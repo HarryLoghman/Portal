@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3f925a32520f4258a491ba22959d7932" Name="Diagram1">
+        <EntityTypeShape EntityType="PortalModel.MessageArchive" Width="1.5" PointX="7.75" PointY="0.75" />
+        <EntityTypeShape EntityType="PortalModel.MessageBuffer" Width="1.5" PointX="5.75" PointY="7.75" />
+        <EntityTypeShape EntityType="PortalModel.Mo" Width="1.5" PointX="7.75" PointY="6.75" />
+        <EntityTypeShape EntityType="PortalModel.OperatorsList" Width="1.5" PointX="9.75" PointY="0.75" />
+        <EntityTypeShape EntityType="PortalModel.OperatorsPlan" Width="1.5" PointX="9.75" PointY="3.75" />
+        <EntityTypeShape EntityType="PortalModel.OperatorsPrefix" Width="1.5" PointX="9.75" PointY="6.75" />
+        <EntityTypeShape EntityType="PortalModel.RPS_Service" Width="1.5" PointX="3" PointY="1.25" />
+        <EntityTypeShape EntityType="PortalModel.RPS_SubscribersAdditionalInfo" Width="1.5" PointX="5.25" PointY="4.75" />
+        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="3.875" />
+        <EntityTypeShape EntityType="PortalModel.ServiceShortCode" Width="1.5" PointX="3" PointY="8.5" />
+        <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="3" PointY="3.75" />
+        <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="7.75" PointY="9.75" />
+        <AssociationConnector Association="PortalModel.FK_RPS_Service_Services" />
+        <AssociationConnector Association="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers" />
+        <AssociationConnector Association="PortalModel.FK_ServiceShortCodes_Services" />
+        <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

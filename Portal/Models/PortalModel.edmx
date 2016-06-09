@@ -1,0 +1,688 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="MessageArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="TimesTryingToSend" Type="int" />
+          <Property Name="MessageType" Type="int" />
+          <Property Name="ServiceId" Type="bigint" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="DeliveryStatus" Type="nvarchar" MaxLength="100" />
+          <Property Name="DeliveryDate" Type="datetime" />
+          <Property Name="OperatorId" Type="int" />
+          <Property Name="DateAddedToQueue" Type="datetime" />
+          <Property Name="AggregatorServiceId" Type="int" />
+        </EntityType>
+        <EntityType Name="MessageBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="TimesTryingToSend" Type="int" />
+          <Property Name="MessageType" Type="int" />
+          <Property Name="ServiceId" Type="bigint" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="DeliveryStatus" Type="nvarchar" MaxLength="100" />
+          <Property Name="DeliveryDate" Type="datetime" />
+          <Property Name="OperatorId" Type="int" />
+          <Property Name="DateAddedToQueue" Type="datetime" />
+          <Property Name="AggregatorServiceId" Type="int" />
+        </EntityType>
+        <EntityType Name="Mo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ShortCode" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="ReceivedTime" Type="datetime" Nullable="false" />
+          <Property Name="MessageId" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="OperatorsList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="OperatorName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OperatorsPlans">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="OperatorPlanName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OperatorsPrefixs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OperatorId" Type="int" Nullable="false" />
+          <Property Name="OperatorPlan" Type="int" Nullable="false" />
+          <Property Name="Prefix" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RPS_Service">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="HamrahAggregatorServiceId" Type="int" />
+        </EntityType>
+        <EntityType Name="RPS_SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="Point" Type="int" />
+          <Property Name="UniqueId" Type="nvarchar" MaxLength="10" />
+          <Property Name="ReferralId" Type="nvarchar" MaxLength="10" />
+          <Property Name="IsRechargeThroughReferall" Type="bit" />
+          <Property Name="RechargeThroughReferall" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Services">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="OnKeywords" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="ServiceIsActive" Type="bit" Nullable="false" />
+          <Property Name="WelcomeMessage" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="LeaveMessage" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="InvalidContentWhenSubscribed" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="InvalidContentWhenNotSubscribed" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="ServiceHelp" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceShortCodes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Subscribers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ActivationDate" Type="datetime" />
+          <Property Name="DeactivationDate" Type="datetime" />
+          <Property Name="OnMethod" Type="nvarchar" MaxLength="50" />
+          <Property Name="OnKeyword" Type="nvarchar" MaxLength="100" />
+          <Property Name="OffMethod" Type="nvarchar" MaxLength="50" />
+          <Property Name="OffKeyword" Type="nvarchar" MaxLength="100" />
+          <Property Name="PersianActivationDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="PersianDeactivationDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="MobileOperator" Type="int" Nullable="false" />
+          <Property Name="OperatorPlan" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubscribersHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" />
+          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="MCIServiceId" Type="int" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ServiceStatusForSubscriber" Type="int" />
+          <Property Name="Date" Type="date" />
+          <Property Name="Time" Type="time" Precision="7" />
+          <Property Name="WhoChangedSubscriberStatus" Type="int" />
+          <Property Name="InvalidContent" Type="nvarchar(max)" />
+        </EntityType>
+        <Association Name="FK_RPS_Service_Services">
+          <End Role="Services" Type="Self.Services" Multiplicity="1" />
+          <End Role="RPS_Service" Type="Self.RPS_Service" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RPS_Service">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RPS_SubscribersAdditionalInfo_Subscribers">
+          <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="1" />
+          <End Role="RPS_SubscribersAdditionalInfo" Type="Self.RPS_SubscribersAdditionalInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subscribers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RPS_SubscribersAdditionalInfo">
+              <PropertyRef Name="SubscriberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ServiceShortCodes_Services">
+          <End Role="Services" Type="Self.Services" Multiplicity="1" />
+          <End Role="ServiceShortCodes" Type="Self.ServiceShortCodes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ServiceShortCodes">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Subscribers_Subscribers">
+          <End Role="Services" Type="Self.Services" Multiplicity="1" />
+          <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Subscribers">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PortalModelStoreContainer">
+          <EntitySet Name="MessageArchive" EntityType="Self.MessageArchive" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageBuffer" EntityType="Self.MessageBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Mo" EntityType="Self.Mo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OperatorsList" EntityType="Self.OperatorsList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RPS_Service" EntityType="Self.RPS_Service" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RPS_SubscribersAdditionalInfo" EntityType="Self.RPS_SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Services" EntityType="Self.Services" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceShortCodes" EntityType="Self.ServiceShortCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Subscribers" EntityType="Self.Subscribers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscribersHistory" EntityType="Self.SubscribersHistory" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_RPS_Service_Services" Association="Self.FK_RPS_Service_Services">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="RPS_Service" EntitySet="RPS_Service" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RPS_SubscribersAdditionalInfo_Subscribers" Association="Self.FK_RPS_SubscribersAdditionalInfo_Subscribers">
+            <End Role="Subscribers" EntitySet="Subscribers" />
+            <End Role="RPS_SubscribersAdditionalInfo" EntitySet="RPS_SubscribersAdditionalInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ServiceShortCodes_Services" Association="Self.FK_ServiceShortCodes_Services">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="ServiceShortCodes" EntitySet="ServiceShortCodes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Subscribers_Subscribers" Association="Self.FK_Subscribers_Subscribers">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PortalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="PortalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="MessageArchives" EntityType="PortalModel.MessageArchive" />
+          <EntitySet Name="MessageBuffers" EntityType="PortalModel.MessageBuffer" />
+          <EntitySet Name="Moes" EntityType="PortalModel.Mo" />
+          <EntitySet Name="OperatorsLists" EntityType="PortalModel.OperatorsList" />
+          <EntitySet Name="OperatorsPlans" EntityType="PortalModel.OperatorsPlan" />
+          <EntitySet Name="OperatorsPrefixs" EntityType="PortalModel.OperatorsPrefix" />
+          <EntitySet Name="RPS_Service" EntityType="PortalModel.RPS_Service" />
+          <EntitySet Name="RPS_SubscribersAdditionalInfo" EntityType="PortalModel.RPS_SubscribersAdditionalInfo" />
+          <EntitySet Name="Services" EntityType="PortalModel.Service" />
+          <EntitySet Name="ServiceShortCodes" EntityType="PortalModel.ServiceShortCode" />
+          <EntitySet Name="Subscribers" EntityType="PortalModel.Subscriber" />
+          <EntitySet Name="SubscribersHistories" EntityType="PortalModel.SubscribersHistory" />
+          <AssociationSet Name="FK_RPS_Service_Services" Association="PortalModel.FK_RPS_Service_Services">
+            <End Role="Service" EntitySet="Services" />
+            <End Role="RPS_Service" EntitySet="RPS_Service" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RPS_SubscribersAdditionalInfo_Subscribers" Association="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers">
+            <End Role="Subscriber" EntitySet="Subscribers" />
+            <End Role="RPS_SubscribersAdditionalInfo" EntitySet="RPS_SubscribersAdditionalInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ServiceShortCodes_Services" Association="PortalModel.FK_ServiceShortCodes_Services">
+            <End Role="Service" EntitySet="Services" />
+            <End Role="ServiceShortCode" EntitySet="ServiceShortCodes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Subscribers_Subscribers" Association="PortalModel.FK_Subscribers_Subscribers">
+            <End Role="Service" EntitySet="Services" />
+            <End Role="Subscriber" EntitySet="Subscribers" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="MessageArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="TimesTryingToSend" Type="Int32" />
+          <Property Name="MessageType" Type="Int32" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DeliveryDate" Type="DateTime" Precision="3" />
+          <Property Name="OperatorId" Type="Int32" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Precision="3" />
+          <Property Name="AggregatorServiceId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MessageBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="TimesTryingToSend" Type="Int32" />
+          <Property Name="MessageType" Type="Int32" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DeliveryDate" Type="DateTime" Precision="3" />
+          <Property Name="OperatorId" Type="Int32" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Precision="3" />
+          <Property Name="AggregatorServiceId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Mo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OperatorsList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="OperatorName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OperatorsPlan">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="OperatorPlanName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OperatorsPrefix">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OperatorId" Type="Int32" Nullable="false" />
+          <Property Name="OperatorPlan" Type="Int32" Nullable="false" />
+          <Property Name="Prefix" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RPS_Service">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="HamrahAggregatorServiceId" Type="Int32" />
+          <NavigationProperty Name="Service" Relationship="PortalModel.FK_RPS_Service_Services" FromRole="RPS_Service" ToRole="Service" />
+        </EntityType>
+        <EntityType Name="RPS_SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="Point" Type="Int32" />
+          <Property Name="UniqueId" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Subscriber" Relationship="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers" FromRole="RPS_SubscribersAdditionalInfo" ToRole="Subscriber" />
+          <Property Name="ReferralId" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="IsRechargeThroughReferall" Type="Boolean" />
+          <Property Name="RechargeThroughReferall" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceIsActive" Type="Boolean" Nullable="false" />
+          <Property Name="WelcomeMessage" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LeaveMessage" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="InvalidContentWhenSubscribed" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="InvalidContentWhenNotSubscribed" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="ServiceHelp" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="RPS_Service" Relationship="PortalModel.FK_RPS_Service_Services" FromRole="Service" ToRole="RPS_Service" />
+          <NavigationProperty Name="ServiceShortCodes" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="Service" ToRole="ServiceShortCode" />
+          <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Service" ToRole="Subscriber" />
+        </EntityType>
+        <EntityType Name="ServiceShortCode">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Service" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="ServiceShortCode" ToRole="Service" />
+        </EntityType>
+        <EntityType Name="Subscriber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ActivationDate" Type="DateTime" Precision="3" />
+          <Property Name="DeactivationDate" Type="DateTime" Precision="3" />
+          <Property Name="OnMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OnKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="OffMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OffKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PersianActivationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PersianDeactivationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileOperator" Type="Int32" Nullable="false" />
+          <Property Name="OperatorPlan" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="RPS_SubscribersAdditionalInfo" Relationship="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers" FromRole="Subscriber" ToRole="RPS_SubscribersAdditionalInfo" />
+          <NavigationProperty Name="Service" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Subscriber" ToRole="Service" />
+        </EntityType>
+        <EntityType Name="SubscribersHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MCIServiceId" Type="Int32" />
+          <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceStatusForSubscriber" Type="Int32" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <Property Name="Time" Type="Time" Precision="7" />
+          <Property Name="WhoChangedSubscriberStatus" Type="Int32" />
+          <Property Name="InvalidContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_RPS_Service_Services">
+          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
+          <End Type="PortalModel.RPS_Service" Role="RPS_Service" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RPS_Service">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RPS_SubscribersAdditionalInfo_Subscribers">
+          <End Type="PortalModel.Subscriber" Role="Subscriber" Multiplicity="1" />
+          <End Type="PortalModel.RPS_SubscribersAdditionalInfo" Role="RPS_SubscribersAdditionalInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subscriber">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RPS_SubscribersAdditionalInfo">
+              <PropertyRef Name="SubscriberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ServiceShortCodes_Services">
+          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
+          <End Type="PortalModel.ServiceShortCode" Role="ServiceShortCode" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ServiceShortCode">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Subscribers_Subscribers">
+          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
+          <End Type="PortalModel.Subscriber" Role="Subscriber" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Subscriber">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PortalModelStoreContainer" CdmEntityContainer="PortalEntities">
+          <EntitySetMapping Name="MessageArchives">
+            <EntityTypeMapping TypeName="PortalModel.MessageArchive">
+              <MappingFragment StoreEntitySet="MessageArchive">
+                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
+                <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="TimesTryingToSend" ColumnName="TimesTryingToSend" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessageBuffers">
+            <EntityTypeMapping TypeName="PortalModel.MessageBuffer">
+              <MappingFragment StoreEntitySet="MessageBuffer">
+                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
+                <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="TimesTryingToSend" ColumnName="TimesTryingToSend" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Moes">
+            <EntityTypeMapping TypeName="PortalModel.Mo">
+              <MappingFragment StoreEntitySet="Mo">
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperatorsLists">
+            <EntityTypeMapping TypeName="PortalModel.OperatorsList">
+              <MappingFragment StoreEntitySet="OperatorsList">
+                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperatorsPlans">
+            <EntityTypeMapping TypeName="PortalModel.OperatorsPlan">
+              <MappingFragment StoreEntitySet="OperatorsPlans">
+                <ScalarProperty Name="OperatorPlanName" ColumnName="OperatorPlanName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperatorsPrefixs">
+            <EntityTypeMapping TypeName="PortalModel.OperatorsPrefix">
+              <MappingFragment StoreEntitySet="OperatorsPrefixs">
+                <ScalarProperty Name="Prefix" ColumnName="Prefix" />
+                <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
+                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RPS_Service">
+            <EntityTypeMapping TypeName="PortalModel.RPS_Service">
+              <MappingFragment StoreEntitySet="RPS_Service">
+                <ScalarProperty Name="HamrahAggregatorServiceId" ColumnName="HamrahAggregatorServiceId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RPS_SubscribersAdditionalInfo">
+            <EntityTypeMapping TypeName="PortalModel.RPS_SubscribersAdditionalInfo">
+              <MappingFragment StoreEntitySet="RPS_SubscribersAdditionalInfo">
+                <ScalarProperty Name="RechargeThroughReferall" ColumnName="RechargeThroughReferall" />
+                <ScalarProperty Name="IsRechargeThroughReferall" ColumnName="IsRechargeThroughReferall" />
+                <ScalarProperty Name="ReferralId" ColumnName="ReferralId" />
+                <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Services">
+            <EntityTypeMapping TypeName="PortalModel.Service">
+              <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="ServiceHelp" ColumnName="ServiceHelp" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="InvalidContentWhenNotSubscribed" ColumnName="InvalidContentWhenNotSubscribed" />
+                <ScalarProperty Name="InvalidContentWhenSubscribed" ColumnName="InvalidContentWhenSubscribed" />
+                <ScalarProperty Name="LeaveMessage" ColumnName="LeaveMessage" />
+                <ScalarProperty Name="WelcomeMessage" ColumnName="WelcomeMessage" />
+                <ScalarProperty Name="ServiceIsActive" ColumnName="ServiceIsActive" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceShortCodes">
+            <EntityTypeMapping TypeName="PortalModel.ServiceShortCode">
+              <MappingFragment StoreEntitySet="ServiceShortCodes">
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Subscribers">
+            <EntityTypeMapping TypeName="PortalModel.Subscriber">
+              <MappingFragment StoreEntitySet="Subscribers">
+                <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
+                <ScalarProperty Name="MobileOperator" ColumnName="MobileOperator" />
+                <ScalarProperty Name="PersianDeactivationDate" ColumnName="PersianDeactivationDate" />
+                <ScalarProperty Name="PersianActivationDate" ColumnName="PersianActivationDate" />
+                <ScalarProperty Name="OffKeyword" ColumnName="OffKeyword" />
+                <ScalarProperty Name="OffMethod" ColumnName="OffMethod" />
+                <ScalarProperty Name="OnKeyword" ColumnName="OnKeyword" />
+                <ScalarProperty Name="OnMethod" ColumnName="OnMethod" />
+                <ScalarProperty Name="DeactivationDate" ColumnName="DeactivationDate" />
+                <ScalarProperty Name="ActivationDate" ColumnName="ActivationDate" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersHistories">
+            <EntityTypeMapping TypeName="PortalModel.SubscribersHistory">
+              <MappingFragment StoreEntitySet="SubscribersHistory">
+                <ScalarProperty Name="InvalidContent" ColumnName="InvalidContent" />
+                <ScalarProperty Name="WhoChangedSubscriberStatus" ColumnName="WhoChangedSubscriberStatus" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ServiceStatusForSubscriber" ColumnName="ServiceStatusForSubscriber" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="MCIServiceId" ColumnName="MCIServiceId" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
