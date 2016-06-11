@@ -21,6 +21,9 @@ namespace Portal.Models
         public string ReferralId { get; set; }
         public Nullable<bool> IsRechargeThroughReferall { get; set; }
         public string RechargeThroughReferall { get; set; }
+        public Nullable<int> TimesWinned { get; set; }
+        public Nullable<int> CurrentGameWinned { get; set; }
+        public Nullable<int> TimesChargeWinned { get; set; }
     
         public virtual Subscriber Subscriber { get; set; }
     }

@@ -20,14 +20,14 @@ namespace Portal.Services.RockPaperScissor
                         RpsSubscribers.AddSubscriberAdditionalInfo(message);
                     return;
                 }
-                var subscriber =
-                    entity.Subscribers.FirstOrDefault(
-                        o => o.MobileNumber == message.MobileNumber && o.ServiceId == message.ServiceId);
+                var subscriber = RpsSubscribers.GetSubscriber(message.MobileNumber, message.ServiceId);
+                    
                 if (subscriber == null)
                 {
                     MessageHandler.InvalidContentWhenNotSubscribed(message, serviceInfo);
                     return;
                 }
+                ContentManager.HandleContent(message, serviceInfo, subscriber);
             }
         }
     }

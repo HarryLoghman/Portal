@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Portal.Models;
+using Portal.Services.RockPaperScissor.Model;
 
 namespace Portal.Services.RockPaperScissor
 {
@@ -23,6 +24,8 @@ namespace Portal.Services.RockPaperScissor
                     newsubscriber.SubscriberId = subsriber.Id;
                     newsubscriber.Point = 0;
                     newsubscriber.UniqueId = CreateUniqueId();
+                    newsubscriber.TimesWinned = 0;
+                    newsubscriber.CurrentGameWinned = 0;
                     entities.RPS_SubscribersAdditionalInfo.Add(newsubscriber);
                     entities.SaveChanges();
                 }
@@ -40,6 +43,17 @@ namespace Portal.Services.RockPaperScissor
                     unqiueId = CreateUniqueId();
             }
             return unqiueId;
+        }
+
+        public static SubscriberWithAdditionalInfo GetSubscriber(string mobileNumber, long serviceId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var subscriber = entity.Subscribers.Join(entity.RPS_SubscribersAdditionalInfo, s => s.Id,
+                    sai => sai.SubscriberId, (s, sai) => new { s, sai }).Where(
+                        o => o.s.MobileNumber == mobileNumber && o.s.ServiceId == serviceId).Select(o => new SubscriberWithAdditionalInfo() { Subscriber = o.s, RPS_SubscribersAdditionalInfo = o.sai }).FirstOrDefault();
+                return subscriber;
+            }
         }
     }
 }

@@ -12,12 +12,16 @@ namespace Portal.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RPS_Service
+    public partial class OperatorsRecharageCode
     {
         public long Id { get; set; }
-        public long ServiceId { get; set; }
-        public Nullable<int> HamrahAggregatorServiceId { get; set; }
-    
-        public virtual Service Service { get; set; }
+        public long OperatorId { get; set; }
+        public string ChargeSerialNumber { get; set; }
+        public string ChargeCode { get; set; }
+        public System.DateTime DateAdded { get; set; }
+        public Nullable<System.DateTime> DateUsed { get; set; }
+        public string PersianDateAdded { get; set; }
+        public string PersianDateUsed { get; set; }
+        public bool IsUsed { get; set; }
     }
 }

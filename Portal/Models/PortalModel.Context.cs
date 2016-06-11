@@ -31,7 +31,8 @@ namespace Portal.Models
         public virtual DbSet<OperatorsList> OperatorsLists { get; set; }
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
         public virtual DbSet<OperatorsPrefix> OperatorsPrefixs { get; set; }
-        public virtual DbSet<RPS_Service> RPS_Service { get; set; }
+        public virtual DbSet<OperatorsRecharageCode> OperatorsRecharageCodes { get; set; }
+        public virtual DbSet<RPS_ServiceAdditionalInfo> RPS_ServiceAdditionalInfo { get; set; }
         public virtual DbSet<RPS_SubscribersAdditionalInfo> RPS_SubscribersAdditionalInfo { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<ServiceShortCode> ServiceShortCodes { get; set; }
