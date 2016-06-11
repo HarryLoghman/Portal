@@ -20,7 +20,7 @@ namespace Portal.Services.RockPaperScissor
 
         }
 
-        private static void ContinueGame(Message message, Service serviceInfo)
+        private static void ContinueGame(Message message, Service serviceInfo) 
         {
             throw new NotImplementedException();
         }
