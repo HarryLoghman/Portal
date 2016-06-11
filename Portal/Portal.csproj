@@ -258,6 +258,20 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="DB\RedGateDatabaseInfo.xml" />
+    <Content Include="DB\Tables\dbo.MessageArchive.sql" />
+    <Content Include="DB\Tables\dbo.MessageBuffer.sql" />
+    <Content Include="DB\Tables\dbo.Mo.sql" />
+    <Content Include="DB\Tables\dbo.OperatorsList.sql" />
+    <Content Include="DB\Tables\dbo.OperatorsPlans.sql" />
+    <Content Include="DB\Tables\dbo.OperatorsPrefixs.sql" />
+    <Content Include="DB\Tables\dbo.OperatorsRecharageCodes.sql" />
+    <Content Include="DB\Tables\dbo.RPS_Service.sql" />
+    <Content Include="DB\Tables\dbo.RPS_SubscribersAdditionalInfo.sql" />
+    <Content Include="DB\Tables\dbo.Services.sql" />
+    <Content Include="DB\Tables\dbo.ServiceShortCodes.sql" />
+    <Content Include="DB\Tables\dbo.Subscribers.sql" />
+    <Content Include="DB\Tables\dbo.SubscribersHistory.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -281,6 +295,7 @@
     <Content Include="Models\PortalModel.edmx.diagram">
       <DependentUpon>PortalModel.edmx</DependentUpon>
     </Content>
+    <Content Include="DB\RedGate.ssc" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -330,6 +345,37 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="DB\Assemblies\" />
+    <Folder Include="DB\Database Triggers\" />
+    <Folder Include="DB\Data\" />
+    <Folder Include="DB\Defaults\" />
+    <Folder Include="DB\Extended Properties\" />
+    <Folder Include="DB\Functions\" />
+    <Folder Include="DB\Rules\" />
+    <Folder Include="DB\Search Property Lists\" />
+    <Folder Include="DB\Security\Asymmetric Keys\" />
+    <Folder Include="DB\Security\Certificates\" />
+    <Folder Include="DB\Security\Roles\" />
+    <Folder Include="DB\Security\Schemas\" />
+    <Folder Include="DB\Security\Symmetric Keys\" />
+    <Folder Include="DB\Security\Users\" />
+    <Folder Include="DB\Sequences\" />
+    <Folder Include="DB\Service Broker\Contracts\" />
+    <Folder Include="DB\Service Broker\Event Notifications\" />
+    <Folder Include="DB\Service Broker\Message Types\" />
+    <Folder Include="DB\Service Broker\Queues\" />
+    <Folder Include="DB\Service Broker\Remote Service Bindings\" />
+    <Folder Include="DB\Service Broker\Routes\" />
+    <Folder Include="DB\Service Broker\Services\" />
+    <Folder Include="DB\Storage\Full Text Catalogs\" />
+    <Folder Include="DB\Storage\Full Text Stoplists\" />
+    <Folder Include="DB\Storage\Partition Functions\" />
+    <Folder Include="DB\Storage\Partition Schemes\" />
+    <Folder Include="DB\Stored Procedures\" />
+    <Folder Include="DB\Synonyms\" />
+    <Folder Include="DB\Types\User-defined Data Types\" />
+    <Folder Include="DB\Types\XML Schema Collections\" />
+    <Folder Include="DB\Views\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
