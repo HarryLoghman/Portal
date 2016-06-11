@@ -25,7 +25,7 @@ namespace Portal.Controllers
                     Shared.PortalException.Throw("Invalid service for: " + message.ShortCode);
                 message = Shared.MessageHandler.ValidateMessage(message);
                 message.ServiceId = serviceInfo.Id;
-                if (message.ServiceId == 1)
+                if (serviceInfo.ServiceCode == "RPS")
                     Services.RockPaperScissor.HandleMo.ReceivedMessage(message, serviceInfo);
             }
             return "Done";

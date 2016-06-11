@@ -76,7 +76,7 @@ namespace Portal.Shared
                 entity.Subscribers.Add(newSubscriber);
                 entity.SaveChanges();
 
-                AddToSubscriberHistory(message.MobileNumber, serviceInfo, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
+                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, serviceInfo, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
 
                 message.Content = serviceInfo.WelcomeMessage;
                 MessageHandler.InsertMessageToQueue(message);
@@ -84,7 +84,7 @@ namespace Portal.Shared
             return ServiceStatusForSubscriberState.Activated;
         }
 
-        private static void AddToSubscriberHistory(string mobileNumber, Service serviceInfo, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent)
+        private static void AddToSubscriberHistory(string mobileNumber, string shortCode, Service serviceInfo, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent)
         {
             using (var entity = new PortalEntities())
             {
@@ -94,7 +94,7 @@ namespace Portal.Shared
                 subscriberHistory.ServiceName = serviceInfo.Name;
                 subscriberHistory.ServiceId = serviceInfo.Id;
                 subscriberHistory.ServiceStatusForSubscriber = (int)subscriberState;
-                subscriberHistory.ShortCode = serviceInfo.ShortCode;
+                subscriberHistory.ShortCode = shortCode;
                 subscriberHistory.Time = DateTime.Now.TimeOfDay;
                 subscriberHistory.WhoChangedSubscriberStatus = (int)whoChangedSubscriberState;
                 subscriberHistory.MCIServiceId = 0;
@@ -135,7 +135,7 @@ namespace Portal.Shared
                 entity.Subscribers.Attach(subscriber);
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
-                AddToSubscriberHistory(message.MobileNumber, serviceInfo, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null);
+                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, serviceInfo, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null);
 
                 message.Content = serviceInfo.LeaveMessage;
                 MessageHandler.InsertMessageToQueue(message);

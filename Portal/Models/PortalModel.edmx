@@ -110,6 +110,7 @@
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ServiceCode" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="OnKeywords" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="ServiceIsActive" Type="bit" Nullable="false" />
@@ -393,6 +394,7 @@
           <NavigationProperty Name="RPS_Service" Relationship="PortalModel.FK_RPS_Service_Services" FromRole="Service" ToRole="RPS_Service" />
           <NavigationProperty Name="ServiceShortCodes" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="Service" ToRole="ServiceShortCode" />
           <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Service" ToRole="Subscriber" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ServiceShortCode">
           <Key>
@@ -603,6 +605,7 @@
           <EntitySetMapping Name="Services">
             <EntityTypeMapping TypeName="PortalModel.Service">
               <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
                 <ScalarProperty Name="ServiceHelp" ColumnName="ServiceHelp" />
                 <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
                 <ScalarProperty Name="InvalidContentWhenNotSubscribed" ColumnName="InvalidContentWhenNotSubscribed" />

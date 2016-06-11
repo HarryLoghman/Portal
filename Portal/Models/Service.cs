@@ -33,6 +33,7 @@ namespace Portal.Models
         public string InvalidContentWhenNotSubscribed { get; set; }
         public bool IsEnabled { get; set; }
         public string ServiceHelp { get; set; }
+        public string ServiceCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RPS_Service> RPS_Service { get; set; }

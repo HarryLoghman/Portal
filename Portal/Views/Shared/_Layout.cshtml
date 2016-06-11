@@ -1,44 +1,156 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    @*<meta charset="utf-8" />*@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    @*@Styles.Render("~/Content/css")*@
+    @*@Scripts.Render("~/bundles/modernizr")*@
+    <style>
+        .k-header h1 {
+            margin: 0;
+            padding: 30px 15px;
+            font-size: 32px;
+            font-weight: lighter;
+        }
+
+        /* Sticky footer styles
+        -------------------------------------------------- */
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            /* Margin bottom by footer height */
+            margin-bottom: 60px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 60px;
+            background-color: #f5f5f5;
+        }
+
+        .container-fluid .text-muted {
+            margin: 20px 0;
+        }
+
+        .placeholders {
+            margin: 30px auto;
+        }
+
+        .placeholder img {
+            display: inline-block;
+        }
+
+        p .k-button {
+            margin: 0 15px 0 0;
+        }
+
+        .btn-toggle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-shadow: none;
+            height: 48px;
+        }
+
+            .btn-toggle .k-icon {
+                opacity: 1;
+            }
+
+            .btn-toggle,
+            .k-primary.btn-toggle:hover,
+            .btn-toggle:focus:active:not(.k-state-disabled):not([disabled]),
+            .btn-toggle:focus:not(.k-state-disabled):not([disabled]) {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+                .btn-toggle .k-i-hbars,
+                .k-primary.btn-toggle:hover .k-i-hbars,
+                .btn-toggle:focus:active:not(.k-state-disabled):not([disabled]) .k-i-hbars,
+                .btn-toggle:focus:not(.k-state-disabled):not([disabled]) .k-i-hbars {
+                    background-position: -80px -32px;
+                }
+
+        @@media (max-width: 768px) {
+            .k-item {
+                display: block;
+                clear: both;
+                float: none;
+                width: 100%;
+            }
+
+            .k-header h1 {
+                margin: 0;
+                padding: 16px 15px 14px 60px;
+                font-size: 18px;
+                font-weight: lighter;
+            }
+        }
+    </style>
+    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.common-material.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.materialblack.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.dataviz.materialblack.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/jquery.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/angular.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/kendo.all.min.js")"></script>
 
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+<body class="k-rtl">
+    <div class="container-fluid">
+        <div class="row k-header">
+            <h1>پرتال</h1>
+            <div id="responsive-panel">
+                <ul id="menu">
+                    <li>
+                        @Html.ActionLink("Home", "Index", "Home")
+                    </li>
+                    <li>
+                        @Html.ActionLink("About", "About", "Home")
+                    </li>
+                    <li>
+                        @Html.ActionLink("Contact", "Contact", "Home")
+                    </li>
+                    <li>
+                        Item 4
+                    </li>
+                    <li>
+                        Item 5
+                    </li>
+                    <li disabled="disabled">
+                        Disabled Item
+                    </li>
                 </ul>
-                @Html.Partial("_LoginPartial")
             </div>
+            <button id="configure" class="k-rpanel-toggle k-button k-primary btn-toggle"><span class="k-icon k-i-hbars"></span></button>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+        @RenderBody()
+
+    <script>
+        $(document).ready(function () {
+            $("#menu").kendoMenu();
+
+            $("#responsive-panel").kendoResponsivePanel({
+                breakpoint: 768,
+                autoClose: false,
+                orientation: "top"
+            });
+        });
+        function onclick(e) {
+            $("#responsive-panel").getKendoResponsivePanel().toggle();
+        }
+    </script>
 </body>
 </html>
