@@ -5,6 +5,14 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AggregatorList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OperatorId" Type="bigint" Nullable="false" />
+          <Property Name="AggregatorName" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
         <EntityType Name="MessageArchive">
           <Key>
             <PropertyRef Name="Id" />
@@ -135,7 +143,6 @@
           <Property Name="LeaveMessage" Type="nvarchar(max)" Nullable="false" />
           <Property Name="InvalidContentWhenSubscribed" Type="nvarchar(max)" Nullable="false" />
           <Property Name="InvalidContentWhenNotSubscribed" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="ServiceHelp" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="ServiceShortCodes">
@@ -229,6 +236,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="PortalModelStoreContainer">
+          <EntitySet Name="AggregatorList" EntityType="Self.AggregatorList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessageArchive" EntityType="Self.MessageArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessageBuffer" EntityType="Self.MessageBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Mo" EntityType="Self.Mo" Schema="dbo" store:Type="Tables" />
@@ -273,17 +281,18 @@
           <EntitySet Name="OperatorsRecharageCodes" EntityType="PortalModel.OperatorsRecharageCode" />
           <EntitySet Name="RPS_ServiceAdditionalInfo" EntityType="PortalModel.RPS_ServiceAdditionalInfo" />
           <EntitySet Name="RPS_SubscribersAdditionalInfo" EntityType="PortalModel.RPS_SubscribersAdditionalInfo" />
-          <EntitySet Name="Services" EntityType="PortalModel.Service" />
           <EntitySet Name="ServiceShortCodes" EntityType="PortalModel.ServiceShortCode" />
           <EntitySet Name="Subscribers" EntityType="PortalModel.Subscriber" />
           <EntitySet Name="SubscribersHistories" EntityType="PortalModel.SubscribersHistory" />
-          <AssociationSet Name="FK_RPS_Service_Services" Association="PortalModel.FK_RPS_Service_Services">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="RPS_ServiceAdditionalInfo" EntitySet="RPS_ServiceAdditionalInfo" />
-          </AssociationSet>
           <AssociationSet Name="FK_RPS_SubscribersAdditionalInfo_Subscribers" Association="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers">
             <End Role="Subscriber" EntitySet="Subscribers" />
             <End Role="RPS_SubscribersAdditionalInfo" EntitySet="RPS_SubscribersAdditionalInfo" />
+          </AssociationSet>
+          <EntitySet Name="AggregatorLists" EntityType="PortalModel.AggregatorList" />
+          <EntitySet Name="Services" EntityType="PortalModel.Service" />
+          <AssociationSet Name="FK_RPS_Service_Services" Association="PortalModel.FK_RPS_Service_Services">
+            <End Role="Service" EntitySet="Services" />
+            <End Role="RPS_ServiceAdditionalInfo" EntitySet="RPS_ServiceAdditionalInfo" />
           </AssociationSet>
           <AssociationSet Name="FK_ServiceShortCodes_Services" Association="PortalModel.FK_ServiceShortCodes_Services">
             <End Role="Service" EntitySet="Services" />
@@ -293,7 +302,7 @@
             <End Role="Service" EntitySet="Services" />
             <End Role="Subscriber" EntitySet="Subscribers" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="MessageArchive">
           <Key>
             <PropertyRef Name="Id" />
@@ -412,26 +421,6 @@
           <NavigationProperty Name="Subscriber" Relationship="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers" FromRole="RPS_SubscribersAdditionalInfo" ToRole="Subscriber" />
           <Property Name="TimesChargeWinned" Type="Int32" />
         </EntityType>
-        <EntityType Name="Service">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceIsActive" Type="Boolean" Nullable="false" />
-          <Property Name="WelcomeMessage" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="LeaveMessage" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="InvalidContentWhenSubscribed" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="InvalidContentWhenNotSubscribed" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="ServiceHelp" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="RPS_ServiceAdditionalInfo" Relationship="PortalModel.FK_RPS_Service_Services" FromRole="Service" ToRole="RPS_ServiceAdditionalInfo" />
-          <NavigationProperty Name="ServiceShortCodes" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="Service" ToRole="ServiceShortCode" />
-          <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Service" ToRole="Subscriber" />
-        </EntityType>
         <EntityType Name="ServiceShortCode">
           <Key>
             <PropertyRef Name="Id" />
@@ -477,18 +466,6 @@
           <Property Name="WhoChangedSubscriberStatus" Type="Int32" />
           <Property Name="InvalidContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <Association Name="FK_RPS_Service_Services">
-          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
-          <End Type="PortalModel.RPS_ServiceAdditionalInfo" Role="RPS_ServiceAdditionalInfo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RPS_ServiceAdditionalInfo">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_RPS_SubscribersAdditionalInfo_Subscribers">
           <End Type="PortalModel.Subscriber" Role="Subscriber" Multiplicity="1" />
           <End Type="PortalModel.RPS_SubscribersAdditionalInfo" Role="RPS_SubscribersAdditionalInfo" Multiplicity="*" />
@@ -498,6 +475,45 @@
             </Principal>
             <Dependent Role="RPS_SubscribersAdditionalInfo">
               <PropertyRef Name="SubscriberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AggregatorList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OperatorId" Type="Int64" Nullable="false" />
+          <Property Name="AggregatorName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceIsActive" Type="Boolean" Nullable="false" />
+          <Property Name="WelcomeMessage" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LeaveMessage" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="InvalidContentWhenSubscribed" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="InvalidContentWhenNotSubscribed" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceHelp" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="RPS_ServiceAdditionalInfo" Relationship="PortalModel.FK_RPS_Service_Services" FromRole="Service" ToRole="RPS_ServiceAdditionalInfo" />
+          <NavigationProperty Name="ServiceShortCodes" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="Service" ToRole="ServiceShortCode" />
+          <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Service" ToRole="Subscriber" />
+        </EntityType>
+        <Association Name="FK_RPS_Service_Services">
+          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
+          <End Type="PortalModel.RPS_ServiceAdditionalInfo" Role="RPS_ServiceAdditionalInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RPS_ServiceAdditionalInfo">
+              <PropertyRef Name="ServiceId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -656,24 +672,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Services">
-            <EntityTypeMapping TypeName="PortalModel.Service">
-              <MappingFragment StoreEntitySet="Services">
-                <ScalarProperty Name="ServiceHelp" ColumnName="ServiceHelp" />
-                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
-                <ScalarProperty Name="InvalidContentWhenNotSubscribed" ColumnName="InvalidContentWhenNotSubscribed" />
-                <ScalarProperty Name="InvalidContentWhenSubscribed" ColumnName="InvalidContentWhenSubscribed" />
-                <ScalarProperty Name="LeaveMessage" ColumnName="LeaveMessage" />
-                <ScalarProperty Name="WelcomeMessage" ColumnName="WelcomeMessage" />
-                <ScalarProperty Name="ServiceIsActive" ColumnName="ServiceIsActive" />
-                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ServiceShortCodes">
             <EntityTypeMapping TypeName="PortalModel.ServiceShortCode">
               <MappingFragment StoreEntitySet="ServiceShortCodes">
@@ -715,6 +713,32 @@
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AggregatorLists">
+            <EntityTypeMapping TypeName="PortalModel.AggregatorList">
+              <MappingFragment StoreEntitySet="AggregatorList">
+                <ScalarProperty Name="AggregatorName" ColumnName="AggregatorName" />
+                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Services">
+            <EntityTypeMapping TypeName="PortalModel.Service">
+              <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="ServiceHelp" ColumnName="ServiceHelp" />
+                <ScalarProperty Name="InvalidContentWhenNotSubscribed" ColumnName="InvalidContentWhenNotSubscribed" />
+                <ScalarProperty Name="InvalidContentWhenSubscribed" ColumnName="InvalidContentWhenSubscribed" />
+                <ScalarProperty Name="LeaveMessage" ColumnName="LeaveMessage" />
+                <ScalarProperty Name="WelcomeMessage" ColumnName="WelcomeMessage" />
+                <ScalarProperty Name="ServiceIsActive" ColumnName="ServiceIsActive" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

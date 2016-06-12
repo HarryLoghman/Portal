@@ -10,7 +10,6 @@ CREATE TABLE [dbo].[Services]
 [LeaveMessage] [nvarchar] (max) COLLATE Persian_100_CI_AI NOT NULL,
 [InvalidContentWhenSubscribed] [nvarchar] (max) COLLATE Persian_100_CI_AI NOT NULL,
 [InvalidContentWhenNotSubscribed] [nvarchar] (max) COLLATE Persian_100_CI_AI NOT NULL,
-[IsEnabled] [bit] NOT NULL,
 [ServiceHelp] [nvarchar] (max) COLLATE Persian_100_CI_AI NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 ALTER TABLE [dbo].[Services] ADD 

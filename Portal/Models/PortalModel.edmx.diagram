@@ -14,12 +14,13 @@
         <EntityTypeShape EntityType="PortalModel.OperatorsRecharageCode" Width="1.5" PointX="7.75" PointY="9.75" />
         <EntityTypeShape EntityType="PortalModel.RPS_ServiceAdditionalInfo" Width="1.5" PointX="3" PointY="3.75" />
         <EntityTypeShape EntityType="PortalModel.RPS_SubscribersAdditionalInfo" Width="1.5" PointX="5.25" PointY="6.875" />
-        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="3.75" />
         <EntityTypeShape EntityType="PortalModel.ServiceShortCode" Width="1.5" PointX="3" PointY="1.25" />
         <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="3" PointY="6.375" />
         <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="9.75" PointY="9.75" />
-        <AssociationConnector Association="PortalModel.FK_RPS_Service_Services" />
         <AssociationConnector Association="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers" />
+        <EntityTypeShape EntityType="PortalModel.AggregatorList" Width="1.5" PointX="0.75" PointY="11.75" />
+        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="1.125" PointY="3.875" />
+        <AssociationConnector Association="PortalModel.FK_RPS_Service_Services" />
         <AssociationConnector Association="PortalModel.FK_ServiceShortCodes_Services" />
         <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" />
       </Diagram>

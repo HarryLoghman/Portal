@@ -32,7 +32,6 @@ namespace Portal.Models
         public string LeaveMessage { get; set; }
         public string InvalidContentWhenSubscribed { get; set; }
         public string InvalidContentWhenNotSubscribed { get; set; }
-        public bool IsEnabled { get; set; }
         public string ServiceHelp { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

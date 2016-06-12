@@ -16,7 +16,7 @@ namespace Portal
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "{controller}/{action}"
+                routeTemplate: "api/{controller}/{action}"
                 );
         }
     }
