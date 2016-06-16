@@ -17,7 +17,9 @@ CREATE TABLE [dbo].[MessageBuffer]
 [DeliveryDate] [datetime] NULL,
 [OperatorId] [int] NULL,
 [DateAddedToQueue] [datetime] NULL,
-[AggregatorServiceId] [int] NULL
+[AggregatorServiceId] [int] NULL,
+[PersianDateAddedToQueue] [nvarchar] (50) COLLATE Persian_100_CI_AI NULL,
+[PersianSentDate] [nvarchar] (50) COLLATE Persian_100_CI_AI NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[MessageBuffer] ADD CONSTRAINT [PK_MessageBuffer] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
