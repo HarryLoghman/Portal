@@ -293,8 +293,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\RockPaperScissor\ContentManager.cs" />
     <Compile Include="Services\RockPaperScissor\HandleMo.cs" />
-    <Compile Include="Services\RockPaperScissor\Model\ServiceWithAdditionalInfo.cs" />
-    <Compile Include="Services\RockPaperScissor\Model\SubscriberWithAdditionalInfo.cs" />
     <Compile Include="Services\RockPaperScissor\RpsServiceController.cs" />
     <Compile Include="Services\RockPaperScissor\RpsServices.cs" />
     <Compile Include="Services\RockPaperScissor\RpsSubscribers.cs" />

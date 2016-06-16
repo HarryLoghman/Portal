@@ -32,5 +32,7 @@ namespace Portal.Models
         public Nullable<int> OperatorId { get; set; }
         public Nullable<System.DateTime> DateAddedToQueue { get; set; }
         public Nullable<int> AggregatorServiceId { get; set; }
+        public string PersianDateAddedToQueue { get; set; }
+        public string PersianSentDate { get; set; }
     }
 }

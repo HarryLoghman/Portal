@@ -25,7 +25,8 @@ namespace Portal.Services.RockPaperScissor
                     newsubscriber.Point = 0;
                     newsubscriber.UniqueId = CreateUniqueId();
                     newsubscriber.TimesWinned = 0;
-                    newsubscriber.CurrentGameWinned = 0;
+                    newsubscriber.ContinuousGameWinned = 0;
+                    newsubscriber.TimesLosed = 0;
                     entities.RPS_SubscribersAdditionalInfo.Add(newsubscriber);
                     entities.SaveChanges();
                 }
@@ -45,15 +46,9 @@ namespace Portal.Services.RockPaperScissor
             return unqiueId;
         }
 
-        public static SubscriberWithAdditionalInfo GetSubscriber(string mobileNumber, long serviceId)
+        public static Subscriber GetSubscriber(string mobileNumber, long serviceId, PortalEntities entity)
         {
-            using (var entity = new PortalEntities())
-            {
-                var subscriber = entity.Subscribers.Join(entity.RPS_SubscribersAdditionalInfo, s => s.Id,
-                    sai => sai.SubscriberId, (s, sai) => new { s, sai }).Where(
-                        o => o.s.MobileNumber == mobileNumber && o.s.ServiceId == serviceId).Select(o => new SubscriberWithAdditionalInfo() { Subscriber = o.s, RPS_SubscribersAdditionalInfo = o.sai }).FirstOrDefault();
-                return subscriber;
-            }
+            return entity.Subscribers.Include("RPS_SubscribersAdditionalInfo").Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId).FirstOrDefault();
         }
     }
 }

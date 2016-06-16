@@ -16,14 +16,15 @@ namespace Portal.Models
     {
         public long Id { get; set; }
         public long SubscriberId { get; set; }
-        public Nullable<int> Point { get; set; }
+        public int Point { get; set; }
         public string UniqueId { get; set; }
         public string ReferralId { get; set; }
         public Nullable<bool> IsRechargeThroughReferall { get; set; }
         public string RechargeThroughReferall { get; set; }
-        public Nullable<int> TimesWinned { get; set; }
-        public Nullable<int> CurrentGameWinned { get; set; }
-        public Nullable<int> TimesChargeWinned { get; set; }
+        public int TimesWinned { get; set; }
+        public int ContinuousGameWinned { get; set; }
+        public int TimesChargeWinned { get; set; }
+        public int TimesLosed { get; set; }
     
         public virtual Subscriber Subscriber { get; set; }
     }

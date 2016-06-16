@@ -25,38 +25,22 @@ namespace Portal.Services.RockPaperScissor
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Services_Read([DataSourceRequest]DataSourceRequest request)
         {
-                var services = RpsServices.GetRpsServiceInfo(db);
+            var services = RpsServices.GetRpsServiceInfo(db);
+            DataSourceResult result = services.ToDataSourceResult(request, serviceInfo => new
+            {
+                Id = serviceInfo.Id,
+                Name = serviceInfo.Name,
+                ServiceCode = serviceInfo.ServiceCode,
+                DateCreated = serviceInfo.DateCreated,
+                OnKeywords = serviceInfo.OnKeywords,
+                ServiceIsActive = serviceInfo.ServiceIsActive,
+                WelcomeMessage = serviceInfo.WelcomeMessage,
+                LeaveMessage = serviceInfo.LeaveMessage,
+                InvalidContentWhenSubscribed = serviceInfo.InvalidContentWhenSubscribed,
+                InvalidContentWhenNotSubscribed = serviceInfo.InvalidContentWhenNotSubscribed,
+                ServiceHelp = serviceInfo.ServiceHelp,
 
-                var s = services.FirstOrDefault();
-            //var d = s.RPS_ServiceAdditionalInfo.FirstOrDefault();
-            //d.HamrahAggregatorServiceId = 2050;
-            //db.Entry(d).State = EntityState.Modified;
-            //db.SaveChanges();
-            //s.WelcomeMessage = "hello!!";
-            //db.Entry(s).State = EntityState.Modified;
-            //db.SaveChanges();
-            s.RPS_ServiceAdditionalInfo.HamrahAggregatorServiceId = 2050;
-            db.RPS_ServiceAdditionalInfo.Attach(s.RPS_ServiceAdditionalInfo);
-            db.Entry(s.RPS_ServiceAdditionalInfo).State = EntityState.Modified;
-            db.SaveChanges();
-            s.Service.WelcomeMessage = "hello!";
-            db.Entry(s.Service).State = EntityState.Modified;
-            db.SaveChanges();
-
-            //DataSourceResult result = services.ToDataSourceResult(request, serviceInfo => new
-            //{
-            //    Id = serviceInfo.Service.Id,
-            //    Name = serviceInfo.Service.Name,
-            //    ServiceCode = serviceInfo.Service.ServiceCode,
-            //    DateCreated = serviceInfo.Service.DateCreated,
-            //    OnKeywords = serviceInfo.Service.OnKeywords,
-            //    ServiceIsActive = serviceInfo.Service.ServiceIsActive,
-            //    WelcomeMessage = serviceInfo.Service.WelcomeMessage,
-            //    LeaveMessage = serviceInfo.Service.LeaveMessage,
-            //    InvalidContentWhenSubscribed = serviceInfo.Service.InvalidContentWhenSubscribed,
-            //    InvalidContentWhenNotSubscribed = serviceInfo.Service.InvalidContentWhenNotSubscribed,
-            //    ServiceHelp = serviceInfo.Service.ServiceHelp,
-            //});
+            });
             return Json("");
         }
 

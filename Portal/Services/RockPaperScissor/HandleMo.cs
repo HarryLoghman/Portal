@@ -20,7 +20,7 @@ namespace Portal.Services.RockPaperScissor
                         RpsSubscribers.AddSubscriberAdditionalInfo(message);
                     return;
                 }
-                var subscriber = RpsSubscribers.GetSubscriber(message.MobileNumber, message.ServiceId);
+                var subscriber = RpsSubscribers.GetSubscriber(message.MobileNumber, message.ServiceId, entity);
                     
                 if (subscriber == null)
                 {

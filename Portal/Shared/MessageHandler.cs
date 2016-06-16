@@ -41,6 +41,7 @@ namespace Portal.Shared
                 messageBuffer.ServiceId = messageBuffer.ServiceId;
                 messageBuffer.DateAddedToQueue = DateTime.Now;
                 messageBuffer.OperatorId = message.MobileOperator;
+                messageBuffer.PersianDateAddedToQueue = Date.GetPersianDate(DateTime.Now);
                 entity.MessageBuffers.Add(messageBuffer);
                 entity.SaveChanges();
             }
