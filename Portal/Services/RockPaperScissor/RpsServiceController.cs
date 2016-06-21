@@ -9,7 +9,6 @@ using System.Web.Mvc;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Portal.Models;
-using Portal.Services.RockPaperScissor.Model;
 
 namespace Portal.Services.RockPaperScissor
 {

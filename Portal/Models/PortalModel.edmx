@@ -125,8 +125,7 @@
           <Property Name="Point" Type="int" Nullable="false" />
           <Property Name="UniqueId" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="ReferralId" Type="nvarchar" MaxLength="10" />
-          <Property Name="IsRechargeThroughReferall" Type="bit" />
-          <Property Name="RechargeThroughReferall" Type="nvarchar" MaxLength="10" />
+          <Property Name="RechargedThroughReferallCount" Type="int" Nullable="false" />
           <Property Name="TimesWinned" Type="int" Nullable="false" />
           <Property Name="ContinuousGameWinned" Type="int" Nullable="false" />
           <Property Name="TimesChargeWinned" Type="int" Nullable="false" />
@@ -527,8 +526,7 @@
           <Property Name="Point" Type="Int32" Nullable="false" />
           <Property Name="UniqueId" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="ReferralId" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="IsRechargeThroughReferall" Type="Boolean" />
-          <Property Name="RechargeThroughReferall" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="RechargedThroughReferallCount" Type="Int32" Nullable="false" />
           <Property Name="TimesWinned" Type="Int32" Nullable="false" />
           <Property Name="ContinuousGameWinned" Type="Int32" Nullable="false" />
           <Property Name="TimesChargeWinned" Type="Int32" Nullable="false" />
@@ -742,8 +740,7 @@
                 <ScalarProperty Name="TimesChargeWinned" ColumnName="TimesChargeWinned" />
                 <ScalarProperty Name="ContinuousGameWinned" ColumnName="ContinuousGameWinned" />
                 <ScalarProperty Name="TimesWinned" ColumnName="TimesWinned" />
-                <ScalarProperty Name="RechargeThroughReferall" ColumnName="RechargeThroughReferall" />
-                <ScalarProperty Name="IsRechargeThroughReferall" ColumnName="IsRechargeThroughReferall" />
+                <ScalarProperty Name="RechargedThroughReferallCount" ColumnName="RechargedThroughReferallCount" />
                 <ScalarProperty Name="ReferralId" ColumnName="ReferralId" />
                 <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
                 <ScalarProperty Name="Point" ColumnName="Point" />

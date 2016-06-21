@@ -19,8 +19,7 @@ namespace Portal.Models
         public int Point { get; set; }
         public string UniqueId { get; set; }
         public string ReferralId { get; set; }
-        public Nullable<bool> IsRechargeThroughReferall { get; set; }
-        public string RechargeThroughReferall { get; set; }
+        public int RechargedThroughReferallCount { get; set; }
         public int TimesWinned { get; set; }
         public int ContinuousGameWinned { get; set; }
         public int TimesChargeWinned { get; set; }

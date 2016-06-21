@@ -21,7 +21,7 @@ namespace Portal.Services.RockPaperScissor
                     return;
                 }
                 var subscriber = RpsSubscribers.GetSubscriber(message.MobileNumber, message.ServiceId, entity);
-                    
+
                 if (subscriber == null)
                 {
                     MessageHandler.InvalidContentWhenNotSubscribed(message, serviceInfo);

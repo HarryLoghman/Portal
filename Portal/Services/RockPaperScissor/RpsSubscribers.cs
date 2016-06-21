@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Portal.Models;
-using Portal.Services.RockPaperScissor.Model;
 
 namespace Portal.Services.RockPaperScissor
 {
@@ -27,6 +26,7 @@ namespace Portal.Services.RockPaperScissor
                     newsubscriber.TimesWinned = 0;
                     newsubscriber.ContinuousGameWinned = 0;
                     newsubscriber.TimesLosed = 0;
+                    newsubscriber.RechargedThroughReferallCount = 0;
                     entities.RPS_SubscribersAdditionalInfo.Add(newsubscriber);
                     entities.SaveChanges();
                 }
