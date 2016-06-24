@@ -25,19 +25,18 @@ namespace Portal.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<MessageArchive> MessageArchives { get; set; }
-        public virtual DbSet<MessageBuffer> MessageBuffers { get; set; }
-        public virtual DbSet<Mo> Moes { get; set; }
-        public virtual DbSet<OperatorsList> OperatorsLists { get; set; }
+        public virtual DbSet<Aggregator> Aggregators { get; set; }
+        public virtual DbSet<Operator> Operators { get; set; }
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
         public virtual DbSet<OperatorsPrefix> OperatorsPrefixs { get; set; }
         public virtual DbSet<OperatorsRecharageCode> OperatorsRecharageCodes { get; set; }
+        public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
+        public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
         public virtual DbSet<RPS_ServiceAdditionalInfo> RPS_ServiceAdditionalInfo { get; set; }
-        public virtual DbSet<ServiceShortCode> ServiceShortCodes { get; set; }
-        public virtual DbSet<Subscriber> Subscribers { get; set; }
-        public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
-        public virtual DbSet<AggregatorList> AggregatorLists { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<RPS_SubscribersAdditionalInfo> RPS_SubscribersAdditionalInfo { get; set; }
+        public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
+        public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
+        public virtual DbSet<Subscriber> Subscribers { get; set; }
     }
 }

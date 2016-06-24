@@ -13,13 +13,14 @@ namespace Portal.Models
         public string ReceiveTime { get; set; }
         public string MessageId { get; set; }
         public long ServiceId { get; set; }
-        public int ContentId { get; set; }
-        public int SubscriberId { get; set; }
+        public long ContentId { get; set; }
+        public long SubscriberId { get; set; }
         public int MessageType { get; set; }
         public int ImiChargeCode { get; set; }
         public int ImiMessageType { get; set; }
         public int ProcessStatus { get; set; }
-        public int MobileOperator { get; set; }
-        public int OperatorPlan { get; set; }
+        public long MobileOperator { get; set; }
+        public long OperatorPlan { get; set; }
+        public long AggregatorId { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Portal.Models
         public Service()
         {
             this.RPS_ServiceAdditionalInfo = new HashSet<RPS_ServiceAdditionalInfo>();
-            this.ServiceShortCodes = new HashSet<ServiceShortCode>();
+            this.ServiceInfoes = new HashSet<ServiceInfo>();
             this.Subscribers = new HashSet<Subscriber>();
         }
     
@@ -27,17 +27,12 @@ namespace Portal.Models
         public string ServiceCode { get; set; }
         public System.DateTime DateCreated { get; set; }
         public string OnKeywords { get; set; }
-        public bool ServiceIsActive { get; set; }
-        public string WelcomeMessage { get; set; }
-        public string LeaveMessage { get; set; }
-        public string InvalidContentWhenSubscribed { get; set; }
-        public string InvalidContentWhenNotSubscribed { get; set; }
-        public string ServiceHelp { get; set; }
+        public bool IsServiceActive { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RPS_ServiceAdditionalInfo> RPS_ServiceAdditionalInfo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ServiceShortCode> ServiceShortCodes { get; set; }
+        public virtual ICollection<ServiceInfo> ServiceInfoes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Subscriber> Subscribers { get; set; }
     }

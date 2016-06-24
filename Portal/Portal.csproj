@@ -45,10 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Kendo.Mvc">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Kendo.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Kendo.Mvc.Examples">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Kendo.Mvc.Examples.dll</HintPath>
+      <HintPath>..\kendo\Kendo.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
@@ -230,22 +227,37 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\AggregatorList.cs">
+    <Compile Include="Models\Aggregator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AutochargeContent.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DanestanModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DanestanModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DanestanModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DanestanModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DanestanModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\MessageArchive.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
+    <Compile Include="Models\MessagesBuffer.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\MessageBuffer.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
+    <Compile Include="Models\MessagesTemplate.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Mo.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OperatorsList.cs">
+    <Compile Include="Models\Operator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\OperatorsPlan.cs">
@@ -272,6 +284,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PortalModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ReceievedMessage.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ReceivedMessagesArchive.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RockPaperScissorModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RockPaperScissorModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RockPaperScissorModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RockPaperScissorModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RockPaperScissorModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\RPS_ServiceAdditionalInfo.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -281,7 +314,7 @@
     <Compile Include="Models\Service.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ServiceShortCode.cs">
+    <Compile Include="Models\ServiceInfo.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Subscriber.cs">
@@ -291,11 +324,17 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Danestan\ContentManager.cs" />
+    <Compile Include="Services\Danestan\Controllers\AutochargeContents.cs" />
+    <Compile Include="Services\Danestan\HandleMo.cs" />
+    <Compile Include="Services\Danestan\ServiceMessage.cs" />
+    <Compile Include="Services\Danestan\Services.cs" />
+    <Compile Include="Services\Danestan\Subscribers.cs" />
     <Compile Include="Services\RockPaperScissor\ContentManager.cs" />
     <Compile Include="Services\RockPaperScissor\HandleMo.cs" />
     <Compile Include="Services\RockPaperScissor\RpsServiceController.cs" />
-    <Compile Include="Services\RockPaperScissor\RpsServices.cs" />
     <Compile Include="Services\RockPaperScissor\RpsSubscribers.cs" />
+    <Compile Include="Services\RockPaperScissor\Services.cs" />
     <Compile Include="Shared\HandleSubscription.cs" />
     <Compile Include="Shared\Date.cs" />
     <Compile Include="Shared\PortalException.cs" />
@@ -641,20 +680,26 @@
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_2x.png" />
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi.png" />
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi_2x.png" />
-    <Content Include="DB\RedGateDatabaseInfo.xml" />
-    <Content Include="DB\Tables\dbo.MessageArchive.sql" />
-    <Content Include="DB\Tables\dbo.MessageBuffer.sql" />
-    <Content Include="DB\Tables\dbo.Mo.sql" />
-    <Content Include="DB\Tables\dbo.OperatorsList.sql" />
-    <Content Include="DB\Tables\dbo.OperatorsPlans.sql" />
-    <Content Include="DB\Tables\dbo.OperatorsPrefixs.sql" />
-    <Content Include="DB\Tables\dbo.OperatorsRecharageCodes.sql" />
-    <Content Include="DB\Tables\dbo.RPS_Service.sql" />
-    <Content Include="DB\Tables\dbo.RPS_SubscribersAdditionalInfo.sql" />
-    <Content Include="DB\Tables\dbo.Services.sql" />
-    <Content Include="DB\Tables\dbo.ServiceShortCodes.sql" />
-    <Content Include="DB\Tables\dbo.Subscribers.sql" />
-    <Content Include="DB\Tables\dbo.SubscribersHistory.sql" />
+    <Content Include="DB\Danestan\RedGateDatabaseInfo.xml" />
+    <Content Include="DB\Danestan\Tables\dbo.MessagesBuffer.sql" />
+    <Content Include="DB\Danestan\Tables\dbo.MessagesTemplate.sql" />
+    <Content Include="DB\Portal\RedGateDatabaseInfo.xml" />
+    <Content Include="DB\Portal\Tables\dbo.AggregatorList.sql" />
+    <Content Include="DB\Portal\Tables\dbo.MessageArchive.sql" />
+    <Content Include="DB\Portal\Tables\dbo.MessageBuffer.sql" />
+    <Content Include="DB\Portal\Tables\dbo.Mo.sql" />
+    <Content Include="DB\Portal\Tables\dbo.OperatorsList.sql" />
+    <Content Include="DB\Portal\Tables\dbo.OperatorsPlans.sql" />
+    <Content Include="DB\Portal\Tables\dbo.OperatorsPrefixs.sql" />
+    <Content Include="DB\Portal\Tables\dbo.OperatorsRecharageCodes.sql" />
+    <Content Include="DB\Portal\Tables\dbo.RPS_ServiceAdditionalInfo.sql" />
+    <Content Include="DB\Portal\Tables\dbo.RPS_SubscribersAdditionalInfo.sql" />
+    <Content Include="DB\Portal\Tables\dbo.Services.sql" />
+    <Content Include="DB\Portal\Tables\dbo.ServiceShortCodes.sql" />
+    <Content Include="DB\Portal\Tables\dbo.Subscribers.sql" />
+    <Content Include="DB\Portal\Tables\dbo.SubscribersHistory.sql" />
+    <Content Include="DB\RockPaperScissor\RedGateDatabaseInfo.xml" />
+    <Content Include="DB\RockPaperScissor\Tables\dbo.MessagesTemplate.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -663,6 +708,16 @@
     <Content Include="Images\accent.png" />
     <Content Include="Images\bullet.png" />
     <Content Include="Images\heroAccent.png" />
+    <Content Include="Models\DanestanModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DanestanModel.edmx</DependentUpon>
+      <LastGenOutput>DanestanModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\DanestanModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DanestanModel.edmx</DependentUpon>
+      <LastGenOutput>DanestanModel.cs</LastGenOutput>
+    </Content>
     <Content Include="Models\PortalModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>PortalModel.edmx</DependentUpon>
@@ -673,6 +728,16 @@
       <DependentUpon>PortalModel.edmx</DependentUpon>
       <LastGenOutput>PortalModel.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\RockPaperScissorModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
+      <LastGenOutput>RockPaperScissorModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\RockPaperScissorModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
+      <LastGenOutput>RockPaperScissorModel.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <EntityDeploy Include="Models\PortalModel.edmx">
@@ -682,7 +747,6 @@
     <Content Include="Models\PortalModel.edmx.diagram">
       <DependentUpon>PortalModel.edmx</DependentUpon>
     </Content>
-    <Content Include="DB\RedGate.ssc" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\kendo\2016.2.504\fonts\DejaVu\DejaVuSans-Bold.ttf" />
@@ -778,6 +842,23 @@
     <Content Include="Content\kendo\2016.2.504\kendo.uniform.min.css.map" />
     <Content Include="Content\kendo\2016.2.504\kendo.uniform.mobile.min.css.map" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="DB\Portal\RedGate.ssc" />
+    <EntityDeploy Include="Models\DanestanModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DanestanModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\DanestanModel.edmx.diagram">
+      <DependentUpon>DanestanModel.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\RockPaperScissorModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RockPaperScissorModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\RockPaperScissorModel.edmx.diagram">
+      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="DB\Danestan\RedGate.ssc" />
+    <Content Include="DB\RockPaperScissor\RedGate.ssc" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -919,7 +1000,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -1075,40 +1158,105 @@
     <Content Include="Scripts\kendo\2016.2.504\kendo.webcomponents.min.js.map" />
     <Content Include="Scripts\kendo\2016.2.504\kendo.window.min.js.map" />
     <Content Include="Views\RpsService\Index.cshtml" />
+    <Content Include="Services\Danestan\Views\AutochargeContents.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="DB\Assemblies\" />
-    <Folder Include="DB\Database Triggers\" />
-    <Folder Include="DB\Data\" />
-    <Folder Include="DB\Defaults\" />
-    <Folder Include="DB\Extended Properties\" />
-    <Folder Include="DB\Functions\" />
-    <Folder Include="DB\Rules\" />
-    <Folder Include="DB\Search Property Lists\" />
-    <Folder Include="DB\Security\Asymmetric Keys\" />
-    <Folder Include="DB\Security\Certificates\" />
-    <Folder Include="DB\Security\Roles\" />
-    <Folder Include="DB\Security\Schemas\" />
-    <Folder Include="DB\Security\Symmetric Keys\" />
-    <Folder Include="DB\Security\Users\" />
-    <Folder Include="DB\Sequences\" />
-    <Folder Include="DB\Service Broker\Contracts\" />
-    <Folder Include="DB\Service Broker\Event Notifications\" />
-    <Folder Include="DB\Service Broker\Message Types\" />
-    <Folder Include="DB\Service Broker\Queues\" />
-    <Folder Include="DB\Service Broker\Remote Service Bindings\" />
-    <Folder Include="DB\Service Broker\Routes\" />
-    <Folder Include="DB\Service Broker\Services\" />
-    <Folder Include="DB\Storage\Full Text Catalogs\" />
-    <Folder Include="DB\Storage\Full Text Stoplists\" />
-    <Folder Include="DB\Storage\Partition Functions\" />
-    <Folder Include="DB\Storage\Partition Schemes\" />
-    <Folder Include="DB\Stored Procedures\" />
-    <Folder Include="DB\Synonyms\" />
-    <Folder Include="DB\Types\User-defined Data Types\" />
-    <Folder Include="DB\Types\XML Schema Collections\" />
-    <Folder Include="DB\Views\" />
+    <Folder Include="bin\" />
+    <Folder Include="DB\Danestan\Assemblies\" />
+    <Folder Include="DB\Danestan\Database Triggers\" />
+    <Folder Include="DB\Danestan\Data\" />
+    <Folder Include="DB\Danestan\Defaults\" />
+    <Folder Include="DB\Danestan\Extended Properties\" />
+    <Folder Include="DB\Danestan\Functions\" />
+    <Folder Include="DB\Danestan\Rules\" />
+    <Folder Include="DB\Danestan\Search Property Lists\" />
+    <Folder Include="DB\Danestan\Security\Asymmetric Keys\" />
+    <Folder Include="DB\Danestan\Security\Certificates\" />
+    <Folder Include="DB\Danestan\Security\Roles\" />
+    <Folder Include="DB\Danestan\Security\Schemas\" />
+    <Folder Include="DB\Danestan\Security\Symmetric Keys\" />
+    <Folder Include="DB\Danestan\Security\Users\" />
+    <Folder Include="DB\Danestan\Sequences\" />
+    <Folder Include="DB\Danestan\Service Broker\Contracts\" />
+    <Folder Include="DB\Danestan\Service Broker\Event Notifications\" />
+    <Folder Include="DB\Danestan\Service Broker\Message Types\" />
+    <Folder Include="DB\Danestan\Service Broker\Queues\" />
+    <Folder Include="DB\Danestan\Service Broker\Remote Service Bindings\" />
+    <Folder Include="DB\Danestan\Service Broker\Routes\" />
+    <Folder Include="DB\Danestan\Service Broker\Services\" />
+    <Folder Include="DB\Danestan\Storage\Full Text Catalogs\" />
+    <Folder Include="DB\Danestan\Storage\Full Text Stoplists\" />
+    <Folder Include="DB\Danestan\Storage\Partition Functions\" />
+    <Folder Include="DB\Danestan\Storage\Partition Schemes\" />
+    <Folder Include="DB\Danestan\Stored Procedures\" />
+    <Folder Include="DB\Danestan\Synonyms\" />
+    <Folder Include="DB\Danestan\Types\User-defined Data Types\" />
+    <Folder Include="DB\Danestan\Types\XML Schema Collections\" />
+    <Folder Include="DB\Danestan\Views\" />
+    <Folder Include="DB\Portal\Assemblies\" />
+    <Folder Include="DB\Portal\Database Triggers\" />
+    <Folder Include="DB\Portal\Data\" />
+    <Folder Include="DB\Portal\Defaults\" />
+    <Folder Include="DB\Portal\Extended Properties\" />
+    <Folder Include="DB\Portal\Functions\" />
+    <Folder Include="DB\Portal\Rules\" />
+    <Folder Include="DB\Portal\Search Property Lists\" />
+    <Folder Include="DB\Portal\Security\Asymmetric Keys\" />
+    <Folder Include="DB\Portal\Security\Certificates\" />
+    <Folder Include="DB\Portal\Security\Roles\" />
+    <Folder Include="DB\Portal\Security\Schemas\" />
+    <Folder Include="DB\Portal\Security\Symmetric Keys\" />
+    <Folder Include="DB\Portal\Security\Users\" />
+    <Folder Include="DB\Portal\Sequences\" />
+    <Folder Include="DB\Portal\Service Broker\Contracts\" />
+    <Folder Include="DB\Portal\Service Broker\Event Notifications\" />
+    <Folder Include="DB\Portal\Service Broker\Message Types\" />
+    <Folder Include="DB\Portal\Service Broker\Queues\" />
+    <Folder Include="DB\Portal\Service Broker\Remote Service Bindings\" />
+    <Folder Include="DB\Portal\Service Broker\Routes\" />
+    <Folder Include="DB\Portal\Service Broker\Services\" />
+    <Folder Include="DB\Portal\Storage\Full Text Catalogs\" />
+    <Folder Include="DB\Portal\Storage\Full Text Stoplists\" />
+    <Folder Include="DB\Portal\Storage\Partition Functions\" />
+    <Folder Include="DB\Portal\Storage\Partition Schemes\" />
+    <Folder Include="DB\Portal\Stored Procedures\" />
+    <Folder Include="DB\Portal\Synonyms\" />
+    <Folder Include="DB\Portal\Types\User-defined Data Types\" />
+    <Folder Include="DB\Portal\Types\XML Schema Collections\" />
+    <Folder Include="DB\Portal\Views\" />
+    <Folder Include="DB\RockPaperScissor\Assemblies\" />
+    <Folder Include="DB\RockPaperScissor\Database Triggers\" />
+    <Folder Include="DB\RockPaperScissor\Data\" />
+    <Folder Include="DB\RockPaperScissor\Defaults\" />
+    <Folder Include="DB\RockPaperScissor\Extended Properties\" />
+    <Folder Include="DB\RockPaperScissor\Functions\" />
+    <Folder Include="DB\RockPaperScissor\Rules\" />
+    <Folder Include="DB\RockPaperScissor\Search Property Lists\" />
+    <Folder Include="DB\RockPaperScissor\Security\Asymmetric Keys\" />
+    <Folder Include="DB\RockPaperScissor\Security\Certificates\" />
+    <Folder Include="DB\RockPaperScissor\Security\Roles\" />
+    <Folder Include="DB\RockPaperScissor\Security\Schemas\" />
+    <Folder Include="DB\RockPaperScissor\Security\Symmetric Keys\" />
+    <Folder Include="DB\RockPaperScissor\Security\Users\" />
+    <Folder Include="DB\RockPaperScissor\Sequences\" />
+    <Folder Include="DB\RockPaperScissor\Service Broker\Contracts\" />
+    <Folder Include="DB\RockPaperScissor\Service Broker\Event Notifications\" />
+    <Folder Include="DB\RockPaperScissor\Service Broker\Message Types\" />
+    <Folder Include="DB\RockPaperScissor\Service Broker\Queues\" />
+    <Folder Include="DB\RockPaperScissor\Service Broker\Remote Service Bindings\" />
+    <Folder Include="DB\RockPaperScissor\Service Broker\Routes\" />
+    <Folder Include="DB\RockPaperScissor\Service Broker\Services\" />
+    <Folder Include="DB\RockPaperScissor\Storage\Full Text Catalogs\" />
+    <Folder Include="DB\RockPaperScissor\Storage\Full Text Stoplists\" />
+    <Folder Include="DB\RockPaperScissor\Storage\Partition Functions\" />
+    <Folder Include="DB\RockPaperScissor\Storage\Partition Schemes\" />
+    <Folder Include="DB\RockPaperScissor\Stored Procedures\" />
+    <Folder Include="DB\RockPaperScissor\Synonyms\" />
+    <Folder Include="DB\RockPaperScissor\Types\User-defined Data Types\" />
+    <Folder Include="DB\RockPaperScissor\Types\XML Schema Collections\" />
+    <Folder Include="DB\RockPaperScissor\Views\" />
+    <Folder Include="Services\RockPaperScissor\Controllers\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

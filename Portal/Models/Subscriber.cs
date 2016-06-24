@@ -31,11 +31,11 @@ namespace Portal.Models
         public string OffKeyword { get; set; }
         public string PersianActivationDate { get; set; }
         public string PersianDeactivationDate { get; set; }
-        public int MobileOperator { get; set; }
-        public int OperatorPlan { get; set; }
+        public long MobileOperator { get; set; }
+        public long OperatorPlan { get; set; }
     
-        public virtual Service Service { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RPS_SubscribersAdditionalInfo> RPS_SubscribersAdditionalInfo { get; set; }
+        public virtual Service Service { get; set; }
     }
 }

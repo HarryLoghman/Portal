@@ -12,51 +12,48 @@ namespace Portal.Shared
         {
             using (var entity = new PortalEntities())
             {
-                var mo = new Mo()
+                var mo = new ReceievedMessage()
                 {
                     MobileNumber = message.MobileNumber,
                     ShortCode = message.ShortCode,
                     ReceivedTime = DateTime.Now,
-                    MessageId = message.MessageId
+                    MessageId = message.MessageId,
+                    Content = message.Content,
+                    IsProcessed = false
                 };
-                entity.Moes.Add(mo);
+                entity.ReceievedMessages.Add(mo);
                 entity.SaveChanges();
             }
         }
 
-        public static void InsertMessageToQueue(Message message)
+        public static long GetAggregatorId(Message message)
         {
             using (var entity = new PortalEntities())
+                return entity.ServiceInfoes.Where(o => o.ShortCode == message.ShortCode).FirstOrDefault().AggregatorId;
+        }
+
+        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState)
+        {
+            string content = null;
+            switch (serviceStatusForSubscriberState)
             {
-                var messageBuffer = new MessageBuffer();
-                messageBuffer.Content = message.Content;
-                messageBuffer.ContentId = message.ContentId;
-                messageBuffer.ImiChargeCode = message.ImiChargeCode;
-                messageBuffer.ImiMessageType = message.ImiMessageType;
-                messageBuffer.MobileNumber = message.MobileNumber;
-                messageBuffer.MessageType = message.MessageType;
-                messageBuffer.TimesTryingToSend = 0;
-                messageBuffer.ProcessStatus = message.ProcessStatus;
-                messageBuffer.SubscriberId = message.SubscriberId;
-                messageBuffer.ServiceId = messageBuffer.ServiceId;
-                messageBuffer.DateAddedToQueue = DateTime.Now;
-                messageBuffer.OperatorId = message.MobileOperator;
-                messageBuffer.PersianDateAddedToQueue = Date.GetPersianDate(DateTime.Now);
-                entity.MessageBuffers.Add(messageBuffer);
-                entity.SaveChanges();
+                case HandleSubscription.ServiceStatusForSubscriberState.Deactivated:
+                    content = messagesTemplate.Where(o => o.Title == "OffMessage").Select(o => o.Content).FirstOrDefault();
+                    break;
+                case HandleSubscription.ServiceStatusForSubscriberState.Activated:
+                    content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
+                    break;
+                case HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed:
+                    content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+                    break;
+                case HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed:
+                    content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                    break;
+                default:
+                    content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+                    break;
             }
-        }
-
-        public static void InvalidContentWhenNotSubscribed(Message message, Service serviceInfo)
-        {
-                message.Content = serviceInfo.InvalidContentWhenNotSubscribed;
-                InsertMessageToQueue(message);
-        }
-
-        public static void InvalidContentWhenSubscribed(Message message, Service serviceInfo)
-        {
-            message.Content = serviceInfo.InvalidContentWhenSubscribed;
-            InsertMessageToQueue(message);
+            return content;
         }
 
         public static Message ValidateMessage(Message message)
@@ -140,8 +137,15 @@ namespace Portal.Shared
                     }
                 }
                 if(message.MobileOperator == null)
-                    Shared.PortalException.Throw("Invalid Opeator for Mobile Number: " + message.MobileNumber);
+                    Shared.PortalException.Throw("Invalid Operator for Mobile Number: " + message.MobileNumber);
             }
+            return message;
+        }
+
+        public static Message SetImIiChargeCode(Message message, int chargeCode, int messageType)
+        {
+            message.ImiChargeCode = chargeCode;
+            message.ImiMessageType = messageType;
             return message;
         }
 
@@ -162,7 +166,7 @@ namespace Portal.Shared
             Paused = 6,
         }
 
-        public enum Operators
+        public enum MobileOperators
         {
             Mci = 1,
             Irancell = 2,

@@ -10,57 +10,53 @@ namespace Portal.Shared
 {
     public class HandleSubscription
     {
-        public static ServiceStatusForSubscriberState HandleSubscriptionContent(Message message, Service serviceInfo)
+        public static ServiceStatusForSubscriberState HandleSubscriptionContent(Message message, Service service, bool isUserWantsToUnsubscribe)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
-            message.ImiChargeCode = 0;
-            message.ImiMessageType = 21;
+            if (message.MobileOperator == (int)MessageHandler.MobileOperators.Mci)
+                message = MessageHandler.SetImIiChargeCode(message, 0, 21);
             message.MessageType = (int)MessageHandler.MessageType.OnDemand;
 
-            if (OffKeywords().Contains(message.Content))
-                serviceStatusForSubscriberState = Unsubscribe(message, serviceInfo);
+            if (isUserWantsToUnsubscribe == true)
+                serviceStatusForSubscriberState = Unsubscribe(message, service);
             else
-                serviceStatusForSubscriberState = Subscribe(message, serviceInfo);
+                serviceStatusForSubscriberState = Subscribe(message, service);
             return serviceStatusForSubscriberState;
         }
 
-        public static ServiceStatusForSubscriberState Subscribe(Message message, Service serviceInfo)
+        public static ServiceStatusForSubscriberState Subscribe(Message message, Service service)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
+            Subscriber subscriber;
             using (var entity = new PortalEntities())
             {
-                var subscriber = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && o.ServiceId == serviceInfo.Id).FirstOrDefault();
-                if (subscriber == null)
-                    serviceStatusForSubscriberState = AddNewSubscriberToService(message, serviceInfo);
-                else if (subscriber.DeactivationDate == null)
-                    AlreadySubsribed(message, serviceInfo);
-                else
-                    serviceStatusForSubscriberState = ActivateServiceForSubscriber(message, subscriber, serviceInfo);
+                subscriber = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && o.ServiceId == service.Id).FirstOrDefault();
             }
+            if (subscriber == null)
+                serviceStatusForSubscriberState = AddNewSubscriberToService(message, service);
+            else if (subscriber.DeactivationDate == null)
+                serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenSubscribed;
+            else
+                serviceStatusForSubscriberState = ActivateServiceForSubscriber(subscriber, message.Content);
             return serviceStatusForSubscriberState;
         }
 
-        private static void AlreadySubsribed(Message message, Service serviceInfo)
-        {
-            MessageHandler.InvalidContentWhenSubscribed(message, serviceInfo);
-        }
-
-        private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(Message message, Subscriber subscriber, Service serviceInfo)
+        private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(Subscriber subscriber, string onKeyword)
         {
             using (var entity = new PortalEntities())
             {
                 subscriber.OffKeyword = null;
                 subscriber.OffMethod = null;
-                entity.Subscribers.Attach(subscriber);
+                subscriber.DeactivationDate = null;
+                subscriber.PersianDeactivationDate = null;
+                subscriber.OnKeyword = onKeyword;
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
             }
-            message.Content = serviceInfo.WelcomeMessage;
-            MessageHandler.InsertMessageToQueue(message);
             return ServiceStatusForSubscriberState.Activated;
         }
 
-        private static ServiceStatusForSubscriberState AddNewSubscriberToService(Message message, Service serviceInfo)
+        private static ServiceStatusForSubscriberState AddNewSubscriberToService(Message message, Service service)
         {
             using (var entity = new PortalEntities())
             {
@@ -68,7 +64,7 @@ namespace Portal.Shared
                 newSubscriber.MobileNumber = message.MobileNumber;
                 newSubscriber.OnKeyword = message.Content;
                 newSubscriber.OnMethod = "keyword";
-                newSubscriber.ServiceId = serviceInfo.Id;
+                newSubscriber.ServiceId = service.Id;
                 newSubscriber.ActivationDate = DateTime.Now;
                 newSubscriber.PersianActivationDate = Shared.Date.GetPersianDate();
                 newSubscriber.MobileOperator = message.MobileOperator;
@@ -76,23 +72,20 @@ namespace Portal.Shared
                 entity.Subscribers.Add(newSubscriber);
                 entity.SaveChanges();
 
-                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, serviceInfo, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
-
-                message.Content = serviceInfo.WelcomeMessage;
-                MessageHandler.InsertMessageToQueue(message);
+                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
             }
             return ServiceStatusForSubscriberState.Activated;
         }
 
-        private static void AddToSubscriberHistory(string mobileNumber, string shortCode, Service serviceInfo, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent)
+        private static void AddToSubscriberHistory(string mobileNumber, string shortCode, Service service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent)
         {
             using (var entity = new PortalEntities())
             {
                 var subscriberHistory = new SubscribersHistory();
                 subscriberHistory.MobileNumber = mobileNumber;
                 subscriberHistory.Date = DateTime.Now;
-                subscriberHistory.ServiceName = serviceInfo.Name;
-                subscriberHistory.ServiceId = serviceInfo.Id;
+                subscriberHistory.ServiceName = service.Name;
+                subscriberHistory.ServiceId = service.Id;
                 subscriberHistory.ServiceStatusForSubscriber = (int)subscriberState;
                 subscriberHistory.ShortCode = shortCode;
                 subscriberHistory.Time = DateTime.Now.TimeOfDay;
@@ -104,27 +97,23 @@ namespace Portal.Shared
             }
         }
 
-        public static ServiceStatusForSubscriberState Unsubscribe(Message message, Service serviceInfo)
+        public static ServiceStatusForSubscriberState Unsubscribe(Message message, Service service)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
+            Subscriber subscriber;
             using (var entity = new PortalEntities())
             {
-                
-                var subscriber = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && o.ServiceId == serviceInfo.Id && o.DeactivationDate != null).FirstOrDefault();
-                if (subscriber == null)
-                    UserNotSubscribedToService(message, serviceInfo);
-                else
-                    serviceStatusForSubscriberState = DeactivateServiceForSubscriber(message, serviceInfo, subscriber);
+                subscriber = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && o.ServiceId == service.Id && o.DeactivationDate == null).FirstOrDefault();
             }
+            if (subscriber == null)
+                serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed;
+            else
+                serviceStatusForSubscriberState = DeactivateServiceForSubscriber(message, service, subscriber);
+
             return serviceStatusForSubscriberState;
         }
 
-        private static void UserNotSubscribedToService(Message message, Service serviceInfo)
-        {
-            MessageHandler.InvalidContentWhenNotSubscribed(message, serviceInfo);
-        }
-
-        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(Message message, Service serviceInfo, Subscriber subscriber)
+        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(Message message, Service service, Subscriber subscriber)
         {
             using (var entity = new PortalEntities())
             {
@@ -132,40 +121,21 @@ namespace Portal.Shared
                 subscriber.PersianDeactivationDate = Shared.Date.GetPersianDate();
                 subscriber.OffKeyword = message.Content;
                 subscriber.OffMethod = "keyword";
-                entity.Subscribers.Attach(subscriber);
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
-                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, serviceInfo, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null);
-
-                message.Content = serviceInfo.LeaveMessage;
-                MessageHandler.InsertMessageToQueue(message);
+                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null);
             }
             return ServiceStatusForSubscriberState.Deactivated;
-        }
-
-        private static string[] OffKeywords()
-        {
-            var offContents = new string[]
-            {
-                "off",
-                "of",
-                "cancel",
-                "stop",
-                "laghv",
-                "lagv",
-                "khamoosh",
-                "خاموش",
-                "لغو",
-                "کنسل"
-            };
-            return offContents;
         }
 
         public enum ServiceStatusForSubscriberState
         {
             Deactivated = 0,
             Activated = 1,
-            Unspecified = 2
+            Unspecified = 2,
+            InvalidContentWhenNotSubscribed = 3,
+            InvalidContentWhenSubscribed = 4,
+
         }
 
         public enum WhoChangedSubscriberState

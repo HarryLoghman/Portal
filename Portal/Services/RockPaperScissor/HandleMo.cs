@@ -9,13 +9,17 @@ namespace Portal.Services.RockPaperScissor
 {
     public class HandleMo
     {
-        public static void ReceivedMessage(Message message, Service serviceInfo)
+        public static void ReceivedMessage(Message message, Service service)
         {
+            using (var entity = new DanestanEntities())
+            {
+                var messagesTemplate = Services.GetServiceMessagesTemplate();
+            }
             using (var entity = new PortalEntities())
             {
-                if (serviceInfo.OnKeywords.Contains(message.Content))
+                if (service.OnKeywords.Contains(message.Content))
                 {
-                    var serviceStatusForSubscriberState = HandleSubscription.HandleSubscriptionContent(message, serviceInfo);
+                    var serviceStatusForSubscriberState = HandleSubscription.HandleSubscriptionContent(message, service);
                     if (serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Activated)
                         RpsSubscribers.AddSubscriberAdditionalInfo(message);
                     return;
@@ -24,10 +28,10 @@ namespace Portal.Services.RockPaperScissor
 
                 if (subscriber == null)
                 {
-                    MessageHandler.InvalidContentWhenNotSubscribed(message, serviceInfo);
+                    MessageHandler.InvalidContentWhenNotSubscribed(message, service);
                     return;
                 }
-                ContentManager.HandleContent(message, serviceInfo, subscriber);
+                ContentManager.HandleContent(message, service, subscriber);
             }
         }
     }
