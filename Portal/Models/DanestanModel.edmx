@@ -58,40 +58,10 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DanestanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="MessagesBuffer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-          <Property Name="SentDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="MessageType" Type="Int32" Nullable="false" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ContentId" Type="Int64" />
-          <Property Name="MessagePoint" Type="Int32" />
-          <Property Name="ImiChargeCode" Type="Int32" />
-          <Property Name="ImiMessageType" Type="Int32" />
-        </EntityType>
-        <EntityType Name="MessagesTemplate">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PersianTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityContainer Name="DanestanEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="MessagesBuffers" EntityType="Self.MessagesBuffer" />
-          <EntitySet Name="MessagesTemplates" EntityType="Self.MessagesTemplate" />
           <EntitySet Name="AutochargeContents" EntityType="DanestanModel.AutochargeContent" />
+          <EntitySet Name="MessagesBuffers" EntityType="DanestanModel.MessagesBuffer" />
+          <EntitySet Name="MessagesTemplates" EntityType="DanestanModel.MessagesTemplate" />
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -107,44 +77,42 @@
           <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PersianSendDate" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="MessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PersianTitle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="DanestanModelStoreContainer" CdmEntityContainer="DanestanEntities">
-          <EntitySetMapping Name="MessagesBuffers">
-            <EntityTypeMapping TypeName="DanestanModel.MessagesBuffer">
-              <MappingFragment StoreEntitySet="MessagesBuffer">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
-                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
-                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
-                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
-                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
-                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
-                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
-                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
-                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MessagesTemplates">
-            <EntityTypeMapping TypeName="DanestanModel.MessagesTemplate">
-              <MappingFragment StoreEntitySet="MessagesTemplate">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="AutochargeContents">
             <EntityTypeMapping TypeName="DanestanModel.AutochargeContent">
               <MappingFragment StoreEntitySet="AutochargeContents">
@@ -156,6 +124,38 @@
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="SendDate" ColumnName="SendDate" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesBuffers">
+            <EntityTypeMapping TypeName="DanestanModel.MessagesBuffer">
+              <MappingFragment StoreEntitySet="MessagesBuffer">
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesTemplates">
+            <EntityTypeMapping TypeName="DanestanModel.MessagesTemplate">
+              <MappingFragment StoreEntitySet="MessagesTemplate">
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

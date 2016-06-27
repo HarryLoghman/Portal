@@ -94,16 +94,8 @@
             }
         }
     </style>
-    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.common-material.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.materialblack.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.dataviz.materialblack.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/2016.2.504/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
-    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/jquery.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/angular.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/jszip.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/kendo/2016.2.504/kendo.all.min.js")"></script>
+    @Styles.Render("~/Content/kendo")
+    @Scripts.Render("~/bundles/kendo")
 
 </head>
 <body class="k-rtl">

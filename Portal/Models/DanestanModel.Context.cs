@@ -25,8 +25,8 @@ namespace Portal.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
         public virtual DbSet<MessagesBuffer> MessagesBuffers { get; set; }
         public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
-        public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
     }
 }
