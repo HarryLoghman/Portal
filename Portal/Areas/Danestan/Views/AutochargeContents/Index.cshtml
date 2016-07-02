@@ -7,11 +7,11 @@
 
 <script>
     $("#grid").kendoGrid({
-        
+
         columns: [
             { field: "Id", title: "ردیف" },
-            { field: "Content", title: "محتوی", editor: function (container, options) { $('<textarea style="width:200px;height:80px" data-bind="value: ' + options.field + '"></textarea>').appendTo(container); } },
-            { field: "SendDate", title: "زمان ارسال" },
+            { field: "Content", title: "محتوی", editor: textAreaEditor },
+            { field: "SendDate", title: "زمان ارسال", format: "{0:HH:mm yyyy-MM-dd}", editor: dateTimeEditor },
             { field: "Price", title: "هزینه پیام" },
             { field: "Point", title: "امتیاز", },
             { command: ["edit", "destroy"], width: 180 }

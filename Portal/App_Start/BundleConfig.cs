@@ -34,6 +34,9 @@ namespace Portal
                     "~/Scripts/kendo/2016.2.504/messages/kendo.messages.fa-IR.js"
                     ));
 
+            bundles.Add(new ScriptBundle("~/bundles/Portal").Include(
+            "~/Scripts/Portal.js"));
+
             bundles.Add(new StyleBundle("~/Content/kendo").Include(
                     "~/Content/kendo/2016.2.504/kendo.common-material.min.css",
                     "~/Content/kendo/2016.2.504/kendo.mobile.all.min.css",

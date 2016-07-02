@@ -11,20 +11,20 @@ namespace Portal.Services.Danestan
     {
         public static void ReceivedMessage(Message message, Service service)
         {
-            var messagesTemplate = Services.GetServiceMessagesTemplate();
-            var isUserWantsToUnsubscribe = Services.CheckIsUserWantsToUnsubscribe(message.Content);
+            var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
+            var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             if (service.OnKeywords.Contains(message.Content) || isUserWantsToUnsubscribe == true)
             {
                 var serviceStatusForSubscriberState = HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
-                message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
-                ServiceMessage.InsertMessageToQueue(message);
+                message.Content = Shared.MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                MessageHandler.InsertMessageToQueue(message);
                 return;
             }
             var subscriber = Subscribers.GetSubscriber(message.MobileNumber, message.ServiceId);
 
             if (subscriber == null)
             {
-                ServiceMessage.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 return;
             }
             ContentManager.HandleContent(message, service, subscriber);

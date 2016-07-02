@@ -251,6 +251,9 @@
       <DependentUpon>DanestanModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\LastAutochargeContentSendedToUser.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MessagesBuffer.cs">
@@ -325,21 +328,20 @@
     <Compile Include="Models\SubscribersHistory.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SubscribersPoint.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Danestan\ContentManager.cs" />
     <Compile Include="Services\Danestan\HandleMo.cs" />
-    <Compile Include="Services\Danestan\ServiceMessage.cs" />
-    <Compile Include="Services\Danestan\Services.cs" />
+    <Compile Include="Services\Danestan\MessageHandler.cs" />
+    <Compile Include="Services\Danestan\ServiceHandler.cs" />
     <Compile Include="Services\Danestan\Subscribers.cs" />
-    <Compile Include="Services\RockPaperScissor\ContentManager.cs" />
-    <Compile Include="Services\RockPaperScissor\HandleMo.cs" />
-    <Compile Include="Services\RockPaperScissor\RpsServiceController.cs" />
-    <Compile Include="Services\RockPaperScissor\RpsSubscribers.cs" />
-    <Compile Include="Services\RockPaperScissor\Services.cs" />
     <Compile Include="Shared\HandleSubscription.cs" />
     <Compile Include="Shared\Date.cs" />
     <Compile Include="Shared\PortalException.cs" />
     <Compile Include="Shared\MessageHandler.cs" />
+    <Compile Include="Shared\ServiceHandler.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1452,6 +1454,7 @@
     <Content Include="Scripts\kendo\2016.2.504\pako_deflate.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\npm.js" />
+    <Content Include="Scripts\Portal.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
@@ -1711,7 +1714,6 @@
     <Folder Include="DB\RockPaperScissor\Types\User-defined Data Types\" />
     <Folder Include="DB\RockPaperScissor\Types\XML Schema Collections\" />
     <Folder Include="DB\RockPaperScissor\Views\" />
-    <Folder Include="Services\RockPaperScissor\Controllers\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

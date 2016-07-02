@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal", "Portal\Portal.csproj", "{C98000E9-DAED-4F0B-AB4D-543BBEA07FCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanestanWindowsService", "DanestanWindowsService\DanestanWindowsService.csproj", "{F68651BA-55E2-43DF-81C2-5E33E0BFBFA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C98000E9-DAED-4F0B-AB4D-543BBEA07FCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C98000E9-DAED-4F0B-AB4D-543BBEA07FCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C98000E9-DAED-4F0B-AB4D-543BBEA07FCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F68651BA-55E2-43DF-81C2-5E33E0BFBFA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F68651BA-55E2-43DF-81C2-5E33E0BFBFA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F68651BA-55E2-43DF-81C2-5E33E0BFBFA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F68651BA-55E2-43DF-81C2-5E33E0BFBFA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

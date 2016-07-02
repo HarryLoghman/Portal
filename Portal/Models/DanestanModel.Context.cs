@@ -28,5 +28,7 @@ namespace Portal.Models
         public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
         public virtual DbSet<MessagesBuffer> MessagesBuffers { get; set; }
         public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
+        public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
+        public virtual DbSet<LastAutochargeContentSendedToUser> LastAutochargeContentSendedToUsers { get; set; }
     }
 }

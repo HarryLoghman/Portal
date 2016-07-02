@@ -41,6 +41,18 @@ namespace Portal.Shared
             return serviceStatusForSubscriberState;
         }
 
+        public static long? GetSubscriberId(string mobileNumber, long serviceId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var subscriberId = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId).Select(o => o.Id).FirstOrDefault();
+                if (subscriberId == null)
+                    return null;
+                else
+                    return subscriberId;
+            }
+        }
+
         private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(Subscriber subscriber, string onKeyword)
         {
             using (var entity = new PortalEntities())
@@ -141,6 +153,7 @@ namespace Portal.Shared
         public enum WhoChangedSubscriberState
         {
             User = 0,
+            IntegratedPanel = 1
         }
     }
 }

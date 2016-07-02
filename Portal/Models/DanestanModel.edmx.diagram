@@ -8,6 +8,8 @@
         <EntityTypeShape EntityType="DanestanModel.AutochargeContent" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="DanestanModel.MessagesBuffer" Width="1.5" PointX="2.75" PointY="0.75" />
         <EntityTypeShape EntityType="DanestanModel.MessagesTemplate" Width="1.5" PointX="4.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DanestanModel.SubscribersPoint" Width="1.5" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="DanestanModel.LastAutochargeContentSendedToUser" Width="1.5" PointX="0.75" PointY="6.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -19,6 +19,16 @@
           <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="PersianSendDate" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="LastAutochargeContentSendedToUser">
+          <Key>
+            <PropertyRef Name="SubscriberId" />
+            <PropertyRef Name="AutochargeContentId" />
+          </Key>
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="bigint" Nullable="false" />
+        </EntityType>
         <EntityType Name="MessagesBuffer">
           <Key>
             <PropertyRef Name="Id" />
@@ -39,6 +49,7 @@
           <Property Name="MessagePoint" Type="int" />
           <Property Name="ImiChargeCode" Type="int" />
           <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
         </EntityType>
         <EntityType Name="MessagesTemplate">
           <Key>
@@ -49,10 +60,25 @@
           <Property Name="PersianTitle" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Content" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="SubscribersPoints">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="DanestanModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesBuffer" EntityType="Self.MessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoints" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LastAutochargeContentSendedToUser" EntityType="Self.LastAutochargeContentSendedToUser" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [LastAutochargeContentSendedToUser].[SubscriberId] AS [SubscriberId], 
+    [LastAutochargeContentSendedToUser].[AutochargeContentId] AS [AutochargeContentId]
+    FROM [dbo].[LastAutochargeContentSendedToUser] AS [LastAutochargeContentSendedToUser]</DefiningQuery>
+          </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -62,6 +88,8 @@
           <EntitySet Name="AutochargeContents" EntityType="DanestanModel.AutochargeContent" />
           <EntitySet Name="MessagesBuffers" EntityType="DanestanModel.MessagesBuffer" />
           <EntitySet Name="MessagesTemplates" EntityType="DanestanModel.MessagesTemplate" />
+          <EntitySet Name="SubscribersPoints" EntityType="DanestanModel.SubscribersPoint" />
+          <EntitySet Name="LastAutochargeContentSendedToUsers" EntityType="DanestanModel.LastAutochargeContentSendedToUser" />
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -97,6 +125,7 @@
           <Property Name="MessagePoint" Type="Int32" />
           <Property Name="ImiChargeCode" Type="Int32" />
           <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
         </EntityType>
         <EntityType Name="MessagesTemplate">
           <Key>
@@ -106,6 +135,22 @@
           <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PersianTitle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SubscribersPoint">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LastAutochargeContentSendedToUser">
+          <Key>
+            <PropertyRef Name="SubscriberId" />
+            <PropertyRef Name="AutochargeContentId" />
+          </Key>
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -131,6 +176,7 @@
           <EntitySetMapping Name="MessagesBuffers">
             <EntityTypeMapping TypeName="DanestanModel.MessagesBuffer">
               <MappingFragment StoreEntitySet="MessagesBuffer">
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
                 <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
                 <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
                 <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
@@ -157,6 +203,23 @@
                 <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersPoints">
+            <EntityTypeMapping TypeName="DanestanModel.SubscribersPoint">
+              <MappingFragment StoreEntitySet="SubscribersPoints">
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LastAutochargeContentSendedToUsers">
+            <EntityTypeMapping TypeName="DanestanModel.LastAutochargeContentSendedToUser">
+              <MappingFragment StoreEntitySet="LastAutochargeContentSendedToUser">
+                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
