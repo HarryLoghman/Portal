@@ -20,7 +20,7 @@ namespace Portal.Services.Danestan
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
-            var subscriber = Subscribers.GetSubscriber(message.MobileNumber, message.ServiceId);
+            var subscriber = Shared.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
             if (subscriber == null)
             {

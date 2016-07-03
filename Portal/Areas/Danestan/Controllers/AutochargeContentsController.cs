@@ -17,6 +17,7 @@ namespace Portal.Areas.Danestan.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.ServiceName = "دانستان";
             return View();
         }
 

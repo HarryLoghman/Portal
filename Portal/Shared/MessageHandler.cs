@@ -134,15 +134,30 @@ namespace Portal.Shared
                     {
                         message.MobileOperator = operatorPrefixe.OperatorId;
                         message.OperatorPlan = operatorPrefixe.OperatorPlan;
+                        break;
                     }
                 }
-                if(message.MobileOperator == null)
+                if(message.MobileOperator == 0)
                     Shared.PortalException.Throw("Invalid Operator for Mobile Number: " + message.MobileNumber);
             }
             return message;
         }
 
-        public static Message SetImIiChargeCode(Message message, int chargeCode, int messageType)
+        public static Message CreateAutochargeMessage(Subscriber subscriber, AutochargeContent autochargeContent)
+        {
+            var message = new Message();
+            message.Content = autochargeContent.Content;
+            message.MobileNumber = subscriber.MobileNumber;
+            message.SubscriberId = subscriber.Id;
+            message.ContentId = autochargeContent.Id;
+            message.MessageType = (int)MessageType.AutoCharge;
+            message.ProcessStatus = (int)ProcessStatus.InQueue;
+            message.ServiceId = subscriber.ServiceId;
+            //message. TODO
+            return message;
+        }
+
+        public static Message SetImiChargeCode(Message message, int chargeCode, int messageType)
         {
             message.ImiChargeCode = chargeCode;
             message.ImiMessageType = messageType;

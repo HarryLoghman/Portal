@@ -19,6 +19,20 @@
           <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="PersianSendDate" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="EventbaseContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="Point" Type="int" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="int" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="bit" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="bit" Nullable="false" />
+        </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="LastAutochargeContentSendedToUser">
@@ -70,6 +84,7 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
         </EntityType>
         <EntityContainer Name="DanestanModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesBuffer" EntityType="Self.MessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoints" Schema="dbo" store:Type="Tables" />
@@ -90,6 +105,7 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <EntitySet Name="MessagesTemplates" EntityType="DanestanModel.MessagesTemplate" />
           <EntitySet Name="SubscribersPoints" EntityType="DanestanModel.SubscribersPoint" />
           <EntitySet Name="LastAutochargeContentSendedToUsers" EntityType="DanestanModel.LastAutochargeContentSendedToUser" />
+          <EntitySet Name="EventbaseContents" EntityType="DanestanModel.EventbaseContent" />
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -151,6 +167,20 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           </Key>
           <Property Name="SubscriberId" Type="Int64" Nullable="false" />
           <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="Point" Type="Int32" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="Int32" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="Boolean" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -220,6 +250,21 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
               <MappingFragment StoreEntitySet="LastAutochargeContentSendedToUser">
                 <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseContents">
+            <EntityTypeMapping TypeName="DanestanModel.EventbaseContent">
+              <MappingFragment StoreEntitySet="EventbaseContents">
+                <ScalarProperty Name="IsAddedToSendQueueFinished" ColumnName="IsAddedToSendQueueFinished" />
+                <ScalarProperty Name="IsAddingMessagesToSendQueue" ColumnName="IsAddingMessagesToSendQueue" />
+                <ScalarProperty Name="SubscriberNotSendedMoInDays" ColumnName="SubscriberNotSendedMoInDays" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

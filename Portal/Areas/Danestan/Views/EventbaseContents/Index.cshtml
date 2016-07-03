@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "محتوای ارسال به صورت دستی";
+}
+
+<div class="k-rtl" id="grid"></div>
+
+<script>
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف" },
+            { field: "Content", title: "محتوی", editor: textAreaEditor },
+            { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند(بر اساس روز)" },
+            { field: "Price", title: "هزینه پیام" },
+            { field: "Point", title: "امتیاز", },
+            { command: ["edit", "destroy"], width: 180 }
+        ],
+        toolbar: ["create"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "EventbaseContents/EventbaseContents_Read",
+                    type: "POST"
+                },
+                create: {
+                    url: "EventbaseContents/EventbaseContents_Create",
+                    type: "POST"
+                },
+                update: {
+                    url: "EventbaseContents/EventbaseContents_Update",
+                    type: "POST"
+                },
+                destroy: {
+                    url: "EventbaseContents/EventbaseContents_Destroy",
+                    type: "POST"
+                },
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                        Content: { type: "string", validation: { required: true }, nullable: false },
+                        SubscriberNotSendedMoInDays: { type: "int", validation: { required: true }, defaultValue: 0 },
+                        Price: { type: "int", validation: { required: true }, defaultValue: 0 },
+                        Point: { type: "int", validation: { required: true }, defaultValue: 0 },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+        dataBound: function (e) {
+            e.sender.dataItems().forEach(function (entry) {
+                if (entry.IsAddedToSendQueue == true)
+                    disableGridButtons(entry.uid);
+            });
+        }
+    });
+
+    function disableGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
+    }
+</script>

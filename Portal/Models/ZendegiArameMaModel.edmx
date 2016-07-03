@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ZendegiArameMaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AutochargeContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SendDate" Type="datetime" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="Point" Type="int" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsAddedToSendQueue" Type="bit" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PersianSendDate" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="Point" Type="int" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="int" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="bit" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ZendegiArameMa.dbo.LastAutochargeContentSendedToUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="LastAutochargeContentSendedToUser">
+          <Key>
+            <PropertyRef Name="SubscriberId" />
+            <PropertyRef Name="AutochargeContentId" />
+          </Key>
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+        </EntityType>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PersianTitle" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="SubscribersPoints">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="ZendegiArameMaModelStoreContainer">
+          <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesBuffer" EntityType="Self.MessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoints" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LastAutochargeContentSendedToUser" EntityType="Self.LastAutochargeContentSendedToUser" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [LastAutochargeContentSendedToUser].[SubscriberId] AS [SubscriberId], 
+    [LastAutochargeContentSendedToUser].[AutochargeContentId] AS [AutochargeContentId]
+    FROM [dbo].[LastAutochargeContentSendedToUser] AS [LastAutochargeContentSendedToUser]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ZendegiArameMaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AutochargeContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SendDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Point" Type="Int32" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsAddedToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PersianSendDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="Point" Type="Int32" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="Int32" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+        </EntityType>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PersianTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SubscribersPoint">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LastAutochargeContentSendedToUser">
+          <Key>
+            <PropertyRef Name="SubscriberId" />
+            <PropertyRef Name="AutochargeContentId" />
+          </Key>
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="ZendegiArameMaEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContent" />
+          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContent" />
+          <EntitySet Name="MessagesBuffers" EntityType="Self.MessagesBuffer" />
+          <EntitySet Name="MessagesTemplates" EntityType="Self.MessagesTemplate" />
+          <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoint" />
+          <EntitySet Name="LastAutochargeContentSendedToUsers" EntityType="Self.LastAutochargeContentSendedToUser" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ZendegiArameMaModelStoreContainer" CdmEntityContainer="ZendegiArameMaEntities">
+          <EntitySetMapping Name="AutochargeContents">
+            <EntityTypeMapping TypeName="ZendegiArameMaModel.AutochargeContent">
+              <MappingFragment StoreEntitySet="AutochargeContents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="SendDate" ColumnName="SendDate" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsAddedToSendQueue" ColumnName="IsAddedToSendQueue" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="PersianSendDate" ColumnName="PersianSendDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseContents">
+            <EntityTypeMapping TypeName="ZendegiArameMaModel.EventbaseContent">
+              <MappingFragment StoreEntitySet="EventbaseContents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="SubscriberNotSendedMoInDays" ColumnName="SubscriberNotSendedMoInDays" />
+                <ScalarProperty Name="IsAddingMessagesToSendQueue" ColumnName="IsAddingMessagesToSendQueue" />
+                <ScalarProperty Name="IsAddedToSendQueueFinished" ColumnName="IsAddedToSendQueueFinished" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesBuffers">
+            <EntityTypeMapping TypeName="ZendegiArameMaModel.MessagesBuffer">
+              <MappingFragment StoreEntitySet="MessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesTemplates">
+            <EntityTypeMapping TypeName="ZendegiArameMaModel.MessagesTemplate">
+              <MappingFragment StoreEntitySet="MessagesTemplate">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersPoints">
+            <EntityTypeMapping TypeName="ZendegiArameMaModel.SubscribersPoint">
+              <MappingFragment StoreEntitySet="SubscribersPoints">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LastAutochargeContentSendedToUsers">
+            <EntityTypeMapping TypeName="ZendegiArameMaModel.LastAutochargeContentSendedToUser">
+              <MappingFragment StoreEntitySet="LastAutochargeContentSendedToUser">
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

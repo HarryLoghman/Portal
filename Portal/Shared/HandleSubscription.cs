@@ -14,7 +14,7 @@ namespace Portal.Shared
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             if (message.MobileOperator == (int)MessageHandler.MobileOperators.Mci)
-                message = MessageHandler.SetImIiChargeCode(message, 0, 21);
+                message = MessageHandler.SetImiChargeCode(message, 0, 21);
             message.MessageType = (int)MessageHandler.MessageType.OnDemand;
 
             if (isUserWantsToUnsubscribe == true)
@@ -52,6 +52,16 @@ namespace Portal.Shared
                     return subscriberId;
             }
         }
+
+        public static Subscriber GetSubscriber(string mobileNumber, long serviceId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var subscriber = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId).FirstOrDefault();
+                return subscriber;
+            }
+        }
+
 
         private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(Subscriber subscriber, string onKeyword)
         {

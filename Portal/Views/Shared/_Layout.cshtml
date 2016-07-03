@@ -3,7 +3,7 @@
 <head>
     @*<meta charset="utf-8" />*@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title</title>
     @*@Styles.Render("~/Content/css")*@
     @*@Scripts.Render("~/bundles/modernizr")*@
     <style>
@@ -94,6 +94,7 @@
             }
         }
     </style>
+    @Styles.Render("~/Content/Portal")
     @Styles.Render("~/Content/kendo")
     @Scripts.Render("~/bundles/kendo")
     @Scripts.Render("~/bundles/Portal")
@@ -102,34 +103,59 @@
 <body class="k-rtl">
     <div class="container-fluid">
         <div class="row k-header">
-            <h1>پرتال</h1>
+            <h1>پرتال دهناد</h1>
             <div id="responsive-panel">
-                <ul id="menu">
-                    <li>
-                        @Html.ActionLink("Home", "Index", "Home")
-                    </li>
-                    <li>
-                        @Html.ActionLink("About", "About", "Home")
-                    </li>
-                    <li>
-                        @Html.ActionLink("Contact", "Contact", "Home")
-                    </li>
-                    <li>
-                        Item 4
-                    </li>
-                    <li>
-                        Item 5
-                    </li>
-                    <li disabled="disabled">
-                        Disabled Item
-                    </li>
-                </ul>
+                <div id="megaStore" class="k-content k-rtl">
+                    <ul id="menu">
+                        <li>
+                            دانستانه
+                            <ul>
+                                <li>
+                                    @Html.ActionLink("محتوای ارسال اتوماتیک", "Index", "AutochargeContents", new { area = "Danestan" }, null)
+                                </li>
+                                <li>
+                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "Danestan" }, null)                                    
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            رژیم
+                            <ul>
+                                <li>
+                                    @Html.ActionLink("محتوای ارسال اتوماتیک", "Index", "AutochargeContents", new { area = "Rejim" }, null)
+                                </li>
+                                <li>
+                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "Rejim" }, null)
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            زندگی آرام ما
+                            <ul>
+                                <li>
+                                    @Html.ActionLink("محتوای ارسال اتوماتیک", "Index", "AutochargeContents", new { area = "ZendegiArameMa" }, null)
+                                </li>
+                                <li>
+                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "ZendegiArameMa" }, null)
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            سنگ کاغذ قیچی
+                            <ul>
+                                <li>
+                                    @Html.ActionLink("تنظیمات", "About", "Home")
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <button id="configure" class="k-rpanel-toggle k-button k-primary btn-toggle"><span class="k-icon k-i-hbars"></span></button>
         </div>
     </div>
 
-        @RenderBody()
+    @RenderBody()
 
     <script>
         $(document).ready(function () {
@@ -147,3 +173,45 @@
     </script>
 </body>
 </html>
+<style>
+    #megaStore {
+        margin-top: 0px !important;
+        margin: 30px auto;
+        background: none;
+    }
+
+    #menu h2 {
+        font-size: 1em;
+        text-transform: uppercase;
+        padding: 5px 10px;
+    }
+
+    #template img {
+        margin: 5px 20px 0 0;
+        float: left;
+    }
+
+    #template {
+        width: 380px;
+    }
+
+        #template ol {
+            float: left;
+            margin: 0 0 0 30px;
+            padding: 10px 10px 0 10px;
+        }
+
+        #template:after {
+            content: ".";
+            display: block;
+            height: 0;
+            clear: both;
+            visibility: hidden;
+        }
+
+        #template .k-button {
+            float: left;
+            clear: left;
+            margin: 5px 0 5px 12px;
+        }
+</style>

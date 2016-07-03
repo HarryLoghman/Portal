@@ -219,7 +219,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\ZendegiArameMa\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\ZendegiArameMa\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\ZendegiArameMa\ZendegiArameMaAreaRegistration.cs" />
+    <Compile Include="Areas\Rejim\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\Rejim\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Rejim\RejimAreaRegistration.cs" />
     <Compile Include="Areas\Danestan\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\Danestan\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Danestan\DanestanAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -233,7 +240,7 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DanestanModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -250,17 +257,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DanestanModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\EventbaseContent.cs">
+      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LastAutochargeContentSendedToUser.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MessagesBuffer.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Operator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
@@ -294,6 +304,21 @@
     </Compile>
     <Compile Include="Models\ReceivedMessagesArchive.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RejimModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RejimModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RejimModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RejimModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RejimModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RejimModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\RockPaperScissorModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -329,7 +354,22 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SubscribersPoint.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ZendegiArameMaModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZendegiArameMaModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ZendegiArameMaModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ZendegiArameMaModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Danestan\ContentManager.cs" />
@@ -683,6 +723,7 @@
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_2x.png" />
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi.png" />
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi_2x.png" />
+    <Content Include="Content\Portal.css" />
     <Content Include="DB\Danestan\RedGateDatabaseInfo.xml" />
     <Content Include="DB\Danestan\Tables\dbo.MessagesBuffer.sql" />
     <Content Include="DB\Danestan\Tables\dbo.MessagesTemplate.sql" />
@@ -731,6 +772,16 @@
       <DependentUpon>PortalModel.edmx</DependentUpon>
       <LastGenOutput>PortalModel.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\RejimModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RejimModel.edmx</DependentUpon>
+      <LastGenOutput>RejimModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\RejimModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RejimModel.edmx</DependentUpon>
+      <LastGenOutput>RejimModel.cs</LastGenOutput>
+    </Content>
     <Content Include="Models\RockPaperScissorModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
@@ -740,6 +791,16 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
       <LastGenOutput>RockPaperScissorModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\ZendegiArameMaModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
+      <LastGenOutput>ZendegiArameMaModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\ZendegiArameMaModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
+      <LastGenOutput>ZendegiArameMaModel.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -866,6 +927,30 @@
     <Content Include="Areas\Danestan\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Danestan\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Danestan\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="fonts\BMITRABD.TTF" />
+    <Content Include="Areas\Danestan\Views\EventbaseContents\Index.cshtml" />
+    <EntityDeploy Include="Models\RejimModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RejimModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\RejimModel.edmx.diagram">
+      <DependentUpon>RejimModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Areas\Rejim\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Rejim\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\Rejim\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Rejim\Views\web.config" />
+    <EntityDeploy Include="Models\ZendegiArameMaModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ZendegiArameMaModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\ZendegiArameMaModel.edmx.diagram">
+      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Areas\ZendegiArameMa\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\ZendegiArameMa\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\ZendegiArameMa\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\ZendegiArameMa\Views\web.config" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -1620,6 +1705,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Danestan\Models\" />
+    <Folder Include="Areas\Rejim\Models\" />
+    <Folder Include="Areas\ZendegiArameMa\Models\" />
     <Folder Include="bin\" />
     <Folder Include="DB\Danestan\Assemblies\" />
     <Folder Include="DB\Danestan\Database Triggers\" />

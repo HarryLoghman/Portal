@@ -30,5 +30,6 @@ namespace Portal.Models
         public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
         public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
         public virtual DbSet<LastAutochargeContentSendedToUser> LastAutochargeContentSendedToUsers { get; set; }
+        public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
     }
 }

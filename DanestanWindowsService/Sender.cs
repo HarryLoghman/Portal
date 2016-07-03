@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Portal.Models;
+using System.Diagnostics;
 
 namespace DanestanWindowsService
 {
@@ -12,6 +13,7 @@ namespace DanestanWindowsService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public void SendHandler()
         {
+            Debugger.Launch();
             var today = DateTime.Now.Date;
             List<MessagesBuffer> messages; 
             int readSize = Convert.ToInt32(Properties.Resources.ReadSize);

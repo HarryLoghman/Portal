@@ -9,33 +9,30 @@ namespace Portal.Services.Danestan
 {
     public class ServiceHandler
     {
-        public static string SelectAutochargeContent(DanestanEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContent(DanestanEntities entity, long subscriberId)
         {
-            string content = "";
+            AutochargeContent autochargeContent = null;
             var lastContentSubscriberReceived = entity.LastAutochargeContentSendedToUsers.FirstOrDefault(o => o.SubscriberId == subscriberId);
             if (lastContentSubscriberReceived == null)
             {
-                var autochargeContent = entity.AutochargeContents.FirstOrDefault();
+                autochargeContent = entity.AutochargeContents.FirstOrDefault();
                 var lastContent = new LastAutochargeContentSendedToUser();
                 lastContent.SubscriberId = subscriberId;
                 lastContent.AutochargeContentId = autochargeContent.Id;
-                content = autochargeContent.Content;
                 entity.LastAutochargeContentSendedToUsers.Add(lastContent);
             }
             else
             {
                 var nextAutochargeContent = entity.AutochargeContents.FirstOrDefault(o => o.Id > lastContentSubscriberReceived.AutochargeContentId);
-                if (nextAutochargeContent == null)
-                    content = "";
-                else
+                if (nextAutochargeContent != null)
                 {
-                    content = nextAutochargeContent.Content;
+                    autochargeContent = nextAutochargeContent;
                     lastContentSubscriberReceived.AutochargeContentId = nextAutochargeContent.Id;
                     entity.Entry(lastContentSubscriberReceived).State = System.Data.Entity.EntityState.Modified;
                 }
             }
             entity.SaveChanges();
-            return content;
+            return autochargeContent;
         }
 
         public static List<MessagesTemplate> GetServiceMessagesTemplate()

@@ -17,16 +17,17 @@ namespace DanestanWindowsService
                 var today = DateTime.Now.Date;
                 var portalEntity = new PortalEntities();
                 var serviceId = portalEntity.Services.Where(o => o.ServiceCode == serviceCode).FirstOrDefault().Id;
-                var subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).Select(o => new { o.MobileNumber, o.Id }).ToList();
+                var subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).Select(o => new { o.MobileNumber, o.Id, o.ServiceId }).ToList();
                 portalEntity.Dispose();
                 using (var entity = new DanestanEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var subscriber in subscribers)
                     {
-                        var content = Portal.Services.Danestan.ServiceHandler.SelectAutochargeContent(entity, subscriber.Id);
-                        if (content == "")
+                        var autochargeContent = Portal.Services.Danestan.ServiceHandler.SelectAutochargeContent(entity, subscriber.Id);
+                        if (autochargeContent == null)
                             continue;
+                        var message = Portal.Shared.MessageHandler.CreateAutochargeMessage(subscriber, autochargeContent);
                     }
                 }
             }

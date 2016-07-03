@@ -31,6 +31,7 @@ namespace Portal.Services.Danestan
                 messageBuffer.AggregatorId = message.AggregatorId;
                 messageBuffer.SubscriberId = Shared.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                 messageBuffer.PersianDateAddedToQueue = Shared.Date.GetPersianDate(DateTime.Now);
+                messageBuffer.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.TryingToSend;
                 entity.MessagesBuffers.Add(messageBuffer);
                 entity.SaveChanges();
             }
@@ -38,6 +39,8 @@ namespace Portal.Services.Danestan
 
         public static void InvalidContentWhenNotSubscribed(Message message, List<MessagesTemplate> messagesTemplate)
         {
+            if (message.MobileOperator == (int)Shared.MessageHandler.MobileOperators.Mci)
+                message = Shared.MessageHandler.SetImiChargeCode(message, 0, 0);
             message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
             InsertMessageToQueue(message);
         }
