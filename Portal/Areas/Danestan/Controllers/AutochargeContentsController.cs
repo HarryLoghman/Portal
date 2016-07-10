@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Portal.Models;
 using Kendo.Mvc.UI;
@@ -12,6 +10,7 @@ namespace Portal.Areas.Danestan.Controllers
 {
     public class AutochargeContentsController : Controller
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Danestan/AutochargeContents
         private DanestanEntities db = new DanestanEntities();
 
@@ -42,23 +41,30 @@ namespace Portal.Areas.Danestan.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult AutochargeContents_Create([DataSourceRequest]DataSourceRequest request, [Bind(Exclude = "Id")] AutochargeContent autochargeContent)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var entity = new AutochargeContent
+                if (ModelState.IsValid)
                 {
-                    Content = autochargeContent.Content,
-                    SendDate = autochargeContent.SendDate,
-                    PersianSendDate = Shared.Date.GetPersianDateTime(autochargeContent.SendDate), //autochargeContent.PersianSendDate,
-                    Point = autochargeContent.Point,
-                    Price = autochargeContent.Price,
-                    DateCreated = DateTime.Now,
-                    PersianDateCreated = Shared.Date.GetPersianDateTime(DateTime.Now),
-                    IsAddedToSendQueue = autochargeContent.IsAddedToSendQueue,
-                };
+                    var entity = new AutochargeContent
+                    {
+                        Content = autochargeContent.Content,
+                        SendDate = autochargeContent.SendDate,
+                        PersianSendDate = Shared.Date.GetPersianDateTime(autochargeContent.SendDate),
+                        Point = autochargeContent.Point,
+                        Price = autochargeContent.Price,
+                        DateCreated = DateTime.Now,
+                        PersianDateCreated = Shared.Date.GetPersianDateTime(DateTime.Now),
+                        IsAddedToSendQueue = autochargeContent.IsAddedToSendQueue,
+                    };
 
-                db.AutochargeContents.Add(entity);
-                db.SaveChanges();
-                autochargeContent.Id = entity.Id;
+                    db.AutochargeContents.Add(entity);
+                    db.SaveChanges();
+                    autochargeContent.Id = entity.Id;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in EventbaseContentsController :" + e);
             }
 
             return Json(new[] { autochargeContent }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);

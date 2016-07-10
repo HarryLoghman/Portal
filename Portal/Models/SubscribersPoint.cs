@@ -16,6 +16,10 @@ namespace Portal.Models
     {
         public long Id { get; set; }
         public long SubscriberId { get; set; }
+        public long ServiceId { get; set; }
         public int Point { get; set; }
+    
+        public virtual Service Service { get; set; }
+        public virtual Subscriber Subscriber { get; set; }
     }
 }

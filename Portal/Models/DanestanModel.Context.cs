@@ -26,10 +26,13 @@ namespace Portal.Models
         }
     
         public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
-        public virtual DbSet<MessagesBuffer> MessagesBuffers { get; set; }
-        public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
-        public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
-        public virtual DbSet<LastAutochargeContentSendedToUser> LastAutochargeContentSendedToUsers { get; set; }
+        public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
         public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
+        public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
+        public virtual DbSet<ImiChargeCode> ImiChargeCodes { get; set; }
+        public virtual DbSet<MessagesMonitoring> MessagesMonitorings { get; set; }
+        public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
+        public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
+        public virtual DbSet<LastAutochargeContentSendedToUser> LastAutochargeContentSendedToUsers { get; set; }
     }
 }

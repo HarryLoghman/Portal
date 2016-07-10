@@ -2,16 +2,15 @@
 using Kendo.Mvc.UI;
 using Portal.Models;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Portal.Areas.Danestan.Controllers
 {
     public class EventbaseContentsController : Controller
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Danestan/EventbaseContents
         private DanestanEntities db = new DanestanEntities();
 
@@ -42,23 +41,30 @@ namespace Portal.Areas.Danestan.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult EventbaseContents_Create([DataSourceRequest]DataSourceRequest request, [Bind(Exclude = "Id")] EventbaseContent eventbaseContent)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var entity = new EventbaseContent
+                if (ModelState.IsValid)
                 {
-                    Content = eventbaseContent.Content,
-                    Point = eventbaseContent.Point,
-                    Price = eventbaseContent.Price,
-                    DateCreated = DateTime.Now,
-                    SubscriberNotSendedMoInDays = eventbaseContent.SubscriberNotSendedMoInDays,
-                    PersianDateCreated = Shared.Date.GetPersianDateTime(DateTime.Now),
-                    IsAddingMessagesToSendQueue = false,
-                    IsAddedToSendQueueFinished = false,
-                };
+                    var entity = new EventbaseContent
+                    {
+                        Content = eventbaseContent.Content,
+                        Point = eventbaseContent.Point,
+                        Price = eventbaseContent.Price,
+                        DateCreated = DateTime.Now,
+                        SubscriberNotSendedMoInDays = eventbaseContent.SubscriberNotSendedMoInDays,
+                        PersianDateCreated = Shared.Date.GetPersianDateTime(DateTime.Now),
+                        IsAddingMessagesToSendQueue = false,
+                        IsAddedToSendQueueFinished = false,
+                    };
 
-                db.EventbaseContents.Add(entity);
-                db.SaveChanges();
-                eventbaseContent.Id = entity.Id;
+                    db.EventbaseContents.Add(entity);
+                    db.SaveChanges();
+                    eventbaseContent.Id = entity.Id;
+                }
+            }
+            catch(Exception e)
+            {
+                logs.Error("Error in EventbaseContentsController :" + e);
             }
 
             return Json(new[] { eventbaseContent }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
@@ -145,6 +151,17 @@ namespace Portal.Areas.Danestan.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult SendEventbaseToQueue([DataSourceRequest]DataSourceRequest request)
+        {
+            var id = Convert.ToInt64(Request["id"]);
+            var eventbaseContent = db.EventbaseContents.FirstOrDefault(o => o.Id == id);
+            eventbaseContent.IsAddingMessagesToSendQueue = true;
+            db.Entry(eventbaseContent).State = EntityState.Modified;
+            db.SaveChanges();
+            return Content("Ok");
         }
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Portal.Models;
 
 namespace Portal.Shared
@@ -22,6 +20,18 @@ namespace Portal.Shared
                 sendInfoDic["aggregatorServiceId"] = serviceInfo.AggregatorServiceId.ToString();
             }
             return sendInfoDic;
+        }
+
+        public static long? GetServiceId(string serviceCode)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var service = entity.Services.FirstOrDefault(o => o.ServiceCode == serviceCode);
+                if (service != null)
+                    return service.Id;
+                else
+                    return null;
+            }
         }
     }
 }

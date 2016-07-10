@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -49,10 +47,6 @@
     </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -110,39 +104,6 @@
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Documents.SpreadsheetStreaming">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Documents.SpreadsheetStreaming.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Web.Spreadsheet">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Web.Spreadsheet.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Documents.Core">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Documents.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Documents.Fixed">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Documents.Fixed.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Documents.Flow">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Documents.Flow.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Documents.Flow.FormatProviders.Pdf">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Documents.Flow.FormatProviders.Pdf.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Documents.Spreadsheet">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Documents.Spreadsheet.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Documents.Spreadsheet.FormatProviders.Pdf">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Documents.Spreadsheet.FormatProviders.Pdf.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Zip">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Zip.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Zip.Extensions">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET MVC Q2 2016\wrappers\aspnetmvc\Examples\VS2015\Kendo.Mvc.Examples\bin\Telerik.Windows.Zip.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
@@ -219,13 +180,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\ZendegiArameMa\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\ZendegiArameMa\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\ZendegiArameMa\ZendegiArameMaAreaRegistration.cs" />
-    <Compile Include="Areas\Rejim\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\Rejim\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Rejim\RejimAreaRegistration.cs" />
     <Compile Include="Areas\Danestan\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\Danestan\Controllers\MonitoringController.cs" />
     <Compile Include="Areas\Danestan\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Danestan\DanestanAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -240,7 +196,10 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AutochargeMessagesBuffer.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DanestanModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -258,19 +217,28 @@
       <DependentUpon>DanestanModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventbaseMessagesBuffer.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ImiChargeCode.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\LastAutochargeContentSendedToUser.cs">
-      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+      <DependentUpon>DanestanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\MessagesBuffer.cs">
-      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+    <Compile Include="Models\MessagesMonitoring.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
+      <DependentUpon>DanestanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OnDemandMessagesBuffer.cs">
+      <DependentUpon>DanestanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Operator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
@@ -305,36 +273,6 @@
     <Compile Include="Models\ReceivedMessagesArchive.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\RejimModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RejimModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RejimModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RejimModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RejimModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RejimModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RockPaperScissorModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RockPaperScissorModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RockPaperScissorModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RockPaperScissorModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RockPaperScissorModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\RPS_ServiceAdditionalInfo.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -354,22 +292,7 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SubscribersPoint.cs">
-      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ZendegiArameMaModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ZendegiArameMaModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ZendegiArameMaModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ZendegiArameMaModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ZendegiArameMaModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
+      <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Danestan\ContentManager.cs" />
@@ -772,36 +695,6 @@
       <DependentUpon>PortalModel.edmx</DependentUpon>
       <LastGenOutput>PortalModel.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\RejimModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RejimModel.edmx</DependentUpon>
-      <LastGenOutput>RejimModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\RejimModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RejimModel.edmx</DependentUpon>
-      <LastGenOutput>RejimModel.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\RockPaperScissorModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
-      <LastGenOutput>RockPaperScissorModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\RockPaperScissorModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
-      <LastGenOutput>RockPaperScissorModel.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\ZendegiArameMaModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
-      <LastGenOutput>ZendegiArameMaModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\ZendegiArameMaModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
-      <LastGenOutput>ZendegiArameMaModel.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <EntityDeploy Include="Models\PortalModel.edmx">
@@ -914,13 +807,6 @@
     <Content Include="Models\DanestanModel.edmx.diagram">
       <DependentUpon>DanestanModel.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\RockPaperScissorModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>RockPaperScissorModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\RockPaperScissorModel.edmx.diagram">
-      <DependentUpon>RockPaperScissorModel.edmx</DependentUpon>
-    </Content>
     <Content Include="DB\Danestan\RedGate.ssc" />
     <Content Include="DB\RockPaperScissor\RedGate.ssc" />
     <Content Include="Areas\Danestan\Views\web.config" />
@@ -929,28 +815,7 @@
     <Content Include="Areas\Danestan\Views\AutochargeContents\Index.cshtml" />
     <Content Include="fonts\BMITRABD.TTF" />
     <Content Include="Areas\Danestan\Views\EventbaseContents\Index.cshtml" />
-    <EntityDeploy Include="Models\RejimModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>RejimModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\RejimModel.edmx.diagram">
-      <DependentUpon>RejimModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="Areas\Rejim\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Rejim\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\Rejim\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Rejim\Views\web.config" />
-    <EntityDeploy Include="Models\ZendegiArameMaModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ZendegiArameMaModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\ZendegiArameMaModel.edmx.diagram">
-      <DependentUpon>ZendegiArameMaModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="Areas\ZendegiArameMa\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\ZendegiArameMa\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\ZendegiArameMa\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\ZendegiArameMa\Views\web.config" />
+    <Content Include="Areas\Danestan\Views\Monitoring\Index.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -1705,8 +1570,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Danestan\Models\" />
-    <Folder Include="Areas\Rejim\Models\" />
-    <Folder Include="Areas\ZendegiArameMa\Models\" />
     <Folder Include="bin\" />
     <Folder Include="DB\Danestan\Assemblies\" />
     <Folder Include="DB\Danestan\Database Triggers\" />
@@ -1841,13 +1704,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

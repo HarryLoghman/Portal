@@ -98,7 +98,6 @@
     @Styles.Render("~/Content/kendo")
     @Scripts.Render("~/bundles/kendo")
     @Scripts.Render("~/bundles/Portal")
-
 </head>
 <body class="k-rtl">
     <div class="container-fluid">
@@ -143,6 +142,9 @@
                         <li>
                             سنگ کاغذ قیچی
                             <ul>
+                                <li>
+                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "RockPaperScissor" }, null)
+                                </li>
                                 <li>
                                     @Html.ActionLink("تنظیمات", "About", "Home")
                                 </li>

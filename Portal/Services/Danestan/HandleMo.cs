@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Portal.Models;
+﻿using Portal.Models;
 using Portal.Shared;
 
 namespace Portal.Services.Danestan
 {
     public class HandleMo
     {
-        public static void ReceivedMessage(Message message, Service service)
+        public static void ReceivedMessage(MessageObject message, Service service)
         {
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);

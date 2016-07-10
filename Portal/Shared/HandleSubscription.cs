@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using Portal.Models;
-using Portal.Shared;
 
 namespace Portal.Shared
 {
     public class HandleSubscription
     {
-        public static ServiceStatusForSubscriberState HandleSubscriptionContent(Message message, Service service, bool isUserWantsToUnsubscribe)
+        public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, Service service, bool isUserWantsToUnsubscribe)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             if (message.MobileOperator == (int)MessageHandler.MobileOperators.Mci)
@@ -24,7 +21,7 @@ namespace Portal.Shared
             return serviceStatusForSubscriberState;
         }
 
-        public static ServiceStatusForSubscriberState Subscribe(Message message, Service service)
+        public static ServiceStatusForSubscriberState Subscribe(MessageObject message, Service service)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -78,7 +75,7 @@ namespace Portal.Shared
             return ServiceStatusForSubscriberState.Activated;
         }
 
-        private static ServiceStatusForSubscriberState AddNewSubscriberToService(Message message, Service service)
+        private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, Service service)
         {
             using (var entity = new PortalEntities())
             {
@@ -119,7 +116,7 @@ namespace Portal.Shared
             }
         }
 
-        public static ServiceStatusForSubscriberState Unsubscribe(Message message, Service service)
+        public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, Service service)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -135,7 +132,7 @@ namespace Portal.Shared
             return serviceStatusForSubscriberState;
         }
 
-        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(Message message, Service service, Subscriber subscriber)
+        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, Service service, Subscriber subscriber)
         {
             using (var entity = new PortalEntities())
             {

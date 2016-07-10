@@ -18,7 +18,7 @@ namespace Portal.Models
         public string Content { get; set; }
         public System.DateTime SendDate { get; set; }
         public System.DateTime DateCreated { get; set; }
-        public Nullable<int> Point { get; set; }
+        public int Point { get; set; }
         public int Price { get; set; }
         public bool IsAddedToSendQueue { get; set; }
         public string PersianDateCreated { get; set; }

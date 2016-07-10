@@ -5,11 +5,13 @@ using System.Web;
 
 namespace Portal.Models
 {
-    public class Message
+    public class MessageObject
     {
         public string MobileNumber { get; set; }
+        public string Address { get; set; }
         public string ShortCode { get; set; }
         public string Content { get; set; }
+        public string Message { get; set; }
         public string ReceiveTime { get; set; }
         public string MessageId { get; set; }
         public long ServiceId { get; set; }
@@ -22,5 +24,6 @@ namespace Portal.Models
         public long MobileOperator { get; set; }
         public long OperatorPlan { get; set; }
         public long AggregatorId { get; set; }
+        public int Point { get; set; }
     }
 }

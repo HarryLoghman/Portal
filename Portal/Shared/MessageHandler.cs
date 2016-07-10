@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Portal.Models;
 
 namespace Portal.Shared
 {
     public class MessageHandler
     {
-        public static void SaveReceivedMessage(Message message)
+        public static void SaveReceivedMessage(MessageObject message)
         {
             using (var entity = new PortalEntities())
             {
@@ -26,12 +25,18 @@ namespace Portal.Shared
             }
         }
 
-        public static long GetAggregatorId(Message message)
+        public static long GetAggregatorId(MessageObject message)
         {
             using (var entity = new PortalEntities())
                 return entity.ServiceInfoes.Where(o => o.ShortCode == message.ShortCode).FirstOrDefault().AggregatorId;
         }
 
+        public static long GetAggregatorIdFromConfig(string AggregatorName)
+        {
+            using (var entity = new PortalEntities())
+                return entity.Aggregators.Where(o => o.AggregatorName == AggregatorName).FirstOrDefault().Id;
+        }
+        
         public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState)
         {
             string content = null;
@@ -56,9 +61,8 @@ namespace Portal.Shared
             return content;
         }
 
-        public static Message ValidateMessage(Message message)
+        public static MessageObject ValidateMessage(MessageObject message)
         {
-            message.MobileNumber = ValidateNumber(message.MobileNumber);
             message.ShortCode = ValidateShortCode(message.ShortCode);
             message.Content = NormalizeContent(message.Content);
             message = GetSubscriberOperatorInfo(message);
@@ -109,7 +113,7 @@ namespace Portal.Shared
             return shortCode.Replace(" ", "");
         }
 
-        private static string ValidateNumber(string mobileNumber)
+        public static string ValidateNumber(string mobileNumber)
         {
             if (mobileNumber.StartsWith("+"))
                 mobileNumber = mobileNumber.TrimStart('+');
@@ -118,12 +122,12 @@ namespace Portal.Shared
             if (!mobileNumber.StartsWith("0"))
                 mobileNumber = "0" + mobileNumber;
             if (!mobileNumber.StartsWith("09") || mobileNumber.Length != 11)
-                Shared.PortalException.Throw("Invalid Mobile Number: " + mobileNumber);
+                mobileNumber = "Invalid Mobile Number";
 
             return mobileNumber;
         }
 
-        private static Message GetSubscriberOperatorInfo(Message message)
+        private static MessageObject GetSubscriberOperatorInfo(MessageObject message)
         {
             using (var entities = new PortalEntities())
             {
@@ -143,21 +147,54 @@ namespace Portal.Shared
             return message;
         }
 
-        public static Message CreateAutochargeMessage(Subscriber subscriber, AutochargeContent autochargeContent)
+        public static MessageObject CreateMessage(Subscriber subscriber, string content, long contentId, MessageType messageType, ProcessStatus processStatus, int ImiMessageType, int ImiChargeCode, long AggregatorId, int messagePoint)
         {
-            var message = new Message();
-            message.Content = autochargeContent.Content;
+            var message = new MessageObject();
+            message.Content = content;
             message.MobileNumber = subscriber.MobileNumber;
             message.SubscriberId = subscriber.Id;
-            message.ContentId = autochargeContent.Id;
+            message.ContentId = contentId;
             message.MessageType = (int)MessageType.AutoCharge;
             message.ProcessStatus = (int)ProcessStatus.InQueue;
             message.ServiceId = subscriber.ServiceId;
-            //message. TODO
+            message.OperatorPlan = subscriber.OperatorPlan;
+            message.MobileOperator = subscriber.MobileOperator;
+            message.ImiMessageType = ImiMessageType;
+            message.ImiChargeCode = ImiChargeCode;
+            message.AggregatorId = AggregatorId;
+            message.Point = messagePoint;
             return message;
         }
 
-        public static Message SetImiChargeCode(Message message, int chargeCode, int messageType)
+        public static void HandleReceivedMessage(ReceievedMessage receivedMessage)
+        {
+            var message = new MessageObject();
+            message.MobileNumber = receivedMessage.MobileNumber;
+            message.ShortCode = receivedMessage.ShortCode;
+            message.Content = receivedMessage.Content;
+
+            using (var entity = new PortalEntities())
+            {
+                var serviceShortCodes = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == message.ShortCode);
+                if (serviceShortCodes == null)
+                    Portal.Shared.PortalException.Throw("Invalid service short code : " + message.ShortCode);
+                var service = entity.Services.FirstOrDefault(o => o.Id == serviceShortCodes.ServiceId);
+                if (service == null)
+                    Portal.Shared.PortalException.Throw("Invalid service for: " + message.ShortCode);
+                message = Portal.Shared.MessageHandler.ValidateMessage(message);
+                message.ServiceId = service.Id;
+
+                //if (service.ServiceCode == "RPS")
+                //    Portal.Services.RockPaperScissor.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "Danestan")
+                    Portal.Services.Danestan.HandleMo.ReceivedMessage(message, service);
+                receivedMessage.IsProcessed = true;
+                entity.Entry(receivedMessage).State = System.Data.Entity.EntityState.Modified;
+                entity.SaveChanges();
+            }
+        }
+
+        public static MessageObject SetImiChargeCode(MessageObject message, int chargeCode, int messageType)
         {
             message.ImiChargeCode = chargeCode;
             message.ImiMessageType = messageType;

@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using Portal.Models;
 
 namespace Portal.Services.Danestan
 {
     public class ServiceHandler
     {
-        public static AutochargeContent SelectAutochargeContent(DanestanEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContentByOrder(DanestanEntities entity, long subscriberId)
         {
             AutochargeContent autochargeContent = null;
             var lastContentSubscriberReceived = entity.LastAutochargeContentSendedToUsers.FirstOrDefault(o => o.SubscriberId == subscriberId);
@@ -30,6 +29,23 @@ namespace Portal.Services.Danestan
                     lastContentSubscriberReceived.AutochargeContentId = nextAutochargeContent.Id;
                     entity.Entry(lastContentSubscriberReceived).State = System.Data.Entity.EntityState.Modified;
                 }
+            }
+            entity.SaveChanges();
+            return autochargeContent;
+        }
+
+        public static AutochargeContent SelectAutochargeContentByDate(DanestanEntities entity, long subscriberId)
+        {
+            var today = DateTime.Now.Date;
+            var autochargesAlreadyInQueue = entity.AutochargeMessagesBuffers.Where(o => DbFunctions.TruncateTime(o.DateAddedToQueue) == today).Select(o => o.Id).ToList();
+
+            var autochargeContent = entity.AutochargeContents.FirstOrDefault(o => DbFunctions.TruncateTime(o.SendDate) == today && !autochargesAlreadyInQueue.Contains(o.Id));
+            if (autochargeContent != null)
+            {
+                var lastContent = new LastAutochargeContentSendedToUser();
+                lastContent.SubscriberId = subscriberId;
+                lastContent.AutochargeContentId = autochargeContent.Id;
+                entity.LastAutochargeContentSendedToUsers.Add(lastContent);
             }
             entity.SaveChanges();
             return autochargeContent;

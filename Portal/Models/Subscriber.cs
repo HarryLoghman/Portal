@@ -18,6 +18,7 @@ namespace Portal.Models
         public Subscriber()
         {
             this.RPS_SubscribersAdditionalInfo = new HashSet<RPS_SubscribersAdditionalInfo>();
+            this.SubscribersPoints = new HashSet<SubscribersPoint>();
         }
     
         public long Id { get; set; }
@@ -37,5 +38,7 @@ namespace Portal.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RPS_SubscribersAdditionalInfo> RPS_SubscribersAdditionalInfo { get; set; }
         public virtual Service Service { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SubscribersPoint> SubscribersPoints { get; set; }
     }
 }

@@ -6,15 +6,17 @@
 <div class="k-rtl" id="grid"></div>
 
 <script>
+    var gridElement = $("#grid");
+
     $("#grid").kendoGrid({
 
         columns: [
-            { field: "Id", title: "ردیف" },
+            { field: "Id", title: "ردیف", width: 100 },
             { field: "Content", title: "محتوی", editor: textAreaEditor },
-            { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند(بر اساس روز)" },
-            { field: "Price", title: "هزینه پیام" },
-            { field: "Point", title: "امتیاز", },
-            { command: ["edit", "destroy"], width: 180 }
+            { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند(بر اساس روز)", width: 100 },
+            { field: "Price", title: "هزینه پیام", width: 100 },
+            { field: "Point", title: "امتیاز", width: 100 },
+            { command: ["edit", "destroy", { text: "انتقال به صف", click: sendToMessagesQueue }], width: 300 }
         ],
         toolbar: ["create"],
         dataSource: {
@@ -85,13 +87,46 @@
         scrollable: false,
         dataBound: function (e) {
             e.sender.dataItems().forEach(function (entry) {
-                if (entry.IsAddedToSendQueue == true)
-                    disableGridButtons(entry.uid);
+                if (entry.IsAddingMessagesToSendQueue == true && entry.IsAddedToSendQueueFinished == true)
+                    hideGridButtons(entry);
+                else if (entry.IsAddingMessagesToSendQueue == true && entry.IsAddedToSendQueueFinished == false)
+                    disableGridButtons(entry);
             });
         }
     });
 
     function disableGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-button").hide();
+        $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").show();
+        $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").attr("disabled", true);
+        if (entry.IsAddingMessagesToSendQueue == true && entry.IsAddedToSendQueueFinished == false)
+            $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").text("در حال افزودن به صف...");
+        else
+            $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").text("به صف ارسال فرستاده شد");
+    }
+
+    function hideGridButtons(entry) {
         $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
+    }
+
+    function sendToMessagesQueue(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        if (dataItem.IsAddingMessagesToSendQueue == true && dataItem.IsAddedToSendQueueFinished == false)
+            return;
+        kendo.ui.progress(gridElement, true);
+        $.ajax({
+            url: '@Url.Action("SendToMessagesQueue", "EventbaseContent")',
+            data: { Id: dataItem.id },
+            dataType: 'html',
+            success: function (data) {
+            },
+            complete: function (data) {
+                kendo.ui.progress(gridElement, false);
+                $('#grid').data('kendoGrid').dataSource.read();
+                $('#grid').data('kendoGrid').refresh();
+            },
+        });
     }
 </script>
