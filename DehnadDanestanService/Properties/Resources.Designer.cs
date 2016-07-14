@@ -61,7 +61,7 @@ namespace DehnadDanestanService.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hamrahvas.
+        ///   Looks up a localized string similar to PardisImi.
         /// </summary>
         public static string AggregatorName {
             get {

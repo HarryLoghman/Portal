@@ -10,8 +10,6 @@ namespace Portal.Shared
         public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, Service service, bool isUserWantsToUnsubscribe)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
-            if (message.MobileOperator == (int)MessageHandler.MobileOperators.Mci)
-                message = MessageHandler.SetImiChargeCode(message, 0, 21);
             message.MessageType = (int)MessageHandler.MessageType.OnDemand;
 
             if (isUserWantsToUnsubscribe == true)
@@ -88,12 +86,42 @@ namespace Portal.Shared
                 newSubscriber.PersianActivationDate = Shared.Date.GetPersianDate();
                 newSubscriber.MobileOperator = message.MobileOperator;
                 newSubscriber.OperatorPlan = message.OperatorPlan;
+                newSubscriber.SubscriberUniqueId = CreateUniqueId();
                 entity.Subscribers.Add(newSubscriber);
                 entity.SaveChanges();
+
+                AddSubscriberToSubscriberPointsTable(newSubscriber, service);
 
                 AddToSubscriberHistory(message.MobileNumber, message.ShortCode, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
             }
             return ServiceStatusForSubscriberState.Activated;
+        }
+
+        private static string CreateUniqueId()
+        {
+            Random random = new Random();
+            var unqiueId = random.Next(10000000, 99999999).ToString();
+            using (var entity = new PortalEntities())
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                var subsriber = entity.Subscribers.FirstOrDefault(o => o.SubscriberUniqueId == unqiueId);
+                if (subsriber != null)
+                    unqiueId = CreateUniqueId();
+            }
+            return unqiueId;
+        }
+
+        private static void AddSubscriberToSubscriberPointsTable(Subscriber newSubscriber, Service service)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var subscriberPoint = new SubscribersPoint();
+                subscriberPoint.ServiceId = service.Id;
+                subscriberPoint.SubscriberId = newSubscriber.Id;
+                subscriberPoint.Point = 0;
+                entity.SubscribersPoints.Add(subscriberPoint);
+                entity.SaveChanges();
+            }
         }
 
         private static void AddToSubscriberHistory(string mobileNumber, string shortCode, Service service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent)

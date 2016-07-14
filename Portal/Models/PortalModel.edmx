@@ -138,6 +138,7 @@
           <Property Name="PersianDeactivationDate" Type="nvarchar" MaxLength="50" />
           <Property Name="MobileOperator" Type="bigint" Nullable="false" />
           <Property Name="OperatorPlan" Type="bigint" Nullable="false" />
+          <Property Name="SubscriberUniqueId" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -507,6 +508,7 @@
           <NavigationProperty Name="RPS_SubscribersAdditionalInfo" Relationship="PortalModel.FK_RPS_SubscribersAdditionalInfo_Subscribers" FromRole="Subscriber" ToRole="RPS_SubscribersAdditionalInfo" />
           <NavigationProperty Name="Service" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Subscriber" ToRole="Service" />
           <NavigationProperty Name="SubscribersPoints" Relationship="PortalModel.FK_SubscribersPoints_Subscribers" FromRole="Subscriber" ToRole="SubscribersPoint" />
+          <Property Name="SubscriberUniqueId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -767,6 +769,7 @@
           <EntitySetMapping Name="Subscribers">
             <EntityTypeMapping TypeName="PortalModel.Subscriber">
               <MappingFragment StoreEntitySet="Subscribers">
+                <ScalarProperty Name="SubscriberUniqueId" ColumnName="SubscriberUniqueId" />
                 <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
                 <ScalarProperty Name="MobileOperator" ColumnName="MobileOperator" />
                 <ScalarProperty Name="PersianDeactivationDate" ColumnName="PersianDeactivationDate" />

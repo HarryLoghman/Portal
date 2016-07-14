@@ -108,13 +108,20 @@ namespace Portal.Shared
             return content;
         }
 
-        private static string ValidateShortCode(string shortCode)
+        public static string ValidateShortCode(string shortCode)
         {
-            return shortCode.Replace(" ", "");
+            shortCode = shortCode.Replace(" ", "");
+            if (shortCode.StartsWith("+"))
+                shortCode = shortCode.TrimStart('+');
+            if (shortCode.StartsWith("98"))
+                shortCode = shortCode.Remove(0, 2);
+            return shortCode;
         }
 
         public static string ValidateNumber(string mobileNumber)
         {
+            if (mobileNumber == null)
+                mobileNumber = "Invalid Mobile Number";
             if (mobileNumber.StartsWith("+"))
                 mobileNumber = mobileNumber.TrimStart('+');
             if (mobileNumber.StartsWith("98"))
@@ -147,23 +154,38 @@ namespace Portal.Shared
             return message;
         }
 
-        public static MessageObject CreateMessage(Subscriber subscriber, string content, long contentId, MessageType messageType, ProcessStatus processStatus, int ImiMessageType, int ImiChargeCode, long AggregatorId, int messagePoint)
+        public static MessageObject CreateMessage(Subscriber subscriber, string content, long contentId, MessageType messageType, ProcessStatus processStatus, int ImiMessageType, ImiChargeCode ImiChargeObject, long AggregatorId, int messagePoint, int? tag)
         {
             var message = new MessageObject();
             message.Content = content;
             message.MobileNumber = subscriber.MobileNumber;
             message.SubscriberId = subscriber.Id;
             message.ContentId = contentId;
-            message.MessageType = (int)MessageType.AutoCharge;
-            message.ProcessStatus = (int)ProcessStatus.InQueue;
+            message.MessageType = (int)messageType;
+            message.ProcessStatus = (int)processStatus;
             message.ServiceId = subscriber.ServiceId;
             message.OperatorPlan = subscriber.OperatorPlan;
             message.MobileOperator = subscriber.MobileOperator;
             message.ImiMessageType = ImiMessageType;
-            message.ImiChargeCode = ImiChargeCode;
+            message.ImiChargeCode = ImiChargeObject.ChargeCode;
+            message.ImiChargeKey = ImiChargeObject.ChargeKey;
             message.AggregatorId = AggregatorId;
             message.Point = messagePoint;
+            message.Tag = tag;
             return message;
+        }
+
+        public static int GetSubscriberPoint(long subscriberId, long? serviceId)
+        {
+            int point = 0;
+            using (var entity = new PortalEntities())
+            {
+                if (serviceId != null)
+                    point = entity.SubscribersPoints.FirstOrDefault(o => o.SubscriberId == subscriberId && o.ServiceId == serviceId).Point;
+                else
+                    point = entity.SubscribersPoints.Where(o => o.SubscriberId == subscriberId).Select(o => o.Point).DefaultIfEmpty(0).Sum();
+            }
+            return point;
         }
 
         public static void HandleReceivedMessage(ReceievedMessage receivedMessage)
@@ -172,6 +194,8 @@ namespace Portal.Shared
             message.MobileNumber = receivedMessage.MobileNumber;
             message.ShortCode = receivedMessage.ShortCode;
             message.Content = receivedMessage.Content;
+            message.ProcessStatus = (int)ProcessStatus.TryingToSend;
+            message.MessageType = (int)MessageType.OnDemand;
 
             using (var entity = new PortalEntities())
             {
@@ -192,13 +216,6 @@ namespace Portal.Shared
                 entity.Entry(receivedMessage).State = System.Data.Entity.EntityState.Modified;
                 entity.SaveChanges();
             }
-        }
-
-        public static MessageObject SetImiChargeCode(MessageObject message, int chargeCode, int messageType)
-        {
-            message.ImiChargeCode = chargeCode;
-            message.ImiMessageType = messageType;
-            return message;
         }
 
         public enum MessageType

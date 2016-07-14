@@ -26,15 +26,24 @@
                 },
                 create: {
                     url: "AutochargeContents/AutochargeContents_Create",
-                    type: "POST"
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
                 },
                 update: {
                     url: "AutochargeContents/AutochargeContents_Update",
-                    type: "POST"
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
                 },
                 destroy: {
                     url: "AutochargeContents/AutochargeContents_Destroy",
-                    type: "POST"
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
                 },
             },
             schema: {

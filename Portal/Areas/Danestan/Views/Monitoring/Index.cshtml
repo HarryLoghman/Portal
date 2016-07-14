@@ -22,19 +22,21 @@
     $("#grid").kendoGrid({
 
         columns: [
-            { field: "MessageType", title: "نوع محتوا", width: 100 },
+            { field: "PersianDateCreated", title: "تاریخ", width: 100 },
+            { field: "MessageType", title: "نوع محتوا", template: "#= MessageType == 2 ? 'محتوای ایونت بیس' : 'محتوای اتوشارژ' #", width: 100 },
             { field: "ContentId", title: "شماره محتوا", width: 100 },
+            { field: "Tag", title: "شماره ارسال(مخصوص اتوشارژ)", width: 100 },
             { field: "TotalMessages", title: "تعداد پیامک", width: 100 },
             { field: "TotalSuccessfulySended", title: "تعداد ارسال موفق", width: 100 },
             { field: "TotalFailed", title: "تعداد خطا", width: 100 },
             { field: "Status", title: "وضعیت", width: 100 },
-            { command: [{ text: "انتقال به صف", click: sendToMessagesQueue }], width: 300 }
+            { command: [{ text: "ارسال", click: SendButton }], width: 300 }
         ],
         dataSource: {
             type: "aspnetmvc-ajax",
             transport: {
                 read: {
-                    url: "EventbaseContents/EventbaseContents_Read",
+                    url: "Monitoring/Monitoring_Read",
                     type: "POST"
                 }
             },
@@ -45,11 +47,14 @@
                 model: {
                     id: "Id",
                     fields: {
-                        Id: { type: "number", editable: false },
-                        Content: { type: "string", validation: { required: true }, nullable: false },
-                        SubscriberNotSendedMoInDays: { type: "int", validation: { required: true }, defaultValue: 0 },
-                        Price: { type: "int", validation: { required: true }, defaultValue: 0 },
-                        Point: { type: "int", validation: { required: true }, defaultValue: 0 },
+                        PersianDateCreated: { type: "string" },
+                        MessageType: { type: "number" },
+                        ContentId: { type: "number" },
+                        Tag: { type: "number" },
+                        TotalMessages: { type: "number" },
+                        TotalSuccessfulySended: { type: "number" },
+                        TotalFailed: { type: "number" },
+                        Status: { type: "number" },
                     }
                 }
             },
@@ -86,47 +91,42 @@
         scrollable: false,
         dataBound: function (e) {
             e.sender.dataItems().forEach(function (entry) {
-                if (entry.IsAddingMessagesToSendQueue == true && entry.IsAddedToSendQueueFinished == true)
-                    hideGridButtons(entry);
-                else if (entry.IsAddingMessagesToSendQueue == true && entry.IsAddedToSendQueueFinished == false)
-                    disableGridButtons(entry);
+                if (entry.Status == 2) {
+                    ChangeButtonTextToPauesed(entry.uid);
+                    AddLoadingAnimationToEachRow(entry.uid);
+                    loadingElement = $("#" + entry.uid + "-loading");
+                    kendo.ui.progress(loadingElement, true);
+                }
+                else if (entry.Status == 5)
+                    HideGridButtons(entry.uid);
+                else if (entry.Status == 6)
+                    ChangeButtonTextToResume(entry.uid);
             });
         }
     });
 
-    function disableGridButtons(entry) {
-        $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-button").hide();
-        $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").show();
-        $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").attr("disabled", true);
-        if (entry.IsAddingMessagesToSendQueue == true && entry.IsAddedToSendQueueFinished == false)
-            $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").text("در حال افزودن به صف...");
-        else
-            $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-grid-انتقالبهصف").text("به صف ارسال فرستاده شد");
+    function ChangeButtonTextToPauesed(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").text("توقف ارسال");
     }
 
-    function hideGridButtons(entry) {
+    function ChangeButtonTextToResume(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").text("ادامه ارسال");
+    }
+
+    function HideGridButtons(entry) {
         $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
     }
 
-    function sendToMessagesQueue(e) {
-        e.preventDefault();
+    function AddLoadingAnimationToEachRow(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").after("<span class='loadAnimation' id='" + entry + "-loading' >&nbsp;&nbsp;&nbsp;&nbsp;</span>");
+    }
 
-        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-        if (dataItem.IsAddingMessagesToSendQueue == true && dataItem.IsAddedToSendQueueFinished == false)
-            return;
-        kendo.ui.progress(gridElement, true);
-        $.ajax({
-            url: '@Url.Action("SendToMessagesQueue", "EventbaseContent")',
-            data: { Id: dataItem.id },
-            dataType: 'html',
-            success: function (data) {
-            },
-            complete: function (data) {
-                kendo.ui.progress(gridElement, false);
-                $('#grid').data('kendoGrid').dataSource.read();
-                $('#grid').data('kendoGrid').refresh();
-            },
-        });
+    function DisbaleGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").addClass("k-state-disabled ");
+    }
+
+    function EnableGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").removeClass("k-state-disabled ");
     }
 
     function SendButton(e) {
@@ -135,16 +135,17 @@
         e.preventDefault();
         var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
         var loadingElement = $("#" + dataItem.uid + "-loading");
-        if (dataItem.ProcessStatus == 1) {
+        if (dataItem.Status == 1) {
             DisbaleGridButtons(dataItem.uid);
             $.ajax({
                 url: '@Url.Action("StartSendingMessages", "Monitoring")',
-                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType },
+                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
                 dataType: 'html',
                 success: function (data) {
                     kendo.ui.progress(loadingElement, true);
                     ChangeButtonTextToPauesed(dataItem.uid);
                     EnableGridButtons(dataItem.uid);
+                    $("#grid").data("kendoGrid").dataSource.read();
                 },
                 error: function () {
                     kendo.ui.progress(loadingElement, false);
@@ -152,16 +153,17 @@
                 },
             });
         }
-        else if (dataItem.ProcessStatus == 2) {
+        else if (dataItem.Status == 2) {
             DisbaleGridButtons(dataItem.uid);
             $.ajax({
                 url: '@Url.Action("PauseSendingMessages", "Monitoring")',
-                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType },
+                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
                 dataType: 'html',
                 success: function (data) {
                     kendo.ui.progress(loadingElement, false);
                     ChangeButtonTextToResume(dataItem.uid);
                     EnableGridButtons(dataItem.uid);
+                    $("#grid").data("kendoGrid").dataSource.read();
                 },
                 error: function () {
                     kendo.ui.progress(loadingElement, true);
@@ -169,16 +171,17 @@
                 },
             });
         }
-        else if (dataItem.ProcessStatus == 6) {
+        else if (dataItem.Status == 6) {
             DisbaleGridButtons(dataItem.uid);
             $.ajax({
                 url: '@Url.Action("ResumeSendingMessages", "Monitoring")',
-                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType },
+                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
                 dataType: 'html',
                 success: function (data) {
                     kendo.ui.progress(loadingElement, true);
                     ChangeButtonTextToPauesed(dataItem.uid);
                     EnableGridButtons(dataItem.uid);
+                    $("#grid").data("kendoGrid").dataSource.read();
                 },
                 error: function () {
                     kendo.ui.progress(loadingElement, false);

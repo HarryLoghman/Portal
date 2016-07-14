@@ -28,15 +28,24 @@
                 },
                 create: {
                     url: "EventbaseContents/EventbaseContents_Create",
-                    type: "POST"
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
                 },
                 update: {
                     url: "EventbaseContents/EventbaseContents_Update",
-                    type: "POST"
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
                 },
                 destroy: {
                     url: "EventbaseContents/EventbaseContents_Destroy",
-                    type: "POST"
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
                 },
             },
             schema: {
@@ -106,7 +115,7 @@
     }
 
     function hideGridButtons(entry) {
-        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
+        $("#grid").find('[data-uid="' + entry.uid + '"]').find(".k-button").hide();
     }
 
     function sendToMessagesQueue(e) {
@@ -117,7 +126,7 @@
             return;
         kendo.ui.progress(gridElement, true);
         $.ajax({
-            url: '@Url.Action("SendToMessagesQueue", "EventbaseContent")',
+            url: '@Url.Action("SendEventbaseToQueue", "EventbaseContents")',
             data: { Id: dataItem.id },
             dataType: 'html',
             success: function (data) {

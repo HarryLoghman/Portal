@@ -12,6 +12,8 @@ namespace Portal.Models
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class DanestanEntities : DbContext
     {
@@ -27,6 +29,7 @@ namespace Portal.Models
     
         public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
         public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
+        public virtual DbSet<AutochargeTimeTable> AutochargeTimeTables { get; set; }
         public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
         public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
         public virtual DbSet<ImiChargeCode> ImiChargeCodes { get; set; }
@@ -34,5 +37,34 @@ namespace Portal.Models
         public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
         public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
         public virtual DbSet<LastAutochargeContentSendedToUser> LastAutochargeContentSendedToUsers { get; set; }
+    
+        public virtual int ChangeMessageStatus(Nullable<int> messageType, Nullable<long> contentId, Nullable<int> tag, string persianDate, Nullable<int> currentStatus, Nullable<int> desiredProcessStatus)
+        {
+            var messageTypeParameter = messageType.HasValue ?
+                new ObjectParameter("MessageType", messageType) :
+                new ObjectParameter("MessageType", typeof(int));
+    
+            var contentIdParameter = contentId.HasValue ?
+                new ObjectParameter("ContentId", contentId) :
+                new ObjectParameter("ContentId", typeof(long));
+    
+            var tagParameter = tag.HasValue ?
+                new ObjectParameter("Tag", tag) :
+                new ObjectParameter("Tag", typeof(int));
+    
+            var persianDateParameter = persianDate != null ?
+                new ObjectParameter("PersianDate", persianDate) :
+                new ObjectParameter("PersianDate", typeof(string));
+    
+            var currentStatusParameter = currentStatus.HasValue ?
+                new ObjectParameter("CurrentStatus", currentStatus) :
+                new ObjectParameter("CurrentStatus", typeof(int));
+    
+            var desiredProcessStatusParameter = desiredProcessStatus.HasValue ?
+                new ObjectParameter("DesiredProcessStatus", desiredProcessStatus) :
+                new ObjectParameter("DesiredProcessStatus", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ChangeMessageStatus", messageTypeParameter, contentIdParameter, tagParameter, persianDateParameter, currentStatusParameter, desiredProcessStatusParameter);
+        }
     }
 }

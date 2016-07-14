@@ -10,6 +10,14 @@ namespace Portal.Services.Danestan
     public class MessageHandler
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public static void InvalidContentWhenSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0);
+            message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+            InsertMessageToQueue(message);
+        }
+
         public static void InsertMessageToQueue(MessageObject message)
         {
             using (var entity = new DanestanEntities())
@@ -66,16 +74,19 @@ namespace Portal.Services.Danestan
             }
         }
 
-        public static string HandleSpecialStrings(string content, int point, long subscriberId)
+        public static string HandleSpecialStrings(string content, int point, long subscriberId, long serviceId)
         {
             using (var entity = new PortalEntities())
             {
-                if (content.Contains("{POINT}"))
+                if (content.Contains("{DPOINT}"))
                 {
-                    var subscriberPoint = entity.SubscribersPoints.FirstOrDefault(o => o.SubscriberId == subscriberId);
-                    if (subscriberPoint != null)
-                        point += subscriberPoint.Point;
-                    content = content.Replace("{POINT}", point.ToString());
+                    point = Shared.MessageHandler.GetSubscriberPoint(subscriberId, serviceId);
+                    content = content.Replace("{DPOINT}", point.ToString());
+                }
+                if (content.Contains("{WPOINT}"))
+                {
+                    point = Shared.MessageHandler.GetSubscriberPoint(subscriberId, null);
+                    content = content.Replace("{WPOINT}", point.ToString());
                 }
             }
             return content;
@@ -90,13 +101,17 @@ namespace Portal.Services.Danestan
             messageBuffer.Content = message.Content;
             messageBuffer.ContentId = message.ContentId;
             messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
             messageBuffer.ImiMessageType = message.ImiMessageType;
             messageBuffer.MobileNumber = message.MobileNumber;
             messageBuffer.MessageType = message.MessageType;
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
             messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? Shared.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = Shared.Date.GetPersianDate(DateTime.Now);
             return messageBuffer;
@@ -111,13 +126,17 @@ namespace Portal.Services.Danestan
             messageBuffer.Content = message.Content;
             messageBuffer.ContentId = message.ContentId;
             messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
             messageBuffer.ImiMessageType = message.ImiMessageType;
             messageBuffer.MobileNumber = message.MobileNumber;
             messageBuffer.MessageType = message.MessageType;
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
             messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? Shared.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = Shared.Date.GetPersianDate(DateTime.Now);
             return messageBuffer;
@@ -132,24 +151,28 @@ namespace Portal.Services.Danestan
             messageBuffer.Content = message.Content;
             messageBuffer.ContentId = message.ContentId;
             messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
             messageBuffer.ImiMessageType = message.ImiMessageType;
             messageBuffer.MobileNumber = message.MobileNumber;
             messageBuffer.MessageType = message.MessageType;
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
             messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? Shared.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = Shared.Date.GetPersianDate(DateTime.Now);
             return messageBuffer;
         }
 
-        public static int GetImiChargeCodeFromPrice(int price)
+        public static ImiChargeCode GetImiChargeObjectFromPrice(int price)
         {
             using (var entity = new DanestanEntities())
             {
                 var imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
-                return imiChargeCode.ChargeCode;
+                return imiChargeCode;
             }
         }
 
@@ -164,8 +187,7 @@ namespace Portal.Services.Danestan
 
         public static void InvalidContentWhenNotSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            if (message.MobileOperator == (int)Shared.MessageHandler.MobileOperators.Mci)
-                message = Shared.MessageHandler.SetImiChargeCode(message, 0, 0);
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0);
             message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
             InsertMessageToQueue(message);
         }
@@ -219,7 +241,7 @@ namespace Portal.Services.Danestan
             using (var entity = new PortalEntities())
             {
                 if (eventbaseContent.SubscriberNotSendedMoInDays == 0)
-                    subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null);
+                    subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
                 else
                     subscribers = (from s in entity.Subscribers join r in entity.ReceievedMessages on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber }).ToList();
             }
@@ -231,22 +253,22 @@ namespace Portal.Services.Danestan
             using (var entity = new DanestanEntities())
             {
                 var messages = new List<MessageObject>();
-                var imiChargecode = MessageHandler.GetImiChargeCodeFromPrice(eventbaseContent.Price);
+                var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price);
                 foreach (var subscriber in subscribers)
                 {
-                    eventbaseContent.Content = HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.Id);
-                    var message = Shared.MessageHandler.CreateMessage(subscriber, eventbaseContent.Content, eventbaseContent.Id, Shared.MessageHandler.MessageType.EventBase, Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargecode, aggregatorId, eventbaseContent.Point);
+                    eventbaseContent.Content = HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.Id, serviceId.Value);
+                    var message = Shared.MessageHandler.CreateMessage(subscriber, eventbaseContent.Content, eventbaseContent.Id, Shared.MessageHandler.MessageType.EventBase, Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, eventbaseContent.Point, null);
                     messages.Add(message);
                 }
                 InsertBulkMessagesToQueue(messages);
                 eventbaseContent.IsAddedToSendQueueFinished = true;
                 entity.Entry(eventbaseContent).State = EntityState.Modified;
-                CreateMonitoringItem(eventbaseContent.Id, Shared.MessageHandler.MessageType.EventBase, subscribers.Count());
+                CreateMonitoringItem(eventbaseContent.Id, Shared.MessageHandler.MessageType.EventBase, subscribers.Count(), null);
                 entity.SaveChanges();
             }
         }
 
-        public static void CreateMonitoringItem(long contentId, Shared.MessageHandler.MessageType messageType, int totalMessages)
+        public static void CreateMonitoringItem(long? contentId, Shared.MessageHandler.MessageType messageType, int totalMessages, int? tag)
         {
             using (var entity = new DanestanEntities())
             {
@@ -257,12 +279,56 @@ namespace Portal.Services.Danestan
                 monitoringItem.TotalFailed = 0;
                 monitoringItem.TotalSuccessfulySended = 0;
                 monitoringItem.TotalWithoutCharge = 0;
+                monitoringItem.DateCreated = DateTime.Now;
+                monitoringItem.PersianDateCreated = Shared.Date.GetPersianDate(DateTime.Now);
                 monitoringItem.Status = (int)Shared.MessageHandler.ProcessStatus.InQueue;
+                monitoringItem.Tag = tag;
                 entity.MessagesMonitorings.Add(monitoringItem);
                 entity.SaveChanges();
             }
         }
 
+        public static MessageObject SetImiChargeInfo(MessageObject message, int price, int messageType)
+        {
+            var imiChargeObj = GetImiChargeObjectFromPrice(price);
+            message.ImiChargeCode = imiChargeObj.ChargeCode;
+            message.ImiChargeKey = imiChargeObj.ChargeKey;
+            message.ImiMessageType = messageType;
+            return message;
+        }
+
+        public static async Task SendMesssagesToPardisImi(DanestanEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            try
+            {
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                PardisImiServiceReference.SMS[] smsList = new PardisImiServiceReference.SMS[20];
+                System.Diagnostics.Debugger.Launch();
+                for (int index = 0; index < 20; index++)
+                {
+                    smsList[index] = new PardisImiServiceReference.SMS()
+                    {
+                        Index = index + 1,
+                        Addresses = "98" + messages[index].MobileNumber.TrimStart('0'),
+                        ShortCode = "98" + serviceAdditionalInfo["shortCode"],
+                        Message = messages[index].Content,
+                        ChargeCode = messages[index].ImiChargeKey,
+                        SubUnsubMoMessage = messages[index].SubUnSubMoMssage,
+                        SubUnsubType = (byte)messages[index].SubUnSubType
+                    };
+                }
+                var pardisClient = new PardisImiServiceReference.MTSoapClient();
+                var pardisResponse = pardisClient.SendSMS(serviceId, smsList);
+                foreach (var item in messages)
+                {
+                    item.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.Success;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendMesssagesToPardisImi: " + e);
+            }
+        }
         public static async Task SendMesssagesToHamrahvas(DanestanEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             List<string> mobileNumbers = new List<string>();
@@ -279,8 +345,8 @@ namespace Portal.Services.Danestan
                 mobileNumbers.Add(message.MobileNumber);
                 contents.Add(message.Content);
                 shortCodes.Add(serviceAdditionalInfo["shortCode"]);
-                ImiMessageType.Add(message.ImiMessageType.GetValueOrDefault());
-                ImiChargeCode.Add(message.ImiChargeCode.GetValueOrDefault());
+                ImiMessageType.Add(message.ImiMessageType);
+                ImiChargeCode.Add(message.ImiChargeCode);
                 serviceIds.Add(Convert.ToInt32(serviceAdditionalInfo["aggregatorServiceId"]));
                 //messageIds.Add(message.Id.ToString());
             }
@@ -330,6 +396,11 @@ namespace Portal.Services.Danestan
             catch (Exception e)
             {
                 logs.Error("Exception in Calling Hamrah Webservice", e);
+            }
+            foreach (var item in messages)
+            {
+                item.ProcessStatus = 3;
+                entity.Entry(item).State = EntityState.Modified;
             }
             entity.SaveChanges();
             logs.Info(" Send function ended ");

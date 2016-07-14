@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="PardisAvvalKish.ir" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="PardisAvvalKish.ir" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="PardisAvvalKish.ir">
+      <s:element name="SendSMS">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SPID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BatchSMS" type="tns:ArrayOfSMS" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfSMS">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SMS" nillable="true" type="tns:SMS" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SMS">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ShortCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Addresses" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ChargeCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Index" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubUnsubMoMessage" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="SubUnsubType" type="s:unsignedByte" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SendSMSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendSMSResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendSMS2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SPID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BatchSMS" type="tns:ArrayOfSMS" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendSMS2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendSMS2Result" type="tns:ArrayOfArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ArrayOfString" nillable="true" type="tns:ArrayOfString" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SendSMSPlus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SPID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BatchSMS" type="tns:ArrayOfSMS" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendSMSPlusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendSMSPlusResult" type="tns:ArrayOfArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SendSMSSoapIn">
+    <wsdl:part name="parameters" element="tns:SendSMS" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSSoapOut">
+    <wsdl:part name="parameters" element="tns:SendSMSResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendSMS2SoapIn">
+    <wsdl:part name="parameters" element="tns:SendSMS2" />
+  </wsdl:message>
+  <wsdl:message name="SendSMS2SoapOut">
+    <wsdl:part name="parameters" element="tns:SendSMS2Response" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSPlusSoapIn">
+    <wsdl:part name="parameters" element="tns:SendSMSPlus" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSPlusSoapOut">
+    <wsdl:part name="parameters" element="tns:SendSMSPlusResponse" />
+  </wsdl:message>
+  <wsdl:portType name="MTSoap">
+    <wsdl:operation name="SendSMS">
+      <wsdl:input message="tns:SendSMSSoapIn" />
+      <wsdl:output message="tns:SendSMSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS2">
+      <wsdl:input message="tns:SendSMS2SoapIn" />
+      <wsdl:output message="tns:SendSMS2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendSMSPlus">
+      <wsdl:input message="tns:SendSMSPlusSoapIn" />
+      <wsdl:output message="tns:SendSMSPlusSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MTSoap" type="tns:MTSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendSMS">
+      <soap:operation soapAction="PardisAvvalKish.ir/SendSMS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS2">
+      <soap:operation soapAction="PardisAvvalKish.ir/SendSMS2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMSPlus">
+      <soap:operation soapAction="PardisAvvalKish.ir/SendSMSPlus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MTSoap12" type="tns:MTSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendSMS">
+      <soap12:operation soapAction="PardisAvvalKish.ir/SendSMS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMS2">
+      <soap12:operation soapAction="PardisAvvalKish.ir/SendSMS2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendSMSPlus">
+      <soap12:operation soapAction="PardisAvvalKish.ir/SendSMSPlus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MT">
+    <wsdl:port name="MTSoap" binding="tns:MTSoap">
+      <soap:address location="http://10.20.22.18:1090/mt.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MTSoap12" binding="tns:MTSoap12">
+      <soap12:address location="http://10.20.22.18:1090/mt.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

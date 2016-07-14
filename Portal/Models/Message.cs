@@ -20,10 +20,14 @@ namespace Portal.Models
         public int MessageType { get; set; }
         public int ImiChargeCode { get; set; }
         public int ImiMessageType { get; set; }
+        public string ImiChargeKey { get; set; }
         public int ProcessStatus { get; set; }
         public long MobileOperator { get; set; }
         public long OperatorPlan { get; set; }
         public long AggregatorId { get; set; }
+        public string SubUnSubMoMssage { get; set; }
+        public int SubUnSubType { get; set; }
         public int Point { get; set; }
+        public int? Tag { get; set; }
     }
 }

@@ -40,6 +40,18 @@
           <Property Name="ImiChargeCode" Type="int" />
           <Property Name="ImiMessageType" Type="int" />
           <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="int" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Tag" Type="int" Nullable="false" />
+          <Property Name="SendTime" Type="time" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -76,6 +88,10 @@
           <Property Name="ImiChargeCode" Type="int" />
           <Property Name="ImiMessageType" Type="int" />
           <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="int" />
+          <Property Name="Tag" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -101,13 +117,16 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ContentId" Type="bigint" Nullable="false" />
+          <Property Name="ContentId" Type="bigint" />
           <Property Name="MessageType" Type="int" Nullable="false" />
           <Property Name="TotalMessages" Type="int" Nullable="false" />
           <Property Name="TotalSuccessfulySended" Type="int" Nullable="false" />
           <Property Name="TotalFailed" Type="int" Nullable="false" />
           <Property Name="TotalWithoutCharge" Type="int" Nullable="false" />
           <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Tag" Type="int" />
         </EntityType>
         <EntityType Name="MessagesTemplate">
           <Key>
@@ -139,10 +158,23 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="ImiChargeCode" Type="int" />
           <Property Name="ImiMessageType" Type="int" />
           <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="int" />
+          <Property Name="Tag" Type="int" />
         </EntityType>
+        <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MessageType" Type="int" Mode="In" />
+          <Parameter Name="ContentId" Type="bigint" Mode="In" />
+          <Parameter Name="Tag" Type="int" Mode="In" />
+          <Parameter Name="PersianDate" Type="nvarchar" Mode="In" />
+          <Parameter Name="CurrentStatus" Type="int" Mode="In" />
+          <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="DanestanModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeMessagesBuffer" EntityType="Self.AutochargeMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeTimeTable" EntityType="Self.AutochargeTimeTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseMessagesBuffer" EntityType="Self.EventbaseMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCodes" Schema="dbo" store:Type="Tables" />
@@ -163,6 +195,7 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
         <EntityContainer Name="DanestanEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AutochargeContents" EntityType="DanestanModel.AutochargeContent" />
           <EntitySet Name="AutochargeMessagesBuffers" EntityType="DanestanModel.AutochargeMessagesBuffer" />
+          <EntitySet Name="AutochargeTimeTables" EntityType="DanestanModel.AutochargeTimeTable" />
           <EntitySet Name="EventbaseContents" EntityType="DanestanModel.EventbaseContent" />
           <EntitySet Name="EventbaseMessagesBuffers" EntityType="DanestanModel.EventbaseMessagesBuffer" />
           <EntitySet Name="ImiChargeCodes" EntityType="DanestanModel.ImiChargeCode" />
@@ -170,6 +203,14 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <EntitySet Name="MessagesTemplates" EntityType="DanestanModel.MessagesTemplate" />
           <EntitySet Name="OnDemandMessagesBuffers" EntityType="DanestanModel.OnDemandMessagesBuffer" />
           <EntitySet Name="LastAutochargeContentSendedToUsers" EntityType="DanestanModel.LastAutochargeContentSendedToUser" />
+          <FunctionImport Name="ChangeMessageStatus">
+            <Parameter Name="MessageType" Mode="In" Type="Int32" />
+            <Parameter Name="ContentId" Mode="In" Type="Int64" />
+            <Parameter Name="Tag" Mode="In" Type="Int32" />
+            <Parameter Name="PersianDate" Mode="In" Type="String" />
+            <Parameter Name="CurrentStatus" Mode="In" Type="Int32" />
+            <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -206,6 +247,18 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="ImiChargeCode" Type="Int32" />
           <Property Name="ImiMessageType" Type="Int32" />
           <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Int32" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tag" Type="Int32" Nullable="false" />
+          <Property Name="SendTime" Type="Time" Nullable="false" Precision="7" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -242,6 +295,10 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="ImiChargeCode" Type="Int32" />
           <Property Name="ImiMessageType" Type="Int32" />
           <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Int32" />
+          <Property Name="Tag" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -257,13 +314,16 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ContentId" Type="Int64" Nullable="false" />
+          <Property Name="ContentId" Type="Int64" />
           <Property Name="MessageType" Type="Int32" Nullable="false" />
           <Property Name="TotalMessages" Type="Int32" Nullable="false" />
           <Property Name="TotalSuccessfulySended" Type="Int32" Nullable="false" />
           <Property Name="TotalFailed" Type="Int32" Nullable="false" />
           <Property Name="TotalWithoutCharge" Type="Int32" Nullable="false" />
           <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Tag" Type="Int32" />
         </EntityType>
         <EntityType Name="MessagesTemplate">
           <Key>
@@ -295,6 +355,10 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="ImiChargeCode" Type="Int32" />
           <Property Name="ImiMessageType" Type="Int32" />
           <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Int32" />
+          <Property Name="Tag" Type="Int32" />
         </EntityType>
         <EntityType Name="LastAutochargeContentSendedToUser">
           <Key>
@@ -328,6 +392,10 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="DanestanModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
                 <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
                 <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
@@ -344,6 +412,15 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
                 <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeTimeTables">
+            <EntityTypeMapping TypeName="DanestanModel.AutochargeTimeTable">
+              <MappingFragment StoreEntitySet="AutochargeTimeTable">
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -366,6 +443,10 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="DanestanModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
                 <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
                 <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
@@ -399,6 +480,9 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <EntitySetMapping Name="MessagesMonitorings">
             <EntityTypeMapping TypeName="DanestanModel.MessagesMonitoring">
               <MappingFragment StoreEntitySet="MessagesMonitoring">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="TotalWithoutCharge" ColumnName="TotalWithoutCharge" />
                 <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
@@ -423,6 +507,10 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="DanestanModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
                 <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
                 <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
@@ -451,6 +539,7 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="DanestanModel.Store.ChangeMessageStatus" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -31,5 +31,9 @@ namespace Portal.Models
         public Nullable<int> ImiChargeCode { get; set; }
         public Nullable<int> ImiMessageType { get; set; }
         public Nullable<long> SubscriberId { get; set; }
+        public string ImiChargeKey { get; set; }
+        public string SubUnSubMoMssage { get; set; }
+        public Nullable<int> SubUnSubType { get; set; }
+        public Nullable<int> Tag { get; set; }
     }
 }

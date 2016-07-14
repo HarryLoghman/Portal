@@ -12,10 +12,12 @@ CREATE TABLE [dbo].[Subscribers]
 [PersianActivationDate] [nvarchar] (50) COLLATE Persian_100_CI_AI NULL,
 [PersianDeactivationDate] [nvarchar] (50) COLLATE Persian_100_CI_AI NULL,
 [MobileOperator] [bigint] NOT NULL,
-[OperatorPlan] [bigint] NOT NULL
+[OperatorPlan] [bigint] NOT NULL,
+[SubscriberUniqueId] [nvarchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Subscribers] ADD 
+CONSTRAINT [PK_Subscribers] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Subscribers] ADD CONSTRAINT [PK_Subscribers] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[Subscribers] ADD CONSTRAINT [FK_Subscribers_Subscribers] FOREIGN KEY ([ServiceId]) REFERENCES [dbo].[Services] ([Id])
 GO

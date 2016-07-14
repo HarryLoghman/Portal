@@ -27,6 +27,7 @@ namespace Portal.Areas.Danestan.Controllers
                 Id = messageMonitoring.Id,
                 ContentId = messageMonitoring.ContentId,
                 MessageType = messageMonitoring.MessageType,
+                PersianDateCreated = messageMonitoring.PersianDateCreated,
                 TotalMessages = messageMonitoring.TotalMessages,
                 TotalSuccessfulySended = messageMonitoring.TotalSuccessfulySended,
                 TotalFailed = messageMonitoring.TotalFailed,
@@ -63,11 +64,13 @@ namespace Portal.Areas.Danestan.Controllers
         {
             var contentId = Convert.ToInt64(Request["ContentId"]);
             var messageType = Convert.ToInt32(Request["MessageType"]);
-            if(messageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
-                db.AutochargeMessagesBuffers.Where(o => o.Id == contentId && o.MessageType == messageType && o.ProcessStatus == (int)Shared.MessageHandler.ProcessStatus.InQueue).ToList().ForEach(o => o.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.TryingToSend);
+            var tag = Convert.ToInt32(Request["Tag"]);
+            var persianDateCreated = Request["PersianDateCreated"];
+            if (messageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
             else
-                db.EventbaseMessagesBuffers.Where(o => o.Id == contentId && o.MessageType == messageType && o.ProcessStatus == (int)Shared.MessageHandler.ProcessStatus.InQueue).ToList().ForEach(o => o.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.TryingToSend);
-            db.SaveChanges();
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
+
             return Content("Ok");
         }
 
@@ -75,11 +78,13 @@ namespace Portal.Areas.Danestan.Controllers
         {
             var contentId = Convert.ToInt64(Request["ContentId"]);
             var messageType = Convert.ToInt32(Request["MessageType"]);
+            var tag = Convert.ToInt32(Request["Tag"]);
+            var persianDateCreated = Request["PersianDateCreated"];
             if (messageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
-                db.AutochargeMessagesBuffers.Where(o => o.Id == contentId && o.MessageType == messageType && o.ProcessStatus == (int)Shared.MessageHandler.ProcessStatus.TryingToSend).ToList().ForEach(o => o.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.Paused);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused);
             else
-                db.EventbaseMessagesBuffers.Where(o => o.Id == contentId && o.MessageType == messageType && o.ProcessStatus == (int)Shared.MessageHandler.ProcessStatus.TryingToSend).ToList().ForEach(o => o.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.Paused);
-            db.SaveChanges();
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused);
+
             return Content("Ok");
         }
 
@@ -87,11 +92,13 @@ namespace Portal.Areas.Danestan.Controllers
         {
             var contentId = Convert.ToInt64(Request["ContentId"]);
             var messageType = Convert.ToInt32(Request["MessageType"]);
+            var tag = Convert.ToInt32(Request["Tag"]);
+            var persianDateCreated = Request["PersianDateCreated"];
             if (messageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
-                db.AutochargeMessagesBuffers.Where(o => o.Id == contentId && o.MessageType == messageType && o.ProcessStatus == (int)Shared.MessageHandler.ProcessStatus.Paused).ToList().ForEach(o => o.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.TryingToSend);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
             else
-                db.EventbaseMessagesBuffers.Where(o => o.Id == contentId && o.MessageType == messageType && o.ProcessStatus == (int)Shared.MessageHandler.ProcessStatus.Paused).ToList().ForEach(o => o.ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.TryingToSend);
-            db.SaveChanges();
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
+
             return Content("Ok");
         }
     }

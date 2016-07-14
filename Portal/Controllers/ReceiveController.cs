@@ -7,17 +7,18 @@ namespace Portal.Controllers
     {
         // /Receive/Message?mobileNumber=09125612694&shortCode=2050&content=hi&receiveTime=22&messageId=45
         [HttpGet]
-        public string Message([FromUri]MessageObject message)
+        public string Message([FromUri]MessageObject messageObj)
         {
-            if (message.MobileNumber == null && message.Address != null)
+            if (messageObj.MobileNumber == null && messageObj.Address != null)
             {
-                message.MobileNumber = message.Address;
-                message.Content = message.Message;
+                messageObj.MobileNumber = messageObj.Address;
+                messageObj.Content = messageObj.Message;
             }
-            message.MobileNumber = Shared.MessageHandler.ValidateNumber(message.MobileNumber);
-            if (message.MobileNumber == "Invalid Mobile Number")
+            messageObj.MobileNumber = Shared.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
                 return "-1";
-            Shared.MessageHandler.SaveReceivedMessage(message);
+            messageObj.ShortCode = Shared.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+            Shared.MessageHandler.SaveReceivedMessage(messageObj);
             return "1";
         }
     }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Portal.Models;
 
 namespace DehnadDanestanService
@@ -17,7 +14,7 @@ namespace DehnadDanestanService
                 using (var entity = new DanestanEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true);
+                    var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
                     if (eventbaseContent == null)
                         return;
                     if (eventbaseContent.Content == null || eventbaseContent.Content.Trim() == "")

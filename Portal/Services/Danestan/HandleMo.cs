@@ -12,7 +12,13 @@ namespace Portal.Services.Danestan
             if (service.OnKeywords.Contains(message.Content) || isUserWantsToUnsubscribe == true)
             {
                 var serviceStatusForSubscriberState = HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
+                if (serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                {
+                    message.SubUnSubMoMssage = message.Content;
+                    message.SubUnSubType = 1;
+                }
                 message.Content = Shared.MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                message = MessageHandler.SetImiChargeInfo(message, 0, 21);
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
@@ -23,8 +29,8 @@ namespace Portal.Services.Danestan
                 MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 return;
             }
-            ContentManager.HandleContent(message, service, subscriber);
-
+            message.SubscriberId = subscriber.Id;
+            ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
         }
     }
 }

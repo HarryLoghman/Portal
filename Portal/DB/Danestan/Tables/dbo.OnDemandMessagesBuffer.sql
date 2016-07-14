@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[MessagesBuffer]
+CREATE TABLE [dbo].[OnDemandMessagesBuffer]
 (
 [Id] [bigint] NOT NULL IDENTITY(1, 1),
 [MobileNumber] [nvarchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -16,8 +16,12 @@ CREATE TABLE [dbo].[MessagesBuffer]
 [MessagePoint] [int] NULL,
 [ImiChargeCode] [int] NULL,
 [ImiMessageType] [int] NULL,
-[SubscriberId] [bigint] NULL
+[SubscriberId] [bigint] NULL,
+[ImiChargeKey] [nvarchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[SubUnSubMoMssage] [nvarchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[SubUnSubType] [int] NULL,
+[Tag] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[MessagesBuffer] ADD CONSTRAINT [PK_MessagesBuffer] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
+ALTER TABLE [dbo].[OnDemandMessagesBuffer] ADD CONSTRAINT [PK_OnDemandMessagesBuffer] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
 GO

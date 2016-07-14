@@ -18,7 +18,7 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Resources.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false).ToList();
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;

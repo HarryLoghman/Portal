@@ -12,18 +12,10 @@ namespace Portal.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class MessagesMonitoring
+    public partial class AutochargeTimeTable
     {
         public long Id { get; set; }
-        public Nullable<long> ContentId { get; set; }
-        public int MessageType { get; set; }
-        public int TotalMessages { get; set; }
-        public int TotalSuccessfulySended { get; set; }
-        public int TotalFailed { get; set; }
-        public int TotalWithoutCharge { get; set; }
-        public int Status { get; set; }
-        public System.DateTime DateCreated { get; set; }
-        public string PersianDateCreated { get; set; }
-        public Nullable<int> Tag { get; set; }
+        public int Tag { get; set; }
+        public System.TimeSpan SendTime { get; set; }
     }
 }

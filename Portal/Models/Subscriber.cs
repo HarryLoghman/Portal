@@ -34,6 +34,7 @@ namespace Portal.Models
         public string PersianDeactivationDate { get; set; }
         public long MobileOperator { get; set; }
         public long OperatorPlan { get; set; }
+        public string SubscriberUniqueId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RPS_SubscribersAdditionalInfo> RPS_SubscribersAdditionalInfo { get; set; }
