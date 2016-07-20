@@ -16,6 +16,6 @@ namespace Portal.Models
     {
         public long Id { get; set; }
         public int Tag { get; set; }
-        public System.TimeSpan SendTime { get; set; }
+        public string SendTime { get; set; }
     }
 }

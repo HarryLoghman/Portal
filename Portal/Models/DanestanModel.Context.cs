@@ -28,15 +28,18 @@ namespace Portal.Models
         }
     
         public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
-        public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
-        public virtual DbSet<AutochargeTimeTable> AutochargeTimeTables { get; set; }
         public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
-        public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
         public virtual DbSet<ImiChargeCode> ImiChargeCodes { get; set; }
         public virtual DbSet<MessagesMonitoring> MessagesMonitorings { get; set; }
         public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
-        public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
         public virtual DbSet<LastAutochargeContentSendedToUser> LastAutochargeContentSendedToUsers { get; set; }
+        public virtual DbSet<ServiceOffReason> ServiceOffReasons { get; set; }
+        public virtual DbSet<PointsTable> PointsTables { get; set; }
+        public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
+        public virtual DbSet<AutochargeTimeTable> AutochargeTimeTables { get; set; }
+        public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
+        public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
+        public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
     
         public virtual int ChangeMessageStatus(Nullable<int> messageType, Nullable<long> contentId, Nullable<int> tag, string persianDate, Nullable<int> currentStatus, Nullable<int> desiredProcessStatus)
         {

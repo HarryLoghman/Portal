@@ -13,7 +13,7 @@ namespace Portal.Services.Danestan
 
         public static void InvalidContentWhenSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(message, 0, 0);
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, Shared.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
             InsertMessageToQueue(message);
         }
@@ -74,6 +74,21 @@ namespace Portal.Services.Danestan
             }
         }
 
+        public static void SetOffReason(Subscriber subscriber, MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            using(var entity = new DanestanEntities())
+            {
+                var offReason = new ServiceOffReason();
+                offReason.SubscriberId = subscriber.Id;
+                offReason.Reason = message.Content;
+                entity.ServiceOffReasons.Add(offReason);
+                entity.SaveChanges();
+                message = MessageHandler.SetImiChargeInfo(message, 0, 0, Shared.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                message.Content = messagesTemplate.Where(o => o.Title == "SubscriberSendedOffReason").Select(o => o.Content).FirstOrDefault();
+                InsertMessageToQueue(message);
+            }
+        }
+
         public static string HandleSpecialStrings(string content, int point, long subscriberId, long serviceId)
         {
             using (var entity = new PortalEntities())
@@ -108,7 +123,7 @@ namespace Portal.Services.Danestan
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
             messageBuffer.DateAddedToQueue = DateTime.Now;
-            messageBuffer.SubUnSubMoMssage = message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
             messageBuffer.SubUnSubType = message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
             messageBuffer.Tag = message.Tag;
@@ -133,7 +148,7 @@ namespace Portal.Services.Danestan
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
             messageBuffer.DateAddedToQueue = DateTime.Now;
-            messageBuffer.SubUnSubMoMssage = message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
             messageBuffer.SubUnSubType = message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
             messageBuffer.Tag = message.Tag;
@@ -158,7 +173,7 @@ namespace Portal.Services.Danestan
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
             messageBuffer.DateAddedToQueue = DateTime.Now;
-            messageBuffer.SubUnSubMoMssage = message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
             messageBuffer.SubUnSubType = message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
             messageBuffer.Tag = message.Tag;
@@ -167,11 +182,24 @@ namespace Portal.Services.Danestan
             return messageBuffer;
         }
 
-        public static ImiChargeCode GetImiChargeObjectFromPrice(int price)
+        public static ImiChargeCode GetImiChargeObjectFromPrice(int price, Shared.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
         {
-            using (var entity = new DanestanEntities())
+            using (var entity = new MyLeagueEntities())
             {
-                var imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
+                if (price == 0 && subscriberState == null)
+                    subscriberState = Shared.HandleSubscription.ServiceStatusForSubscriberState.Unspecified;
+
+                ImiChargeCode imiChargeCode;
+                if (subscriberState == null)
+                    imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
+                else if (subscriberState == Shared.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+                    imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Register");
+                else if (subscriberState == Shared.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                    imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
+                else if (subscriberState == Shared.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                    imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
+                else
+                    imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Free");
                 return imiChargeCode;
             }
         }
@@ -187,8 +215,15 @@ namespace Portal.Services.Danestan
 
         public static void InvalidContentWhenNotSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(message, 0, 0);
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, Shared.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+            InsertMessageToQueue(message);
+        }
+
+        public static void OffReasonResponse(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, Shared.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message.Content = messagesTemplate.Where(o => o.Title == "SubscriberSendedOffReason").Select(o => o.Content).FirstOrDefault();
             InsertMessageToQueue(message);
         }
 
@@ -253,7 +288,7 @@ namespace Portal.Services.Danestan
             using (var entity = new DanestanEntities())
             {
                 var messages = new List<MessageObject>();
-                var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price);
+                var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price,null);
                 foreach (var subscriber in subscribers)
                 {
                     eventbaseContent.Content = HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.Id, serviceId.Value);
@@ -288,9 +323,9 @@ namespace Portal.Services.Danestan
             }
         }
 
-        public static MessageObject SetImiChargeInfo(MessageObject message, int price, int messageType)
+        public static MessageObject SetImiChargeInfo(MessageObject message, int price, int messageType, Shared.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
         {
-            var imiChargeObj = GetImiChargeObjectFromPrice(price);
+            var imiChargeObj = GetImiChargeObjectFromPrice(price, subscriberState);
             message.ImiChargeCode = imiChargeObj.ChargeCode;
             message.ImiChargeKey = imiChargeObj.ChargeKey;
             message.ImiMessageType = messageType;
@@ -303,7 +338,6 @@ namespace Portal.Services.Danestan
             {
                 var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
                 PardisImiServiceReference.SMS[] smsList = new PardisImiServiceReference.SMS[20];
-                System.Diagnostics.Debugger.Launch();
                 for (int index = 0; index < 20; index++)
                 {
                     smsList[index] = new PardisImiServiceReference.SMS()
@@ -314,7 +348,7 @@ namespace Portal.Services.Danestan
                         Message = messages[index].Content,
                         ChargeCode = messages[index].ImiChargeKey,
                         SubUnsubMoMessage = messages[index].SubUnSubMoMssage,
-                        SubUnsubType = (byte)messages[index].SubUnSubType
+                        SubUnsubType = messages[index].SubUnSubType
                     };
                 }
                 var pardisClient = new PardisImiServiceReference.MTSoapClient();

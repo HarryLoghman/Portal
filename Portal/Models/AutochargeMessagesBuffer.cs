@@ -33,7 +33,7 @@ namespace Portal.Models
         public Nullable<long> SubscriberId { get; set; }
         public string ImiChargeKey { get; set; }
         public string SubUnSubMoMssage { get; set; }
-        public Nullable<int> SubUnSubType { get; set; }
+        public Nullable<byte> SubUnSubType { get; set; }
         public Nullable<int> Tag { get; set; }
     }
 }

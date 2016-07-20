@@ -26,18 +26,17 @@ namespace Portal.Models
         }
     
         public virtual DbSet<Aggregator> Aggregators { get; set; }
+        public virtual DbSet<Delivery> Deliveries { get; set; }
         public virtual DbSet<Operator> Operators { get; set; }
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
         public virtual DbSet<OperatorsPrefix> OperatorsPrefixs { get; set; }
         public virtual DbSet<OperatorsRecharageCode> OperatorsRecharageCodes { get; set; }
-        public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
-        public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
-        public virtual DbSet<RPS_ServiceAdditionalInfo> RPS_ServiceAdditionalInfo { get; set; }
-        public virtual DbSet<RPS_SubscribersAdditionalInfo> RPS_SubscribersAdditionalInfo { get; set; }
-        public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Subscriber> Subscribers { get; set; }
         public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
         public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
+        public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
+        public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
+        public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
     }
 }

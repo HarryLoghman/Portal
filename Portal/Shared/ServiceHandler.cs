@@ -22,6 +22,16 @@ namespace Portal.Shared
             return sendInfoDic;
         }
 
+        public static ServiceInfo GetServiceInfoFromAggregatorServiceId(string aggregatorServiceId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                aggregatorServiceId = aggregatorServiceId.ToLower();
+                var serviceInfo = entity.ServiceInfoes.FirstOrDefault( o => o.AggregatorServiceId == aggregatorServiceId);
+                return serviceInfo;
+            }
+        }
+
         public static long? GetServiceId(string serviceCode)
         {
             using (var entity = new PortalEntities())

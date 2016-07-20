@@ -18,5 +18,6 @@ namespace Portal.Models
         public int ChargeCode { get; set; }
         public int Price { get; set; }
         public string ChargeKey { get; set; }
+        public string Description { get; set; }
     }
 }

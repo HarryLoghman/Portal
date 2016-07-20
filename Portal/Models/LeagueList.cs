@@ -12,12 +12,10 @@ namespace Portal.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RPS_ServiceAdditionalInfo
+    public partial class LeagueList
     {
         public long Id { get; set; }
-        public long ServiceId { get; set; }
-        public Nullable<int> HamrahAggregatorServiceId { get; set; }
-    
-        public virtual Service Service { get; set; }
+        public int Number { get; set; }
+        public string Name { get; set; }
     }
 }

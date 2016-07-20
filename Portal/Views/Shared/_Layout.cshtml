@@ -94,10 +94,10 @@
             }
         }
     </style>
-    @Styles.Render("~/Content/Portal")
-    @Styles.Render("~/Content/kendo")
-    @Scripts.Render("~/bundles/kendo")
-    @Scripts.Render("~/bundles/Portal")
+    @Styles.Render("~/Content/PortalStyles")
+    @Styles.Render("~/Content/kendo/2016.2.504/Styles")
+    @Scripts.Render("~/bundles/kendojs")
+    @Scripts.Render("~/bundles/Portaljs")
 </head>
 <body class="k-rtl">
     <div class="container-fluid">
@@ -106,11 +106,11 @@
             <div id="responsive-panel">
                 <div id="megaStore" class="k-content k-rtl">
                     <ul id="menu">
-                        <li>
+                        @*<li>
                             دانستانه
                             <ul>
                                 <li>
-                                    @Html.ActionLink("محتوای ارسال اتوماتیک", "Index", "AutochargeContents", new { area = "Danestan" }, null)
+                                    @Html.ActionLink("محتوای ارسال اتوشارژ", "Index", "AutochargeContents", new { area = "Danestan" }, null)
                                 </li>
                                 <li>
                                     @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "Danestan" }, null)
@@ -121,41 +121,35 @@
                                 <li>
                                     @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Danestan" }, null)
                                 </li>
+                                <li>
+                                    @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "Danestan" }, null)
+                                </li>
+                                <li>
+                                    @Html.ActionLink("تنظیم ساعات ارسال اتوشارژ", "Index", "AutochargeTimeTable", new { area = "Danestan" }, null)
+                                </li>
                             </ul>
-                        </li>
+                        </li>*@
                         <li>
-                            رژیم
+                            لیگ من
                             <ul>
                                 <li>
-                                    @Html.ActionLink("محتوای ارسال اتوماتیک", "Index", "AutochargeContents", new { area = "Rejim" }, null)
+                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "MyLeague" }, null)
                                 </li>
                                 <li>
-                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "Rejim" }, null)
+                                    @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "MyLeague" }, null)
+                                </li>
+                                <li>
+                                    @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "MyLeague" }, null)
+                                </li>
+                                <li>
+                                    @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "MyLeague" }, null)
+                                </li>
+                                <li>
+                                    @Html.ActionLink("لیست لیگ ها", "Index", "LeagueList", new { area = "MyLeague" }, null)
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            زندگی آرام ما
-                            <ul>
-                                <li>
-                                    @Html.ActionLink("محتوای ارسال اتوماتیک", "Index", "AutochargeContents", new { area = "ZendegiArameMa" }, null)
-                                </li>
-                                <li>
-                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "ZendegiArameMa" }, null)
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            سنگ کاغذ قیچی
-                            <ul>
-                                <li>
-                                    @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "RockPaperScissor" }, null)
-                                </li>
-                                <li>
-                                    @Html.ActionLink("تنظیمات", "About", "Home")
-                                </li>
-                            </ul>
-                        </li>
+
                     </ul>
                 </div>
             </div>

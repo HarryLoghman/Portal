@@ -21,5 +21,30 @@ namespace Portal.Controllers
             Shared.MessageHandler.SaveReceivedMessage(messageObj);
             return "1";
         }
+
+        // /Receive/Delivery?PardisId=44353535&Status=DeliveredToNetwork&ErrorMessage=error
+        [HttpGet]
+        public string Delivery([FromUri]DeliveryObject delivery)
+        {
+            Shared.MessageHandler.SaveDeliveryStatus(delivery);
+            return "1";
+        }
+
+        // /Receive/PardisIntegratedPanel?Address=09125612694&ServiceID=1245&EventId=error
+        [HttpGet]
+        public string PardisIntegratedPanel([FromUri]IntegratedPanel integratedPanelObj)
+        {
+            if(integratedPanelObj.EventID == "1.2" && integratedPanelObj.NewStatus == 5)
+            {
+                var serviceInfo = Shared.ServiceHandler.GetServiceInfoFromAggregatorServiceId(integratedPanelObj.ServiceID);
+                var recievedMessage = new ReceievedMessage();
+                recievedMessage.Content = "off";
+                recievedMessage.MobileNumber = integratedPanelObj.Address;
+                recievedMessage.ShortCode = serviceInfo.ShortCode;
+                recievedMessage.IsReceivedFromIntegratedPanel = true;
+                Shared.MessageHandler.HandleReceivedMessage(recievedMessage);
+            }
+            return "1";
+        }
     }
 }

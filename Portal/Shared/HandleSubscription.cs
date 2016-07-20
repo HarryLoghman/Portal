@@ -70,7 +70,7 @@ namespace Portal.Shared
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
             }
-            return ServiceStatusForSubscriberState.Activated;
+            return ServiceStatusForSubscriberState.Renewal;
         }
 
         private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, Service service)
@@ -182,7 +182,7 @@ namespace Portal.Shared
             Unspecified = 2,
             InvalidContentWhenNotSubscribed = 3,
             InvalidContentWhenSubscribed = 4,
-
+            Renewal = 5
         }
 
         public enum WhoChangedSubscriberState

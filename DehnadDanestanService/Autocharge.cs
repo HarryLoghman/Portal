@@ -34,8 +34,9 @@ namespace DehnadDanestanService
             var autochargeTimeTable = GetAutochargeTimeTable();
             foreach (var item in autochargeTimeTable)
             {
-                var SendEndTime = item.SendTime + TimeSpan.Parse("00:00:05");
-                if (currentTime > item.SendTime && currentTime < SendEndTime)
+                var sendTime = TimeSpan.Parse(item.SendTime);
+                var SendEndTime = sendTime + TimeSpan.Parse("00:00:05");
+                if (currentTime > sendTime && currentTime < SendEndTime)
                 {
                     using (var entity = new DanestanEntities())
                     {
@@ -60,10 +61,10 @@ namespace DehnadDanestanService
                 using (var entity = new DanestanEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    var numberOfAutochargeMessagesPerDay = Convert.ToInt32(Properties.Resources.NumberOfAutochargeMessagesPerDay);
-                    for (int i = 1; i <= numberOfAutochargeMessagesPerDay; i++)
+                    var autochargeTimeTable = GetAutochargeTimeTable();
+                    foreach (var item in autochargeTimeTable)
                     {
-                        int tag = i;
+                        int tag = item.Tag;
                         var messages = new List<MessageObject>();
                         foreach (var subscriber in subscribers)
                         {
@@ -71,7 +72,7 @@ namespace DehnadDanestanService
                             if (autochargeContent == null)
                                 continue;
                             autochargeContent.Content = Portal.Services.Danestan.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.Id, serviceId);
-                            var imiChargeObject = Portal.Services.Danestan.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price);
+                            var imiChargeObject = Portal.Services.Danestan.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
                             var message = Portal.Shared.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, Portal.Shared.MessageHandler.MessageType.AutoCharge, Portal.Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
                             messages.Add(message);
                         }
@@ -94,6 +95,7 @@ namespace DehnadDanestanService
             {
                 using (var entity = new DanestanEntities())
                 {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
                     autochargeTimeTable = entity.AutochargeTimeTables.ToList();
                 }
             }

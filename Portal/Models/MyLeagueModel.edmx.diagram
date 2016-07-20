@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3023d549c02d499b9d15a21225607b45" Name="Diagram1">
+        <EntityTypeShape EntityType="MyLeagueModel.AutochargeContent" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.AutochargeTimeTable" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.ImiChargeCode" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.MessagesMonitoring" Width="1.5" PointX="6.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.MessagesTemplate" Width="1.5" PointX="2.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.PointsTable" Width="1.5" PointX="8.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.ServiceOffReason" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.SubscribersAdditionalInfo" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.LastAutochargeContentSendedToUser" Width="1.5" PointX="0.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyLeagueModel.EventbaseContent" Width="1.5" PointX="5.375" PointY="10.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.LeagueList" Width="1.5" PointX="11.375" PointY="3.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.SubscribersLeague" Width="1.5" PointX="11.375" PointY="6.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.AutochargeMessagesBuffer" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.EventbaseMessagesBuffer" Width="1.5" PointX="11.375" PointY="9.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.OnDemandMessagesBuffer" Width="1.5" PointX="7.375" PointY="12.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

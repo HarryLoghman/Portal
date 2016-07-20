@@ -181,6 +181,16 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\LeagueListController.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\PointsController.cs" />
+    <Compile Include="Areas\MyLeague\MyLeagueAreaRegistration.cs" />
+    <Compile Include="Areas\Danestan\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\Danestan\Controllers\PointsController.cs" />
     <Compile Include="Areas\Danestan\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Danestan\Controllers\AutochargeContentsController.cs" />
     <Compile Include="Areas\Danestan\Controllers\MonitoringController.cs" />
@@ -198,13 +208,13 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeMessagesBuffer.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeTimeTable.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DanestanModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -221,29 +231,52 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DanestanModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Delivery.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DeliveryObject.cs" />
     <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventbaseMessagesBuffer.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ImiChargeCode.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\IntegratedPanel.cs" />
     <Compile Include="Models\LastAutochargeContentSendedToUser.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\LeagueList.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MessagesMonitoring.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MyLeagueModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MyLeagueModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MyLeagueModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MyLeagueModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
-      <DependentUpon>DanestanModel.tt</DependentUpon>
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Operator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
@@ -256,6 +289,9 @@
     </Compile>
     <Compile Include="Models\OperatorsRecharageCode.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PointsTable.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PortalModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -278,23 +314,26 @@
     <Compile Include="Models\ReceivedMessagesArchive.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\RPS_ServiceAdditionalInfo.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RPS_SubscribersAdditionalInfo.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Service.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServiceInfo.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServiceOffReason.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Subscriber.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SubscribersAdditionalInfo.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SubscribersHistory.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SubscribersLeague.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SubscribersPoint.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
@@ -305,6 +344,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Services\MyLeague\ContentManager.cs" />
+    <Compile Include="Services\MyLeague\HandleMo.cs" />
+    <Compile Include="Services\MyLeague\MessageHandler.cs" />
+    <Compile Include="Services\MyLeague\ServiceHandler.cs" />
+    <Compile Include="Services\MyLeague\Subscribers.cs" />
     <Compile Include="Services\Danestan\ContentManager.cs" />
     <Compile Include="Services\Danestan\HandleMo.cs" />
     <Compile Include="Services\Danestan\MessageHandler.cs" />
@@ -657,26 +701,6 @@
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi.png" />
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi_2x.png" />
     <Content Include="Content\Portal.css" />
-    <Content Include="DB\Danestan\RedGateDatabaseInfo.xml" />
-    <Content Include="DB\Danestan\Tables\dbo.MessagesBuffer.sql" />
-    <Content Include="DB\Danestan\Tables\dbo.MessagesTemplate.sql" />
-    <Content Include="DB\Portal\RedGateDatabaseInfo.xml" />
-    <Content Include="DB\Portal\Tables\dbo.AggregatorList.sql" />
-    <Content Include="DB\Portal\Tables\dbo.MessageArchive.sql" />
-    <Content Include="DB\Portal\Tables\dbo.MessageBuffer.sql" />
-    <Content Include="DB\Portal\Tables\dbo.Mo.sql" />
-    <Content Include="DB\Portal\Tables\dbo.OperatorsList.sql" />
-    <Content Include="DB\Portal\Tables\dbo.OperatorsPlans.sql" />
-    <Content Include="DB\Portal\Tables\dbo.OperatorsPrefixs.sql" />
-    <Content Include="DB\Portal\Tables\dbo.OperatorsRecharageCodes.sql" />
-    <Content Include="DB\Portal\Tables\dbo.RPS_ServiceAdditionalInfo.sql" />
-    <Content Include="DB\Portal\Tables\dbo.RPS_SubscribersAdditionalInfo.sql" />
-    <Content Include="DB\Portal\Tables\dbo.Services.sql" />
-    <Content Include="DB\Portal\Tables\dbo.ServiceShortCodes.sql" />
-    <Content Include="DB\Portal\Tables\dbo.Subscribers.sql" />
-    <Content Include="DB\Portal\Tables\dbo.SubscribersHistory.sql" />
-    <Content Include="DB\RockPaperScissor\RedGateDatabaseInfo.xml" />
-    <Content Include="DB\RockPaperScissor\Tables\dbo.MessagesTemplate.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -694,6 +718,16 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DanestanModel.edmx</DependentUpon>
       <LastGenOutput>DanestanModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\MyLeagueModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
+      <LastGenOutput>MyLeagueModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\MyLeagueModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
+      <LastGenOutput>MyLeagueModel.cs</LastGenOutput>
     </Content>
     <Content Include="Models\PortalModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -809,7 +843,6 @@
     <Content Include="Content\kendo\2016.2.504\kendo.uniform.min.css.map" />
     <Content Include="Content\kendo\2016.2.504\kendo.uniform.mobile.min.css.map" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="DB\Portal\RedGate.ssc" />
     <EntityDeploy Include="Models\DanestanModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>DanestanModel.Designer.cs</LastGenOutput>
@@ -817,8 +850,6 @@
     <Content Include="Models\DanestanModel.edmx.diagram">
       <DependentUpon>DanestanModel.edmx</DependentUpon>
     </Content>
-    <Content Include="DB\Danestan\RedGate.ssc" />
-    <Content Include="DB\RockPaperScissor\RedGate.ssc" />
     <Content Include="Areas\Danestan\Views\web.config" />
     <Content Include="Areas\Danestan\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Danestan\Views\Shared\_Layout.cshtml" />
@@ -828,6 +859,26 @@
     <Content Include="Areas\Danestan\Views\Monitoring\Index.cshtml" />
     <Content Include="Areas\Danestan\Views\MessagesTemplate\Index.cshtml" />
     <Content Include="Properties\DataSources\System.Data.DataTable.datasource" />
+    <Content Include="Areas\Danestan\Views\Points\Index.cshtml" />
+    <Content Include="Areas\Danestan\Views\AutochargeTimeTable\Index.cshtml" />
+    <EntityDeploy Include="Models\MyLeagueModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>MyLeagueModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\MyLeagueModel.edmx.diagram">
+      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Areas\MyLeague\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\MyLeague\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\AutochargeTimeTable\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\Points\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\MyLeague\Views\web.config" />
+    <Content Include="Areas\MyLeague\Views\LeagueList\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -1589,106 +1640,13 @@
     <Content Include="Scripts\kendo\2016.2.504\kendo.web.min.js.map" />
     <Content Include="Scripts\kendo\2016.2.504\kendo.webcomponents.min.js.map" />
     <Content Include="Scripts\kendo\2016.2.504\kendo.window.min.js.map" />
-    <Content Include="Views\RpsService\Index.cshtml" />
     <None Include="Service References\PardisImiServiceReference\parids-imi-mt.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Danestan\Models\" />
+    <Folder Include="Areas\MyLeague\Models\" />
     <Folder Include="bin\" />
-    <Folder Include="DB\Danestan\Assemblies\" />
-    <Folder Include="DB\Danestan\Database Triggers\" />
-    <Folder Include="DB\Danestan\Data\" />
-    <Folder Include="DB\Danestan\Defaults\" />
-    <Folder Include="DB\Danestan\Extended Properties\" />
-    <Folder Include="DB\Danestan\Functions\" />
-    <Folder Include="DB\Danestan\Rules\" />
-    <Folder Include="DB\Danestan\Search Property Lists\" />
-    <Folder Include="DB\Danestan\Security\Asymmetric Keys\" />
-    <Folder Include="DB\Danestan\Security\Certificates\" />
-    <Folder Include="DB\Danestan\Security\Roles\" />
-    <Folder Include="DB\Danestan\Security\Schemas\" />
-    <Folder Include="DB\Danestan\Security\Symmetric Keys\" />
-    <Folder Include="DB\Danestan\Security\Users\" />
-    <Folder Include="DB\Danestan\Sequences\" />
-    <Folder Include="DB\Danestan\Service Broker\Contracts\" />
-    <Folder Include="DB\Danestan\Service Broker\Event Notifications\" />
-    <Folder Include="DB\Danestan\Service Broker\Message Types\" />
-    <Folder Include="DB\Danestan\Service Broker\Queues\" />
-    <Folder Include="DB\Danestan\Service Broker\Remote Service Bindings\" />
-    <Folder Include="DB\Danestan\Service Broker\Routes\" />
-    <Folder Include="DB\Danestan\Service Broker\Services\" />
-    <Folder Include="DB\Danestan\Storage\Full Text Catalogs\" />
-    <Folder Include="DB\Danestan\Storage\Full Text Stoplists\" />
-    <Folder Include="DB\Danestan\Storage\Partition Functions\" />
-    <Folder Include="DB\Danestan\Storage\Partition Schemes\" />
-    <Folder Include="DB\Danestan\Stored Procedures\" />
-    <Folder Include="DB\Danestan\Synonyms\" />
-    <Folder Include="DB\Danestan\Types\User-defined Data Types\" />
-    <Folder Include="DB\Danestan\Types\XML Schema Collections\" />
-    <Folder Include="DB\Danestan\Views\" />
-    <Folder Include="DB\Portal\Assemblies\" />
-    <Folder Include="DB\Portal\Database Triggers\" />
-    <Folder Include="DB\Portal\Data\" />
-    <Folder Include="DB\Portal\Defaults\" />
-    <Folder Include="DB\Portal\Extended Properties\" />
-    <Folder Include="DB\Portal\Functions\" />
-    <Folder Include="DB\Portal\Rules\" />
-    <Folder Include="DB\Portal\Search Property Lists\" />
-    <Folder Include="DB\Portal\Security\Asymmetric Keys\" />
-    <Folder Include="DB\Portal\Security\Certificates\" />
-    <Folder Include="DB\Portal\Security\Roles\" />
-    <Folder Include="DB\Portal\Security\Schemas\" />
-    <Folder Include="DB\Portal\Security\Symmetric Keys\" />
-    <Folder Include="DB\Portal\Security\Users\" />
-    <Folder Include="DB\Portal\Sequences\" />
-    <Folder Include="DB\Portal\Service Broker\Contracts\" />
-    <Folder Include="DB\Portal\Service Broker\Event Notifications\" />
-    <Folder Include="DB\Portal\Service Broker\Message Types\" />
-    <Folder Include="DB\Portal\Service Broker\Queues\" />
-    <Folder Include="DB\Portal\Service Broker\Remote Service Bindings\" />
-    <Folder Include="DB\Portal\Service Broker\Routes\" />
-    <Folder Include="DB\Portal\Service Broker\Services\" />
-    <Folder Include="DB\Portal\Storage\Full Text Catalogs\" />
-    <Folder Include="DB\Portal\Storage\Full Text Stoplists\" />
-    <Folder Include="DB\Portal\Storage\Partition Functions\" />
-    <Folder Include="DB\Portal\Storage\Partition Schemes\" />
-    <Folder Include="DB\Portal\Stored Procedures\" />
-    <Folder Include="DB\Portal\Synonyms\" />
-    <Folder Include="DB\Portal\Types\User-defined Data Types\" />
-    <Folder Include="DB\Portal\Types\XML Schema Collections\" />
-    <Folder Include="DB\Portal\Views\" />
-    <Folder Include="DB\RockPaperScissor\Assemblies\" />
-    <Folder Include="DB\RockPaperScissor\Database Triggers\" />
-    <Folder Include="DB\RockPaperScissor\Data\" />
-    <Folder Include="DB\RockPaperScissor\Defaults\" />
-    <Folder Include="DB\RockPaperScissor\Extended Properties\" />
-    <Folder Include="DB\RockPaperScissor\Functions\" />
-    <Folder Include="DB\RockPaperScissor\Rules\" />
-    <Folder Include="DB\RockPaperScissor\Search Property Lists\" />
-    <Folder Include="DB\RockPaperScissor\Security\Asymmetric Keys\" />
-    <Folder Include="DB\RockPaperScissor\Security\Certificates\" />
-    <Folder Include="DB\RockPaperScissor\Security\Roles\" />
-    <Folder Include="DB\RockPaperScissor\Security\Schemas\" />
-    <Folder Include="DB\RockPaperScissor\Security\Symmetric Keys\" />
-    <Folder Include="DB\RockPaperScissor\Security\Users\" />
-    <Folder Include="DB\RockPaperScissor\Sequences\" />
-    <Folder Include="DB\RockPaperScissor\Service Broker\Contracts\" />
-    <Folder Include="DB\RockPaperScissor\Service Broker\Event Notifications\" />
-    <Folder Include="DB\RockPaperScissor\Service Broker\Message Types\" />
-    <Folder Include="DB\RockPaperScissor\Service Broker\Queues\" />
-    <Folder Include="DB\RockPaperScissor\Service Broker\Remote Service Bindings\" />
-    <Folder Include="DB\RockPaperScissor\Service Broker\Routes\" />
-    <Folder Include="DB\RockPaperScissor\Service Broker\Services\" />
-    <Folder Include="DB\RockPaperScissor\Storage\Full Text Catalogs\" />
-    <Folder Include="DB\RockPaperScissor\Storage\Full Text Stoplists\" />
-    <Folder Include="DB\RockPaperScissor\Storage\Partition Functions\" />
-    <Folder Include="DB\RockPaperScissor\Storage\Partition Schemes\" />
-    <Folder Include="DB\RockPaperScissor\Stored Procedures\" />
-    <Folder Include="DB\RockPaperScissor\Synonyms\" />
-    <Folder Include="DB\RockPaperScissor\Types\User-defined Data Types\" />
-    <Folder Include="DB\RockPaperScissor\Types\XML Schema Collections\" />
-    <Folder Include="DB\RockPaperScissor\Views\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

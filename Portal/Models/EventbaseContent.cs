@@ -23,5 +23,6 @@ namespace Portal.Models
         public int SubscriberNotSendedMoInDays { get; set; }
         public bool IsAddingMessagesToSendQueue { get; set; }
         public bool IsAddedToSendQueueFinished { get; set; }
+        public long LeagueId { get; set; }
     }
 }

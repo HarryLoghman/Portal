@@ -12,8 +12,9 @@
 
         columns: [
             { field: "Id", title: "ردیف", width: 100 },
+            { field: "PersianDateCreated", title: "تاریخ ایجاد", width: 200 },
             { field: "Content", title: "محتوی", editor: textAreaEditor },
-            { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند(بر اساس روز)", width: 100 },
+            { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند", editor: subscriberNotSendedMoInDaysDropDownEditor, template: "#=getSubscriberNotSendedMoInDaysValue(SubscriberNotSendedMoInDays)#", width: 100 },
             { field: "Price", title: "هزینه پیام", width: 100 },
             { field: "Point", title: "امتیاز", width: 100 },
             { command: ["edit", "destroy", { text: "انتقال به صف", click: sendToMessagesQueue }], width: 300 }
@@ -56,6 +57,7 @@
                     id: "Id",
                     fields: {
                         Id: { type: "number", editable: false },
+                        PersianDateCreated: { editable: false },
                         Content: { type: "string", validation: { required: true }, nullable: false },
                         SubscriberNotSendedMoInDays: { type: "int", validation: { required: true }, defaultValue: 0 },
                         Price: { type: "int", validation: { required: true }, defaultValue: 0 },

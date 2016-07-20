@@ -26,8 +26,9 @@ namespace Portal.Models
         public long OperatorPlan { get; set; }
         public long AggregatorId { get; set; }
         public string SubUnSubMoMssage { get; set; }
-        public int SubUnSubType { get; set; }
+        public  byte SubUnSubType { get; set; }
         public int Point { get; set; }
         public int? Tag { get; set; }
+        public bool IsReceivedFromIntegratedPanel { get; set; }
     }
 }

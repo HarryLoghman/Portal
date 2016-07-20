@@ -42,7 +42,7 @@
           <Property Name="SubscriberId" Type="bigint" />
           <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
-          <Property Name="SubUnSubType" Type="int" />
+          <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
@@ -51,7 +51,7 @@
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Tag" Type="int" Nullable="false" />
-          <Property Name="SendTime" Type="time" Precision="7" Nullable="false" />
+          <Property Name="SendTime" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -90,7 +90,7 @@
           <Property Name="SubscriberId" Type="bigint" />
           <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
-          <Property Name="SubUnSubType" Type="int" />
+          <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
@@ -160,8 +160,34 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="SubscriberId" Type="bigint" />
           <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
-          <Property Name="SubUnSubType" Type="int" />
+          <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="PointsTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+          <Property Name="PersianTitle" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceOffReason">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="Reason" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="bit" />
+          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="bit" />
         </EntityType>
         <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MessageType" Type="int" Mode="In" />
@@ -181,6 +207,9 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <EntitySet Name="MessagesMonitoring" EntityType="Self.MessagesMonitoring" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OnDemandMessagesBuffer" EntityType="Self.OnDemandMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LastAutochargeContentSendedToUser" EntityType="Self.LastAutochargeContentSendedToUser" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [LastAutochargeContentSendedToUser].[SubscriberId] AS [SubscriberId], 
@@ -194,14 +223,10 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
       <Schema Namespace="DanestanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="DanestanEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AutochargeContents" EntityType="DanestanModel.AutochargeContent" />
-          <EntitySet Name="AutochargeMessagesBuffers" EntityType="DanestanModel.AutochargeMessagesBuffer" />
-          <EntitySet Name="AutochargeTimeTables" EntityType="DanestanModel.AutochargeTimeTable" />
           <EntitySet Name="EventbaseContents" EntityType="DanestanModel.EventbaseContent" />
-          <EntitySet Name="EventbaseMessagesBuffers" EntityType="DanestanModel.EventbaseMessagesBuffer" />
           <EntitySet Name="ImiChargeCodes" EntityType="DanestanModel.ImiChargeCode" />
           <EntitySet Name="MessagesMonitorings" EntityType="DanestanModel.MessagesMonitoring" />
           <EntitySet Name="MessagesTemplates" EntityType="DanestanModel.MessagesTemplate" />
-          <EntitySet Name="OnDemandMessagesBuffers" EntityType="DanestanModel.OnDemandMessagesBuffer" />
           <EntitySet Name="LastAutochargeContentSendedToUsers" EntityType="DanestanModel.LastAutochargeContentSendedToUser" />
           <FunctionImport Name="ChangeMessageStatus">
             <Parameter Name="MessageType" Mode="In" Type="Int32" />
@@ -211,6 +236,13 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
             <Parameter Name="CurrentStatus" Mode="In" Type="Int32" />
             <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="ServiceOffReasons" EntityType="DanestanModel.ServiceOffReason" />
+          <EntitySet Name="PointsTables" EntityType="DanestanModel.PointsTable" />
+          <EntitySet Name="SubscribersAdditionalInfoes" EntityType="DanestanModel.SubscribersAdditionalInfo" />
+          <EntitySet Name="AutochargeTimeTables" EntityType="DanestanModel.AutochargeTimeTable" />
+          <EntitySet Name="AutochargeMessagesBuffers" EntityType="DanestanModel.AutochargeMessagesBuffer" />
+          <EntitySet Name="EventbaseMessagesBuffers" EntityType="DanestanModel.EventbaseMessagesBuffer" />
+          <EntitySet Name="OnDemandMessagesBuffers" EntityType="DanestanModel.OnDemandMessagesBuffer" />
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -226,40 +258,6 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PersianSendDate" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="AutochargeMessagesBuffer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-          <Property Name="SentDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MessageType" Type="Int32" Nullable="false" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ContentId" Type="Int64" />
-          <Property Name="MessagePoint" Type="Int32" />
-          <Property Name="ImiChargeCode" Type="Int32" />
-          <Property Name="ImiMessageType" Type="Int32" />
-          <Property Name="SubscriberId" Type="Int64" />
-          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubType" Type="Int32" />
-          <Property Name="Tag" Type="Int32" />
-        </EntityType>
-        <EntityType Name="AutochargeTimeTable">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Tag" Type="Int32" Nullable="false" />
-          <Property Name="SendTime" Type="Time" Nullable="false" Precision="7" />
-        </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
             <PropertyRef Name="Id" />
@@ -273,32 +271,6 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="SubscriberNotSendedMoInDays" Type="Int32" Nullable="false" />
           <Property Name="IsAddingMessagesToSendQueue" Type="Boolean" Nullable="false" />
           <Property Name="IsAddedToSendQueueFinished" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="EventbaseMessagesBuffer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-          <Property Name="SentDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MessageType" Type="Int32" Nullable="false" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ContentId" Type="Int64" />
-          <Property Name="MessagePoint" Type="Int32" />
-          <Property Name="ImiChargeCode" Type="Int32" />
-          <Property Name="ImiMessageType" Type="Int32" />
-          <Property Name="SubscriberId" Type="Int64" />
-          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubType" Type="Int32" />
-          <Property Name="Tag" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -334,6 +306,100 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="PersianTitle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="LastAutochargeContentSendedToUser">
+          <Key>
+            <PropertyRef Name="SubscriberId" />
+            <PropertyRef Name="AutochargeContentId" />
+          </Key>
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceOffReason">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="Reason" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="PointsTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="PersianTitle" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="Boolean" />
+          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tag" Type="Int32" Nullable="false" />
+          <Property Name="SendTime" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutochargeMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="EventbaseMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
         <EntityType Name="OnDemandMessagesBuffer">
           <Key>
             <PropertyRef Name="Id" />
@@ -357,16 +423,8 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
           <Property Name="SubscriberId" Type="Int64" />
           <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubType" Type="Int32" />
+          <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
-        </EntityType>
-        <EntityType Name="LastAutochargeContentSendedToUser">
-          <Key>
-            <PropertyRef Name="SubscriberId" />
-            <PropertyRef Name="AutochargeContentId" />
-          </Key>
-          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
-          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -389,42 +447,6 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="AutochargeMessagesBuffers">
-            <EntityTypeMapping TypeName="DanestanModel.AutochargeMessagesBuffer">
-              <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
-                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
-                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
-                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
-                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
-                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
-                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
-                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
-                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
-                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
-                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AutochargeTimeTables">
-            <EntityTypeMapping TypeName="DanestanModel.AutochargeTimeTable">
-              <MappingFragment StoreEntitySet="AutochargeTimeTable">
-                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="EventbaseContents">
             <EntityTypeMapping TypeName="DanestanModel.EventbaseContent">
               <MappingFragment StoreEntitySet="EventbaseContents">
@@ -436,33 +458,6 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
                 <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="EventbaseMessagesBuffers">
-            <EntityTypeMapping TypeName="DanestanModel.EventbaseMessagesBuffer">
-              <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
-                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
-                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
-                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
-                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
-                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
-                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
-                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
-                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
-                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
-                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -504,6 +499,107 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="LastAutochargeContentSendedToUsers">
+            <EntityTypeMapping TypeName="DanestanModel.LastAutochargeContentSendedToUser">
+              <MappingFragment StoreEntitySet="LastAutochargeContentSendedToUser">
+                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="DanestanModel.Store.ChangeMessageStatus" />
+          <EntitySetMapping Name="ServiceOffReasons">
+            <EntityTypeMapping TypeName="DanestanModel.ServiceOffReason">
+              <MappingFragment StoreEntitySet="ServiceOffReason">
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PointsTables">
+            <EntityTypeMapping TypeName="DanestanModel.PointsTable">
+              <MappingFragment StoreEntitySet="PointsTable">
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersAdditionalInfoes">
+            <EntityTypeMapping TypeName="DanestanModel.SubscribersAdditionalInfo">
+              <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
+                <ScalarProperty Name="IsSubscriberReceivedOffReasonPoint" ColumnName="IsSubscriberReceivedOffReasonPoint" />
+                <ScalarProperty Name="IsSubscriberReceivedSubscriptionPoint" ColumnName="IsSubscriberReceivedSubscriptionPoint" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeTimeTables">
+            <EntityTypeMapping TypeName="DanestanModel.AutochargeTimeTable">
+              <MappingFragment StoreEntitySet="AutochargeTimeTable">
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeMessagesBuffers">
+            <EntityTypeMapping TypeName="DanestanModel.AutochargeMessagesBuffer">
+              <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseMessagesBuffers">
+            <EntityTypeMapping TypeName="DanestanModel.EventbaseMessagesBuffer">
+              <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="DanestanModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
@@ -531,15 +627,6 @@ warning 6002: The table/view 'Danestan.dbo.LastAutochargeContentSendedToUser' do
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="LastAutochargeContentSendedToUsers">
-            <EntityTypeMapping TypeName="DanestanModel.LastAutochargeContentSendedToUser">
-              <MappingFragment StoreEntitySet="LastAutochargeContentSendedToUser">
-                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="DanestanModel.Store.ChangeMessageStatus" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

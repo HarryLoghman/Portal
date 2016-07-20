@@ -21,5 +21,6 @@ namespace Portal.Models
         public string MessageId { get; set; }
         public bool IsProcessed { get; set; }
         public string Content { get; set; }
+        public bool IsReceivedFromIntegratedPanel { get; set; }
     }
 }

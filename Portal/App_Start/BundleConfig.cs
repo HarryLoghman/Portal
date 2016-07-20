@@ -23,7 +23,7 @@ namespace Portal
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
-            bundles.Add(new ScriptBundle("~/bundles/kendo").Include(
+            bundles.Add(new ScriptBundle("~/bundles/kendojs").Include(
                     "~/Scripts/kendo/2016.2.504/jquery.min.js",
                     "~/Scripts/kendo/2016.2.504/angular.min.js",
                     "~/Scripts/kendo/2016.2.504/jszip.min.js",
@@ -33,14 +33,14 @@ namespace Portal
                     "~/Scripts/kendo/2016.2.504/messages/kendo.messages.fa-IR.js"
                     ));
 
-            bundles.Add(new ScriptBundle("~/bundles/Portal").Include(
+            bundles.Add(new ScriptBundle("~/bundles/Portaljs").Include(
             "~/Scripts/Portal.js"));
 
-            bundles.Add(new StyleBundle("~/Content/Portal").Include(
+            bundles.Add(new StyleBundle("~/Content/PortalStyles").Include(
             "~/Content/Portal.css"
             ));
 
-            bundles.Add(new StyleBundle("~/Content/kendo").Include(
+            bundles.Add(new StyleBundle("~/Content/kendo/2016.2.504/Styles").Include(
                     "~/Content/kendo/2016.2.504/kendo.common-material.min.css",
                     "~/Content/kendo/2016.2.504/kendo.mobile.all.min.css",
                     "~/Content/kendo/2016.2.504/kendo.dataviz.min.css",

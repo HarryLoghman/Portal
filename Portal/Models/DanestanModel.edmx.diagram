@@ -6,15 +6,18 @@
     <edmx:Diagrams>
       <Diagram DiagramId="3cf640584794418a8641a4694d022fac" Name="Diagram1" ZoomLevel="89">
         <EntityTypeShape EntityType="DanestanModel.AutochargeContent" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="DanestanModel.AutochargeMessagesBuffer" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="DanestanModel.AutochargeTimeTable" Width="1.5" PointX="4.75" PointY="0.75" />
         <EntityTypeShape EntityType="DanestanModel.EventbaseContent" Width="1.5" PointX="4.75" PointY="3.75" />
-        <EntityTypeShape EntityType="DanestanModel.EventbaseMessagesBuffer" Width="1.5" PointX="6.75" PointY="0.75" />
         <EntityTypeShape EntityType="DanestanModel.ImiChargeCode" Width="1.5" PointX="0.75" PointY="6.75" />
         <EntityTypeShape EntityType="DanestanModel.MessagesMonitoring" Width="1.5" PointX="6.75" PointY="6.75" />
         <EntityTypeShape EntityType="DanestanModel.MessagesTemplate" Width="1.5" PointX="2.75" PointY="7.75" />
-        <EntityTypeShape EntityType="DanestanModel.OnDemandMessagesBuffer" Width="1.5" PointX="8.75" PointY="0.75" />
         <EntityTypeShape EntityType="DanestanModel.LastAutochargeContentSendedToUser" Width="1.5" PointX="8.75" PointY="6.75" />
+        <EntityTypeShape EntityType="DanestanModel.ServiceOffReason" Width="1.5" PointX="9.375" PointY="9.75" />
+        <EntityTypeShape EntityType="DanestanModel.PointsTable" Width="1.5" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="DanestanModel.SubscribersAdditionalInfo" Width="1.5" PointX="3.375" PointY="10.75" />
+        <EntityTypeShape EntityType="DanestanModel.AutochargeTimeTable" Width="1.5" PointX="5.375" PointY="10.75" />
+        <EntityTypeShape EntityType="DanestanModel.AutochargeMessagesBuffer" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DanestanModel.EventbaseMessagesBuffer" Width="1.5" PointX="9.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DanestanModel.OnDemandMessagesBuffer" Width="1.5" PointX="11.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

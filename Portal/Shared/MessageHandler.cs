@@ -7,6 +7,7 @@ namespace Portal.Shared
 {
     public class MessageHandler
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void SaveReceivedMessage(MessageObject message)
         {
             using (var entity = new PortalEntities())
@@ -18,7 +19,8 @@ namespace Portal.Shared
                     ReceivedTime = DateTime.Now,
                     MessageId = message.MessageId,
                     Content = message.Content,
-                    IsProcessed = false
+                    IsProcessed = false,
+                    IsReceivedFromIntegratedPanel = false
                 };
                 entity.ReceievedMessages.Add(mo);
                 entity.SaveChanges();
@@ -36,7 +38,20 @@ namespace Portal.Shared
             using (var entity = new PortalEntities())
                 return entity.Aggregators.Where(o => o.AggregatorName == AggregatorName).FirstOrDefault().Id;
         }
-        
+
+        public static void SaveDeliveryStatus(DeliveryObject deliveryObj)
+        {
+            using(var entity = new PortalEntities())
+            {
+                var delivery = new Delivery();
+                delivery.ReferenceId = deliveryObj.PardisID;
+                delivery.Status = deliveryObj.Status;
+                delivery.Description = deliveryObj.ErrorMessage;
+                entity.Deliveries.Add(delivery);
+                entity.SaveChanges();
+            }
+        }
+
         public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState)
         {
             string content = null;
@@ -46,6 +61,9 @@ namespace Portal.Shared
                     content = messagesTemplate.Where(o => o.Title == "OffMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case HandleSubscription.ServiceStatusForSubscriberState.Activated:
+                    content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
+                    break;
+                case HandleSubscription.ServiceStatusForSubscriberState.Renewal:
                     content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed:
@@ -138,6 +156,7 @@ namespace Portal.Shared
         {
             using (var entities = new PortalEntities())
             {
+                entities.Configuration.AutoDetectChangesEnabled = false;
                 var operatorPrefixes = entities.OperatorsPrefixs.OrderByDescending(o => o.Prefix.Length).ToList();
                 foreach (var operatorPrefixe in operatorPrefixes)
                 {
@@ -148,7 +167,7 @@ namespace Portal.Shared
                         break;
                     }
                 }
-                if(message.MobileOperator == 0)
+                if (message.MobileOperator == 0)
                     Shared.PortalException.Throw("Invalid Operator for Mobile Number: " + message.MobileNumber);
             }
             return message;
@@ -188,6 +207,17 @@ namespace Portal.Shared
             return point;
         }
 
+        public static void SetSubscriberPoint(long subscriberId, long serviceId, int point)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var pointObj = entity.SubscribersPoints.FirstOrDefault(o => o.SubscriberId == subscriberId && o.ServiceId == serviceId);
+                pointObj.Point += point;
+                entity.Entry(pointObj).State = System.Data.Entity.EntityState.Modified;
+                entity.SaveChanges();
+            }
+        }
+
         public static void HandleReceivedMessage(ReceievedMessage receivedMessage)
         {
             var message = new MessageObject();
@@ -196,6 +226,7 @@ namespace Portal.Shared
             message.Content = receivedMessage.Content;
             message.ProcessStatus = (int)ProcessStatus.TryingToSend;
             message.MessageType = (int)MessageType.OnDemand;
+            message.IsReceivedFromIntegratedPanel = receivedMessage.IsReceivedFromIntegratedPanel;
 
             using (var entity = new PortalEntities())
             {
@@ -208,10 +239,10 @@ namespace Portal.Shared
                 message = Portal.Shared.MessageHandler.ValidateMessage(message);
                 message.ServiceId = service.Id;
 
-                //if (service.ServiceCode == "RPS")
-                //    Portal.Services.RockPaperScissor.HandleMo.ReceivedMessage(message, service);
+                if (service.ServiceCode == "MyLeague")
+                    Portal.Services.MyLeague.HandleMo.ReceivedMessage(message, service);
                 //else if (service.ServiceCode == "Danestan")
-                    Portal.Services.Danestan.HandleMo.ReceivedMessage(message, service);
+                //    Portal.Services.Danestan.HandleMo.ReceivedMessage(message, service);
                 receivedMessage.IsProcessed = true;
                 entity.Entry(receivedMessage).State = System.Data.Entity.EntityState.Modified;
                 entity.SaveChanges();
@@ -240,6 +271,13 @@ namespace Portal.Shared
             Mci = 1,
             Irancell = 2,
             Rightel = 3
+        }
+
+        public enum OperatorPlan
+        {
+            Unspecified = 0,
+            Postpaid = 1,
+            Prepaid = 2
         }
     }
 }
