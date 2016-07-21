@@ -7,6 +7,7 @@ namespace Portal.Controllers
     {
         // /Receive/Message?mobileNumber=09125612694&shortCode=2050&content=hi&receiveTime=22&messageId=45
         [HttpGet]
+        [AllowAnonymous]
         public string Message([FromUri]MessageObject messageObj)
         {
             if (messageObj.MobileNumber == null && messageObj.Address != null)
@@ -24,6 +25,7 @@ namespace Portal.Controllers
 
         // /Receive/Delivery?PardisId=44353535&Status=DeliveredToNetwork&ErrorMessage=error
         [HttpGet]
+        [AllowAnonymous]
         public string Delivery([FromUri]DeliveryObject delivery)
         {
             Shared.MessageHandler.SaveDeliveryStatus(delivery);
@@ -32,6 +34,7 @@ namespace Portal.Controllers
 
         // /Receive/PardisIntegratedPanel?Address=09125612694&ServiceID=1245&EventId=error
         [HttpGet]
+        [AllowAnonymous]
         public string PardisIntegratedPanel([FromUri]IntegratedPanel integratedPanelObj)
         {
             if(integratedPanelObj.EventID == "1.2" && integratedPanelObj.NewStatus == 5)
