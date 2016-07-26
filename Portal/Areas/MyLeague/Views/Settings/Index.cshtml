@@ -1,0 +1,76 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "تنظیمات";
+}
+
+<div class="k-rtl" id="keywordsGrid"></div>
+
+<script>
+    $("#keywordsGrid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف" },
+            { field: "OnKeywords", title: "کلید واژه عضویت", editor: textAreaEditor },
+            { command: ["edit"], width: 180 }
+        ],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Settings/Service_Read",
+                    type: "POST"
+                },
+                update: {
+                    url: "Settings/Service_Update",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#keywordsGrid").data("kendoGrid").dataSource.read();
+                    }
+                },
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                        OnKeywords: { type: "string", validation: { required: true }, nullable: false },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 1,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "asc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+    });
+
+</script>

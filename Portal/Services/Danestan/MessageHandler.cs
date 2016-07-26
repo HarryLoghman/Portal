@@ -89,19 +89,19 @@ namespace Portal.Services.Danestan
             }
         }
 
-        public static string HandleSpecialStrings(string content, int point, long subscriberId, long serviceId)
+        public static string HandleSpecialStrings(string content, int point, string mobileNumber, long serviceId)
         {
             using (var entity = new PortalEntities())
             {
-                if (content.Contains("{DPOINT}"))
+                if (content.Contains("{SPOINT}"))
                 {
-                    point = Shared.MessageHandler.GetSubscriberPoint(subscriberId, serviceId);
-                    content = content.Replace("{DPOINT}", point.ToString());
+                    point = Shared.MessageHandler.GetSubscriberPoint(mobileNumber, serviceId);
+                    content = content.Replace("{SPOINT}", point.ToString());
                 }
-                if (content.Contains("{WPOINT}"))
+                if (content.Contains("{TPOINT}"))
                 {
-                    point = Shared.MessageHandler.GetSubscriberPoint(subscriberId, null);
-                    content = content.Replace("{WPOINT}", point.ToString());
+                    point = Shared.MessageHandler.GetSubscriberPoint(mobileNumber, null);
+                    content = content.Replace("{TPOINT}", point.ToString());
                 }
             }
             return content;
@@ -291,7 +291,7 @@ namespace Portal.Services.Danestan
                 var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price,null);
                 foreach (var subscriber in subscribers)
                 {
-                    eventbaseContent.Content = HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.Id, serviceId.Value);
+                    eventbaseContent.Content = HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.MobileNumber, serviceId.Value);
                     var message = Shared.MessageHandler.CreateMessage(subscriber, eventbaseContent.Content, eventbaseContent.Id, Shared.MessageHandler.MessageType.EventBase, Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, eventbaseContent.Point, null);
                     messages.Add(message);
                 }

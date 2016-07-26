@@ -19,7 +19,7 @@ namespace Portal.Services.MyLeague
                     return;
                 var pointsTable = GetPointsTableValues();
                 var subscriptionPoint = pointsTable.Where(o => o.Title == "SubscriptionPoint").FirstOrDefault();
-                Shared.MessageHandler.SetSubscriberPoint(subscriberId.Value, serviceId, subscriptionPoint.Point);
+                Shared.MessageHandler.SetSubscriberPoint(mobileNumber, serviceId, subscriptionPoint.Point);
                 using (var entity = new MyLeagueEntities())
                 {
                     entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);
@@ -34,16 +34,16 @@ namespace Portal.Services.MyLeague
             }
         }
 
-        public static void AddSubscriptionOffReasonPoint(long subscriberId, long serviceId)
+        public static void AddSubscriptionOffReasonPoint(Subscriber subscriber, long serviceId)
         {
             try
             {
-                var subscriberAdditionalInfo = GetSubscriberAdditionalInfo(subscriberId);
+                var subscriberAdditionalInfo = GetSubscriberAdditionalInfo(subscriber.Id);
                 if (subscriberAdditionalInfo.IsSubscriberReceivedOffReasonPoint == true)
                     return;
                 var pointsTable = GetPointsTableValues();
                 var subscribtionPoint = pointsTable.Where(o => o.Title == "OffReasonPoint").FirstOrDefault();
-                Shared.MessageHandler.SetSubscriberPoint(subscriberId, serviceId, subscribtionPoint.Point);
+                Shared.MessageHandler.SetSubscriberPoint(subscriber.MobileNumber, serviceId, subscribtionPoint.Point);
                 using (var entity = new MyLeagueEntities())
                 {
                     entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);

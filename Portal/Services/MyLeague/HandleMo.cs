@@ -9,11 +9,23 @@ namespace Portal.Services.MyLeague
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void ReceivedMessage(MessageObject message, Service service)
         {
-            
+            //System.Diagnostics.Debugger.Launch();
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
+            var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            if (service.OnKeywords.Contains(message.Content) || isUserWantsToUnsubscribe == true)
+            if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
+                if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                { 
+                    var user = Shared.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                    if (user != null && user.DeactivationDate == null)
+                    {
+                        //User already subscribed, send service help
+                        MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                }
                 var serviceStatusForSubscriberState = HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
@@ -36,12 +48,13 @@ namespace Portal.Services.MyLeague
 
                 }
                 else if (serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                else
                 {
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, HandleSubscription.ServiceStatusForSubscriberState.Renewal);
+                    var subscriberId = Shared.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
+                    ServiceHandler.RemoveSubscriberLeagues(subscriberId);
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                 }
-
+                else
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 message.Content = Shared.MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                 MessageHandler.InsertMessageToQueue(message);
                 return;
@@ -55,11 +68,11 @@ namespace Portal.Services.MyLeague
                 return;
             }
             message.SubscriberId = subscriber.Id;
-            if(subscriber.DeactivationDate != null)
+            if (subscriber.DeactivationDate != null)
             {
-                if (Regex.IsMatch(message.Content, @"^[a-zA-Z]+$"))
+                if (Regex.IsMatch(message.Content, @"^[a-fA-F]+$"))
                 {
-                    Subscribers.AddSubscriptionOffReasonPoint(subscriber.Id, service.Id);
+                    Subscribers.AddSubscriptionOffReasonPoint(subscriber, service.Id);
                     MessageHandler.SetOffReason(subscriber, message, messagesTemplate);
                 }
                 else

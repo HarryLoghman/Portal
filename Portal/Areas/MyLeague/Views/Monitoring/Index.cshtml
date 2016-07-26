@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = ViewBag.ServiceName + " : " + "وضعیت ارسال ها";
 }
 
@@ -22,6 +21,7 @@
     $("#grid").kendoGrid({
 
         columns: [
+            { field: "Id", title: "ردیف", width: 100 },
             { field: "PersianDateCreated", title: "تاریخ", width: 100 },
             { field: "MessageType", title: "نوع محتوا", template: "#= MessageType == 2 ? 'محتوای ایونت بیس' : 'محتوای اتوشارژ' #", width: 100 },
             { field: "ContentId", title: "شماره محتوا", width: 100 },
@@ -29,7 +29,7 @@
             { field: "TotalMessages", title: "تعداد پیامک", width: 100 },
             { field: "TotalSuccessfulySended", title: "تعداد ارسال موفق", width: 100 },
             { field: "TotalFailed", title: "تعداد خطا", width: 100 },
-            { field: "Status", title: "وضعیت", width: 100 },
+            { field: "Status", title: "وضعیت", template: "#=getProcessStatus(Status)#", width: 100 },
             { command: [{ text: "ارسال", click: SendButton }], width: 300 }
         ],
         dataSource: {
@@ -139,7 +139,7 @@
             DisbaleGridButtons(dataItem.uid);
             $.ajax({
                 url: '@Url.Action("StartSendingMessages", "Monitoring")',
-                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
+                data: { MonitoringId: dataItem.Id, ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
                 dataType: 'html',
                 success: function (data) {
                     kendo.ui.progress(loadingElement, true);
@@ -157,7 +157,7 @@
             DisbaleGridButtons(dataItem.uid);
             $.ajax({
                 url: '@Url.Action("PauseSendingMessages", "Monitoring")',
-                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
+                data: { MonitoringId: dataItem.Id, ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
                 dataType: 'html',
                 success: function (data) {
                     kendo.ui.progress(loadingElement, false);
@@ -175,7 +175,7 @@
             DisbaleGridButtons(dataItem.uid);
             $.ajax({
                 url: '@Url.Action("ResumeSendingMessages", "Monitoring")',
-                data: { ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
+                data: { MonitoringId: dataItem.Id, ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
                 dataType: 'html',
                 success: function (data) {
                     kendo.ui.progress(loadingElement, true);

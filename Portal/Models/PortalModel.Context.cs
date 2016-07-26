@@ -34,9 +34,14 @@ namespace Portal.Models
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Subscriber> Subscribers { get; set; }
         public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
-        public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
         public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
         public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
         public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
+        public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
+        public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
     }
 }

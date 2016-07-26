@@ -14,12 +14,6 @@ namespace Portal.Models
     
     public partial class Subscriber
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Subscriber()
-        {
-            this.SubscribersPoints = new HashSet<SubscribersPoint>();
-        }
-    
         public long Id { get; set; }
         public string MobileNumber { get; set; }
         public long ServiceId { get; set; }
@@ -36,7 +30,5 @@ namespace Portal.Models
         public string SubscriberUniqueId { get; set; }
     
         public virtual Service Service { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SubscribersPoint> SubscribersPoints { get; set; }
     }
 }

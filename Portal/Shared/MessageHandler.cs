@@ -47,6 +47,7 @@ namespace Portal.Shared
                 delivery.ReferenceId = deliveryObj.PardisID;
                 delivery.Status = deliveryObj.Status;
                 delivery.Description = deliveryObj.ErrorMessage;
+                delivery.DeliveryTime = DateTime.Now;
                 entity.Deliveries.Add(delivery);
                 entity.SaveChanges();
             }
@@ -166,6 +167,11 @@ namespace Portal.Shared
                         message.OperatorPlan = operatorPrefixe.OperatorPlan;
                         break;
                     }
+                    else
+                    {
+                        message.MobileOperator = (int)MobileOperators.Mci;
+                        message.OperatorPlan = (int)OperatorPlan.Prepaid;
+                    }
                 }
                 if (message.MobileOperator == 0)
                     Shared.PortalException.Throw("Invalid Operator for Mobile Number: " + message.MobileNumber);
@@ -194,24 +200,24 @@ namespace Portal.Shared
             return message;
         }
 
-        public static int GetSubscriberPoint(long subscriberId, long? serviceId)
+        public static int GetSubscriberPoint(string mobileNumber, long? serviceId)
         {
             int point = 0;
             using (var entity = new PortalEntities())
             {
                 if (serviceId != null)
-                    point = entity.SubscribersPoints.FirstOrDefault(o => o.SubscriberId == subscriberId && o.ServiceId == serviceId).Point;
+                    point = entity.SubscribersPoints.FirstOrDefault(o => o.Mobilenumber == mobileNumber && o.ServiceId == serviceId).Point;
                 else
-                    point = entity.SubscribersPoints.Where(o => o.SubscriberId == subscriberId).Select(o => o.Point).DefaultIfEmpty(0).Sum();
+                    point = entity.SubscribersPoints.Where(o => o.Mobilenumber == mobileNumber).Select(o => o.Point).DefaultIfEmpty(0).Sum();
             }
             return point;
         }
 
-        public static void SetSubscriberPoint(long subscriberId, long serviceId, int point)
+        public static void SetSubscriberPoint(string mobileNumber, long serviceId, int point)
         {
             using (var entity = new PortalEntities())
             {
-                var pointObj = entity.SubscribersPoints.FirstOrDefault(o => o.SubscriberId == subscriberId && o.ServiceId == serviceId);
+                var pointObj = entity.SubscribersPoints.FirstOrDefault(o => o.Mobilenumber == mobileNumber && o.ServiceId == serviceId);
                 pointObj.Point += point;
                 entity.Entry(pointObj).State = System.Data.Entity.EntityState.Modified;
                 entity.SaveChanges();

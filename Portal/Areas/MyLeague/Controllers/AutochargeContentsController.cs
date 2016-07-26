@@ -64,7 +64,7 @@ namespace Portal.Areas.MyLeague.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Error in EventbaseContentsController :" + e);
+                logs.Error("Error in AutochargeContentsController :" + e);
             }
 
             return Json(new[] { autochargeContent }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);

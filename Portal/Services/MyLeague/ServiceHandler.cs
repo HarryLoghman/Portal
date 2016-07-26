@@ -51,6 +51,16 @@ namespace Portal.Services.MyLeague
             return autochargeContent;
         }
 
+        public static void RemoveSubscriberLeagues(long? subscriberId)
+        {
+            using (var entity = new MyLeagueEntities())
+            {
+                var subscriberLeagus = entity.SubscribersLeagues.Where(o => o.SubscriberId == subscriberId);
+                entity.SubscribersLeagues.RemoveRange(subscriberLeagus);
+                entity.SaveChanges();
+            }
+        }
+
         public static List<MessagesTemplate> GetServiceMessagesTemplate()
         {
             using (var entity = new MyLeagueEntities())
@@ -64,6 +74,17 @@ namespace Portal.Services.MyLeague
             foreach (var offKeyword in ServiceOffKeywords())
             {
                 if (content.Contains(offKeyword))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool CheckIfUserSendsSubscriptionKeyword(string content, Service service)
+        {
+            var serviceKeywords = service.OnKeywords.Split(',');
+            foreach (var keyword in serviceKeywords)
+            {
+                if (content == keyword || content == keyword.Replace(" ", ""))
                     return true;
             }
             return false;

@@ -19,7 +19,7 @@ namespace Portal.Services.MyLeague
             else if (message.Content.Contains("-"))
                 message = RemoveLeagueFromSubsriber(subscriber, message, leagueList, messagesTemplate);
             else
-                MessageHandler.InvalidContentWhenSubscribed(message, messagesTemplate);
+                MessageHandler.SendServiceHelp(message, messagesTemplate);
             if (message.Content != null)
                 MessageHandler.InsertMessageToQueue(message);
         }
@@ -71,26 +71,26 @@ namespace Portal.Services.MyLeague
                     leagueId = item.Id;
                     break;
                 }
-                if (leagueId != 0)
+            }
+            if (leagueId != 0)
+            {
+                using (var entity = new MyLeagueEntities())
                 {
-                    using (var entity = new MyLeagueEntities())
+                    var isSubscriberLeagueExits = entity.SubscribersLeagues.FirstOrDefault(o => o.SubscriberId == subscriber.Id && o.LeagueId == leagueId);
+                    if (isSubscriberLeagueExits == null)
                     {
-                        var isSubscriberLeagueExits = entity.SubscribersLeagues.FirstOrDefault(o => o.SubscriberId == subscriber.Id && o.LeagueId == leagueId);
-                        if (isSubscriberLeagueExits == null)
-                        {
-                            var league = new SubscribersLeague();
-                            league.SubscriberId = subscriber.Id;
-                            league.LeagueId = leagueId;
-                            entity.SubscribersLeagues.Add(league);
-                            entity.SaveChanges();
-                        }
+                        var league = new SubscribersLeague();
+                        league.SubscriberId = subscriber.Id;
+                        league.LeagueId = leagueId;
+                        entity.SubscribersLeagues.Add(league);
+                        entity.SaveChanges();
                     }
-                    message = PrepareLatestLeagueContent(message, subscriber.Id, leagueId);
                 }
-                else
-                {
-                    message = MessageHandler.InvalidContentWhenSubscribed(message, messagesTemplate);
-                }
+                message = PrepareLatestLeagueContent(message, subscriber.Id, leagueId);
+            }
+            else
+            {
+                message = MessageHandler.SendServiceHelp(message, messagesTemplate);
             }
             return message;
         }
@@ -124,7 +124,7 @@ namespace Portal.Services.MyLeague
 
         public static List<SubscribersLeague> GetSubscriberLeagues(long subscriberId)
         {
-            using(var entity = new MyLeagueEntities())
+            using (var entity = new MyLeagueEntities())
             {
                 var subscriberLeageus = entity.SubscribersLeagues.Where(o => o.SubscriberId == subscriberId).ToList();
                 return subscriberLeageus;

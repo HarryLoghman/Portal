@@ -62,42 +62,51 @@ namespace Portal.Areas.MyLeague.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult StartSendingMessages([DataSourceRequest]DataSourceRequest request)
         {
+            var monitoringId = Convert.ToInt64(Request["MonitoringId"]);
             var contentId = Convert.ToInt64(Request["ContentId"]);
             var messageType = Convert.ToInt32(Request["MessageType"]);
-            var tag = Convert.ToInt32(Request["Tag"]);
             var persianDateCreated = Request["PersianDateCreated"];
             if (messageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
-                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
+            {
+                var tag = Convert.ToInt32(Request["Tag"]);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, monitoringId);
+            }
             else
-                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, monitoringId);
 
             return Content("Ok");
         }
 
         public ActionResult PauseSendingMessages([DataSourceRequest]DataSourceRequest request)
         {
+            var monitoringId = Convert.ToInt64(Request["MonitoringId"]);
             var contentId = Convert.ToInt64(Request["ContentId"]);
             var messageType = Convert.ToInt32(Request["MessageType"]);
-            var tag = Convert.ToInt32(Request["Tag"]);
             var persianDateCreated = Request["PersianDateCreated"];
             if (messageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
-                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused);
+            {
+                var tag = Convert.ToInt32(Request["Tag"]);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, monitoringId);
+            }
             else
-                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, monitoringId);
 
             return Content("Ok");
         }
 
         public ActionResult ResumeSendingMessages([DataSourceRequest]DataSourceRequest request)
         {
+            var monitoringId = Convert.ToInt64(Request["MonitoringId"]);
             var contentId = Convert.ToInt64(Request["ContentId"]);
             var messageType = Convert.ToInt32(Request["MessageType"]);
-            var tag = Convert.ToInt32(Request["Tag"]);
             var persianDateCreated = Request["PersianDateCreated"];
             if (messageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
-                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
+            {
+                var tag = Convert.ToInt32(Request["Tag"]);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, tag, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, monitoringId);
+            }
             else
-                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
+                db.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.EventBase, contentId, null, persianDateCreated, (int)Portal.Shared.MessageHandler.ProcessStatus.Paused, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, monitoringId);
 
             return Content("Ok");
         }

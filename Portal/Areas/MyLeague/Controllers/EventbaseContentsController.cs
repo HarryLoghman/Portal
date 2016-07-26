@@ -171,6 +171,8 @@ namespace Portal.Areas.MyLeague.Controllers
         public ActionResult GetLeagueList()
         {
             var leagueList = Services.MyLeague.ContentManager.GetLeagueList();
+            leagueList.Insert(0, new Models.LeagueList { Number = 0, Name = "همه لیگ ها" });
+            leagueList.Add(new Models.LeagueList { Number = 99, Name = "اعضایی که لیگ انتخاب نکرده اند" });
             return Json(leagueList, JsonRequestBehavior.AllowGet);
         }
     }

@@ -15,11 +15,10 @@ namespace Portal.Models
     public partial class SubscribersPoint
     {
         public long Id { get; set; }
-        public long SubscriberId { get; set; }
+        public string Mobilenumber { get; set; }
         public long ServiceId { get; set; }
         public int Point { get; set; }
     
         public virtual Service Service { get; set; }
-        public virtual Subscriber Subscriber { get; set; }
     }
 }

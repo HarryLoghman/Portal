@@ -1,0 +1,149 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "گزارشات";
+}
+
+<style>
+    .loadAnimation {
+        position: relative;
+        margin-right: 30px;
+    }
+
+    .loadAnimation > .k-loading-mask > .k-loading-image {
+        background-size: contain;
+    }
+</style>
+
+<div class="k-rtl" id="grid"></div>
+<div id="subscribersStaticsContainer" style="height: 400px"></div>
+
+<script>
+    var gridElement = $("#grid");
+
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            { field: "NumberOfSubscriptions", title: "تعداد عضویت", width: 100 },
+            { field: "NumberOfUnsubscriptions", title: "تعداد لغو عضویت", width: 100 },
+            { field: "NumberOfPostpaidSubscriptions", title: "تعداد عضویت مشترکین دائمی", width: 100 },
+            { field: "NumberOfPrepaidSubscriptions", title: "تعداد عضویت مشترکین اعتباری", width: 100 },
+            { field: "NumberOfMessagesSent", title: "تعداد پیامک ارسال شده", width: 100 },
+            { field: "NumberOfPostpaidMessagesSent", title: "تعداد پیامک دائمی ارسال شده", width: 100 },
+            { field: "NumberOfPrepaidMessagesSent", title: "تعداد پیامک اعتباری ارسال شده", width: 100 },
+            { field: "TotalSubscribers", title: "تعداد اعضا", width: 100 },
+            { field: "NumberOfOnDemandMessagesSent", title: "تعداد پیامک OnDemand ارسال شده", width: 100 },
+            { field: "NumberOfAutochargeMessagesSent", title: "تعداد پیامک اتوشارژ ارسال شده", width: 100 },
+            { field: "NumberOfEventbaseMessagesSent", title: "تعداد پیامک Eventbase ارسال شده", width: 100 },
+            { field: "NumberOfPostpaidUnsubscriptions", title: "تعداد لغو عضویت دائمی", width: 100 },
+            { field: "NumberOfPrepaidUnsubscriptions", title: "تعداد لغو عضویت اعتباری", width: 100 },
+            { field: "NumberOfMessagesFailed", title: "تعداد پیامک ارسال نشده", width: 100 },
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_Read",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+
+</script>
+
+<script type="text/javascript">
+$(function () {
+    $('#subscribersStaticsContainer').highcharts({
+        chart: {
+            type: 'pie',
+            //options3d: {
+            //    enabled: true,
+            //    alpha: 45,
+            //    beta: 0
+            //}
+        },
+        title: {
+            text: 'تعداد اعضای سرویس'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}'
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            data: [
+                ['اعضای غیر فعال', 30],
+                {
+                    name: 'اعضای فعال',
+                    y: 15,
+                    sliced: true,
+                    selected: true
+                },
+            ]
+        }]
+    });
+});
+</script>
+
+<script src="@Url.Content("~/Scripts/Highstock/highcharts.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/highcharts-3d.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/modules/exporting.js")"></script>

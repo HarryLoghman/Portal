@@ -42,11 +42,11 @@
         columns: [
             { field: "Id", title: "ردیف", width: 100 },
             { field: "PersianDateCreated", title: "تاریخ ایجاد", width: 200 },
-            { field: "LeagueId", title: "لیگ", editor: leagueDropDownEditor, template: "#=getLeagueName(LeagueId)#", width: 400 },
+            { field: "LeagueId", title: "لیگ", editor: leagueDropDownEditor, template: "#=getLeagueName(LeagueId)#", width: 200 },
             { field: "Content", title: "محتوی", editor: textAreaEditor },
             { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند", editor: subscriberNotSendedMoInDaysDropDownEditor, template: "#=getSubscriberNotSendedMoInDaysValue(SubscriberNotSendedMoInDays)#", width: 100 },
-            { field: "Price", title: "هزینه پیام", width: 100 },
-            { field: "Point", title: "امتیاز", width: 100 },
+            { field: "Price", title: "هزینه پیام", width: 150 },
+            { field: "Point", title: "امتیاز", width: 150 },
             { command: ["edit", "destroy", { text: "انتقال به صف", click: sendToMessagesQueue }], width: 300 }
         ],
         toolbar: ["create"],

@@ -117,7 +117,7 @@ namespace Portal.Shared
             {
                 var subscriberPoint = new SubscribersPoint();
                 subscriberPoint.ServiceId = service.Id;
-                subscriberPoint.SubscriberId = newSubscriber.Id;
+                subscriberPoint.Mobilenumber = newSubscriber.MobileNumber;
                 subscriberPoint.Point = 0;
                 entity.SubscribersPoints.Add(subscriberPoint);
                 entity.SaveChanges();
@@ -128,12 +128,18 @@ namespace Portal.Shared
         {
             using (var entity = new PortalEntities())
             {
+                int state;
+                if (subscriberState == ServiceStatusForSubscriberState.Renewal)
+                    state = (int)ServiceStatusForSubscriberState.Activated;
+                else
+                    state = (int)subscriberState;
+
                 var subscriberHistory = new SubscribersHistory();
                 subscriberHistory.MobileNumber = mobileNumber;
                 subscriberHistory.Date = DateTime.Now;
                 subscriberHistory.ServiceName = service.Name;
                 subscriberHistory.ServiceId = service.Id;
-                subscriberHistory.ServiceStatusForSubscriber = (int)subscriberState;
+                subscriberHistory.ServiceStatusForSubscriber = state;
                 subscriberHistory.ShortCode = shortCode;
                 subscriberHistory.Time = DateTime.Now.TimeOfDay;
                 subscriberHistory.WhoChangedSubscriberStatus = (int)whoChangedSubscriberState;

@@ -53,7 +53,7 @@ namespace Portal.Areas.MyLeague.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Error in EventbaseContentsController :" + e);
+                logs.Error("Error in AutochargeTimeTableController :" + e);
             }
 
             return Json(new[] { autochargeTimeTable }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);

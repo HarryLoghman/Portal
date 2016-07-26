@@ -42,8 +42,23 @@ namespace Portal.Models
         public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
         public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
         public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
+        public virtual DbSet<DailyStatistic> DailyStatistics { get; set; }
+        public virtual DbSet<MessagesArchive> MessagesArchives { get; set; }
     
-        public virtual int ChangeMessageStatus(Nullable<int> messageType, Nullable<long> contentId, Nullable<int> tag, string persianDate, Nullable<int> currentStatus, Nullable<int> desiredProcessStatus)
+        public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, Nullable<long> serviceId)
+        {
+            var miladiDateParameter = miladiDate.HasValue ?
+                new ObjectParameter("MiladiDate", miladiDate) :
+                new ObjectParameter("MiladiDate", typeof(System.DateTime));
+    
+            var serviceIdParameter = serviceId.HasValue ?
+                new ObjectParameter("ServiceId", serviceId) :
+                new ObjectParameter("ServiceId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("AggregateDailyStatistics", miladiDateParameter, serviceIdParameter);
+        }
+    
+        public virtual int ChangeMessageStatus(Nullable<int> messageType, Nullable<long> contentId, Nullable<int> tag, string persianDate, Nullable<int> currentStatus, Nullable<int> desiredProcessStatus, Nullable<long> monitoringId)
         {
             var messageTypeParameter = messageType.HasValue ?
                 new ObjectParameter("MessageType", messageType) :
@@ -69,7 +84,11 @@ namespace Portal.Models
                 new ObjectParameter("DesiredProcessStatus", desiredProcessStatus) :
                 new ObjectParameter("DesiredProcessStatus", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ChangeMessageStatus", messageTypeParameter, contentIdParameter, tagParameter, persianDateParameter, currentStatusParameter, desiredProcessStatusParameter);
+            var monitoringIdParameter = monitoringId.HasValue ?
+                new ObjectParameter("MonitoringId", monitoringId) :
+                new ObjectParameter("MonitoringId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ChangeMessageStatus", messageTypeParameter, contentIdParameter, tagParameter, persianDateParameter, currentStatusParameter, desiredProcessStatusParameter, monitoringIdParameter);
         }
     }
 }

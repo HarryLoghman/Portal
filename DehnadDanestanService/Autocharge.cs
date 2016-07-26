@@ -71,7 +71,7 @@ namespace DehnadDanestanService
                             var autochargeContent = Portal.Services.Danestan.ServiceHandler.SelectAutochargeContentByDate(entity, subscriber.Id);
                             if (autochargeContent == null)
                                 continue;
-                            autochargeContent.Content = Portal.Services.Danestan.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.Id, serviceId);
+                            autochargeContent.Content = Portal.Services.Danestan.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId);
                             var imiChargeObject = Portal.Services.Danestan.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
                             var message = Portal.Shared.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, Portal.Shared.MessageHandler.MessageType.AutoCharge, Portal.Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
                             messages.Add(message);

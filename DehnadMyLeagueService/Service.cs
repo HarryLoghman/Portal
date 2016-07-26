@@ -31,9 +31,9 @@ namespace DehnadMyLeagueService
             sendMessageThread.IsBackground = true;
             sendMessageThread.Start();
 
-            //statisticsThread = new Thread(StatisticsWorkerThread);
-            //statisticsThread.IsBackground = true;
-            //statisticsThread.Start();
+            statisticsThread = new Thread(StatisticsWorkerThread);
+            statisticsThread.IsBackground = true;
+            statisticsThread.Start();
         }
 
         protected override void OnStop()
@@ -58,11 +58,11 @@ namespace DehnadMyLeagueService
                     sendMessageThread.Abort();
                 }
 
-                //shutdownEvent.Set();
-                //if (!statisticsThread.Join(3000))
-                //{
-                //    statisticsThread.Abort();
-                //}
+                shutdownEvent.Set();
+                if (!statisticsThread.Join(3000))
+                {
+                    statisticsThread.Abort();
+                }
             }
             catch (Exception exp)
             {
@@ -103,14 +103,14 @@ namespace DehnadMyLeagueService
         }
 
 
-        //private void StatisticsWorkerThread()
-        //{
-        //    var sendJob = new SendJob();
-        //    while (!shutdownEvent.WaitOne(0))
-        //    {
-        //        sendJob.Statistics();
-        //        Thread.Sleep(10000);
-        //    }
-        //}
+        private void StatisticsWorkerThread()
+        {
+            var statistic = new Statistic();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                statistic.Process();
+                Thread.Sleep(10000);
+            }
+        }
     }
 }

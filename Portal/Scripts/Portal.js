@@ -55,3 +55,20 @@ function getSubscriberNotSendedMoInDaysValue(Id) {
         }
     }
 }
+
+function getProcessStatus(Status) {
+    if (Status === 1)
+        return "در صف";
+    else if (Status === 2)
+        return "در حال ارسال";
+    else if (Status === 3)
+        return "موفق";
+    else if (Status === 4)
+        return "خطا";
+    else if (Status === 5)
+        return "پایان یافته";
+    else if (Status === 6)
+        return "متوقف شده";
+    else
+        return "نامشخص";
+}

@@ -135,7 +135,7 @@
                                 لیگ من
                                 <ul>
                                     <li>
-                                        @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "MyLeague" }, null)
+                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "MyLeague" }, null)
                                     </li>
                                     <li>
                                         @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "MyLeague" }, null)
@@ -148,6 +148,12 @@
                                     </li>
                                     <li>
                                         @Html.ActionLink("لیست لیگ ها", "Index", "LeagueList", new { area = "MyLeague" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "MyLeague" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "MyLeague" }, null)
                                     </li>
                                 </ul>
                             </li>

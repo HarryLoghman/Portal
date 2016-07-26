@@ -10,7 +10,7 @@
         @Html.ActionLink("ایجاد کاربر جدید", "Register", "Account")
     </li>
     <li>
-        @Html.ActionLink("خروج", "LogOff", "Account", null, null)
+        @Html.ActionLink("خروج", "LogOff", new { area = "", controller = "Account" })
     </li>
 </ul>
 @*using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))

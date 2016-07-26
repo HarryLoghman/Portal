@@ -40,7 +40,7 @@ namespace DehnadMyLeagueService
                 {
                     using (var entity = new MyLeagueEntities())
                     {
-                        entity.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, item.Tag, currentPersianDate, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend);
+                        entity.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, item.Tag, currentPersianDate, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, null);
                     }
                 }
             }
@@ -71,7 +71,7 @@ namespace DehnadMyLeagueService
                             var autochargeContent = Portal.Services.MyLeague.ServiceHandler.SelectAutochargeContentByDate(entity, subscriber.Id);
                             if (autochargeContent == null)
                                 continue;
-                            autochargeContent.Content = Portal.Services.MyLeague.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.Id, serviceId);
+                            autochargeContent.Content = Portal.Services.MyLeague.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId);
                             var imiChargeObject = Portal.Services.MyLeague.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
                             var message = Portal.Shared.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, Portal.Shared.MessageHandler.MessageType.AutoCharge, Portal.Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
                             messages.Add(message);

@@ -22,6 +22,7 @@ namespace Portal.Services.MyLeague
         {
             using (var entity = new MyLeagueEntities())
             {
+                message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
                 if (message.MessageType == (int)Shared.MessageHandler.MessageType.AutoCharge)
                 {
                     var messageBuffer = CreateAutochargeMessageBuffer(message);
@@ -39,6 +40,13 @@ namespace Portal.Services.MyLeague
                 }
                 entity.SaveChanges();
             }
+        }
+
+        public static MessageObject SendServiceHelp(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, Shared.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message.Content = messagesTemplate.Where(o => o.Title == "ServiceHelp").Select(o => o.Content).FirstOrDefault();
+            return message;
         }
 
         public static void InsertBulkMessagesToQueue(List<MessageObject> messages)
@@ -89,19 +97,21 @@ namespace Portal.Services.MyLeague
             }
         }
 
-        public static string HandleSpecialStrings(string content, int point, long subscriberId, long serviceId)
+        public static string HandleSpecialStrings(string content, int point, string mobileNumber, long serviceId)
         {
             using (var entity = new PortalEntities())
             {
-                if (content.Contains("{DPOINT}"))
+                if (content.Contains("{SPOINT}"))
                 {
-                    point = Shared.MessageHandler.GetSubscriberPoint(subscriberId, serviceId);
-                    content = content.Replace("{DPOINT}", point.ToString());
+                    var subscriberPoint = Shared.MessageHandler.GetSubscriberPoint(mobileNumber, serviceId);
+                    subscriberPoint += point;
+                    content = content.Replace("{SPOINT}", subscriberPoint.ToString());
                 }
-                if (content.Contains("{WPOINT}"))
+                if (content.Contains("{TPOINT}"))
                 {
-                    point = Shared.MessageHandler.GetSubscriberPoint(subscriberId, null);
-                    content = content.Replace("{WPOINT}", point.ToString());
+                    var subscriberPoint = Shared.MessageHandler.GetSubscriberPoint(mobileNumber, null);
+                    subscriberPoint += point;
+                    content = content.Replace("{TPOINT}", subscriberPoint.ToString());
                 }
             }
             return content;
@@ -119,6 +129,7 @@ namespace Portal.Services.MyLeague
             messageBuffer.ImiChargeKey = message.ImiChargeKey;
             messageBuffer.ImiMessageType = message.ImiMessageType;
             messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
             messageBuffer.MessageType = message.MessageType;
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
@@ -144,6 +155,7 @@ namespace Portal.Services.MyLeague
             messageBuffer.ImiChargeKey = message.ImiChargeKey;
             messageBuffer.ImiMessageType = message.ImiMessageType;
             messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
             messageBuffer.MessageType = message.MessageType;
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
@@ -169,6 +181,7 @@ namespace Portal.Services.MyLeague
             messageBuffer.ImiChargeKey = message.ImiChargeKey;
             messageBuffer.ImiMessageType = message.ImiMessageType;
             messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
             messageBuffer.MessageType = message.MessageType;
             messageBuffer.ProcessStatus = message.ProcessStatus;
             messageBuffer.ServiceId = message.ServiceId;
@@ -187,7 +200,7 @@ namespace Portal.Services.MyLeague
             using (var entity = new MyLeagueEntities())
             {
                 ImiChargeCode imiChargeCode;
-                if (subscriberState == null)
+                if (subscriberState == null && price > 0)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
                 else if(subscriberState == Shared.HandleSubscription.ServiceStatusForSubscriberState.Activated)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Register");
@@ -275,24 +288,36 @@ namespace Portal.Services.MyLeague
                 if (eventbaseContent.SubscriberNotSendedMoInDays == 0)
                     subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
                 else
-                    subscribers = (from s in entity.Subscribers join r in entity.ReceievedMessages on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator  = s.MobileOperator}).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
+                    subscribers = (from s in entity.Subscribers join r in entity.ReceivedMessagesArchives on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator  = s.MobileOperator}).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
             }
             if (subscribers == null)
             {
                 logs.Info("There is no subscribers for service with code of: " + serviceCode);
                 return;
             }
+            logs.Info("Eventbase subscribers count:" + subscribers.Count());
             using (var entity = new MyLeagueEntities())
             {
-                var leagueSubscribers = (from s in subscribers join l in entity.SubscribersLeagues on s.Id equals l.SubscriberId where l.LeagueId == eventbaseContent.LeagueId select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
+                List<Subscriber> leagueSubscribers;
+                if (eventbaseContent.LeagueId == 0)
+                    leagueSubscribers = subscribers.ToList();
+                else if (eventbaseContent.LeagueId == 99)
+                {
+                    var allLeaguesSubscribers = (from l in entity.SubscribersLeagues select l.SubscriberId);
+                    leagueSubscribers = leagueSubscribers = (from s in subscribers where !allLeaguesSubscribers.Contains(s.Id) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
+                }
+                else
+                    leagueSubscribers = (from s in subscribers join l in entity.SubscribersLeagues on s.Id equals l.SubscriberId where l.LeagueId == eventbaseContent.LeagueId select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
+                logs.Info("Eventbase leagueSubscribers Count:" + leagueSubscribers.Count());
                 var messages = new List<MessageObject>();
                 var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price, null);
                 foreach (var subscriber in leagueSubscribers)
                 {
-                    eventbaseContent.Content = HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.Id, serviceId.Value);
+                    eventbaseContent.Content = HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.MobileNumber, serviceId.Value);
                     var message = Shared.MessageHandler.CreateMessage(subscriber, eventbaseContent.Content, eventbaseContent.Id, Shared.MessageHandler.MessageType.EventBase, Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, eventbaseContent.Point, null);
                     messages.Add(message);
                 }
+                logs.Info("Evenbase messages count:" + messages.Count());
                 InsertBulkMessagesToQueue(messages);
                 eventbaseContent.IsAddedToSendQueueFinished = true;
                 entity.Entry(eventbaseContent).State = EntityState.Modified;
@@ -357,12 +382,27 @@ namespace Portal.Services.MyLeague
                 if(pardisResponse.Rows.Count == 0)
                 {
                     logs.Info("SendMessagesToPardisImi does not return response there must be somthing wrong with the parameters");
+                    foreach (var sms in smsList)
+                    {
+                        logs.Info("Index: " + sms.Index);
+                        logs.Info("Addresses: " + sms.Addresses);
+                        logs.Info("ShortCode: " + sms.ShortCode);
+                        logs.Info("Message: " + sms.Message);
+                        logs.Info("ChargeCode: " + sms.ChargeCode);
+                        logs.Info("SubUnsubMoMessage: " + sms.SubUnsubMoMessage);
+                        logs.Info("SubUnsubType: " + sms.SubUnsubType);
+                        logs.Info("++++++++++++++++++++++++++++++++++");
+                    }
                     return;
                 }
                 for (int index = 0; index < messagesCount; index++)
                 {
                     messages[index].ProcessStatus = (int)Shared.MessageHandler.ProcessStatus.Success;
                     messages[index].ReferenceId = pardisResponse.Rows[index]["Correlator"].ToString();
+                    messages[index].SentDate = DateTime.Now;
+                    messages[index].PersianSentDate = Shared.Date.GetPersianDate(DateTime.Now);
+                    if(messages[index].MessagePoint > 0)
+                        Shared.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
                     entity.Entry(messages[index]).State = EntityState.Modified;
                 }
                 entity.SaveChanges();

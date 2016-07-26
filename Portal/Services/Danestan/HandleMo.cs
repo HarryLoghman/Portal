@@ -56,7 +56,7 @@ namespace Portal.Services.Danestan
             {
                 if (Regex.IsMatch(message.Content, @"^[a-zA-Z]+$"))
                 {
-                    Subscribers.AddSubscriptionOffReasonPoint(subscriber.Id, service.Id);
+                    Subscribers.AddSubscriptionOffReasonPoint(subscriber, service.Id);
                     MessageHandler.SetOffReason(subscriber, message, messagesTemplate);
                 }
                 else
