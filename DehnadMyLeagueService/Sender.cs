@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Portal.Models;
+using SharedLibrary.Models;
+using MyLeagueLibrary.Models;
 using System.Linq;
 
 namespace DehnadMyLeagueService
@@ -17,10 +18,10 @@ namespace DehnadMyLeagueService
                 List<AutochargeMessagesBuffer> autochargeMessages;
                 List<EventbaseMessagesBuffer> eventbaseMessages;
                 List<OnDemandMessagesBuffer> onDemandMessages;
-                int readSize = Convert.ToInt32(Properties.Resources.ReadSize);
-                int takeSize = Convert.ToInt32(Properties.Resources.Take);
-                string aggregatorName = Properties.Resources.AggregatorName;
-                var serviceAdditionalInfo = Portal.Shared.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MyLeague", aggregatorName);
+                int readSize = Convert.ToInt32(Properties.Settings.Default.ReadSize);
+                int takeSize = Convert.ToInt32(Properties.Settings.Default.Take);
+                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MyLeague", aggregatorName);
                 int[] take = new int[(readSize / takeSize)];
                 int[] skip = new int[(readSize / takeSize)];
                 skip[0] = 0;
@@ -33,9 +34,9 @@ namespace DehnadMyLeagueService
                 using (var entity = new MyLeagueEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    autochargeMessages = Portal.Services.MyLeague.MessageHandler.GetUnprocessedAutochargeMessages(entity, readSize);
-                    eventbaseMessages = Portal.Services.MyLeague.MessageHandler.GetUnprocessedEventbaseMessages(entity, readSize);
-                    onDemandMessages = Portal.Services.MyLeague.MessageHandler.GetUnprocessedOnDemandMessages(entity, readSize);
+                    autochargeMessages = MyLeagueLibrary.MessageHandler.GetUnprocessedAutochargeMessages(entity, readSize);
+                    eventbaseMessages = MyLeagueLibrary.MessageHandler.GetUnprocessedEventbaseMessages(entity, readSize);
+                    onDemandMessages = MyLeagueLibrary.MessageHandler.GetUnprocessedOnDemandMessages(entity, readSize);
                 }
 
                 SendAutochargeMessages(autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
@@ -60,9 +61,9 @@ namespace DehnadMyLeagueService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(Portal.Services.MyLeague.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(MyLeagueLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(Portal.Services.MyLeague.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(MyLeagueLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -80,9 +81,9 @@ namespace DehnadMyLeagueService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(Portal.Services.MyLeague.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(MyLeagueLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(Portal.Services.MyLeague.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(MyLeagueLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -100,9 +101,9 @@ namespace DehnadMyLeagueService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(Portal.Services.MyLeague.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(MyLeagueLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(Portal.Services.MyLeague.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(MyLeagueLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());

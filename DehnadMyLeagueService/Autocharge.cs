@@ -1,5 +1,6 @@
 ﻿using System;
-using Portal.Models;
+using SharedLibrary.Models;
+using MyLeagueLibrary.Models;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -14,8 +15,8 @@ namespace DehnadMyLeagueService
             try
             {
                 var time = DateTime.Now.TimeOfDay;
-                var insertTime = TimeSpan.Parse(Properties.Resources.InsertAutochargeMessageInQueueTime);
-                var insertEndTime = TimeSpan.Parse(Properties.Resources.InsertAutochargeMessageInQueueEndTime);
+                var insertTime = TimeSpan.Parse(Properties.Settings.Default.InsertAutochargeMessageInQueueTime);
+                var insertEndTime = TimeSpan.Parse(Properties.Settings.Default.InsertAutochargeMessageInQueueEndTime);
                 if (time < insertTime && time > insertEndTime)
                     InsertAutochargeMessagesToQueue();
 
@@ -30,7 +31,7 @@ namespace DehnadMyLeagueService
         private void SendAutochargeOnTime()
         {
             var currentTime = DateTime.Now.TimeOfDay;
-            var currentPersianDate = Portal.Shared.Date.GetPersianDate(DateTime.Now).Replace("/","-");
+            var currentPersianDate = SharedLibrary.Date.GetPersianDate(DateTime.Now).Replace("/","-");
             var autochargeTimeTable = GetAutochargeTimeTable();
             foreach (var item in autochargeTimeTable)
             {
@@ -40,7 +41,7 @@ namespace DehnadMyLeagueService
                 {
                     using (var entity = new MyLeagueEntities())
                     {
-                        entity.ChangeMessageStatus((int)Portal.Shared.MessageHandler.MessageType.AutoCharge, null, item.Tag, currentPersianDate, (int)Portal.Shared.MessageHandler.ProcessStatus.InQueue, (int)Portal.Shared.MessageHandler.ProcessStatus.TryingToSend, null);
+                        entity.ChangeMessageStatus((int)SharedLibrary.MessageHandler.MessageType.AutoCharge, null, item.Tag, currentPersianDate, (int)SharedLibrary.MessageHandler.ProcessStatus.InQueue, (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, null);
                     }
                 }
             }
@@ -51,9 +52,9 @@ namespace DehnadMyLeagueService
             try
             {
                 var time = DateTime.Now.TimeOfDay;
-                var aggregatorName = Properties.Resources.AggregatorName;
-                var aggregatorId = Portal.Shared.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                var serviceCode = Properties.Resources.ServiceCode;
+                var aggregatorName = Properties.Settings.Default.AggregatorName;
+                var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
+                var serviceCode = Properties.Settings.Default.ServiceCode;
                 var portalEntity = new PortalEntities();
                 var serviceId = portalEntity.Services.Where(o => o.ServiceCode == serviceCode).FirstOrDefault().Id;
                 var subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
@@ -68,16 +69,16 @@ namespace DehnadMyLeagueService
                         var messages = new List<MessageObject>();
                         foreach (var subscriber in subscribers)
                         {
-                            var autochargeContent = Portal.Services.MyLeague.ServiceHandler.SelectAutochargeContentByDate(entity, subscriber.Id);
+                            var autochargeContent = MyLeagueLibrary.ServiceHandler.SelectAutochargeContentByDate(entity, subscriber.Id);
                             if (autochargeContent == null)
                                 continue;
-                            autochargeContent.Content = Portal.Services.MyLeague.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId);
-                            var imiChargeObject = Portal.Services.MyLeague.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
-                            var message = Portal.Shared.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, Portal.Shared.MessageHandler.MessageType.AutoCharge, Portal.Shared.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
+                            autochargeContent.Content = MyLeagueLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId);
+                            var imiChargeObject = MyLeagueLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
+                            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
                             messages.Add(message);
                         }
-                        Portal.Services.MyLeague.MessageHandler.InsertBulkMessagesToQueue(messages);
-                        Portal.Services.MyLeague.MessageHandler.CreateMonitoringItem(null, Portal.Shared.MessageHandler.MessageType.AutoCharge, messages.Count, tag);
+                        MyLeagueLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                        MyLeagueLibrary.MessageHandler.CreateMonitoringItem(null, SharedLibrary.MessageHandler.MessageType.AutoCharge, messages.Count, tag);
                     }
                 }
             }

@@ -11,6 +11,7 @@ namespace DehnadMyLeagueService
         private Thread prepareEventbaseThread;
         private Thread sendMessageThread;
         private Thread statisticsThread;
+        private Thread timedThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -34,6 +35,10 @@ namespace DehnadMyLeagueService
             statisticsThread = new Thread(StatisticsWorkerThread);
             statisticsThread.IsBackground = true;
             statisticsThread.Start();
+
+            timedThread = new Thread(TiemdWorkerThread);
+            timedThread.IsBackground = true;
+            timedThread.Start();
         }
 
         protected override void OnStop()
@@ -62,6 +67,12 @@ namespace DehnadMyLeagueService
                 if (!statisticsThread.Join(3000))
                 {
                     statisticsThread.Abort();
+                }
+
+                shutdownEvent.Set();
+                if (!timedThread.Join(3000))
+                {
+                    timedThread.Abort();
                 }
             }
             catch (Exception exp)
@@ -111,6 +122,17 @@ namespace DehnadMyLeagueService
                 statistic.Process();
                 Thread.Sleep(10000);
             }
+        }
+
+        private void TiemdWorkerThread()
+        {
+            var timed = new Timed();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                timed.ProcessTempMessageBufferTable();
+                Thread.Sleep(60000);
+            }
+
         }
     }
 }

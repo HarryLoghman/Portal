@@ -1,6 +1,7 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using Portal.Models;
+using MyLeagueLibrary.Models;
+using SharedLibrary;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace Portal.Areas.MyLeague.Controllers
                         Price = eventbaseContent.Price,
                         DateCreated = DateTime.Now,
                         SubscriberNotSendedMoInDays = eventbaseContent.SubscriberNotSendedMoInDays,
-                        PersianDateCreated = Shared.Date.GetPersianDateTime(DateTime.Now),
+                        PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
                         IsAddingMessagesToSendQueue = false,
                         IsAddedToSendQueueFinished = false,
                     };
@@ -170,9 +171,9 @@ namespace Portal.Areas.MyLeague.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult GetLeagueList()
         {
-            var leagueList = Services.MyLeague.ContentManager.GetLeagueList();
-            leagueList.Insert(0, new Models.LeagueList { Number = 0, Name = "همه لیگ ها" });
-            leagueList.Add(new Models.LeagueList { Number = 99, Name = "اعضایی که لیگ انتخاب نکرده اند" });
+            var leagueList = MyLeagueLibrary.ContentManager.GetLeagueList();
+            leagueList.Insert(0, new LeagueList { Number = 0, Name = "همه لیگ ها" });
+            leagueList.Add(new LeagueList { Number = 99, Name = "اعضایی که لیگ انتخاب نکرده اند" });
             return Json(leagueList, JsonRequestBehavior.AllowGet);
         }
     }

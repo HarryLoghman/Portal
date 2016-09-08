@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Portal.Models;
+using SharedLibrary.Models;
+using MyLeagueLibrary.Models;
 
 namespace DehnadMyLeagueService
 {
@@ -19,9 +20,9 @@ namespace DehnadMyLeagueService
                         return;
                     if (eventbaseContent.Content == null || eventbaseContent.Content.Trim() == "")
                         return;
-                    var aggregatorName = Properties.Resources.AggregatorName;
-                    var aggregatorId = Portal.Shared.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    Portal.Services.MyLeague.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    var aggregatorName = Properties.Settings.Default.AggregatorName;
+                    var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
+                    MyLeagueLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)

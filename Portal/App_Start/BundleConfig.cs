@@ -34,7 +34,8 @@ namespace Portal
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/Portaljs").Include(
-            "~/Scripts/Portal.js"));
+            "~/Scripts/Portal.js",
+            "~/Scripts/jdate.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/PortalStyles").Include(
             "~/Content/Portal.css"

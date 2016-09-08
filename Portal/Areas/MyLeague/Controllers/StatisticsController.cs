@@ -1,6 +1,8 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using Portal.Models;
+using MyLeagueLibrary.Models;
+using SharedLibrary;
+using SharedLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +23,7 @@ namespace Portal.Areas.MyLeague.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult Statistics_Read([DataSourceRequest]DataSourceRequest request)
+        public ActionResult Statistics_GridRead([DataSourceRequest]DataSourceRequest request)
         {
             DataSourceResult result = db.DailyStatistics.ToDataSourceResult(request, dailyStatistics => new
             {
@@ -60,6 +62,13 @@ namespace Portal.Areas.MyLeague.Controllers
                 NumberOfEventbasePostpaidMessagesFailed = dailyStatistics.NumberOfEventbasePostpaidMessagesFailed,
                 NumberOfEventbasePrepaidMessagesFailed = dailyStatistics.NumberOfEventbasePrepaidMessagesFailed
             });
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult Statistics_Read([DataSourceRequest]DataSourceRequest request)
+        {
+            var result = db.DailyStatistics.OrderBy(o => o.Date);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 

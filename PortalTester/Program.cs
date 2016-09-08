@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Portal;
-using Portal.Models;
 
 namespace PortalTester
 {
@@ -12,23 +10,18 @@ namespace PortalTester
     {
         static void Main(string[] args)
         {
-            //RunTest();
+            RunTest();
         }
 
         public static void RunTest()
         {
-            using (var entity = new MyLeagueEntities())
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
-                if (eventbaseContent == null)
-                    return;
-                if (eventbaseContent.Content == null || eventbaseContent.Content.Trim() == "")
-                    return;
-                var aggregatorName = "PardisImi";
-                var aggregatorId = Portal.Shared.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                Portal.Services.MyLeague.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
-            }
+            var a = new SharedLibrary.Models.ReceievedMessage();
+            a.MobileNumber = "09125612694";
+            a.ShortCode = "301714";
+            a.Content = "222";
+            a.IsReceivedFromIntegratedPanel = false;
+            a.IsProcessed = false;
+            DehnadReceiveProcessorService.MessageProcesser.HandleReceivedMessage(a);
         }
     }
 }

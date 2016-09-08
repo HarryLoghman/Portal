@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Portal.Models;
+using MyLeagueLibrary.Models;
+using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;
@@ -49,11 +50,11 @@ namespace Portal.Areas.MyLeague.Controllers
                     {
                         Content = autochargeContent.Content,
                         SendDate = autochargeContent.SendDate,
-                        PersianSendDate = Shared.Date.GetPersianDateTime(autochargeContent.SendDate),
+                        PersianSendDate = SharedLibrary.Date.GetPersianDateTime(autochargeContent.SendDate),
                         Point = autochargeContent.Point,
                         Price = autochargeContent.Price,
                         DateCreated = DateTime.Now,
-                        PersianDateCreated = Shared.Date.GetPersianDateTime(DateTime.Now),
+                        PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
                         IsAddedToSendQueue = autochargeContent.IsAddedToSendQueue,
                     };
 
@@ -82,7 +83,7 @@ namespace Portal.Areas.MyLeague.Controllers
                         Id = autochargeContent.Id,
                         Content = autochargeContent.Content,
                         SendDate = autochargeContent.SendDate,
-                        PersianSendDate = Shared.Date.GetPersianDateTime(autochargeContent.SendDate),
+                        PersianSendDate = SharedLibrary.Date.GetPersianDateTime(autochargeContent.SendDate),
                         Point = autochargeContent.Point,
                         Price = autochargeContent.Price,
                         PersianDateCreated = "This will not be saved!",

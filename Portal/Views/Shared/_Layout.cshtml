@@ -108,29 +108,6 @@
                     <ul id="menu">
                         @if (Request.IsAuthenticated)
                         {
-                            @*<li>
-                                    دانستانه
-                                    <ul>
-                                        <li>
-                                            @Html.ActionLink("محتوای ارسال اتوشارژ", "Index", "AutochargeContents", new { area = "Danestan" }, null)
-                                        </li>
-                                        <li>
-                                            @Html.ActionLink("محتوای ارسال به صورت دستی", "Index", "EventbaseContents", new { area = "Danestan" }, null)
-                                        </li>
-                                        <li>
-                                            @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Danestan" }, null)
-                                        </li>
-                                        <li>
-                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Danestan" }, null)
-                                        </li>
-                                        <li>
-                                            @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "Danestan" }, null)
-                                        </li>
-                                        <li>
-                                            @Html.ActionLink("تنظیم ساعات ارسال اتوشارژ", "Index", "AutochargeTimeTable", new { area = "Danestan" }, null)
-                                        </li>
-                                    </ul>
-                                </li>*@
                             <li>
                                 لیگ من
                                 <ul>
@@ -154,6 +131,114 @@
                                     </li>
                                     <li>
                                         @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "MyLeague" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "MyLeague" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "MyLeague" }, null)
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                دانستانه
+                                <ul>
+                                    <li>
+                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Danestaneh" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Danestaneh" }, null)
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                موبایلیگا
+                                <ul>
+                                    <li>
+                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("لیست موبایل ها", "Index", "MobilesList", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Mobiliga" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Mobiliga" }, null)
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                ماشین بازها
+                                <ul>
+                                    <li>
+                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("لیست ماشین ها", "Index", "CarBrandsList", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "MashinBazha" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "MashinBazha" }, null)
                                     </li>
                                 </ul>
                             </li>

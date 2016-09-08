@@ -1,0 +1,217 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "محتوای ارسال به صورت اتوماتیک";
+}
+
+<br />
+<br />
+<div>
+    هدر و فوتر اتوشارژ
+    <div class="k-rtl" id="headerFooterGrid"></div>
+</div>
+<br />
+<br />
+<div>
+    محتوای اتوشارژ
+    <div class="k-rtl" id="grid"></div>
+</div>
+
+<!--Autocharge header and footer grid-->
+<script>
+    $("#headerFooterGrid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف" },
+            { field: "Header", title: "Header", editor: textAreaEditor },
+            { field: "Footer", title: "Footer", editor: textAreaEditor },
+            { command: ["edit"], width: 180 }
+        ],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "AutochargeContents/AutochargeHeaderAndFooter_Read",
+                    type: "POST"
+                },
+                update: {
+                    url: "AutochargeContents/AutochargeHeaderAndFooter_Update",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#headerFooterGrid").data("kendoGrid").dataSource.read();
+                    }
+                },
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                        Title: { type: "string", validation: { required: true }, nullable: false },
+                        Content: { type: "string", validation: { required: true }, nullable: false },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: false,
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: false,
+        scrollable: false,
+    });
+</script>
+
+<!--Autocharge Grid-->
+<script>
+
+    var carBrandsList;
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'AutochargeContents/GetCarBrandsList',
+        dataType: 'json',
+        success: function (result) {
+            carBrandsList = result;
+        }
+    });
+
+    function getCarBrand(CarBrandId) {
+        for (var idx = 0, length = carBrandsList.length; idx < length; idx++) {
+            if (carBrandsList[idx].Id === CarBrandId) {
+                return carBrandsList[idx].CarBrand;
+            }
+        }
+    }
+
+    function carBrandDropDownEditor(container, options) {
+        $('<input data-text-field="CarBrand" data-value-field="Id" data-bind="value:' + options.field + '"/>')
+            .appendTo(container)
+           .kendoDropDownList({
+               dataSource: carBrandsList,
+               dataTextField: "CarBrand",
+               dataValueField: "Id"
+           });
+    }
+
+
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف" },
+            { field: "CarBrandId", title: "نام ماشین", editor: carBrandDropDownEditor, template: "#=getCarBrand(CarBrandId)#", width: 200 },
+            { field: "Content", title: "محتوی", editor: textAreaEditor },
+            { field: "Price", title: "هزینه پیام" },
+            { field: "Point", title: "امتیاز", },
+            { command: ["edit", "destroy"], width: 180 }
+        ],
+        toolbar: ["create"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "AutochargeContents/AutochargeContents_Read",
+                    type: "POST"
+                },
+                create: {
+                    url: "AutochargeContents/AutochargeContents_Create",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                },
+                update: {
+                    url: "AutochargeContents/AutochargeContents_Update",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                },
+                destroy: {
+                    url: "AutochargeContents/AutochargeContents_Destroy",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                },
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                        CarBrandId: { validation: { required: true }, nullable: false, defaultValue: 1 },
+                        Content: { type: "string", validation: { required: true }, nullable: false },
+                        Price: { type: "int", validation: { required: true }, defaultValue: 0 },
+                        Point: { type: "int", validation: { required: true }, defaultValue: 0 },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+        dataBound: function (e) {
+            e.sender.dataItems().forEach(function (entry) {
+                if (entry.IsAddedToSendQueue == true)
+                    disableGridButtons(entry.uid);
+            });
+        }
+    });
+
+    function disableGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
+    }
+</script>

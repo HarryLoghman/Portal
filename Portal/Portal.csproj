@@ -181,6 +181,43 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\CarBrandsListController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\PointsController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\SettingsController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\MashinBazha\MyLeagueAreaRegistration.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\MobilesListController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\PointsController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\SettingsController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Mobiliga\MyLeagueAreaRegistration.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\PointsController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\SettingsController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Danestaneh\MyLeagueAreaRegistration.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\ReceiveController.cs" />
     <Compile Include="Areas\MyLeague\Controllers\SettingsController.cs" />
     <Compile Include="Areas\MyLeague\Controllers\LeagueListController.cs" />
     <Compile Include="Areas\MyLeague\Controllers\AutochargeContentsController.cs" />
@@ -191,13 +228,6 @@
     <Compile Include="Areas\MyLeague\Controllers\MonitoringController.cs" />
     <Compile Include="Areas\MyLeague\Controllers\PointsController.cs" />
     <Compile Include="Areas\MyLeague\MyLeagueAreaRegistration.cs" />
-    <Compile Include="Areas\Danestan\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\Danestan\Controllers\PointsController.cs" />
-    <Compile Include="Areas\Danestan\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\Danestan\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\Danestan\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\Danestan\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Danestan\DanestanAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -206,185 +236,98 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\Aggregator.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AspNetRole.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AspNetUser.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AspNetUserClaim.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AspNetUserLogin.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeMessagesBuffer.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeTimeTable.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\C__MigrationHistory.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DailyStatistic.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DanestanModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DanestanModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DanestanModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DanestanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DanestanModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DanestanModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Delivery.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DeliveryObject.cs" />
-    <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseMessagesBuffer.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\ImiChargeCode.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\IntegratedPanel.cs" />
-    <Compile Include="Models\LastAutochargeContentSendedToUser.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\LeagueList.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\MessagesArchive.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesMonitoring.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MyLeagueModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MyLeagueModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MyLeagueModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MyLeagueModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OnDemandMessagesBuffer.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Operator.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OperatorsPlan.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OperatorsPrefix.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OperatorsRecharageCode.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PointsTable.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PortalModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PortalModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PortalModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PortalModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PortalModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ReceievedMessage.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ReceivedMessagesArchive.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Service.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServiceInfo.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServiceOffReason.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Subscriber.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersAdditionalInfo.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersHistory.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersLeague.cs">
-      <DependentUpon>MyLeagueModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersPoint.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\PardisImiServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Services\MyLeague\ContentManager.cs" />
-    <Compile Include="Services\MyLeague\HandleMo.cs" />
-    <Compile Include="Services\MyLeague\MessageHandler.cs" />
-    <Compile Include="Services\MyLeague\ServiceHandler.cs" />
-    <Compile Include="Services\MyLeague\Subscribers.cs" />
-    <Compile Include="Services\Danestan\ContentManager.cs" />
-    <Compile Include="Services\Danestan\HandleMo.cs" />
-    <Compile Include="Services\Danestan\MessageHandler.cs" />
-    <Compile Include="Services\Danestan\ServiceHandler.cs" />
-    <Compile Include="Services\Danestan\Subscribers.cs" />
-    <Compile Include="Shared\HandleSubscription.cs" />
-    <Compile Include="Shared\Date.cs" />
-    <Compile Include="Shared\PortalException.cs" />
-    <Compile Include="Shared\MessageHandler.cs" />
-    <Compile Include="Shared\ServiceHandler.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Antlr3.Runtime.dll" />
+    <Content Include="bin\Antlr3.Runtime.pdb" />
+    <Content Include="bin\bg-BG\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\cs-CZ\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\da-DK\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\DanestanehLibrary.dll" />
+    <Content Include="bin\DanestanehLibrary.pdb" />
+    <Content Include="bin\de-DE\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\EntityFramework.dll" />
+    <Content Include="bin\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\EntityFramework.xml" />
+    <Content Include="bin\es-ES\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\fr-CA\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\fr-FR\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\it-IT\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\Kendo.Mvc.dll" />
+    <Content Include="bin\Kendo.Mvc.xml" />
+    <Content Include="bin\log4net.dll" />
+    <Content Include="bin\log4net.xml" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Core.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Core.xml" />
+    <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.xml" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Owin.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Owin.xml" />
+    <Content Include="bin\Microsoft.Owin.dll" />
+    <Content Include="bin\Microsoft.Owin.Host.SystemWeb.dll" />
+    <Content Include="bin\Microsoft.Owin.Host.SystemWeb.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.Cookies.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Cookies.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Facebook.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Facebook.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.Google.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Google.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.MicrosoftAccount.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.MicrosoftAccount.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.OAuth.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.OAuth.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.Twitter.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Twitter.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.xml" />
+    <Content Include="bin\Microsoft.Owin.xml" />
+    <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\MyLeagueLibrary.dll" />
+    <Content Include="bin\MyLeagueLibrary.pdb" />
+    <Content Include="bin\Newtonsoft.Json.dll" />
+    <Content Include="bin\Newtonsoft.Json.xml" />
+    <Content Include="bin\nl-NL\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\Owin.dll" />
+    <Content Include="bin\pl-PL\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\Portal.dll" />
+    <Content Include="bin\Portal.pdb" />
+    <Content Include="bin\pt-BR\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\pt-PT\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\ro-RO\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\ru-RU\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\SharedLibrary.dll" />
+    <Content Include="bin\SharedLibrary.pdb" />
+    <Content Include="bin\sk-SK\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\sv-SE\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\System.Net.Http.Formatting.dll" />
+    <Content Include="bin\System.Net.Http.Formatting.xml" />
+    <Content Include="bin\System.Web.Helpers.dll" />
+    <Content Include="bin\System.Web.Helpers.xml" />
+    <Content Include="bin\System.Web.Http.dll" />
+    <Content Include="bin\System.Web.Http.WebHost.dll" />
+    <Content Include="bin\System.Web.Http.WebHost.xml" />
+    <Content Include="bin\System.Web.Http.xml" />
+    <Content Include="bin\System.Web.Mvc.dll" />
+    <Content Include="bin\System.Web.Mvc.xml" />
+    <Content Include="bin\System.Web.Optimization.dll" />
+    <Content Include="bin\System.Web.Optimization.xml" />
+    <Content Include="bin\System.Web.Razor.dll" />
+    <Content Include="bin\System.Web.Razor.xml" />
+    <Content Include="bin\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\System.Web.WebPages.Deployment.xml" />
+    <Content Include="bin\System.Web.WebPages.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.xml" />
+    <Content Include="bin\System.Web.WebPages.xml" />
+    <Content Include="bin\tr-TR\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\uk-UA\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\WebGrease.dll" />
+    <Content Include="bin\zh-CN\Kendo.Mvc.resources.dll" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -732,45 +675,8 @@
     <Content Include="Images\accent.png" />
     <Content Include="Images\bullet.png" />
     <Content Include="Images\heroAccent.png" />
-    <Content Include="Models\DanestanModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DanestanModel.edmx</DependentUpon>
-      <LastGenOutput>DanestanModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\DanestanModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DanestanModel.edmx</DependentUpon>
-      <LastGenOutput>DanestanModel.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\MyLeagueModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
-      <LastGenOutput>MyLeagueModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\MyLeagueModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
-      <LastGenOutput>MyLeagueModel.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\PortalModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PortalModel.edmx</DependentUpon>
-      <LastGenOutput>PortalModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\PortalModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PortalModel.edmx</DependentUpon>
-      <LastGenOutput>PortalModel.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <EntityDeploy Include="Models\PortalModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>PortalModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\PortalModel.edmx.diagram">
-      <DependentUpon>PortalModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\kendo\2016.2.504\fonts\DejaVu\DejaVuSans-Bold.ttf" />
@@ -866,31 +772,8 @@
     <Content Include="Content\kendo\2016.2.504\kendo.uniform.min.css.map" />
     <Content Include="Content\kendo\2016.2.504\kendo.uniform.mobile.min.css.map" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <EntityDeploy Include="Models\DanestanModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DanestanModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\DanestanModel.edmx.diagram">
-      <DependentUpon>DanestanModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="Areas\Danestan\Views\web.config" />
-    <Content Include="Areas\Danestan\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Danestan\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Danestan\Views\AutochargeContents\Index.cshtml" />
     <Content Include="fonts\BMITRABD.TTF" />
-    <Content Include="Areas\Danestan\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Danestan\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\Danestan\Views\MessagesTemplate\Index.cshtml" />
     <Content Include="Properties\DataSources\System.Data.DataTable.datasource" />
-    <Content Include="Areas\Danestan\Views\Points\Index.cshtml" />
-    <Content Include="Areas\Danestan\Views\AutochargeTimeTable\Index.cshtml" />
-    <EntityDeploy Include="Models\MyLeagueModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>MyLeagueModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\MyLeagueModel.edmx.diagram">
-      <DependentUpon>MyLeagueModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Areas\MyLeague\Views\_ViewStart.cshtml" />
     <Content Include="Areas\MyLeague\Views\AutochargeContents\Index.cshtml" />
     <Content Include="Areas\MyLeague\Views\AutochargeTimeTable\Index.cshtml" />
@@ -903,10 +786,55 @@
     <Content Include="Areas\MyLeague\Views\LeagueList\Index.cshtml" />
     <Content Include="Areas\MyLeague\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\MyLeague\Views\Settings\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\AutochargeTimeTable\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\Points\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\Settings\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\web.config" />
+    <Content Include="bin\Portal.dll.config" />
+    <Content Include="Areas\Mobiliga\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\AutochargeTimeTable\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\Points\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\Settings\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\web.config" />
+    <Content Include="Areas\Mobiliga\Views\MobilesList\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\AutochargeTimeTable\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\CarBrandsList\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\Points\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\Settings\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.src.js" />
+    <Content Include="Scripts\Highstock\modules\export-csv.js" />
     <Content Include="Scripts\Highstock\highcharts-3d.js" />
     <Content Include="Scripts\Highstock\highcharts-3d.src.js" />
     <Content Include="Scripts\Highstock\highcharts-more.js" />
@@ -948,6 +876,7 @@
     <Content Include="Scripts\Highstock\themes\grid.js" />
     <Content Include="Scripts\Highstock\themes\sand-signika.js" />
     <Content Include="Scripts\Highstock\themes\skies.js" />
+    <Content Include="Scripts\jdate.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\kendo.modernizr.custom.js" />
@@ -1099,18 +1028,6 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <None Include="Service References\PardisImiServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\PardisImiServiceReference\configuration.svcinfo" />
-    <Content Include="Service References\PardisImiServiceReference\Portal.PardisImiServiceReference.SendSMS2Response.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
-    <Content Include="Service References\PardisImiServiceReference\Portal.PardisImiServiceReference.SendSMSPlusResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
-    <None Include="Service References\PardisImiServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1260,13 +1177,13 @@
     <Content Include="Scripts\kendo\2016.2.504\kendo.web.min.js.map" />
     <Content Include="Scripts\kendo\2016.2.504\kendo.webcomponents.min.js.map" />
     <Content Include="Scripts\kendo\2016.2.504\kendo.window.min.js.map" />
-    <None Include="Service References\PardisImiServiceReference\parids-imi-mt.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Danestan\Models\" />
+    <Folder Include="Areas\Danestaneh\Models\" />
+    <Folder Include="Areas\MashinBazha\Models\" />
+    <Folder Include="Areas\Mobiliga\Models\" />
     <Folder Include="Areas\MyLeague\Models\" />
-    <Folder Include="bin\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -1280,10 +1197,30 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\PardisImiServiceReference\" />
+    <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
+      <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
+      <Name>DanestanehLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
+      <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
+      <Name>MashinBazhaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
+      <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>
+      <Name>MobiligaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyLeagueLibrary\MyLeagueLibrary.csproj">
+      <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
+      <Name>MyLeagueLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
+      <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
+      <Name>SharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
+      <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
+      <Name>SoltanLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

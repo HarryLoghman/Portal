@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Portal.Models;
+using MyLeagueLibrary.Models;
+using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;

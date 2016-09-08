@@ -67,10 +67,10 @@
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Sender.cs" />
     <Compile Include="Service.cs">
@@ -82,6 +82,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistic.cs" />
+    <Compile Include="Timed.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -90,20 +91,24 @@
     <None Include="bin\Release\Install.bat" />
     <None Include="bin\Release\Uninstall.bat" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Portal\Portal.csproj">
-      <Project>{c98000e9-daed-4f0b-ab4d-543bbea07fca}</Project>
-      <Name>Portal</Name>
+    <ProjectReference Include="..\MyLeagueLibrary\MyLeagueLibrary.csproj">
+      <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
+      <Name>MyLeagueLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
+      <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
+      <Name>SharedLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

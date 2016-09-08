@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadMyLeagueService.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AggregatorName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PardisImi</Value>
+    </Setting>
+    <Setting Name="InsertAutochargeMessageInQueueTime" Type="System.String" Scope="User">
+      <Value Profile="(Default)">03:15:00</Value>
+    </Setting>
+    <Setting Name="InsertAutochargeMessageInQueueEndTime" Type="System.String" Scope="User">
+      <Value Profile="(Default)">03:15:15</Value>
+    </Setting>
+    <Setting Name="NumberOfAutochargeMessagesPerDay" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ReadSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="Take" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="ServiceCode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MyLeague</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

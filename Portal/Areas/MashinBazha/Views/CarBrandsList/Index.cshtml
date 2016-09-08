@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "لیست موبایل ها";
+}
+
+<div class="k-rtl" id="grid"></div>
+
+<script>
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف" },
+            { field: "Number", title: "شماره برند" },
+            { field: "CarBrand", title: "نام برند ماشین" },
+            { command: ["edit", "destroy"], width: 180 }
+        ],
+        toolbar: ["create"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "CarBrandsList/CarBrandsList_Read",
+                    type: "POST"
+                },
+                create: {
+                    url: "CarBrandsList/CarBrandsList_Create",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                },
+                update: {
+                    url: "CarBrandsList/CarBrandsList_Update",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                },
+                destroy: {
+                    url: "CarBrandsList/CarBrandsList_Destroy",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                },
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                        Number: { type: "int", validation: { required: true }, nullable: false },
+                        CarBrand: { type: "string", validation: { required: true }, nullable: false },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Number", dir: "asc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+        dataBound: function (e) {
+            e.sender.dataItems().forEach(function (entry) {
+                if (entry.IsAddedToSendQueue == true)
+                    disableGridButtons(entry.uid);
+            });
+        }
+    });
+
+    function disableGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
+    }
+</script>

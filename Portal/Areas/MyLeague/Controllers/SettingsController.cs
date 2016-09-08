@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Portal.Models;
+using MyLeagueLibrary.Models;
+using SharedLibrary;
+using SharedLibrary.Models;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;
@@ -78,6 +80,100 @@ namespace Portal.Areas.MyLeague.Controllers
             }
             return Json(new[] { service }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
         }
+
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult RechargeKeywords_Read([DataSourceRequest]DataSourceRequest request)
+        {
+            DataSourceResult result = db.ServiceRechargeKeywords.ToDataSourceResult(request, rechargeKeywords => new
+            {
+                Id = rechargeKeywords.Id,
+                Keyword = rechargeKeywords.Keyword,
+                Price = rechargeKeywords.Price
+            });
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult RechargeKeywords_Create([DataSourceRequest]DataSourceRequest request, [Bind(Exclude = "Id")] ServiceRechargeKeyword serviceRechargeKeywords)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var entity = new ServiceRechargeKeyword
+                    {
+                        Keyword = serviceRechargeKeywords.Keyword,
+                        Price = serviceRechargeKeywords.Price
+                    };
+
+                    db.ServiceRechargeKeywords.Add(entity);
+                    db.SaveChanges();
+                    serviceRechargeKeywords.Id = entity.Id;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in SettingsController :" + e);
+            }
+
+            return Json(new[] { serviceRechargeKeywords }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult RechargeKeywords_Update([DataSourceRequest]DataSourceRequest request, ServiceRechargeKeyword rechargeKeywords)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var entity = new ServiceRechargeKeyword
+                    {
+                        Id = rechargeKeywords.Id,
+                        Keyword = rechargeKeywords.Keyword,
+                        Price = rechargeKeywords.Price
+                    };
+
+                    db.ServiceRechargeKeywords.Attach(entity);
+                    db.Entry(entity).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+                {
+                    // Retrieve the error messages as a list of strings.
+                    var errorMessages = ex.EntityValidationErrors
+                            .SelectMany(x => x.ValidationErrors)
+                            .Select(x => x.ErrorMessage);
+
+                    // Join the list to a single string.
+                    var fullErrorMessage = string.Join("; ", errorMessages);
+
+                    // Combine the original exception message with the new one.
+                    var exceptionMessage = string.Concat(ex.Message, " The validation errors are: ", fullErrorMessage);
+
+                    // Throw a new DbEntityValidationException with the improved exception message.
+                    throw new System.Data.Entity.Validation.DbEntityValidationException(exceptionMessage, ex.EntityValidationErrors);
+                }
+
+            }
+            return Json(new[] { rechargeKeywords }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult RechargeKeywords_Destroy([DataSourceRequest]DataSourceRequest request, ServiceRechargeKeyword serviceRechargeKeywords)
+        {
+            var entity = new ServiceRechargeKeyword
+            {
+                Id = serviceRechargeKeywords.Id,
+            };
+
+            db.ServiceRechargeKeywords.Attach(entity);
+            db.ServiceRechargeKeywords.Remove(entity);
+            db.SaveChanges();
+
+            return Json(new[] { serviceRechargeKeywords }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
+        }
+
 
         [HttpPost]
         public ActionResult Excel_Export_Save(string contentType, string base64, string fileName)
