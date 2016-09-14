@@ -127,6 +127,24 @@ namespace SharedLibrary
             }
         }
 
+        public static ServiceInfo GetServiceInfoFromServiceId(long serviceId)
+        {
+            ServiceInfo serviceInfo;
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.ServiceId == serviceId);
+                    return serviceInfo;
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in GetServiceInfoFromServiceId: " + e);
+                    return null;
+                }
+            }
+        }
+
         public static string getFirstOnKeywordOfService(string serviceOnKeywords)
         {
             var onKeywords = serviceOnKeywords.Replace(" ", "").Split(',');

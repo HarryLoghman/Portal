@@ -283,6 +283,17 @@
           <Property Name="IsFullyPaid" Type="bit" Nullable="false" />
           <Property Name="IsExceededDailyChargeLimit" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAdded" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsLastDayWarningSent" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -386,6 +397,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" store:Type="Views" store:Schema="dbo">
@@ -664,6 +676,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="SoltanModel.AutochargeContentsSendedToUser" />
           <EntitySet Name="Singlecharges" EntityType="SoltanModel.Singlecharge" />
           <EntitySet Name="SinglechargeInstallments" EntityType="SoltanModel.SinglechargeInstallment" />
+          <EntitySet Name="SinglechargeWaitings" EntityType="SoltanModel.SinglechargeWaiting" />
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -800,6 +813,17 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="PricePayed" Type="Int32" Nullable="false" />
           <Property Name="IsFullyPaid" Type="Boolean" Nullable="false" />
           <Property Name="IsExceededDailyChargeLimit" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1165,6 +1189,18 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
                 <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
                 <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeWaitings">
+            <EntityTypeMapping TypeName="SoltanModel.SinglechargeWaiting">
+              <MappingFragment StoreEntitySet="SinglechargeWaiting">
+                <ScalarProperty Name="IsLastDayWarningSent" ColumnName="IsLastDayWarningSent" />
+                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

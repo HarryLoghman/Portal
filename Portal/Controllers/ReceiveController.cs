@@ -25,6 +25,25 @@ namespace Portal.Controllers
             return "1";
         }
 
+        // /Receive/ReceiveMessage?mobileNumber=09125612694&shortCode=2050&content=hi&receiveTime=22&messageId=45
+        [HttpPost]
+        [AllowAnonymous]
+        public string ReceiveMessage([FromBody]MessageObject messageObj)
+        {
+            if (messageObj.MobileNumber == null && messageObj.Address != null)
+            {
+                messageObj.MobileNumber = messageObj.Address;
+                messageObj.Content = messageObj.Message;
+            }
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                return "-1";
+            messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+            SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+            return "1";
+        }
+
         // /Receive/Delivery?PardisId=44353535&Status=DeliveredToNetwork&ErrorMessage=error
         [HttpGet]
         [AllowAnonymous]

@@ -47,6 +47,7 @@ namespace SoltanLibrary.Models
         public virtual DbSet<AutochargeContentsSendedToUser> AutochargeContentsSendedToUsers { get; set; }
         public virtual DbSet<Singlecharge> Singlecharges { get; set; }
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
+        public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, Nullable<long> serviceId)
         {

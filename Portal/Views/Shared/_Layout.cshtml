@@ -242,6 +242,23 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li>
+                                نبرد اساطیر
+                                <ul>
+                                    <li>
+                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Soltan" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Soltan" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Soltan" }, null)
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Soltan" }, null)
+                                    </li>
+                                </ul>
+                            </li>
                             <li style="float:left;">
                                 @Html.Partial("_LoginPartial")
                             </li>

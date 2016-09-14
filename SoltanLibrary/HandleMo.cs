@@ -29,7 +29,7 @@ namespace SoltanLibrary
                     if (user != null && user.DeactivationDate == null)
                     {
                         message.Content = content;
-                        ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
+                        ContentManager.HandleContent(message, service, user, messagesTemplate);
                         return;
                     }
                 }
@@ -53,9 +53,11 @@ namespace SoltanLibrary
                     Subscribers.CreateSubscriberAdditionalInfo(message.MobileNumber, service.Id);
                     Subscribers.AddSubscriptionPointIfItsFirstTime(message.MobileNumber, service.Id);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                    ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                 {
+                    ContentManager.DeleteFromSinglechargeQueue(message.MobileNumber);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                 }
@@ -64,14 +66,15 @@ namespace SoltanLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
+                    ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                 }
                 message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                 MessageHandler.InsertMessageToQueue(message);
-                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                {
-                    message.Content = content;
-                    ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
-                }
+                //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                //{
+                //    message.Content = content;
+                //    ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
+                //}
                 return;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
@@ -90,7 +93,8 @@ namespace SoltanLibrary
                 return;
             }
             message.Content = content;
-            ContentManager.HandleSinglechargeContent(message, service, subscriber, messagesTemplate);
+            ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+
         }
 
         public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)

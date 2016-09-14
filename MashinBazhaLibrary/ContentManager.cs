@@ -86,8 +86,9 @@ namespace MashinBazhaLibrary
                         carBrand.CarBrandId = carBrandId;
                         entity.SubscribersCarBrands.Add(carBrand);
                         entity.SaveChanges();
+                        SendWelcomeToMashinBazhaMessage(message, carBrandId);
                     }
-                    SendWelcomeToMashinBazhaMessage(message, carBrandId);
+                    
                 }
                 message = PrepareLatestMashinBazhaContent(message, subscriber.Id, carBrandId);
             }

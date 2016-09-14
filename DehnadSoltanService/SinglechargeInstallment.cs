@@ -25,7 +25,10 @@ namespace DehnadSoltanService
                     foreach (var installment in installmentList)
                     {
                         if (batchSaveCounter >= 500)
+                        {
                             entity.SaveChanges();
+                            batchSaveCounter = 0;
+                        }
                         var priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList().Sum(o => o.Price);
                         if (priceUserChargedToday >= 4000)
                         {

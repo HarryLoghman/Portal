@@ -86,8 +86,8 @@ namespace MobiligaLibrary
                         mobile.MobileId = mobileId;
                         entity.SubscribersMobiles.Add(mobile);
                         entity.SaveChanges();
+                        SendWelcomeToMobileMessage(message, mobileId);
                     }
-                    SendWelcomeToMobileMessage(message, mobileId);
                 }
                 message = PrepareLatestMobileContent(message, subscriber.Id, mobileId);
             }

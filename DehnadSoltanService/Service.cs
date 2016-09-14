@@ -14,6 +14,7 @@ namespace DehnadSoltanService
         private Thread timedThread;
         private Thread informApplicationThread;
         private Thread singlechargeInstallmentThread;
+        private Thread singlechargeQueueThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -49,6 +50,10 @@ namespace DehnadSoltanService
             singlechargeInstallmentThread = new Thread(SinglechargeInstallmentWorkerThread);
             singlechargeInstallmentThread.IsBackground = true;
             singlechargeInstallmentThread.Start();
+
+            singlechargeQueueThread = new Thread(SinglechargeQueueWorkerThread);
+            singlechargeQueueThread.IsBackground = true;
+            singlechargeQueueThread.Start();
         }
 
         protected override void OnStop()
@@ -95,6 +100,12 @@ namespace DehnadSoltanService
                 if (!singlechargeInstallmentThread.Join(3000))
                 {
                     singlechargeInstallmentThread.Abort();
+                }
+
+                shutdownEvent.Set();
+                if (!singlechargeQueueThread.Join(3000))
+                {
+                    singlechargeQueueThread.Abort();
                 }
             }
             catch (Exception exp)
@@ -171,7 +182,17 @@ namespace DehnadSoltanService
             var singlechargeInstallment = new SinglechargeInstallment();
             while (!shutdownEvent.WaitOne(0))
             {
-                singlechargeInstallment.ProcessInstallment();
+                //singlechargeInstallment.ProcessInstallment();
+                Thread.Sleep(1000);
+            }
+        }
+
+        private void SinglechargeQueueWorkerThread()
+        {
+            var singlechargeQueue = new SinglechargeQueue();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                singlechargeQueue.ProcessQueue();
                 Thread.Sleep(1000);
             }
         }

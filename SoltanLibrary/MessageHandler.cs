@@ -113,6 +113,13 @@ namespace SoltanLibrary
             return autochargeContent;
         }
 
+        public static MessageObject UserHasActiveSinglecharge(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message.Content = messagesTemplate.Where(o => o.Title == "UserHasActiveSinglecharge").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
         public static void SetOffReason(Subscriber subscriber, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
             using (var entity = new SoltanEntities())
@@ -132,6 +139,8 @@ namespace SoltanLibrary
         {
             using (var entity = new PortalEntities())
             {
+                if (content == null || content == "")
+                    return content;
                 if (content.Contains("{SPOINT}"))
                 {
                     var subscriberPoint = SharedLibrary.MessageHandler.GetSubscriberPoint(mobileNumber, serviceId);

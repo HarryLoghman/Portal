@@ -110,6 +110,9 @@
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>SoltanModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeWaiting.cs">
+      <DependentUpon>SoltanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SoltanModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
