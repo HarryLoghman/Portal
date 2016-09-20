@@ -22,5 +22,7 @@ namespace SoltanLibrary.Models
         public int PricePayed { get; set; }
         public bool IsFullyPaid { get; set; }
         public bool IsExceededDailyChargeLimit { get; set; }
+        public int PriceTodayCharged { get; set; }
+        public bool IsUserDailyChargeBalanced { get; set; }
     }
 }

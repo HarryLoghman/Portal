@@ -11,10 +11,15 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public string Message([FromUri]MessageObject messageObj)
         {
-            if (messageObj.MobileNumber == null && messageObj.Address != null)
+            if (messageObj.Address != null)
             {
                 messageObj.MobileNumber = messageObj.Address;
                 messageObj.Content = messageObj.Message;
+            }
+            else if(messageObj.From != null)
+            {
+                messageObj.MobileNumber = messageObj.From;
+                messageObj.ShortCode = messageObj.To;
             }
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -30,10 +35,15 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public string ReceiveMessage([FromBody]MessageObject messageObj)
         {
-            if (messageObj.MobileNumber == null && messageObj.Address != null)
+            if (messageObj.Address != null)
             {
                 messageObj.MobileNumber = messageObj.Address;
                 messageObj.Content = messageObj.Message;
+            }
+            else if (messageObj.From != null)
+            {
+                messageObj.MobileNumber = messageObj.From;
+                messageObj.ShortCode = messageObj.To;
             }
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -82,7 +92,7 @@ namespace Portal.Controllers
         public string ChargeUser([FromUri]MessageObject message)
         {
             message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-            if (message.ReceivedFrom == "31.187.71.85")
+            if (message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85")
             {
                 message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
                 if (message.MobileNumber == "Invalid Mobile Number")
@@ -109,6 +119,8 @@ namespace Portal.Controllers
                 }
                 if (singlecharge.IsSucceeded == true)
                     return "1";
+                else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
+                    return "-6";
                 else
                     return "-4";
             }

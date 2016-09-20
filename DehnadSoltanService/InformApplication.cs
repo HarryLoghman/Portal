@@ -48,7 +48,7 @@ namespace DehnadSoltanService
                 };
 
                     var content = new FormUrlEncodedContent(values);
-                    var url = "http://godfather.abrstudio.ir/api/purchase/newsms";
+                    var url = "http://herosh.abrstudio.ir/api/purchase/newsms";
                     var response = await client.PostAsync(url, content);
 
                     var responseString = await response.Content.ReadAsStringAsync();

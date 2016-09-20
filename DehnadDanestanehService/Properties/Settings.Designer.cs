@@ -49,7 +49,7 @@ namespace DehnadDanestanehService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("03:15:15")]
+        [global::System.Configuration.DefaultSettingValueAttribute("03:15:05")]
         public string InsertAutochargeMessageInQueueEndTime {
             get {
                 return ((string)(this["InsertAutochargeMessageInQueueEndTime"]));

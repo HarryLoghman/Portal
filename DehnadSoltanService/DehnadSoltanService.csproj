@@ -96,7 +96,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SinglechargeQueue.cs" />
-    <Compile Include="SinglechargeInstallment.cs" />
+    <Compile Include="SinglechargeInstallmentClass.cs" />
     <Compile Include="Statistic.cs" />
     <Compile Include="Timed.cs" />
   </ItemGroup>

@@ -381,8 +381,11 @@ namespace MyLeagueLibrary
             var imiChargeObj = GetImiChargeObjectFromPrice(price, subscriberState);
             message.ImiChargeCode = imiChargeObj.ChargeCode;
             message.ImiChargeKey = imiChargeObj.ChargeKey;
-            message.ImiMessageType = messageType;
-            message.Price = price;
+            message.ImiMessageType = messageType;            
+            if (price != 0)
+                message.Price = price / 10;
+            else
+                message.Price = price;
             return message;
         }
 

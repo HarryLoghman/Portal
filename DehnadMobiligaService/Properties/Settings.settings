@@ -9,7 +9,7 @@
       <Value Profile="(Default)">03:15:00</Value>
     </Setting>
     <Setting Name="InsertAutochargeMessageInQueueEndTime" Type="System.String" Scope="User">
-      <Value Profile="(Default)">03:15:15</Value>
+      <Value Profile="(Default)">03:15:05</Value>
     </Setting>
     <Setting Name="NumberOfAutochargeMessagesPerDay" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>

@@ -23,9 +23,9 @@ namespace DehnadSoltanService
 
         protected override void OnStart(string[] args)
         {
-            //prepareAutochargeThread = new Thread(AutochargeWorkerThread);
-            //prepareAutochargeThread.IsBackground = true;
-            //prepareAutochargeThread.Start();
+            prepareAutochargeThread = new Thread(AutochargeWorkerThread);
+            prepareAutochargeThread.IsBackground = true;
+            prepareAutochargeThread.Start();
 
             prepareEventbaseThread = new Thread(EventbaseWorkerThread);
             prepareEventbaseThread.IsBackground = true;
@@ -60,11 +60,11 @@ namespace DehnadSoltanService
         {
             try
             {
-                //shutdownEvent.Set();
-                //if (!prepareAutochargeThread.Join(3000))
-                //{
-                //    prepareAutochargeThread.Abort();
-                //}
+                shutdownEvent.Set();
+                if (!prepareAutochargeThread.Join(3000))
+                {
+                    prepareAutochargeThread.Abort();
+                }
 
                 shutdownEvent.Set();
                 if (!prepareEventbaseThread.Join(3000))
@@ -179,10 +179,10 @@ namespace DehnadSoltanService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            var singlechargeInstallment = new SinglechargeInstallment();
+            var singlechargeInstallment = new SinglechargeInstallmentClass();
             while (!shutdownEvent.WaitOne(0))
             {
-                //singlechargeInstallment.ProcessInstallment();
+                singlechargeInstallment.ProcessInstallment();
                 Thread.Sleep(1000);
             }
         }

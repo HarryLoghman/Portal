@@ -153,8 +153,18 @@ namespace SharedLibrary
                             var serviceOnKeywords = service.ServiceOnKeywords.Split(',');
                             foreach (var onKeyword in serviceOnKeywords)
                             {
-                                if (content == onKeyword.Trim())
+                                var trimmedOnKeyword = onKeyword.Trim();
+                                if (content == trimmedOnKeyword)
                                     return service.ServiceId;
+                                else
+                                {
+                                    var offkewords = SharedLibrary.ServiceHandler.ServiceOffKeywords();
+                                    foreach (var offkeyword in offkewords)
+                                    {
+                                        if (content.Contains(offkeyword) && content.Contains(trimmedOnKeyword))
+                                            return service.ServiceId;
+                                    }
+                                }
                             }
                         }
                     }

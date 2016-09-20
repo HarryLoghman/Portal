@@ -444,7 +444,7 @@ namespace SoltanLibrary
             }
         }
 
-        public static Singlecharge SendSinglechargeMesssageToPardisImi(MessageObject message)
+        public static Singlecharge SendSinglechargeMesssageToPardisImi(MessageObject message, long installmentId = 0)
         {
             if (message == null)
                 return null;
@@ -459,6 +459,7 @@ namespace SoltanLibrary
                     ShortCode = "98" + message.ShortCode,
                     ChargeCode = message.ImiChargeKey,
                 };
+
                 var pardisClient = new SharedLibrary.PardisImiSinglechargeServiceReference.ServiceSoapClient();
                 var pardisResponse = pardisClient.SingleCharge(SPID, sms);
                 if (pardisResponse == null)
@@ -466,12 +467,12 @@ namespace SoltanLibrary
                     logs.Info("response returend from pardis singlecharge is null");
                     return null;
                 }
-                logs.Info("1: ");
+
                 if (pardisResponse[2] == "1")
                     singlecharge.IsSucceeded = true;
                 else
                     singlecharge.IsSucceeded = false;
-                logs.Info("2: ");
+                
                 singlecharge.Description = pardisResponse[2];
                 singlecharge.ReferenceId = pardisResponse[0];
             }
@@ -489,6 +490,8 @@ namespace SoltanLibrary
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
+                if (installmentId != 0)
+                    singlecharge.InstallmentId = installmentId;
 
                 using (var entity = new SoltanEntities())
                 {

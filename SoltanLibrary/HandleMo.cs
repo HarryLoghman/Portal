@@ -12,7 +12,7 @@ namespace SoltanLibrary
         {
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
-            if (message.ReceivedFrom == "31.187.71.85" && message.Content.Length > 3)
+            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85") && message.Content.Length > 3)
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
@@ -102,7 +102,7 @@ namespace SoltanLibrary
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var singlecharge = new Singlecharge();
-            if (message.ReceivedFrom == "31.187.71.85" && message.Content.Length > 3)
+            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85") && message.Content.Length > 3)
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);

@@ -32,5 +32,7 @@ namespace SharedLibrary.Models
         public bool IsReceivedFromIntegratedPanel { get; set; }
         public string ReceivedFrom { get; set; }
         public int? Price { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
     }
 }

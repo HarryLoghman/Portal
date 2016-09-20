@@ -35,8 +35,8 @@ namespace DehnadSoltanService
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
-                    var warningDaysThershold = DateTime.Now.AddDays(-1);
-                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.TruncateTime(o.DateAdded) == DbFunctions.TruncateTime(warningDaysThershold) && o.IsLastDayWarningSent == false && DateTime.Now.Hour > 8).ToList();
+                    var now = DateTime.Now;
+                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddDays(o.DateAdded, 2) < now && o.IsLastDayWarningSent == false).ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Soltan");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
@@ -80,8 +80,8 @@ namespace DehnadSoltanService
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
-                    var chargeDaysThershold = DateTime.Now.AddDays(-3);
-                    var QueueList = entity.SinglechargeWaitings.Where(o => o.DateAdded <= chargeDaysThershold).ToList();
+                    var now = DateTime.Now;
+                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddDays(o.DateAdded, 3) <= now).ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Soltan");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
@@ -101,8 +101,22 @@ namespace DehnadSoltanService
                         message.MobileNumber = item.MobileNumber;
                         message.ImiChargeKey = chargeCodes.FirstOrDefault(o => o.Price == item.Price).ChargeKey;
                         message.ShortCode = shortCode;
-                        message.Price = item.Price * 10;
-                        SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
+                        message.Price = item.Price;
+                        var singlecharge = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
+                        if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
+                        {
+                            var installment = new SinglechargeInstallment();
+                            installment.MobileNumber = message.MobileNumber;
+                            installment.TotalPrice = message.Price.GetValueOrDefault();
+                            installment.IsExceededDailyChargeLimit = false;
+                            installment.IsFullyPaid = false;
+                            installment.PricePayed = 0;
+                            installment.DateCreated = DateTime.Now;
+                            installment.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
+                            installment.PriceTodayCharged = 0;
+                            installment.IsUserDailyChargeBalanced = false;
+                            entity.SinglechargeInstallments.Add(installment);
+                        }
                         entity.SinglechargeWaitings.Remove(item);
                         batchSaveCounter += 1;
                     }
