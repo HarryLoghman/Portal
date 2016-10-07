@@ -48,7 +48,7 @@ namespace DehnadSoltanService
                 int batchSaveCounter = 0;
                 using (var entity = new SoltanEntities())
                 {
-                    var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false).ToList();
+                    var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
                     foreach (var installment in installmentList)
                     {
                         if (batchSaveCounter >= 500)

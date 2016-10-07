@@ -115,6 +115,10 @@
       <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
       <Name>MyLeagueLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
+      <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
+      <Name>SepidRoodLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
@@ -122,6 +126,10 @@
     <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
       <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
       <Name>SoltanLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
+      <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
+      <Name>Tabriz2018Library</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

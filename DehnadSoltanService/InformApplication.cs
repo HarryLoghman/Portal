@@ -24,7 +24,10 @@ namespace DehnadSoltanService
                     List<Task> TaskList = new List<Task>();
                     foreach (var item in unInformed)
                     {
-                        TaskList.Add(CallApplicationUrlToInformSinglecharge(entity, item));
+                        int package = item.Price / 10;
+                        if (item.InstallmentId != null)
+                            package = entity.SinglechargeInstallments.Where(o => o.Id == item.InstallmentId).FirstOrDefault().TotalPrice;
+                        TaskList.Add(CallApplicationUrlToInformSinglecharge(entity, item, package));
                     }
                     Task.WaitAll(TaskList.ToArray());
                 }
@@ -34,7 +37,7 @@ namespace DehnadSoltanService
                 logs.Error("Exception in Infrom method: ", e);
             }
         }
-        private async Task CallApplicationUrlToInformSinglecharge(SoltanEntities entity, Singlecharge singlechargeItem)
+        private async Task CallApplicationUrlToInformSinglecharge(SoltanEntities entity, Singlecharge singlechargeItem, int package)
         {
             try
             {
@@ -44,7 +47,8 @@ namespace DehnadSoltanService
                 {
                    { "sign", "ErhIvyN33DItV7OmYxoAZmzYzf0pdHagZMTmQCcKyfvdAPLpSOvqTDumSihaY13r15FXB3PlI32xwQVfRJ76hIq2dwpy9WtYZyaVFfNwTxjsjrbXYn0WiVZe76hIq2dw" },
                    { "mobileNumber", singlechargeItem.MobileNumber },
-                   { "price", (singlechargeItem.Price / 10).ToString() }
+                   { "price", (singlechargeItem.Price / 10).ToString() },
+                   { "package", package.ToString() }
                 };
 
                     var content = new FormUrlEncodedContent(values);
@@ -52,6 +56,7 @@ namespace DehnadSoltanService
                     var response = await client.PostAsync(url, content);
 
                     var responseString = await response.Content.ReadAsStringAsync();
+                    logs.Info("CallApplicationUrlToInformSinglecharge:" + responseString);
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
                     if (jsonResponse.success == "true")
                     {

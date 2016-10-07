@@ -100,6 +100,21 @@ namespace SoltanLibrary
             return autochargeContent;
         }
 
+        public static void CancelUserInstallments(string mobileNumber)
+        {
+            using(var entity = new SoltanEntities())
+            {
+                var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsFullyPaid == false && o.IsUserCanceledTheInstallment == false).ToList();
+                foreach (var installment in userinstallments)
+                {
+                    installment.IsUserCanceledTheInstallment = true;
+                    installment.CancelationDate = DateTime.Now;
+                    installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime();
+                    entity.Entry(installment).State = EntityState.Modified;
+                }
+                entity.SaveChanges();
+            }
+        }
 
         public static List<MessagesTemplate> GetServiceMessagesTemplate()
         {

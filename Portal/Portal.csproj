@@ -216,6 +216,17 @@
     <Compile Include="Areas\Danestaneh\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Danestaneh\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Danestaneh\MyLeagueAreaRegistration.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\PointsController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\SettingsController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\SepidRood\SepidRoodAreaRegistration.cs" />
     <Compile Include="Areas\Soltan\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Soltan\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Soltan\Controllers\MonitoringController.cs" />
@@ -846,6 +857,19 @@
     <Content Include="Areas\Soltan\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Soltan\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Soltan\Views\web.config" />
+    <Content Include="Areas\SepidRood\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\SepidRood\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\AutochargeTimeTable\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\Points\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\Settings\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\SepidRood\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\SepidRood\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1200,6 +1224,7 @@
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
     <Folder Include="Areas\MyLeague\Models\" />
+    <Folder Include="Areas\SepidRood\Models\" />
     <Folder Include="Areas\Soltan\Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -1230,6 +1255,10 @@
       <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
       <Name>MyLeagueLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
+      <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
+      <Name>SepidRoodLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
@@ -1237,6 +1266,10 @@
     <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
       <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
       <Name>SoltanLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
+      <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
+      <Name>Tabriz2018Library</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

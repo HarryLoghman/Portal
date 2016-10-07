@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:intf="http://example" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://example" targetNamespace="http://example" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://example">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <xsd:complexType name="ArrayOf_xsd_string">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute wsdl:arrayType="xsd:string[]" ref="soapenc:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOf_xsd_long">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute wsdl:arrayType="xsd:long[]" ref="soapenc:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOf_xsd_int">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute wsdl:arrayType="xsd:int[]" ref="soapenc:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="enqueuebinaryResponse">
+    <wsdl:part name="enqueuebinaryReturn" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:message name="ServiceSendResponse">
+    <wsdl:part name="ServiceSendReturn" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:message name="fanclubcontentRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="message" type="xsd:string" />
+    <wsdl:part name="team" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="fanclubcontentResponse">
+    <wsdl:part name="fanclubcontentReturn" type="xsd:long" />
+  </wsdl:message>
+  <wsdl:message name="enqueueResponse">
+    <wsdl:part name="enqueueReturn" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:message name="BinarySendRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="messages" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="destinations" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="originators" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="udhsPart" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="udhsTotal" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="clientID" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="serviceid" type="impl:ArrayOf_xsd_string" />
+  </wsdl:message>
+  <wsdl:message name="matchRequest">
+    <wsdl:part name="message" type="xsd:string" />
+    <wsdl:part name="pattern" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="enqueuebinaryRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="msgType" type="xsd:int" />
+    <wsdl:part name="messages" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="destinations" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="originators" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="udhs" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="mClass" type="impl:ArrayOf_xsd_string" />
+  </wsdl:message>
+  <wsdl:message name="queryRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="messageIds" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:message name="enqueueRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="msgType" type="xsd:int" />
+    <wsdl:part name="messages" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="destinations" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="originators" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="udhs" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="mClass" type="impl:ArrayOf_xsd_string" />
+  </wsdl:message>
+  <wsdl:message name="sendwappushResponse">
+    <wsdl:part name="sendwappushReturn" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:message name="smsonportbinaryRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="msgType" type="xsd:int" />
+    <wsdl:part name="messages" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="destinations" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="originators" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="udhs" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="mClass" type="impl:ArrayOf_xsd_string" />
+  </wsdl:message>
+  <wsdl:message name="enqueuebinary2Response">
+    <wsdl:part name="enqueuebinary2Return" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:message name="matchResponse">
+    <wsdl:part name="matchReturn" type="xsd:boolean" />
+  </wsdl:message>
+  <wsdl:message name="queryResponse">
+    <wsdl:part name="queryReturn" type="impl:ArrayOf_xsd_int" />
+  </wsdl:message>
+  <wsdl:message name="ServiceSendRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="messages" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="destinations" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="originators" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="serviceid" type="impl:ArrayOf_xsd_string" />
+  </wsdl:message>
+  <wsdl:message name="sendwappushRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="messages" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="destinations" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="originators" type="impl:ArrayOf_xsd_string" />
+  </wsdl:message>
+  <wsdl:message name="enqueuebinary2Request">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="domain" type="xsd:string" />
+    <wsdl:part name="msgType" type="xsd:int" />
+    <wsdl:part name="messages" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="destinations" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="originators" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="udhs" type="impl:ArrayOf_xsd_string" />
+    <wsdl:part name="mClass" type="impl:ArrayOf_xsd_string" />
+  </wsdl:message>
+  <wsdl:message name="BinarySendResponse">
+    <wsdl:part name="BinarySendReturn" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:message name="smsonportbinaryResponse">
+    <wsdl:part name="smsonportbinaryReturn" type="impl:ArrayOf_xsd_long" />
+  </wsdl:message>
+  <wsdl:portType name="HelloWorld">
+    <wsdl:operation name="enqueue" parameterOrder="username password domain msgType messages destinations originators udhs mClass">
+      <wsdl:input name="enqueueRequest" message="impl:enqueueRequest" />
+      <wsdl:output name="enqueueResponse" message="impl:enqueueResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="match" parameterOrder="message pattern">
+      <wsdl:input name="matchRequest" message="impl:matchRequest" />
+      <wsdl:output name="matchResponse" message="impl:matchResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="query" parameterOrder="username password domain messageIds">
+      <wsdl:input name="queryRequest" message="impl:queryRequest" />
+      <wsdl:output name="queryResponse" message="impl:queryResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="fanclubcontent" parameterOrder="username password domain message team">
+      <wsdl:input name="fanclubcontentRequest" message="impl:fanclubcontentRequest" />
+      <wsdl:output name="fanclubcontentResponse" message="impl:fanclubcontentResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="enqueuebinary" parameterOrder="username password domain msgType messages destinations originators udhs mClass">
+      <wsdl:input name="enqueuebinaryRequest" message="impl:enqueuebinaryRequest" />
+      <wsdl:output name="enqueuebinaryResponse" message="impl:enqueuebinaryResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="smsonportbinary" parameterOrder="username password domain msgType messages destinations originators udhs mClass">
+      <wsdl:input name="smsonportbinaryRequest" message="impl:smsonportbinaryRequest" />
+      <wsdl:output name="smsonportbinaryResponse" message="impl:smsonportbinaryResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="enqueuebinary2" parameterOrder="username password domain msgType messages destinations originators udhs mClass">
+      <wsdl:input name="enqueuebinary2Request" message="impl:enqueuebinary2Request" />
+      <wsdl:output name="enqueuebinary2Response" message="impl:enqueuebinary2Response" />
+    </wsdl:operation>
+    <wsdl:operation name="ServiceSend" parameterOrder="username password domain messages destinations originators serviceid">
+      <wsdl:input name="ServiceSendRequest" message="impl:ServiceSendRequest" />
+      <wsdl:output name="ServiceSendResponse" message="impl:ServiceSendResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="BinarySend" parameterOrder="username password domain messages destinations originators udhsPart udhsTotal clientID serviceid">
+      <wsdl:input name="BinarySendRequest" message="impl:BinarySendRequest" />
+      <wsdl:output name="BinarySendResponse" message="impl:BinarySendResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="sendwappush" parameterOrder="username password domain messages destinations originators">
+      <wsdl:input name="sendwappushRequest" message="impl:sendwappushRequest" />
+      <wsdl:output name="sendwappushResponse" message="impl:sendwappushResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SMSSoapBinding" type="impl:HelloWorld">
+    <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="enqueue">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="enqueueRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="enqueueResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="match">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="matchRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="matchResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="query">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="queryRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="queryResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="fanclubcontent">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="fanclubcontentRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="fanclubcontentResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="enqueuebinary">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="enqueuebinaryRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="enqueuebinaryResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="smsonportbinary">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="smsonportbinaryRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="smsonportbinaryResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="enqueuebinary2">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="enqueuebinary2Request">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="enqueuebinary2Response">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ServiceSend">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="ServiceSendRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="ServiceSendResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BinarySend">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="BinarySendRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="BinarySendResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendwappush">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="sendwappushRequest">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="sendwappushResponse">
+        <wsdlsoap:body use="encoded" namespace="http://example" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HelloWorldService">
+    <wsdl:port name="SMS" binding="impl:SMSSoapBinding">
+      <wsdlsoap:address location="http://10.20.13.30/websrv/services/SMS" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

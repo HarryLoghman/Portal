@@ -92,7 +92,7 @@ namespace Portal.Controllers
         public string ChargeUser([FromUri]MessageObject message)
         {
             message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-            if (message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85")
+            if (message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "178.62.51.95")
             {
                 message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
                 if (message.MobileNumber == "Invalid Mobile Number")

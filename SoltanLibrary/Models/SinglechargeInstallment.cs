@@ -24,5 +24,8 @@ namespace SoltanLibrary.Models
         public bool IsExceededDailyChargeLimit { get; set; }
         public int PriceTodayCharged { get; set; }
         public bool IsUserDailyChargeBalanced { get; set; }
+        public bool IsUserCanceledTheInstallment { get; set; }
+        public Nullable<System.DateTime> CancelationDate { get; set; }
+        public string PersianCancelationDate { get; set; }
     }
 }

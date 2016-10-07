@@ -102,21 +102,22 @@ namespace DehnadSoltanService
                         message.ImiChargeKey = chargeCodes.FirstOrDefault(o => o.Price == item.Price).ChargeKey;
                         message.ShortCode = shortCode;
                         message.Price = item.Price;
-                        var singlecharge = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
-                        if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
-                        {
-                            var installment = new SinglechargeInstallment();
-                            installment.MobileNumber = message.MobileNumber;
-                            installment.TotalPrice = message.Price.GetValueOrDefault();
-                            installment.IsExceededDailyChargeLimit = false;
-                            installment.IsFullyPaid = false;
-                            installment.PricePayed = 0;
-                            installment.DateCreated = DateTime.Now;
-                            installment.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
-                            installment.PriceTodayCharged = 0;
-                            installment.IsUserDailyChargeBalanced = false;
-                            entity.SinglechargeInstallments.Add(installment);
-                        }
+                        //var singlecharge = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
+                        //if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
+                        //{
+                        var installment = new SinglechargeInstallment();
+                        installment.MobileNumber = message.MobileNumber;
+                        installment.TotalPrice = message.Price.GetValueOrDefault();
+                        installment.IsExceededDailyChargeLimit = false;
+                        installment.IsFullyPaid = false;
+                        installment.PricePayed = 0;
+                        installment.DateCreated = DateTime.Now;
+                        installment.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
+                        installment.PriceTodayCharged = 0;
+                        installment.IsUserDailyChargeBalanced = false;
+                        installment.IsUserCanceledTheInstallment = false;
+                        entity.SinglechargeInstallments.Add(installment);
+                        //}
                         entity.SinglechargeWaitings.Remove(item);
                         batchSaveCounter += 1;
                     }

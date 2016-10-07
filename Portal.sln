@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMashinBazhaService", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadSoltanService", "DehnadSoltanService\DehnadSoltanService.csproj", "{DE2157E6-5C7D-4503-8D24-2A9D83BC5122}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadTabriz2018Service", "DehnadTabriz2018Service\DehnadTabriz2018Service.csproj", "{AD235726-5C7D-4503-8D24-2A9D83BC5458}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadSepidRoodService", "DehnadSepidRoodService\DehnadSepidRoodService.csproj", "{BFA35722-5C7D-4503-8D24-2A9D83BC54BB}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -30,6 +34,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MashinBazhaLibrary", "MashinBazhaLibrary\MashinBazhaLibrary.csproj", "{11D7B226-1D58-42EB-984D-0A52CE554431}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoltanLibrary", "SoltanLibrary\SoltanLibrary.csproj", "{BAD74526-1C58-42EB-984D-0A52CE35412D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tabriz2018Library", "Tabriz2018Library\Tabriz2018Library.csproj", "{5BD34522-2D58-42EB-984D-0A52CE35443A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SepidRoodLibrary", "SepidRoodLibrary\SepidRoodLibrary.csproj", "{21B32522-2D58-42FF-984D-0A52CE55142C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +73,14 @@ Global
 		{DE2157E6-5C7D-4503-8D24-2A9D83BC5122}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE2157E6-5C7D-4503-8D24-2A9D83BC5122}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE2157E6-5C7D-4503-8D24-2A9D83BC5122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD235726-5C7D-4503-8D24-2A9D83BC5458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD235726-5C7D-4503-8D24-2A9D83BC5458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD235726-5C7D-4503-8D24-2A9D83BC5458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD235726-5C7D-4503-8D24-2A9D83BC5458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFA35722-5C7D-4503-8D24-2A9D83BC54BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFA35722-5C7D-4503-8D24-2A9D83BC54BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFA35722-5C7D-4503-8D24-2A9D83BC54BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFA35722-5C7D-4503-8D24-2A9D83BC54BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -93,6 +109,14 @@ Global
 		{BAD74526-1C58-42EB-984D-0A52CE35412D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAD74526-1C58-42EB-984D-0A52CE35412D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAD74526-1C58-42EB-984D-0A52CE35412D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BD34522-2D58-42EB-984D-0A52CE35443A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BD34522-2D58-42EB-984D-0A52CE35443A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BD34522-2D58-42EB-984D-0A52CE35443A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD34522-2D58-42EB-984D-0A52CE35443A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21B32522-2D58-42FF-984D-0A52CE55142C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21B32522-2D58-42FF-984D-0A52CE55142C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21B32522-2D58-42FF-984D-0A52CE55142C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21B32522-2D58-42FF-984D-0A52CE55142C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

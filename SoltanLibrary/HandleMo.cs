@@ -12,7 +12,7 @@ namespace SoltanLibrary
         {
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
-            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85") && message.Content.Length > 3)
+            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
@@ -58,6 +58,7 @@ namespace SoltanLibrary
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                 {
                     ContentManager.DeleteFromSinglechargeQueue(message.MobileNumber);
+                    ServiceHandler.CancelUserInstallments(message.MobileNumber);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                 }
@@ -102,7 +103,7 @@ namespace SoltanLibrary
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var singlecharge = new Singlecharge();
-            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85") && message.Content.Length > 3)
+            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
