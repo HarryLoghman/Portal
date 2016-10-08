@@ -60,6 +60,62 @@ namespace SepidRoodLibrary
             }
         }
 
+        public static void Add2000TomanPoint(Subscriber subscriber, long serviceId)
+        {
+            try
+            {
+                var pointsTable = GetPointsTableValues();
+                var subscribtionPoint = pointsTable.Where(o => o.Title == "2000TomanPoint").FirstOrDefault();
+                SharedLibrary.MessageHandler.SetSubscriberPoint(subscriber.MobileNumber, serviceId, subscribtionPoint.Point);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in Add2000TomanPoint: " + e);
+            }
+        }
+
+        public static void Add5000TomanPoint(Subscriber subscriber, long serviceId)
+        {
+            try
+            {
+                var pointsTable = GetPointsTableValues();
+                var subscribtionPoint = pointsTable.Where(o => o.Title == "5000TomanPoint").FirstOrDefault();
+                SharedLibrary.MessageHandler.SetSubscriberPoint(subscriber.MobileNumber, serviceId, subscribtionPoint.Point);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in Add5000TomanPoint: " + e);
+            }
+        }
+
+        public static void Add200TomanPoint(Subscriber subscriber, long serviceId)
+        {
+            try
+            {
+                var pointsTable = GetPointsTableValues();
+                var subscribtionPoint = pointsTable.Where(o => o.Title == "200TomanPoint").FirstOrDefault();
+                SharedLibrary.MessageHandler.SetSubscriberPoint(subscriber.MobileNumber, serviceId, subscribtionPoint.Point);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in Add200TomanPoint: " + e);
+            }
+        }
+
+        public static void Add500TomanPoint(Subscriber subscriber, long serviceId)
+        {
+            try
+            {
+                var pointsTable = GetPointsTableValues();
+                var subscribtionPoint = pointsTable.Where(o => o.Title == "500TomanPoint").FirstOrDefault();
+                SharedLibrary.MessageHandler.SetSubscriberPoint(subscriber.MobileNumber, serviceId, subscribtionPoint.Point);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in Add500TomanPoint: " + e);
+            }
+        }
+
         public static List<PointsTable> GetPointsTableValues()
         {
             var pointsTable = new List<PointsTable>();

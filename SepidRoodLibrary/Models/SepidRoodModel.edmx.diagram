@@ -11,7 +11,6 @@
         <EntityTypeShape EntityType="SepidRoodModel.AutochargeMessagesBuffer" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SepidRoodModel.AutochargeTimeTable" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SepidRoodModel.DailyStatistic" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SepidRoodModel.EventbaseContent" Width="1.5" PointX="2.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SepidRoodModel.EventbaseMessagesBuffer" Width="1.5" PointX="6.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SepidRoodModel.ImiChargeCode" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SepidRoodModel.MessagesArchive" Width="1.5" PointX="8.75" PointY="3.75" IsExpanded="true" />
@@ -27,7 +26,9 @@
         <EntityTypeShape EntityType="SepidRoodModel.SubscribersMobile" Width="1.5" PointX="12.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SepidRoodModel.TimedTempMessagesBuffer" Width="1.5" PointX="12.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SepidRoodModel.vw_SentMessages" Width="1.5" PointX="2.75" PointY="13.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SepidRoodModel.SusbcribersSubscriptionKeyword" Width="1.5" PointX="5.375" PointY="13.75" />
+        <EntityTypeShape EntityType="SepidRoodModel.SubscriptionKeyword" Width="1.5" PointX="5.375" PointY="13.75" />
+        <EntityTypeShape EntityType="SepidRoodModel.SusbcribersSubscriptionKeyword" Width="1.5" PointX="15.375" PointY="0.75" />
+        <EntityTypeShape EntityType="SepidRoodModel.EventbaseContent" Width="1.5" PointX="15.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

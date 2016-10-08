@@ -18,7 +18,7 @@ namespace DehnadSoltanService
             {
                 using (var entity = new SoltanEntities())
                 {
-                    var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false).Take(100).ToList();
+                    var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true).Take(100).ToList();
                     if (unInformed == null)
                         return;
                     List<Task> TaskList = new List<Task>();
@@ -30,6 +30,7 @@ namespace DehnadSoltanService
                         TaskList.Add(CallApplicationUrlToInformSinglecharge(entity, item, package));
                     }
                     Task.WaitAll(TaskList.ToArray());
+                    entity.SaveChanges();
                 }
             }
             catch (Exception e)
@@ -45,10 +46,10 @@ namespace DehnadSoltanService
                 {
                     var values = new Dictionary<string, string>
                 {
-                   { "sign", "ErhIvyN33DItV7OmYxoAZmzYzf0pdHagZMTmQCcKyfvdAPLpSOvqTDumSihaY13r15FXB3PlI32xwQVfRJ76hIq2dwpy9WtYZyaVFfNwTxjsjrbXYn0WiVZe76hIq2dw" },
-                   { "mobileNumber", singlechargeItem.MobileNumber },
-                   { "price", (singlechargeItem.Price / 10).ToString() },
-                   { "package", package.ToString() }
+                   { "Sign", "ErhIvyN33DItV7OmYxoAZmzYzf0pdHagZMTmQCcKyfvdAPLpSOvqTDumSihaY13r15FXB3PlI32xwQVfRJ76hIq2dwpy9WtYZyaVFfNwTxjsjrbXYn0WiVZe76hIq2dw" },
+                   { "MobileNumber", singlechargeItem.MobileNumber },
+                   { "Price", (singlechargeItem.Price / 10).ToString() },
+                   { "Package", package.ToString() }
                 };
 
                     var content = new FormUrlEncodedContent(values);
@@ -63,7 +64,6 @@ namespace DehnadSoltanService
                         singlechargeItem.IsApplicationInformed = true;
                         entity.Singlecharges.Attach(singlechargeItem);
                         entity.Entry(singlechargeItem).State = EntityState.Modified;
-                        entity.SaveChanges();
                     }
                     else
                     {

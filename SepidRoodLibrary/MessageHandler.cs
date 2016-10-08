@@ -327,10 +327,16 @@ namespace SepidRoodLibrary
             logs.Info("Eventbase subscribers count:" + subscribers.Count());
             using (var entity = new SepidRoodEntities())
             {
+                List<Subscriber> subscribersList;
+                if (eventbaseContent.SubscriptionKeywordId == 0)
+                    subscribersList = subscribers.ToList();
+                else
+                    subscribersList = (from s in subscribers join l in entity.SusbcribersSubscriptionKeywords on s.Id equals l.SubscriberId where l.SubscriptionKeywordId == eventbaseContent.SubscriptionKeywordId select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
+
                 logs.Info("Eventbase subscribers Count:" + subscribers.Count());
                 var messages = new List<MessageObject>();
                 var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price, null);
-                foreach (var subscriber in subscribers)
+                foreach (var subscriber in subscribersList)
                 {
                     var content = eventbaseContent.Content;
                     content = HandleSpecialStrings(content, eventbaseContent.Point, subscriber.MobileNumber, serviceId.Value);
@@ -341,7 +347,7 @@ namespace SepidRoodLibrary
                 InsertBulkMessagesToQueue(messages);
                 eventbaseContent.IsAddedToSendQueueFinished = true;
                 entity.Entry(eventbaseContent).State = EntityState.Modified;
-                CreateMonitoringItem(eventbaseContent.Id, SharedLibrary.MessageHandler.MessageType.EventBase, subscribers.Count(), null);
+                CreateMonitoringItem(eventbaseContent.Id, SharedLibrary.MessageHandler.MessageType.EventBase, subscribersList.Count(), null);
                 entity.SaveChanges();
             }
         }

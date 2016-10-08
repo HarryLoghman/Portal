@@ -12,10 +12,9 @@ namespace SepidRoodLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class SusbcribersSubscriptionKeyword
+    public partial class SubscriptionKeyword
     {
         public long Id { get; set; }
-        public long SubscriberId { get; set; }
-        public long SubscriptionKeywordId { get; set; }
+        public string Keyword { get; set; }
     }
 }

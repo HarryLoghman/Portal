@@ -19,6 +19,7 @@ namespace SepidRoodLibrary
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 message.Content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
+                Subscribers.Add200TomanPoint(subscriber, service.Id);
             }
             else if (message.Content == "5")
             {
@@ -26,16 +27,19 @@ namespace SepidRoodLibrary
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 message.Content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
+                Subscribers.Add500TomanPoint(subscriber, service.Id);
             }
             else if (message.Content == "22")
             {
                 message = ContentWith2000Price(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
+                Subscribers.Add2000TomanPoint(subscriber, service.Id);
             }
             else if (message.Content == "55")
             {
                 message = ContentWith5000Price(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
+                Subscribers.Add5000TomanPoint(subscriber, service.Id);
             }
             else if (message.Content == "")
             {
@@ -56,6 +60,15 @@ namespace SepidRoodLibrary
             message = MessageHandler.SetImiChargeInfo(message, 5000, 0, null);
             message.Content = messagesTemplate.Where(o => o.Title == "ContentWith5000Price").Select(o => o.Content).FirstOrDefault();
             return message;
+        }
+
+        public static List<SubscriptionKeyword> GetSubscriptionKeywordsList()
+        {
+            using (var entity = new SepidRoodEntities())
+            {
+                var subscriptionKeywords = entity.SubscriptionKeywords.ToList();
+                return subscriptionKeywords;
+            }
         }
     }
 }

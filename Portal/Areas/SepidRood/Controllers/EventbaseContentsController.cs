@@ -35,6 +35,7 @@ namespace Portal.Areas.SepidRood.Controllers
                 PersianDateCreated = eventbaseContent.PersianDateCreated,
                 IsAddingMessagesToSendQueue = eventbaseContent.IsAddingMessagesToSendQueue,
                 IsAddedToSendQueueFinished = eventbaseContent.IsAddedToSendQueueFinished,
+                SubscriptionKeywordId = eventbaseContent.SubscriptionKeywordId
             });
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -56,6 +57,7 @@ namespace Portal.Areas.SepidRood.Controllers
                         PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
                         IsAddingMessagesToSendQueue = false,
                         IsAddedToSendQueueFinished = false,
+                        SubscriptionKeywordId = eventbaseContent.SubscriptionKeywordId
                     };
 
                     db.EventbaseContents.Add(entity);
@@ -88,6 +90,7 @@ namespace Portal.Areas.SepidRood.Controllers
                         PersianDateCreated = "This will not be saved!",
                         IsAddingMessagesToSendQueue = false,
                         IsAddedToSendQueueFinished = false,
+                        SubscriptionKeywordId = eventbaseContent.SubscriptionKeywordId
                     };
 
                     db.EventbaseContents.Attach(entity);
@@ -164,6 +167,13 @@ namespace Portal.Areas.SepidRood.Controllers
             db.SaveChanges();
             return Content("Ok");
         }
-
+       
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult SubscriptionKeywordsList()
+        {
+            var keywordsList = SepidRoodLibrary.ContentManager.GetSubscriptionKeywordsList();
+            keywordsList.Insert(0, new SubscriptionKeyword { Id = 0, Keyword = "همه اعضاء" });
+            return Json(keywordsList, JsonRequestBehavior.AllowGet);
+        }
     }
 }

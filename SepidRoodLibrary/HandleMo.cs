@@ -48,6 +48,10 @@ namespace SepidRoodLibrary
                     if (message.Content == "2" || message.Content == "5")
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);
+                        if(message.Content == "2")
+                            Subscribers.Add200TomanPoint(subscriberData, service.Id);
+                        else if (message.Content == "5")
+                            Subscribers.Add500TomanPoint(subscriberData, service.Id);
                     }
                     else if(message.Content == "22" || message.Content == "55")
                     {
@@ -68,6 +72,10 @@ namespace SepidRoodLibrary
                     if (message.Content == "2" || message.Content == "5")
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);
+                        if (message.Content == "2")
+                            Subscribers.Add200TomanPoint(subscriberData, service.Id);
+                        else if (message.Content == "5")
+                            Subscribers.Add500TomanPoint(subscriberData, service.Id);
                     }
                     else if (message.Content == "22" || message.Content == "55")
                     {

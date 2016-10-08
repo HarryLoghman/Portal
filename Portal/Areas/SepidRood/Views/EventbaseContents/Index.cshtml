@@ -7,12 +7,42 @@
 
 <script>
     var gridElement = $("#grid");
+    var subscriptionKeywordsList;
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'EventbaseContents/SubscriptionKeywordsList',
+        dataType: 'json',
+        success: function (result) {
+            subscriptionKeywordsList = result;
+        }
+    });
+
+    function getSubscriptionKeyword(SubscriptionKeywordId) {
+        for (var idx = 0, length = subscriptionKeywordsList.length; idx < length; idx++) {
+            if (subscriptionKeywordsList[idx].Id === subscriptionKeywordId) {
+                return subscriptionKeywordsList[idx].Keyword;
+            }
+        }
+    }
+
+    function subscriptionKeywordsDropDownEditor(container, options) {
+        $('<input data-text-field="Keyword" data-value-field="Id" data-bind="value:' + options.field + '"/>')
+            .appendTo(container)
+           .kendoDropDownList({
+               dataSource: subscriptionKeywordsList,
+               dataTextField: "Keyword",
+               dataValueField: "Id"
+           });
+    }
 
     $("#grid").kendoGrid({
 
         columns: [
             { field: "Id", title: "ردیف", width: 100 },
             { field: "PersianDateCreated", title: "تاریخ ایجاد", width: 200 },
+            { field: "SubscriptionKeywordId", title: "کلید واژه عضویت", editor: subscriptionKeywordsDropDownEditor, template: "#=getSubscriptionKeyword(SubscriptionKeywordId)#", width: 200 },
             { field: "Content", title: "محتوی", editor: textAreaEditor },
             { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند", editor: subscriberNotSendedMoInDaysDropDownEditor, template: "#=getSubscriberNotSendedMoInDaysValue(SubscriberNotSendedMoInDays)#", width: 100 },
             { field: "Price", title: "هزینه پیام", width: 150 },
@@ -58,6 +88,7 @@
                     fields: {
                         Id: { type: "number", editable: false },
                         PersianDateCreated: { editable: false },
+                        SubscriptionKeywordId: { validation: { required: true }, nullable: false, defaultValue: 0 },
                         Content: { type: "string", validation: { required: true }, nullable: false },
                         SubscriberNotSendedMoInDays: { type: "int", validation: { required: true }, defaultValue: 0 },
                         Price: { type: "int", validation: { required: true }, defaultValue: 0 },

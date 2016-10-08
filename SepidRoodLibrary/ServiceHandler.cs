@@ -46,12 +46,13 @@ namespace SepidRoodLibrary
             {
                 using (var entity = new SepidRoodEntities())
                 {
-                    var subscriberKeyword = entity.SusbcribersSubscriptionKeywords.FirstOrDefault(o => o.SubscriberId == subscriberId && o.SubscriptionKeyword == message.Content);
+                    var keyword = entity.SubscriptionKeywords.FirstOrDefault(o => o.Keyword == message.Content);
+                    var subscriberKeyword = entity.SusbcribersSubscriptionKeywords.FirstOrDefault(o => o.SubscriberId == subscriberId && o.SubscriptionKeywordId == keyword.Id);
                     if(subscriberKeyword == null)
                     {
                         subscriberKeyword = new SusbcribersSubscriptionKeyword();
                         subscriberKeyword.SubscriberId = subscriberId;
-                        subscriberKeyword.SubscriptionKeyword = message.Content;
+                        subscriberKeyword.SubscriptionKeywordId = keyword.Id;
                         entity.SusbcribersSubscriptionKeywords.Add(subscriberKeyword);
                         entity.SaveChanges();
                     }

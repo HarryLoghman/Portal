@@ -123,6 +123,7 @@
           <Property Name="SubscriberNotSendedMoInDays" Type="int" Nullable="false" />
           <Property Name="IsAddingMessagesToSendQueue" Type="bit" Nullable="false" />
           <Property Name="IsAddedToSendQueueFinished" Type="bit" Nullable="false" />
+          <Property Name="SubscriptionKeywordId" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="EventbaseMessagesBuffer">
           <Key>
@@ -317,13 +318,20 @@
           <Property Name="MobileId" Type="bigint" Nullable="false" />
           <Property Name="Subscriberid" Type="bigint" Nullable="false" />
         </EntityType>
+        <EntityType Name="SubscriptionKeywords">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Keyword" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="SusbcribersSubscriptionKeywords">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SubscriberId" Type="bigint" Nullable="false" />
-          <Property Name="SubscriptionKeyword" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SubscriptionKeywordId" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="TimedTempMessagesBuffer">
           <Key>
@@ -421,6 +429,7 @@ warning 6002: The table/view 'SepidRood.dbo.vw_SentMessages' does not have a pri
           <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersMobile" EntityType="Self.SubscribersMobile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscriptionKeywords" EntityType="Self.SubscriptionKeywords" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SusbcribersSubscriptionKeywords" EntityType="Self.SusbcribersSubscriptionKeywords" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" store:Type="Views" store:Schema="dbo">
@@ -557,20 +566,6 @@ warning 6002: The table/view 'SepidRood.dbo.vw_SentMessages' does not have a pri
           <Property Name="NumberOfEventbaseMessagesFailed" Type="Int32" Nullable="false" />
           <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="Int32" Nullable="false" />
           <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="EventbaseContent">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="Point" Type="Int32" Nullable="false" />
-          <Property Name="SubscriberNotSendedMoInDays" Type="Int32" Nullable="false" />
-          <Property Name="IsAddingMessagesToSendQueue" Type="Boolean" Nullable="false" />
-          <Property Name="IsAddedToSendQueueFinished" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="EventbaseMessagesBuffer">
           <Key>
@@ -831,7 +826,6 @@ warning 6002: The table/view 'SepidRood.dbo.vw_SentMessages' does not have a pri
           <EntitySet Name="AutochargeMessagesBuffers" EntityType="Self.AutochargeMessagesBuffer" />
           <EntitySet Name="AutochargeTimeTables" EntityType="Self.AutochargeTimeTable" />
           <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistic" />
-          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContent" />
           <EntitySet Name="EventbaseMessagesBuffers" EntityType="Self.EventbaseMessagesBuffer" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCode" />
           <EntitySet Name="MessagesArchives" EntityType="Self.MessagesArchive" />
@@ -861,15 +855,39 @@ warning 6002: The table/view 'SepidRood.dbo.vw_SentMessages' does not have a pri
             <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
+          <EntitySet Name="SubscriptionKeywords" EntityType="SepidRoodModel.SubscriptionKeyword" />
           <EntitySet Name="SusbcribersSubscriptionKeywords" EntityType="SepidRoodModel.SusbcribersSubscriptionKeyword" />
+          <EntitySet Name="EventbaseContents" EntityType="SepidRoodModel.EventbaseContent" />
         </EntityContainer>
+        <EntityType Name="SubscriptionKeyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Keyword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
         <EntityType Name="SusbcribersSubscriptionKeyword">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SubscriberId" Type="Int64" Nullable="false" />
-          <Property Name="SubscriptionKeyword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubscriptionKeywordId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="Int32" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="Boolean" Nullable="false" />
+          <Property Name="SubscriptionKeywordId" Type="Int64" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -985,21 +1003,6 @@ warning 6002: The table/view 'SepidRood.dbo.vw_SentMessages' does not have a pri
                 <ScalarProperty Name="NumberOfEventbaseMessagesFailed" ColumnName="NumberOfEventbaseMessagesFailed" />
                 <ScalarProperty Name="NumberOfEventbasePostpaidMessagesFailed" ColumnName="NumberOfEventbasePostpaidMessagesFailed" />
                 <ScalarProperty Name="NumberOfEventbasePrepaidMessagesFailed" ColumnName="NumberOfEventbasePrepaidMessagesFailed" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="EventbaseContents">
-            <EntityTypeMapping TypeName="SepidRoodModel.EventbaseContent">
-              <MappingFragment StoreEntitySet="EventbaseContents">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Point" ColumnName="Point" />
-                <ScalarProperty Name="SubscriberNotSendedMoInDays" ColumnName="SubscriberNotSendedMoInDays" />
-                <ScalarProperty Name="IsAddingMessagesToSendQueue" ColumnName="IsAddingMessagesToSendQueue" />
-                <ScalarProperty Name="IsAddedToSendQueueFinished" ColumnName="IsAddedToSendQueueFinished" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1266,11 +1269,35 @@ warning 6002: The table/view 'SepidRood.dbo.vw_SentMessages' does not have a pri
           <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="SepidRoodModel.Store.AggregateDailyStatistics" />
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="SepidRoodModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="SepidRoodModel.Store.ChangeMessageStatus" />
+          <EntitySetMapping Name="SubscriptionKeywords">
+            <EntityTypeMapping TypeName="SepidRoodModel.SubscriptionKeyword">
+              <MappingFragment StoreEntitySet="SubscriptionKeywords">
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="SusbcribersSubscriptionKeywords">
             <EntityTypeMapping TypeName="SepidRoodModel.SusbcribersSubscriptionKeyword">
               <MappingFragment StoreEntitySet="SusbcribersSubscriptionKeywords">
-                <ScalarProperty Name="SubscriptionKeyword" ColumnName="SubscriptionKeyword" />
+                <ScalarProperty Name="SubscriptionKeywordId" ColumnName="SubscriptionKeywordId" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseContents">
+            <EntityTypeMapping TypeName="SepidRoodModel.EventbaseContent">
+              <MappingFragment StoreEntitySet="EventbaseContents">
+                <ScalarProperty Name="SubscriptionKeywordId" ColumnName="SubscriptionKeywordId" />
+                <ScalarProperty Name="IsAddedToSendQueueFinished" ColumnName="IsAddedToSendQueueFinished" />
+                <ScalarProperty Name="IsAddingMessagesToSendQueue" ColumnName="IsAddingMessagesToSendQueue" />
+                <ScalarProperty Name="SubscriberNotSendedMoInDays" ColumnName="SubscriberNotSendedMoInDays" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
