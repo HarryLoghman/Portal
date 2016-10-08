@@ -519,7 +519,7 @@ namespace SepidRoodLibrary
             logs.Info(" Send function ended ");
         }
 
-        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState)
+        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, MessageObject message)
         {
             string content = null;
             switch (serviceStatusForSubscriberState)
@@ -528,10 +528,20 @@ namespace SepidRoodLibrary
                     content = messagesTemplate.Where(o => o.Title == "OffMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated:
-                    content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
+                    if(message.Content == "2")
+                        content = messagesTemplate.Where(o => o.Title == "WelcomeMessageWith2Keyword").Select(o => o.Content).FirstOrDefault();
+                    else if (message.Content == "5")
+                        content = messagesTemplate.Where(o => o.Title == "WelcomeMessageWith5Keyword").Select(o => o.Content).FirstOrDefault();
+                    else
+                        content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal:
-                    content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
+                    if (message.Content == "2")
+                        content = messagesTemplate.Where(o => o.Title == "WelcomeMessageWith2Keyword").Select(o => o.Content).FirstOrDefault();
+                    else if (message.Content == "5")
+                        content = messagesTemplate.Where(o => o.Title == "WelcomeMessageWith5Keyword").Select(o => o.Content).FirstOrDefault();
+                    else
+                        content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed:
                     content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();

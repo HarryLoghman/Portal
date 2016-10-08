@@ -20,8 +20,15 @@ namespace SepidRoodLibrary
                     var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                     if (user != null && user.DeactivationDate == null)
                     {
-                        message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
-                        MessageHandler.InsertMessageToQueue(message);
+                        if (message.Content == "22" || message.Content == "55")
+                        {
+                            ContentManager.HandleContent(message, service, user, messagesTemplate);
+                        }
+                        else
+                        {
+                            message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
                         return;
                     }
                 }
@@ -82,7 +89,7 @@ namespace SepidRoodLibrary
                         ContentManager.HandleContent(message, service, subscriberData, messagesTemplate);
                     }
                 }
-                message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, message);
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
