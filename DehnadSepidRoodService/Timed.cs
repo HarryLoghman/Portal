@@ -19,7 +19,8 @@ namespace DehnadSepidRoodService
             {
                 using (var entity = new SepidRoodEntities())
                 {
-                    var tempMessageBuffer = entity.TimedTempMessagesBuffers.Where(o => o.DateAddedToQueue < DbFunctions.AddMinutes(o.DateAddedToQueue, 1));
+                    var now = DateTime.Now;
+                    var tempMessageBuffer = entity.TimedTempMessagesBuffers.Where(o => now > DbFunctions.AddMinutes(o.DateAddedToQueue, 1));
                     if (tempMessageBuffer == null)
                         return;
                     var messages = new List<MessageObject>();

@@ -16,7 +16,7 @@ namespace SepidRoodLibrary
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                { 
+                {
                     var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                     if (user != null && user.DeactivationDate == null)
                     {
@@ -24,12 +24,26 @@ namespace SepidRoodLibrary
                         {
                             ContentManager.HandleContent(message, service, user, messagesTemplate);
                         }
+                        else if (message.Content == "2" || message.Content == "5")
+                        {
+                            bool isSubscribed = false;
+                            isSubscribed = ContentManager.IsUserAlreadySubscribedToKeyword("2", user.Id);
+                            if (isSubscribed == false)
+                                isSubscribed = ContentManager.IsUserAlreadySubscribedToKeyword("5", user.Id);
+
+                            if (isSubscribed == true)
+                            {
+                                message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
+                                MessageHandler.InsertMessageToQueue(message);
+                                return;
+                            }
+                        }
                         else
                         {
                             message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
+                            return;
                         }
-                        return;
                     }
                 }
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
@@ -50,20 +64,29 @@ namespace SepidRoodLibrary
                 {
                     Subscribers.CreateSubscriberAdditionalInfo(message.MobileNumber, service.Id);
                     Subscribers.AddSubscriptionPointIfItsFirstTime(message.MobileNumber, service.Id);
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                     var subscriberData = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
                     if (message.Content == "2" || message.Content == "5")
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);
-                        if(message.Content == "2")
+                        MessageObject lastEventbaseContent;
+                        if (message.Content == "2")
+                        {
                             Subscribers.Add200TomanPoint(subscriberData, service.Id);
+                        }
                         else if (message.Content == "5")
+                        {
                             Subscribers.Add500TomanPoint(subscriberData, service.Id);
+                        }
+                        lastEventbaseContent = ContentManager.GetLastEventbaseContent(subscriberData, service.Id, message.ShortCode, null, message.AggregatorId, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, message.Content);
+                        if (lastEventbaseContent != null && lastEventbaseContent.Content != "" && lastEventbaseContent.Content != null)
+                            MessageHandler.InsertMessageToTimedTempQueue(lastEventbaseContent, SharedLibrary.MessageHandler.MessageType.OnDemand);
                     }
-                    else if(message.Content == "22" || message.Content == "55")
+                    else if (message.Content == "22" || message.Content == "55")
                     {
                         ContentManager.HandleContent(message, service, subscriberData, messagesTemplate);
+                        return;
                     }
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                 {
@@ -73,21 +96,30 @@ namespace SepidRoodLibrary
                 }
                 else
                 {
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                     var subscriberData = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
                     Subscribers.SetIsSubscriberSendedOffReason(subscriberData.Id, false);
                     if (message.Content == "2" || message.Content == "5")
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);
+                        MessageObject lastEventbaseContent;
                         if (message.Content == "2")
+                        {
                             Subscribers.Add200TomanPoint(subscriberData, service.Id);
+                        }
                         else if (message.Content == "5")
+                        {
                             Subscribers.Add500TomanPoint(subscriberData, service.Id);
+                        }
+                        lastEventbaseContent = ContentManager.GetLastEventbaseContent(subscriberData, service.Id, message.ShortCode, null, message.AggregatorId, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, message.Content);
+                        if (lastEventbaseContent != null && lastEventbaseContent.Content != "" && lastEventbaseContent.Content != null)
+                            MessageHandler.InsertMessageToTimedTempQueue(lastEventbaseContent, SharedLibrary.MessageHandler.MessageType.OnDemand);
                     }
                     else if (message.Content == "22" || message.Content == "55")
                     {
                         ContentManager.HandleContent(message, service, subscriberData, messagesTemplate);
+                        return;
                     }
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 }
                 message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, message);
                 MessageHandler.InsertMessageToQueue(message);

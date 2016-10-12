@@ -9,6 +9,7 @@
     $("#grid").kendoGrid({
 
         columns: [
+            { field: "SentDate", title: "تاریخ ارسال میلادی", template: "#= kendo.toString(kendo.parseDate(SentDate, 'yyyy-MM-dd hh:mm:ss'), 'yyyy-MM-dd hh:mm:ss') #" },
             { field: "PersianSentDate", title: "تاریخ ارسال" },
             { field: "MobileNumber", title: "شماره" },
             { field: "Content", title: "محتوی" },
@@ -39,7 +40,7 @@
             pageSize: 10,
             serverPaging: true,
             sort: [
-                { field: "PersianSentDate", dir: "desc" }
+                { field: "SentDate", dir: "desc" }
             ]
         },
         columnMenu: true,

@@ -12,6 +12,17 @@ namespace SepidRoodLibrary
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public static void InsertMessageToTimedTempQueue(MessageObject message, SharedLibrary.MessageHandler.MessageType messageType)
+        {
+            using (var entity = new SepidRoodEntities())
+            {
+                message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
+                var messageBuffer = CreateTimedTempMessageBuffer(message, messageType);
+                entity.TimedTempMessagesBuffers.Add(messageBuffer);
+                entity.SaveChanges();
+            }
+        }
+
         public static MessageObject InvalidContentWhenSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
             message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -144,6 +155,32 @@ namespace SepidRoodLibrary
                 }
             }
             return content;
+        }
+
+        public static TimedTempMessagesBuffer CreateTimedTempMessageBuffer(MessageObject message, SharedLibrary.MessageHandler.MessageType messageType)
+        {
+            if (message.AggregatorId == 0)
+                message.AggregatorId = SharedLibrary.MessageHandler.GetAggregatorId(message);
+
+            var messageBuffer = new TimedTempMessagesBuffer();
+            messageBuffer.Content = message.Content;
+            messageBuffer.ContentId = message.ContentId;
+            messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
+            messageBuffer.ImiMessageType = message.ImiMessageType;
+            messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
+            messageBuffer.MessageType = (int)messageType;
+            messageBuffer.ProcessStatus = message.ProcessStatus;
+            messageBuffer.ServiceId = message.ServiceId;
+            messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = message.SubUnSubType;
+            messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            return messageBuffer;
         }
 
         public static OnDemandMessagesBuffer CreateOnDemandMessageBuffer(MessageObject message)
