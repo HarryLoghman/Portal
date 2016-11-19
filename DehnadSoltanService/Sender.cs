@@ -64,6 +64,8 @@ namespace DehnadSoltanService
                         TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
                         TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                    else if (aggregatorName == "Telepromo")
+                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -84,6 +86,8 @@ namespace DehnadSoltanService
                         TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
                         TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                    else if (aggregatorName == "Telepromo")
+                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -104,6 +108,8 @@ namespace DehnadSoltanService
                         TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
                         TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                    else if (aggregatorName == "Telepromo")
+                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());

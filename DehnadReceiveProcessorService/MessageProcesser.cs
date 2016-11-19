@@ -150,6 +150,10 @@ namespace DehnadReceiveProcessorService
                     Tabriz2018Library.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "SepidRood")
                     SepidRoodLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Tirandazi")
+                    TirandaziLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "BimeKarbala")
+                    BimeKarbalaLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -175,6 +179,10 @@ namespace DehnadReceiveProcessorService
                     Tabriz2018Library.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "SepidRood")
                     SepidRoodLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Tirandazi")
+                    TirandaziLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "BimeKarbala")
+                    BimeKarbalaLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

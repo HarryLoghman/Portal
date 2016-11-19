@@ -7,6 +7,7 @@ using SharedLibrary.Models;
 using SepidRoodLibrary.Models;
 using System.Text.RegularExpressions;
 using SharedLibrary;
+using System.Data.Entity;
 
 namespace SepidRoodLibrary
 {
@@ -25,7 +26,6 @@ namespace SepidRoodLibrary
                     message = ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriber.Id);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     message.Content = messagesTemplate.Where(o => o.Title == "WelcomeMessageWith2Keyword").Select(o => o.Content).FirstOrDefault();
-                    Subscribers.Add200TomanPoint(subscriber, service.Id);
                     MessageHandler.InsertMessageToQueue(message);
                     lastEventbaseContent = ContentManager.GetLastEventbaseContent(subscriber, service.Id, message.ShortCode, null, message.AggregatorId, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, content);
                     if (lastEventbaseContent != null && lastEventbaseContent.Content != "" && lastEventbaseContent.Content != null)
@@ -51,7 +51,6 @@ namespace SepidRoodLibrary
                     message = ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriber.Id);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     message.Content = messagesTemplate.Where(o => o.Title == "WelcomeMessageWith5Keyword").Select(o => o.Content).FirstOrDefault();
-                    Subscribers.Add500TomanPoint(subscriber, service.Id);
                     MessageHandler.InsertMessageToQueue(message);
                     lastEventbaseContent = ContentManager.GetLastEventbaseContent(subscriber, service.Id, message.ShortCode, null, message.AggregatorId, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, content);
                     if (lastEventbaseContent != null && lastEventbaseContent.Content != "" && lastEventbaseContent.Content != null)
@@ -71,17 +70,33 @@ namespace SepidRoodLibrary
             }
             else if (message.Content == "22")
             {
-                message = ContentWith2000Price(message, messagesTemplate);
-                Subscribers.Add2000TomanPoint(subscriber, service.Id);
+                var isSupportThresholdExceeded = CheckIsSupportThresholdExceeded(subscriber.MobileNumber, service.Id);
+                if (isSupportThresholdExceeded)
+                {
+                    message = SupportThresholdExceededContent(message, messagesTemplate);
+                }
+                else
+                {
+                    Subscribers.Add2000TomanPoint(subscriber, service.Id);
+                    message = ContentWith2000Price(message, messagesTemplate);
+                }
                 MessageHandler.InsertMessageToQueue(message);
             }
             else if (message.Content == "55")
             {
-                message = ContentWith5000Price(message, messagesTemplate);
-                Subscribers.Add5000TomanPoint(subscriber, service.Id);
+                var isSupportThresholdExceeded = CheckIsSupportThresholdExceeded(subscriber.MobileNumber, service.Id);
+                if (isSupportThresholdExceeded)
+                {
+                    message = SupportThresholdExceededContent(message, messagesTemplate);
+                }
+                else
+                {
+                    Subscribers.Add5000TomanPoint(subscriber, service.Id);
+                    message = ContentWith5000Price(message, messagesTemplate);
+                }
                 MessageHandler.InsertMessageToQueue(message);
             }
-            else if (message.Content == "")
+            else
             {
                 message = MessageHandler.InvalidContentWhenSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
@@ -105,6 +120,35 @@ namespace SepidRoodLibrary
                 logs.Error("Exception in checkUserAlreadySubscribedToKeyword:" + e);
             }
             return true;
+        }
+
+        public static bool CheckIsSupportThresholdExceeded(string mobileNumber, long serviceId)
+        {
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+                    var today = DateTime.Now.Date;
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
+                    var receivedMessages = entity.ReceievedMessages.Where(o => DbFunctions.TruncateTime(o.ReceivedTime) == today && o.ShortCode == serviceInfo.ShortCode && (o.Content == "22" || o.Content == "55") && o.MobileNumber == mobileNumber).Count();
+                    if (receivedMessages != null && receivedMessages > 3)
+                        return true;
+                    else
+                        return false;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in CheckIsSupportThresholdExceeded: ", e);
+            }
+            return false;
+        }
+
+        public static MessageObject SupportThresholdExceededContent(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message.Content = messagesTemplate.Where(o => o.Title == "ChargeThresholdExceeded").Select(o => o.Content).FirstOrDefault();
+            return message;
         }
 
         public static MessageObject ContentWith2000Price(MessageObject message, List<MessagesTemplate> messagesTemplate)

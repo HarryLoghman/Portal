@@ -16,7 +16,7 @@ namespace SharedLibrary.Models
     {
         public long Id { get; set; }
         public long ServiceId { get; set; }
-        public string Keyword { get; set; }
         public string ShortCode { get; set; }
+        public string Keyword { get; set; }
     }
 }

@@ -62,6 +62,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -149,6 +150,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -236,6 +238,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -334,6 +337,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -513,6 +517,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -600,6 +605,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -645,6 +651,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityContainer Name="SoltanEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistic" />
@@ -756,6 +763,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityType Name="AutochargeHeaderFooter">
           <Key>
@@ -899,6 +907,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="SoltanModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -991,6 +1000,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="SoltanModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1039,6 +1049,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="TimedTempMessagesBuffers">
             <EntityTypeMapping TypeName="SoltanModel.TimedTempMessagesBuffer">
               <MappingFragment StoreEntitySet="TimedTempMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1112,6 +1123,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="SoltanModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
                 <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
                 <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />

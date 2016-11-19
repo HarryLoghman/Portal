@@ -24,9 +24,10 @@ namespace SoltanLibrary
                 {
                     if (imiChargecode.ChargeCode == content)
                     {
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", "Telepromo");
                         message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
                         chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToPardisImi(message);
+                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
                         break;
                     }
                 }

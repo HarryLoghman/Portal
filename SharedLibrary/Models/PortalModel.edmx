@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="__MigrationHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -198,13 +198,19 @@
           <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ServiceId" Type="bigint" />
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
-          <Property Name="MCIServiceId" Type="int" />
+          <Property Name="AggregatorServiceId" Type="nvarchar" MaxLength="100" />
           <Property Name="ServiceName" Type="nvarchar" MaxLength="100" />
           <Property Name="ServiceStatusForSubscriber" Type="int" />
           <Property Name="Date" Type="date" />
           <Property Name="Time" Type="time" Precision="7" />
           <Property Name="WhoChangedSubscriberStatus" Type="int" />
           <Property Name="InvalidContent" Type="nvarchar(max)" />
+          <Property Name="AggregatorId" Type="bigint" />
+          <Property Name="AggregatorName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateTime" Type="datetime" />
+          <Property Name="PersianDateTime" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubscriptionKeyword" Type="nvarchar" MaxLength="100" />
+          <Property Name="UnsubscriptionKeyword" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersPoints">
           <Key>
@@ -429,7 +435,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PortalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -580,7 +587,30 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Aggregator" Relationship="Self.FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregators" />
-          <NavigationProperty Name="Service" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Service" />
+          <NavigationProperty Name="Service" Relationship="Self.FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Services" />
+        </EntityType>
+        <EntityType Name="ServiceKeyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Keyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ServiceCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OnKeywords" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ServiceInfoes" Relationship="Self.FK_ServiceShortCodes_Services" FromRole="Services" ToRole="ServiceInfo" />
+          <NavigationProperty Name="Subscribers" Relationship="Self.FK_Subscribers_Subscribers" FromRole="Services" ToRole="Subscribers" />
+          <NavigationProperty Name="SubscribersPoints" Relationship="Self.FK_SubscribersPoints_Services" FromRole="Services" ToRole="SubscribersPoints" />
         </EntityType>
         <EntityType Name="Subscriber">
           <Key>
@@ -600,7 +630,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="MobileOperator" Type="Int64" Nullable="false" />
           <Property Name="OperatorPlan" Type="Int64" Nullable="false" />
           <Property Name="SubscriberUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Service" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Subscriber" ToRole="Service" />
+          <NavigationProperty Name="Service" Relationship="Self.FK_Subscribers_Subscribers" FromRole="Subscribers" ToRole="Services" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -610,13 +640,19 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ServiceId" Type="Int64" />
           <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MCIServiceId" Type="Int32" />
+          <Property Name="AggregatorServiceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ServiceStatusForSubscriber" Type="Int32" />
           <Property Name="Date" Type="DateTime" Precision="0" />
           <Property Name="Time" Type="Time" Precision="7" />
           <Property Name="WhoChangedSubscriberStatus" Type="Int32" />
           <Property Name="InvalidContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorId" Type="Int64" />
+          <Property Name="AggregatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateTime" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UnsubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SubscribersPoint">
           <Key>
@@ -626,7 +662,27 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ServiceId" Type="Int64" Nullable="false" />
           <Property Name="Point" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Service" Relationship="PortalModel.FK_SubscribersPoints_Services" FromRole="SubscribersPoint" ToRole="Service" />
+          <NavigationProperty Name="Service" Relationship="Self.FK_SubscribersPoints_Services" FromRole="SubscribersPoints" ToRole="Services" />
+        </EntityType>
+        <EntityType Name="vw_ReceivedMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ShortCode" />
+            <PropertyRef Name="ReceivedTime" />
+            <PropertyRef Name="IsProcessed" />
+            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operator" Multiplicity="1" />
@@ -680,6 +736,42 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ServiceShortCodes_Services">
+          <End Role="Services" Type="Self.Service" Multiplicity="1" />
+          <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ServiceInfo">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Subscribers_Subscribers">
+          <End Role="Services" Type="Self.Service" Multiplicity="1" />
+          <End Role="Subscribers" Type="Self.Subscriber" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Subscribers">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SubscribersPoints_Services">
+          <End Role="Services" Type="Self.Service" Multiplicity="1" />
+          <End Role="SubscribersPoints" Type="Self.SubscribersPoint" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SubscribersPoints">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="AspNetUserRoles">
           <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
@@ -698,9 +790,12 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessage" />
           <EntitySet Name="ReceivedMessagesArchives" EntityType="Self.ReceivedMessagesArchive" />
           <EntitySet Name="ServiceInfoes" EntityType="Self.ServiceInfo" />
+          <EntitySet Name="ServiceKeywords" EntityType="Self.ServiceKeyword" />
+          <EntitySet Name="Services" EntityType="Self.Service" />
           <EntitySet Name="Subscribers" EntityType="Self.Subscriber" />
           <EntitySet Name="SubscribersHistories" EntityType="Self.SubscribersHistory" />
           <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoint" />
+          <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" />
           <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
             <End Role="Operators" EntitySet="Operators" />
             <End Role="Aggregators" EntitySet="Aggregators" />
@@ -717,106 +812,24 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
+          <AssociationSet Name="FK_ServiceShortCodes_Services" Association="Self.FK_ServiceShortCodes_Services">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Subscribers_Subscribers" Association="Self.FK_Subscribers_Subscribers">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubscribersPoints_Services" Association="Self.FK_SubscribersPoints_Services">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
+          </AssociationSet>
           <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
           <FunctionImport Name="ArchiveReceivedMessages" />
-          <EntitySet Name="ServiceKeywords" EntityType="PortalModel.ServiceKeyword" />
-          <EntitySet Name="Services" EntityType="PortalModel.Service" />
-          <AssociationSet Name="FK_ServiceShortCodes_Services" Association="PortalModel.FK_ServiceShortCodes_Services">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Subscribers_Subscribers" Association="PortalModel.FK_Subscribers_Subscribers">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="Subscriber" EntitySet="Subscribers" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SubscribersPoints_Services" Association="PortalModel.FK_SubscribersPoints_Services">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="SubscribersPoint" EntitySet="SubscribersPoints" />
-          </AssociationSet>
-          <EntitySet Name="vw_ReceivedMessages" EntityType="PortalModel.vw_ReceivedMessages" />
         </EntityContainer>
-        <EntityType Name="ServiceKeyword">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="Keyword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Service">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ServiceInfoes" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="Service" ToRole="ServiceInfo" />
-          <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Service" ToRole="Subscriber" />
-          <NavigationProperty Name="SubscribersPoints" Relationship="PortalModel.FK_SubscribersPoints_Services" FromRole="Service" ToRole="SubscribersPoint" />
-        </EntityType>
-        <Association Name="FK_ServiceShortCodes_Services">
-          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
-          <End Type="PortalModel.ServiceInfo" Role="ServiceInfo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ServiceInfo">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Subscribers_Subscribers">
-          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
-          <End Type="PortalModel.Subscriber" Role="Subscriber" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Subscriber">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SubscribersPoints_Services">
-          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
-          <End Type="PortalModel.SubscribersPoint" Role="SubscribersPoint" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SubscribersPoint">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="vw_ReceivedMessages">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ReceivedTime" />
-            <PropertyRef Name="IsProcessed" />
-            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -931,7 +944,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="ReceievedMessages">
             <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
               <MappingFragment StoreEntitySet="ReceievedMessages">
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
@@ -941,13 +953,13 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="Content" ColumnName="Content" />
                 <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
                 <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ReceivedMessagesArchives">
             <EntityTypeMapping TypeName="PortalModel.ReceivedMessagesArchive">
               <MappingFragment StoreEntitySet="ReceivedMessagesArchive">
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
@@ -957,6 +969,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="Content" ColumnName="Content" />
                 <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
                 <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -968,6 +981,28 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
                 <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceKeywords">
+            <EntityTypeMapping TypeName="PortalModel.ServiceKeyword">
+              <MappingFragment StoreEntitySet="ServiceKeywords">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Services">
+            <EntityTypeMapping TypeName="PortalModel.Service">
+              <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -998,13 +1033,19 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="MCIServiceId" ColumnName="MCIServiceId" />
+                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
                 <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
                 <ScalarProperty Name="ServiceStatusForSubscriber" ColumnName="ServiceStatusForSubscriber" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="WhoChangedSubscriberStatus" ColumnName="WhoChangedSubscriberStatus" />
                 <ScalarProperty Name="InvalidContent" ColumnName="InvalidContent" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="AggregatorName" ColumnName="AggregatorName" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="PersianDateTime" ColumnName="PersianDateTime" />
+                <ScalarProperty Name="SubscriptionKeyword" ColumnName="SubscriptionKeyword" />
+                <ScalarProperty Name="UnsubscriptionKeyword" ColumnName="UnsubscriptionKeyword" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1018,6 +1059,22 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vw_ReceivedMessages">
+            <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
+              <MappingFragment StoreEntitySet="vw_ReceivedMessages">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
+                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <AssociationSetMapping Name="AspNetUserRoles" TypeName="PortalModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
             <EndProperty Name="AspNetRoles">
               <ScalarProperty Name="Id" ColumnName="RoleId" />
@@ -1027,44 +1084,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </EndProperty>
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="ArchiveReceivedMessages" FunctionName="PortalModel.Store.ArchiveReceivedMessages" />
-          <EntitySetMapping Name="ServiceKeywords">
-            <EntityTypeMapping TypeName="PortalModel.ServiceKeyword">
-              <MappingFragment StoreEntitySet="ServiceKeywords">
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Services">
-            <EntityTypeMapping TypeName="PortalModel.Service">
-              <MappingFragment StoreEntitySet="Services">
-                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
-                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_ReceivedMessages">
-            <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
-              <MappingFragment StoreEntitySet="vw_ReceivedMessages">
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

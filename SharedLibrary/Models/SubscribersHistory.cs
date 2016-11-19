@@ -18,12 +18,18 @@ namespace SharedLibrary.Models
         public string MobileNumber { get; set; }
         public Nullable<long> ServiceId { get; set; }
         public string ShortCode { get; set; }
-        public Nullable<int> MCIServiceId { get; set; }
+        public string AggregatorServiceId { get; set; }
         public string ServiceName { get; set; }
         public Nullable<int> ServiceStatusForSubscriber { get; set; }
         public Nullable<System.DateTime> Date { get; set; }
         public Nullable<System.TimeSpan> Time { get; set; }
         public Nullable<int> WhoChangedSubscriberStatus { get; set; }
         public string InvalidContent { get; set; }
+        public Nullable<long> AggregatorId { get; set; }
+        public string AggregatorName { get; set; }
+        public Nullable<System.DateTime> DateTime { get; set; }
+        public string PersianDateTime { get; set; }
+        public string SubscriptionKeyword { get; set; }
+        public string UnsubscriptionKeyword { get; set; }
     }
 }

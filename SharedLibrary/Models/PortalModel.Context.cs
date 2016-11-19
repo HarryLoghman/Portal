@@ -40,11 +40,11 @@ namespace SharedLibrary.Models
         public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
         public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
         public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
+        public virtual DbSet<ServiceKeyword> ServiceKeywords { get; set; }
+        public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Subscriber> Subscribers { get; set; }
         public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
         public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
-        public virtual DbSet<ServiceKeyword> ServiceKeywords { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
     
         public virtual int ArchiveReceivedMessages()

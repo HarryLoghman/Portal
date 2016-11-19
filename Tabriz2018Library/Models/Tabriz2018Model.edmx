@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Tabriz2018Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Tabriz2018Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -63,6 +63,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -150,6 +151,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -245,6 +247,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -306,6 +309,7 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -402,8 +406,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Tabriz2018Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -465,6 +468,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -552,6 +556,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -647,6 +652,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -708,6 +714,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
         </EntityType>
         <EntityType Name="vw_SentMessages">
           <Key>
@@ -823,6 +830,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="Tabriz2018Model.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -914,6 +922,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="Tabriz2018Model.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1015,6 +1024,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="Tabriz2018Model.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1081,6 +1091,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <EntitySetMapping Name="TimedTempMessagesBuffers">
             <EntityTypeMapping TypeName="Tabriz2018Model.TimedTempMessagesBuffer">
               <MappingFragment StoreEntitySet="TimedTempMessagesBuffer">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />

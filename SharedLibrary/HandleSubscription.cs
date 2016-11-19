@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using SharedLibrary.Models;
+using System.Collections.Generic;
 
 namespace SharedLibrary
 {
@@ -9,17 +10,18 @@ namespace SharedLibrary
     {
         public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, Service service, bool isUserWantsToUnsubscribe)
         {
+            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             message.MessageType = (int)MessageHandler.MessageType.OnDemand;
 
             if (isUserWantsToUnsubscribe == true)
-                serviceStatusForSubscriberState = Unsubscribe(message, service);
+                serviceStatusForSubscriberState = Unsubscribe(message, service, serviceInfo);
             else
-                serviceStatusForSubscriberState = Subscribe(message, service);
+                serviceStatusForSubscriberState = Subscribe(message, service, serviceInfo);
             return serviceStatusForSubscriberState;
         }
 
-        public static ServiceStatusForSubscriberState Subscribe(MessageObject message, Service service)
+        public static ServiceStatusForSubscriberState Subscribe(MessageObject message, Service service, ServiceInfo serviceInfo)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -28,11 +30,11 @@ namespace SharedLibrary
                 subscriber = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && o.ServiceId == service.Id).FirstOrDefault();
             }
             if (subscriber == null)
-                serviceStatusForSubscriberState = AddNewSubscriberToService(message, service);
+                serviceStatusForSubscriberState = AddNewSubscriberToService(message, service, serviceInfo);
             else if (subscriber.DeactivationDate == null)
                 serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenSubscribed;
             else
-                serviceStatusForSubscriberState = ActivateServiceForSubscriber(subscriber, message.Content);
+                serviceStatusForSubscriberState = ActivateServiceForSubscriber(message, subscriber, message.Content, service, serviceInfo);
             return serviceStatusForSubscriberState;
         }
 
@@ -58,7 +60,7 @@ namespace SharedLibrary
         }
 
 
-        private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(Subscriber subscriber, string onKeyword)
+        private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(MessageObject message, Subscriber subscriber, string onKeyword, Service service, ServiceInfo serviceInfo)
         {
             using (var entity = new PortalEntities())
             {
@@ -67,20 +69,28 @@ namespace SharedLibrary
                 subscriber.DeactivationDate = null;
                 subscriber.PersianDeactivationDate = null;
                 subscriber.OnKeyword = onKeyword;
+                if (message.IsReceivedFromIntegratedPanel == false)
+                    subscriber.OnMethod = "keyword";
+                else
+                    subscriber.OnMethod = "Integrated Panel";
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
             }
+            AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             return ServiceStatusForSubscriberState.Renewal;
         }
 
-        private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, Service service)
+        private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, Service service, ServiceInfo serviceInfo)
         {
             using (var entity = new PortalEntities())
             {
                 var newSubscriber = new Subscriber();
                 newSubscriber.MobileNumber = message.MobileNumber;
                 newSubscriber.OnKeyword = message.Content;
-                newSubscriber.OnMethod = "keyword";
+                if (message.IsReceivedFromIntegratedPanel == false)
+                    newSubscriber.OnMethod = "keyword";
+                else
+                    newSubscriber.OnMethod = "Integrated Panel";
                 newSubscriber.ServiceId = service.Id;
                 newSubscriber.ActivationDate = DateTime.Now;
                 newSubscriber.PersianActivationDate = Date.GetPersianDate();
@@ -92,12 +102,12 @@ namespace SharedLibrary
 
                 AddSubscriberToSubscriberPointsTable(newSubscriber, service);
 
-                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
+                AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             }
             return ServiceStatusForSubscriberState.Activated;
         }
 
-        private static string CreateUniqueId()
+        public static string CreateUniqueId()
         {
             Random random = new Random();
             var unqiueId = random.Next(10000000, 99999999).ToString();
@@ -111,7 +121,7 @@ namespace SharedLibrary
             return unqiueId;
         }
 
-        private static void AddSubscriberToSubscriberPointsTable(Subscriber newSubscriber, Service service)
+        public static void AddSubscriberToSubscriberPointsTable(Subscriber newSubscriber, Service service)
         {
             using (var entity = new PortalEntities())
             {
@@ -124,7 +134,7 @@ namespace SharedLibrary
             }
         }
 
-        private static void AddToSubscriberHistory(string mobileNumber, string shortCode, Service service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent)
+        public static void AddToSubscriberHistory(MessageObject message, Service service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent, ServiceInfo serviceInfo)
         {
             using (var entity = new PortalEntities())
             {
@@ -135,22 +145,36 @@ namespace SharedLibrary
                     state = (int)subscriberState;
 
                 var subscriberHistory = new SubscribersHistory();
-                subscriberHistory.MobileNumber = mobileNumber;
+                subscriberHistory.MobileNumber = message.MobileNumber;
                 subscriberHistory.Date = DateTime.Now;
                 subscriberHistory.ServiceName = service.Name;
                 subscriberHistory.ServiceId = service.Id;
                 subscriberHistory.ServiceStatusForSubscriber = state;
-                subscriberHistory.ShortCode = shortCode;
+                subscriberHistory.ShortCode = message.ShortCode;
                 subscriberHistory.Time = DateTime.Now.TimeOfDay;
-                subscriberHistory.WhoChangedSubscriberStatus = (int)whoChangedSubscriberState;
-                subscriberHistory.MCIServiceId = 0;
+                if (message.IsReceivedFromIntegratedPanel == true)
+                    subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.IntegratedPanel;
+                else
+                    subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.User;
+                subscriberHistory.AggregatorServiceId = serviceInfo.AggregatorServiceId;
+                subscriberHistory.DateTime = DateTime.Now;
+                subscriberHistory.PersianDateTime = Date.GetPersianDateTime();
                 subscriberHistory.InvalidContent = invalidContent;
+                subscriberHistory.AggregatorId = serviceInfo.AggregatorId;
+                if (subscriberState == ServiceStatusForSubscriberState.Activated || subscriberState == ServiceStatusForSubscriberState.Renewal)
+                    subscriberHistory.SubscriptionKeyword = message.Content;
+                else
+                    subscriberHistory.UnsubscriptionKeyword = message.Content;
+                if (message.IsReceivedFromIntegratedPanel == false)
+                    subscriberHistory.WhoChangedSubscriberStatus = 1;
+                else
+                    subscriberHistory.WhoChangedSubscriberStatus = 2;
                 entity.SubscribersHistories.Add(subscriberHistory);
                 entity.SaveChanges();
             }
         }
 
-        public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, Service service)
+        public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, Service service, ServiceInfo serviceInfo)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -161,22 +185,25 @@ namespace SharedLibrary
             if (subscriber == null)
                 serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed;
             else
-                serviceStatusForSubscriberState = DeactivateServiceForSubscriber(message, service, subscriber);
+                serviceStatusForSubscriberState = DeactivateServiceForSubscriber(message, service, subscriber, serviceInfo);
 
             return serviceStatusForSubscriberState;
         }
 
-        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, Service service, Subscriber subscriber)
+        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, Service service, Subscriber subscriber, ServiceInfo serviceInfo)
         {
             using (var entity = new PortalEntities())
             {
                 subscriber.DeactivationDate = DateTime.Now;
                 subscriber.PersianDeactivationDate = Date.GetPersianDate();
                 subscriber.OffKeyword = message.Content;
-                subscriber.OffMethod = "keyword";
+                if (message.IsReceivedFromIntegratedPanel == false)
+                    subscriber.OffMethod = "keyword";
+                else
+                    subscriber.OffMethod = "Integrated Panel";
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
-                AddToSubscriberHistory(message.MobileNumber, message.ShortCode, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null);
+                AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null, serviceInfo);
             }
             return ServiceStatusForSubscriberState.Deactivated;
         }

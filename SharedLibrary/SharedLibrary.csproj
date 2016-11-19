@@ -22,7 +22,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -163,7 +163,9 @@
     <Compile Include="ServiceHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
     <EntityDeploy Include="Models\PortalModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>PortalModel.Designer.cs</LastGenOutput>
@@ -187,22 +189,30 @@
     <None Include="Service References\PardisImiSinglechargeServiceReference\SharedLibrary.PardisImiSinglechargeServiceReference.SingleChargeResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\PardisPlatformServiceReference\PardisPlatform.wsdl" />
+    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.RSendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.SubscribeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.UltraSendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\PortalModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PortalModel.edmx</DependentUpon>
-      <LastGenOutput>PortalModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\PortalModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PortalModel.edmx</DependentUpon>
-      <LastGenOutput>PortalModel.cs</LastGenOutput>
-    </Content>
+    <None Include="Service References\PardisPlatformServiceReference\Pardis.wsdl" />
     <None Include="Service References\PardisPlatformServiceReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -229,6 +239,18 @@
     <WCFMetadataStorage Include="Service References\PardisImiServiceReference\" />
     <WCFMetadataStorage Include="Service References\PardisImiSinglechargeServiceReference\" />
     <WCFMetadataStorage Include="Service References\PardisPlatformServiceReference\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\PortalModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PortalModel.edmx</DependentUpon>
+      <LastGenOutput>PortalModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\PortalModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PortalModel.edmx</DependentUpon>
+      <LastGenOutput>PortalModel.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

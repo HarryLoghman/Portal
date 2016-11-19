@@ -25,7 +25,7 @@ namespace DehnadSoltanService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PardisImi")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Telepromo")]
         public string AggregatorName {
             get {
                 return ((string)(this["AggregatorName"]));

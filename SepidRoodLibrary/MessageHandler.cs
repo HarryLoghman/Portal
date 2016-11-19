@@ -180,6 +180,7 @@ namespace SepidRoodLibrary
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -206,6 +207,7 @@ namespace SepidRoodLibrary
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -232,6 +234,7 @@ namespace SepidRoodLibrary
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -258,6 +261,7 @@ namespace SepidRoodLibrary
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 

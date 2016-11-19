@@ -35,5 +35,6 @@ namespace MashinBazhaLibrary.Models
         public string SubUnSubMoMssage { get; set; }
         public Nullable<byte> SubUnSubType { get; set; }
         public Nullable<int> Tag { get; set; }
+        public Nullable<int> Price { get; set; }
     }
 }

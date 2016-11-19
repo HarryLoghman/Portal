@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using SharedLibrary.Models;
 using SoltanLibrary.Models;
+using System.Net.Http;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SoltanLibrary
 {
@@ -180,6 +183,7 @@ namespace SoltanLibrary
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -206,6 +210,7 @@ namespace SoltanLibrary
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -232,6 +237,7 @@ namespace SoltanLibrary
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -472,7 +478,7 @@ namespace SoltanLibrary
                     singlecharge.IsSucceeded = true;
                 else
                     singlecharge.IsSucceeded = false;
-                
+
                 singlecharge.Description = pardisResponse[2];
                 singlecharge.ReferenceId = pardisResponse[0];
             }
@@ -502,6 +508,157 @@ namespace SoltanLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in SendSinglechargeMesssageToPardisImi on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<Dictionary<string, string>> SendSingleMessageToTelepromo(HttpClient client, string url)
+        {
+            var result = new Dictionary<string, string>();
+            result["status"] = "";
+            result["message"] = "";
+            try
+            {
+                using (var response = client.GetAsync(new Uri(url)).Result)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string httpResult = response.Content.ReadAsStringAsync().Result;
+                        XDocument xmlResult = XDocument.Parse(httpResult);
+                        result["status"] = xmlResult.Root.Descendants("status").Select(e => e.Value).FirstOrDefault();
+                        result["message"] = xmlResult.Root.Descendants("message").Select(e => e.Value).FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSingleMessageToTelepromo: " + e);
+            }
+            return result;
+        }
+
+        public static async Task SendMesssagesToTelepromo(SoltanEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            try
+            {
+                var messagesCount = messages.Count;
+                if (messagesCount == 0)
+                    return;
+                var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/send?";
+                var sc = "Dehnad";
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var from = "98" + serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+
+                using (var client = new HttpClient())
+                {
+                    foreach (var message in messages)
+                    {
+                        var to = "98" + message.MobileNumber.TrimStart('0');
+                        var messageContent = message.Content;
+                        var messageId = Guid.NewGuid().ToString();
+                        var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}"
+                                                                , sc, username, password, from, serviceId, to, messageContent, messageId);
+                        if (message.ImiChargeKey != "FREE")
+                            urlWithParameters += String.Format("&chargingCode={0}", message.ImiChargeKey);
+
+                        var result = new Dictionary<string, string>();
+                        result["status"] = "";
+                        result["message"] = "";
+                        try
+                        {
+                            result = await SendSingleMessageToTelepromo(client, urlWithParameters);
+                        }
+                        catch (Exception e)
+                        {
+                            logs.Error("Exception in SendSingleMessageToTelepromo: " + e);
+                        }
+
+
+                        if (result["status"] == "0")
+                        {
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                            message.ReferenceId = messageId;
+                            message.SentDate = DateTime.Now;
+                            message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            if (message.MessagePoint > 0)
+                                SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+                            entity.Entry(message).State = EntityState.Modified;
+                        }
+                        else
+                        {
+                            logs.Info("SendMesssagesToTelepromo Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                        }
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendMessagesToTelepromo: " + e);
+            }
+        }
+
+        public static async Task<Singlecharge> SendSinglechargeMesssageToTelepromo(MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        {
+            var singlecharge = new Singlecharge();
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
+                var sc = "Dehnad";
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var from = "98" + serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                using (var client = new HttpClient())
+                {
+                    var to = "98" + message.MobileNumber.TrimStart('0');
+                    var messageContent = "InAppPurchase";
+                    var messageId = Guid.NewGuid().ToString();
+                    var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}"
+                                                            , sc, username, password, from, serviceId, to, messageContent, messageId);
+                    urlWithParameters += String.Format("&chargingCode={0}", message.ImiChargeKey);
+                    var result = new Dictionary<string, string>();
+                    result["status"] = "";
+                    result["message"] = "";
+                    result = await SendSingleMessageToTelepromo(client, urlWithParameters);
+                    if (result["status"] == "0" && result["message"].Contains("description=ACCEPTED"))
+                        singlecharge.IsSucceeded = true;
+                    else
+                        singlecharge.IsSucceeded = false;
+
+                    singlecharge.Description = result["message"];
+                    singlecharge.ReferenceId = messageId;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToTelepromo: " + e);
+            }
+            try
+            {
+                if (singlecharge.IsSucceeded == null)
+                    singlecharge.IsSucceeded = false;
+                if (singlecharge.ReferenceId == null)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                if (installmentId != 0)
+                    singlecharge.InstallmentId = installmentId;
+
+                using (var entity = new SoltanEntities())
+                {
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToTelepromo on saving values to db: " + e);
             }
             return singlecharge;
         }

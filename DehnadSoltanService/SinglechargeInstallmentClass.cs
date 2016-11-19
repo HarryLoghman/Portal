@@ -25,6 +25,23 @@ namespace DehnadSoltanService
             }
         }
 
+        private void DeactivateChargingUsersAfter30Days()
+        {
+            try
+            {
+                using (var entity = new SoltanEntities())
+                {
+                    var today = DateTime.Now;
+                    entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SinglechargeInstallment InstallmentDailyBalance: ", e);
+            }
+        }
+
         private void ResetUserDailyChargeBalanceValue()
         {
             try
@@ -93,6 +110,7 @@ namespace DehnadSoltanService
                 {
                     var chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false).ToList();
+                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", "Telepromo");
                     foreach (var installment in installmentList)
                     {
                         if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0)
@@ -112,28 +130,28 @@ namespace DehnadSoltanService
                         }
                         var message = new SharedLibrary.Models.MessageObject();
                         message.MobileNumber = installment.MobileNumber;
-                        message.ShortCode = "3071171";
+                        message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
-                        if (response.IsSucceeded == false && response.Description.Contains("Insufficient balance"))
+                        var response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
+                        if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                         {
                             if (message.Price == 400)
                             {
                                 SetMessagePrice(message, chargeCodes, 300);
-                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
-                                if (response.IsSucceeded == false && response.Description.Contains("Insufficient balance"))
+                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
+                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);
-                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
-                                    if (response.IsSucceeded == false && response.Description.Contains("Insufficient balance"))
+                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         SetMessagePrice(message, chargeCodes, 100);
-                                        response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
-                                        if (response.IsSucceeded == false && response.Description.Contains("Insufficient balance"))
+                                        response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                         {
                                             SetMessagePrice(message, chargeCodes, 50);
-                                            response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
+                                            response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
                                         }
                                     }
                                 }
@@ -141,26 +159,26 @@ namespace DehnadSoltanService
                             else if (message.Price == 300)
                             {
                                 SetMessagePrice(message, chargeCodes, 200);
-                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
-                                if (response.IsSucceeded == false && response.Description.Contains("Insufficient balance"))
+                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 100);
-                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
-                                    if (response.IsSucceeded == false && response.Description.Contains("Insufficient balance"))
+                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         SetMessagePrice(message, chargeCodes, 50);
-                                        response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
+                                        response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
                                     }
                                 }
                             }
                             else if (message.Price == 200)
                             {
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
-                                if (response.IsSucceeded == false && response.Description.Contains("Insufficient balance"))
+                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
-                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message, installment.Id);
+                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
                                 }
                             }
                         }

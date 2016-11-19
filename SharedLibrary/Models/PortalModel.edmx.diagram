@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="72624a13ec0441eb95ab9784ab1f53d1" Name="Diagram1">
+      <Diagram DiagramId="078fa22e80e241d4a55e0d56a6161e5c" Name="Diagram1">
         <EntityTypeShape EntityType="PortalModel.C__MigrationHistory" Width="1.5" PointX="5.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="5.75" PointY="2.5" IsExpanded="true" />
@@ -15,23 +15,23 @@
         <EntityTypeShape EntityType="PortalModel.Operator" Width="1.5" PointX="1.5" PointY="13.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.OperatorsPlan" Width="1.5" PointX="5.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.OperatorsPrefix" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="9.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.ReceivedMessagesArchive" Width="1.5" PointX="11.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="7.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.ReceivedMessagesArchive" Width="1.5" PointX="9.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ServiceInfo" Width="1.5" PointX="3" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="11.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="3" PointY="6" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="11.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="11.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SubscribersPoint" Width="1.5" PointX="3" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="PortalModel.FK_Aggregators_Operators" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_ServiceInfo_Aggregators" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="PortalModel.FK_ServiceShortCodes_Services" ManuallyRouted="false" />
+        <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" ManuallyRouted="false" />
+        <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="5.375" PointY="12.75" />
-        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="5.875" />
-        <AssociationConnector Association="PortalModel.FK_ServiceShortCodes_Services" />
-        <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" />
-        <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" />
-        <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="12.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

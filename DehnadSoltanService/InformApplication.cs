@@ -18,13 +18,13 @@ namespace DehnadSoltanService
             {
                 using (var entity = new SoltanEntities())
                 {
-                    var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true).Take(100).ToList();
+                    var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
                     if (unInformed == null)
                         return;
                     List<Task> TaskList = new List<Task>();
                     foreach (var item in unInformed)
                     {
-                        int package = item.Price / 10;
+                        int package = item.Price;
                         if (item.InstallmentId != null)
                             package = entity.SinglechargeInstallments.Where(o => o.Id == item.InstallmentId).FirstOrDefault().TotalPrice;
                         TaskList.Add(CallApplicationUrlToInformSinglecharge(entity, item, package));
@@ -48,7 +48,7 @@ namespace DehnadSoltanService
                 {
                    { "Sign", "ErhIvyN33DItV7OmYxoAZmzYzf0pdHagZMTmQCcKyfvdAPLpSOvqTDumSihaY13r15FXB3PlI32xwQVfRJ76hIq2dwpy9WtYZyaVFfNwTxjsjrbXYn0WiVZe76hIq2dw" },
                    { "MobileNumber", singlechargeItem.MobileNumber },
-                   { "Price", (singlechargeItem.Price / 10).ToString() },
+                   { "Price", (singlechargeItem.Price).ToString() },
                    { "Package", package.ToString() }
                 };
 

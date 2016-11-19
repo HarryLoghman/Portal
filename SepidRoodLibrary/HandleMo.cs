@@ -23,6 +23,7 @@ namespace SepidRoodLibrary
                         if (message.Content == "22" || message.Content == "55")
                         {
                             ContentManager.HandleContent(message, service, user, messagesTemplate);
+                            return;
                         }
                         else if (message.Content == "2" || message.Content == "5")
                         {
@@ -35,6 +36,11 @@ namespace SepidRoodLibrary
                             {
                                 message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
                                 MessageHandler.InsertMessageToQueue(message);
+                                return;
+                            }
+                            else
+                            {
+                                ContentManager.HandleContent(message, service, user, messagesTemplate);
                                 return;
                             }
                         }
@@ -69,14 +75,6 @@ namespace SepidRoodLibrary
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);
                         MessageObject lastEventbaseContent;
-                        if (message.Content == "2")
-                        {
-                            Subscribers.Add200TomanPoint(subscriberData, service.Id);
-                        }
-                        else if (message.Content == "5")
-                        {
-                            Subscribers.Add500TomanPoint(subscriberData, service.Id);
-                        }
                         lastEventbaseContent = ContentManager.GetLastEventbaseContent(subscriberData, service.Id, message.ShortCode, null, message.AggregatorId, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, message.Content);
                         if (lastEventbaseContent != null && lastEventbaseContent.Content != "" && lastEventbaseContent.Content != null)
                             MessageHandler.InsertMessageToTimedTempQueue(lastEventbaseContent, SharedLibrary.MessageHandler.MessageType.OnDemand);
@@ -102,14 +100,6 @@ namespace SepidRoodLibrary
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);
                         MessageObject lastEventbaseContent;
-                        if (message.Content == "2")
-                        {
-                            Subscribers.Add200TomanPoint(subscriberData, service.Id);
-                        }
-                        else if (message.Content == "5")
-                        {
-                            Subscribers.Add500TomanPoint(subscriberData, service.Id);
-                        }
                         lastEventbaseContent = ContentManager.GetLastEventbaseContent(subscriberData, service.Id, message.ShortCode, null, message.AggregatorId, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, message.Content);
                         if (lastEventbaseContent != null && lastEventbaseContent.Content != "" && lastEventbaseContent.Content != null)
                             MessageHandler.InsertMessageToTimedTempQueue(lastEventbaseContent, SharedLibrary.MessageHandler.MessageType.OnDemand);

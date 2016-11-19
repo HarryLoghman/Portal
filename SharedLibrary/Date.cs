@@ -22,7 +22,7 @@ namespace SharedLibrary
             if (dt == null)
                 dt = DateTime.Now;
 
-            var dateTime = GetPersianDate(dt) + " " + dt.Value.ToString("HH:mm");
+            var dateTime = GetPersianDate(dt) + " " + dt.Value.ToString("HH:mm:ss");
             return dateTime;
         }
 
@@ -32,6 +32,19 @@ namespace SharedLibrary
             var persianCal = new System.Globalization.PersianCalendar();
             DateTime gregorianDate = persianCal.ToDateTime(Convert.ToInt32(persianDateArray[0]), Convert.ToInt32(persianDateArray[1]), Convert.ToInt32(persianDateArray[2]), 0, 0, 0, 0);
             return gregorianDate;
+        }
+
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
+        public static double DateTimeToUnixTimestamp(DateTime dateTime)
+        {
+            return (TimeZoneInfo.ConvertTimeToUtc(dateTime) -
+                   new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalSeconds;
         }
     }
 }

@@ -108,32 +108,32 @@ namespace Tabriz2018Library
                     messageContents[index] = messages[index].Content;
                     aggregatorServiceIds[index] = serviceAdditionalInfo["aggregatorServiceId"];
                 }
-                var pardisClient = new SharedLibrary.PardisPlatformServiceReference.HelloWorldClient();
-                var pardisResponse = pardisClient.ServiceSend(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], "dehnad", messageContents, mobileNumbers, shortCodes, aggregatorServiceIds);
-                if (pardisResponse == null || pardisResponse.Count() < messagesCount)
-                {
-                    pardisResponse = new long[messagesCount];
-                }
-                for (int index = 0; index < messagesCount; index++)
-                {
-                    if (pardisResponse[index] == null)
-                        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                    else if (pardisResponse[index] < 100)
-                    {
-                        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                        messages[index].ReferenceId = pardisResponse[index];
-                    }
-                    else
-                    {
-                        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                        messages[index].ReferenceId = pardisResponse[index];
-                    }
-                    messages[index].SentDate = DateTime.Now;
-                    messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    if (messages[index].MessagePoint > 0)
-                        SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
-                    entity.Entry(messages[index]).State = EntityState.Modified;
-                }
+                //var pardisClient = new SharedLibrary.PardisPlatformServiceReference.HelloWorldClient();
+                //var pardisResponse = pardisClient.ServiceSend(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], "dehnad", messageContents, mobileNumbers, shortCodes, aggregatorServiceIds);
+                //if (pardisResponse == null || pardisResponse.Count() < messagesCount)
+                //{
+                //    pardisResponse = new long[messagesCount];
+                //}
+                //for (int index = 0; index < messagesCount; index++)
+                //{
+                //    if (pardisResponse[index] == null)
+                //        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                //    else if (pardisResponse[index] < 100)
+                //    {
+                //        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                //        messages[index].ReferenceId = pardisResponse[index];
+                //    }
+                //    else
+                //    {
+                //        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                //        messages[index].ReferenceId = pardisResponse[index];
+                //    }
+                //    messages[index].SentDate = DateTime.Now;
+                //    messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //    if (messages[index].MessagePoint > 0)
+                //        SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
+                //    entity.Entry(messages[index]).State = EntityState.Modified;
+                //}
                 entity.SaveChanges();
             }
             catch (Exception e)
@@ -223,6 +223,7 @@ namespace Tabriz2018Library
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -249,6 +250,7 @@ namespace Tabriz2018Library
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
@@ -275,6 +277,7 @@ namespace Tabriz2018Library
             messageBuffer.Tag = message.Tag;
             messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 

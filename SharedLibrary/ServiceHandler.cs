@@ -34,6 +34,15 @@ namespace SharedLibrary
             }
         }
 
+        public static long GetAggregatorIdFromAggregatorName(string aggregatorName)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var aggregatorId = entity.Aggregators.FirstOrDefault(o => o.AggregatorName == aggregatorName).Id;
+                return aggregatorId;
+            }
+        }
+
         public static long? GetServiceId(string serviceCode)
         {
             using (var entity = new PortalEntities())
@@ -51,6 +60,18 @@ namespace SharedLibrary
             using (var entity = new PortalEntities())
             {
                 var service = entity.Services.FirstOrDefault(o => o.ServiceCode == serviceCode);
+                if (service != null)
+                    return service;
+                else
+                    return null;
+            }
+        }
+
+        public static Service GetServiceFromServiceId(long serviceId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var service = entity.Services.FirstOrDefault(o => o.Id == serviceId);
                 if (service != null)
                     return service;
                 else

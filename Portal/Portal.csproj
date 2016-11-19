@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -50,6 +50,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -116,9 +121,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http.Formatting">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
@@ -216,6 +218,24 @@
     <Compile Include="Areas\Danestaneh\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Danestaneh\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Danestaneh\MyLeagueAreaRegistration.cs" />
+    <Compile Include="Areas\BimeKarbala\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\BimeKarbala\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\BimeKarbala\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\BimeKarbala\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\BimeKarbala\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\BimeKarbala\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\BimeKarbala\BimeKarbalaAreaRegistration.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\PointsController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\SettingsController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Tirandazi\TirandaziAreaRegistration.cs" />
     <Compile Include="Areas\SepidRood\Controllers\AutochargeContentsController.cs" />
     <Compile Include="Areas\SepidRood\Controllers\AutochargeTimeTableController.cs" />
     <Compile Include="Areas\SepidRood\Controllers\EventbaseContentsController.cs" />
@@ -249,6 +269,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\TelepromoController.cs" />
     <Compile Include="Controllers\ReceiveController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -261,91 +282,64 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Antlr3.Runtime.dll" />
-    <Content Include="bin\Antlr3.Runtime.pdb" />
-    <Content Include="bin\bg-BG\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\cs-CZ\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\da-DK\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\BimeKarbalaLibrary.dll" />
+    <Content Include="bin\BimeKarbalaLibrary.pdb" />
     <Content Include="bin\DanestanehLibrary.dll" />
     <Content Include="bin\DanestanehLibrary.pdb" />
-    <Content Include="bin\de-DE\Kendo.Mvc.resources.dll" />
     <Content Include="bin\EntityFramework.dll" />
     <Content Include="bin\EntityFramework.SqlServer.dll" />
-    <Content Include="bin\EntityFramework.SqlServer.xml" />
-    <Content Include="bin\EntityFramework.xml" />
-    <Content Include="bin\es-ES\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\fr-CA\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\fr-FR\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\it-IT\Kendo.Mvc.resources.dll" />
     <Content Include="bin\Kendo.Mvc.dll" />
-    <Content Include="bin\Kendo.Mvc.xml" />
     <Content Include="bin\log4net.dll" />
-    <Content Include="bin\log4net.xml" />
+    <Content Include="bin\MashinBazhaLibrary.dll" />
+    <Content Include="bin\MashinBazhaLibrary.pdb" />
     <Content Include="bin\Microsoft.AspNet.Identity.Core.dll" />
-    <Content Include="bin\Microsoft.AspNet.Identity.Core.xml" />
     <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.dll" />
-    <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.xml" />
     <Content Include="bin\Microsoft.AspNet.Identity.Owin.dll" />
-    <Content Include="bin\Microsoft.AspNet.Identity.Owin.xml" />
     <Content Include="bin\Microsoft.Owin.dll" />
     <Content Include="bin\Microsoft.Owin.Host.SystemWeb.dll" />
-    <Content Include="bin\Microsoft.Owin.Host.SystemWeb.xml" />
     <Content Include="bin\Microsoft.Owin.Security.Cookies.dll" />
-    <Content Include="bin\Microsoft.Owin.Security.Cookies.xml" />
     <Content Include="bin\Microsoft.Owin.Security.dll" />
     <Content Include="bin\Microsoft.Owin.Security.Facebook.dll" />
-    <Content Include="bin\Microsoft.Owin.Security.Facebook.xml" />
     <Content Include="bin\Microsoft.Owin.Security.Google.dll" />
-    <Content Include="bin\Microsoft.Owin.Security.Google.xml" />
     <Content Include="bin\Microsoft.Owin.Security.MicrosoftAccount.dll" />
-    <Content Include="bin\Microsoft.Owin.Security.MicrosoftAccount.xml" />
     <Content Include="bin\Microsoft.Owin.Security.OAuth.dll" />
-    <Content Include="bin\Microsoft.Owin.Security.OAuth.xml" />
     <Content Include="bin\Microsoft.Owin.Security.Twitter.dll" />
-    <Content Include="bin\Microsoft.Owin.Security.Twitter.xml" />
-    <Content Include="bin\Microsoft.Owin.Security.xml" />
-    <Content Include="bin\Microsoft.Owin.xml" />
     <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\MobiligaLibrary.dll" />
+    <Content Include="bin\MobiligaLibrary.pdb" />
     <Content Include="bin\MyLeagueLibrary.dll" />
     <Content Include="bin\MyLeagueLibrary.pdb" />
     <Content Include="bin\Newtonsoft.Json.dll" />
-    <Content Include="bin\Newtonsoft.Json.xml" />
-    <Content Include="bin\nl-NL\Kendo.Mvc.resources.dll" />
     <Content Include="bin\Owin.dll" />
-    <Content Include="bin\pl-PL\Kendo.Mvc.resources.dll" />
     <Content Include="bin\Portal.dll" />
+    <Content Include="bin\Portal.dll.config" />
     <Content Include="bin\Portal.pdb" />
-    <Content Include="bin\pt-BR\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\pt-PT\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\ro-RO\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\ru-RU\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\SepidRoodLibrary.dll" />
+    <Content Include="bin\SepidRoodLibrary.pdb" />
     <Content Include="bin\SharedLibrary.dll" />
     <Content Include="bin\SharedLibrary.pdb" />
-    <Content Include="bin\sk-SK\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\sv-SE\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\SoltanLibrary.dll" />
+    <Content Include="bin\SoltanLibrary.pdb" />
+    <Content Include="bin\System.Diagnostics.Tracing.dll" />
+    <Content Include="bin\System.Net.Http.Extensions.dll" />
     <Content Include="bin\System.Net.Http.Formatting.dll" />
-    <Content Include="bin\System.Net.Http.Formatting.xml" />
+    <Content Include="bin\System.Net.Http.Primitives.dll" />
+    <Content Include="bin\System.Runtime.dll" />
+    <Content Include="bin\System.Runtime.InteropServices.dll" />
     <Content Include="bin\System.Web.Helpers.dll" />
-    <Content Include="bin\System.Web.Helpers.xml" />
     <Content Include="bin\System.Web.Http.dll" />
     <Content Include="bin\System.Web.Http.WebHost.dll" />
-    <Content Include="bin\System.Web.Http.WebHost.xml" />
-    <Content Include="bin\System.Web.Http.xml" />
     <Content Include="bin\System.Web.Mvc.dll" />
-    <Content Include="bin\System.Web.Mvc.xml" />
     <Content Include="bin\System.Web.Optimization.dll" />
-    <Content Include="bin\System.Web.Optimization.xml" />
     <Content Include="bin\System.Web.Razor.dll" />
-    <Content Include="bin\System.Web.Razor.xml" />
     <Content Include="bin\System.Web.WebPages.Deployment.dll" />
-    <Content Include="bin\System.Web.WebPages.Deployment.xml" />
     <Content Include="bin\System.Web.WebPages.dll" />
     <Content Include="bin\System.Web.WebPages.Razor.dll" />
-    <Content Include="bin\System.Web.WebPages.Razor.xml" />
-    <Content Include="bin\System.Web.WebPages.xml" />
-    <Content Include="bin\tr-TR\Kendo.Mvc.resources.dll" />
-    <Content Include="bin\uk-UA\Kendo.Mvc.resources.dll" />
+    <Content Include="bin\Tabriz2018Library.dll" />
+    <Content Include="bin\Tabriz2018Library.pdb" />
+    <Content Include="bin\TirandaziLibrary.dll" />
+    <Content Include="bin\TirandaziLibrary.pdb" />
     <Content Include="bin\WebGrease.dll" />
-    <Content Include="bin\zh-CN\Kendo.Mvc.resources.dll" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -819,7 +813,6 @@
     <Content Include="Areas\Danestaneh\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Danestaneh\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Danestaneh\Views\web.config" />
-    <Content Include="bin\Portal.dll.config" />
     <Content Include="Areas\Mobiliga\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Mobiliga\Views\AutochargeContents\Index.cshtml" />
     <Content Include="Areas\Mobiliga\Views\AutochargeTimeTable\Index.cshtml" />
@@ -870,6 +863,28 @@
     <Content Include="Areas\SepidRood\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\SepidRood\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\SepidRood\Views\web.config" />
+    <Content Include="Areas\Tirandazi\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\AutochargeTimeTable\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\Points\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\Settings\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\web.config" />
+    <Content Include="Areas\BimeKarbala\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1220,12 +1235,33 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\BimeKarbala\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
     <Folder Include="Areas\MyLeague\Models\" />
     <Folder Include="Areas\SepidRood\Models\" />
     <Folder Include="Areas\Soltan\Models\" />
+    <Folder Include="Areas\Tirandazi\Models\" />
+    <Folder Include="bin\bg-BG\" />
+    <Folder Include="bin\cs-CZ\" />
+    <Folder Include="bin\da-DK\" />
+    <Folder Include="bin\de-DE\" />
+    <Folder Include="bin\es-ES\" />
+    <Folder Include="bin\fr-CA\" />
+    <Folder Include="bin\fr-FR\" />
+    <Folder Include="bin\it-IT\" />
+    <Folder Include="bin\nl-NL\" />
+    <Folder Include="bin\pl-PL\" />
+    <Folder Include="bin\pt-BR\" />
+    <Folder Include="bin\pt-PT\" />
+    <Folder Include="bin\ro-RO\" />
+    <Folder Include="bin\ru-RU\" />
+    <Folder Include="bin\sk-SK\" />
+    <Folder Include="bin\sv-SE\" />
+    <Folder Include="bin\tr-TR\" />
+    <Folder Include="bin\uk-UA\" />
+    <Folder Include="bin\zh-CN\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -1239,6 +1275,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BimeKarbalaLibrary\BimeKarbalaLibrary.csproj">
+      <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
+      <Name>BimeKarbalaLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
       <Name>DanestanehLibrary</Name>
@@ -1270,6 +1310,10 @@
     <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
       <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
       <Name>Tabriz2018Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TirandaziLibrary\TirandaziLibrary.csproj">
+      <Project>{45c21d1f-2d58-42ff-984d-02b5ce55243f}</Project>
+      <Name>TirandaziLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

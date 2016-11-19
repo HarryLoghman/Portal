@@ -12,205 +12,702 @@ namespace SharedLibrary.PardisPlatformServiceReference {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="http://example", ConfigurationName="PardisPlatformServiceReference.HelloWorld")]
-    public interface HelloWorld {
+    [System.ServiceModel.ServiceContractAttribute(Namespace="http://Srv/", ConfigurationName="PardisPlatformServiceReference.ServiceCall")]
+    public interface ServiceCall {
+        
+        // CODEGEN: Parameter 'getHelloWorldAsStringReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
+        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [return: System.ServiceModel.MessageParameterAttribute(Name="getHelloWorldAsStringReturn")]
+        SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse getHelloWorldAsString(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="enqueueReturn")]
-        long[] enqueue(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> getHelloWorldAsStringAsync(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request);
+        
+        // CODEGEN: Parameter 'RSendReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
+        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [return: System.ServiceModel.MessageParameterAttribute(Name="RSendReturn")]
+        SharedLibrary.PardisPlatformServiceReference.RSendResponse RSend(SharedLibrary.PardisPlatformServiceReference.RSendRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="enqueueReturn")]
-        System.Threading.Tasks.Task<long[]> enqueueAsync(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.RSendResponse> RSendAsync(SharedLibrary.PardisPlatformServiceReference.RSendRequest request);
+        
+        // CODEGEN: Parameter 'UltraSendReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
+        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [return: System.ServiceModel.MessageParameterAttribute(Name="UltraSendReturn")]
+        SharedLibrary.PardisPlatformServiceReference.UltraSendResponse UltraSend(SharedLibrary.PardisPlatformServiceReference.UltraSendRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="matchReturn")]
-        bool match(string message, string pattern);
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.UltraSendResponse> UltraSendAsync(SharedLibrary.PardisPlatformServiceReference.UltraSendRequest request);
+        
+        // CODEGEN: Parameter 'UnsubscribeReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
+        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [return: System.ServiceModel.MessageParameterAttribute(Name="UnsubscribeReturn")]
+        SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse Unsubscribe(SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="matchReturn")]
-        System.Threading.Tasks.Task<bool> matchAsync(string message, string pattern);
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse> UnsubscribeAsync(SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest request);
+        
+        // CODEGEN: Parameter 'SubscribeReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
+        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [return: System.ServiceModel.MessageParameterAttribute(Name="SubscribeReturn")]
+        SharedLibrary.PardisPlatformServiceReference.SubscribeResponse Subscribe(SharedLibrary.PardisPlatformServiceReference.SubscribeRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="queryReturn")]
-        int[] query(string username, string password, string domain, long[] messageIds);
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.SubscribeResponse> SubscribeAsync(SharedLibrary.PardisPlatformServiceReference.SubscribeRequest request);
         
+        // CODEGEN: Parameter 'ServiceSendReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="queryReturn")]
-        System.Threading.Tasks.Task<int[]> queryAsync(string username, string password, string domain, long[] messageIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="fanclubcontentReturn")]
-        long fanclubcontent(string username, string password, string domain, string message, string team);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="fanclubcontentReturn")]
-        System.Threading.Tasks.Task<long> fanclubcontentAsync(string username, string password, string domain, string message, string team);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="enqueuebinaryReturn")]
-        long[] enqueuebinary(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="enqueuebinaryReturn")]
-        System.Threading.Tasks.Task<long[]> enqueuebinaryAsync(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="smsonportbinaryReturn")]
-        long[] smsonportbinary(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="smsonportbinaryReturn")]
-        System.Threading.Tasks.Task<long[]> smsonportbinaryAsync(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="enqueuebinary2Return")]
-        long[] enqueuebinary2(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="enqueuebinary2Return")]
-        System.Threading.Tasks.Task<long[]> enqueuebinary2Async(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         [return: System.ServiceModel.MessageParameterAttribute(Name="ServiceSendReturn")]
-        long[] ServiceSend(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] serviceid);
+        SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse ServiceSend(SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="ServiceSendReturn")]
-        System.Threading.Tasks.Task<long[]> ServiceSendAsync(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] serviceid);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="BinarySendReturn")]
-        long[] BinarySend(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] udhsPart, string[] udhsTotal, string[] clientID, string[] serviceid);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="BinarySendReturn")]
-        System.Threading.Tasks.Task<long[]> BinarySendAsync(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] udhsPart, string[] udhsTotal, string[] clientID, string[] serviceid);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true, Use=System.ServiceModel.OperationFormatUse.Encoded)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="sendwappushReturn")]
-        long[] sendwappush(string username, string password, string domain, string[] messages, string[] destinations, string[] originators);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="sendwappushReturn")]
-        System.Threading.Tasks.Task<long[]> sendwappushAsync(string username, string password, string domain, string[] messages, string[] destinations, string[] originators);
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface HelloWorldChannel : SharedLibrary.PardisPlatformServiceReference.HelloWorld, System.ServiceModel.IClientChannel {
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse> ServiceSendAsync(SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class HelloWorldClient : System.ServiceModel.ClientBase<SharedLibrary.PardisPlatformServiceReference.HelloWorld>, SharedLibrary.PardisPlatformServiceReference.HelloWorld {
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getHelloWorldAsString", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class getHelloWorldAsStringRequest {
         
-        public HelloWorldClient() {
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string name;
+        
+        public getHelloWorldAsStringRequest() {
         }
         
-        public HelloWorldClient(string endpointConfigurationName) : 
+        public getHelloWorldAsStringRequest(string name) {
+            this.name = name;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getHelloWorldAsStringResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class getHelloWorldAsStringResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string getHelloWorldAsStringReturn;
+        
+        public getHelloWorldAsStringResponse() {
+        }
+        
+        public getHelloWorldAsStringResponse(string getHelloWorldAsStringReturn) {
+            this.getHelloWorldAsStringReturn = getHelloWorldAsStringReturn;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="RSend", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class RSendRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string username;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string password;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string domain;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute("cpuserid", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] cpuserid;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public int msgType;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute("messages", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] messages;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute("destinations", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] destinations;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=7)]
+        [System.Xml.Serialization.XmlElementAttribute("originators", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] originators;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=8)]
+        [System.Xml.Serialization.XmlElementAttribute("ServiceIds", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] ServiceIds;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=9)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string info;
+        
+        public RSendRequest() {
+        }
+        
+        public RSendRequest(string username, string password, string domain, string[] cpuserid, int msgType, string[] messages, string[] destinations, string[] originators, string[] ServiceIds, string info) {
+            this.username = username;
+            this.password = password;
+            this.domain = domain;
+            this.cpuserid = cpuserid;
+            this.msgType = msgType;
+            this.messages = messages;
+            this.destinations = destinations;
+            this.originators = originators;
+            this.ServiceIds = ServiceIds;
+            this.info = info;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="RSendResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class RSendResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("RSendReturn", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public long[] RSendReturn;
+        
+        public RSendResponse() {
+        }
+        
+        public RSendResponse(long[] RSendReturn) {
+            this.RSendReturn = RSendReturn;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="UltraSend", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class UltraSendRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string username;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string password;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string domain;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string cpuserid;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public int msgType;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute("messages", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] messages;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute("destinations", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] destinations;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=7)]
+        [System.Xml.Serialization.XmlElementAttribute("originators", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] originators;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=8)]
+        [System.Xml.Serialization.XmlElementAttribute("ServiceIds", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] ServiceIds;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=9)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string info;
+        
+        public UltraSendRequest() {
+        }
+        
+        public UltraSendRequest(string username, string password, string domain, string cpuserid, int msgType, string[] messages, string[] destinations, string[] originators, string[] ServiceIds, string info) {
+            this.username = username;
+            this.password = password;
+            this.domain = domain;
+            this.cpuserid = cpuserid;
+            this.msgType = msgType;
+            this.messages = messages;
+            this.destinations = destinations;
+            this.originators = originators;
+            this.ServiceIds = ServiceIds;
+            this.info = info;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="UltraSendResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class UltraSendResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("UltraSendReturn", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public long[] UltraSendReturn;
+        
+        public UltraSendResponse() {
+        }
+        
+        public UltraSendResponse(long[] UltraSendReturn) {
+            this.UltraSendReturn = UltraSendReturn;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="Unsubscribe", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class UnsubscribeRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string username;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string password;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string domain;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string shortcode;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string subscriber;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string ServiceId;
+        
+        public UnsubscribeRequest() {
+        }
+        
+        public UnsubscribeRequest(string username, string password, string domain, string shortcode, string subscriber, string ServiceId) {
+            this.username = username;
+            this.password = password;
+            this.domain = domain;
+            this.shortcode = shortcode;
+            this.subscriber = subscriber;
+            this.ServiceId = ServiceId;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="UnsubscribeResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class UnsubscribeResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string UnsubscribeReturn;
+        
+        public UnsubscribeResponse() {
+        }
+        
+        public UnsubscribeResponse(string UnsubscribeReturn) {
+            this.UnsubscribeReturn = UnsubscribeReturn;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="Subscribe", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class SubscribeRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string username;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string password;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string domain;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string shortcode;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string subscriber;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string ServiceId;
+        
+        public SubscribeRequest() {
+        }
+        
+        public SubscribeRequest(string username, string password, string domain, string shortcode, string subscriber, string ServiceId) {
+            this.username = username;
+            this.password = password;
+            this.domain = domain;
+            this.shortcode = shortcode;
+            this.subscriber = subscriber;
+            this.ServiceId = ServiceId;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="SubscribeResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class SubscribeResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string SubscribeReturn;
+        
+        public SubscribeResponse() {
+        }
+        
+        public SubscribeResponse(string SubscribeReturn) {
+            this.SubscribeReturn = SubscribeReturn;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="ServiceSend", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class ServiceSendRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string username;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string password;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string domain;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public int msgType;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute("messages", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] messages;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute("destinations", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] destinations;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute("originators", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] originators;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=7)]
+        [System.Xml.Serialization.XmlElementAttribute("udhs", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] udhs;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=8)]
+        [System.Xml.Serialization.XmlElementAttribute("mClass", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] mClass;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=9)]
+        [System.Xml.Serialization.XmlElementAttribute("ServiceIds", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string[] ServiceIds;
+        
+        public ServiceSendRequest() {
+        }
+        
+        public ServiceSendRequest(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass, string[] ServiceIds) {
+            this.username = username;
+            this.password = password;
+            this.domain = domain;
+            this.msgType = msgType;
+            this.messages = messages;
+            this.destinations = destinations;
+            this.originators = originators;
+            this.udhs = udhs;
+            this.mClass = mClass;
+            this.ServiceIds = ServiceIds;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="ServiceSendResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class ServiceSendResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("ServiceSendReturn", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public long[] ServiceSendReturn;
+        
+        public ServiceSendResponse() {
+        }
+        
+        public ServiceSendResponse(long[] ServiceSendReturn) {
+            this.ServiceSendReturn = ServiceSendReturn;
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public interface ServiceCallChannel : SharedLibrary.PardisPlatformServiceReference.ServiceCall, System.ServiceModel.IClientChannel {
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class ServiceCallClient : System.ServiceModel.ClientBase<SharedLibrary.PardisPlatformServiceReference.ServiceCall>, SharedLibrary.PardisPlatformServiceReference.ServiceCall {
+        
+        public ServiceCallClient() {
+        }
+        
+        public ServiceCallClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
         
-        public HelloWorldClient(string endpointConfigurationName, string remoteAddress) : 
+        public ServiceCallClient(string endpointConfigurationName, string remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public HelloWorldClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public ServiceCallClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public HelloWorldClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public ServiceCallClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
         }
         
-        public long[] enqueue(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.enqueue(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.getHelloWorldAsString(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request) {
+            return base.Channel.getHelloWorldAsString(request);
         }
         
-        public System.Threading.Tasks.Task<long[]> enqueueAsync(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.enqueueAsync(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        public string getHelloWorldAsString(string name) {
+            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest inValue = new SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest();
+            inValue.name = name;
+            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).getHelloWorldAsString(inValue);
+            return retVal.getHelloWorldAsStringReturn;
         }
         
-        public bool match(string message, string pattern) {
-            return base.Channel.match(message, pattern);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.getHelloWorldAsStringAsync(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request) {
+            return base.Channel.getHelloWorldAsStringAsync(request);
         }
         
-        public System.Threading.Tasks.Task<bool> matchAsync(string message, string pattern) {
-            return base.Channel.matchAsync(message, pattern);
+        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> getHelloWorldAsStringAsync(string name) {
+            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest inValue = new SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest();
+            inValue.name = name;
+            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).getHelloWorldAsStringAsync(inValue);
         }
         
-        public int[] query(string username, string password, string domain, long[] messageIds) {
-            return base.Channel.query(username, password, domain, messageIds);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        SharedLibrary.PardisPlatformServiceReference.RSendResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.RSend(SharedLibrary.PardisPlatformServiceReference.RSendRequest request) {
+            return base.Channel.RSend(request);
         }
         
-        public System.Threading.Tasks.Task<int[]> queryAsync(string username, string password, string domain, long[] messageIds) {
-            return base.Channel.queryAsync(username, password, domain, messageIds);
+        public long[] RSend(string username, string password, string domain, string[] cpuserid, int msgType, string[] messages, string[] destinations, string[] originators, string[] ServiceIds, string info) {
+            SharedLibrary.PardisPlatformServiceReference.RSendRequest inValue = new SharedLibrary.PardisPlatformServiceReference.RSendRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.cpuserid = cpuserid;
+            inValue.msgType = msgType;
+            inValue.messages = messages;
+            inValue.destinations = destinations;
+            inValue.originators = originators;
+            inValue.ServiceIds = ServiceIds;
+            inValue.info = info;
+            SharedLibrary.PardisPlatformServiceReference.RSendResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).RSend(inValue);
+            return retVal.RSendReturn;
         }
         
-        public long fanclubcontent(string username, string password, string domain, string message, string team) {
-            return base.Channel.fanclubcontent(username, password, domain, message, team);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.RSendResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.RSendAsync(SharedLibrary.PardisPlatformServiceReference.RSendRequest request) {
+            return base.Channel.RSendAsync(request);
         }
         
-        public System.Threading.Tasks.Task<long> fanclubcontentAsync(string username, string password, string domain, string message, string team) {
-            return base.Channel.fanclubcontentAsync(username, password, domain, message, team);
+        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.RSendResponse> RSendAsync(string username, string password, string domain, string[] cpuserid, int msgType, string[] messages, string[] destinations, string[] originators, string[] ServiceIds, string info) {
+            SharedLibrary.PardisPlatformServiceReference.RSendRequest inValue = new SharedLibrary.PardisPlatformServiceReference.RSendRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.cpuserid = cpuserid;
+            inValue.msgType = msgType;
+            inValue.messages = messages;
+            inValue.destinations = destinations;
+            inValue.originators = originators;
+            inValue.ServiceIds = ServiceIds;
+            inValue.info = info;
+            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).RSendAsync(inValue);
         }
         
-        public long[] enqueuebinary(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.enqueuebinary(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        SharedLibrary.PardisPlatformServiceReference.UltraSendResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.UltraSend(SharedLibrary.PardisPlatformServiceReference.UltraSendRequest request) {
+            return base.Channel.UltraSend(request);
         }
         
-        public System.Threading.Tasks.Task<long[]> enqueuebinaryAsync(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.enqueuebinaryAsync(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        public long[] UltraSend(string username, string password, string domain, string cpuserid, int msgType, string[] messages, string[] destinations, string[] originators, string[] ServiceIds, string info) {
+            SharedLibrary.PardisPlatformServiceReference.UltraSendRequest inValue = new SharedLibrary.PardisPlatformServiceReference.UltraSendRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.cpuserid = cpuserid;
+            inValue.msgType = msgType;
+            inValue.messages = messages;
+            inValue.destinations = destinations;
+            inValue.originators = originators;
+            inValue.ServiceIds = ServiceIds;
+            inValue.info = info;
+            SharedLibrary.PardisPlatformServiceReference.UltraSendResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).UltraSend(inValue);
+            return retVal.UltraSendReturn;
         }
         
-        public long[] smsonportbinary(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.smsonportbinary(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.UltraSendResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.UltraSendAsync(SharedLibrary.PardisPlatformServiceReference.UltraSendRequest request) {
+            return base.Channel.UltraSendAsync(request);
         }
         
-        public System.Threading.Tasks.Task<long[]> smsonportbinaryAsync(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.smsonportbinaryAsync(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.UltraSendResponse> UltraSendAsync(string username, string password, string domain, string cpuserid, int msgType, string[] messages, string[] destinations, string[] originators, string[] ServiceIds, string info) {
+            SharedLibrary.PardisPlatformServiceReference.UltraSendRequest inValue = new SharedLibrary.PardisPlatformServiceReference.UltraSendRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.cpuserid = cpuserid;
+            inValue.msgType = msgType;
+            inValue.messages = messages;
+            inValue.destinations = destinations;
+            inValue.originators = originators;
+            inValue.ServiceIds = ServiceIds;
+            inValue.info = info;
+            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).UltraSendAsync(inValue);
         }
         
-        public long[] enqueuebinary2(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.enqueuebinary2(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.Unsubscribe(SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest request) {
+            return base.Channel.Unsubscribe(request);
         }
         
-        public System.Threading.Tasks.Task<long[]> enqueuebinary2Async(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass) {
-            return base.Channel.enqueuebinary2Async(username, password, domain, msgType, messages, destinations, originators, udhs, mClass);
+        public string Unsubscribe(string username, string password, string domain, string shortcode, string subscriber, string ServiceId) {
+            SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest inValue = new SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.shortcode = shortcode;
+            inValue.subscriber = subscriber;
+            inValue.ServiceId = ServiceId;
+            SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).Unsubscribe(inValue);
+            return retVal.UnsubscribeReturn;
         }
         
-        public long[] ServiceSend(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] serviceid) {
-            return base.Channel.ServiceSend(username, password, domain, messages, destinations, originators, serviceid);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.UnsubscribeAsync(SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest request) {
+            return base.Channel.UnsubscribeAsync(request);
         }
         
-        public System.Threading.Tasks.Task<long[]> ServiceSendAsync(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] serviceid) {
-            return base.Channel.ServiceSendAsync(username, password, domain, messages, destinations, originators, serviceid);
+        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse> UnsubscribeAsync(string username, string password, string domain, string shortcode, string subscriber, string ServiceId) {
+            SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest inValue = new SharedLibrary.PardisPlatformServiceReference.UnsubscribeRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.shortcode = shortcode;
+            inValue.subscriber = subscriber;
+            inValue.ServiceId = ServiceId;
+            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).UnsubscribeAsync(inValue);
         }
         
-        public long[] BinarySend(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] udhsPart, string[] udhsTotal, string[] clientID, string[] serviceid) {
-            return base.Channel.BinarySend(username, password, domain, messages, destinations, originators, udhsPart, udhsTotal, clientID, serviceid);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        SharedLibrary.PardisPlatformServiceReference.SubscribeResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.Subscribe(SharedLibrary.PardisPlatformServiceReference.SubscribeRequest request) {
+            return base.Channel.Subscribe(request);
         }
         
-        public System.Threading.Tasks.Task<long[]> BinarySendAsync(string username, string password, string domain, string[] messages, string[] destinations, string[] originators, string[] udhsPart, string[] udhsTotal, string[] clientID, string[] serviceid) {
-            return base.Channel.BinarySendAsync(username, password, domain, messages, destinations, originators, udhsPart, udhsTotal, clientID, serviceid);
+        public string Subscribe(string username, string password, string domain, string shortcode, string subscriber, string ServiceId) {
+            SharedLibrary.PardisPlatformServiceReference.SubscribeRequest inValue = new SharedLibrary.PardisPlatformServiceReference.SubscribeRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.shortcode = shortcode;
+            inValue.subscriber = subscriber;
+            inValue.ServiceId = ServiceId;
+            SharedLibrary.PardisPlatformServiceReference.SubscribeResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).Subscribe(inValue);
+            return retVal.SubscribeReturn;
         }
         
-        public long[] sendwappush(string username, string password, string domain, string[] messages, string[] destinations, string[] originators) {
-            return base.Channel.sendwappush(username, password, domain, messages, destinations, originators);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.SubscribeResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.SubscribeAsync(SharedLibrary.PardisPlatformServiceReference.SubscribeRequest request) {
+            return base.Channel.SubscribeAsync(request);
         }
         
-        public System.Threading.Tasks.Task<long[]> sendwappushAsync(string username, string password, string domain, string[] messages, string[] destinations, string[] originators) {
-            return base.Channel.sendwappushAsync(username, password, domain, messages, destinations, originators);
+        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.SubscribeResponse> SubscribeAsync(string username, string password, string domain, string shortcode, string subscriber, string ServiceId) {
+            SharedLibrary.PardisPlatformServiceReference.SubscribeRequest inValue = new SharedLibrary.PardisPlatformServiceReference.SubscribeRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.shortcode = shortcode;
+            inValue.subscriber = subscriber;
+            inValue.ServiceId = ServiceId;
+            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).SubscribeAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.ServiceSend(SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest request) {
+            return base.Channel.ServiceSend(request);
+        }
+        
+        public long[] ServiceSend(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass, string[] ServiceIds) {
+            SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest inValue = new SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.msgType = msgType;
+            inValue.messages = messages;
+            inValue.destinations = destinations;
+            inValue.originators = originators;
+            inValue.udhs = udhs;
+            inValue.mClass = mClass;
+            inValue.ServiceIds = ServiceIds;
+            SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).ServiceSend(inValue);
+            return retVal.ServiceSendReturn;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.ServiceSendAsync(SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest request) {
+            return base.Channel.ServiceSendAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse> ServiceSendAsync(string username, string password, string domain, int msgType, string[] messages, string[] destinations, string[] originators, string[] udhs, string[] mClass, string[] ServiceIds) {
+            SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest inValue = new SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.domain = domain;
+            inValue.msgType = msgType;
+            inValue.messages = messages;
+            inValue.destinations = destinations;
+            inValue.originators = originators;
+            inValue.udhs = udhs;
+            inValue.mClass = mClass;
+            inValue.ServiceIds = ServiceIds;
+            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).ServiceSendAsync(inValue);
         }
     }
 }

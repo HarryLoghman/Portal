@@ -248,7 +248,7 @@ namespace SharedLibrary
             return message;
         }
 
-        public static MessageObject CreateMessageFromMessageBuffer(long? subscriberId, string mobileNumber, long serviceId, string content, long? contentId, MessageType messageType, ProcessStatus processStatus, int? ImiMessageType, int? imiChargeCode, string imiChargeKey, long AggregatorId, int messagePoint, int? tag, byte? subUnSubType, string subUnSubMoMessage)
+        public static MessageObject CreateMessageFromMessageBuffer(long? subscriberId, string mobileNumber, long serviceId, string content, long? contentId, MessageType messageType, ProcessStatus processStatus, int? ImiMessageType, int? imiChargeCode, string imiChargeKey, long AggregatorId, int messagePoint, int? tag, byte? subUnSubType, string subUnSubMoMessage, int price)
         {
             var message = new MessageObject();
             message.Content = content;
@@ -266,6 +266,7 @@ namespace SharedLibrary
             message.Tag = tag;
             message.SubUnSubType = subUnSubType;
             message.SubUnSubMoMssage = subUnSubMoMessage;
+            message.Price = price;
             return message;
         }
         public static int GetSubscriberPoint(string mobileNumber, long? serviceId)

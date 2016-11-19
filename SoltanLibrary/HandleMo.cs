@@ -12,7 +12,7 @@ namespace SoltanLibrary
         {
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
-            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
+            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "188.166.173.46" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
@@ -103,15 +103,18 @@ namespace SoltanLibrary
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var singlecharge = new Singlecharge();
-            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
-            {
-                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
-                MessageHandler.InsertMessageToQueue(message);
-                return singlecharge;
-            }
+            //if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
+            //{
+            //    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            //    MessageHandler.InsertMessageToQueue(message);
+            //    return singlecharge;
+            //}
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+            if (subscriber == null)
+                isUserSendsSubscriptionKeyword = true;
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
@@ -156,8 +159,8 @@ namespace SoltanLibrary
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     //Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
                 }
-                message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
-                MessageHandler.InsertMessageToQueue(message);
+                //message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                //MessageHandler.InsertMessageToQueue(message);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
                     message.Content = content;
@@ -165,7 +168,7 @@ namespace SoltanLibrary
                 }
                 return singlecharge;
             }
-            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+            subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
             if (subscriber == null)
             {
