@@ -130,7 +130,7 @@ namespace SepidRoodLibrary
                 {
                     var today = DateTime.Now.Date;
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
-                    var receivedMessages = entity.ReceievedMessages.Where(o => DbFunctions.TruncateTime(o.ReceivedTime) == today && o.ShortCode == serviceInfo.ShortCode && (o.Content == "22" || o.Content == "55") && o.MobileNumber == mobileNumber).Count();
+                    var receivedMessages = entity.ReceievedMessages.Where(o => DbFunctions.TruncateTime(o.ReceivedTime) == today && o.ShortCode == serviceInfo.ShortCode && (o.Content == "22" || o.Content == "55" || o.Content == "۲۲" || o.Content == "٢٢" || o.Content == "‏۵‏۵" || o.Content == "۵۵" || o.Content == "٥٥") && o.MobileNumber == mobileNumber).Count();
                     if (receivedMessages != null && receivedMessages > 3)
                         return true;
                     else

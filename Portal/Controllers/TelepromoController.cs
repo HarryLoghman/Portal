@@ -126,19 +126,25 @@ namespace Portal.Controllers
                         responseJson.status = 1001;
                     else
                     {
-                        subscriber.DeactivationDate = DateTime.Now;
-                        subscriber.PersianDeactivationDate = SharedLibrary.Date.GetPersianDateTime();
-                        subscriber.OffMethod = "Integrated Panel";
-                        subscriber.OffKeyword = "Integrated Panel";
-                        entity.Entry(subscriber).State = System.Data.Entity.EntityState.Modified;
-                        entity.SaveChanges();
-                        var message = new MessageObject();
-                        message.MobileNumber = mobileNumber;
-                        message.ShortCode = serviceInfo.ShortCode;
-                        message.IsReceivedFromIntegratedPanel = true;
-                        message.Content = "Integrated Panel";
-                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                        SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null, serviceInfo);
+                        var recievedMessage = new MessageObject();
+                        recievedMessage.Content = serviceId;
+                        recievedMessage.MobileNumber = mobileNumber;
+                        recievedMessage.ShortCode = serviceInfo.ShortCode;
+                        recievedMessage.IsReceivedFromIntegratedPanel = true;
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                        //subscriber.DeactivationDate = DateTime.Now;
+                        //subscriber.PersianDeactivationDate = SharedLibrary.Date.GetPersianDateTime();
+                        //subscriber.OffMethod = "Integrated Panel";
+                        //subscriber.OffKeyword = "Integrated Panel";
+                        //entity.Entry(subscriber).State = System.Data.Entity.EntityState.Modified;
+                        //entity.SaveChanges();
+                        //var message = new MessageObject();
+                        //message.MobileNumber = mobileNumber;
+                        //message.ShortCode = serviceInfo.ShortCode;
+                        //message.IsReceivedFromIntegratedPanel = true;
+                        //message.Content = "Integrated Panel";
+                        //var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+                        //SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null, serviceInfo);
                         responseJson.status = 0;
                     }
                 }
@@ -269,6 +275,47 @@ namespace Portal.Controllers
                 }
             }
             responseJson.result = history;
+            var json = JsonConvert.SerializeObject(responseJson);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage Events(string msisdn, string serviceId = null)
+        {
+            dynamic responseJson = new ExpandoObject();
+            List<dynamic> eventsList = new List<dynamic>();
+            using (var entity = new PortalEntities())
+            {
+                var mobileNumber = "0" + msisdn.Remove(0, 2);
+                IQueryable<vw_ReceivedMessages> recievedMessages;
+                if (serviceId != null)
+                {
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
+                    recievedMessages = entity.vw_ReceivedMessages.Where(o => o.MobileNumber == mobileNumber && o.IsReceivedFromIntegratedPanel == false && o.ShortCode == serviceInfo.ShortCode);
+                }
+                else
+                {
+                    var serviceInfo = entity.ServiceInfoes.Where(o => o.AggregatorId == 3).Select(o => o.ShortCode).ToList();
+                    recievedMessages = entity.vw_ReceivedMessages.Where(o => o.MobileNumber == mobileNumber && o.IsReceivedFromIntegratedPanel == false && serviceInfo.Contains(o.ShortCode));
+                }
+                var recievedMessagesList = recievedMessages.ToList();
+                foreach (var recievedMessage in recievedMessagesList)
+                {
+                    dynamic receiveEvent = new ExpandoObject();
+                    receiveEvent.type = 0;
+                    receiveEvent.shortCode = "98" + recievedMessage.ShortCode;
+                    receiveEvent.service = null;
+                    receiveEvent.date = SharedLibrary.Date.DateTimeToUnixTimestamp(recievedMessage.ReceivedTime);
+                    receiveEvent.message = recievedMessage.Content;
+                    receiveEvent.chargingCode = null;
+                    eventsList.Add(receiveEvent);
+                }
+            }
+            responseJson.status = 0;
+            responseJson.result = eventsList;
             var json = JsonConvert.SerializeObject(responseJson);
             var response = Request.CreateResponse(HttpStatusCode.OK);
             response.Content = new StringContent(json, Encoding.UTF8, "application/json");
