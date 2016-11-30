@@ -18,7 +18,7 @@ namespace Portal.Areas.Soltan.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "نبرد اساطیر";
+            ViewBag.ServiceName = "شهر وار";
             return View();
         }
 

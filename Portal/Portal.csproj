@@ -183,6 +183,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\BimeKarbala\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Danestaneh\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\AutochargeContentsController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\AutochargeTimeTableController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\EventbaseContentsController.cs" />
@@ -191,6 +193,7 @@
     <Compile Include="Areas\MashinBazha\Controllers\MonitoringController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\PointsController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\MashinBazha\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\SettingsController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\StatisticsController.cs" />
@@ -203,6 +206,7 @@
     <Compile Include="Areas\Mobiliga\Controllers\MonitoringController.cs" />
     <Compile Include="Areas\Mobiliga\Controllers\PointsController.cs" />
     <Compile Include="Areas\Mobiliga\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Mobiliga\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Mobiliga\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Mobiliga\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Mobiliga\Controllers\StatisticsController.cs" />
@@ -225,6 +229,9 @@
     <Compile Include="Areas\BimeKarbala\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\BimeKarbala\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\BimeKarbalaAreaRegistration.cs" />
+    <Compile Include="Areas\MyLeague\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\SepidRood\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Soltan\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\AutochargeContentsController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\AutochargeTimeTableController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\EventbaseContentsController.cs" />
@@ -232,6 +239,7 @@
     <Compile Include="Areas\Tirandazi\Controllers\MonitoringController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\PointsController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Tirandazi\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\StatisticsController.cs" />
@@ -885,6 +893,14 @@
     <Content Include="Areas\BimeKarbala\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\BimeKarbala\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\BimeKarbala\Views\web.config" />
+    <Content Include="Areas\SepidRood\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\BimeKarbala\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Danestaneh\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\MashinBazha\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Mobiliga\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\MyLeague\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Soltan\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Tirandazi\Views\SendDirectMessage\Index.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
