@@ -51,7 +51,7 @@ namespace Portal.Areas.Tirandazi.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = TirandaziLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = TirandaziLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             TirandaziLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }

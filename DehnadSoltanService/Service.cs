@@ -183,7 +183,7 @@ namespace DehnadSoltanService
             while (!shutdownEvent.WaitOne(0))
             {
                 singlechargeInstallment.ProcessInstallment();
-                Thread.Sleep(1000);
+                Thread.Sleep(7200000);
             }
         }
 

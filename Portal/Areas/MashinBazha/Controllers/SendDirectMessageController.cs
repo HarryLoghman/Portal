@@ -51,7 +51,7 @@ namespace Portal.Areas.MashinBazha.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = MashinBazhaLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = MashinBazhaLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             MashinBazhaLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }

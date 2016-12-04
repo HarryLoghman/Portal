@@ -51,7 +51,7 @@ namespace Portal.Areas.Danestaneh.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = DanestanehLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = DanestanehLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             DanestanehLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }

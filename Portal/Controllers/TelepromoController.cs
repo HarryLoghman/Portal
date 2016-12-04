@@ -21,7 +21,7 @@ namespace Portal.Controllers
             List<dynamic> history = new List<dynamic>();
             using (var entity = new PortalEntities())
             {
-                var mobileNumber = "0" + msisdn.Remove(0, 2);
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                 IQueryable<SubscribersHistory> subscriberServices;
                 if (serviceId == null || serviceId == "")
                     subscriberServices = entity.SubscribersHistories.Where(o => o.AggregatorId == 5 && o.MobileNumber == mobileNumber);
@@ -115,7 +115,7 @@ namespace Portal.Controllers
             dynamic responseJson = new ExpandoObject();
             using (var entity = new PortalEntities())
             {
-                var mobileNumber = "0" + msisdn.Remove(0, 2);
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                 var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
                 var subscriber = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceInfo.ServiceId).FirstOrDefault();
                 if (subscriber == null)
@@ -126,12 +126,23 @@ namespace Portal.Controllers
                         responseJson.status = 1001;
                     else
                     {
-                        var recievedMessage = new MessageObject();
-                        recievedMessage.Content = serviceId;
-                        recievedMessage.MobileNumber = mobileNumber;
-                        recievedMessage.ShortCode = serviceInfo.ShortCode;
-                        recievedMessage.IsReceivedFromIntegratedPanel = true;
-                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                        var message = new SharedLibrary.Models.MessageObject();
+                        message.MobileNumber = mobileNumber;
+                        message.ShortCode = serviceInfo.ShortCode;
+                        message.IsReceivedFromIntegratedPanel = true;
+                        message.Content = "off";
+                        message.ServiceId = serviceInfo.ServiceId;
+                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                        message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+                        SoltanLibrary.HandleMo.ReceivedMessage(message, service);
+                        //var recievedMessage = new MessageObject();
+                        //recievedMessage.Content = serviceId;
+                        //recievedMessage.MobileNumber = mobileNumber;
+                        //recievedMessage.ShortCode = serviceInfo.ShortCode;
+                        //recievedMessage.IsReceivedFromIntegratedPanel = true;
+                        //SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+
                         //subscriber.DeactivationDate = DateTime.Now;
                         //subscriber.PersianDeactivationDate = SharedLibrary.Date.GetPersianDateTime();
                         //subscriber.OffMethod = "Integrated Panel";
@@ -162,7 +173,7 @@ namespace Portal.Controllers
             dynamic responseJson = new ExpandoObject();
             using (var entity = new PortalEntities())
             {
-                var mobileNumber = "0" + msisdn.Remove(0, 2);
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                 var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
                 var subscriber = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceInfo.ServiceId).FirstOrDefault();
                 if (subscriber != null)
@@ -228,7 +239,7 @@ namespace Portal.Controllers
             List<dynamic> history = new List<dynamic>();
             using (var entity = new PortalEntities())
             {
-                var mobileNumber = "0" + msisdn.Remove(0, 2);
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                 IQueryable<SubscribersHistory> subscriberHistoryQuery;
                 if (serviceId == null || serviceId == "")
                     subscriberHistoryQuery = entity.SubscribersHistories.Where(o => o.MobileNumber == mobileNumber && o.AggregatorId == 3);
@@ -289,7 +300,7 @@ namespace Portal.Controllers
             List<dynamic> eventsList = new List<dynamic>();
             using (var entity = new PortalEntities())
             {
-                var mobileNumber = "0" + msisdn.Remove(0, 2);
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                 IQueryable<vw_ReceivedMessages> recievedMessages;
                 if (serviceId != null)
                 {

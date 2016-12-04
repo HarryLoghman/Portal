@@ -51,7 +51,7 @@ namespace Portal.Areas.BimeKarbala.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = BimeKarbalaLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = BimeKarbalaLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             BimeKarbalaLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }

@@ -51,7 +51,7 @@ namespace Portal.Areas.SepidRood.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = SepidRoodLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = SepidRoodLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             SepidRoodLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }

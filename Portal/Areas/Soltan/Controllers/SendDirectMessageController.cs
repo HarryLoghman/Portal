@@ -51,7 +51,7 @@ namespace Portal.Areas.Soltan.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = SoltanLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = SoltanLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             SoltanLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }

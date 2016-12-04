@@ -51,7 +51,7 @@ namespace Portal.Areas.Mobiliga.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = MobiligaLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = MobiligaLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             MobiligaLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }

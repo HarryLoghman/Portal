@@ -51,7 +51,7 @@ namespace Portal.Areas.MyLeague.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = MyLeagueLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            messageObject = MyLeagueLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
             MyLeagueLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }
