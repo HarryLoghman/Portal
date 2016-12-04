@@ -240,11 +240,26 @@ namespace Portal.Controllers
             using (var entity = new PortalEntities())
             {
                 var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                DateTime? from = null;
+                DateTime? to = null;
+                if (fromDate != null)
+                    from = SharedLibrary.Date.UnixTimeStampToDateTime(fromDate);
+                if(toDate != null)
+                    to = SharedLibrary.Date.UnixTimeStampToDateTime(toDate);
+
                 IQueryable<SubscribersHistory> subscriberHistoryQuery;
                 if (serviceId == null || serviceId == "")
-                    subscriberHistoryQuery = entity.SubscribersHistories.Where(o => o.MobileNumber == mobileNumber && o.AggregatorId == 3);
+                    subscriberHistoryQuery = entity.SubscribersHistories.Where(o => o.MobileNumber == mobileNumber && o.AggregatorId == 5);
                 else
-                    subscriberHistoryQuery = entity.SubscribersHistories.Where(o => o.MobileNumber == mobileNumber && o.AggregatorId == 3 && o.AggregatorServiceId == serviceId);
+                    subscriberHistoryQuery = entity.SubscribersHistories.Where(o => o.MobileNumber == mobileNumber && o.AggregatorId == 5 && o.AggregatorServiceId == serviceId);
+
+                if (from != null && to != null)
+                    subscriberHistoryQuery = subscriberHistoryQuery.Where(o => o.DateTime >= from && o.DateTime <= to);
+                else if( from != null && to == null)
+                    subscriberHistoryQuery = subscriberHistoryQuery.Where(o => o.DateTime >= from);
+                else if( from == null && to != null)
+                    subscriberHistoryQuery = subscriberHistoryQuery.Where(o => o.DateTime <= to);
+
                 var subscriberHistory = subscriberHistoryQuery.ToList();
                 if (subscriberHistory == null)
                     responseJson.status = 4;
@@ -309,7 +324,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    var serviceInfo = entity.ServiceInfoes.Where(o => o.AggregatorId == 3).Select(o => o.ShortCode).ToList();
+                    var serviceInfo = entity.ServiceInfoes.Where(o => o.AggregatorId == 5).Select(o => o.ShortCode).ToList();
                     recievedMessages = entity.vw_ReceivedMessages.Where(o => o.MobileNumber == mobileNumber && o.IsReceivedFromIntegratedPanel == false && serviceInfo.Contains(o.ShortCode));
                 }
                 var recievedMessagesList = recievedMessages.ToList();
