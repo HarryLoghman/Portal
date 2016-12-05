@@ -64,6 +64,8 @@
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
           <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -152,6 +154,8 @@
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
           <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -188,6 +192,9 @@
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -248,6 +255,8 @@
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
           <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -469,6 +478,8 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
           <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -557,6 +568,8 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
           <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -593,6 +606,9 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -653,6 +669,8 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
           <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -830,6 +848,8 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="MobiligaModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -922,6 +942,8 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="MobiligaModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -961,6 +983,9 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="MessagesArchives">
             <EntityTypeMapping TypeName="MobiligaModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1024,6 +1049,8 @@ warning 6002: The table/view 'Mobiliga.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="MobiligaModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />

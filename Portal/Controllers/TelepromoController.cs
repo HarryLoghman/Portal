@@ -40,7 +40,7 @@ namespace Portal.Controllers
                         if (sub == null)
                             continue;
                         subscriberHistory.subscriptionShortCode = "98" + service.ShortCode;
-                        subscriberHistory.subscriptionDate = SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
+                        subscriberHistory.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
                         subscriberHistory.subscriptionKeyword = sub.OnKeyword;
                         subscriberHistory.enabled = 0;
                         if (sub.OnMethod == "keyword")
@@ -56,7 +56,7 @@ namespace Portal.Controllers
                         if (sub == null)
                             continue;
                         subscriberHistory.unsubscriptionShortCode = "98" + service.ShortCode;
-                        subscriberHistory.unsubscriptionDate = SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
+                        subscriberHistory.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
                         subscriberHistory.unsubscriptionKeyword = sub.OnKeyword;
                         subscriberHistory.enabled = 1;
                         if (sub.OffMethod == "keyword")
@@ -74,7 +74,7 @@ namespace Portal.Controllers
                         if (sub.DeactivationDate != null)
                         {
                             subscriberHistory.unsubscriptionShortCode = "98" + service.ShortCode;
-                            subscriberHistory.unsubscriptionDate = SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
+                            subscriberHistory.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
                             subscriberHistory.unsubscriptionKeyword = sub.OnKeyword;
                             subscriberHistory.enabled = 1;
                             if (sub.OffMethod == "keyword")
@@ -85,7 +85,7 @@ namespace Portal.Controllers
                                 subscriberHistory.unsubscriptionMethod = 3;
                         }
                         subscriberHistory.subscriptionShortCode = "98" + service.ShortCode;
-                        subscriberHistory.subscriptionDate = SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
+                        subscriberHistory.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
                         subscriberHistory.subscriptionKeyword = sub.OnKeyword;
                         subscriberHistory.enabled = 0;
                         if (sub.OnMethod == "keyword")
@@ -233,7 +233,7 @@ namespace Portal.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage History(string msisdn, long fromDate, long toDate, string serviceId = null)
+        public HttpResponseMessage History(string msisdn, long fromDate = 0, long toDate = 0, string serviceId = null)
         {
             dynamic responseJson = new ExpandoObject();
             List<dynamic> history = new List<dynamic>();
@@ -242,9 +242,9 @@ namespace Portal.Controllers
                 var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                 DateTime? from = null;
                 DateTime? to = null;
-                if (fromDate != null)
+                if (fromDate != 0)
                     from = SharedLibrary.Date.UnixTimeStampToDateTime(fromDate);
-                if(toDate != null)
+                if(toDate != 0)
                     to = SharedLibrary.Date.UnixTimeStampToDateTime(toDate);
 
                 IQueryable<SubscribersHistory> subscriberHistoryQuery;
@@ -272,7 +272,7 @@ namespace Portal.Controllers
                         if (subscriber.SubscriptionKeyword != null && subscriber.SubscriptionKeyword != "")
                         {
                             subscriberHistoryObject.subscriptionShortCode = "98" + subscriber.ShortCode;
-                            subscriberHistoryObject.subscriptionDate = SharedLibrary.Date.DateTimeToUnixTimestamp(subscriber.DateTime.GetValueOrDefault());
+                            subscriberHistoryObject.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(subscriber.DateTime.GetValueOrDefault());
                             subscriberHistoryObject.subscriptionKeyword = subscriber.SubscriptionKeyword;
                             subscriberHistoryObject.enabled = 0;
                             if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.HandleSubscription.WhoChangedSubscriberState.User)
@@ -285,7 +285,7 @@ namespace Portal.Controllers
                         else if (subscriber.UnsubscriptionKeyword != null && subscriber.UnsubscriptionKeyword != "")
                         {
                             subscriberHistoryObject.unsubscriptionShortCode = "98" + subscriber.ShortCode;
-                            subscriberHistoryObject.unsubscriptionDate = SharedLibrary.Date.DateTimeToUnixTimestamp(subscriber.DateTime.GetValueOrDefault());
+                            subscriberHistoryObject.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(subscriber.DateTime.GetValueOrDefault());
                             subscriberHistoryObject.unsubscriptionKeyword = subscriber.UnsubscriptionKeyword;
                             subscriberHistoryObject.enabled = 1;
                             if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.HandleSubscription.WhoChangedSubscriberState.User)
@@ -334,7 +334,7 @@ namespace Portal.Controllers
                     receiveEvent.type = 0;
                     receiveEvent.shortCode = "98" + recievedMessage.ShortCode;
                     receiveEvent.service = null;
-                    receiveEvent.date = SharedLibrary.Date.DateTimeToUnixTimestamp(recievedMessage.ReceivedTime);
+                    receiveEvent.date = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(recievedMessage.ReceivedTime);
                     receiveEvent.message = recievedMessage.Content;
                     receiveEvent.chargingCode = null;
                     eventsList.Add(receiveEvent);

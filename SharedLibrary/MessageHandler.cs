@@ -51,6 +51,7 @@ namespace SharedLibrary
                 delivery.Status = deliveryObj.Status;
                 delivery.Description = deliveryObj.ErrorMessage;
                 delivery.DeliveryTime = DateTime.Now;
+                delivery.IsProcessed = false;
                 entity.Deliveries.Add(delivery);
                 entity.SaveChanges();
             }

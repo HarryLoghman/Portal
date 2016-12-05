@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadTirandaziService", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadBimeKarbalaService", "DehnadBimeKarbalaService\DehnadBimeKarbalaService.csproj", "{36D28F8C-AE3C-44FA-9B8D-2478E4B9E6CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadDeliveryProcessorService", "DehnadDeliveryProcessorService\DehnadDeliveryProcessorService.csproj", "{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -97,6 +99,10 @@ Global
 		{36D28F8C-AE3C-44FA-9B8D-2478E4B9E6CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36D28F8C-AE3C-44FA-9B8D-2478E4B9E6CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36D28F8C-AE3C-44FA-9B8D-2478E4B9E6CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU

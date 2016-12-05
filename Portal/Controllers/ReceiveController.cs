@@ -95,6 +95,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delivery([FromUri]DeliveryObject delivery)
         {
+            delivery.AggregatorId = 2;
             SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
             var result = "1";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -111,6 +112,7 @@ namespace Portal.Controllers
             var delivery = new DeliveryObject();
             delivery.ReferenceId = refId;
             delivery.Status = deliveryStatus;
+            delivery.AggregatorId = 5;
             SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
             var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);

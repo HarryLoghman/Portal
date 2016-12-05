@@ -18,6 +18,8 @@ namespace SharedLibrary.Models
         public string MobileNumber { get; set; }
         public long ServiceId { get; set; }
         public int Point { get; set; }
+        public Nullable<long> BundledServiceId { get; set; }
+        public Nullable<int> WeeklyPoint { get; set; }
     
         public virtual Service Service { get; set; }
     }

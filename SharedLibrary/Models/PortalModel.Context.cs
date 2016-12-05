@@ -33,7 +33,6 @@ namespace SharedLibrary.Models
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-        public virtual DbSet<Delivery> Deliveries { get; set; }
         public virtual DbSet<Operator> Operators { get; set; }
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
         public virtual DbSet<OperatorsPrefix> OperatorsPrefixs { get; set; }
@@ -46,6 +45,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
         public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
+        public virtual DbSet<Delivery> Deliveries { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

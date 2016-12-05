@@ -19,5 +19,7 @@ namespace SharedLibrary.Models
         public string Status { get; set; }
         public string Description { get; set; }
         public Nullable<System.DateTime> DeliveryTime { get; set; }
+        public long AggregatorId { get; set; }
+        public bool IsProcessed { get; set; }
     }
 }

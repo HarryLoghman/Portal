@@ -11,7 +11,6 @@
         <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserLogin" Width="1.5" PointX="10.25" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUser" Width="1.5" PointX="8" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="7.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.Operator" Width="1.5" PointX="1.5" PointY="13.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.OperatorsPlan" Width="1.5" PointX="5.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.OperatorsPrefix" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
@@ -32,6 +31,7 @@
         <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="4.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

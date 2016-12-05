@@ -35,5 +35,8 @@ namespace SepidRoodLibrary.Models
         public string SubUnSubMoMssage { get; set; }
         public Nullable<byte> SubUnSubType { get; set; }
         public Nullable<int> Tag { get; set; }
+        public int Price { get; set; }
+        public Nullable<bool> DeliveryStatus { get; set; }
+        public string DeliveryDescription { get; set; }
     }
 }
