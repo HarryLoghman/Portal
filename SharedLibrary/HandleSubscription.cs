@@ -165,10 +165,6 @@ namespace SharedLibrary
                     subscriberHistory.SubscriptionKeyword = message.Content;
                 else
                     subscriberHistory.UnsubscriptionKeyword = message.Content;
-                if (message.IsReceivedFromIntegratedPanel == false)
-                    subscriberHistory.WhoChangedSubscriberStatus = 1;
-                else
-                    subscriberHistory.WhoChangedSubscriberStatus = 2;
                 entity.SubscribersHistories.Add(subscriberHistory);
                 entity.SaveChanges();
             }

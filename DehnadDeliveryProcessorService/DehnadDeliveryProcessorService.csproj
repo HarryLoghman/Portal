@@ -103,6 +103,10 @@
       <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
       <Name>BimeKarbalaLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BoatingLibrary\BoatingLibrary.csproj">
+      <Project>{11bd1312-2d38-42ff-944d-02b5ce3457c1}</Project>
+      <Name>BoatingLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
       <Name>DanestanehLibrary</Name>

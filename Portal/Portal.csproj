@@ -232,6 +232,18 @@
     <Compile Include="Areas\MyLeague\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\SepidRood\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Soltan\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Boating\Controllers\AutochargeContentsController.cs" />
+    <Compile Include="Areas\Boating\Controllers\AutochargeTimeTableController.cs" />
+    <Compile Include="Areas\Boating\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Boating\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Boating\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Boating\Controllers\PointsController.cs" />
+    <Compile Include="Areas\Boating\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Boating\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Boating\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Boating\Controllers\SettingsController.cs" />
+    <Compile Include="Areas\Boating\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Boating\BoatingAreaRegistration.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\AutochargeContentsController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\AutochargeTimeTableController.cs" />
     <Compile Include="Areas\Tirandazi\Controllers\EventbaseContentsController.cs" />
@@ -901,6 +913,20 @@
     <Content Include="Areas\MyLeague\Views\SendDirectMessage\Index.cshtml" />
     <Content Include="Areas\Soltan\Views\SendDirectMessage\Index.cshtml" />
     <Content Include="Areas\Tirandazi\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Boating\Views\AutochargeContents\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\AutochargeTimeTable\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\Points\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\Settings\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Boating\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Boating\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1252,6 +1278,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\BimeKarbala\Models\" />
+    <Folder Include="Areas\Boating\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
@@ -1294,6 +1321,10 @@
     <ProjectReference Include="..\BimeKarbalaLibrary\BimeKarbalaLibrary.csproj">
       <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
       <Name>BimeKarbalaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BoatingLibrary\BoatingLibrary.csproj">
+      <Project>{11bd1312-2d38-42ff-944d-02b5ce3457c1}</Project>
+      <Name>BoatingLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>

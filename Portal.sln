@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadBimeKarbalaService", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadDeliveryProcessorService", "DehnadDeliveryProcessorService\DehnadDeliveryProcessorService.csproj", "{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadBoatingService", "DehnadBoatingService\DehnadBoatingService.csproj", "{54D25F7C-AB3C-44FA-9B8D-2478E4B94321}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -48,6 +50,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TirandaziLibrary", "TirandaziLibrary\TirandaziLibrary.csproj", "{45C21D1F-2D58-42FF-984D-02B5CE55243F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BimeKarbalaLibrary", "BimeKarbalaLibrary\BimeKarbalaLibrary.csproj", "{21DF1D13-2D38-42FF-984D-02B5CE4424D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoatingLibrary", "BoatingLibrary\BoatingLibrary.csproj", "{11BD1312-2D38-42FF-944D-02B5CE3457C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +107,10 @@ Global
 		{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46D28F7C-AE3C-44FA-9B8D-2478E4B9E4AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D25F7C-AB3C-44FA-9B8D-2478E4B94321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54D25F7C-AB3C-44FA-9B8D-2478E4B94321}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D25F7C-AB3C-44FA-9B8D-2478E4B94321}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D25F7C-AB3C-44FA-9B8D-2478E4B94321}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -147,6 +155,10 @@ Global
 		{21DF1D13-2D38-42FF-984D-02B5CE4424D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21DF1D13-2D38-42FF-984D-02B5CE4424D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21DF1D13-2D38-42FF-984D-02B5CE4424D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11BD1312-2D38-42FF-944D-02B5CE3457C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11BD1312-2D38-42FF-944D-02B5CE3457C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11BD1312-2D38-42FF-944D-02B5CE3457C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11BD1312-2D38-42FF-944D-02B5CE3457C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
