@@ -544,7 +544,8 @@ namespace SoltanLibrary
                 var messagesCount = messages.Count;
                 if (messagesCount == 0)
                     return;
-                var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/send?";
+                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/send?";
+                var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/send?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -606,7 +607,8 @@ namespace SoltanLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
-                var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
+                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
+                var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/charge?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];

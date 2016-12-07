@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SoltanLibrary.Models;
 using SoltanLibrary;
 using System.Data.Entity;
+using System.Threading;
 
 namespace DehnadSoltanService
 {
@@ -16,13 +17,18 @@ namespace DehnadSoltanService
         public void ProcessInstallment()
         {
             if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
-                InstallmentDailyBalance();
+                return;
             else
                 InstallmentJob();
-            if (DateTime.Now.Hour == 5 || DateTime.Now.Hour == 6 || DateTime.Now.Hour == 7)
-            {
-                ResetUserDailyChargeBalanceValue();
-            }
+
+            //if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
+            //    InstallmentDailyBalance();
+            //else
+            //    InstallmentJob();
+            //if (DateTime.Now.Hour == 5 || DateTime.Now.Hour == 6 || DateTime.Now.Hour == 7)
+            //{
+            //    ResetUserDailyChargeBalanceValue();
+            //}
         }
 
         private void DeactivateChargingUsersAfter30Days()
@@ -42,7 +48,7 @@ namespace DehnadSoltanService
             }
         }
 
-        private void ResetUserDailyChargeBalanceValue()
+        public void ResetUserDailyChargeBalanceValue()
         {
             try
             {
@@ -56,9 +62,10 @@ namespace DehnadSoltanService
             {
                 logs.Error("Exception in SinglechargeInstallment InstallmentDailyBalance: ", e);
             }
+            
         }
 
-        private void InstallmentDailyBalance()
+        public void InstallmentDailyBalance()
         {
             try
             {

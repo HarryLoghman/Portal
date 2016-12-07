@@ -14,6 +14,7 @@ namespace DehnadSoltanService
         private Thread timedThread;
         private Thread informApplicationThread;
         private Thread singlechargeInstallmentThread;
+        private Thread singlechargeInstallmentBalancerThread;
         private Thread singlechargeQueueThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
@@ -50,6 +51,10 @@ namespace DehnadSoltanService
             singlechargeInstallmentThread = new Thread(SinglechargeInstallmentWorkerThread);
             singlechargeInstallmentThread.IsBackground = true;
             singlechargeInstallmentThread.Start();
+
+            singlechargeInstallmentBalancerThread = new Thread(SinglechargeInstallmentBalancerWorkerThread);
+            singlechargeInstallmentBalancerThread.IsBackground = true;
+            singlechargeInstallmentBalancerThread.Start();
 
             singlechargeQueueThread = new Thread(SinglechargeQueueWorkerThread);
             singlechargeQueueThread.IsBackground = true;
@@ -100,6 +105,12 @@ namespace DehnadSoltanService
                 if (!singlechargeInstallmentThread.Join(3000))
                 {
                     singlechargeInstallmentThread.Abort();
+                }
+
+                shutdownEvent.Set();
+                if (!singlechargeInstallmentBalancerThread.Join(3000))
+                {
+                    singlechargeInstallmentBalancerThread.Abort();
                 }
 
                 shutdownEvent.Set();
@@ -184,6 +195,21 @@ namespace DehnadSoltanService
             {
                 singlechargeInstallment.ProcessInstallment();
                 Thread.Sleep(7200000);
+            }
+        }
+
+        private void SinglechargeInstallmentBalancerWorkerThread()
+        {
+            while (!shutdownEvent.WaitOne(0))
+            {
+                var singlechargeInstallment = new SinglechargeInstallmentClass();
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0 && DateTime.Now.Second < 5)
+                {
+                    singlechargeInstallment.InstallmentDailyBalance();
+                    singlechargeInstallment.ResetUserDailyChargeBalanceValue();
+                    Thread.Sleep(100000);
+                }
+                Thread.Sleep(1000);
             }
         }
 
