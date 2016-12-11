@@ -54,7 +54,7 @@ namespace DanestanehLibrary
             autochargeContent = DanestanehLibrary.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent);
             autochargeContent = DanestanehLibrary.MessageHandler.HandleSpecialStrings(autochargeContent, point, subscriber.MobileNumber, serviceId);
             var imiChargeObject = DanestanehLibrary.MessageHandler.GetImiChargeObjectFromPrice(100, null);
-            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent, autochargeContentId, messageType, processStatus, 0, imiChargeObject, aggregatorId, point, tag);
+            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent, autochargeContentId, messageType, processStatus, 0, imiChargeObject, aggregatorId, point, tag, imiChargeObject.Price);
             message.ShortCode = shortCode;
             return message;
         }

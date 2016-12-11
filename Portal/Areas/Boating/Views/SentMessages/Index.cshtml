@@ -16,6 +16,8 @@
             { field: "MessagePoint", title: "امتیاز", },
             { field: "MessageType", title: "نوع پیغام", },
             { field: "ImiChargeCode", title: "مجانی", template: "#= ImiChargeCode == 0 ? 'بله' : 'خیر' #" },
+            { field: "DeliveryStatus", title: "وضعیت دلیوری" },
+            { field: "DeliveryDescription", title: "توضیحات دلیوری" },
         ],
         dataSource: {
             type: "aspnetmvc-ajax",

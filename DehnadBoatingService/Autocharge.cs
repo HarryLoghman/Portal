@@ -74,7 +74,7 @@ namespace DehnadBoatingService
                                 continue;
                             autochargeContent.Content = BoatingLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId);
                             var imiChargeObject = BoatingLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
-                            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
+                            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag, imiChargeObject.Price);
                             messages.Add(message);
                         }
                         BoatingLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);

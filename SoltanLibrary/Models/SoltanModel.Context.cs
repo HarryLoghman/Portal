@@ -49,17 +49,17 @@ namespace SoltanLibrary.Models
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
         public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
     
-        public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, Nullable<long> serviceId)
+        public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {
             var miladiDateParameter = miladiDate.HasValue ?
                 new ObjectParameter("MiladiDate", miladiDate) :
                 new ObjectParameter("MiladiDate", typeof(System.DateTime));
     
-            var serviceIdParameter = serviceId.HasValue ?
-                new ObjectParameter("ServiceId", serviceId) :
-                new ObjectParameter("ServiceId", typeof(long));
+            var serviceCodeParameter = serviceCode != null ?
+                new ObjectParameter("ServiceCode", serviceCode) :
+                new ObjectParameter("ServiceCode", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("AggregateDailyStatistics", miladiDateParameter, serviceIdParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("AggregateDailyStatistics", miladiDateParameter, serviceCodeParameter);
         }
     
         public virtual int ArchiveMessages()

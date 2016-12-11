@@ -52,6 +52,7 @@ namespace SharedLibrary
                 delivery.Description = deliveryObj.ErrorMessage;
                 delivery.DeliveryTime = DateTime.Now;
                 delivery.IsProcessed = false;
+                delivery.AggregatorId = deliveryObj.AggregatorId;
                 entity.Deliveries.Add(delivery);
                 entity.SaveChanges();
             }
@@ -228,7 +229,7 @@ namespace SharedLibrary
             return message;
         }
 
-        public static MessageObject CreateMessage(Subscriber subscriber, string content, long contentId, MessageType messageType, ProcessStatus processStatus, int ImiMessageType, dynamic ImiChargeObject, long AggregatorId, int messagePoint, int? tag)
+        public static MessageObject CreateMessage(Subscriber subscriber, string content, long contentId, MessageType messageType, ProcessStatus processStatus, int ImiMessageType, dynamic ImiChargeObject, long AggregatorId, int messagePoint, int? tag, int price)
         {
             var message = new MessageObject();
             message.Content = content;
@@ -246,6 +247,7 @@ namespace SharedLibrary
             message.AggregatorId = AggregatorId;
             message.Point = messagePoint;
             message.Tag = tag;
+            message.Price = price;
             return message;
         }
 

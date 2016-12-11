@@ -80,7 +80,7 @@ namespace DehnadMobiligaService
                                 autochargeContent.Content = MobiligaLibrary.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
                                 autochargeContent.Content = MobiligaLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
                                 var imiChargeObject = MobiligaLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
-                                var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
+                                var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag, imiChargeObject.Price);
                                 messages.Add(message);
                             }
                         }
@@ -94,7 +94,7 @@ namespace DehnadMobiligaService
                             autochargeContent.Content = MobiligaLibrary.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
                             autochargeContent.Content = MobiligaLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
                             var imiChargeObject = MobiligaLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
-                            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
+                            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag, imiChargeObject.Price);
                             messages.Add(message);
                         }
 

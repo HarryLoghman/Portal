@@ -112,6 +112,75 @@
           <Property Name="NumberOfEventbaseMessagesFailed" Type="int" Nullable="false" />
           <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="int" Nullable="false" />
           <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesDelivered" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDelivered" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfMessagesDelivered" Type="int" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfFreeOnDemandMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeEventbaseMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeAutochargeMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeOnDemandMessagesDelivered" Type="int" />
+          <Property Name="NumberOfFreeEventbaseMessagesDelivered" Type="int" />
+          <Property Name="NumberOfFreeAutochargeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfFreeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfPaidOnDemandMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidEventbaseMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidAutochargeMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidOnDemandMessagesFailed" Type="int" />
+          <Property Name="NumberOfPaidEventbaseMessagesFailed" Type="int" />
+          <Property Name="NumberOfPaidAutochargeMessagesFailed" Type="int" />
+          <Property Name="NumberOfPaidMessagesFailed" Type="int" />
+          <Property Name="SumOfPaidOnDemandMessages" Type="int" />
+          <Property Name="SumOfpaidEventbaseMessages" Type="int" />
+          <Property Name="SumOfPaidAutochargeMessages" Type="int" />
+          <Property Name="SumOfPaidMessages" Type="int" />
+          <Property Name="ServiceId" Type="bigint" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -406,10 +475,13 @@ warning 6002: The table/view 'Tirandazi.dbo.vw_SentMessages' does not have a pri
           <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
           <Property Name="SubUnSubType" Type="tinyint" />
           <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
         <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MiladiDate" Type="date" Mode="In" />
-          <Parameter Name="ServiceId" Type="bigint" Mode="In" />
+          <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="ArchiveMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -467,7 +539,10 @@ warning 6002: The table/view 'Tirandazi.dbo.vw_SentMessages' does not have a pri
     [vw_SentMessages].[ImiChargeKey] AS [ImiChargeKey], 
     [vw_SentMessages].[SubUnSubMoMssage] AS [SubUnSubMoMssage], 
     [vw_SentMessages].[SubUnSubType] AS [SubUnSubType], 
-    [vw_SentMessages].[Tag] AS [Tag]
+    [vw_SentMessages].[Tag] AS [Tag], 
+    [vw_SentMessages].[Price] AS [Price], 
+    [vw_SentMessages].[DeliveryStatus] AS [DeliveryStatus], 
+    [vw_SentMessages].[DeliveryDescription] AS [DeliveryDescription]
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
@@ -582,6 +657,75 @@ warning 6002: The table/view 'Tirandazi.dbo.vw_SentMessages' does not have a pri
           <Property Name="NumberOfEventbaseMessagesFailed" Type="Int32" Nullable="false" />
           <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="Int32" Nullable="false" />
           <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfFreeOnDemandMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeEventbaseMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeAutochargeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeOnDemandMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeEventbaseMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeAutochargeMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfPaidOnDemandMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidEventbaseMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidAutochargeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidOnDemandMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidEventbaseMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidAutochargeMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidMessagesFailed" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessages" Type="Int32" />
+          <Property Name="SumOfpaidEventbaseMessages" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessages" Type="Int32" />
+          <Property Name="SumOfPaidMessages" Type="Int32" />
+          <Property Name="ServiceId" Type="Int64" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -874,6 +1018,9 @@ warning 6002: The table/view 'Tirandazi.dbo.vw_SentMessages' does not have a pri
           <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="TirandaziEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContent" />
@@ -902,7 +1049,7 @@ warning 6002: The table/view 'Tirandazi.dbo.vw_SentMessages' does not have a pri
           <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" />
           <FunctionImport Name="AggregateDailyStatistics">
             <Parameter Name="MiladiDate" Mode="In" Type="DateTime" />
-            <Parameter Name="ServiceId" Mode="In" Type="Int64" />
+            <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ArchiveMessages" />
           <FunctionImport Name="ChangeMessageStatus">
@@ -998,6 +1145,75 @@ warning 6002: The table/view 'Tirandazi.dbo.vw_SentMessages' does not have a pri
           <EntitySetMapping Name="DailyStatistics">
             <EntityTypeMapping TypeName="TirandaziModel.DailyStatistic">
               <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="SumOfPaidMessages" ColumnName="SumOfPaidMessages" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessages" ColumnName="SumOfPaidAutochargeMessages" />
+                <ScalarProperty Name="SumOfpaidEventbaseMessages" ColumnName="SumOfpaidEventbaseMessages" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessages" ColumnName="SumOfPaidOnDemandMessages" />
+                <ScalarProperty Name="NumberOfPaidMessagesFailed" ColumnName="NumberOfPaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesFailed" ColumnName="NumberOfPaidAutochargeMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesFailed" ColumnName="NumberOfPaidEventbaseMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesFailed" ColumnName="NumberOfPaidOnDemandMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidMessagesSent" ColumnName="NumberOfPaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesSent" ColumnName="NumberOfPaidAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesSent" ColumnName="NumberOfPaidEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesSent" ColumnName="NumberOfPaidOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeMessagesDelivered" ColumnName="NumberOfFreeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesDelivered" ColumnName="NumberOfFreeAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesDelivered" ColumnName="NumberOfFreeEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesDelivered" ColumnName="NumberOfFreeOnDemandMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeMessagesSent" ColumnName="NumberOfFreeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesSent" ColumnName="NumberOfFreeAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesSent" ColumnName="NumberOfFreeEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesSent" ColumnName="NumberOfFreeOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfMessagesThatUserHasNoCharge" ColumnName="NumberOfMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbaseMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargeMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryNotReceived" ColumnName="NumberOfMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryNotReceived" ColumnName="NumberOfEventbaseMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargeMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryFailed" ColumnName="NumberOfMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryFailed" ColumnName="NumberOfPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryFailed" ColumnName="NumberOfPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryFailed" ColumnName="NumberOfEventbaseMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryFailed" ColumnName="NumberOfAutochargeMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryFailed" ColumnName="NumberOfOnDemandMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfMessagesDelivered" ColumnName="NumberOfMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDelivered" ColumnName="NumberOfPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDelivered" ColumnName="NumberOfPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDelivered" ColumnName="NumberOfEventbasePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDelivered" ColumnName="NumberOfEventbasePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDelivered" ColumnName="NumberOfEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDelivered" ColumnName="NumberOfAutochargePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDelivered" ColumnName="NumberOfAutochargePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDelivered" ColumnName="NumberOfAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDelivered" ColumnName="NumberOfOnDemandPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDelivered" ColumnName="NumberOfOnDemandPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDelivered" ColumnName="NumberOfOnDemandMessagesDelivered" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
@@ -1314,6 +1530,9 @@ warning 6002: The table/view 'Tirandazi.dbo.vw_SentMessages' does not have a pri
           <EntitySetMapping Name="vw_SentMessages">
             <EntityTypeMapping TypeName="TirandaziModel.vw_SentMessages">
               <MappingFragment StoreEntitySet="vw_SentMessages">
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />

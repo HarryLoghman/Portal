@@ -32,7 +32,9 @@ namespace Portal.Areas.MashinBazha.Controllers
                 Content = sentMessages.Content,
                 MessagePoint = sentMessages.MessagePoint,
                 MessageType = sentMessages.MessageType,
-                ImiChargeCode = sentMessages.ImiChargeCode
+                ImiChargeCode = sentMessages.ImiChargeCode,
+                DeliveryStatus = sentMessages.DeliveryStatus,
+                DeliveryDescription = sentMessages.DeliveryDescription
             });
             return Json(result, JsonRequestBehavior.AllowGet);
         }

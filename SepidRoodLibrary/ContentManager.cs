@@ -186,7 +186,7 @@ namespace SepidRoodLibrary
                         return null;
                     eventbaseContent.Content = MessageHandler.HandleSpecialStrings(eventbaseContent.Content, eventbaseContent.Point, subscriber.MobileNumber, serviceId);
                     var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price, null);
-                    var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, eventbaseContent.Content, eventbaseContent.Id, messageType, processStatus, 0, imiChargeObject, aggregatorId, eventbaseContent.Point, null);
+                    var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, eventbaseContent.Content, eventbaseContent.Id, messageType, processStatus, 0, imiChargeObject, aggregatorId, eventbaseContent.Point, null, imiChargeObject.Price);
                     message.ShortCode = shortCode;
                     return message;
                 }
