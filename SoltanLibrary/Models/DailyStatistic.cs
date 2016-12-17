@@ -117,5 +117,16 @@ namespace SoltanLibrary.Models
         public Nullable<int> SumOfPaidAutochargeMessages { get; set; }
         public Nullable<int> SumOfPaidMessages { get; set; }
         public Nullable<long> ServiceId { get; set; }
+        public Nullable<int> TotalPrepaidSubscribers { get; set; }
+        public Nullable<int> TotalPostpaidSubscribers { get; set; }
+        public Nullable<int> TotalUnSubscribers { get; set; }
+        public Nullable<int> SumOfPaidOnDemandMessagesForPostPaidSubscribers { get; set; }
+        public Nullable<int> SumOfPaidOnDemandMessagesForPrePaidSubscribers { get; set; }
+        public Nullable<int> SumOfPaidEventbaseMessagesForPostPaidSubscribers { get; set; }
+        public Nullable<int> SumOfPaidEventbaseMessagesForPrePaidSubscribers { get; set; }
+        public Nullable<int> SumOfPaidAutochargeMessagesForPostPaidSubscribers { get; set; }
+        public Nullable<int> SumOfPaidAutochargeMessagesForPrePaidSubscribers { get; set; }
+        public Nullable<int> SumOfPaidMessagesForPostPaidSubscribers { get; set; }
+        public Nullable<int> SumOfPaidMessagesForPrePaidSubscribers { get; set; }
     }
 }

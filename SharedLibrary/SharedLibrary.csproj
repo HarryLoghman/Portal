@@ -140,6 +140,9 @@
     <Compile Include="Models\SubscribersPoint.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\vw_DehnadAllSentMessages.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\vw_ReceivedMessages.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

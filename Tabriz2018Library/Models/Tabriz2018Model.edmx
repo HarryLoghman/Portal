@@ -182,6 +182,17 @@
           <Property Name="SumOfPaidAutochargeMessages" Type="int" />
           <Property Name="SumOfPaidMessages" Type="int" />
           <Property Name="ServiceId" Type="bigint" />
+          <Property Name="TotalPrepaidSubscribers" Type="int" />
+          <Property Name="TotalPostpaidSubscribers" Type="int" />
+          <Property Name="TotalUnSubscribers" Type="int" />
+          <Property Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="int" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -671,6 +682,17 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <Property Name="SumOfPaidAutochargeMessages" Type="Int32" />
           <Property Name="SumOfPaidMessages" Type="Int32" />
           <Property Name="ServiceId" Type="Int64" />
+          <Property Name="TotalPrepaidSubscribers" Type="Int32" />
+          <Property Name="TotalPostpaidSubscribers" Type="Int32" />
+          <Property Name="TotalUnSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="Int32" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -1034,6 +1056,17 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <EntitySetMapping Name="DailyStatistics">
             <EntityTypeMapping TypeName="Tabriz2018Model.DailyStatistic">
               <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
+                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
+                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="SumOfPaidMessages" ColumnName="SumOfPaidMessages" />
                 <ScalarProperty Name="SumOfPaidAutochargeMessages" ColumnName="SumOfPaidAutochargeMessages" />
