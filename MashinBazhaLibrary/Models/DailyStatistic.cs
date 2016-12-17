@@ -128,5 +128,20 @@ namespace MashinBazhaLibrary.Models
         public Nullable<int> SumOfPaidAutochargeMessagesForPrePaidSubscribers { get; set; }
         public Nullable<int> SumOfPaidMessagesForPostPaidSubscribers { get; set; }
         public Nullable<int> SumOfPaidMessagesForPrePaidSubscribers { get; set; }
+        public Nullable<int> NumberOfSinglechargeSuccessfulPrepaidFullCharge { get; set; }
+        public Nullable<int> NumberOfSinglechargeSuccessfulPostpaidFullCharge { get; set; }
+        public Nullable<int> NumberOfSinglechargeSuccessfulFullCharge { get; set; }
+        public Nullable<int> NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge { get; set; }
+        public Nullable<int> NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge { get; set; }
+        public Nullable<int> NumberOfSinglechargeSuccessfulIncompleteCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulPrepaidCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulPostpaidCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulPrepaidFullCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulPostpaidFullCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulFullCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulPrepaidIncompleteCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulPostpaidIncompleteCharge { get; set; }
+        public Nullable<int> SumOfSinglechargeSuccessfulIncompleteCharge { get; set; }
     }
 }

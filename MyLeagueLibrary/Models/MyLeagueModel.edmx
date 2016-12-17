@@ -183,6 +183,21 @@
           <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="int" />
           <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="int" />
           <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -370,6 +385,51 @@
           <Property Name="Keyword" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Price" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsSucceeded" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
+          <Property Name="InstallmentId" Type="bigint" />
+          <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TotalPrice" Type="int" Nullable="false" />
+          <Property Name="PricePayed" Type="int" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="bit" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="bit" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="int" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="bit" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="bit" Nullable="false" />
+          <Property Name="CancelationDate" Type="datetime" />
+          <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAdded" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsLastDayWarningSent" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -485,6 +545,9 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceRechargeKeywords" EntityType="Self.ServiceRechargeKeywords" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersLeagues" EntityType="Self.SubscribersLeagues" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
@@ -699,6 +762,21 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
           <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="Int32" />
           <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="Int32" />
           <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -952,6 +1030,9 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
           <EntitySet Name="OperatorsRechargeCodes" EntityType="MyLeagueModel.OperatorsRechargeCode" />
           <EntitySet Name="ServiceRechargeKeywords" EntityType="MyLeagueModel.ServiceRechargeKeyword" />
           <EntitySet Name="TimedTempMessagesBuffers" EntityType="MyLeagueModel.TimedTempMessagesBuffer" />
+          <EntitySet Name="Singlecharges" EntityType="MyLeagueModel.Singlecharge" />
+          <EntitySet Name="SinglechargeInstallments" EntityType="MyLeagueModel.SinglechargeInstallment" />
+          <EntitySet Name="SinglechargeWaitings" EntityType="MyLeagueModel.SinglechargeWaiting" />
         </EntityContainer>
         <EntityType Name="OperatorsRechargeCode">
           <Key>
@@ -1003,6 +1084,51 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
           <Property Name="Price" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TotalPrice" Type="Int32" Nullable="false" />
+          <Property Name="PricePayed" Type="Int32" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="Boolean" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="Boolean" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="Int32" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="Boolean" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="Boolean" Nullable="false" />
+          <Property Name="CancelationDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1077,6 +1203,21 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="DailyStatistics">
             <EntityTypeMapping TypeName="MyLeagueModel.DailyStatistic">
               <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulFullCharge" ColumnName="SumOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulFullCharge" ColumnName="NumberOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidFullCharge" />
                 <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
                 <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
                 <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />
@@ -1468,6 +1609,54 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
                 <ScalarProperty Name="SentDate" ColumnName="SentDate" />
                 <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Singlecharges">
+            <EntityTypeMapping TypeName="MyLeagueModel.Singlecharge">
+              <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeInstallments">
+            <EntityTypeMapping TypeName="MyLeagueModel.SinglechargeInstallment">
+              <MappingFragment StoreEntitySet="SinglechargeInstallment">
+                <ScalarProperty Name="PersianCancelationDate" ColumnName="PersianCancelationDate" />
+                <ScalarProperty Name="CancelationDate" ColumnName="CancelationDate" />
+                <ScalarProperty Name="IsUserCanceledTheInstallment" ColumnName="IsUserCanceledTheInstallment" />
+                <ScalarProperty Name="IsUserDailyChargeBalanced" ColumnName="IsUserDailyChargeBalanced" />
+                <ScalarProperty Name="PriceTodayCharged" ColumnName="PriceTodayCharged" />
+                <ScalarProperty Name="IsExceededDailyChargeLimit" ColumnName="IsExceededDailyChargeLimit" />
+                <ScalarProperty Name="IsFullyPaid" ColumnName="IsFullyPaid" />
+                <ScalarProperty Name="PricePayed" ColumnName="PricePayed" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeWaitings">
+            <EntityTypeMapping TypeName="MyLeagueModel.SinglechargeWaiting">
+              <MappingFragment StoreEntitySet="SinglechargeWaiting">
+                <ScalarProperty Name="IsLastDayWarningSent" ColumnName="IsLastDayWarningSent" />
+                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

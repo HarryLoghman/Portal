@@ -25,6 +25,9 @@
         <EntityTypeShape EntityType="MashinBazhaModel.CarBrandsList" Width="1.5" PointX="9.75" PointY="12.75" />
         <EntityTypeShape EntityType="MashinBazhaModel.SubscribersCarBrand" Width="1.5" PointX="12.375" PointY="12.75" />
         <EntityTypeShape EntityType="MashinBazhaModel.TimedTempMessagesBuffer" Width="1.5" PointX="3.375" PointY="13.75" />
+        <EntityTypeShape EntityType="MashinBazhaModel.Singlecharge" Width="1.5" PointX="14.375" PointY="13.75" />
+        <EntityTypeShape EntityType="MashinBazhaModel.SinglechargeInstallment" Width="1.5" PointX="15.375" PointY="0.75" />
+        <EntityTypeShape EntityType="MashinBazhaModel.SinglechargeWaiting" Width="1.5" PointX="15.375" PointY="5.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

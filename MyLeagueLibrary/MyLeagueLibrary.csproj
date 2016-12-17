@@ -125,6 +125,15 @@
     <Compile Include="Models\ServiceRechargeKeyword.cs">
       <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Singlecharge.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeInstallment.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeWaiting.cs">
+      <DependentUpon>MyLeagueModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SubscribersAdditionalInfo.cs">
       <DependentUpon>MyLeagueModel.tt</DependentUpon>
     </Compile>

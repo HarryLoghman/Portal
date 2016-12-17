@@ -26,6 +26,9 @@
         <EntityTypeShape EntityType="MyLeagueModel.OperatorsRechargeCode" Width="1.5" PointX="7.375" PointY="12.75" />
         <EntityTypeShape EntityType="MyLeagueModel.ServiceRechargeKeyword" Width="1.5" PointX="9.375" PointY="12.75" />
         <EntityTypeShape EntityType="MyLeagueModel.TimedTempMessagesBuffer" Width="1.5" PointX="11.375" PointY="12.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.Singlecharge" Width="1.5" PointX="13.375" PointY="6.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.SinglechargeInstallment" Width="1.5" PointX="13.375" PointY="10.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.SinglechargeWaiting" Width="1.5" PointX="15.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

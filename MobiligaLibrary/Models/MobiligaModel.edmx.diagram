@@ -25,6 +25,9 @@
         <EntityTypeShape EntityType="MobiligaModel.SubscribersMobile" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MobiligaModel.vw_SentMessages" Width="1.5" PointX="12.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MobiligaModel.TimedTempMessagesBuffer" Width="1.5" PointX="7.375" PointY="12.75" />
+        <EntityTypeShape EntityType="MobiligaModel.Singlecharge" Width="1.5" PointX="9.375" PointY="12.75" />
+        <EntityTypeShape EntityType="MobiligaModel.SinglechargeInstallment" Width="1.5" PointX="3.375" PointY="13.75" />
+        <EntityTypeShape EntityType="MobiligaModel.SinglechargeWaiting" Width="1.5" PointX="11.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

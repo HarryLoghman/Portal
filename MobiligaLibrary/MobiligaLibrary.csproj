@@ -122,6 +122,15 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>MobiligaModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Singlecharge.cs">
+      <DependentUpon>MobiligaModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeInstallment.cs">
+      <DependentUpon>MobiligaModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeWaiting.cs">
+      <DependentUpon>MobiligaModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SubscribersAdditionalInfo.cs">
       <DependentUpon>MobiligaModel.tt</DependentUpon>
     </Compile>

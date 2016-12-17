@@ -122,6 +122,15 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>DanestanehModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Singlecharge.cs">
+      <DependentUpon>DanestanehModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeInstallment.cs">
+      <DependentUpon>DanestanehModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeWaiting.cs">
+      <DependentUpon>DanestanehModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SubscribersAdditionalInfo.cs">
       <DependentUpon>DanestanehModel.tt</DependentUpon>
     </Compile>

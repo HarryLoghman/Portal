@@ -122,6 +122,15 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>MashinBazhaModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Singlecharge.cs">
+      <DependentUpon>MashinBazhaModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeInstallment.cs">
+      <DependentUpon>MashinBazhaModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeWaiting.cs">
+      <DependentUpon>MashinBazhaModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SubscribersAdditionalInfo.cs">
       <DependentUpon>MashinBazhaModel.tt</DependentUpon>
     </Compile>

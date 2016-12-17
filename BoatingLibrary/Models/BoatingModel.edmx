@@ -192,6 +192,21 @@
           <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="int" />
           <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="int" />
           <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -748,6 +763,21 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="Int32" />
           <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="Int32" />
           <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -1167,6 +1197,21 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="DailyStatistics">
             <EntityTypeMapping TypeName="BoatingModel.DailyStatistic">
               <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulFullCharge" ColumnName="SumOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulFullCharge" ColumnName="NumberOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidFullCharge" />
                 <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
                 <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
                 <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />

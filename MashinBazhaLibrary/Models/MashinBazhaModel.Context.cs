@@ -47,6 +47,9 @@ namespace MashinBazhaLibrary.Models
         public virtual DbSet<CarBrandsList> CarBrandsLists { get; set; }
         public virtual DbSet<SubscribersCarBrand> SubscribersCarBrands { get; set; }
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
+        public virtual DbSet<Singlecharge> Singlecharges { get; set; }
+        public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
+        public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {
