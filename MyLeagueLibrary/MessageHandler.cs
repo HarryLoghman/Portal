@@ -113,7 +113,7 @@ namespace MyLeagueLibrary
 
         public static void SetOffReason(Subscriber subscriber, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            using(var entity = new MyLeagueEntities())
+            using (var entity = new MyLeagueEntities())
             {
                 var offReason = new ServiceOffReason();
                 offReason.SubscriberId = subscriber.Id;
@@ -234,7 +234,7 @@ namespace MyLeagueLibrary
                 ImiChargeCode imiChargeCode;
                 if (subscriberState == null && price > 0)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
-                else if(subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+                else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Register");
                 else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
@@ -320,7 +320,7 @@ namespace MyLeagueLibrary
                 if (eventbaseContent.SubscriberNotSendedMoInDays == 0)
                     subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
                 else
-                    subscribers = (from s in entity.Subscribers join r in entity.ReceivedMessagesArchives on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator  = s.MobileOperator}).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
+                    subscribers = (from s in entity.Subscribers join r in entity.ReceivedMessagesArchives on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
             }
             if (subscribers == null)
             {
@@ -384,11 +384,8 @@ namespace MyLeagueLibrary
             var imiChargeObj = GetImiChargeObjectFromPrice(price, subscriberState);
             message.ImiChargeCode = imiChargeObj.ChargeCode;
             message.ImiChargeKey = imiChargeObj.ChargeKey;
-            message.ImiMessageType = messageType;            
-            if (price != 0)
-                message.Price = price / 10;
-            else
-                message.Price = price;
+            message.ImiMessageType = messageType;
+            message.Price = price;
             return message;
         }
 
@@ -416,7 +413,7 @@ namespace MyLeagueLibrary
                 }
                 var pardisClient = new SharedLibrary.PardisImiServiceReference.MTSoapClient();
                 var pardisResponse = pardisClient.SendSMS(SPID, smsList);
-                if(pardisResponse.Rows.Count == 0)
+                if (pardisResponse.Rows.Count == 0)
                 {
                     logs.Info("SendMessagesToPardisImi does not return response there must be somthing wrong with the parameters");
                     foreach (var sms in smsList)
@@ -438,7 +435,7 @@ namespace MyLeagueLibrary
                     messages[index].ReferenceId = pardisResponse.Rows[index]["Correlator"].ToString();
                     messages[index].SentDate = DateTime.Now;
                     messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    if(messages[index].MessagePoint > 0)
+                    if (messages[index].MessagePoint > 0)
                         SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
                     entity.Entry(messages[index]).State = EntityState.Modified;
                 }
