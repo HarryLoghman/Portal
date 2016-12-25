@@ -39,6 +39,35 @@ namespace Portal.Controllers
             return response;
         }
 
+        public HttpResponseMessage WebMessage([FromUri]MessageObject messageObj)
+        {
+            if (messageObj.Address != null)
+            {
+                messageObj.MobileNumber = messageObj.Address;
+                messageObj.Content = messageObj.Message;
+            }
+            else if (messageObj.From != null)
+            {
+                messageObj.MobileNumber = messageObj.From;
+                messageObj.ShortCode = messageObj.To;
+            }
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            string result = "";
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                result = "-1";
+            else
+            {
+                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                messageObj.IsReceivedFromWeb = true;
+                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                result = "1";
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
         // /Receive/TelepromoMessage?da=989125612694&oa=2050&txt=hi
         [HttpGet]
         [AllowAnonymous]

@@ -7,23 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SharedLibrary.Models
+namespace Tabriz2018Library.Models
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class ReceievedMessage
+    public partial class SinglechargeWaiting
     {
         public long Id { get; set; }
         public string MobileNumber { get; set; }
-        public string ShortCode { get; set; }
-        public System.DateTime ReceivedTime { get; set; }
-        public string MessageId { get; set; }
-        public bool IsProcessed { get; set; }
-        public string Content { get; set; }
-        public bool IsReceivedFromIntegratedPanel { get; set; }
-        public string PersianReceivedTime { get; set; }
-        public string ReceivedFrom { get; set; }
-        public Nullable<bool> IsReceivedFromWeb { get; set; }
+        public int Price { get; set; }
+        public System.DateTime DateAdded { get; set; }
+        public string PersianDateAdded { get; set; }
+        public bool IsLastDayWarningSent { get; set; }
     }
 }

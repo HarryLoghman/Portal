@@ -127,6 +127,7 @@
           <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsReceivedFromWeb" Type="bit" />
         </EntityType>
         <EntityType Name="ReceivedMessagesArchive">
           <Key>
@@ -142,6 +143,7 @@
           <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsReceivedFromWeb" Type="bit" />
         </EntityType>
         <EntityType Name="ServiceInfo">
           <Key>
@@ -288,6 +290,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsReceivedFromWeb" Type="bit" />
         </EntityType>
         <Association Name="FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operators" Multiplicity="1" />
@@ -471,7 +474,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
     [vw_ReceivedMessages].[Content] AS [Content], 
     [vw_ReceivedMessages].[IsReceivedFromIntegratedPanel] AS [IsReceivedFromIntegratedPanel], 
     [vw_ReceivedMessages].[PersianReceivedTime] AS [PersianReceivedTime], 
-    [vw_ReceivedMessages].[ReceivedFrom] AS [ReceivedFrom]
+    [vw_ReceivedMessages].[ReceivedFrom] AS [ReceivedFrom], 
+    [vw_ReceivedMessages].[IsReceivedFromWeb] AS [IsReceivedFromWeb]
     FROM [dbo].[vw_ReceivedMessages] AS [vw_ReceivedMessages]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
@@ -626,6 +630,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromWeb" Type="Boolean" />
         </EntityType>
         <EntityType Name="ReceivedMessagesArchive">
           <Key>
@@ -641,6 +646,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromWeb" Type="Boolean" />
         </EntityType>
         <EntityType Name="ServiceInfo">
           <Key>
@@ -750,6 +756,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromWeb" Type="Boolean" />
         </EntityType>
         <Association Name="FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operator" Multiplicity="1" />
@@ -1053,6 +1060,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="ReceievedMessages">
             <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
               <MappingFragment StoreEntitySet="ReceievedMessages">
+                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
@@ -1069,6 +1077,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="ReceivedMessagesArchives">
             <EntityTypeMapping TypeName="PortalModel.ReceivedMessagesArchive">
               <MappingFragment StoreEntitySet="ReceivedMessagesArchive">
+                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
@@ -1173,6 +1182,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="vw_ReceivedMessages">
             <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
               <MappingFragment StoreEntitySet="vw_ReceivedMessages">
+                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />

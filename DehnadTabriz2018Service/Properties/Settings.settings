@@ -23,5 +23,8 @@
     <Setting Name="ServiceCode" Type="System.String" Scope="User">
       <Value Profile="(Default)">Tabriz2018</Value>
     </Setting>
+    <Setting Name="RetryNotDeliveredMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

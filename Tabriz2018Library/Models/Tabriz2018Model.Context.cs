@@ -47,6 +47,9 @@ namespace Tabriz2018Library.Models
         public virtual DbSet<SubscribersMobile> SubscribersMobiles { get; set; }
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
+        public virtual DbSet<Singlecharge> Singlecharges { get; set; }
+        public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
+        public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {
@@ -97,6 +100,11 @@ namespace Tabriz2018Library.Models
                 new ObjectParameter("MonitoringId", typeof(long));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ChangeMessageStatus", messageTypeParameter, contentIdParameter, tagParameter, persianDateParameter, currentStatusParameter, desiredProcessStatusParameter, monitoringIdParameter);
+        }
+    
+        public virtual int RetryUndeliveredMessages()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("RetryUndeliveredMessages");
         }
     }
 }

@@ -20,6 +20,7 @@ namespace DehnadMobiligaService
                 List<OnDemandMessagesBuffer> onDemandMessages;
                 int readSize = Convert.ToInt32(Properties.Settings.Default.ReadSize);
                 int takeSize = Convert.ToInt32(Properties.Settings.Default.Take);
+                bool retryNotDelieveredMessages = Properties.Settings.Default.RetryNotDeliveredMessages;
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Mobiliga", aggregatorName);
                 int[] take = new int[(readSize / takeSize)];
@@ -37,6 +38,16 @@ namespace DehnadMobiligaService
                     autochargeMessages = MobiligaLibrary.MessageHandler.GetUnprocessedAutochargeMessages(entity, readSize);
                     eventbaseMessages = MobiligaLibrary.MessageHandler.GetUnprocessedEventbaseMessages(entity, readSize);
                     onDemandMessages = MobiligaLibrary.MessageHandler.GetUnprocessedOnDemandMessages(entity, readSize);
+
+                    if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
+                    {
+                        TimeSpan retryEndTime = new TimeSpan(23, 30, 0);
+                        var now = DateTime.Now.TimeOfDay;
+                        if (now < retryEndTime)
+                        {
+                            entity.RetryUndeliveredMessages();
+                        }
+                    }
                 }
 
                 SendAutochargeMessages(autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);

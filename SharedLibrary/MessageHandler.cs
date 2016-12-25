@@ -23,6 +23,7 @@ namespace SharedLibrary
                     Content = message.Content,
                     IsProcessed = false,
                     IsReceivedFromIntegratedPanel = (message.IsReceivedFromIntegratedPanel == null) ? false : message.IsReceivedFromIntegratedPanel,
+                    IsReceivedFromWeb = (message.IsReceivedFromWeb == null) ? false : message.IsReceivedFromWeb,
                     ReceivedFrom = message.ReceivedFrom
                 };
                 entity.ReceievedMessages.Add(mo);

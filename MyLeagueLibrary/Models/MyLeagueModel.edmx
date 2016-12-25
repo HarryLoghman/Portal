@@ -527,6 +527,7 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
           <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
+        <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="MyLeagueModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
@@ -1033,6 +1034,7 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
           <EntitySet Name="Singlecharges" EntityType="MyLeagueModel.Singlecharge" />
           <EntitySet Name="SinglechargeInstallments" EntityType="MyLeagueModel.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeWaitings" EntityType="MyLeagueModel.SinglechargeWaiting" />
+          <FunctionImport Name="RetryUndeliveredMessages" />
         </EntityContainer>
         <EntityType Name="OperatorsRechargeCode">
           <Key>
@@ -1662,6 +1664,7 @@ warning 6002: The table/view 'MyLeague.dbo.vw_SentMessages' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="MyLeagueModel.Store.RetryUndeliveredMessages" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

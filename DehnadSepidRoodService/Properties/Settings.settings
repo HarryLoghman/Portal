@@ -15,13 +15,16 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="ReadSize" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1000</Value>
+      <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="Take" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">20</Value>
+      <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="ServiceCode" Type="System.String" Scope="User">
       <Value Profile="(Default)">SepidRood</Value>
+    </Setting>
+    <Setting Name="RetryNotDeliveredMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

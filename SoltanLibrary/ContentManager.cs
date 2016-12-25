@@ -108,7 +108,7 @@ namespace SoltanLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    if (message.Content != "111")
+                    if (message.Content != "111" || message.Content != "1" || message.Content != "2")
                     {
                         message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);

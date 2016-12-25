@@ -370,6 +370,51 @@
           <Property Name="SubscriberId" Type="bigint" Nullable="false" />
           <Property Name="Reason" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsSucceeded" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
+          <Property Name="InstallmentId" Type="bigint" />
+          <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TotalPrice" Type="int" Nullable="false" />
+          <Property Name="PricePayed" Type="int" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="bit" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="bit" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="int" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="bit" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="bit" Nullable="false" />
+          <Property Name="CancelationDate" Type="datetime" />
+          <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAdded" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsLastDayWarningSent" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -467,6 +512,7 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
+        <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="Tabriz2018ModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
@@ -484,6 +530,9 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <EntitySet Name="OnDemandMessagesBuffer" EntityType="Self.OnDemandMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersMobile" EntityType="Self.SubscribersMobile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
@@ -1001,7 +1050,56 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
             <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
+          <EntitySet Name="Singlecharges" EntityType="Tabriz2018Model.Singlecharge" />
+          <EntitySet Name="SinglechargeInstallments" EntityType="Tabriz2018Model.SinglechargeInstallment" />
+          <EntitySet Name="SinglechargeWaitings" EntityType="Tabriz2018Model.SinglechargeWaiting" />
+          <FunctionImport Name="RetryUndeliveredMessages" />
         </EntityContainer>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TotalPrice" Type="Int32" Nullable="false" />
+          <Property Name="PricePayed" Type="Int32" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="Boolean" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="Boolean" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="Int32" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="Boolean" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="Boolean" Nullable="false" />
+          <Property Name="CancelationDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1470,6 +1568,55 @@ warning 6002: The table/view 'Tabriz2018.dbo.vw_SentMessages' does not have a pr
           <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="Tabriz2018Model.Store.AggregateDailyStatistics" />
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="Tabriz2018Model.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="Tabriz2018Model.Store.ChangeMessageStatus" />
+          <EntitySetMapping Name="Singlecharges">
+            <EntityTypeMapping TypeName="Tabriz2018Model.Singlecharge">
+              <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeInstallments">
+            <EntityTypeMapping TypeName="Tabriz2018Model.SinglechargeInstallment">
+              <MappingFragment StoreEntitySet="SinglechargeInstallment">
+                <ScalarProperty Name="PersianCancelationDate" ColumnName="PersianCancelationDate" />
+                <ScalarProperty Name="CancelationDate" ColumnName="CancelationDate" />
+                <ScalarProperty Name="IsUserCanceledTheInstallment" ColumnName="IsUserCanceledTheInstallment" />
+                <ScalarProperty Name="IsUserDailyChargeBalanced" ColumnName="IsUserDailyChargeBalanced" />
+                <ScalarProperty Name="PriceTodayCharged" ColumnName="PriceTodayCharged" />
+                <ScalarProperty Name="IsExceededDailyChargeLimit" ColumnName="IsExceededDailyChargeLimit" />
+                <ScalarProperty Name="IsFullyPaid" ColumnName="IsFullyPaid" />
+                <ScalarProperty Name="PricePayed" ColumnName="PricePayed" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeWaitings">
+            <EntityTypeMapping TypeName="Tabriz2018Model.SinglechargeWaiting">
+              <MappingFragment StoreEntitySet="SinglechargeWaiting">
+                <ScalarProperty Name="IsLastDayWarningSent" ColumnName="IsLastDayWarningSent" />
+                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="Tabriz2018Model.Store.RetryUndeliveredMessages" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

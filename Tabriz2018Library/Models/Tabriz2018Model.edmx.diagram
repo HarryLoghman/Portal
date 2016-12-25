@@ -25,6 +25,9 @@
         <EntityTypeShape EntityType="Tabriz2018Model.SubscribersMobile" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Tabriz2018Model.TimedTempMessagesBuffer" Width="1.5" PointX="12.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Tabriz2018Model.vw_SentMessages" Width="1.5" PointX="6.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Tabriz2018Model.Singlecharge" Width="1.5" PointX="9.375" PointY="12.75" />
+        <EntityTypeShape EntityType="Tabriz2018Model.SinglechargeInstallment" Width="1.5" PointX="11.375" PointY="12.75" />
+        <EntityTypeShape EntityType="Tabriz2018Model.SinglechargeWaiting" Width="1.5" PointX="3.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

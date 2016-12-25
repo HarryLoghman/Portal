@@ -504,6 +504,7 @@ warning 6002: The table/view 'Danestaneh.dbo.vw_SentMessages' does not have a pr
           <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
+        <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="DanestanehModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
@@ -988,6 +989,7 @@ warning 6002: The table/view 'Danestaneh.dbo.vw_SentMessages' does not have a pr
           <EntitySet Name="Singlecharges" EntityType="DanestanehModel.Singlecharge" />
           <EntitySet Name="SinglechargeInstallments" EntityType="DanestanehModel.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeWaitings" EntityType="DanestanehModel.SinglechargeWaiting" />
+          <FunctionImport Name="RetryUndeliveredMessages" />
         </EntityContainer>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
@@ -1587,6 +1589,7 @@ warning 6002: The table/view 'Danestaneh.dbo.vw_SentMessages' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="DanestanehModel.Store.RetryUndeliveredMessages" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

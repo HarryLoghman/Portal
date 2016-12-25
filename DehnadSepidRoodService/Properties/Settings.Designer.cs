@@ -73,7 +73,7 @@ namespace DehnadSepidRoodService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int ReadSize {
             get {
                 return ((int)(this["ReadSize"]));
@@ -85,7 +85,7 @@ namespace DehnadSepidRoodService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int Take {
             get {
                 return ((int)(this["Take"]));
@@ -104,6 +104,18 @@ namespace DehnadSepidRoodService.Properties {
             }
             set {
                 this["ServiceCode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RetryNotDeliveredMessages {
+            get {
+                return ((bool)(this["RetryNotDeliveredMessages"]));
+            }
+            set {
+                this["RetryNotDeliveredMessages"] = value;
             }
         }
     }

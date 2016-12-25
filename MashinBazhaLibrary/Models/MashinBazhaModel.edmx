@@ -512,6 +512,7 @@ warning 6002: The table/view 'MashinBazha.dbo.vw_SentMessages' does not have a p
           <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
+        <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="MashinBazhaModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
@@ -984,6 +985,7 @@ warning 6002: The table/view 'MashinBazha.dbo.vw_SentMessages' does not have a p
           <EntitySet Name="Singlecharges" EntityType="MashinBazhaModel.Singlecharge" />
           <EntitySet Name="SinglechargeInstallments" EntityType="MashinBazhaModel.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeWaitings" EntityType="MashinBazhaModel.SinglechargeWaiting" />
+          <FunctionImport Name="RetryUndeliveredMessages" />
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -1614,6 +1616,7 @@ warning 6002: The table/view 'MashinBazha.dbo.vw_SentMessages' does not have a p
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="MashinBazhaModel.Store.RetryUndeliveredMessages" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

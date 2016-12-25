@@ -7,23 +7,23 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SharedLibrary.Models
+namespace Tabriz2018Library.Models
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class ReceievedMessage
+    public partial class Singlecharge
     {
         public long Id { get; set; }
         public string MobileNumber { get; set; }
-        public string ShortCode { get; set; }
-        public System.DateTime ReceivedTime { get; set; }
-        public string MessageId { get; set; }
-        public bool IsProcessed { get; set; }
-        public string Content { get; set; }
-        public bool IsReceivedFromIntegratedPanel { get; set; }
-        public string PersianReceivedTime { get; set; }
-        public string ReceivedFrom { get; set; }
-        public Nullable<bool> IsReceivedFromWeb { get; set; }
+        public string ReferenceId { get; set; }
+        public System.DateTime DateCreated { get; set; }
+        public string PersianDateCreated { get; set; }
+        public int Price { get; set; }
+        public bool IsSucceeded { get; set; }
+        public string Description { get; set; }
+        public bool IsApplicationInformed { get; set; }
+        public Nullable<long> InstallmentId { get; set; }
+        public bool IsCalledFromInAppPurchase { get; set; }
     }
 }

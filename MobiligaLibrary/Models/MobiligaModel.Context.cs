@@ -101,5 +101,10 @@ namespace MobiligaLibrary.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ChangeMessageStatus", messageTypeParameter, contentIdParameter, tagParameter, persianDateParameter, currentStatusParameter, desiredProcessStatusParameter, monitoringIdParameter);
         }
+    
+        public virtual int RetryUndeliveredMessages()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("RetryUndeliveredMessages");
+        }
     }
 }

@@ -69,10 +69,12 @@ namespace SharedLibrary
                 subscriber.DeactivationDate = null;
                 subscriber.PersianDeactivationDate = null;
                 subscriber.OnKeyword = onKeyword;
-                if (message.IsReceivedFromIntegratedPanel == false)
+                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                     subscriber.OnMethod = "keyword";
-                else
+                else if (message.IsReceivedFromIntegratedPanel == true)
                     subscriber.OnMethod = "Integrated Panel";
+                else
+                    subscriber.OnMethod = "Web";
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
             }
@@ -87,10 +89,12 @@ namespace SharedLibrary
                 var newSubscriber = new Subscriber();
                 newSubscriber.MobileNumber = message.MobileNumber;
                 newSubscriber.OnKeyword = message.Content;
-                if (message.IsReceivedFromIntegratedPanel == false)
+                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                     newSubscriber.OnMethod = "keyword";
-                else
+                else if(message.IsReceivedFromIntegratedPanel == true)
                     newSubscriber.OnMethod = "Integrated Panel";
+                else
+                    newSubscriber.OnMethod = "Web";
                 newSubscriber.ServiceId = service.Id;
                 newSubscriber.ActivationDate = DateTime.Now;
                 newSubscriber.PersianActivationDate = Date.GetPersianDate();
@@ -152,10 +156,13 @@ namespace SharedLibrary
                 subscriberHistory.ServiceStatusForSubscriber = state;
                 subscriberHistory.ShortCode = message.ShortCode;
                 subscriberHistory.Time = DateTime.Now.TimeOfDay;
-                if (message.IsReceivedFromIntegratedPanel == true)
+                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                    subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.User;
+                else if (message.IsReceivedFromIntegratedPanel == true)
                     subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.IntegratedPanel;
                 else
-                    subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.User;
+                    subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.Web;
+
                 subscriberHistory.AggregatorServiceId = serviceInfo.AggregatorServiceId;
                 subscriberHistory.DateTime = DateTime.Now;
                 subscriberHistory.PersianDateTime = Date.GetPersianDateTime();
@@ -193,10 +200,12 @@ namespace SharedLibrary
                 subscriber.DeactivationDate = DateTime.Now;
                 subscriber.PersianDeactivationDate = Date.GetPersianDate();
                 subscriber.OffKeyword = message.Content;
-                if (message.IsReceivedFromIntegratedPanel == false)
+                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                     subscriber.OffMethod = "keyword";
-                else
+                else if (message.IsReceivedFromIntegratedPanel == true)
                     subscriber.OffMethod = "Integrated Panel";
+                else
+                    subscriber.OffMethod = "Web";
                 entity.Entry(subscriber).State = EntityState.Modified;
                 entity.SaveChanges();
                 AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null, serviceInfo);
@@ -217,7 +226,8 @@ namespace SharedLibrary
         public enum WhoChangedSubscriberState
         {
             User = 0,
-            IntegratedPanel = 1
+            IntegratedPanel = 1,
+            Web = 2
         }
     }
 }

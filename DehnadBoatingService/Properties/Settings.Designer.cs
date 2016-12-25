@@ -106,5 +106,17 @@ namespace DehnadBoatingService.Properties {
                 this["ServiceCode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RetryNotDeliveredMessages {
+            get {
+                return ((bool)(this["RetryNotDeliveredMessages"]));
+            }
+            set {
+                this["RetryNotDeliveredMessages"] = value;
+            }
+        }
     }
 }
