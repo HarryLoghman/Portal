@@ -39,8 +39,13 @@ namespace Portal.Controllers
             return response;
         }
 
-        public HttpResponseMessage WebMessage([FromUri]MessageObject messageObj)
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage WebMessage([FromUri]MessageObject messageObj, int subscribeUser)
         {
+            if (subscribeUser != 1)
+                messageObj.Content = "SendServiceHelp";
+
             if (messageObj.Address != null)
             {
                 messageObj.MobileNumber = messageObj.Address;
