@@ -107,6 +107,9 @@
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>SoltanModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeArchive.cs">
+      <DependentUpon>SoltanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>SoltanModel.tt</DependentUpon>
     </Compile>

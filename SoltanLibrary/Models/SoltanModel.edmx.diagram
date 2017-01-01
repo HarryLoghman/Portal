@@ -26,6 +26,7 @@
         <EntityTypeShape EntityType="SoltanModel.Singlecharge" Width="1.5" PointX="13.375" PointY="3.75" />
         <EntityTypeShape EntityType="SoltanModel.SinglechargeInstallment" Width="1.5" PointX="13.375" PointY="7.75" />
         <EntityTypeShape EntityType="SoltanModel.SinglechargeWaiting" Width="1.5" PointX="7.375" PointY="13.75" />
+        <EntityTypeShape EntityType="SoltanModel.SinglechargeArchive" Width="1.5" PointX="13.375" PointY="12.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

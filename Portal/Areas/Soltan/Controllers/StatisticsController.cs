@@ -155,6 +155,11 @@ namespace Portal.Areas.Soltan.Controllers
                 SumOfSinglechargeSuccessfulPrepaidIncompleteCharge = dailyStatistics.SumOfSinglechargeSuccessfulPrepaidIncompleteCharge,
                 SumOfSinglechargeSuccessfulPostpaidIncompleteCharge = dailyStatistics.SumOfSinglechargeSuccessfulPostpaidIncompleteCharge,
                 SumOfSinglechargeSuccessfulIncompleteCharge = dailyStatistics.SumOfSinglechargeSuccessfulIncompleteCharge,
+                NumberOfSinglechargeDistinctNumbersTriedToCharge = dailyStatistics.NumberOfSinglechargeDistinctNumbersTriedToCharge,
+                TotalNumberOfSinglechargeInAppPurchases = dailyStatistics.TotalNumberOfSinglechargeInAppPurchases,
+                NumberOfSinglechargeInAppPurchasesFailed = dailyStatistics.NumberOfSinglechargeInAppPurchasesFailed,
+                NumberOfSinglechargeInAppPurchasesSucceeded = dailyStatistics.NumberOfSinglechargeInAppPurchasesSucceeded,
+                SumOfSinglechargeInAppPurchases = dailyStatistics.SumOfSinglechargeInAppPurchases
             });
             return Json(result, JsonRequestBehavior.AllowGet);
         }
