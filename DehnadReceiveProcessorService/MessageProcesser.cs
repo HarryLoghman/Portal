@@ -51,6 +51,12 @@ namespace DehnadReceiveProcessorService
 
             using (var entity = new PortalEntities())
             {
+                if (message.ShortCode.StartsWith("2"))
+                {
+                    var pardisShortCode = entity.ParidsShortCodes.FirstOrDefault(o => o.ShortCode == message.ShortCode);
+                    if (pardisShortCode != null)
+                        message.ShortCode = entity.ServiceInfoes.FirstOrDefault(o => o.ServiceId == pardisShortCode.ServiceId).ShortCode;
+                }
                 var serviceShortCodes = entity.ServiceInfoes.Where(o => o.ShortCode == message.ShortCode);
                 if (serviceShortCodes != null)
                 {

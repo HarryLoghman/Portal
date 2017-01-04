@@ -2,20 +2,6 @@
 <wsdl:definitions xmlns:intf="http://Srv/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://Srv/" targetNamespace="http://Srv/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://Srv/">
-      <xsd:element name="getHelloWorldAsString">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="name" type="xsd:string" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="getHelloWorldAsStringResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="getHelloWorldAsStringReturn" type="xsd:string" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       <xsd:element name="RSend">
         <xsd:complexType>
           <xsd:sequence>
@@ -36,6 +22,20 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element maxOccurs="unbounded" name="RSendReturn" type="xsd:long" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getHelloWorldAsString">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getHelloWorldAsStringResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getHelloWorldAsStringReturn" type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -162,13 +162,13 @@
     <wsdl:part name="parameters" element="impl:ServiceSend" />
   </wsdl:message>
   <wsdl:portType name="ServiceCall">
-    <wsdl:operation name="getHelloWorldAsString">
-      <wsdl:input name="getHelloWorldAsStringRequest" message="impl:getHelloWorldAsStringRequest" />
-      <wsdl:output name="getHelloWorldAsStringResponse" message="impl:getHelloWorldAsStringResponse" />
-    </wsdl:operation>
     <wsdl:operation name="RSend">
       <wsdl:input name="RSendRequest" message="impl:RSendRequest" />
       <wsdl:output name="RSendResponse" message="impl:RSendResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="getHelloWorldAsString">
+      <wsdl:input name="getHelloWorldAsStringRequest" message="impl:getHelloWorldAsStringRequest" />
+      <wsdl:output name="getHelloWorldAsStringResponse" message="impl:getHelloWorldAsStringResponse" />
     </wsdl:operation>
     <wsdl:operation name="UltraSend">
       <wsdl:input name="UltraSendRequest" message="impl:UltraSendRequest" />
@@ -189,21 +189,21 @@
   </wsdl:portType>
   <wsdl:binding name="SendSoapBinding" type="impl:ServiceCall">
     <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="getHelloWorldAsString">
-      <wsdlsoap:operation soapAction="" />
-      <wsdl:input name="getHelloWorldAsStringRequest">
-        <wsdlsoap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output name="getHelloWorldAsStringResponse">
-        <wsdlsoap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="RSend">
       <wsdlsoap:operation soapAction="" />
       <wsdl:input name="RSendRequest">
         <wsdlsoap:body use="literal" />
       </wsdl:input>
       <wsdl:output name="RSendResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getHelloWorldAsString">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="getHelloWorldAsStringRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getHelloWorldAsStringResponse">
         <wsdlsoap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>

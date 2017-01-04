@@ -101,6 +101,9 @@
     <Compile Include="Models\OperatorsPrefix.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ParidsShortCode.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PortalModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -192,6 +195,7 @@
     <None Include="Service References\PardisImiSinglechargeServiceReference\SharedLibrary.PardisImiSinglechargeServiceReference.SingleChargeResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\PardisPlatformServiceReference\PardisPlatform.wsdl" />
     <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -215,7 +219,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\PardisPlatformServiceReference\Pardis.wsdl" />
     <None Include="Service References\PardisPlatformServiceReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>

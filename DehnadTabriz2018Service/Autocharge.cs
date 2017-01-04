@@ -51,57 +51,7 @@ namespace DehnadTabriz2018Service
         {
             try
             {
-                var time = DateTime.Now.TimeOfDay;
-                var aggregatorName = Properties.Settings.Default.AggregatorName;
-                var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                var serviceCode = Properties.Settings.Default.ServiceCode;
-                var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode);
-                var subscribers = SharedLibrary.ServiceHandler.GetServiceActiveSubscribersFromServiceId(serviceId.Value);
-                using (var entity = new Tabriz2018Entities())
-                {
-                    entity.Configuration.AutoDetectChangesEnabled = false;
-                    var autochargeTimeTable = GetAutochargeTimeTable();
-                    var mobilesList = Tabriz2018Library.ContentManager.GetMobilesList();
-                    if (mobilesList == null)
-                        return;
-                    foreach (var item in autochargeTimeTable)
-                    {
-                        int tag = item.Tag;
-                        var messages = new List<MessageObject>();
-                        foreach(var mobile in mobilesList)
-                        {
-                            var subscribersForMobile = (from m in entity.SubscribersMobiles where m.MobileId == mobile.Id select m.Subscriberid);
-                            var mobileSubscribers = (from s in subscribers where subscribersForMobile.Contains(s.Id) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
-                            foreach (var subscriber in mobileSubscribers)
-                            {
-                                var autochargeContent = Tabriz2018Library.ContentManager.PrepareLatestMobileContent(subscriber.Id, mobile.Id);
-                                if (autochargeContent == null)
-                                    continue;
-                                autochargeContent.Content = Tabriz2018Library.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
-                                autochargeContent.Content = Tabriz2018Library.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
-                                var imiChargeObject = Tabriz2018Library.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
-                                var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag, imiChargeObject.Price);
-                                messages.Add(message);
-                            }
-                        }
-                        var subscribersMobiles = (from m in entity.SubscribersMobiles select m.Subscriberid);
-                        var subscribersWithNoMobileSelected = (from s in subscribers where !subscribersMobiles.Contains(s.Id) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
-                        foreach (var subscriber in subscribersWithNoMobileSelected)
-                        {
-                            var autochargeContent = Tabriz2018Library.ContentManager.PrepareLatestMobileContent(subscriber.Id, mobilesList.FirstOrDefault().Id);
-                            if (autochargeContent == null)
-                                continue;
-                            autochargeContent.Content = Tabriz2018Library.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
-                            autochargeContent.Content = Tabriz2018Library.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
-                            var imiChargeObject = Tabriz2018Library.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
-                            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag, imiChargeObject.Price);
-                            messages.Add(message);
-                        }
-
-                        Tabriz2018Library.MessageHandler.InsertBulkMessagesToQueue(messages);
-                        Tabriz2018Library.MessageHandler.CreateMonitoringItem(null, SharedLibrary.MessageHandler.MessageType.AutoCharge, messages.Count, tag);
-                    }
-                }
+                
             }
             catch (Exception e)
             {

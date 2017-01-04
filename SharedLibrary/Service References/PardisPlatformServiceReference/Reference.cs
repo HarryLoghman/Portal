@@ -15,15 +15,6 @@ namespace SharedLibrary.PardisPlatformServiceReference {
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://Srv/", ConfigurationName="PardisPlatformServiceReference.ServiceCall")]
     public interface ServiceCall {
         
-        // CODEGEN: Parameter 'getHelloWorldAsStringReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        [return: System.ServiceModel.MessageParameterAttribute(Name="getHelloWorldAsStringReturn")]
-        SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse getHelloWorldAsString(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> getHelloWorldAsStringAsync(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request);
-        
         // CODEGEN: Parameter 'RSendReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -32,6 +23,15 @@ namespace SharedLibrary.PardisPlatformServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.RSendResponse> RSendAsync(SharedLibrary.PardisPlatformServiceReference.RSendRequest request);
+        
+        // CODEGEN: Parameter 'getHelloWorldAsStringReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
+        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [return: System.ServiceModel.MessageParameterAttribute(Name="getHelloWorldAsStringReturn")]
+        SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse getHelloWorldAsString(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> getHelloWorldAsStringAsync(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request);
         
         // CODEGEN: Parameter 'UltraSendReturn' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
@@ -68,42 +68,6 @@ namespace SharedLibrary.PardisPlatformServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse> ServiceSendAsync(SharedLibrary.PardisPlatformServiceReference.ServiceSendRequest request);
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="getHelloWorldAsString", WrapperNamespace="http://Srv/", IsWrapped=true)]
-    public partial class getHelloWorldAsStringRequest {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string name;
-        
-        public getHelloWorldAsStringRequest() {
-        }
-        
-        public getHelloWorldAsStringRequest(string name) {
-            this.name = name;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="getHelloWorldAsStringResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
-    public partial class getHelloWorldAsStringResponse {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string getHelloWorldAsStringReturn;
-        
-        public getHelloWorldAsStringResponse() {
-        }
-        
-        public getHelloWorldAsStringResponse(string getHelloWorldAsStringReturn) {
-            this.getHelloWorldAsStringReturn = getHelloWorldAsStringReturn;
-        }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -184,6 +148,42 @@ namespace SharedLibrary.PardisPlatformServiceReference {
         
         public RSendResponse(long[] RSendReturn) {
             this.RSendReturn = RSendReturn;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getHelloWorldAsString", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class getHelloWorldAsStringRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string name;
+        
+        public getHelloWorldAsStringRequest() {
+        }
+        
+        public getHelloWorldAsStringRequest(string name) {
+            this.name = name;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getHelloWorldAsStringResponse", WrapperNamespace="http://Srv/", IsWrapped=true)]
+    public partial class getHelloWorldAsStringResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://Srv/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string getHelloWorldAsStringReturn;
+        
+        public getHelloWorldAsStringResponse() {
+        }
+        
+        public getHelloWorldAsStringResponse(string getHelloWorldAsStringReturn) {
+            this.getHelloWorldAsStringReturn = getHelloWorldAsStringReturn;
         }
     }
     
@@ -499,29 +499,6 @@ namespace SharedLibrary.PardisPlatformServiceReference {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.getHelloWorldAsString(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request) {
-            return base.Channel.getHelloWorldAsString(request);
-        }
-        
-        public string getHelloWorldAsString(string name) {
-            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest inValue = new SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest();
-            inValue.name = name;
-            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).getHelloWorldAsString(inValue);
-            return retVal.getHelloWorldAsStringReturn;
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.getHelloWorldAsStringAsync(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request) {
-            return base.Channel.getHelloWorldAsStringAsync(request);
-        }
-        
-        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> getHelloWorldAsStringAsync(string name) {
-            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest inValue = new SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest();
-            inValue.name = name;
-            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).getHelloWorldAsStringAsync(inValue);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         SharedLibrary.PardisPlatformServiceReference.RSendResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.RSend(SharedLibrary.PardisPlatformServiceReference.RSendRequest request) {
             return base.Channel.RSend(request);
         }
@@ -560,6 +537,29 @@ namespace SharedLibrary.PardisPlatformServiceReference {
             inValue.ServiceIds = ServiceIds;
             inValue.info = info;
             return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).RSendAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse SharedLibrary.PardisPlatformServiceReference.ServiceCall.getHelloWorldAsString(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request) {
+            return base.Channel.getHelloWorldAsString(request);
+        }
+        
+        public string getHelloWorldAsString(string name) {
+            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest inValue = new SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest();
+            inValue.name = name;
+            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse retVal = ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).getHelloWorldAsString(inValue);
+            return retVal.getHelloWorldAsStringReturn;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> SharedLibrary.PardisPlatformServiceReference.ServiceCall.getHelloWorldAsStringAsync(SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest request) {
+            return base.Channel.getHelloWorldAsStringAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse> getHelloWorldAsStringAsync(string name) {
+            SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest inValue = new SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringRequest();
+            inValue.name = name;
+            return ((SharedLibrary.PardisPlatformServiceReference.ServiceCall)(this)).getHelloWorldAsStringAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]

@@ -25,7 +25,7 @@ namespace DehnadTabriz2018Service.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PardisImi")]
+        [global::System.Configuration.DefaultSettingValueAttribute("PardisPlatform")]
         public string AggregatorName {
             get {
                 return ((string)(this["AggregatorName"]));

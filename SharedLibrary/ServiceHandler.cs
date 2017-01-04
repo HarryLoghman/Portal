@@ -19,6 +19,8 @@ namespace SharedLibrary
                 var service = entity.Services.FirstOrDefault(o => o.ServiceCode == serviceCode);
                 var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.AggregatorId == aggregatorInfo.Id && o.ServiceId == service.Id);
                 sendInfoDic["shortCode"] = serviceInfo.ShortCode;
+                sendInfoDic["serviceId"] = service.Id.ToString();
+                sendInfoDic["aggregatorId"] = serviceInfo.AggregatorId.ToString();
                 sendInfoDic["aggregatorServiceId"] = serviceInfo.AggregatorServiceId.ToString();
             }
             return sendInfoDic;

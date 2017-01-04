@@ -23,6 +23,15 @@ namespace DehnadTabriz2018Service
                 bool retryNotDelieveredMessages = Properties.Settings.Default.RetryNotDeliveredMessages;
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Tabriz2018", aggregatorName);
+                List<ParidsShortCode> paridsShortCodes = null;
+                if (serviceAdditionalInfo["aggregatorId"] == "3"/*PardisPlatform*/)
+                {
+                    using (var portalEntity = new PortalEntities())
+                    {
+                        var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                        paridsShortCodes = portalEntity.ParidsShortCodes.Where(o => o.ServiceId == serivceId).ToList();
+                    }
+                }
                 int[] take = new int[(readSize / takeSize)];
                 int[] skip = new int[(readSize / takeSize)];
                 skip[0] = 0;
@@ -50,9 +59,9 @@ namespace DehnadTabriz2018Service
                     }
                 }
 
-                SendAutochargeMessages(autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                SendEventbaseMessages(eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                SendOnDemandMessages(onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                SendAutochargeMessages(autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName, paridsShortCodes);
+                SendEventbaseMessages(eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName, paridsShortCodes);
+                SendOnDemandMessages(onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName, paridsShortCodes);
 
             }
             catch (Exception e)
@@ -60,7 +69,7 @@ namespace DehnadTabriz2018Service
                 logs.Error("Error in SendHandler:" + e);
             }
         }
-        public static void SendAutochargeMessages(List<AutochargeMessagesBuffer> messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
+        public static void SendAutochargeMessages(List<AutochargeMessagesBuffer> messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName, List<ParidsShortCode> paridsShortCodes)
         {
             if (messages.Count == 0)
                 return;
@@ -76,13 +85,13 @@ namespace DehnadTabriz2018Service
                     else if (aggregatorName == "PardisImi")
                         TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisPlatform")
-                        TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo, paridsShortCodes));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
         }
 
-        public static void SendEventbaseMessages(List<EventbaseMessagesBuffer> messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
+        public static void SendEventbaseMessages(List<EventbaseMessagesBuffer> messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName, List<ParidsShortCode> paridsShortCodes)
         {
             if (messages.Count == 0)
                 return;
@@ -98,13 +107,13 @@ namespace DehnadTabriz2018Service
                     else if (aggregatorName == "PardisImi")
                         TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisPlatform")
-                        TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo, paridsShortCodes));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
         }
 
-        public static void SendOnDemandMessages(List<OnDemandMessagesBuffer> messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
+        public static void SendOnDemandMessages(List<OnDemandMessagesBuffer> messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName, List<ParidsShortCode> paridsShortCodes)
         {
             if (messages.Count == 0)
                 return;
@@ -120,7 +129,7 @@ namespace DehnadTabriz2018Service
                     else if (aggregatorName == "PardisImi")
                         TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisPlatform")
-                        TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(Tabriz2018Library.MessageHandler.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo, paridsShortCodes));
                 }
             }
             Task.WaitAll(TaskList.ToArray());

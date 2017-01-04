@@ -113,6 +113,16 @@
           <Property Name="OperatorPlan" Type="int" Nullable="false" />
           <Property Name="Prefix" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="ParidsShortCodes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PardisServiceId" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="ReceievedMessages">
           <Key>
             <PropertyRef Name="Id" />
@@ -425,6 +435,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="Operators" EntityType="Self.Operators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ParidsShortCodes" EntityType="Self.ParidsShortCodes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceInfo" EntityType="Self.ServiceInfo" Schema="dbo" store:Type="Tables" />
@@ -904,6 +915,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <FunctionImport Name="ArchiveReceivedMessages" />
           <EntitySet Name="Deliveries" EntityType="PortalModel.Delivery" />
           <EntitySet Name="vw_DehnadAllSentMessages" EntityType="PortalModel.vw_DehnadAllSentMessages" />
+          <EntitySet Name="ParidsShortCodes" EntityType="PortalModel.ParidsShortCode" />
         </EntityContainer>
         <EntityType Name="Delivery">
           <Key>
@@ -956,6 +968,16 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ServiceName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ParidsShortCode">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PardisServiceId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1246,6 +1268,17 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ParidsShortCodes">
+            <EntityTypeMapping TypeName="PortalModel.ParidsShortCode">
+              <MappingFragment StoreEntitySet="ParidsShortCodes">
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PardisServiceId" ColumnName="PardisServiceId" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

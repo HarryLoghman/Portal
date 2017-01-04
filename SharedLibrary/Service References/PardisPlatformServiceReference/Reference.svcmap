@@ -19,10 +19,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="C:\Work\Pardis.xml" Protocol="file" SourceId="1" />
+    <MetadataSource Address="C:\Work\PardisPlatform.xml" Protocol="file" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Pardis.wsdl" MetadataType="Wsdl" ID="318ff995-46b3-42b3-b437-abbf1af45f08" SourceId="1" SourceUrl="file:///C:/Work/Pardis.xml" />
+    <MetadataFile FileName="PardisPlatform.wsdl" MetadataType="Wsdl" ID="dacc3aab-2351-427d-a079-43aba19128a3" SourceId="1" SourceUrl="file:///C:/Work/PardisPlatform.xml" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
