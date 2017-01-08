@@ -14,31 +14,13 @@ namespace SharedLibrary.Models
     
     public partial class vw_DehnadAllSentMessages
     {
-        public long Id { get; set; }
+        public string Type { get; set; }
+        public string ServiceName { get; set; }
         public string MobileNumber { get; set; }
+        public string ShortCode { get; set; }
+        public string PersianDate { get; set; }
+        public string Time { get; set; }
         public string Content { get; set; }
         public int ProcessStatus { get; set; }
-        public Nullable<System.DateTime> SentDate { get; set; }
-        public string PersianSentDate { get; set; }
-        public System.DateTime DateAddedToQueue { get; set; }
-        public string PersianDateAddedToQueue { get; set; }
-        public int MessageType { get; set; }
-        public long AggregatorId { get; set; }
-        public long ServiceId { get; set; }
-        public string ReferenceId { get; set; }
-        public Nullable<long> ContentId { get; set; }
-        public Nullable<int> MessagePoint { get; set; }
-        public Nullable<int> ImiChargeCode { get; set; }
-        public Nullable<int> ImiMessageType { get; set; }
-        public Nullable<long> SubscriberId { get; set; }
-        public string ImiChargeKey { get; set; }
-        public string SubUnSubMoMssage { get; set; }
-        public Nullable<byte> SubUnSubType { get; set; }
-        public Nullable<int> Tag { get; set; }
-        public Nullable<int> Price { get; set; }
-        public Nullable<bool> DeliveryStatus { get; set; }
-        public string DeliveryDescription { get; set; }
-        public string ServiceName { get; set; }
-        public string ShortCode { get; set; }
     }
 }

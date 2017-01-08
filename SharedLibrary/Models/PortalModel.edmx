@@ -241,43 +241,20 @@
 warning 6002: The table/view 'Portal.dbo.vw_DehnadAllSentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_DehnadAllSentMessages">
           <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ProcessStatus" />
-            <PropertyRef Name="DateAddedToQueue" />
-            <PropertyRef Name="PersianDateAddedToQueue" />
-            <PropertyRef Name="MessageType" />
-            <PropertyRef Name="AggregatorId" />
-            <PropertyRef Name="ServiceId" />
+            <PropertyRef Name="Type" />
             <PropertyRef Name="ServiceName" />
+            <PropertyRef Name="MobileNumber" />
             <PropertyRef Name="ShortCode" />
+            <PropertyRef Name="ProcessStatus" />
           </Key>
-          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PersianDate" Type="nvarchar" MaxLength="10" />
+          <Property Name="Time" Type="nvarchar" MaxLength="21" />
           <Property Name="Content" Type="nvarchar(max)" />
           <Property Name="ProcessStatus" Type="int" Nullable="false" />
-          <Property Name="SentDate" Type="datetime" />
-          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
-          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
-          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MessageType" Type="int" Nullable="false" />
-          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
-          <Property Name="ServiceId" Type="bigint" Nullable="false" />
-          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
-          <Property Name="ContentId" Type="bigint" />
-          <Property Name="MessagePoint" Type="int" />
-          <Property Name="ImiChargeCode" Type="int" />
-          <Property Name="ImiMessageType" Type="int" />
-          <Property Name="SubscriberId" Type="bigint" />
-          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
-          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
-          <Property Name="SubUnSubType" Type="tinyint" />
-          <Property Name="Tag" Type="int" />
-          <Property Name="Price" Type="int" />
-          <Property Name="DeliveryStatus" Type="bit" />
-          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
-          <Property Name="ServiceName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -446,32 +423,14 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoints" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vw_DehnadAllSentMessages" EntityType="Self.vw_DehnadAllSentMessages" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
-    [vw_DehnadAllSentMessages].[Id] AS [Id], 
-    [vw_DehnadAllSentMessages].[MobileNumber] AS [MobileNumber], 
-    [vw_DehnadAllSentMessages].[Content] AS [Content], 
-    [vw_DehnadAllSentMessages].[ProcessStatus] AS [ProcessStatus], 
-    [vw_DehnadAllSentMessages].[SentDate] AS [SentDate], 
-    [vw_DehnadAllSentMessages].[PersianSentDate] AS [PersianSentDate], 
-    [vw_DehnadAllSentMessages].[DateAddedToQueue] AS [DateAddedToQueue], 
-    [vw_DehnadAllSentMessages].[PersianDateAddedToQueue] AS [PersianDateAddedToQueue], 
-    [vw_DehnadAllSentMessages].[MessageType] AS [MessageType], 
-    [vw_DehnadAllSentMessages].[AggregatorId] AS [AggregatorId], 
-    [vw_DehnadAllSentMessages].[ServiceId] AS [ServiceId], 
-    [vw_DehnadAllSentMessages].[ReferenceId] AS [ReferenceId], 
-    [vw_DehnadAllSentMessages].[ContentId] AS [ContentId], 
-    [vw_DehnadAllSentMessages].[MessagePoint] AS [MessagePoint], 
-    [vw_DehnadAllSentMessages].[ImiChargeCode] AS [ImiChargeCode], 
-    [vw_DehnadAllSentMessages].[ImiMessageType] AS [ImiMessageType], 
-    [vw_DehnadAllSentMessages].[SubscriberId] AS [SubscriberId], 
-    [vw_DehnadAllSentMessages].[ImiChargeKey] AS [ImiChargeKey], 
-    [vw_DehnadAllSentMessages].[SubUnSubMoMssage] AS [SubUnSubMoMssage], 
-    [vw_DehnadAllSentMessages].[SubUnSubType] AS [SubUnSubType], 
-    [vw_DehnadAllSentMessages].[Tag] AS [Tag], 
-    [vw_DehnadAllSentMessages].[Price] AS [Price], 
-    [vw_DehnadAllSentMessages].[DeliveryStatus] AS [DeliveryStatus], 
-    [vw_DehnadAllSentMessages].[DeliveryDescription] AS [DeliveryDescription], 
+    [vw_DehnadAllSentMessages].[Type] AS [Type], 
     [vw_DehnadAllSentMessages].[ServiceName] AS [ServiceName], 
-    [vw_DehnadAllSentMessages].[ShortCode] AS [ShortCode]
+    [vw_DehnadAllSentMessages].[MobileNumber] AS [MobileNumber], 
+    [vw_DehnadAllSentMessages].[ShortCode] AS [ShortCode], 
+    [vw_DehnadAllSentMessages].[PersianDate] AS [PersianDate], 
+    [vw_DehnadAllSentMessages].[Time] AS [Time], 
+    [vw_DehnadAllSentMessages].[Content] AS [Content], 
+    [vw_DehnadAllSentMessages].[ProcessStatus] AS [ProcessStatus]
     FROM [dbo].[vw_DehnadAllSentMessages] AS [vw_DehnadAllSentMessages]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" store:Type="Views" store:Schema="dbo">
@@ -914,8 +873,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           </AssociationSet>
           <FunctionImport Name="ArchiveReceivedMessages" />
           <EntitySet Name="Deliveries" EntityType="PortalModel.Delivery" />
-          <EntitySet Name="vw_DehnadAllSentMessages" EntityType="PortalModel.vw_DehnadAllSentMessages" />
           <EntitySet Name="ParidsShortCodes" EntityType="PortalModel.ParidsShortCode" />
+          <EntitySet Name="vw_DehnadAllSentMessages" EntityType="PortalModel.vw_DehnadAllSentMessages" />
         </EntityContainer>
         <EntityType Name="Delivery">
           <Key>
@@ -929,46 +888,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="AggregatorId" Type="Int64" Nullable="false" />
           <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
         </EntityType>
-        <EntityType Name="vw_DehnadAllSentMessages">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ProcessStatus" />
-            <PropertyRef Name="DateAddedToQueue" />
-            <PropertyRef Name="PersianDateAddedToQueue" />
-            <PropertyRef Name="MessageType" />
-            <PropertyRef Name="AggregatorId" />
-            <PropertyRef Name="ServiceId" />
-            <PropertyRef Name="ServiceName" />
-            <PropertyRef Name="ShortCode" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-          <Property Name="SentDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MessageType" Type="Int32" Nullable="false" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ContentId" Type="Int64" />
-          <Property Name="MessagePoint" Type="Int32" />
-          <Property Name="ImiChargeCode" Type="Int32" />
-          <Property Name="ImiMessageType" Type="Int32" />
-          <Property Name="SubscriberId" Type="Int64" />
-          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubType" Type="Byte" />
-          <Property Name="Tag" Type="Int32" />
-          <Property Name="Price" Type="Int32" />
-          <Property Name="DeliveryStatus" Type="Boolean" />
-          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="ParidsShortCode">
           <Key>
             <PropertyRef Name="Id" />
@@ -978,6 +897,23 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PardisServiceId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Price" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vw_DehnadAllSentMessages">
+          <Key>
+            <PropertyRef Name="Type" />
+            <PropertyRef Name="ServiceName" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ShortCode" />
+            <PropertyRef Name="ProcessStatus" />
+          </Key>
+          <Property Name="Type" Type="String" Nullable="false" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PersianDate" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Time" Type="String" MaxLength="21" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1240,38 +1176,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vw_DehnadAllSentMessages">
-            <EntityTypeMapping TypeName="PortalModel.vw_DehnadAllSentMessages">
-              <MappingFragment StoreEntitySet="vw_DehnadAllSentMessages">
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
-                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
-                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
-                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
-                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
-                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
-                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
-                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
-                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
-                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
-                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ParidsShortCodes">
             <EntityTypeMapping TypeName="PortalModel.ParidsShortCode">
               <MappingFragment StoreEntitySet="ParidsShortCodes">
@@ -1280,6 +1184,20 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_DehnadAllSentMessages">
+            <EntityTypeMapping TypeName="PortalModel.vw_DehnadAllSentMessages">
+              <MappingFragment StoreEntitySet="vw_DehnadAllSentMessages">
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
