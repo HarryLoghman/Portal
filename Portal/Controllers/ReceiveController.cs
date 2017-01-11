@@ -18,7 +18,7 @@ namespace Portal.Controllers
                 messageObj.MobileNumber = messageObj.Address;
                 messageObj.Content = messageObj.Message;
             }
-            else if(messageObj.From != null)
+            else if (messageObj.From != null)
             {
                 messageObj.MobileNumber = messageObj.From;
                 messageObj.ShortCode = messageObj.To;
@@ -82,7 +82,7 @@ namespace Portal.Controllers
             messageObj.MobileNumber = da;
             messageObj.ShortCode = oa;
             messageObj.Content = txt;
-            
+
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -122,6 +122,29 @@ namespace Portal.Controllers
             messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
             SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
             return "1";
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public string AppMessage([FromBody]MessageObject messageObj)
+        {
+            if (messageObj.Address != null)
+            {
+                messageObj.MobileNumber = messageObj.Address;
+                messageObj.Content = messageObj.Message;
+            }
+            else if (messageObj.From != null)
+            {
+                messageObj.MobileNumber = messageObj.From;
+                messageObj.ShortCode = messageObj.To;
+            }
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                return "Invalid Mobile Number";
+            messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+            SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+            return "Success";
         }
 
         // /Receive/Delivery?PardisId=44353535&Status=DeliveredToNetwork&ErrorMessage=error
@@ -165,7 +188,7 @@ namespace Portal.Controllers
             {
                 var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(integratedPanelObj.ServiceID);
                 integratedPanelObj.Address = SharedLibrary.MessageHandler.ValidateNumber(integratedPanelObj.Address);
-                
+
                 if (integratedPanelObj.Address == "Invalid Mobile Number")
                     result = "-1";
                 else
@@ -209,12 +232,12 @@ namespace Portal.Controllers
                 var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
                 if (singlecharge == null)
                     return "-3";
-                using(var entity = new SoltanLibrary.Models.SoltanEntities())
+                using (var entity = new SoltanLibrary.Models.SoltanEntities())
                 {
                     entity.Singlecharges.Attach(singlecharge);
                     singlecharge.IsCalledFromInAppPurchase = true;
                     entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
-                    entity.SaveChanges();   
+                    entity.SaveChanges();
                 }
                 if (singlecharge.IsSucceeded == true)
                     return "1";
@@ -225,6 +248,43 @@ namespace Portal.Controllers
             }
             else
                 return "-5";
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public string AppChargeUser([FromBody]MessageObject message)
+        {
+            message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+            message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
+            if (message.MobileNumber == "Invalid Mobile Number")
+                return "Invalid Mobile Number";
+            if (message.ServiceCode == "")
+                return "Invalid ServiceCode";
+            message = SharedLibrary.MessageHandler.ValidateMessage(message);
+            message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+            message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+            message.IsReceivedFromIntegratedPanel = false;
+            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(message.ServiceCode);
+            if (service == null)
+                return "Invalid ServiceCode";
+            message.ServiceId = service.Id;
+            //var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+            //if (singlecharge == null)
+            //    return "-3";
+            //using (var entity = new SoltanLibrary.Models.SoltanEntities())
+            //{
+            //    entity.Singlecharges.Attach(singlecharge);
+            //    singlecharge.IsCalledFromInAppPurchase = true;
+            //    entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+            //    entity.SaveChanges();
+            //}
+            //if (singlecharge.IsSucceeded == true)
+            //    return "1";
+            //else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
+            //    return "-6";
+            //else
+                return "Error in AppChargeUser";
         }
     }
 }

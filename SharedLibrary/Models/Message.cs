@@ -35,5 +35,6 @@ namespace SharedLibrary.Models
         public string From { get; set; }
         public string To { get; set; }
         public bool? IsReceivedFromWeb { get; set; }
+        public string ServiceCode { get; set; }
     }
 }
