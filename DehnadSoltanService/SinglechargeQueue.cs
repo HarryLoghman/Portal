@@ -18,12 +18,55 @@ namespace DehnadSoltanService
             {
                 //SendWarningToSinglechargeUsersInQueue();
                 ChargeUsersFromSinglechargeQueue();
+                SendWarningToSinglechargeUsersInQueue();
+                RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)
             {
                 logs.Error("Exception in SinglechargeQueue ProcessQueue : ", e);
             }
         }
+
+        private void SendRenewalWarningToSinglechargeUsersInQueue()
+        {
+            try
+            {
+                var today = DateTime.Now;
+                int batchSaveCounter = 0;
+                using (var entity = new SoltanEntities())
+                {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    var chargeCodes = entity.ImiChargeCodes.ToList();
+                    var now = DateTime.Now;
+                    var QueueList = entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 29) < now && now < DbFunctions.AddDays(o.DateCreated, 30)  && o.IsUserCanceledTheInstallment == false && o.IsRenewalMessageSent != true).ToList();
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Soltan");
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
+                    if (serviceInfo == null)
+                    {
+                        logs.Info("serviceInfo is null in SendRenewalWarningToSinglechargeUsersInQueue!");
+                        return;
+                    }
+                    var shortCode = serviceInfo.ShortCode;
+                    foreach (var item in QueueList)
+                    {
+                        var isMessageAlreadySended = entity.OnDemandMessagesBuffers.FirstOrDefault(o => o.MobileNumber == item.MobileNumber);
+                        if (isMessageAlreadySended != null)
+                            continue;
+                        var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
+                        var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "RenewalSinglechargeMessage").Content;
+                        var imiChargeObject = SoltanLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
+                        SoltanLibrary.MessageHandler.InsertMessageToQueue(message);
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SinglechargeQueue SendRenewalWarningToSinglechargeUsersInQueue : ", e);
+            }
+        }
+
 
         private void SendWarningToSinglechargeUsersInQueue()
         {
@@ -67,6 +110,61 @@ namespace DehnadSoltanService
             catch (Exception e)
             {
                 logs.Error("Exception in SinglechargeQueue SendWarningToSinglechargeUsersInQueue : ", e);
+            }
+        }
+
+        private void RenewSinglechargeInstallmentQueue()
+        {
+            try
+            {
+                var today = DateTime.Now;
+                int batchSaveCounter = 0;
+                using (var entity = new SoltanEntities())
+                {
+
+                    var chargeCodes = entity.ImiChargeCodes.ToList();
+                    var now = DateTime.Now;
+                    var QueueList = entity.SinglechargeInstallments.Where(o => now > DbFunctions.AddDays(o.DateCreated, 30) && o.DateCreated > DbFunctions.AddDays(now, -31) && o.CancelationDate == null && o.IsRenewd != true).ToList();
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Soltan");
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
+                    if (serviceInfo == null)
+                    {
+                        logs.Info("serviceInfo is null in RenewSinglechargeInstallmentQueue!");
+                        return;
+                    }
+                    var shortCode = serviceInfo.ShortCode;
+                    foreach (var item in QueueList)
+                    {
+                        if (batchSaveCounter >= 500)
+                        {
+                            entity.SaveChanges();
+                            batchSaveCounter = 0;
+                        }
+
+                        var installment = new SinglechargeInstallment();
+                        installment.MobileNumber = item.MobileNumber;
+                        installment.TotalPrice = item.TotalPrice;
+                        installment.IsExceededDailyChargeLimit = false;
+                        installment.IsFullyPaid = false;
+                        installment.PricePayed = 0;
+                        installment.DateCreated = DateTime.Now;
+                        installment.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
+                        installment.PriceTodayCharged = 0;
+                        installment.IsUserDailyChargeBalanced = false;
+                        installment.IsUserCanceledTheInstallment = false;
+                        installment.IsRenewalMessageSent = false;
+                        installment.IsRenewd = false;
+                        entity.SinglechargeInstallments.Add(installment);
+                        item.IsRenewd = true;
+                        entity.Entry(item).State = EntityState.Modified;
+                        batchSaveCounter += 1;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SinglechargeQueue RenewSinglechargeInstallmentQueue : ", e);
             }
         }
 
@@ -116,6 +214,8 @@ namespace DehnadSoltanService
                         installment.PriceTodayCharged = 0;
                         installment.IsUserDailyChargeBalanced = false;
                         installment.IsUserCanceledTheInstallment = false;
+                        installment.IsRenewalMessageSent = false;
+                        installment.IsRenewd = false;
                         entity.SinglechargeInstallments.Add(installment);
                         //}
                         entity.SinglechargeWaitings.Remove(item);

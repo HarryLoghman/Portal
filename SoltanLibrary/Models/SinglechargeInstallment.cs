@@ -27,5 +27,7 @@ namespace SoltanLibrary.Models
         public bool IsUserCanceledTheInstallment { get; set; }
         public Nullable<System.DateTime> CancelationDate { get; set; }
         public string PersianCancelationDate { get; set; }
+        public Nullable<bool> IsRenewalMessageSent { get; set; }
+        public Nullable<bool> IsRenewd { get; set; }
     }
 }

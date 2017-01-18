@@ -144,7 +144,7 @@ namespace Portal.Controllers
             messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
             messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
             SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-            return "Success";
+            return "1";
         }
 
         // /Receive/Delivery?PardisId=44353535&Status=DeliveredToNetwork&ErrorMessage=error
@@ -269,6 +269,8 @@ namespace Portal.Controllers
             if (service == null)
                 return "Invalid ServiceCode";
             message.ServiceId = service.Id;
+            if (message.Price == null)
+                return "Invalid Price";
             //var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
             //if (singlecharge == null)
             //    return "-3";

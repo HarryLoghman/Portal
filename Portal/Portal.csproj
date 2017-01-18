@@ -230,6 +230,8 @@
     <Compile Include="Areas\BimeKarbala\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\BimeKarbalaAreaRegistration.cs" />
     <Compile Include="Areas\MyLeague\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Statistics\Controllers\SubscribersLogController.cs" />
+    <Compile Include="Areas\Statistics\StatisticsAreaRegistration.cs" />
     <Compile Include="Areas\Tabriz2018\Controllers\AutochargeContentsController.cs" />
     <Compile Include="Areas\Tabriz2018\Controllers\AutochargeTimeTableController.cs" />
     <Compile Include="Areas\Tabriz2018\Controllers\EventbaseContentsController.cs" />
@@ -953,6 +955,9 @@
     <Content Include="Areas\Tabriz2018\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Tabriz2018\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Tabriz2018\Views\web.config" />
+    <Content Include="Areas\Statistics\Views\SubscribersLog\Index.cshtml" />
+    <Content Include="Areas\Statistics\Views\web.config" />
+    <Content Include="Areas\Statistics\Views\_ViewStart.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1311,6 +1316,7 @@
     <Folder Include="Areas\MyLeague\Models\" />
     <Folder Include="Areas\SepidRood\Models\" />
     <Folder Include="Areas\Soltan\Models\" />
+    <Folder Include="Areas\Statistics\Models\" />
     <Folder Include="Areas\Tabriz2018\Models\" />
     <Folder Include="Areas\Tirandazi\Models\" />
     <Folder Include="bin\bg-BG\" />
