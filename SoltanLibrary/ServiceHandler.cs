@@ -104,7 +104,7 @@ namespace SoltanLibrary
         {
             using(var entity = new SoltanEntities())
             {
-                var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsFullyPaid == false && o.IsUserCanceledTheInstallment == false).ToList();
+                var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
                 foreach (var installment in userinstallments)
                 {
                     installment.IsUserCanceledTheInstallment = true;
