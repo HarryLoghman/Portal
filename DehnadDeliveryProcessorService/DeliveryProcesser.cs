@@ -75,6 +75,8 @@ namespace DehnadDeliveryProcessorService
                     isMessageFound = Tabriz2018FindAndUpdateMessageDelivery(delivredMessage, isSusccessfulyDelivered, description);
                 if (isMessageFound == false)
                     isMessageFound = TirandaziFindAndUpdateMessageDelivery(delivredMessage, isSusccessfulyDelivered, description);
+                if (isMessageFound == false)
+                    isMessageFound = DonyayeAsatirFindAndUpdateMessageDelivery(delivredMessage, isSusccessfulyDelivered, description);
 
                 UpdateDeliveryObject(delivredMessage, isMessageFound);
             }
@@ -101,6 +103,44 @@ namespace DehnadDeliveryProcessorService
                 }
                 portalEntity.SaveChanges();
             }
+        }
+
+        private bool DonyayeAsatirFindAndUpdateMessageDelivery(Delivery delivredMessage, bool isSusccessfulyDelivered, string description)
+        {
+            using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+            {
+                var autochargeMessage = entity.AutochargeMessagesBuffers.FirstOrDefault(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.Success && o.DeliveryStatus == null && o.ReferenceId == delivredMessage.ReferenceId);
+                if (autochargeMessage != null)
+                {
+                    autochargeMessage.DeliveryStatus = isSusccessfulyDelivered;
+                    if (isSusccessfulyDelivered == false)
+                        autochargeMessage.DeliveryDescription = description;
+                    entity.Entry(autochargeMessage).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    return true;
+                }
+                var eventbaseMessage = entity.EventbaseMessagesBuffers.FirstOrDefault(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.Success && o.DeliveryStatus == null && o.ReferenceId == delivredMessage.ReferenceId);
+                if (eventbaseMessage != null)
+                {
+                    eventbaseMessage.DeliveryStatus = isSusccessfulyDelivered;
+                    if (isSusccessfulyDelivered == false)
+                        eventbaseMessage.DeliveryDescription = description;
+                    entity.Entry(eventbaseMessage).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    return true;
+                }
+                var ondemandMessage = entity.OnDemandMessagesBuffers.FirstOrDefault(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.Success && o.DeliveryStatus == null && o.ReferenceId == delivredMessage.ReferenceId);
+                if (ondemandMessage != null)
+                {
+                    ondemandMessage.DeliveryStatus = isSusccessfulyDelivered;
+                    if (isSusccessfulyDelivered == false)
+                        ondemandMessage.DeliveryDescription = description;
+                    entity.Entry(ondemandMessage).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
         }
 
         private bool BoatingFindAndUpdateMessageDelivery(Delivery delivredMessage, bool isSusccessfulyDelivered, string description)

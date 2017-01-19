@@ -2,29 +2,6 @@
 <wsdl:definitions xmlns:intf="http://Srv/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://Srv/" targetNamespace="http://Srv/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://Srv/">
-      <xsd:element name="RSend">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="username" type="xsd:string" />
-            <xsd:element name="password" type="xsd:string" />
-            <xsd:element name="domain" type="xsd:string" />
-            <xsd:element maxOccurs="unbounded" name="cpuserid" type="xsd:string" />
-            <xsd:element name="msgType" type="xsd:int" />
-            <xsd:element maxOccurs="unbounded" name="messages" type="xsd:string" />
-            <xsd:element maxOccurs="unbounded" name="destinations" type="xsd:string" />
-            <xsd:element maxOccurs="unbounded" name="originators" type="xsd:string" />
-            <xsd:element maxOccurs="unbounded" name="ServiceIds" type="xsd:string" />
-            <xsd:element name="info" type="xsd:string" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="RSendResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element maxOccurs="unbounded" name="RSendReturn" type="xsd:long" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       <xsd:element name="getHelloWorldAsString">
         <xsd:complexType>
           <xsd:sequence>
@@ -36,6 +13,29 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="getHelloWorldAsStringReturn" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ServiceSend">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="username" type="xsd:string" />
+            <xsd:element name="password" type="xsd:string" />
+            <xsd:element name="domain" type="xsd:string" />
+            <xsd:element name="msgType" type="xsd:int" />
+            <xsd:element maxOccurs="unbounded" name="messages" type="xsd:string" />
+            <xsd:element maxOccurs="unbounded" name="destinations" type="xsd:string" />
+            <xsd:element maxOccurs="unbounded" name="originators" type="xsd:string" />
+            <xsd:element maxOccurs="unbounded" name="udhs" type="xsd:string" />
+            <xsd:element maxOccurs="unbounded" name="mClass" type="xsd:string" />
+            <xsd:element maxOccurs="unbounded" name="ServiceIds" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ServiceSendResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="ServiceSendReturn" type="xsd:long" />
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -62,25 +62,6 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="Unsubscribe">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="username" type="xsd:string" />
-            <xsd:element name="password" type="xsd:string" />
-            <xsd:element name="domain" type="xsd:string" />
-            <xsd:element name="shortcode" type="xsd:string" />
-            <xsd:element name="subscriber" type="xsd:string" />
-            <xsd:element name="ServiceId" type="xsd:string" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="UnsubscribeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="UnsubscribeReturn" type="xsd:string" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       <xsd:element name="Subscribe">
         <xsd:complexType>
           <xsd:sequence>
@@ -100,26 +81,45 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="ServiceSend">
+      <xsd:element name="Unsubscribe">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="username" type="xsd:string" />
             <xsd:element name="password" type="xsd:string" />
             <xsd:element name="domain" type="xsd:string" />
+            <xsd:element name="shortcode" type="xsd:string" />
+            <xsd:element name="subscriber" type="xsd:string" />
+            <xsd:element name="ServiceId" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="UnsubscribeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="UnsubscribeReturn" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="RSend">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="username" type="xsd:string" />
+            <xsd:element name="password" type="xsd:string" />
+            <xsd:element name="domain" type="xsd:string" />
+            <xsd:element maxOccurs="unbounded" name="cpuserid" type="xsd:string" />
             <xsd:element name="msgType" type="xsd:int" />
             <xsd:element maxOccurs="unbounded" name="messages" type="xsd:string" />
             <xsd:element maxOccurs="unbounded" name="destinations" type="xsd:string" />
             <xsd:element maxOccurs="unbounded" name="originators" type="xsd:string" />
-            <xsd:element maxOccurs="unbounded" name="udhs" type="xsd:string" />
-            <xsd:element maxOccurs="unbounded" name="mClass" type="xsd:string" />
             <xsd:element maxOccurs="unbounded" name="ServiceIds" type="xsd:string" />
+            <xsd:element name="info" type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="ServiceSendResponse">
+      <xsd:element name="RSendResponse">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element maxOccurs="unbounded" name="ServiceSendReturn" type="xsd:long" />
+            <xsd:element maxOccurs="unbounded" name="RSendReturn" type="xsd:long" />
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -162,48 +162,48 @@
     <wsdl:part name="parameters" element="impl:ServiceSend" />
   </wsdl:message>
   <wsdl:portType name="ServiceCall">
-    <wsdl:operation name="RSend">
-      <wsdl:input name="RSendRequest" message="impl:RSendRequest" />
-      <wsdl:output name="RSendResponse" message="impl:RSendResponse" />
-    </wsdl:operation>
     <wsdl:operation name="getHelloWorldAsString">
       <wsdl:input name="getHelloWorldAsStringRequest" message="impl:getHelloWorldAsStringRequest" />
       <wsdl:output name="getHelloWorldAsStringResponse" message="impl:getHelloWorldAsStringResponse" />
-    </wsdl:operation>
-    <wsdl:operation name="UltraSend">
-      <wsdl:input name="UltraSendRequest" message="impl:UltraSendRequest" />
-      <wsdl:output name="UltraSendResponse" message="impl:UltraSendResponse" />
-    </wsdl:operation>
-    <wsdl:operation name="Unsubscribe">
-      <wsdl:input name="UnsubscribeRequest" message="impl:UnsubscribeRequest" />
-      <wsdl:output name="UnsubscribeResponse" message="impl:UnsubscribeResponse" />
-    </wsdl:operation>
-    <wsdl:operation name="Subscribe">
-      <wsdl:input name="SubscribeRequest" message="impl:SubscribeRequest" />
-      <wsdl:output name="SubscribeResponse" message="impl:SubscribeResponse" />
     </wsdl:operation>
     <wsdl:operation name="ServiceSend">
       <wsdl:input name="ServiceSendRequest" message="impl:ServiceSendRequest" />
       <wsdl:output name="ServiceSendResponse" message="impl:ServiceSendResponse" />
     </wsdl:operation>
+    <wsdl:operation name="UltraSend">
+      <wsdl:input name="UltraSendRequest" message="impl:UltraSendRequest" />
+      <wsdl:output name="UltraSendResponse" message="impl:UltraSendResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="Subscribe">
+      <wsdl:input name="SubscribeRequest" message="impl:SubscribeRequest" />
+      <wsdl:output name="SubscribeResponse" message="impl:SubscribeResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="Unsubscribe">
+      <wsdl:input name="UnsubscribeRequest" message="impl:UnsubscribeRequest" />
+      <wsdl:output name="UnsubscribeResponse" message="impl:UnsubscribeResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="RSend">
+      <wsdl:input name="RSendRequest" message="impl:RSendRequest" />
+      <wsdl:output name="RSendResponse" message="impl:RSendResponse" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="SendSoapBinding" type="impl:ServiceCall">
     <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="RSend">
-      <wsdlsoap:operation soapAction="" />
-      <wsdl:input name="RSendRequest">
-        <wsdlsoap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output name="RSendResponse">
-        <wsdlsoap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="getHelloWorldAsString">
       <wsdlsoap:operation soapAction="" />
       <wsdl:input name="getHelloWorldAsStringRequest">
         <wsdlsoap:body use="literal" />
       </wsdl:input>
       <wsdl:output name="getHelloWorldAsStringResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ServiceSend">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="ServiceSendRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ServiceSendResponse">
         <wsdlsoap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
@@ -216,15 +216,6 @@
         <wsdlsoap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="Unsubscribe">
-      <wsdlsoap:operation soapAction="" />
-      <wsdl:input name="UnsubscribeRequest">
-        <wsdlsoap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output name="UnsubscribeResponse">
-        <wsdlsoap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="Subscribe">
       <wsdlsoap:operation soapAction="" />
       <wsdl:input name="SubscribeRequest">
@@ -234,12 +225,21 @@
         <wsdlsoap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ServiceSend">
+    <wsdl:operation name="Unsubscribe">
       <wsdlsoap:operation soapAction="" />
-      <wsdl:input name="ServiceSendRequest">
+      <wsdl:input name="UnsubscribeRequest">
         <wsdlsoap:body use="literal" />
       </wsdl:input>
-      <wsdl:output name="ServiceSendResponse">
+      <wsdl:output name="UnsubscribeResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RSend">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="RSendRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="RSendResponse">
         <wsdlsoap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>

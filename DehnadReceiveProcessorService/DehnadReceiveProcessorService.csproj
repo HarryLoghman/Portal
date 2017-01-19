@@ -111,6 +111,10 @@
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
       <Name>DanestanehLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
+      <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
+      <Name>DonyayeAsatirLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>

@@ -163,6 +163,8 @@ namespace DehnadReceiveProcessorService
                     BimeKarbalaLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Boating")
                     BoatingLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "DonyayeAsatir")
+                    DonyayeAsatirLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -194,6 +196,8 @@ namespace DehnadReceiveProcessorService
                     BimeKarbalaLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "Boating")
                     BoatingLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "DonyayeAsatir")
+                    DonyayeAsatirLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

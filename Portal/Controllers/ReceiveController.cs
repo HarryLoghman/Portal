@@ -142,7 +142,7 @@ namespace Portal.Controllers
             if (messageObj.MobileNumber == "Invalid Mobile Number")
                 return "Invalid Mobile Number";
             messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromApp" : null;
             SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
             return "1";
         }
