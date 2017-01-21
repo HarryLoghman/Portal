@@ -104,6 +104,12 @@ namespace DonyayeAsatirLibrary
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var singlecharge = new Singlecharge();
+            if (message.Content.All(char.IsDigit))
+            {
+                var price = Convert.ToInt32(message.Content);
+                var imiObject = MessageHandler.GetImiChargeObjectFromPrice(price, null);
+                message.Content = imiObject.ChargeCode.ToString();
+            }
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);

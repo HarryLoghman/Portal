@@ -144,7 +144,7 @@ namespace Portal.Controllers
             messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
             messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromApp" : null;
             SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-            return "1";
+            return "Success";
         }
 
         // /Receive/Delivery?PardisId=44353535&Status=DeliveredToNetwork&ErrorMessage=error
@@ -271,22 +271,42 @@ namespace Portal.Controllers
             message.ServiceId = service.Id;
             if (message.Price == null)
                 return "Invalid Price";
-            //var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
-            //if (singlecharge == null)
-            //    return "-3";
-            //using (var entity = new SoltanLibrary.Models.SoltanEntities())
-            //{
-            //    entity.Singlecharges.Attach(singlecharge);
-            //    singlecharge.IsCalledFromInAppPurchase = true;
-            //    entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
-            //    entity.SaveChanges();
-            //}
-            //if (singlecharge.IsSucceeded == true)
-            //    return "1";
-            //else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
-            //    return "-6";
-            //else
-                return "Error in AppChargeUser";
+
+            if (message.ServiceCode == "Soltan")
+            {
+                var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                if (singlecharge == null)
+                    return "-3";
+                using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                {
+                    entity.Singlecharges.Attach(singlecharge);
+                    singlecharge.IsCalledFromInAppPurchase = true;
+                    entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                    entity.SaveChanges();
+                }
+                if (singlecharge.IsSucceeded == true)
+                    return "Success";
+                else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                    return "Insufficient Balance";
+            }
+            else if (message.ServiceCode == "DonyayeAsatir")
+            {
+                var singlecharge = DonyayeAsatirLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                if (singlecharge == null)
+                    return "Error in Charging";
+                using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                {
+                    entity.Singlecharges.Attach(singlecharge);
+                    singlecharge.IsCalledFromInAppPurchase = true;
+                    entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                    entity.SaveChanges();
+                }
+                if (singlecharge.IsSucceeded == true)
+                    return "Success";
+                else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                    return "Insufficient Balance";
+            }
+            return "General Error in AppChargeUser";
         }
     }
 }
