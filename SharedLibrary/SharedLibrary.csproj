@@ -90,6 +90,9 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DeliveryObject.cs" />
+    <Compile Include="Models\GetUserLog_Result.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\IntegratedPanel.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Operator.cs">

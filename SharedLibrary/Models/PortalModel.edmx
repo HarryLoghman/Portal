@@ -396,6 +396,9 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           </ReferentialConstraint>
         </Association>
         <Function Name="ArchiveReceivedMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="GetUserLog" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MobileNumber" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="ShamsiDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="nvarchar(max)">
           <Parameter Name="intDate" Type="datetime" Mode="In" />
           <Parameter Name="format" Type="nvarchar(max)" Mode="In" />
@@ -875,6 +878,9 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="Deliveries" EntityType="PortalModel.Delivery" />
           <EntitySet Name="ParidsShortCodes" EntityType="PortalModel.ParidsShortCode" />
           <EntitySet Name="vw_DehnadAllSentMessages" EntityType="PortalModel.vw_DehnadAllSentMessages" />
+          <FunctionImport Name="GetUserLog" ReturnType="Collection(PortalModel.GetUserLog_Result)">
+            <Parameter Name="MobileNumber" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Delivery">
           <Key>
@@ -915,6 +921,15 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
         </EntityType>
+        <ComplexType Name="GetUserLog_Result">
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="ServiceName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MobileNumber" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="ShortCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="PersianDate" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="Time" Nullable="true" MaxLength="21" />
+          <Property Type="String" Name="Content" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1201,6 +1216,19 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetUserLog" FunctionName="PortalModel.Store.GetUserLog">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PortalModel.GetUserLog_Result">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

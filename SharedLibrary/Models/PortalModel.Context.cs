@@ -53,5 +53,14 @@ namespace SharedLibrary.Models
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ArchiveReceivedMessages");
         }
+    
+        public virtual ObjectResult<GetUserLog_Result> GetUserLog(string mobileNumber)
+        {
+            var mobileNumberParameter = mobileNumber != null ?
+                new ObjectParameter("MobileNumber", mobileNumber) :
+                new ObjectParameter("MobileNumber", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUserLog_Result>("GetUserLog", mobileNumberParameter);
+        }
     }
 }

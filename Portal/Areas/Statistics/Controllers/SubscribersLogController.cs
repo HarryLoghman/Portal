@@ -23,18 +23,34 @@ namespace Portal.Areas.Statistics.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult UserLog_Read([DataSourceRequest]DataSourceRequest request, string mobileNumber)
         {
-            //var mobileNumber = "";
-            DataSourceResult result = db.vw_DehnadAllSentMessages.Where(o => o.MobileNumber == mobileNumber && o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.Success).ToDataSourceResult(request, messagesSendedToUserLog => new
+            try
             {
-                Type = messagesSendedToUserLog.Type,
-                ServiceName = messagesSendedToUserLog.ServiceName,
-                MobileNumber = messagesSendedToUserLog.MobileNumber,
-                ShortCode = messagesSendedToUserLog.ShortCode,
-                PersianDate = messagesSendedToUserLog.PersianDate,
-                Time = messagesSendedToUserLog.Time,
-                Content = messagesSendedToUserLog.Content
-            });
-            return Json(result, JsonRequestBehavior.AllowGet);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    logs.Info(mobileNumber);
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    entity.Database.CommandTimeout = 120;
+                    if (mobileNumber == null || mobileNumber == "")
+                        return Json("", JsonRequestBehavior.AllowGet);
+                    var query = entity.GetUserLog(mobileNumber).ToList();
+                    DataSourceResult result = query.ToDataSourceResult(request, messagesSendedToUserLog => new
+                    {
+                        Type = messagesSendedToUserLog.Type,
+                        ServiceName = messagesSendedToUserLog.ServiceName,
+                        MobileNumber = messagesSendedToUserLog.MobileNumber,
+                        ShortCode = messagesSendedToUserLog.ShortCode,
+                        PersianDate = messagesSendedToUserLog.PersianDate,
+                        Time = messagesSendedToUserLog.Time,
+                        Content = messagesSendedToUserLog.Content
+                    });
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in UserLog_Read:", e);
+            }
+            return Json("", JsonRequestBehavior.AllowGet);
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
@@ -79,7 +95,7 @@ namespace Portal.Areas.Statistics.Controllers
             var mobileNumber = Request["MobileNumber"];
             var serviceName = Request["ServiceName"];
             var subscriberService = db.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.Service.Name == serviceName);
-            if(subscriberService == null)
+            if (subscriberService == null)
                 return Content("Not Subscribed!");
             var message = new SharedLibrary.Models.MessageObject();
             message.MobileNumber = subscriberService.MobileNumber;
