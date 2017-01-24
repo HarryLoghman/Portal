@@ -18,7 +18,7 @@ namespace DehnadSoltanService
             {
                 //SendWarningToSinglechargeUsersInQueue();
                 ChargeUsersFromSinglechargeQueue();
-                SendWarningToSinglechargeUsersInQueue();
+                SendRenewalWarningToSinglechargeUsersInQueue();
                 RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)

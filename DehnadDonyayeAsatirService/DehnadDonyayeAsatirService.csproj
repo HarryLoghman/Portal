@@ -118,13 +118,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
+      <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
+      <Name>DonyayeAsatirLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
-      <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
-      <Name>DonyayeAsatirLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

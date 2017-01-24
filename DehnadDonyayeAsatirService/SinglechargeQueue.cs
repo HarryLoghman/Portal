@@ -18,7 +18,7 @@ namespace DehnadDonyayeAsatirService
             {
                 //SendWarningToSinglechargeUsersInQueue();
                 ChargeUsersFromSinglechargeQueue();
-                SendWarningToSinglechargeUsersInQueue();
+                SendRenewalWarningToSinglechargeUsersInQueue();
                 RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)
