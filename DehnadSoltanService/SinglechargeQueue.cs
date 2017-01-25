@@ -38,7 +38,7 @@ namespace DehnadSoltanService
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 29) < now && now < DbFunctions.AddDays(o.DateCreated, 30)  && o.IsUserCanceledTheInstallment == false && o.IsRenewalMessageSent != true).ToList();
+                    var QueueList = entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 29) < now && now < DbFunctions.AddDays(o.DateCreated, 30) && o.IsUserCanceledTheInstallment == false && o.IsRenewalMessageSent != true).ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Soltan");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
@@ -49,14 +49,19 @@ namespace DehnadSoltanService
                     var shortCode = serviceInfo.ShortCode;
                     foreach (var item in QueueList)
                     {
-                        var isMessageAlreadySended = entity.OnDemandMessagesBuffers.FirstOrDefault(o => o.MobileNumber == item.MobileNumber);
-                        if (isMessageAlreadySended != null)
-                            continue;
                         var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "RenewalSinglechargeMessage").Content;
                         var imiChargeObject = SoltanLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
                         SoltanLibrary.MessageHandler.InsertMessageToQueue(message);
+                        item.IsRenewalMessageSent = true;
+                        entity.Entry(item).State = EntityState.Modified;
+                        if (batchSaveCounter > 500)
+                        {
+                            entity.SaveChanges();
+                            batchSaveCounter = 0;
+                        }
+                        batchSaveCounter++;
                     }
                     entity.SaveChanges();
                 }
@@ -124,7 +129,7 @@ namespace DehnadSoltanService
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeInstallments.Where(o => now > DbFunctions.AddDays(o.DateCreated, 30) && o.DateCreated > DbFunctions.AddDays(now, -31) && o.CancelationDate == null && o.IsRenewd != true).ToList();
+                    var QueueList = entity.SinglechargeInstallments.Where(o => now > DbFunctions.AddDays(o.DateCreated, 30) && o.DateCreated > DbFunctions.AddDays(now, -32) && o.IsUserCanceledTheInstallment != true && o.IsRenewd != true).ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Soltan");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
