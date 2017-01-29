@@ -52,9 +52,22 @@ namespace DehnadSoltanService
         {
             try
             {
+                int batchSaveCounter = 0;
                 using (var entity = new SoltanEntities())
                 {
-                    entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList().ForEach(o => o.IsUserDailyChargeBalanced = false);
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
+                    foreach (var item in userDailyBalnace)
+                    {
+                        if (batchSaveCounter >= 1000)
+                        {
+                            entity.SaveChanges();
+                            batchSaveCounter = 0;
+                        }
+                        item.IsUserDailyChargeBalanced = false;
+                        entity.Entry(item).State = EntityState.Modified;
+                        batchSaveCounter++;
+                    }
                     entity.SaveChanges();
                 }
             }
@@ -62,7 +75,7 @@ namespace DehnadSoltanService
             {
                 logs.Error("Exception in SinglechargeInstallment InstallmentDailyBalance: ", e);
             }
-            
+
         }
 
         public void InstallmentDailyBalance()
@@ -72,10 +85,12 @@ namespace DehnadSoltanService
                 int batchSaveCounter = 0;
                 using (var entity = new SoltanEntities())
                 {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
+                    var today = DateTime.Now.Date;
                     foreach (var installment in installmentList)
                     {
-                        if (batchSaveCounter >= 500)
+                        if (batchSaveCounter >= 1000)
                         {
                             entity.SaveChanges();
                             batchSaveCounter = 0;
@@ -87,13 +102,12 @@ namespace DehnadSoltanService
                         }
                         else
                         {
-                            if (installment.PriceTodayCharged > maxChargeLimit)
-                                installment.PriceTodayCharged = maxChargeLimit;
-                            installment.PricePayed += maxChargeLimit - installment.PriceTodayCharged;
+                            if (installment.DateCreated.AddDays(30) >= DateTime.Now)
+                                installment.IsFullyPaid = true;
                         }
                         installment.PriceTodayCharged = 0;
                         installment.IsExceededDailyChargeLimit = false;
-                        installment.IsUserDailyChargeBalanced = true;
+                        //installment.IsUserDailyChargeBalanced = true;
                         entity.Entry(installment).State = EntityState.Modified;
                         batchSaveCounter++;
                     }
@@ -110,97 +124,46 @@ namespace DehnadSoltanService
         {
             try
             {
-                var today = DateTime.Now.Date;
-                int batchSaveCounter = 0;
                 logs.Info("InstallmentJob start!");
+
+
+
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", "Telepromo");
+                List<SinglechargeInstallment> installmentList;
+                List<ImiChargeCode> chargeCodes;
                 using (var entity = new SoltanEntities())
                 {
-                    var chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
-                    var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
-                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", "Telepromo");
-                    foreach (var installment in installmentList)
-                    {
-                        if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0)
-                            break;
-                        if (batchSaveCounter >= 500)
-                        {
-                            entity.SaveChanges();
-                            batchSaveCounter = 0;
-                        }
-                        var priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList().Sum(o => o.Price);
-                        if (priceUserChargedToday >= maxChargeLimit)
-                        {
-                            installment.IsExceededDailyChargeLimit = true;
-                            entity.Entry(installment).State = EntityState.Modified;
-                            batchSaveCounter += 1;
-                            continue;
-                        }
-                        var message = new SharedLibrary.Models.MessageObject();
-                        message.MobileNumber = installment.MobileNumber;
-                        message.ShortCode = serviceAdditionalInfo["shortCode"];
-
-                        message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
-                        if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                        {
-                            if (message.Price == 400)
-                            {
-                                SetMessagePrice(message, chargeCodes, 300);
-                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
-                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                {
-                                    SetMessagePrice(message, chargeCodes, 200);
-                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                    {
-                                        SetMessagePrice(message, chargeCodes, 100);
-                                        response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                        if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                        {
-                                            SetMessagePrice(message, chargeCodes, 50);
-                                            response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (message.Price == 300)
-                            {
-                                SetMessagePrice(message, chargeCodes, 200);
-                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                {
-                                    SetMessagePrice(message, chargeCodes, 100);
-                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                    {
-                                        SetMessagePrice(message, chargeCodes, 50);
-                                        response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                    }
-                                }
-                            }
-                            else if (message.Price == 200)
-                            {
-                                SetMessagePrice(message, chargeCodes, 100);
-                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                {
-                                    SetMessagePrice(message, chargeCodes, 50);
-                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
-                                }
-                            }
-                        }
-                        if (response.IsSucceeded == true)
-                        {
-                            installment.PricePayed += message.Price.GetValueOrDefault();
-                            installment.PriceTodayCharged += message.Price.GetValueOrDefault();
-                            if (installment.PricePayed >= installment.TotalPrice)
-                                installment.IsFullyPaid = true;
-                            entity.Entry(installment).State = EntityState.Modified;
-                        }
-                        batchSaveCounter++;
-                    }
-                    entity.SaveChanges();
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
+                    installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
                 }
+                if (installmentList.Count == 0)
+                {
+                    logs.Info("InstallmentJob ended!");
+                    return;
+                }
+                int takeSize = 1000;
+
+                int[] take = new int[(installmentList.Count / takeSize)];
+                int[] skip = new int[(installmentList.Count / takeSize)];
+                skip[0] = 0;
+                take[0] = takeSize;
+                for (int i = 1; i < take.Length; i++)
+                {
+                    take[i] = takeSize;
+                    skip[i] = skip[i - 1] + takeSize;
+                }
+
+                List<Task> TaskList = new List<Task>();
+                for (int i = 0; i < take.Length; i++)
+                {
+                    using (var entity = new SoltanEntities())
+                    {
+                        var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
+                        TaskList.Add(ProcessInstallmentChunk(entity, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes));
+                    }
+                }
+                Task.WaitAll(TaskList.ToArray());
             }
             catch (Exception e)
             {
@@ -240,6 +203,102 @@ namespace DehnadSoltanService
             message.Price = chargecode.Price;
             message.ImiChargeKey = chargecode.ChargeKey;
             return message;
+        }
+        public static async Task ProcessInstallmentChunk(SoltanEntities entity, List<SinglechargeInstallment> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, List<ImiChargeCode> chargeCodes)
+        {
+            var today = DateTime.Now.Date;
+            logs.Info("InstallmentJob Chunk started");
+            int batchSaveCounter = 0;
+            try
+            {
+                foreach (var installment in chunkedSingleChargeInstallment)
+                {
+                    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 2)
+                        break;
+                    if (batchSaveCounter >= 1000)
+                    {
+                        entity.SaveChanges();
+                        batchSaveCounter = 0;
+                    }
+                    var priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList().Sum(o => o.Price);
+                    if (priceUserChargedToday >= maxChargeLimit)
+                    {
+                        installment.IsExceededDailyChargeLimit = true;
+                        entity.Entry(installment).State = EntityState.Modified;
+                        batchSaveCounter += 1;
+                        continue;
+                    }
+                    var message = new SharedLibrary.Models.MessageObject();
+                    message.MobileNumber = installment.MobileNumber;
+                    message.ShortCode = serviceAdditionalInfo["shortCode"];
+
+                    message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
+                    var response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
+                    {
+                        if (message.Price == 400)
+                        {
+                            SetMessagePrice(message, chargeCodes, 300);
+                            response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                            if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
+                            {
+                                SetMessagePrice(message, chargeCodes, 200);
+                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
+                                {
+                                    SetMessagePrice(message, chargeCodes, 100);
+                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
+                                    {
+                                        SetMessagePrice(message, chargeCodes, 50);
+                                        response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    }
+                                }
+                            }
+                        }
+                        else if (message.Price == 300)
+                        {
+                            SetMessagePrice(message, chargeCodes, 200);
+                            response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                            if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
+                            {
+                                SetMessagePrice(message, chargeCodes, 100);
+                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
+                                {
+                                    SetMessagePrice(message, chargeCodes, 50);
+                                    response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                }
+                            }
+                        }
+                        else if (message.Price == 200)
+                        {
+                            SetMessagePrice(message, chargeCodes, 100);
+                            response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                            if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
+                            {
+                                SetMessagePrice(message, chargeCodes, 50);
+                                response = SoltanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                            }
+                        }
+                    }
+                    if (response.IsSucceeded == true)
+                    {
+                        installment.PricePayed += message.Price.GetValueOrDefault();
+                        installment.PriceTodayCharged += message.Price.GetValueOrDefault();
+                        if (installment.PricePayed >= installment.TotalPrice)
+                            installment.IsFullyPaid = true;
+                        entity.Entry(installment).State = EntityState.Modified;
+                    }
+                    batchSaveCounter++;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SinglechargeInstallment ProcessInstallment: ", e);
+            }
+            entity.SaveChanges();
+            logs.Info("InstallmentJob Chunk ended");
         }
     }
 }

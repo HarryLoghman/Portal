@@ -194,10 +194,7 @@ namespace DehnadSoltanService
             while (!shutdownEvent.WaitOne(0))
             {
                 singlechargeInstallment.ProcessInstallment();
-                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
-                    Thread.Sleep(30 * 60 * 1000);
-                else
-                    Thread.Sleep(1000);
+                Thread.Sleep(7200000);
             }
         }
 
@@ -206,10 +203,10 @@ namespace DehnadSoltanService
             while (!shutdownEvent.WaitOne(0))
             {
                 var singlechargeInstallment = new SinglechargeInstallmentClass();
-                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0 && DateTime.Now.Second < 60)
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0 && DateTime.Now.Second < 5)
                 {
                     singlechargeInstallment.InstallmentDailyBalance();
-                    //singlechargeInstallment.ResetUserDailyChargeBalanceValue();
+                    singlechargeInstallment.ResetUserDailyChargeBalanceValue();
                     Thread.Sleep(100000);
                 }
                 Thread.Sleep(1000);

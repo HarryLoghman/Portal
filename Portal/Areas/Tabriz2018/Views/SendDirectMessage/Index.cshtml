@@ -43,6 +43,7 @@
                 return;
             kendo.ui.progress(container, true);
             $.ajax({
+                method: "POST",
                 url: '@Url.Action("Send", "SendDirectMessage")',
                 data: { mobile: mobile, message: message, price: price, point: point },
                 dataType: 'html',

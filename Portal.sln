@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadBoatingService", "Deh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadDonyayeAsatirService", "DehnadDonyayeAsatirService\DehnadDonyayeAsatirService.csproj", "{26CD2F8D-AB6D-43FB-9B8D-2478E4B94124}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadShahreKalamehService", "DehnadShahreKalamehService\DehnadShahreKalamehService.csproj", "{5D2D1F8C-AB6D-43FB-9C8D-2378E4B94124}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -56,6 +58,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoatingLibrary", "BoatingLibrary\BoatingLibrary.csproj", "{11BD1312-2D38-42FF-944D-02B5CE3457C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DonyayeAsatirLibrary", "DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj", "{22CD1452-2D3F-4CF2-944D-02B5CE34F4D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShahreKalamehLibrary", "ShahreKalamehLibrary\ShahreKalamehLibrary.csproj", "{23BD342D-2D3F-4CF2-944D-02B5CE34242D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +123,10 @@ Global
 		{26CD2F8D-AB6D-43FB-9B8D-2478E4B94124}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26CD2F8D-AB6D-43FB-9B8D-2478E4B94124}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26CD2F8D-AB6D-43FB-9B8D-2478E4B94124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D2D1F8C-AB6D-43FB-9C8D-2378E4B94124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D2D1F8C-AB6D-43FB-9C8D-2378E4B94124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D2D1F8C-AB6D-43FB-9C8D-2378E4B94124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D2D1F8C-AB6D-43FB-9C8D-2378E4B94124}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -171,6 +179,10 @@ Global
 		{22CD1452-2D3F-4CF2-944D-02B5CE34F4D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22CD1452-2D3F-4CF2-944D-02B5CE34F4D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22CD1452-2D3F-4CF2-944D-02B5CE34F4D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23BD342D-2D3F-4CF2-944D-02B5CE34242D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23BD342D-2D3F-4CF2-944D-02B5CE34242D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23BD342D-2D3F-4CF2-944D-02B5CE34242D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23BD342D-2D3F-4CF2-944D-02B5CE34242D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

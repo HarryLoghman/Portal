@@ -57,7 +57,7 @@ namespace DehnadSoltanService
                     var response = await client.PostAsync(url, content);
 
                     var responseString = await response.Content.ReadAsStringAsync();
-                    //logs.Info("CallApplicationUrlToInformSinglecharge:" + responseString);
+                    logs.Info("CallApplicationUrlToInformSinglecharge:" + responseString);
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
                     if (jsonResponse.success == "true")
                     {

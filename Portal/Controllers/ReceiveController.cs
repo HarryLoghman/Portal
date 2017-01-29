@@ -132,8 +132,9 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public string AppMessage([FromBody]MessageObject messageObj)
+        public HttpResponseMessage AppMessage([FromBody]MessageObject messageObj)
         {
+            var result = "";
             if (messageObj.Address != null)
             {
                 messageObj.MobileNumber = messageObj.Address;
@@ -146,11 +147,17 @@ namespace Portal.Controllers
             }
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             if (messageObj.MobileNumber == "Invalid Mobile Number")
-                return "Invalid Mobile Number";
-            messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromApp" : null;
-            SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-            return "Success";
+                result = "Invalid Mobile Number";
+            else
+            {
+                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromApp" : null;
+                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                result = "Success";
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
         }
 
         // /Receive/Delivery?PardisId=44353535&Status=DeliveredToNetwork&ErrorMessage=error
@@ -258,14 +265,24 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public string AppChargeUser([FromBody]MessageObject message)
+        public HttpResponseMessage AppChargeUser([FromBody]MessageObject message)
         {
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            var result = "";
             message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
             message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
             if (message.MobileNumber == "Invalid Mobile Number")
-                return "Invalid Mobile Number";
+            {
+                result = "Invalid Mobile Number";
+                response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                return response;
+            }
             if (message.ServiceCode == "")
-                return "Invalid ServiceCode";
+            {
+                result = "Invalid ServiceCode";
+                response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                return response;
+            }
             message = SharedLibrary.MessageHandler.ValidateMessage(message);
             message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
             message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
@@ -273,46 +290,64 @@ namespace Portal.Controllers
             message.IsReceivedFromIntegratedPanel = false;
             var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(message.ServiceCode);
             if (service == null)
-                return "Invalid ServiceCode";
+            {
+                result = "Invalid ServiceCode";
+                response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                return response;
+            }
             message.ServiceId = service.Id;
             if (message.Price == null)
-                return "Invalid Price";
+            {
+                result = "Invalid Price";
+                response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                return response;
+            }
 
             if (message.ServiceCode == "Soltan")
             {
                 var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
                 if (singlecharge == null)
-                    return "-3";
-                using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                    result = "Error in Charging";
+                else
                 {
-                    entity.Singlecharges.Attach(singlecharge);
-                    singlecharge.IsCalledFromInAppPurchase = true;
-                    entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
-                    entity.SaveChanges();
+                    using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                    {
+                        entity.Singlecharges.Attach(singlecharge);
+                        singlecharge.IsCalledFromInAppPurchase = true;
+                        entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                    if (singlecharge.IsSucceeded == true)
+                        result = "Success";
+                    else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                        result = "Insufficient Balance";
                 }
-                if (singlecharge.IsSucceeded == true)
-                    return "Success";
-                else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
-                    return "Insufficient Balance";
             }
             else if (message.ServiceCode == "DonyayeAsatir")
             {
                 var singlecharge = DonyayeAsatirLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
                 if (singlecharge == null)
-                    return "Error in Charging";
-                using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                    result = "Error in Charging";
+                else
                 {
-                    entity.Singlecharges.Attach(singlecharge);
-                    singlecharge.IsCalledFromInAppPurchase = true;
-                    entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
-                    entity.SaveChanges();
+                    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                    {
+                        entity.Singlecharges.Attach(singlecharge);
+                        singlecharge.IsCalledFromInAppPurchase = true;
+                        entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                    if (singlecharge.IsSucceeded == true)
+                        result = "Success";
+                    else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                        result = "Insufficient Balance";
                 }
-                if (singlecharge.IsSucceeded == true)
-                    return "Success";
-                else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
-                    return "Insufficient Balance";
             }
-            return "General Error in AppChargeUser";
+            else
+                result = "General Error in AppChargeUser";
+            
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
         }
     }
 }
