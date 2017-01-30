@@ -24,7 +24,7 @@ namespace Portal.Areas.Tabriz2018.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult SentMessages_Read([DataSourceRequest]DataSourceRequest request)
         {
-            DataSourceResult result = db.vw_SentMessages.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.Success).ToDataSourceResult(request, sentMessages => new
+            DataSourceResult result = db.vw_SentMessages.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.Success || o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToDataSourceResult(request, sentMessages => new
             {
                 SentDate = sentMessages.SentDate,
                 PersianSentDate = sentMessages.PersianSentDate,

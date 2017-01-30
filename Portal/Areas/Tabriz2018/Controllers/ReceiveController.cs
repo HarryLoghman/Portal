@@ -26,10 +26,11 @@ namespace Portal.Areas.Tabriz2018.Controllers
         public ActionResult Receive_Read([DataSourceRequest]DataSourceRequest request)
         {
             var service = db.Services.FirstOrDefault(o => o.ServiceCode == "Tabriz2018");
-            var shortCode = db.ServiceInfoes.Where(o => o.ServiceId == service.Id).Select(o => o.ShortCode).FirstOrDefault();
-            DataSourceResult result = db.vw_ReceivedMessages.Where(o => o.ShortCode == shortCode).ToDataSourceResult(request, receivedMessages => new
+            var shortCodes = db.ParidsShortCodes.Where(o => o.ServiceId == service.Id).Select(o => o.ShortCode).ToList();
+            DataSourceResult result = db.vw_ReceivedMessages.Where(o => shortCodes.Contains(o.ShortCode)).ToDataSourceResult(request, receivedMessages => new
             {
                 Id = receivedMessages.Id,
+                ShortCode = receivedMessages.ShortCode,
                 MobileNumber = receivedMessages.MobileNumber,
                 PersianReceivedTime = receivedMessages.PersianReceivedTime,
                 Content = receivedMessages.Content,
