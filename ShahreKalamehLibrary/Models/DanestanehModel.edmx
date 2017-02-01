@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="SoltanModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ShahreKalamehModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -274,7 +274,7 @@
           <Property Name="IsSubscriberSendedOffReason" Type="bit" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'ShahreKalameh.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_SentMessages">
           <Key>
             <PropertyRef Name="Id" />
@@ -322,7 +322,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
-        <EntityContainer Name="SoltanModelStoreContainer">
+        <EntityContainer Name="ShahreKalamehModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeHeaderFooter" EntityType="Self.AutochargeHeaderFooter" Schema="dbo" store:Type="Tables" />
@@ -369,7 +369,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="SoltanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="ShahreKalamehModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="AutochargeContent">
           <Key>
             <PropertyRef Name="Id" />
@@ -652,7 +652,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="SubUnSubType" Type="Byte" />
           <Property Name="Tag" Type="Int32" />
         </EntityType>
-        <EntityContainer Name="SoltanEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="ShahreKalamehEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContent" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUser" />
           <EntitySet Name="AutochargeHeaderFooters" EntityType="Self.AutochargeHeaderFooter" />
@@ -683,8 +683,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
-          <EntitySet Name="SubscribersAdditionalInfoes" EntityType="SoltanModel.SubscribersAdditionalInfo" />
-          <EntitySet Name="LeveledAutochargeContentDailyLists" EntityType="SoltanModel.LeveledAutochargeContentDailyList" />
+          <EntitySet Name="SubscribersAdditionalInfoes" EntityType="ShahreKalamehModel.SubscribersAdditionalInfo" />
+          <EntitySet Name="LeveledAutochargeContentDailyLists" EntityType="ShahreKalamehModel.LeveledAutochargeContentDailyList" />
         </EntityContainer>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
@@ -710,9 +710,9 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="SoltanModelStoreContainer" CdmEntityContainer="SoltanEntities">
+        <EntityContainerMapping StorageEntityContainer="ShahreKalamehModelStoreContainer" CdmEntityContainer="ShahreKalamehEntities">
           <EntitySetMapping Name="AutochargeContents">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeContent">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeContent">
               <MappingFragment StoreEntitySet="AutochargeContents">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -728,7 +728,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AutochargeContentsSendedToUsers">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeContentsSendedToUser">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeContentsSendedToUser">
               <MappingFragment StoreEntitySet="AutochargeContentsSendedToUsers">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
@@ -738,7 +738,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AutochargeHeaderFooters">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeHeaderFooter">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeHeaderFooter">
               <MappingFragment StoreEntitySet="AutochargeHeaderFooter">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Header" ColumnName="Header" />
@@ -747,7 +747,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AutochargeMessagesBuffers">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeMessagesBuffer">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -774,7 +774,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AutochargeTimeTables">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeTimeTable">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeTimeTable">
               <MappingFragment StoreEntitySet="AutochargeTimeTable">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
@@ -783,7 +783,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DailyStatistics">
-            <EntityTypeMapping TypeName="SoltanModel.DailyStatistic">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.DailyStatistic">
               <MappingFragment StoreEntitySet="DailyStatistics">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
@@ -823,7 +823,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="EventbaseContents">
-            <EntityTypeMapping TypeName="SoltanModel.EventbaseContent">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.EventbaseContent">
               <MappingFragment StoreEntitySet="EventbaseContents">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -838,7 +838,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="EventbaseMessagesBuffers">
-            <EntityTypeMapping TypeName="SoltanModel.EventbaseMessagesBuffer">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -865,7 +865,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ImiChargeCodes">
-            <EntityTypeMapping TypeName="SoltanModel.ImiChargeCode">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.ImiChargeCode">
               <MappingFragment StoreEntitySet="ImiChargeCodes">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ChargeCode" ColumnName="ChargeCode" />
@@ -876,7 +876,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MessagesArchives">
-            <EntityTypeMapping TypeName="SoltanModel.MessagesArchive">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -903,7 +903,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MessagesMonitorings">
-            <EntityTypeMapping TypeName="SoltanModel.MessagesMonitoring">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.MessagesMonitoring">
               <MappingFragment StoreEntitySet="MessagesMonitoring">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ContentId" ColumnName="ContentId" />
@@ -920,7 +920,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MessagesTemplates">
-            <EntityTypeMapping TypeName="SoltanModel.MessagesTemplate">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.MessagesTemplate">
               <MappingFragment StoreEntitySet="MessagesTemplate">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -930,7 +930,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OnDemandMessagesBuffers">
-            <EntityTypeMapping TypeName="SoltanModel.OnDemandMessagesBuffer">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -957,7 +957,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PointsTables">
-            <EntityTypeMapping TypeName="SoltanModel.PointsTable">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.PointsTable">
               <MappingFragment StoreEntitySet="PointsTable">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -967,7 +967,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ServiceOffReasons">
-            <EntityTypeMapping TypeName="SoltanModel.ServiceOffReason">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.ServiceOffReason">
               <MappingFragment StoreEntitySet="ServiceOffReason">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
@@ -976,7 +976,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="vw_SentMessages">
-            <EntityTypeMapping TypeName="SoltanModel.vw_SentMessages">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.vw_SentMessages">
               <MappingFragment StoreEntitySet="vw_SentMessages">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -1002,11 +1002,11 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="SoltanModel.Store.AggregateDailyStatistics" />
-          <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="SoltanModel.Store.ArchiveMessages" />
-          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="SoltanModel.Store.ChangeMessageStatus" />
+          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="ShahreKalamehModel.Store.AggregateDailyStatistics" />
+          <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="ShahreKalamehModel.Store.ArchiveMessages" />
+          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="ShahreKalamehModel.Store.ChangeMessageStatus" />
           <EntitySetMapping Name="SubscribersAdditionalInfoes">
-            <EntityTypeMapping TypeName="SoltanModel.SubscribersAdditionalInfo">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.SubscribersAdditionalInfo">
               <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
                 <ScalarProperty Name="IsSubscriberSendedOffReason" ColumnName="IsSubscriberSendedOffReason" />
                 <ScalarProperty Name="IsSubscriberReceivedOffReasonPoint" ColumnName="IsSubscriberReceivedOffReasonPoint" />
@@ -1017,7 +1017,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LeveledAutochargeContentDailyLists">
-            <EntityTypeMapping TypeName="SoltanModel.LeveledAutochargeContentDailyList">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.LeveledAutochargeContentDailyList">
               <MappingFragment StoreEntitySet="LeveledAutochargeContentDailyList">
                 <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
                 <ScalarProperty Name="Index" ColumnName="Index" />

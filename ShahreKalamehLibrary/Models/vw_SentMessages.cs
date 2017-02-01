@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SoltanLibrary.Models
+namespace ShahreKalamehLibrary.Models
 {
     using System;
     using System.Collections.Generic;

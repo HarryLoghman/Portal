@@ -2,6 +2,7 @@
 using Tabriz2018Library.Models;
 using System;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Tabriz2018Library
 {
@@ -67,7 +68,15 @@ namespace Tabriz2018Library
 
             if (subscriber == null)
             {
-                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                if (message.Content == "101")
+                    message.Content = messagesTemplate.Where(o => o.Title == "101Content").Select(o => o.Content).FirstOrDefault();
+                else if (message.Content == "102")
+                    message.Content = messagesTemplate.Where(o => o.Title == "102Content").Select(o => o.Content).FirstOrDefault();
+                else if (message.Content == "103")
+                    message.Content = messagesTemplate.Where(o => o.Title == "103Content").Select(o => o.Content).FirstOrDefault();
+                else
+                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
@@ -83,7 +92,15 @@ namespace Tabriz2018Library
                 }
                 else
                 {
-                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    if (message.Content == "101")
+                        message.Content = messagesTemplate.Where(o => o.Title == "101Content").Select(o => o.Content).FirstOrDefault();
+                    else if (message.Content == "102")
+                        message.Content = messagesTemplate.Where(o => o.Title == "102Content").Select(o => o.Content).FirstOrDefault();
+                    else if (message.Content == "103")
+                        message.Content = messagesTemplate.Where(o => o.Title == "103Content").Select(o => o.Content).FirstOrDefault();
+                    else
+                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                 }
                 return;

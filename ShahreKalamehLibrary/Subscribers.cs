@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 
-namespace SoltanLibrary
+namespace ShahreKalamehLibrary
 {
     public class Subscribers
     {
@@ -21,7 +21,7 @@ namespace SoltanLibrary
                 var pointsTable = GetPointsTableValues();
                 var subscriptionPoint = pointsTable.Where(o => o.Title == "SubscriptionPoint").FirstOrDefault();
                 SharedLibrary.MessageHandler.SetSubscriberPoint(mobileNumber, serviceId, subscriptionPoint.Point);
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);
                     subscriberAdditionalInfo.IsSubscriberReceivedSubscriptionPoint = true;
@@ -45,7 +45,7 @@ namespace SoltanLibrary
                 var pointsTable = GetPointsTableValues();
                 var subscribtionPoint = pointsTable.Where(o => o.Title == "OffReasonPoint").FirstOrDefault();
                 SharedLibrary.MessageHandler.SetSubscriberPoint(subscriber.MobileNumber, serviceId, subscribtionPoint.Point);
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);
                     subscriberAdditionalInfo.IsSubscriberReceivedOffReasonPoint = true;
@@ -65,7 +65,7 @@ namespace SoltanLibrary
             var pointsTable = new List<PointsTable>();
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     pointsTable = entity.PointsTables.ToList();
                 }
@@ -82,7 +82,7 @@ namespace SoltanLibrary
             var subscriberAdditionalInfo = new SubscribersAdditionalInfo();
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
                 }
@@ -98,7 +98,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(mobileNumber, serviceId);
                     var subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
@@ -121,7 +121,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
                     subscriberAdditionalInfo.IsSubscriberSendedOffReason = value;
@@ -140,7 +140,7 @@ namespace SoltanLibrary
             bool result = false;
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var isSubscriberSendedOffReason = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId).IsSubscriberSendedOffReason;
                     if (isSubscriberSendedOffReason == true)

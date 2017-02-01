@@ -1,9 +1,9 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadSoltanService.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadShahreKalamehService.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="AggregatorName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Telepromo</Value>
+      <Value Profile="(Default)">Hub</Value>
     </Setting>
     <Setting Name="InsertAutochargeMessageInQueueTime" Type="System.String" Scope="User">
       <Value Profile="(Default)">03:15:00</Value>
@@ -21,7 +21,7 @@
       <Value Profile="(Default)">20</Value>
     </Setting>
     <Setting Name="ServiceCode" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Soltan</Value>
+      <Value Profile="(Default)">ShahreKalameh</Value>
     </Setting>
     <Setting Name="RetryNotDeliveredMessages" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 
-namespace SoltanLibrary
+namespace ShahreKalamehLibrary
 {
     public class ServiceHandler
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static AutochargeContent SelectAutochargeContentByOrder(SoltanEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContentByOrder(ShahreKalamehEntities entity, long subscriberId)
         {
             AutochargeContent autochargeContent = null;
             var lastContentSubscriberReceived = entity.AutochargeContentsSendedToUsers.Where(o => o.SubscriberId == subscriberId).OrderByDescending(o => o.Id).FirstOrDefault();
@@ -36,7 +36,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var lastContent = new AutochargeContentsSendedToUser();
                     lastContent.SubscriberId = subscriberId;
@@ -56,7 +56,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var lastContent = new AutochargeContentsSendedToUser();
                     lastContent.SubscriberId = subscriberId;
@@ -72,7 +72,7 @@ namespace SoltanLibrary
             }
         }
 
-        public static AutochargeContent SelectAutochargeContentByDate(SoltanEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContentByDate(ShahreKalamehEntities entity, long subscriberId)
         {
             var today = DateTime.Now.Date;
             var autochargesAlreadyInQueue = entity.AutochargeMessagesBuffers.Where(o => DbFunctions.TruncateTime(o.DateAddedToQueue) == today).Select(o => o.Id).ToList();
@@ -86,7 +86,7 @@ namespace SoltanLibrary
             return autochargeContent;
         }
 
-        public static AutochargeContent SelectAutochargeContent(SoltanEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContent(ShahreKalamehEntities entity, long subscriberId)
         {
             var today = DateTime.Now.Date;
             var autochargesAlreadyInQueue = entity.AutochargeMessagesBuffers.Where(o => DbFunctions.TruncateTime(o.DateAddedToQueue) == today).Select(o => o.Id).ToList();
@@ -102,7 +102,7 @@ namespace SoltanLibrary
 
         public static void CancelUserInstallments(string mobileNumber)
         {
-            using(var entity = new SoltanEntities())
+            using(var entity = new ShahreKalamehEntities())
             {
                 var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
                 foreach (var installment in userinstallments)
@@ -118,7 +118,7 @@ namespace SoltanLibrary
 
         public static List<MessagesTemplate> GetServiceMessagesTemplate()
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 return entity.MessagesTemplates.ToList();
             }
@@ -136,7 +136,7 @@ namespace SoltanLibrary
 
         public static List<ImiChargeCode> GetImiChargeCodes()
         {
-            using(var entity = new SoltanEntities())
+            using(var entity = new ShahreKalamehEntities())
             {
                 return entity.ImiChargeCodes.ToList();
             }

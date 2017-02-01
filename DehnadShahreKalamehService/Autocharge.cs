@@ -1,10 +1,10 @@
 ﻿using System;
 using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace DehnadSoltanService
+namespace DehnadShahreKalamehService
 {
     class Autocharge
     {
@@ -39,7 +39,7 @@ namespace DehnadSoltanService
                 var SendEndTime = sendTime + TimeSpan.Parse("00:00:05");
                 if (currentTime > sendTime && currentTime < SendEndTime)
                 {
-                    using (var entity = new SoltanEntities())
+                    using (var entity = new ShahreKalamehEntities())
                     {
                         entity.ChangeMessageStatus((int)SharedLibrary.MessageHandler.MessageType.AutoCharge, null, item.Tag, currentPersianDate, (int)SharedLibrary.MessageHandler.ProcessStatus.InQueue, (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, null);
                     }
@@ -57,11 +57,11 @@ namespace DehnadSoltanService
             //    var serviceCode = Properties.Settings.Default.ServiceCode;
             //    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode);
             //    var subscribers = SharedLibrary.ServiceHandler.GetServiceActiveSubscribersFromServiceId(serviceId.Value);
-            //    using (var entity = new SoltanEntities())
+            //    using (var entity = new ShahreKalamehEntities())
             //    {
             //        entity.Configuration.AutoDetectChangesEnabled = false;
             //        var autochargeTimeTable = GetAutochargeTimeTable();
-            //        var mobilesList = SoltanLibrary.ContentManager.GetMobilesList();
+            //        var mobilesList = ShahreKalamehLibrary.ContentManager.GetMobilesList();
             //        if (mobilesList == null)
             //            return;
             //        foreach (var item in autochargeTimeTable)
@@ -74,12 +74,12 @@ namespace DehnadSoltanService
             //                var mobileSubscribers = (from s in subscribers where subscribersForMobile.Contains(s.Id) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
             //                foreach (var subscriber in mobileSubscribers)
             //                {
-            //                    var autochargeContent = SoltanLibrary.ContentManager.PrepareLatestMobileContent(subscriber.Id, mobile.Id);
+            //                    var autochargeContent = ShahreKalamehLibrary.ContentManager.PrepareLatestMobileContent(subscriber.Id, mobile.Id);
             //                    if (autochargeContent == null)
             //                        continue;
-            //                    autochargeContent.Content = SoltanLibrary.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
-            //                    autochargeContent.Content = SoltanLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
-            //                    var imiChargeObject = SoltanLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
+            //                    autochargeContent.Content = ShahreKalamehLibrary.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
+            //                    autochargeContent.Content = ShahreKalamehLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
+            //                    var imiChargeObject = ShahreKalamehLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
             //                    var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
             //                    messages.Add(message);
             //                }
@@ -88,18 +88,18 @@ namespace DehnadSoltanService
             //            var subscribersWithNoMobileSelected = (from s in subscribers where !subscribersMobiles.Contains(s.Id) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
             //            foreach (var subscriber in subscribersWithNoMobileSelected)
             //            {
-            //                var autochargeContent = SoltanLibrary.ContentManager.PrepareLatestMobileContent(subscriber.Id, mobilesList.FirstOrDefault().Id);
+            //                var autochargeContent = ShahreKalamehLibrary.ContentManager.PrepareLatestMobileContent(subscriber.Id, mobilesList.FirstOrDefault().Id);
             //                if (autochargeContent == null)
             //                    continue;
-            //                autochargeContent.Content = SoltanLibrary.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
-            //                autochargeContent.Content = SoltanLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
-            //                var imiChargeObject = SoltanLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
+            //                autochargeContent.Content = ShahreKalamehLibrary.MessageHandler.AddAutochargeHeaderAndFooter(autochargeContent.Content);
+            //                autochargeContent.Content = ShahreKalamehLibrary.MessageHandler.HandleSpecialStrings(autochargeContent.Content, autochargeContent.Point, subscriber.MobileNumber, serviceId.Value);
+            //                var imiChargeObject = ShahreKalamehLibrary.MessageHandler.GetImiChargeObjectFromPrice(autochargeContent.Price, null);
             //                var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, autochargeContent.Content, autochargeContent.Id, SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, autochargeContent.Point, tag);
             //                messages.Add(message);
             //            }
 
-            //            SoltanLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
-            //            SoltanLibrary.MessageHandler.CreateMonitoringItem(null, SharedLibrary.MessageHandler.MessageType.AutoCharge, messages.Count, tag);
+            //            ShahreKalamehLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+            //            ShahreKalamehLibrary.MessageHandler.CreateMonitoringItem(null, SharedLibrary.MessageHandler.MessageType.AutoCharge, messages.Count, tag);
             //        }
             //    }
             //}
@@ -115,7 +115,7 @@ namespace DehnadSoltanService
             var autochargeTimeTable = new List<AutochargeTimeTable>();
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     autochargeTimeTable = entity.AutochargeTimeTables.ToList();

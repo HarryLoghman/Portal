@@ -1,4 +1,4 @@
-﻿namespace DehnadSoltanService
+﻿namespace DehnadShahreKalamehService
 {
     partial class Service
     {

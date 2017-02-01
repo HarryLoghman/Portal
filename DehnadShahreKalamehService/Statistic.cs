@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 using System.Data.Entity;
 
-namespace DehnadSoltanService
+namespace DehnadShahreKalamehService
 {
     class Statistic
     {
@@ -27,7 +27,7 @@ namespace DehnadSoltanService
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
 
@@ -61,7 +61,7 @@ namespace DehnadSoltanService
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
 

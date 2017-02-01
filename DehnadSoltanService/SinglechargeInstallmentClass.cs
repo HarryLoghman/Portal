@@ -125,7 +125,8 @@ namespace DehnadSoltanService
             try
             {
                 logs.Info("InstallmentJob start!");
-                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", "Telepromo");
+                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", aggregatorName);
                 List<SinglechargeInstallment> installmentList;
                 List<ImiChargeCode> chargeCodes;
                 using (var entity = new SoltanEntities())

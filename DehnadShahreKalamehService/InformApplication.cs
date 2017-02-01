@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 using System.Data.Entity;
 
-namespace DehnadSoltanService
+namespace DehnadShahreKalamehService
 {
     public class InformApplication
     {
@@ -16,7 +16,7 @@ namespace DehnadSoltanService
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
                     if (unInformed == null)
@@ -38,7 +38,7 @@ namespace DehnadSoltanService
                 logs.Error("Exception in Infrom method: ", e);
             }
         }
-        private async Task CallApplicationUrlToInformSinglecharge(SoltanEntities entity, Singlecharge singlechargeItem, int package)
+        private async Task CallApplicationUrlToInformSinglecharge(ShahreKalamehEntities entity, Singlecharge singlechargeItem, int package)
         {
             try
             {

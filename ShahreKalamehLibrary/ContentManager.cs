@@ -1,12 +1,12 @@
 ﻿using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Text.RegularExpressions;
 using System.Data.Entity;
 
-namespace SoltanLibrary
+namespace ShahreKalamehLibrary
 {
     public class ContentManager
     {
@@ -24,7 +24,7 @@ namespace SoltanLibrary
                 {
                     if (imiChargecode.ChargeCode == content)
                     {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", "Telepromo");
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("ShahreKalameh", "Telepromo");
                         message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
                         chargecodeFound = true;
                         singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
@@ -54,7 +54,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var singlechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber);
                     entity.SinglechargeWaitings.RemoveRange(singlechargeQueue);
@@ -71,7 +71,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var chargeCode = Convert.ToInt32(content);
                     var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.ChargeCode == chargeCode);
@@ -99,7 +99,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if(message.Content == "77")
@@ -147,7 +147,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var lastMonth = DateTime.Today.AddDays(-30);
                     var isUserAlreadychargedThisMonth = entity.Singlecharges.FirstOrDefault(o => o.MobileNumber == mobileNumber && (DbFunctions.TruncateTime(o.DateCreated) <= DateTime.Now.Date && DbFunctions.TruncateTime(o.DateCreated) >= lastMonth));
@@ -166,7 +166,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var isUserAlreadyInSinglechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber);
                     if (isUserAlreadyInSinglechargeQueue == null)

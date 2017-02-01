@@ -1,4 +1,4 @@
-﻿namespace DehnadSoltanService
+﻿namespace DehnadShahreKalamehService
 {
     partial class ProjectInstaller
     {
@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "DehnadSoltanService";
+            this.serviceInstaller1.ServiceName = "DehnadShahreKalamehService";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller

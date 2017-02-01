@@ -277,9 +277,15 @@ namespace Portal.Controllers
                 response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
                 return response;
             }
-            if (message.ServiceCode == "")
+            if (message.ServiceCode == null || message.ServiceCode == "")
             {
                 result = "Invalid ServiceCode";
+                response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                return response;
+            }
+            if (message.ShortCode == null || message.ShortCode == "")
+            {
+                result = "Invalid ShortCode";
                 response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
                 return response;
             }
@@ -341,6 +347,28 @@ namespace Portal.Controllers
                         result = "Success";
                     else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
                         result = "Insufficient Balance";
+                }
+            }
+            else if (message.ServiceCode == "ShahreKalameh")
+            {
+                var singlecharge = ShahreKalamehLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                if (singlecharge == null)
+                    result = "Error in Charging";
+                else
+                {
+                    using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                    {
+                        entity.Singlecharges.Attach(singlecharge);
+                        singlecharge.IsCalledFromInAppPurchase = true;
+                        entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                    if (singlecharge.IsSucceeded == true)
+                        result = "Success";
+                    else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                        result = "Insufficient Balance";
+                    else
+                        result = "Unknown error";
                 }
             }
             else

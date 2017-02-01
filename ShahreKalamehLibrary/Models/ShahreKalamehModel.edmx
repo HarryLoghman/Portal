@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="SoltanModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="ShahreKalamehModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -467,7 +467,7 @@
           <Property Name="Price" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'ShahreKalameh.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_SentMessages">
           <Key>
             <PropertyRef Name="Id" />
@@ -519,7 +519,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
         <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <EntityContainer Name="SoltanModelStoreContainer">
+        <EntityContainer Name="ShahreKalamehModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeHeaderFooter" EntityType="Self.AutochargeHeaderFooter" Schema="dbo" store:Type="Tables" />
@@ -570,10 +570,80 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="SoltanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="ShahreKalamehModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AutochargeContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsAddedToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SendDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSendDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutochargeContentsSendedToUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="AutochargeHeaderFooter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Header" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Footer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutochargeMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tag" Type="Int32" Nullable="false" />
+          <Property Name="SendTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
         <EntityType Name="DailyStatistic">
           <Key>
             <PropertyRef Name="Id" />
@@ -858,6 +928,77 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="Point" Type="Int32" Nullable="false" />
           <Property Name="PersianTitle" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
+        <EntityType Name="ServiceOffReason">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="Reason" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TotalPrice" Type="Int32" Nullable="false" />
+          <Property Name="PricePayed" Type="Int32" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="Boolean" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="Boolean" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="Int32" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="Boolean" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="Boolean" Nullable="false" />
+          <Property Name="CancelationDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsRenewalMessageSent" Type="Boolean" />
+          <Property Name="IsRenewd" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAdded" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
+        </EntityType>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -895,7 +1036,48 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="Tag" Type="Int32" />
           <Property Name="Price" Type="Int32" />
         </EntityType>
-        <EntityContainer Name="SoltanEntities" annotation:LazyLoadingEnabled="true">
+        <EntityType Name="vw_SentMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ProcessStatus" />
+            <PropertyRef Name="DateAddedToQueue" />
+            <PropertyRef Name="PersianDateAddedToQueue" />
+            <PropertyRef Name="MessageType" />
+            <PropertyRef Name="AggregatorId" />
+            <PropertyRef Name="ServiceId" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="ShahreKalamehEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContent" />
+          <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUser" />
+          <EntitySet Name="AutochargeHeaderFooters" EntityType="Self.AutochargeHeaderFooter" />
+          <EntitySet Name="AutochargeMessagesBuffers" EntityType="Self.AutochargeMessagesBuffer" />
+          <EntitySet Name="AutochargeTimeTables" EntityType="Self.AutochargeTimeTable" />
           <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistic" />
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContent" />
           <EntitySet Name="EventbaseMessagesBuffers" EntityType="Self.EventbaseMessagesBuffer" />
@@ -905,8 +1087,14 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySet Name="MessagesTemplates" EntityType="Self.MessagesTemplate" />
           <EntitySet Name="OnDemandMessagesBuffers" EntityType="Self.OnDemandMessagesBuffer" />
           <EntitySet Name="PointsTables" EntityType="Self.PointsTable" />
+          <EntitySet Name="ServiceOffReasons" EntityType="Self.ServiceOffReason" />
+          <EntitySet Name="Singlecharges" EntityType="Self.Singlecharge" />
+          <EntitySet Name="SinglechargeArchives" EntityType="Self.SinglechargeArchive" />
+          <EntitySet Name="SinglechargeInstallments" EntityType="Self.SinglechargeInstallment" />
+          <EntitySet Name="SinglechargeWaitings" EntityType="Self.SinglechargeWaiting" />
           <EntitySet Name="SubscribersAdditionalInfoes" EntityType="Self.SubscribersAdditionalInfo" />
           <EntitySet Name="TimedTempMessagesBuffers" EntityType="Self.TimedTempMessagesBuffer" />
+          <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" />
           <FunctionImport Name="AggregateDailyStatistics">
             <Parameter Name="MiladiDate" Mode="In" Type="DateTime" />
             <Parameter Name="ServiceCode" Mode="In" Type="String" />
@@ -921,304 +1109,91 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
-          <EntitySet Name="AutochargeContents" EntityType="SoltanModel.AutochargeContent" />
-          <EntitySet Name="vw_SentMessages" EntityType="SoltanModel.vw_SentMessages" />
-          <EntitySet Name="AutochargeMessagesBuffers" EntityType="SoltanModel.AutochargeMessagesBuffer" />
-          <EntitySet Name="AutochargeHeaderFooters" EntityType="SoltanModel.AutochargeHeaderFooter" />
-          <EntitySet Name="AutochargeTimeTables" EntityType="SoltanModel.AutochargeTimeTable" />
-          <EntitySet Name="ServiceOffReasons" EntityType="SoltanModel.ServiceOffReason" />
-          <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="SoltanModel.AutochargeContentsSendedToUser" />
-          <EntitySet Name="Singlecharges" EntityType="SoltanModel.Singlecharge" />
-          <EntitySet Name="SinglechargeInstallments" EntityType="SoltanModel.SinglechargeInstallment" />
-          <EntitySet Name="SinglechargeWaitings" EntityType="SoltanModel.SinglechargeWaiting" />
           <FunctionImport Name="RetryUndeliveredMessages" />
-          <EntitySet Name="SinglechargeArchives" EntityType="SoltanModel.SinglechargeArchive" />
         </EntityContainer>
-        <EntityType Name="AutochargeContent">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Point" Type="Int32" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsAddedToSendQueue" Type="Boolean" Nullable="false" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SendDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianSendDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="vw_SentMessages">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ProcessStatus" />
-            <PropertyRef Name="DateAddedToQueue" />
-            <PropertyRef Name="PersianDateAddedToQueue" />
-            <PropertyRef Name="MessageType" />
-            <PropertyRef Name="AggregatorId" />
-            <PropertyRef Name="ServiceId" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-          <Property Name="SentDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MessageType" Type="Int32" Nullable="false" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ContentId" Type="Int64" />
-          <Property Name="MessagePoint" Type="Int32" />
-          <Property Name="ImiChargeCode" Type="Int32" />
-          <Property Name="ImiMessageType" Type="Int32" />
-          <Property Name="SubscriberId" Type="Int64" />
-          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubType" Type="Byte" />
-          <Property Name="Tag" Type="Int32" />
-          <Property Name="Price" Type="Int32" />
-          <Property Name="DeliveryStatus" Type="Boolean" />
-          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="AutochargeMessagesBuffer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-          <Property Name="SentDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MessageType" Type="Int32" Nullable="false" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ContentId" Type="Int64" />
-          <Property Name="MessagePoint" Type="Int32" />
-          <Property Name="ImiChargeCode" Type="Int32" />
-          <Property Name="ImiMessageType" Type="Int32" />
-          <Property Name="SubscriberId" Type="Int64" />
-          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="SubUnSubType" Type="Byte" />
-          <Property Name="Tag" Type="Int32" />
-          <Property Name="Price" Type="Int32" />
-          <Property Name="DeliveryStatus" Type="Boolean" />
-          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="AutochargeHeaderFooter">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Header" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Footer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="AutochargeTimeTable">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Tag" Type="Int32" Nullable="false" />
-          <Property Name="SendTime" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ServiceOffReason">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
-          <Property Name="Reason" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="AutochargeContentsSendedToUser">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
-          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
-          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
-        </EntityType>
-        <EntityType Name="Singlecharge">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="SinglechargeInstallment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="TotalPrice" Type="Int32" Nullable="false" />
-          <Property Name="PricePayed" Type="Int32" Nullable="false" />
-          <Property Name="IsFullyPaid" Type="Boolean" Nullable="false" />
-          <Property Name="IsExceededDailyChargeLimit" Type="Boolean" Nullable="false" />
-          <Property Name="PriceTodayCharged" Type="Int32" Nullable="false" />
-          <Property Name="IsUserDailyChargeBalanced" Type="Boolean" Nullable="false" />
-          <Property Name="IsUserCanceledTheInstallment" Type="Boolean" Nullable="false" />
-          <Property Name="CancelationDate" Type="DateTime" Precision="3" />
-          <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsRenewalMessageSent" Type="Boolean" />
-          <Property Name="IsRenewd" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="SinglechargeWaiting">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="SinglechargeArchive">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="SoltanModelStoreContainer" CdmEntityContainer="SoltanEntities">
-          <EntitySetMapping Name="DailyStatistics">
-            <EntityTypeMapping TypeName="SoltanModel.DailyStatistic">
-              <MappingFragment StoreEntitySet="DailyStatistics">
-                <ScalarProperty Name="SumOfSinglechargeInAppPurchases" ColumnName="SumOfSinglechargeInAppPurchases" />
-                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesSucceeded" ColumnName="NumberOfSinglechargeInAppPurchasesSucceeded" />
-                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesFailed" ColumnName="NumberOfSinglechargeInAppPurchasesFailed" />
-                <ScalarProperty Name="TotalNumberOfSinglechargeInAppPurchases" ColumnName="TotalNumberOfSinglechargeInAppPurchases" />
-                <ScalarProperty Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" ColumnName="NumberOfSinglechargeDistinctNumbersTriedToCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulFullCharge" ColumnName="SumOfSinglechargeSuccessfulFullCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidFullCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidFullCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulIncompleteCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulFullCharge" ColumnName="NumberOfSinglechargeSuccessfulFullCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidFullCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidFullCharge" />
-                <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
-                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
-                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
+        <EntityContainerMapping StorageEntityContainer="ShahreKalamehModelStoreContainer" CdmEntityContainer="ShahreKalamehEntities">
+          <EntitySetMapping Name="AutochargeContents">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeContent">
+              <MappingFragment StoreEntitySet="AutochargeContents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsAddedToSendQueue" ColumnName="IsAddedToSendQueue" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="SendDate" ColumnName="SendDate" />
+                <ScalarProperty Name="PersianSendDate" ColumnName="PersianSendDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeContentsSendedToUsers">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeContentsSendedToUser">
+              <MappingFragment StoreEntitySet="AutochargeContentsSendedToUsers">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeHeaderFooters">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeHeaderFooter">
+              <MappingFragment StoreEntitySet="AutochargeHeaderFooter">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="Footer" ColumnName="Footer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeMessagesBuffers">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeMessagesBuffer">
+              <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="SumOfPaidMessages" ColumnName="SumOfPaidMessages" />
-                <ScalarProperty Name="SumOfPaidAutochargeMessages" ColumnName="SumOfPaidAutochargeMessages" />
-                <ScalarProperty Name="SumOfpaidEventbaseMessages" ColumnName="SumOfpaidEventbaseMessages" />
-                <ScalarProperty Name="SumOfPaidOnDemandMessages" ColumnName="SumOfPaidOnDemandMessages" />
-                <ScalarProperty Name="NumberOfPaidMessagesFailed" ColumnName="NumberOfPaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfPaidAutochargeMessagesFailed" ColumnName="NumberOfPaidAutochargeMessagesFailed" />
-                <ScalarProperty Name="NumberOfPaidEventbaseMessagesFailed" ColumnName="NumberOfPaidEventbaseMessagesFailed" />
-                <ScalarProperty Name="NumberOfPaidOnDemandMessagesFailed" ColumnName="NumberOfPaidOnDemandMessagesFailed" />
-                <ScalarProperty Name="NumberOfPaidMessagesSent" ColumnName="NumberOfPaidMessagesSent" />
-                <ScalarProperty Name="NumberOfPaidAutochargeMessagesSent" ColumnName="NumberOfPaidAutochargeMessagesSent" />
-                <ScalarProperty Name="NumberOfPaidEventbaseMessagesSent" ColumnName="NumberOfPaidEventbaseMessagesSent" />
-                <ScalarProperty Name="NumberOfPaidOnDemandMessagesSent" ColumnName="NumberOfPaidOnDemandMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeMessagesDelivered" ColumnName="NumberOfFreeMessagesDelivered" />
-                <ScalarProperty Name="NumberOfFreeAutochargeMessagesDelivered" ColumnName="NumberOfFreeAutochargeMessagesDelivered" />
-                <ScalarProperty Name="NumberOfFreeEventbaseMessagesDelivered" ColumnName="NumberOfFreeEventbaseMessagesDelivered" />
-                <ScalarProperty Name="NumberOfFreeOnDemandMessagesDelivered" ColumnName="NumberOfFreeOnDemandMessagesDelivered" />
-                <ScalarProperty Name="NumberOfFreeMessagesSent" ColumnName="NumberOfFreeMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeAutochargeMessagesSent" ColumnName="NumberOfFreeAutochargeMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeEventbaseMessagesSent" ColumnName="NumberOfFreeEventbaseMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeOnDemandMessagesSent" ColumnName="NumberOfFreeOnDemandMessagesSent" />
-                <ScalarProperty Name="NumberOfMessagesThatUserHasNoCharge" ColumnName="NumberOfMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbaseMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargeMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfMessagesDeliveryNotReceived" ColumnName="NumberOfMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfPrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfPostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryNotReceived" ColumnName="NumberOfEventbaseMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargeMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfMessagesDeliveryFailed" ColumnName="NumberOfMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryFailed" ColumnName="NumberOfPrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryFailed" ColumnName="NumberOfPostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryFailed" ColumnName="NumberOfEventbaseMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryFailed" ColumnName="NumberOfAutochargeMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryFailed" ColumnName="NumberOfOnDemandMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfMessagesDelivered" ColumnName="NumberOfMessagesDelivered" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesDelivered" ColumnName="NumberOfPrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesDelivered" ColumnName="NumberOfPostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDelivered" ColumnName="NumberOfEventbasePrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDelivered" ColumnName="NumberOfEventbasePostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesDelivered" ColumnName="NumberOfEventbaseMessagesDelivered" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDelivered" ColumnName="NumberOfAutochargePrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDelivered" ColumnName="NumberOfAutochargePostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesDelivered" ColumnName="NumberOfAutochargeMessagesDelivered" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDelivered" ColumnName="NumberOfOnDemandPrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDelivered" ColumnName="NumberOfOnDemandPostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesDelivered" ColumnName="NumberOfOnDemandMessagesDelivered" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeTimeTables">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.AutochargeTimeTable">
+              <MappingFragment StoreEntitySet="AutochargeTimeTable">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DailyStatistics">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.DailyStatistic">
+              <MappingFragment StoreEntitySet="DailyStatistics">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
@@ -1253,11 +1228,111 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
                 <ScalarProperty Name="NumberOfEventbaseMessagesFailed" ColumnName="NumberOfEventbaseMessagesFailed" />
                 <ScalarProperty Name="NumberOfEventbasePostpaidMessagesFailed" ColumnName="NumberOfEventbasePostpaidMessagesFailed" />
                 <ScalarProperty Name="NumberOfEventbasePrepaidMessagesFailed" ColumnName="NumberOfEventbasePrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDelivered" ColumnName="NumberOfOnDemandMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDelivered" ColumnName="NumberOfOnDemandPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDelivered" ColumnName="NumberOfOnDemandPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDelivered" ColumnName="NumberOfAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDelivered" ColumnName="NumberOfAutochargePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDelivered" ColumnName="NumberOfAutochargePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDelivered" ColumnName="NumberOfEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDelivered" ColumnName="NumberOfEventbasePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDelivered" ColumnName="NumberOfEventbasePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDelivered" ColumnName="NumberOfPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDelivered" ColumnName="NumberOfPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfMessagesDelivered" ColumnName="NumberOfMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryFailed" ColumnName="NumberOfOnDemandMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryFailed" ColumnName="NumberOfAutochargeMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryFailed" ColumnName="NumberOfEventbaseMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryFailed" ColumnName="NumberOfPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryFailed" ColumnName="NumberOfPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryFailed" ColumnName="NumberOfMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargeMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryNotReceived" ColumnName="NumberOfEventbaseMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryNotReceived" ColumnName="NumberOfMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargeMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbaseMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfMessagesThatUserHasNoCharge" ColumnName="NumberOfMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesSent" ColumnName="NumberOfFreeOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesSent" ColumnName="NumberOfFreeEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesSent" ColumnName="NumberOfFreeAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeMessagesSent" ColumnName="NumberOfFreeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesDelivered" ColumnName="NumberOfFreeOnDemandMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesDelivered" ColumnName="NumberOfFreeEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesDelivered" ColumnName="NumberOfFreeAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeMessagesDelivered" ColumnName="NumberOfFreeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesSent" ColumnName="NumberOfPaidOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesSent" ColumnName="NumberOfPaidEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesSent" ColumnName="NumberOfPaidAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidMessagesSent" ColumnName="NumberOfPaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesFailed" ColumnName="NumberOfPaidOnDemandMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesFailed" ColumnName="NumberOfPaidEventbaseMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesFailed" ColumnName="NumberOfPaidAutochargeMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidMessagesFailed" ColumnName="NumberOfPaidMessagesFailed" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessages" ColumnName="SumOfPaidOnDemandMessages" />
+                <ScalarProperty Name="SumOfpaidEventbaseMessages" ColumnName="SumOfpaidEventbaseMessages" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessages" ColumnName="SumOfPaidAutochargeMessages" />
+                <ScalarProperty Name="SumOfPaidMessages" ColumnName="SumOfPaidMessages" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
+                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
+                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulFullCharge" ColumnName="NumberOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulFullCharge" ColumnName="SumOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" ColumnName="NumberOfSinglechargeDistinctNumbersTriedToCharge" />
+                <ScalarProperty Name="TotalNumberOfSinglechargeInAppPurchases" ColumnName="TotalNumberOfSinglechargeInAppPurchases" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesFailed" ColumnName="NumberOfSinglechargeInAppPurchasesFailed" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesSucceeded" ColumnName="NumberOfSinglechargeInAppPurchasesSucceeded" />
+                <ScalarProperty Name="SumOfSinglechargeInAppPurchases" ColumnName="SumOfSinglechargeInAppPurchases" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="EventbaseContents">
-            <EntityTypeMapping TypeName="SoltanModel.EventbaseContent">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.EventbaseContent">
               <MappingFragment StoreEntitySet="EventbaseContents">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1272,11 +1347,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="EventbaseMessagesBuffers">
-            <EntityTypeMapping TypeName="SoltanModel.EventbaseMessagesBuffer">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
-                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1298,11 +1370,14 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
                 <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
                 <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ImiChargeCodes">
-            <EntityTypeMapping TypeName="SoltanModel.ImiChargeCode">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.ImiChargeCode">
               <MappingFragment StoreEntitySet="ImiChargeCodes">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ChargeCode" ColumnName="ChargeCode" />
@@ -1313,11 +1388,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MessagesArchives">
-            <EntityTypeMapping TypeName="SoltanModel.MessagesArchive">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
-                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1339,11 +1411,14 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
                 <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
                 <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MessagesMonitorings">
-            <EntityTypeMapping TypeName="SoltanModel.MessagesMonitoring">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.MessagesMonitoring">
               <MappingFragment StoreEntitySet="MessagesMonitoring">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ContentId" ColumnName="ContentId" />
@@ -1360,7 +1435,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MessagesTemplates">
-            <EntityTypeMapping TypeName="SoltanModel.MessagesTemplate">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.MessagesTemplate">
               <MappingFragment StoreEntitySet="MessagesTemplate">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1370,11 +1445,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OnDemandMessagesBuffers">
-            <EntityTypeMapping TypeName="SoltanModel.OnDemandMessagesBuffer">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
-                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1396,11 +1468,14 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
                 <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
                 <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PointsTables">
-            <EntityTypeMapping TypeName="SoltanModel.PointsTable">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.PointsTable">
               <MappingFragment StoreEntitySet="PointsTable">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1409,8 +1484,84 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ServiceOffReasons">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.ServiceOffReason">
+              <MappingFragment StoreEntitySet="ServiceOffReason">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Singlecharges">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.Singlecharge">
+              <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeArchives">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.SinglechargeArchive">
+              <MappingFragment StoreEntitySet="SinglechargeArchive">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeInstallments">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.SinglechargeInstallment">
+              <MappingFragment StoreEntitySet="SinglechargeInstallment">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="PricePayed" ColumnName="PricePayed" />
+                <ScalarProperty Name="IsFullyPaid" ColumnName="IsFullyPaid" />
+                <ScalarProperty Name="IsExceededDailyChargeLimit" ColumnName="IsExceededDailyChargeLimit" />
+                <ScalarProperty Name="PriceTodayCharged" ColumnName="PriceTodayCharged" />
+                <ScalarProperty Name="IsUserDailyChargeBalanced" ColumnName="IsUserDailyChargeBalanced" />
+                <ScalarProperty Name="IsUserCanceledTheInstallment" ColumnName="IsUserCanceledTheInstallment" />
+                <ScalarProperty Name="CancelationDate" ColumnName="CancelationDate" />
+                <ScalarProperty Name="PersianCancelationDate" ColumnName="PersianCancelationDate" />
+                <ScalarProperty Name="IsRenewalMessageSent" ColumnName="IsRenewalMessageSent" />
+                <ScalarProperty Name="IsRenewd" ColumnName="IsRenewd" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeWaitings">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.SinglechargeWaiting">
+              <MappingFragment StoreEntitySet="SinglechargeWaiting">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
+                <ScalarProperty Name="IsLastDayWarningSent" ColumnName="IsLastDayWarningSent" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="SubscribersAdditionalInfoes">
-            <EntityTypeMapping TypeName="SoltanModel.SubscribersAdditionalInfo">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.SubscribersAdditionalInfo">
               <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
@@ -1421,9 +1572,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="TimedTempMessagesBuffers">
-            <EntityTypeMapping TypeName="SoltanModel.TimedTempMessagesBuffer">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.TimedTempMessagesBuffer">
               <MappingFragment StoreEntitySet="TimedTempMessagesBuffer">
-                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1445,193 +1595,44 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
                 <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
                 <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="SoltanModel.Store.AggregateDailyStatistics" />
-          <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="SoltanModel.Store.ArchiveMessages" />
-          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="SoltanModel.Store.ChangeMessageStatus" />
-          <EntitySetMapping Name="AutochargeContents">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeContent">
-              <MappingFragment StoreEntitySet="AutochargeContents">
-                <ScalarProperty Name="PersianSendDate" ColumnName="PersianSendDate" />
-                <ScalarProperty Name="SendDate" ColumnName="SendDate" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="IsAddedToSendQueue" ColumnName="IsAddedToSendQueue" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Point" ColumnName="Point" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="vw_SentMessages">
-            <EntityTypeMapping TypeName="SoltanModel.vw_SentMessages">
+            <EntityTypeMapping TypeName="ShahreKalamehModel.vw_SentMessages">
               <MappingFragment StoreEntitySet="vw_SentMessages">
-                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
-                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
-                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
-                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
-                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
-                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
-                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
-                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
-                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
-                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
-                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AutochargeMessagesBuffers">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeMessagesBuffer">
-              <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
-                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
-                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
-                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
-                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
-                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
-                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
-                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
-                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
-                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
-                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
                 <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AutochargeHeaderFooters">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeHeaderFooter">
-              <MappingFragment StoreEntitySet="AutochargeHeaderFooter">
-                <ScalarProperty Name="Footer" ColumnName="Footer" />
-                <ScalarProperty Name="Header" ColumnName="Header" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AutochargeTimeTables">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeTimeTable">
-              <MappingFragment StoreEntitySet="AutochargeTimeTable">
-                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ServiceOffReasons">
-            <EntityTypeMapping TypeName="SoltanModel.ServiceOffReason">
-              <MappingFragment StoreEntitySet="ServiceOffReason">
-                <ScalarProperty Name="Reason" ColumnName="Reason" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AutochargeContentsSendedToUsers">
-            <EntityTypeMapping TypeName="SoltanModel.AutochargeContentsSendedToUser">
-              <MappingFragment StoreEntitySet="AutochargeContentsSendedToUsers">
-                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
-                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Singlecharges">
-            <EntityTypeMapping TypeName="SoltanModel.Singlecharge">
-              <MappingFragment StoreEntitySet="Singlecharge">
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="SinglechargeInstallments">
-            <EntityTypeMapping TypeName="SoltanModel.SinglechargeInstallment">
-              <MappingFragment StoreEntitySet="SinglechargeInstallment">
-                <ScalarProperty Name="IsRenewd" ColumnName="IsRenewd" />
-                <ScalarProperty Name="IsRenewalMessageSent" ColumnName="IsRenewalMessageSent" />
-                <ScalarProperty Name="PersianCancelationDate" ColumnName="PersianCancelationDate" />
-                <ScalarProperty Name="CancelationDate" ColumnName="CancelationDate" />
-                <ScalarProperty Name="IsUserCanceledTheInstallment" ColumnName="IsUserCanceledTheInstallment" />
-                <ScalarProperty Name="IsUserDailyChargeBalanced" ColumnName="IsUserDailyChargeBalanced" />
-                <ScalarProperty Name="PriceTodayCharged" ColumnName="PriceTodayCharged" />
-                <ScalarProperty Name="IsExceededDailyChargeLimit" ColumnName="IsExceededDailyChargeLimit" />
-                <ScalarProperty Name="IsFullyPaid" ColumnName="IsFullyPaid" />
-                <ScalarProperty Name="PricePayed" ColumnName="PricePayed" />
-                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SinglechargeWaitings">
-            <EntityTypeMapping TypeName="SoltanModel.SinglechargeWaiting">
-              <MappingFragment StoreEntitySet="SinglechargeWaiting">
-                <ScalarProperty Name="IsLastDayWarningSent" ColumnName="IsLastDayWarningSent" />
-                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
-                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="SoltanModel.Store.RetryUndeliveredMessages" />
-          <EntitySetMapping Name="SinglechargeArchives">
-            <EntityTypeMapping TypeName="SoltanModel.SinglechargeArchive">
-              <MappingFragment StoreEntitySet="SinglechargeArchive">
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="ShahreKalamehModel.Store.AggregateDailyStatistics" />
+          <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="ShahreKalamehModel.Store.ArchiveMessages" />
+          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="ShahreKalamehModel.Store.ChangeMessageStatus" />
+          <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="ShahreKalamehModel.Store.RetryUndeliveredMessages" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

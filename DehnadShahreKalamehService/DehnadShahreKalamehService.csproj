@@ -7,8 +7,8 @@
     <ProjectGuid>{5D2D1F8C-AB6D-43FB-9C8D-2378E4B94124}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DehnadSoltanService</RootNamespace>
-    <AssemblyName>DehnadSoltanService</AssemblyName>
+    <RootNamespace>DehnadShahreKalamehService</RootNamespace>
+    <AssemblyName>DehnadShahreKalamehService</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -118,13 +118,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ShahreKalamehLibrary\ShahreKalamehLibrary.csproj">
+      <Project>{23bd342d-2d3f-4cf2-944d-02b5ce34242d}</Project>
+      <Name>ShahreKalamehLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
-      <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
-      <Name>SoltanLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

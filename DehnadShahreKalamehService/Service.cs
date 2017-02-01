@@ -2,7 +2,7 @@
 using System.ServiceProcess;
 using System.Threading;
 
-namespace DehnadSoltanService
+namespace DehnadShahreKalamehService
 {
     public partial class Service : ServiceBase
     {
@@ -194,7 +194,10 @@ namespace DehnadSoltanService
             while (!shutdownEvent.WaitOne(0))
             {
                 singlechargeInstallment.ProcessInstallment();
-                Thread.Sleep(7200000);
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
+                    Thread.Sleep(50 * 60 * 1000);
+                else
+                    Thread.Sleep(1000);
             }
         }
 
@@ -203,11 +206,11 @@ namespace DehnadSoltanService
             while (!shutdownEvent.WaitOne(0))
             {
                 var singlechargeInstallment = new SinglechargeInstallmentClass();
-                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0 && DateTime.Now.Second < 5)
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute > 13 && DateTime.Now.Minute < 17)
                 {
                     singlechargeInstallment.InstallmentDailyBalance();
-                    singlechargeInstallment.ResetUserDailyChargeBalanceValue();
-                    Thread.Sleep(100000);
+                    //singlechargeInstallment.ResetUserDailyChargeBalanceValue();
+                    Thread.Sleep(60 * 60 * 1000);
                 }
                 Thread.Sleep(1000);
             }

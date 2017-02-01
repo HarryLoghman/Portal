@@ -1384,6 +1384,10 @@
       <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
       <Name>SepidRoodLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ShahreKalamehLibrary\ShahreKalamehLibrary.csproj">
+      <Project>{23bd342d-2d3f-4cf2-944d-02b5ce34242d}</Project>
+      <Name>ShahreKalamehLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>

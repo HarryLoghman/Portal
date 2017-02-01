@@ -1,18 +1,18 @@
 ﻿using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 using System;
 using System.Text.RegularExpressions;
+using System.Linq;
 
-namespace SoltanLibrary
+namespace ShahreKalamehLibrary
 {
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void ReceivedMessage(MessageObject message, Service service)
         {
-            //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
-            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "188.166.173.46" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
+            if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
@@ -100,15 +100,15 @@ namespace SoltanLibrary
 
         public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)
         {
-            //System.Diagnostics.Debugger.Launch();
+            message.Content = message.Price.ToString();
             var content = message.Content;
             var singlecharge = new Singlecharge();
-            //if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
-            //{
-            //    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
-            //    MessageHandler.InsertMessageToQueue(message);
-            //    return singlecharge;
-            //}
+            if (message.Content.All(char.IsDigit))
+            {
+                var price = Convert.ToInt32(message.Content);
+                var imiObject = MessageHandler.GetImiChargeObjectFromPrice(price, null);
+                message.Content = imiObject.ChargeCode.ToString();
+            }
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);

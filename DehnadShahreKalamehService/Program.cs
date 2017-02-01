@@ -1,7 +1,7 @@
 ﻿using System.ServiceProcess;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
-namespace DehnadSoltanService
+namespace DehnadShahreKalamehService
 {
     static class Program
     {

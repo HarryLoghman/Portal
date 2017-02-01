@@ -7,8 +7,8 @@
     <ProjectGuid>{23BD342D-2D3F-4CF2-944D-02B5CE34242D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SoltanLibrary</RootNamespace>
-    <AssemblyName>SoltanLibrary</AssemblyName>
+    <RootNamespace>ShahreKalamehLibrary</RootNamespace>
+    <AssemblyName>ShahreKalamehLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -60,85 +60,85 @@
     <Compile Include="HandleMo.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeContentsSendedToUser.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeHeaderFooter.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AutochargeTimeTable.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DailyStatistic.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventbaseMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ImiChargeCode.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MessagesArchive.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MessagesMonitoring.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PointsTable.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServiceOffReason.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShahreKalamehModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ShahreKalamehModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShahreKalamehModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShahreKalamehModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ShahreKalamehModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\Singlecharge.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SinglechargeArchive.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SinglechargeInstallment.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SinglechargeWaiting.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SoltanModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SoltanModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SoltanModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SoltanModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SubscribersAdditionalInfo.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\TimedTempMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceHandler.cs" />
@@ -146,12 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Models\SoltanModel.edmx">
+    <EntityDeploy Include="Models\ShahreKalamehModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SoltanModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>ShahreKalamehModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="Models\SoltanModel.edmx.diagram">
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
+    <None Include="Models\ShahreKalamehModel.edmx.diagram">
+      <DependentUpon>ShahreKalamehModel.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
@@ -164,16 +164,17 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Content Include="Models\SoltanModel.Context.tt">
+    <Content Include="Models\ShahreKalamehModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
-      <LastGenOutput>SoltanModel.Context.cs</LastGenOutput>
+      <DependentUpon>ShahreKalamehModel.edmx</DependentUpon>
+      <LastGenOutput>ShahreKalamehModel.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\SoltanModel.tt">
+    <Content Include="Models\ShahreKalamehModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
-      <LastGenOutput>SoltanModel.cs</LastGenOutput>
+      <DependentUpon>ShahreKalamehModel.edmx</DependentUpon>
+      <LastGenOutput>ShahreKalamehModel.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

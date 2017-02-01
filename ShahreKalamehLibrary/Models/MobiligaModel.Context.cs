@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SoltanLibrary.Models
+namespace ShahreKalamehLibrary.Models
 {
     using System;
     using System.Data.Entity;
@@ -15,10 +15,10 @@ namespace SoltanLibrary.Models
     using System.Data.Entity.Core.Objects;
     using System.Linq;
     
-    public partial class SoltanEntities : DbContext
+    public partial class ShahreKalamehEntities : DbContext
     {
-        public SoltanEntities()
-            : base("name=SoltanEntities")
+        public ShahreKalamehEntities()
+            : base("name=ShahreKalamehEntities")
         {
         }
     

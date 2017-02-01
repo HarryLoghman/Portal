@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DehnadSoltanService.Properties {
+namespace DehnadShahreKalamehService.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -25,7 +25,7 @@ namespace DehnadSoltanService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Telepromo")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Hub")]
         public string AggregatorName {
             get {
                 return ((string)(this["AggregatorName"]));
@@ -97,7 +97,7 @@ namespace DehnadSoltanService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Soltan")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ShahreKalameh")]
         public string ServiceCode {
             get {
                 return ((string)(this["ServiceCode"]));

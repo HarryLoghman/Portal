@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SoltanLibrary.Models
+namespace ShahreKalamehLibrary.Models
 {
     using System;
     using System.Data.Entity;
@@ -15,10 +15,10 @@ namespace SoltanLibrary.Models
     using System.Data.Entity.Core.Objects;
     using System.Linq;
     
-    public partial class SoltanEntities : DbContext
+    public partial class ShahreKalamehEntities : DbContext
     {
-        public SoltanEntities()
-            : base("name=SoltanEntities")
+        public ShahreKalamehEntities()
+            : base("name=ShahreKalamehEntities")
         {
         }
     
@@ -27,6 +27,11 @@ namespace SoltanLibrary.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
+        public virtual DbSet<AutochargeContentsSendedToUser> AutochargeContentsSendedToUsers { get; set; }
+        public virtual DbSet<AutochargeHeaderFooter> AutochargeHeaderFooters { get; set; }
+        public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
+        public virtual DbSet<AutochargeTimeTable> AutochargeTimeTables { get; set; }
         public virtual DbSet<DailyStatistic> DailyStatistics { get; set; }
         public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
         public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
@@ -36,19 +41,14 @@ namespace SoltanLibrary.Models
         public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
         public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
         public virtual DbSet<PointsTable> PointsTables { get; set; }
-        public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
-        public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
-        public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
-        public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
-        public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
-        public virtual DbSet<AutochargeHeaderFooter> AutochargeHeaderFooters { get; set; }
-        public virtual DbSet<AutochargeTimeTable> AutochargeTimeTables { get; set; }
         public virtual DbSet<ServiceOffReason> ServiceOffReasons { get; set; }
-        public virtual DbSet<AutochargeContentsSendedToUser> AutochargeContentsSendedToUsers { get; set; }
         public virtual DbSet<Singlecharge> Singlecharges { get; set; }
+        public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
         public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
-        public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
+        public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
+        public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
+        public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

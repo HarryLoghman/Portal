@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 using System.Net.Http;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace SoltanLibrary
+namespace ShahreKalamehLibrary
 {
     public class MessageHandler
     {
@@ -24,7 +24,7 @@ namespace SoltanLibrary
 
         public static void InsertMessageToQueue(MessageObject message)
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
                 if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
@@ -62,7 +62,7 @@ namespace SoltanLibrary
 
         public static void InsertBulkMessagesToQueue(List<MessageObject> messages)
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 int counter = 0;
                 foreach (var message in messages)
@@ -97,7 +97,7 @@ namespace SoltanLibrary
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     var autochargeHeaderAndFooter = entity.AutochargeHeaderFooters.FirstOrDefault();
                     if (autochargeHeaderAndFooter != null)
@@ -125,7 +125,7 @@ namespace SoltanLibrary
 
         public static void SetOffReason(Subscriber subscriber, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 var offReason = new ServiceOffReason();
                 offReason.SubscriberId = subscriber.Id;
@@ -243,7 +243,7 @@ namespace SoltanLibrary
 
         public static ImiChargeCode GetImiChargeObjectFromPrice(int price, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 ImiChargeCode imiChargeCode;
                 if (subscriberState == null && price > 0)
@@ -262,7 +262,7 @@ namespace SoltanLibrary
 
         public static string GetImiChargeKeyFromPrice(int price)
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 var imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
                 return imiChargeCode.ChargeKey;
@@ -283,19 +283,19 @@ namespace SoltanLibrary
             InsertMessageToQueue(message);
         }
 
-        public static List<OnDemandMessagesBuffer> GetUnprocessedOnDemandMessages(SoltanEntities entity, int readSize)
+        public static List<OnDemandMessagesBuffer> GetUnprocessedOnDemandMessages(ShahreKalamehEntities entity, int readSize)
         {
             var today = DateTime.Now.Date;
             return entity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend).Take(readSize).ToList();
         }
 
-        public static List<EventbaseMessagesBuffer> GetUnprocessedEventbaseMessages(SoltanEntities entity, int readSize)
+        public static List<EventbaseMessagesBuffer> GetUnprocessedEventbaseMessages(ShahreKalamehEntities entity, int readSize)
         {
             var today = DateTime.Now.Date;
             return entity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
         }
 
-        public static List<AutochargeMessagesBuffer> GetUnprocessedAutochargeMessages(SoltanEntities entity, int readSize)
+        public static List<AutochargeMessagesBuffer> GetUnprocessedAutochargeMessages(ShahreKalamehEntities entity, int readSize)
         {
             var today = DateTime.Now.Date;
             return entity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
@@ -303,7 +303,7 @@ namespace SoltanLibrary
 
         public static void SetEventbaseStatus(long eventbaseId)
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.Id == eventbaseId);
                 if (eventbaseContent != null)
@@ -317,7 +317,7 @@ namespace SoltanLibrary
 
         public static void AddEventbaseMessagesToQueue(EventbaseContent eventbaseContent, long aggregatorId)
         {
-            var serviceCode = "Soltan";
+            var serviceCode = "ShahreKalameh";
             var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode);
             if (serviceId == null)
             {
@@ -342,7 +342,7 @@ namespace SoltanLibrary
                 return;
             }
             logs.Info("Eventbase subscribers count:" + subscribers.Count());
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 var messages = new List<MessageObject>();
                 var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(eventbaseContent.Price, null);
@@ -364,7 +364,7 @@ namespace SoltanLibrary
 
         public static void CreateMonitoringItem(long? contentId, SharedLibrary.MessageHandler.MessageType messageType, int totalMessages, int? tag)
         {
-            using (var entity = new SoltanEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 var monitoringItem = new MessagesMonitoring();
                 monitoringItem.ContentId = contentId;
@@ -392,7 +392,7 @@ namespace SoltanLibrary
             return message;
         }
 
-        public static async Task SendMesssagesToPardisImi(SoltanEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task SendMesssagesToPardisImi(ShahreKalamehEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try
             {
@@ -499,7 +499,7 @@ namespace SoltanLibrary
                 if (installmentId != 0)
                     singlecharge.InstallmentId = installmentId;
 
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.Singlecharges.Add(singlecharge);
                     entity.SaveChanges();
@@ -537,7 +537,299 @@ namespace SoltanLibrary
             return result;
         }
 
-        public static async Task SendMesssagesToTelepromo(SoltanEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task SendMesssagesToHub(ShahreKalamehEntities entityDisposeIt, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            try
+            {
+                await Task.Delay(10); // for making it async
+                var messagesCount = messages.Count;
+                if (messagesCount == 0)
+                    return;
+                using (var entity = new ShahreKalamehEntities())
+                {
+                    var aggregatorUsername = serviceAdditionalInfo["username"];
+                    var aggregatorPassword = serviceAdditionalInfo["password"];
+                    var from = serviceAdditionalInfo["shortCode"];
+                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+
+                    XmlDocument doc = new XmlDocument();
+                    XmlElement root = doc.CreateElement("xmsrequest");
+                    XmlElement userid = doc.CreateElement("userid");
+                    XmlElement password = doc.CreateElement("password");
+                    XmlElement action = doc.CreateElement("action");
+                    XmlElement body = doc.CreateElement("body");
+                    XmlElement type = doc.CreateElement("type");
+                    type.InnerText = "oto";
+                    body.AppendChild(type);
+
+                    foreach (var message in messages)
+                    {
+                        XmlElement recipient = doc.CreateElement("recipient");
+                        recipient.InnerText = message.Content;
+                        body.AppendChild(recipient);
+
+                        XmlAttribute mobile = doc.CreateAttribute("mobile");
+                        recipient.Attributes.Append(mobile);
+                        mobile.InnerText = message.MobileNumber;
+
+                        XmlAttribute originator = doc.CreateAttribute("originator");
+                        originator.InnerText = from;
+                        recipient.Attributes.Append(originator);
+
+                        XmlAttribute cost = doc.CreateAttribute("cost");
+                        cost.InnerText = message.Price.ToString();
+                        recipient.Attributes.Append(cost);
+
+                        XmlAttribute type1 = doc.CreateAttribute("type");
+                        type1.InnerText = "250";
+                        recipient.Attributes.Append(type1);
+                    }
+
+                    userid.InnerText = aggregatorUsername;
+                    password.InnerText = aggregatorPassword;
+                    action.InnerText = "smssend";
+                    //
+                    doc.AppendChild(root);
+                    root.AppendChild(userid);
+                    root.AppendChild(password);
+                    root.AppendChild(action);
+                    root.AppendChild(body);
+                    //
+                    string stringedXml = doc.OuterXml;
+                    logs.Info("request smssend: " + stringedXml);
+                    SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                    string response = hubClient.XmsRequest(stringedXml).ToString();
+                    logs.Info("response smssend: " + response);
+                    XmlDocument xml = new XmlDocument();
+                    xml.LoadXml(response);
+                    XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                    foreach (XmlNode error in OK)
+                    {
+                        if (error.InnerText != "" && error.InnerText != "ok")
+                        {
+                            logs.Error("Error in sending message to Hub");
+                        }
+                        else
+                        {
+                            var i = 0;
+                            XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                            foreach (XmlNode xn in xnList)
+                            {
+                                string responseCode = (xn.Attributes["status"].Value).ToString();
+                                if (responseCode == "6900")
+                                {
+                                    messages[i].ReferenceId = "برای انجام این کار دسترسی ندارید";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6906")
+                                {
+                                    messages[i].ReferenceId = "برای انجام این کار اعتبار شما کافی نیست";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6908")
+                                {
+                                    messages[i].ReferenceId = "متن پیامی که در حال ارسال می باشید خالی است";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6950")
+                                {
+                                    messages[i].ReferenceId = "ایکس ام ال فرستاده شده نامعتبر است";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6951")
+                                {
+                                    messages[i].ReferenceId = "کاربر یا رمز عبور اشتباه است";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6953")
+                                {
+                                    messages[i].ReferenceId = "متد استفاده شده نامعتبر است";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6955")
+                                {
+                                    messages[i].ReferenceId = "شماره ای که شما با آن ارسال می کنید نامعتبر است، ممکن است شماره برای شما نباشد";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6954")
+                                {
+                                    messages[i].ReferenceId = "موبایل معتبر نیست";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "6956")
+                                {
+                                    messages[i].ReferenceId = "هیچ گیرنده ای مشخص نشده است";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                if (responseCode == "46")
+                                {
+                                    messages[i].ReferenceId = "46";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                else
+                                {
+                                    messages[i].ReferenceId = "Success";
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                    messages[i].SentDate = DateTime.Now;
+                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                    if (messages[i].MessagePoint > 0)
+                                        SharedLibrary.MessageHandler.SetSubscriberPoint(messages[i].MobileNumber, messages[i].ServiceId, messages[i].MessagePoint);
+                                }
+                                entity.Entry(messages[i]).State = EntityState.Modified;
+                                i++;
+                            }
+                            entity.SaveChanges();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendMessagesToHub: " + e);
+            }
+        }
+
+        public static async Task<Singlecharge> SendSinglechargeMesssageToHub(MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        {
+            var singlecharge = new Singlecharge();
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var aggregatorUsername = serviceAdditionalInfo["username"];
+                var aggregatorPassword = serviceAdditionalInfo["password"];
+                var from = serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+
+                var messageId = Guid.NewGuid().ToString();
+                XmlDocument doc = new XmlDocument();
+                XmlElement root = doc.CreateElement("xmsrequest");
+                XmlElement userid = doc.CreateElement("userid");
+                XmlElement password = doc.CreateElement("password");
+                XmlElement action = doc.CreateElement("action");
+                XmlElement body = doc.CreateElement("body");
+                XmlElement serviceid = doc.CreateElement("serviceid");
+                serviceid.InnerText = serviceId;
+                body.AppendChild(serviceid);
+
+                XmlElement recipient = doc.CreateElement("recipient");
+                recipient.InnerText = message.Content;
+                body.AppendChild(recipient);
+
+                XmlAttribute mobile = doc.CreateAttribute("mobile");
+                recipient.Attributes.Append(mobile);
+                mobile.InnerText = message.MobileNumber;
+
+                XmlAttribute originator = doc.CreateAttribute("originator");
+                originator.InnerText = from;
+                recipient.Attributes.Append(originator);
+
+                XmlAttribute cost = doc.CreateAttribute("cost");
+                cost.InnerText = message.Price.ToString();
+                recipient.Attributes.Append(cost);
+
+                XmlAttribute type1 = doc.CreateAttribute("type");
+                type1.InnerText = "250";
+                recipient.Attributes.Append(type1);
+
+                userid.InnerText = aggregatorUsername;
+                password.InnerText = aggregatorPassword;
+                action.InnerText = "singlecharge";
+                //
+                doc.AppendChild(root);
+                root.AppendChild(userid);
+                root.AppendChild(password);
+                root.AppendChild(action);
+                root.AppendChild(body);
+                //
+                string stringedXml = doc.OuterXml;
+                logs.Info("request singlecharge: " + stringedXml);
+                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                string response = hubClient.XmsRequest(stringedXml).ToString();
+                logs.Info("response singlecharge: " + response);
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(response);
+                XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                foreach (XmlNode error in OK)
+                {
+                    if (error.InnerText != "" && error.InnerText != "ok")
+                    {
+                        logs.Error("Error in Singlecharge using Hub");
+                    }
+                    else
+                    {
+                        var i = 0;
+                        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                        foreach (XmlNode xn in xnList)
+                        {
+                            string responseCode = (xn.Attributes["status"].Value).ToString();
+                            if (responseCode == "40")
+                            {
+                                singlecharge.IsSucceeded = true;
+                                singlecharge.Description = responseCode;
+                                singlecharge.ReferenceId = messageId;
+                            }
+                            else
+                            {
+                                singlecharge.IsSucceeded = false;
+                                singlecharge.Description = responseCode;
+                                singlecharge.ReferenceId = messageId;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToHub: " + e);
+            }
+            try
+            {
+                if (singlecharge.IsSucceeded == null)
+                    singlecharge.IsSucceeded = false;
+                if (singlecharge.ReferenceId == null)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                if (installmentId != 0)
+                    singlecharge.InstallmentId = installmentId;
+
+                using (var entity = new ShahreKalamehEntities())
+                {
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToHub on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task SendMesssagesToTelepromo(ShahreKalamehEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try
             {
@@ -652,7 +944,7 @@ namespace SoltanLibrary
                 if (installmentId != 0)
                     singlecharge.InstallmentId = installmentId;
 
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.Singlecharges.Add(singlecharge);
                     entity.SaveChanges();
@@ -665,7 +957,7 @@ namespace SoltanLibrary
             return singlecharge;
         }
 
-        public static async Task SendMesssagesToHamrahvas(SoltanEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task SendMesssagesToHamrahvas(ShahreKalamehEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             List<string> mobileNumbers = new List<string>();
             List<string> contents = new List<string>();

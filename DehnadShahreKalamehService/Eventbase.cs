@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using SoltanLibrary.Models;
+using ShahreKalamehLibrary.Models;
 
-namespace DehnadSoltanService
+namespace DehnadShahreKalamehService
 {
     class Eventbase
     {
@@ -12,7 +12,7 @@ namespace DehnadSoltanService
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new ShahreKalamehEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -22,7 +22,7 @@ namespace DehnadSoltanService
                         return;
                     var aggregatorName = Properties.Settings.Default.AggregatorName;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    SoltanLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    ShahreKalamehLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)
