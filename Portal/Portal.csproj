@@ -318,6 +318,7 @@
     <Compile Include="Areas\MyLeague\MyLeagueAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\HubController.cs" />
     <Compile Include="Controllers\TelepromoController.cs" />

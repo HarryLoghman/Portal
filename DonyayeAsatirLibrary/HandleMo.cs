@@ -13,13 +13,22 @@ namespace DonyayeAsatirLibrary
         {
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
+            var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
-            var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
+            else if (message.ReceivedFrom.Contains("FromApp") && message.Content.Contains("SendVerification"))
+            {
+                var verficationMessage = message.Content.Split('-');
+                message.Content = messagesTemplate.Where(o => o.Title == "VerificationMessage").Select(o => o.Content).FirstOrDefault();
+                message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
+                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+                MessageHandler.InsertMessageToQueue(message);
+                return;
+            }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
