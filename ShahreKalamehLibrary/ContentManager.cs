@@ -22,12 +22,12 @@ namespace ShahreKalamehLibrary
                 var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
                 foreach (var imiChargecode in imiChargeCodes)
                 {
-                    if (imiChargecode.ChargeCode == content)
+                    if (imiChargecode.Price == content)
                     {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("ShahreKalameh", "Telepromo");
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("ShahreKalameh", "Hub");
                         message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
                         chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
+                        singlecharge = MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo).Result;
                         break;
                     }
                 }

@@ -551,6 +551,7 @@ namespace ShahreKalamehLibrary
                     var aggregatorPassword = serviceAdditionalInfo["password"];
                     var from = serviceAdditionalInfo["shortCode"];
                     var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    var subUnsubXmlStringList = new List<string>();
 
                     XmlDocument doc = new XmlDocument();
                     XmlElement root = doc.CreateElement("xmsrequest");
@@ -564,6 +565,52 @@ namespace ShahreKalamehLibrary
 
                     foreach (var message in messages)
                     {
+                        if (message.ImiChargeKey == "UnSubscription" || message.ImiChargeKey == "Register" || message.ImiChargeKey == "Renewal")
+                        {
+                            XmlDocument doc1 = new XmlDocument();
+                            XmlElement root1 = doc1.CreateElement("xmsrequest");
+                            XmlElement userid1 = doc1.CreateElement("userid");
+                            XmlElement password1 = doc1.CreateElement("password");
+                            XmlElement action1 = doc1.CreateElement("action");
+                            XmlElement body1 = doc1.CreateElement("body");
+                            XmlElement serviceid1 = doc1.CreateElement("serviceid");
+                            XmlElement mobile1 = doc1.CreateElement("mobile");
+                            XmlElement smsid = doc1.CreateElement("smsid");
+                            XmlElement subUnSub;
+                            serviceid1.InnerText = serviceId;
+                            body1.AppendChild(serviceid1);
+
+                            mobile1.InnerText = message.MobileNumber;
+                            body1.AppendChild(mobile1);
+
+                            smsid.InnerText = "-1";
+                            body1.AppendChild(smsid);
+
+
+                            if (message.ImiChargeKey == "UnSubscription")
+                            {
+                                subUnSub = doc1.CreateElement("sendgoodbye");
+                                action1.InnerText = "vasremovemember";
+                            }
+                            else
+                            {
+                                subUnSub = doc1.CreateElement("sendwellcome");
+                                action1.InnerText = "vasaddmember";
+                            }
+                            subUnSub.InnerText = "0";
+                            body1.AppendChild(subUnSub);
+
+                            userid1.InnerText = aggregatorUsername;
+                            password1.InnerText = aggregatorPassword;
+
+                            doc1.AppendChild(root1);
+                            root1.AppendChild(userid1);
+                            root1.AppendChild(password1);
+                            root1.AppendChild(action1);
+                            root1.AppendChild(body1);
+
+                            subUnsubXmlStringList.Add(doc1.OuterXml);
+                        }
                         XmlElement recipient = doc.CreateElement("recipient");
                         recipient.InnerText = message.Content;
                         body.AppendChild(recipient);
@@ -596,10 +643,14 @@ namespace ShahreKalamehLibrary
                     root.AppendChild(body);
                     //
                     string stringedXml = doc.OuterXml;
-                    logs.Info("request smssend: " + stringedXml);
                     SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                    foreach (var subUnsubStringXml in subUnsubXmlStringList)
+                    {
+                        logs.Info("subUnsub Request: " + subUnsubStringXml);
+                        string subUnsubResponse = hubClient.XmsRequest(subUnsubStringXml).ToString();
+                        logs.Info("subUnsub Response: " + subUnsubResponse);
+                    }
                     string response = hubClient.XmsRequest(stringedXml).ToString();
-                    logs.Info("response smssend: " + response);
                     XmlDocument xml = new XmlDocument();
                     xml.LoadXml(response);
                     XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
@@ -616,85 +667,20 @@ namespace ShahreKalamehLibrary
                             foreach (XmlNode xn in xnList)
                             {
                                 string responseCode = (xn.Attributes["status"].Value).ToString();
-                                if (responseCode == "6900")
+                                if (responseCode == "40")
                                 {
-                                    messages[i].ReferenceId = "برای انجام این کار دسترسی ندارید";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6906")
-                                {
-                                    messages[i].ReferenceId = "برای انجام این کار اعتبار شما کافی نیست";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6908")
-                                {
-                                    messages[i].ReferenceId = "متن پیامی که در حال ارسال می باشید خالی است";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6950")
-                                {
-                                    messages[i].ReferenceId = "ایکس ام ال فرستاده شده نامعتبر است";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6951")
-                                {
-                                    messages[i].ReferenceId = "کاربر یا رمز عبور اشتباه است";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6953")
-                                {
-                                    messages[i].ReferenceId = "متد استفاده شده نامعتبر است";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6955")
-                                {
-                                    messages[i].ReferenceId = "شماره ای که شما با آن ارسال می کنید نامعتبر است، ممکن است شماره برای شما نباشد";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6954")
-                                {
-                                    messages[i].ReferenceId = "موبایل معتبر نیست";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "6956")
-                                {
-                                    messages[i].ReferenceId = "هیچ گیرنده ای مشخص نشده است";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                if (responseCode == "46")
-                                {
-                                    messages[i].ReferenceId = "46";
-                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                }
-                                else
-                                {
-                                    messages[i].ReferenceId = "Success";
+                                    messages[i].ReferenceId = xn.InnerText;
                                     messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                                    messages[i].SentDate = DateTime.Now;
-                                    messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                                     if (messages[i].MessagePoint > 0)
                                         SharedLibrary.MessageHandler.SetSubscriberPoint(messages[i].MobileNumber, messages[i].ServiceId, messages[i].MessagePoint);
                                 }
+                                else
+                                {
+                                    messages[i].ReferenceId = "failed:" + responseCode;
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                }
+                                messages[i].SentDate = DateTime.Now;
+                                messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                                 entity.Entry(messages[i]).State = EntityState.Modified;
                                 i++;
                             }
@@ -719,8 +705,8 @@ namespace ShahreKalamehLibrary
                 var aggregatorPassword = serviceAdditionalInfo["password"];
                 var from = serviceAdditionalInfo["shortCode"];
                 var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                message.Price *= 10;
 
-                var messageId = Guid.NewGuid().ToString();
                 XmlDocument doc = new XmlDocument();
                 XmlElement root = doc.CreateElement("xmsrequest");
                 XmlElement userid = doc.CreateElement("userid");
@@ -762,10 +748,8 @@ namespace ShahreKalamehLibrary
                 root.AppendChild(body);
                 //
                 string stringedXml = doc.OuterXml;
-                logs.Info("request singlecharge: " + stringedXml);
                 SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
                 string response = hubClient.XmsRequest(stringedXml).ToString();
-                logs.Info("response singlecharge: " + response);
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(response);
                 XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
@@ -786,13 +770,13 @@ namespace ShahreKalamehLibrary
                             {
                                 singlecharge.IsSucceeded = true;
                                 singlecharge.Description = responseCode;
-                                singlecharge.ReferenceId = messageId;
+                                singlecharge.ReferenceId = xn.InnerText;
                             }
                             else
                             {
                                 singlecharge.IsSucceeded = false;
                                 singlecharge.Description = responseCode;
-                                singlecharge.ReferenceId = messageId;
+                                //singlecharge.ReferenceId = xn.InnerText;
                             }
                             i++;
                         }
