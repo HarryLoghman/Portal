@@ -184,6 +184,7 @@
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="OnKeywords" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="IsServiceActive" Type="bit" Nullable="false" />
+          <Property Name="VerifyKeyword" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Subscribers">
           <Key>
@@ -655,6 +656,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <NavigationProperty Name="ServiceInfoes" Relationship="Self.FK_ServiceShortCodes_Services" FromRole="Services" ToRole="ServiceInfo" />
           <NavigationProperty Name="Subscribers" Relationship="Self.FK_Subscribers_Subscribers" FromRole="Services" ToRole="Subscribers" />
           <NavigationProperty Name="SubscribersPoints" Relationship="Self.FK_SubscribersPoints_Services" FromRole="Services" ToRole="SubscribersPoints" />
+          <Property Name="VerifyKeyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Subscriber">
           <Key>
@@ -879,7 +881,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="ParidsShortCodes" EntityType="PortalModel.ParidsShortCode" />
           <EntitySet Name="vw_DehnadAllSentMessages" EntityType="PortalModel.vw_DehnadAllSentMessages" />
           <FunctionImport Name="GetUserLog" ReturnType="Collection(PortalModel.GetUserLog_Result)">
-            <Parameter Name="MobileNumber" Mode="In" Type="String" />
+          <Parameter Name="MobileNumber" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Delivery">
@@ -1088,6 +1090,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="Services">
             <EntityTypeMapping TypeName="PortalModel.Service">
               <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="VerifyKeyword" ColumnName="VerifyKeyword" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />

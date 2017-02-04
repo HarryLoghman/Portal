@@ -562,6 +562,9 @@ namespace ShahreKalamehLibrary
                     XmlElement type = doc.CreateElement("type");
                     type.InnerText = "oto";
                     body.AppendChild(type);
+                    XmlElement serviceid = doc.CreateElement("serviceid");
+                    serviceid.InnerText = serviceId;
+                    body.AppendChild(serviceid);
 
                     foreach (var message in messages)
                     {
@@ -627,9 +630,9 @@ namespace ShahreKalamehLibrary
                         cost.InnerText = message.Price.ToString();
                         recipient.Attributes.Append(cost);
 
-                        XmlAttribute type1 = doc.CreateAttribute("type");
-                        type1.InnerText = "250";
-                        recipient.Attributes.Append(type1);
+                        //XmlAttribute type1 = doc.CreateAttribute("type");
+                        //type1.InnerText = "250";
+                        //recipient.Attributes.Append(type1);
                     }
 
                     userid.InnerText = aggregatorUsername;
@@ -646,9 +649,7 @@ namespace ShahreKalamehLibrary
                     SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
                     foreach (var subUnsubStringXml in subUnsubXmlStringList)
                     {
-                        logs.Info("subUnsub Request: " + subUnsubStringXml);
                         string subUnsubResponse = hubClient.XmsRequest(subUnsubStringXml).ToString();
-                        logs.Info("subUnsub Response: " + subUnsubResponse);
                     }
                     string response = hubClient.XmsRequest(stringedXml).ToString();
                     XmlDocument xml = new XmlDocument();
@@ -705,7 +706,6 @@ namespace ShahreKalamehLibrary
                 var aggregatorPassword = serviceAdditionalInfo["password"];
                 var from = serviceAdditionalInfo["shortCode"];
                 var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-                message.Price *= 10;
 
                 XmlDocument doc = new XmlDocument();
                 XmlElement root = doc.CreateElement("xmsrequest");
@@ -718,7 +718,6 @@ namespace ShahreKalamehLibrary
                 body.AppendChild(serviceid);
 
                 XmlElement recipient = doc.CreateElement("recipient");
-                recipient.InnerText = message.Content;
                 body.AppendChild(recipient);
 
                 XmlAttribute mobile = doc.CreateAttribute("mobile");
@@ -730,12 +729,12 @@ namespace ShahreKalamehLibrary
                 recipient.Attributes.Append(originator);
 
                 XmlAttribute cost = doc.CreateAttribute("cost");
-                cost.InnerText = message.Price.ToString();
+                cost.InnerText = (message.Price * 10).ToString();
                 recipient.Attributes.Append(cost);
 
-                XmlAttribute type1 = doc.CreateAttribute("type");
-                type1.InnerText = "250";
-                recipient.Attributes.Append(type1);
+                //XmlAttribute type1 = doc.CreateAttribute("type");
+                //type1.InnerText = "250";
+                //recipient.Attributes.Append(type1);
 
                 userid.InnerText = aggregatorUsername;
                 password.InnerText = aggregatorPassword;
@@ -749,7 +748,9 @@ namespace ShahreKalamehLibrary
                 //
                 string stringedXml = doc.OuterXml;
                 SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                logs.Info(stringedXml);
                 string response = hubClient.XmsRequest(stringedXml).ToString();
+                logs.Info(response);
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(response);
                 XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");

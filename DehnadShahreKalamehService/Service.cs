@@ -190,14 +190,14 @@ namespace DehnadShahreKalamehService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            //var singlechargeInstallment = new SinglechargeInstallmentClass();
+            var singlechargeInstallment = new SinglechargeInstallmentClass();
             //while (!shutdownEvent.WaitOne(0))
             //{
             //    singlechargeInstallment.ProcessInstallment();
             //    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
             //        Thread.Sleep(50 * 60 * 1000);
             //    else
-            //        Thread.Sleep(1000);
+            //        Thread.Sleep( 1 * 60 * 60 * 1000);
             //}
         }
 

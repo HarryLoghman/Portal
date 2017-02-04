@@ -20,7 +20,7 @@ namespace DonyayeAsatirLibrary
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
-            else if (message.ReceivedFrom.Contains("FromApp") && message.Content.Contains("SendVerification"))
+            else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
             {
                 var verficationMessage = message.Content.Split('-');
                 message.Content = messagesTemplate.Where(o => o.Title == "VerificationMessage").Select(o => o.Content).FirstOrDefault();

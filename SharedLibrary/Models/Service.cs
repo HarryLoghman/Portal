@@ -28,6 +28,7 @@ namespace SharedLibrary.Models
         public System.DateTime DateCreated { get; set; }
         public string OnKeywords { get; set; }
         public bool IsServiceActive { get; set; }
+        public string VerifyKeyword { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ServiceInfo> ServiceInfoes { get; set; }

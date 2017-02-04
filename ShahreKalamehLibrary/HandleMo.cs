@@ -19,7 +19,7 @@ namespace ShahreKalamehLibrary
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
-            else if (message.ReceivedFrom.Contains("FromApp") && message.Content.Contains("SendVerification"))
+            else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
             {
                 var verficationMessage = message.Content.Split('-');
                 message.Content = messagesTemplate.Where(o => o.Title == "VerificationMessage").Select(o => o.Content).FirstOrDefault();
@@ -92,6 +92,8 @@ namespace ShahreKalamehLibrary
             if (subscriber == null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (message.Content == service.VerifyKeyword)
+                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
@@ -99,6 +101,8 @@ namespace ShahreKalamehLibrary
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (message.Content == service.VerifyKeyword)
+                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
@@ -122,6 +126,7 @@ namespace ShahreKalamehLibrary
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+            
             if (subscriber == null)
                 isUserSendsSubscriptionKeyword = true;
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
