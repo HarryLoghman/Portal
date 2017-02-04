@@ -1,0 +1,24 @@
+﻿@using Microsoft.AspNet.Identity
+
+@Html.AntiForgeryToken()
+@User.Identity.GetUserName()
+<ul>
+    <li>
+        @Html.ActionLink("تغییر رمز عبور", "ChangePassword", "Manage")
+    </li>
+    <li>
+        @Html.ActionLink("ایجاد کاربر جدید", "Register", "Account")
+    </li>
+    <li>
+        @Html.ActionLink("خروج", "LogOff", new { area = "", controller = "Account" })
+    </li>
+</ul>
+@*using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    <ul>
+        <li>
+            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+        </li>
+        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+    </ul>
+    }*@

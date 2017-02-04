@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DonyayeAsatirLibrary", "Don
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShahreKalamehLibrary", "ShahreKalamehLibrary\ShahreKalamehLibrary.csproj", "{23BD342D-2D3F-4CF2-944D-02B5CE34242D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppPortal", "AppPortal\AppPortal.csproj", "{A24E91F1-DE00-4EB1-A4FD-75D7EA3A5A71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -183,6 +185,10 @@ Global
 		{23BD342D-2D3F-4CF2-944D-02B5CE34242D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23BD342D-2D3F-4CF2-944D-02B5CE34242D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23BD342D-2D3F-4CF2-944D-02B5CE34242D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A24E91F1-DE00-4EB1-A4FD-75D7EA3A5A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A24E91F1-DE00-4EB1-A4FD-75D7EA3A5A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A24E91F1-DE00-4EB1-A4FD-75D7EA3A5A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A24E91F1-DE00-4EB1-A4FD-75D7EA3A5A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
