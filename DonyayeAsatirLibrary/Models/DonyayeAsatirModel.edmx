@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DonyayeAsatirModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DonyayeAsatirModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -417,6 +417,7 @@
           <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
           <Property Name="IsRenewalMessageSent" Type="bit" />
           <Property Name="IsRenewd" Type="bit" />
+          <Property Name="PriceBalancedForInAppRequest" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
@@ -570,8 +571,7 @@ warning 6002: The table/view 'DonyayeAsatir.dbo.vw_SentMessages' does not have a
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DonyayeAsatirModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -987,6 +987,7 @@ warning 6002: The table/view 'DonyayeAsatir.dbo.vw_SentMessages' does not have a
           <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsRenewalMessageSent" Type="Boolean" />
           <Property Name="IsRenewd" Type="Boolean" />
+          <Property Name="PriceBalancedForInAppRequest" Type="Int32" />
         </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
@@ -1530,6 +1531,7 @@ warning 6002: The table/view 'DonyayeAsatir.dbo.vw_SentMessages' does not have a
           <EntitySetMapping Name="SinglechargeInstallments">
             <EntityTypeMapping TypeName="DonyayeAsatirModel.SinglechargeInstallment">
               <MappingFragment StoreEntitySet="SinglechargeInstallment">
+                <ScalarProperty Name="PriceBalancedForInAppRequest" ColumnName="PriceBalancedForInAppRequest" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />

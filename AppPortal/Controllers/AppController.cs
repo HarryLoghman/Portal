@@ -20,38 +20,35 @@ namespace Portal.Controllers
         private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir" };
         private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir" };
         private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh" };
+        private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir" };
         [HttpPost]
         [AllowAnonymous]
-        public HttpResponseMessage AppChargeUser([FromBody]MessageObject message)
+        public HttpResponseMessage ChargeUser([FromBody]MessageObject message)
         {
             dynamic result = new ExpandoObject();
+            result.MobileNumber = message.MobileNumber;
             try
             {
-                message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
-                message.Content = message.Price == null ? " " : message.Price.ToString();
-                if (message.MobileNumber == "Invalid Mobile Number")
-                {
-                    result.Status = "Invalid Mobile Number";
-                }
+                var hash = SharedLibrary.Security.GetSha256Hash("ChargeUser" + message.ServiceCode + message.MobileNumber);
+                if (message.AccessKey != hash)
+                    result.Status = "You do not have permission";
                 else
                 {
-                    if (!AppMessageAllowedServiceCode.Contains(message.ServiceCode))
+                    message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
+                    message.Content = message.Price == null ? " " : message.Price.ToString();
+                    if (message.MobileNumber == "Invalid Mobile Number")
                     {
-                        result.Status = "This ServiceCode does not have permission";
+                        result.Status = "Invalid Mobile Number";
                     }
                     else
                     {
-                        if (message.ShortCode == null || message.ShortCode == "")
+                        if (!AppMessageAllowedServiceCode.Contains(message.ServiceCode))
                         {
-                            result.Status = "Invalid ShortCode";
+                            result.Status = "This ServiceCode does not have permission";
                         }
                         else
                         {
-                            message = SharedLibrary.MessageHandler.ValidateMessage(message);
-                            message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
-                            message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
-                            message.IsReceivedFromIntegratedPanel = false;
                             var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(message.ServiceCode);
                             if (service == null)
                             {
@@ -59,13 +56,21 @@ namespace Portal.Controllers
                             }
                             else
                             {
+                                message.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id).ShortCode;
+                                message = SharedLibrary.MessageHandler.ValidateMessage(message);
+                                message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                                message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                                message.IsReceivedFromIntegratedPanel = false;
                                 message.ServiceId = service.Id;
+
                                 if (message.Price == null)
                                 {
                                     result.Status = "Invalid Price";
                                 }
                                 else
                                 {
+                                    message.Content = message.Price.ToString();
                                     if (message.ServiceCode == "Soltan")
                                     {
                                         var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
@@ -88,7 +93,7 @@ namespace Portal.Controllers
                                     }
                                     else if (message.ServiceCode == "DonyayeAsatir")
                                     {
-                                        var singlecharge = DonyayeAsatirLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                        var singlecharge = DonyayeAsatirLibrary.ContentManager.HandleSinglechargeContent(message, service, null, DonyayeAsatirLibrary.ServiceHandler.GetServiceMessagesTemplate());
                                         if (singlecharge == null)
                                             result.Status = "Error in Charging";
                                         else
@@ -129,7 +134,7 @@ namespace Portal.Controllers
                                         }
                                     }
                                     else
-                                        result = "General Error in AppChargeUser";
+                                        result.Status = "General Error in AppChargeUser";
                                 }
                             }
                         }
@@ -139,7 +144,7 @@ namespace Portal.Controllers
             catch (Exception e)
             {
                 logs.Error("Exception in AppChargeUser:" + e);
-                result.Status = "General error occured";
+                result.Status = "General error occurred";
             }
             var json = JsonConvert.SerializeObject(result);
             var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -152,35 +157,42 @@ namespace Portal.Controllers
         public HttpResponseMessage AppMessage([FromBody]MessageObject messageObj)
         {
             dynamic result = new ExpandoObject();
+            result.MobileNumber = messageObj.MobileNumber;
             try
             {
-                if (messageObj.Address != null)
-                {
-                    messageObj.MobileNumber = messageObj.Address;
-                    messageObj.Content = messageObj.Message;
-                }
-                else if (messageObj.From != null)
-                {
-                    messageObj.MobileNumber = messageObj.From;
-                    messageObj.ShortCode = messageObj.To;
-                }
-                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                if (messageObj.MobileNumber == "Invalid Mobile Number")
-                    result.Status = "Invalid Mobile Number";
-                else if (!AppMessageAllowedServiceCode.Contains(messageObj.ServiceCode))
-                    result.Status = "This ServiceCode does not have permission";
+                var hash = SharedLibrary.Security.GetSha256Hash("AppMessage" + messageObj.ServiceCode + messageObj.MobileNumber);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
                 else
                 {
-                    messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromApp" : null;
-                    SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                    result.Status = "Success";
+                    if (messageObj.Address != null)
+                    {
+                        messageObj.MobileNumber = messageObj.Address;
+                        messageObj.Content = messageObj.Message;
+                    }
+                    else if (messageObj.From != null)
+                    {
+                        messageObj.MobileNumber = messageObj.From;
+                        messageObj.ShortCode = messageObj.To;
+                    }
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.MobileNumber == "Invalid Mobile Number")
+                        result.Status = "Invalid Mobile Number";
+                    else if (!AppMessageAllowedServiceCode.Contains(messageObj.ServiceCode))
+                        result.Status = "This ServiceCode does not have permission";
+                    else
+                    {
+                        messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromApp" : null;
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                        result.Status = "Success";
+                    }
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Exception in AppMessage:" + e);
-                result.Status = "General error occured";
+                result.Status = "General error occurred";
             }
             var json = JsonConvert.SerializeObject(result);
             var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -193,10 +205,10 @@ namespace Portal.Controllers
         public HttpResponseMessage Verification([FromBody]MessageObject messageObj)
         {
             dynamic result = new ExpandoObject();
+            result.MobileNumber = messageObj.MobileNumber;
             try
             {
                 var hash = SharedLibrary.Security.GetSha256Hash("Verification" + messageObj.ServiceCode + messageObj.MobileNumber);
-                logs.Info("hash:" + hash);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
                 else
@@ -225,7 +237,6 @@ namespace Portal.Controllers
                                 messageObj.Content = "SendVerification-" + verficationId;
                                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-AppVerification" : null;
                                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                                result.MobileNumber = messageObj.MobileNumber;
                                 result.Status = "Subscribed";
                                 result.ActivationCode = verficationId;
                             }
@@ -234,7 +245,6 @@ namespace Portal.Controllers
                                 messageObj.Content = "SendServiceHelp";
                                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Verification" : null;
                                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                                result.MobileNumber = messageObj.MobileNumber;
                                 result.Status = "NotSubscribed";
                                 result.ActivationCode = null;
                             }
@@ -245,7 +255,7 @@ namespace Portal.Controllers
             catch (Exception e)
             {
                 logs.Error("Exception in Verification:" + e);
-                result.Status = "General error occured";
+                result.Status = "General error occurred";
             }
             var json = JsonConvert.SerializeObject(result);
             var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -258,6 +268,7 @@ namespace Portal.Controllers
         public HttpResponseMessage SubscriberStatus([FromBody]MessageObject messageObj)
         {
             dynamic result = new ExpandoObject();
+            result.MobileNumber = messageObj.MobileNumber;
             try
             {
                 var hash = SharedLibrary.Security.GetSha256Hash("SubscriberStatus" + messageObj.ServiceCode + messageObj.MobileNumber);
@@ -283,6 +294,7 @@ namespace Portal.Controllers
                             messageObj.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id).ShortCode;
                             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
                             var daysLeft = 0;
+                            var pricePayed = -1;
                             if (messageObj.ServiceCode == "Soltan")
                             {
                                 using (var entity = new SoltanLibrary.Models.SoltanEntities())
@@ -300,11 +312,22 @@ namespace Portal.Controllers
                                 using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
                                 {
                                     var now = DateTime.Now;
-                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
                                     if (singlechargeInstallment == null)
-                                        daysLeft = 0;
+                                        pricePayed = -1;
                                     else
-                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                    {
+                                        var originalPriceBalancedForInAppRequest = singlechargeInstallment.PriceBalancedForInAppRequest;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest == null)
+                                            singlechargeInstallment.PriceBalancedForInAppRequest = 0;
+                                        pricePayed = singlechargeInstallment.PricePayed - singlechargeInstallment.PriceBalancedForInAppRequest.Value;
+                                        singlechargeInstallment.PriceBalancedForInAppRequest += pricePayed;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest != originalPriceBalancedForInAppRequest)
+                                        {
+                                            entity.Entry(singlechargeInstallment).State = EntityState.Modified;
+                                            entity.SaveChanges();
+                                        }
+                                    }
                                 }
                             }
                             else if (messageObj.ServiceCode == "ShahreKalameh")
@@ -319,17 +342,19 @@ namespace Portal.Controllers
                                         daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
                                 }
                             }
-                            if (daysLeft > 0)
+                            if (daysLeft > 0 || pricePayed > -1)
                             {
-                                result.MobileNumber = messageObj.MobileNumber;
                                 result.Status = "Active";
-                                result.DaysLeft = daysLeft;
+                                if (daysLeft > 0)
+                                    result.DaysLeft = daysLeft;
+                                else
+                                    result.PricePayed = pricePayed;
                             }
                             else
                             {
-                                result.MobileNumber = messageObj.MobileNumber;
                                 result.Status = "NotActive";
                                 result.DaysLeft = null;
+                                result.PricePayed = null;
                             }
                         }
                     }
@@ -338,7 +363,7 @@ namespace Portal.Controllers
             catch (Exception e)
             {
                 logs.Error("Exception in SubscriberStatus:" + e);
-                result.Status = "General error occured";
+                result.Status = "General error occurred";
             }
             var json = JsonConvert.SerializeObject(result);
             var response = Request.CreateResponse(HttpStatusCode.OK);

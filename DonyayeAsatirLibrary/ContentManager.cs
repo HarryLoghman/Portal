@@ -22,20 +22,20 @@ namespace DonyayeAsatirLibrary
                 var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
                 foreach (var imiChargecode in imiChargeCodes)
                 {
-                    if (imiChargecode.ChargeCode == content)
+                    if (imiChargecode.ChargeCode == content || imiChargecode.Price == content)
                     {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("DonyayeAsatir", "Telepromo");
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("DonyayeAsatir", "PardisImi");
                         message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
                         chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
+                        singlecharge = MessageHandler.SendSinglechargeMesssageToPardisImi(message);
                         break;
                     }
                 }
-                if (chargecodeFound == false)
-                {
-                    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                    MessageHandler.InsertMessageToQueue(message);
-                }
+                //if (chargecodeFound == false)
+                //{
+                //    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                //    MessageHandler.InsertMessageToQueue(message);
+                //}
                 if (singlecharge.IsSucceeded == true)
                 {
                     message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";

@@ -159,6 +159,7 @@ namespace DehnadDonyayeAsatirService
                         installment.IsUserCanceledTheInstallment = false;
                         installment.IsRenewalMessageSent = false;
                         installment.IsRenewd = false;
+                        installment.PriceBalancedForInAppRequest = 0;
                         entity.SinglechargeInstallments.Add(installment);
                         item.IsRenewd = true;
                         entity.Entry(item).State = EntityState.Modified;
@@ -221,6 +222,7 @@ namespace DehnadDonyayeAsatirService
                         installment.IsUserCanceledTheInstallment = false;
                         installment.IsRenewalMessageSent = false;
                         installment.IsRenewd = false;
+                        installment.PriceBalancedForInAppRequest = 0;
                         entity.SinglechargeInstallments.Add(installment);
                         //}
                         entity.SinglechargeWaitings.Remove(item);

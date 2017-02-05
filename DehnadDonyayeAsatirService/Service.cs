@@ -180,12 +180,12 @@ namespace DehnadDonyayeAsatirService
 
         private void InformApplicationWorkerThread()
         {
-            var inform = new InformApplication();
-            while (!shutdownEvent.WaitOne(0))
-            {
-                inform.Inform();
-                Thread.Sleep(1000);
-            }
+            //var inform = new InformApplication();
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    inform.Inform();
+            //    Thread.Sleep(1000);
+            //}
         }
 
         private void SinglechargeInstallmentWorkerThread()
