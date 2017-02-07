@@ -18,6 +18,7 @@ namespace DehnadSoltanService
             {
                 using (var entity = new SoltanEntities())
                 {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
                     var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
                     if (unInformed == null)
                         return;

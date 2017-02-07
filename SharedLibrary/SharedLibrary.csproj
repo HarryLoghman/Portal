@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Date.cs" />
     <Compile Include="HandleSubscription.cs" />
+    <Compile Include="HelpfulFunctions.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="Models\Aggregator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>

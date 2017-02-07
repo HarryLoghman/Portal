@@ -170,6 +170,8 @@ namespace DehnadReceiveProcessorService
                     DonyayeAsatirLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "ShahreKalameh")
                     ShahreKalamehLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "BimeIran")
+                    BimeIranLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -205,6 +207,8 @@ namespace DehnadReceiveProcessorService
                     DonyayeAsatirLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "ShahreKalameh")
                     ShahreKalamehLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "BimeIran")
+                    BimeIranLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

@@ -56,8 +56,11 @@ namespace SoltanLibrary
             {
                 using (var entity = new SoltanEntities())
                 {
-                    var singlechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber);
-                    entity.SinglechargeWaitings.RemoveRange(singlechargeQueue);
+                    var singlechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber).ToList();
+                    foreach (var item in singlechargeQueue)
+                    {
+                        entity.Entry(item).State = EntityState.Deleted;
+                    }
                     entity.SaveChanges();
                 }
             }

@@ -56,8 +56,11 @@ namespace DonyayeAsatirLibrary
             {
                 using (var entity = new DonyayeAsatirEntities())
                 {
-                    var singlechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber);
-                    entity.SinglechargeWaitings.RemoveRange(singlechargeQueue);
+                    var singlechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber).ToList();
+                    foreach (var item in singlechargeQueue)
+                    {
+                        entity.Entry(item).State = EntityState.Deleted;
+                    }
                     entity.SaveChanges();
                 }
             }

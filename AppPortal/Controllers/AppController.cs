@@ -22,6 +22,7 @@ namespace Portal.Controllers
         private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir" };
         private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh" };
         private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir" };
+
         [HttpPost]
         [AllowAnonymous]
         public HttpResponseMessage ChargeUser([FromBody]MessageObject message)

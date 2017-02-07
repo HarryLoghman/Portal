@@ -1391,6 +1391,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
+      <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>
+      <Name>BimeIranLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BimeKarbalaLibrary\BimeKarbalaLibrary.csproj">
       <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
       <Name>BimeKarbalaLibrary</Name>

@@ -14,6 +14,8 @@ namespace Portal.Controllers
 {
     public class HubController : ApiController
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage Message(string text, string from, string to, string smsId, string userId)
@@ -36,6 +38,17 @@ namespace Portal.Controllers
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                 result = "1";
             }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage SinglechargeDelivery(string ChargeId, string StatusId, string Recipient, int AppliedPrice, string TransactionCode, string description)
+        {
+            logs.Info("SinglechargeDelivery: " + "ChargeId=" + ChargeId + "," + "StatusId=" + StatusId + "," + "Recipient=" + Recipient + "," + "AppliedPrice=" + AppliedPrice.ToString() + "," + "TransactionCode=" + TransactionCode + "," + "Description=" + description + ",");
+            var result = "1";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;

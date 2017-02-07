@@ -102,17 +102,24 @@ namespace SoltanLibrary
 
         public static void CancelUserInstallments(string mobileNumber)
         {
-            using(var entity = new SoltanEntities())
+            try
             {
-                var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
-                foreach (var installment in userinstallments)
+                using (var entity = new SoltanEntities())
                 {
-                    installment.IsUserCanceledTheInstallment = true;
-                    installment.CancelationDate = DateTime.Now;
-                    installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime();
-                    entity.Entry(installment).State = EntityState.Modified;
+                    var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
+                    foreach (var installment in userinstallments)
+                    {
+                        installment.IsUserCanceledTheInstallment = true;
+                        installment.CancelationDate = DateTime.Now;
+                        installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime();
+                        entity.Entry(installment).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
                 }
-                entity.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                logs.Error("Exception in CancelUserInstallments:" + e);
             }
         }
 

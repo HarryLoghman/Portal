@@ -184,6 +184,9 @@ namespace DehnadSoltanService
             while (!shutdownEvent.WaitOne(0))
             {
                 inform.Inform();
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
+                    Thread.Sleep(30 * 60 * 1000);
+                else
                 Thread.Sleep(1000);
             }
         }
