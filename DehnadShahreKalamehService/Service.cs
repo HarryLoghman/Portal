@@ -191,14 +191,14 @@ namespace DehnadShahreKalamehService
         private void SinglechargeInstallmentWorkerThread()
         {
             var singlechargeInstallment = new SinglechargeInstallmentClass();
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    singlechargeInstallment.ProcessInstallment();
-            //    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
-            //        Thread.Sleep(50 * 60 * 1000);
-            //    else
-            //        Thread.Sleep( 1 * 60 * 60 * 1000);
-            //}
+            while (!shutdownEvent.WaitOne(0))
+            {
+                singlechargeInstallment.ProcessInstallment();
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
+                    Thread.Sleep(50 * 60 * 1000);
+                else
+                    Thread.Sleep(1 * 60 * 60 * 1000);
+            }
         }
 
         private void SinglechargeInstallmentBalancerWorkerThread()
@@ -209,7 +209,6 @@ namespace DehnadShahreKalamehService
                 if (DateTime.Now.Hour == 0 && DateTime.Now.Minute > 13 && DateTime.Now.Minute < 17)
                 {
                     singlechargeInstallment.InstallmentDailyBalance();
-                    //singlechargeInstallment.ResetUserDailyChargeBalanceValue();
                     Thread.Sleep(60 * 60 * 1000);
                 }
                 Thread.Sleep(1000);

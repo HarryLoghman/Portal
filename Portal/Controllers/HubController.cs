@@ -47,7 +47,18 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage SinglechargeDelivery(string ChargeId, string StatusId, string Recipient, int AppliedPrice, string TransactionCode, string description)
         {
-            logs.Info("SinglechargeDelivery: " + "ChargeId=" + ChargeId + "," + "StatusId=" + StatusId + "," + "Recipient=" + Recipient + "," + "AppliedPrice=" + AppliedPrice.ToString() + "," + "TransactionCode=" + TransactionCode + "," + "Description=" + description + ",");
+            var singlechargeDelivery = new SinglechargeDelivery();
+            singlechargeDelivery.DateReceived = DateTime.Now;
+            singlechargeDelivery.MobileNumber = "0" + Recipient;
+            singlechargeDelivery.ReferenceId = ChargeId;
+            singlechargeDelivery.Status = StatusId;
+            singlechargeDelivery.Description = description;
+            singlechargeDelivery.IsProcessed = false;
+            using(var entity = new PortalEntities())
+            {
+                entity.SinglechargeDeliveries.Add(singlechargeDelivery);
+                entity.SaveChanges();
+            }
             var result = "1";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");

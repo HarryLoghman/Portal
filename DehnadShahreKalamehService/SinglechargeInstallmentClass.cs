@@ -224,7 +224,10 @@ namespace DehnadShahreKalamehService
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        var priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList().Sum(o => o.Price);
+                        var userSinglecharges = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList();
+                        if (userSinglecharges.Where(o => o.Description == "40").ToList().Count > 0)
+                            continue;
+                        var priceUserChargedToday = userSinglecharges.Where(o => o.IsSucceeded == true).Sum(o => o.Price);
                         if (priceUserChargedToday >= maxChargeLimit)
                         {
                             installment.IsExceededDailyChargeLimit = true;
@@ -238,79 +241,7 @@ namespace DehnadShahreKalamehService
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
                         var response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                        if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                        {
-                            if (message.Price == 500)
-                            {
-                                SetMessagePrice(message, chargeCodes, 400);
-                                response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                {
-                                    SetMessagePrice(message, chargeCodes, 300);
-                                    response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                    {
-                                        SetMessagePrice(message, chargeCodes, 200);
-                                        response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                        if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                        {
-                                            SetMessagePrice(message, chargeCodes, 100);
-                                            response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                            if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                            {
-                                                SetMessagePrice(message, chargeCodes, 50);
-                                                response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else if (message.Price == 400)
-                            {
-                                SetMessagePrice(message, chargeCodes, 300);
-                                response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                {
-                                    SetMessagePrice(message, chargeCodes, 200);
-                                    response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                    {
-                                        SetMessagePrice(message, chargeCodes, 100);
-                                        response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                        if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                        {
-                                            SetMessagePrice(message, chargeCodes, 50);
-                                            response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (message.Price == 300)
-                            {
-                                SetMessagePrice(message, chargeCodes, 200);
-                                response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                {
-                                    SetMessagePrice(message, chargeCodes, 100);
-                                    response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                    if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                    {
-                                        SetMessagePrice(message, chargeCodes, 50);
-                                        response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                    }
-                                }
-                            }
-                            else if (message.Price == 200)
-                            {
-                                SetMessagePrice(message, chargeCodes, 100);
-                                response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
-                                {
-                                    SetMessagePrice(message, chargeCodes, 50);
-                                    response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
-                                }
-                            }
-                        }
+                        
                         if (response.IsSucceeded == true)
                         {
                             installment.PricePayed += message.Price.GetValueOrDefault();

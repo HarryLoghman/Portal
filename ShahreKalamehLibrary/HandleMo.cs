@@ -92,7 +92,7 @@ namespace ShahreKalamehLibrary
             if (subscriber == null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                if (message.Content == service.VerifyKeyword)
+                if (content == service.VerifyKeyword)
                     message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
@@ -101,7 +101,7 @@ namespace ShahreKalamehLibrary
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                if (message.Content == service.VerifyKeyword)
+                if (content == service.VerifyKeyword)
                     message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;

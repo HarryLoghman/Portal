@@ -34,6 +34,7 @@
         <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="4.375" PointY="13.75" />
         <EntityTypeShape EntityType="PortalModel.ParidsShortCode" Width="1.5" PointX="8.375" PointY="13.75" />
         <EntityTypeShape EntityType="PortalModel.vw_DehnadAllSentMessages" Width="1.5" PointX="14.375" PointY="4.75" />
+        <EntityTypeShape EntityType="PortalModel.SinglechargeDelivery" Width="1.5" PointX="14.375" PointY="8.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

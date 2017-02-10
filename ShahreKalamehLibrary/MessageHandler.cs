@@ -769,7 +769,7 @@ namespace ShahreKalamehLibrary
                             string responseCode = (xn.Attributes["status"].Value).ToString();
                             if (responseCode == "40")
                             {
-                                singlecharge.IsSucceeded = true;
+                                singlecharge.IsSucceeded = false;
                                 singlecharge.Description = responseCode;
                                 singlecharge.ReferenceId = xn.InnerText;
                             }

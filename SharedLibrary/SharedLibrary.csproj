@@ -138,6 +138,9 @@
     <Compile Include="Models\ServiceKeyword.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeDelivery.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Subscriber.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

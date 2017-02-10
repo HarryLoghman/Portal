@@ -174,6 +174,22 @@ namespace SharedLibrary
             return onKeywords[0];
         }
 
+        public static string GetSubscriberOnKeyword(long subscriberId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    var onKeyword = entity.Subscribers.FirstOrDefault(o => o.Id == subscriberId).OnKeyword;
+                    return onKeyword;
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in GetServiceInfoFromServiceId: " + e);
+                    return null;
+                }
+            }
+        }
 
         public static string[] ServiceOffKeywords()
         {

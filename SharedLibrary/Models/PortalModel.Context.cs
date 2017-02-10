@@ -48,6 +48,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<Delivery> Deliveries { get; set; }
         public virtual DbSet<ParidsShortCode> ParidsShortCodes { get; set; }
         public virtual DbSet<vw_DehnadAllSentMessages> vw_DehnadAllSentMessages { get; set; }
+        public virtual DbSet<SinglechargeDelivery> SinglechargeDeliveries { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

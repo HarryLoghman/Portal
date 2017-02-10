@@ -24,12 +24,12 @@ namespace BimeIranLibrary
                     if (userLevel == 0)
                         return;
                     var userInput = message.Content;
-                    if(userLevel == 1)
+                    if (userLevel == 1)
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "FillInformationContent").Select(o => o.Content).FirstOrDefault();
                         ChangeUserLevel(subscriber.Id, 2);
                     }
-                    else if(userLevel == 2)
+                    else if (userLevel == 2)
                     {
                         var extractedNumbers = SharedLibrary.HelpfulFunctions.GetAllTheNumbersFromComplexString(userInput);
                         if (extractedNumbers.Length != 20)
@@ -42,7 +42,7 @@ namespace BimeIranLibrary
                             var firstNumber = extractedNumbers.Substring(0, 10);
                             var secondNumber = extractedNumbers.Substring(10);
                             isSocialNumberFound = SocialCodeValidator(firstNumber);
-                            if(isSocialNumberFound == true)
+                            if (isSocialNumberFound == true)
                             {
                                 isSocialNumberFound = true;
                                 socailNumber = firstNumber;
@@ -67,7 +67,13 @@ namespace BimeIranLibrary
                             CreateInsuranceInfo(subscriber.MobileNumber, null, socailNumber, zipCode);
                             ChangeUserLevel(subscriber.Id, 3);
                             message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
+                            MessageHandler.InsertMessageToQueue(message);
+                            message = TryToChargeUser(message, subscriber, messagesTemplate);
                         }
+                    }
+                    if(userLevel == 3)
+                    {
+                        message = TryToChargeUser(message, subscriber, messagesTemplate);
                     }
                     MessageHandler.InsertMessageToQueue(message);
                     return;
@@ -77,6 +83,32 @@ namespace BimeIranLibrary
             {
                 logs.Error("Error in HandleContent: ", e);
             }
+        }
+
+        private static MessageObject TryToChargeUser(MessageObject message, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        {
+            var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
+            var onKeyword = Convert.ToInt32(SharedLibrary.ServiceHandler.GetSubscriberOnKeyword(subscriber.Id));
+            Singlecharge singlecharge = new Singlecharge();
+            foreach (var imiChargecode in imiChargeCodes)
+            {
+                if (imiChargecode.ChargeCode == onKeyword)
+                {
+                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("BimeIran", "Telepromo");
+                    message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
+                    singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
+                    break;
+                }
+            }
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            if (singlecharge.IsSucceeded == true)
+            {
+                ChangeUserLevel(subscriber.Id, 4);
+                message.Content = messagesTemplate.Where(o => o.Title == "SingleChargeSuccessful").Select(o => o.Content).FirstOrDefault();
+            }
+            else
+                message.Content = messagesTemplate.Where(o => o.Title == "SingleChargeNotSuccessful").Select(o => o.Content).FirstOrDefault();
+            return message;
         }
 
         public static bool SocialCodeValidator(string socialCode)
