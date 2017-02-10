@@ -202,9 +202,9 @@ namespace DehnadShahreKalamehService
                         }
                         var message = new SharedLibrary.Models.MessageObject();
                         message.MobileNumber = item.MobileNumber;
-                        message.ImiChargeKey = chargeCodes.FirstOrDefault(o => o.Price == item.Price).ChargeKey;
-                        message.ShortCode = shortCode;
-                        message.Price = item.Price;
+                        //message.ImiChargeKey = chargeCodes.FirstOrDefault(o => o.Price == item.Price).ChargeKey;
+                        //message.ShortCode = shortCode;
+                        //message.Price = item.Price;
                         //var singlecharge = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
                         //if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
                         //{
