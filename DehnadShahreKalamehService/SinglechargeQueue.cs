@@ -210,7 +210,7 @@ namespace DehnadShahreKalamehService
                         //{
                         var installment = new SinglechargeInstallment();
                         installment.MobileNumber = message.MobileNumber;
-                        installment.TotalPrice = message.Price.GetValueOrDefault();
+                        installment.TotalPrice = 10000;
                         installment.IsExceededDailyChargeLimit = false;
                         installment.IsFullyPaid = false;
                         installment.PricePayed = 0;

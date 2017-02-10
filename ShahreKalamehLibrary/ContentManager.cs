@@ -82,7 +82,7 @@ namespace ShahreKalamehLibrary
                         return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
-                    singlechargeQueueItem.Price = imichargeCode.Price;
+                    singlechargeQueueItem.Price = 10000;
                     singlechargeQueueItem.DateAdded = DateTime.Now;
                     singlechargeQueueItem.PersianDateAdded = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlechargeQueueItem.IsLastDayWarningSent = false;
