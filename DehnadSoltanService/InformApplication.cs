@@ -22,6 +22,8 @@ namespace DehnadSoltanService
                     var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
                     if (unInformed == null)
                         return;
+                    if (unInformed.Count == 0)
+                        return;
                     List<Task> TaskList = new List<Task>();
                     foreach (var item in unInformed)
                     {
@@ -56,7 +58,6 @@ namespace DehnadSoltanService
                     var content = new FormUrlEncodedContent(values);
                     var url = "http://herosh.abrstudio.ir/api/purchase/newsms";
                     var response = await client.PostAsync(url, content);
-
                     var responseString = await response.Content.ReadAsStringAsync();
                     //logs.Info("CallApplicationUrlToInformSinglecharge:" + responseString);
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);

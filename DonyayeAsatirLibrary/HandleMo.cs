@@ -93,6 +93,8 @@ namespace DonyayeAsatirLibrary
             if (subscriber == null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (content == service.VerifyKeyword)
+                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
@@ -100,6 +102,8 @@ namespace DonyayeAsatirLibrary
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (content == service.VerifyKeyword)
+                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }

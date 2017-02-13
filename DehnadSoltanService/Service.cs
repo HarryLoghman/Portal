@@ -183,11 +183,19 @@ namespace DehnadSoltanService
             var inform = new InformApplication();
             while (!shutdownEvent.WaitOne(0))
             {
-                inform.Inform();
-                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
-                    Thread.Sleep(30 * 60 * 1000);
-                else
-                Thread.Sleep(1000);
+                try
+                {
+                    inform.Inform();
+                    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
+                        Thread.Sleep(30 * 60 * 1000);
+                    else
+                        Thread.Sleep(1000);
+                }
+                catch(Exception e)
+                {
+                    logs.Error("Exception in InformApplicationWorkerThread:", e);
+                    Thread.Sleep(1000);
+                }
             }
         }
 

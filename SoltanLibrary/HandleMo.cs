@@ -1,6 +1,7 @@
 ﻿using SharedLibrary.Models;
 using SoltanLibrary.Models;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SoltanLibrary
@@ -83,6 +84,8 @@ namespace SoltanLibrary
             if (subscriber == null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (content == service.VerifyKeyword)
+                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
@@ -90,6 +93,8 @@ namespace SoltanLibrary
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (content == service.VerifyKeyword)
+                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }

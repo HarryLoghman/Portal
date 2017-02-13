@@ -64,11 +64,18 @@ namespace BimeIranLibrary
                                 else
                                     zipCode = firstNumber;
                             }
-                            CreateInsuranceInfo(subscriber.MobileNumber, null, socailNumber, zipCode);
-                            ChangeUserLevel(subscriber.Id, 3);
-                            message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
-                            MessageHandler.InsertMessageToQueue(message);
-                            message = TryToChargeUser(message, subscriber, messagesTemplate);
+                            var isCreated = CheckAndCreateInsuranceInfo(subscriber.MobileNumber, null, socailNumber, zipCode);
+                            if (isCreated == false)
+                            {
+                                message.Content = messagesTemplate.Where(o => o.Title == "InformationExistsContent").Select(o => o.Content).FirstOrDefault();
+                            }
+                            else
+                            {
+                                ChangeUserLevel(subscriber.Id, 3);
+                                message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
+                                MessageHandler.InsertMessageToQueue(message);
+                                message = TryToChargeUser(message, subscriber, messagesTemplate);
+                            }
                         }
                     }
                     if(userLevel == 3)
@@ -256,7 +263,7 @@ namespace BimeIranLibrary
             return number;
         }
 
-        private static void CreateInsuranceInfo(string mobileNumber, string passportNo, string socialCode, string zipCode)
+        private static bool CheckAndCreateInsuranceInfo(string mobileNumber, string passportNo, string socialCode, string zipCode)
         {
             try
             {
@@ -270,14 +277,19 @@ namespace BimeIranLibrary
                 insuranceInfo.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
                 using (var entity = new BimeIranEntities())
                 {
+                    var exists = entity.InsuranceInfoes.FirstOrDefault(o => o.SocialNumber == socialCode && o.ZipCode == zipCode);
+                    if (exists != null)
+                        return false;
                     entity.InsuranceInfoes.Add(insuranceInfo);
                     entity.SaveChanges();
+                    return true;
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Error in CreateInsuranceInfo: ", e);
             }
+            return false;
         }
 
         public static void ChangeUserLevel(long subscriberId, int level)

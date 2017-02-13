@@ -197,7 +197,7 @@ namespace DehnadShahreKalamehService
                 if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
                     Thread.Sleep(50 * 60 * 1000);
                 else
-                    Thread.Sleep(1 * 60 * 60 * 1000);
+                    Thread.Sleep(10 * 60 * 1000);
             }
         }
 
