@@ -26,5 +26,11 @@ namespace BimeIranLibrary.Models
         public string InsuranceNo { get; set; }
         public string SocialNumber { get; set; }
         public string ZipCode { get; set; }
+        public bool IsSendedToInsuranceCompany { get; set; }
+        public Nullable<int> PackageIdSendedToInsuranceCompany { get; set; }
+        public string InsuranceType { get; set; }
+        public Nullable<System.DateTime> DateCanceled { get; set; }
+        public string PersianDateCanceled { get; set; }
+        public Nullable<bool> IsCancelationSendedToInsuranceCompany { get; set; }
     }
 }

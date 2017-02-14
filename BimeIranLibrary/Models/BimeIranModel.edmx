@@ -282,6 +282,12 @@
           <Property Name="InsuranceNo" Type="nvarchar" MaxLength="50" />
           <Property Name="SocialNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ZipCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsSendedToInsuranceCompany" Type="bit" Nullable="false" />
+          <Property Name="PackageIdSendedToInsuranceCompany" Type="int" />
+          <Property Name="InsuranceType" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="DateCanceled" Type="datetime" />
+          <Property Name="PersianDateCanceled" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsCancelationSendedToInsuranceCompany" Type="bit" />
         </EntityType>
         <EntityType Name="MessagesArchive">
           <Key>
@@ -1149,6 +1155,12 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="InsuranceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="SocialNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ZipCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsSendedToInsuranceCompany" Type="Boolean" Nullable="false" />
+          <Property Name="PackageIdSendedToInsuranceCompany" Type="Int32" />
+          <Property Name="InsuranceType" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DateCanceled" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateCanceled" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsCancelationSendedToInsuranceCompany" Type="Boolean" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1677,6 +1689,12 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="InsuranceInfoes">
             <EntityTypeMapping TypeName="BimeIranModel.InsuranceInfo">
               <MappingFragment StoreEntitySet="InsuranceInfo">
+                <ScalarProperty Name="IsCancelationSendedToInsuranceCompany" ColumnName="IsCancelationSendedToInsuranceCompany" />
+                <ScalarProperty Name="PersianDateCanceled" ColumnName="PersianDateCanceled" />
+                <ScalarProperty Name="DateCanceled" ColumnName="DateCanceled" />
+                <ScalarProperty Name="InsuranceType" ColumnName="InsuranceType" />
+                <ScalarProperty Name="PackageIdSendedToInsuranceCompany" ColumnName="PackageIdSendedToInsuranceCompany" />
+                <ScalarProperty Name="IsSendedToInsuranceCompany" ColumnName="IsSendedToInsuranceCompany" />
                 <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
                 <ScalarProperty Name="SocialNumber" ColumnName="SocialNumber" />
                 <ScalarProperty Name="InsuranceNo" ColumnName="InsuranceNo" />
