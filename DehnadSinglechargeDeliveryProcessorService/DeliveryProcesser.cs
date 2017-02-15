@@ -45,7 +45,7 @@ namespace DehnadSinglechargeDeliveryProcessorService
 
                 if (isSinglechargeFound == false)
                     isSinglechargeFound = ShahreKalamehFindAndUpdateSinglechargeDelivery(deliveredSinglecharge);
-                
+
                 UpdateDeliveryObject(deliveredSinglecharge, isSinglechargeFound);
             }
             catch (Exception e)
@@ -75,32 +75,39 @@ namespace DehnadSinglechargeDeliveryProcessorService
 
         private bool ShahreKalamehFindAndUpdateSinglechargeDelivery(SinglechargeDelivery deliveredSinglecharge)
         {
-            using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+            try
             {
-                var singlecharge = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == deliveredSinglecharge.ReferenceId);
-                if (singlecharge != null)
+                using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
                 {
-                    singlecharge.Description = deliveredSinglecharge.Status + "-" + deliveredSinglecharge.Description;
-                    if (deliveredSinglecharge.Status == "41" && deliveredSinglecharge.Description.Contains("ACCEPTED"))
+                    var singlecharge = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == deliveredSinglecharge.ReferenceId);
+                    if (singlecharge != null)
                     {
-                        singlecharge.IsSucceeded = true;
-                        if (singlecharge.InstallmentId != null)
+                        singlecharge.Description = deliveredSinglecharge.Status + "-" + deliveredSinglecharge.Description;
+                        if (deliveredSinglecharge.Status == "41" && deliveredSinglecharge.Description.Contains("ACCEPTED"))
                         {
-                            var installment = entity.SinglechargeInstallments.FirstOrDefault(o => o.Id == singlecharge.InstallmentId);
-                            if (installment != null)
+                            singlecharge.IsSucceeded = true;
+                            if (singlecharge.InstallmentId != null)
                             {
-                                installment.PricePayed += singlecharge.Price;
-                                installment.PriceTodayCharged += singlecharge.Price;
-                                if (installment.PricePayed >= installment.TotalPrice)
-                                    installment.IsFullyPaid = true;
-                                entity.Entry(installment).State = EntityState.Modified;
+                                var installment = entity.SinglechargeInstallments.FirstOrDefault(o => o.Id == singlecharge.InstallmentId);
+                                if (installment != null)
+                                {
+                                    installment.PricePayed += singlecharge.Price;
+                                    installment.PriceTodayCharged += singlecharge.Price;
+                                    if (installment.PricePayed >= installment.TotalPrice)
+                                        installment.IsFullyPaid = true;
+                                    entity.Entry(installment).State = EntityState.Modified;
+                                }
                             }
                         }
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
+                        return true;
                     }
-                    entity.Entry(singlecharge).State = EntityState.Modified;
-                    entity.SaveChanges();
-                    return true;
                 }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in ShahreKalamehFindAndUpdateSinglechargeDelivery: " + e);
             }
             return false;
         }

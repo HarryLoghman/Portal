@@ -20,7 +20,6 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Message(string text, string from, string to, string smsId, string userId)
         {
-
             var messageObj = new MessageObject();
             messageObj.MobileNumber = from;
             messageObj.ShortCode = to;
@@ -45,7 +44,7 @@ namespace Portal.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage SinglechargeDelivery(string ChargeId, string StatusId, string Recipient, int AppliedPrice, string TransactionCode, string description)
+        public HttpResponseMessage SinglechargeDelivery(string ChargeId, string StatusId, string Recipient, string AppliedPrice, string TransactionCode, string description)
         {
             var singlechargeDelivery = new SinglechargeDelivery();
             singlechargeDelivery.DateReceived = DateTime.Now;
