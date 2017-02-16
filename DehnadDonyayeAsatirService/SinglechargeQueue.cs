@@ -185,7 +185,7 @@ namespace DehnadDonyayeAsatirService
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddDays(o.DateAdded, 1) <= now)*/.ToList();
+                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now).ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("DonyayeAsatir");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
