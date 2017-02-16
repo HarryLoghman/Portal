@@ -40,7 +40,6 @@ namespace SharedLibrary.Models
         public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
         public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
         public virtual DbSet<ServiceKeyword> ServiceKeywords { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Subscriber> Subscribers { get; set; }
         public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
         public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
@@ -49,6 +48,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<ParidsShortCode> ParidsShortCodes { get; set; }
         public virtual DbSet<vw_DehnadAllSentMessages> vw_DehnadAllSentMessages { get; set; }
         public virtual DbSet<SinglechargeDelivery> SinglechargeDeliveries { get; set; }
+        public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<VerifySubscriber> VerifySubscribers { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

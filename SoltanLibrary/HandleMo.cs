@@ -34,6 +34,17 @@ namespace SoltanLibrary
                         return;
                     }
                 }
+                if(service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
+                {
+                    bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId);
+                    if(isSubscriberdVerified == false)
+                    {
+                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                }
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
@@ -84,8 +95,6 @@ namespace SoltanLibrary
             if (subscriber == null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                if (content == service.VerifyKeyword)
-                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
@@ -93,8 +102,6 @@ namespace SoltanLibrary
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                if (content == service.VerifyKeyword)
-                    message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }

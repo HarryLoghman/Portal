@@ -18,7 +18,6 @@
         <EntityTypeShape EntityType="PortalModel.ReceivedMessagesArchive" Width="1.5" PointX="9.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ServiceInfo" Width="1.5" PointX="3" PointY="2" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="11.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="3" PointY="6" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="11.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SubscribersPoint" Width="1.5" PointX="3" PointY="10.625" IsExpanded="true" />
@@ -27,14 +26,16 @@
         <AssociationConnector Association="PortalModel.FK_ServiceInfo_Aggregators" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_ServiceShortCodes_Services" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
         <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="4.375" PointY="13.75" />
         <EntityTypeShape EntityType="PortalModel.ParidsShortCode" Width="1.5" PointX="8.375" PointY="13.75" />
         <EntityTypeShape EntityType="PortalModel.vw_DehnadAllSentMessages" Width="1.5" PointX="14.375" PointY="4.75" />
         <EntityTypeShape EntityType="PortalModel.SinglechargeDelivery" Width="1.5" PointX="14.375" PointY="8.75" />
+        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="6" />
+        <AssociationConnector Association="PortalModel.FK_ServiceShortCodes_Services" />
+        <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" />
+        <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" />
+        <EntityTypeShape EntityType="PortalModel.VerifySubscriber" Width="1.5" PointX="14.375" PointY="12.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

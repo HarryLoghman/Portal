@@ -99,6 +99,36 @@ namespace SharedLibrary
             }
         }
 
+        public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId)
+        {
+            var result = false;
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    var user = entity.VerifySubscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
+                    if(user == null)
+                    {
+                        var verify = new VerifySubscriber();
+                        verify.MobileNumber = mobileNumber;
+                        verify.ServiceId = serviceId;
+                        entity.VerifySubscribers.Add(verify);
+                    }
+                    else
+                    {
+                        entity.VerifySubscribers.Remove(user);
+                        result = true;
+                    }
+                    entity.SaveChanges();
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in IsUserVerifedTheSubscription: " + e);
+                }
+                return result;
+            }
+        }
+
         public static List<Subscriber> GetServiceActiveSubscribersFromServiceId(long serviceId)
         {
             List<Subscriber> subscriberList = new List<Subscriber>();
