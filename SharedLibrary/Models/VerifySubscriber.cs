@@ -17,5 +17,6 @@ namespace SharedLibrary.Models
         public long Id { get; set; }
         public string MobileNumber { get; set; }
         public long ServiceId { get; set; }
+        public string UsedKeyword { get; set; }
     }
 }

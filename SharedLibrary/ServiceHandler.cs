@@ -99,7 +99,7 @@ namespace SharedLibrary
             }
         }
 
-        public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId)
+        public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
         {
             var result = false;
             using (var entity = new PortalEntities())
@@ -107,13 +107,16 @@ namespace SharedLibrary
                 try
                 {
                     var user = entity.VerifySubscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
-                    if(user == null)
+                    if (user == null)
                     {
                         var verify = new VerifySubscriber();
                         verify.MobileNumber = mobileNumber;
                         verify.ServiceId = serviceId;
+                        verify.UsedKeyword = keyword;
                         entity.VerifySubscribers.Add(verify);
                     }
+                    else if (user.UsedKeyword == keyword)
+                        result = false;
                     else
                     {
                         entity.VerifySubscribers.Remove(user);

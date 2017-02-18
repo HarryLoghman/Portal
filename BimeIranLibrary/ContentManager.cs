@@ -64,7 +64,8 @@ namespace BimeIranLibrary
                                 else
                                     zipCode = firstNumber;
                             }
-                            var isCreated = CheckAndCreateInsuranceInfo(subscriber.MobileNumber, null, socailNumber, zipCode);
+                            var insuranceType = subscriber.OnKeyword;
+                            var isCreated = CheckAndCreateInsuranceInfo(subscriber.MobileNumber, null, socailNumber, zipCode, insuranceType);
                             if (isCreated == false)
                             {
                                 message.Content = messagesTemplate.Where(o => o.Title == "InformationExistsContent").Select(o => o.Content).FirstOrDefault();
@@ -263,7 +264,7 @@ namespace BimeIranLibrary
             return number;
         }
 
-        private static bool CheckAndCreateInsuranceInfo(string mobileNumber, string passportNo, string socialCode, string zipCode)
+        private static bool CheckAndCreateInsuranceInfo(string mobileNumber, string passportNo, string socialCode, string zipCode, string insuranceType)
         {
             try
             {
@@ -273,6 +274,7 @@ namespace BimeIranLibrary
                 insuranceInfo.IsApproved = true;
                 insuranceInfo.SocialNumber = socialCode;
                 insuranceInfo.ZipCode = zipCode;
+                insuranceInfo.InsuranceType = insuranceType;
                 insuranceInfo.DateCreated = DateTime.Now;
                 insuranceInfo.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
                 using (var entity = new BimeIranEntities())

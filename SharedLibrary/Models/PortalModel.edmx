@@ -257,6 +257,7 @@
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="UsedKeyword" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Portal.dbo.vw_DehnadAllSentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -975,6 +976,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="UsedKeyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1292,6 +1294,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="VerifySubscribers">
             <EntityTypeMapping TypeName="PortalModel.VerifySubscriber">
               <MappingFragment StoreEntitySet="VerifySubscribers">
+                <ScalarProperty Name="UsedKeyword" ColumnName="UsedKeyword" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

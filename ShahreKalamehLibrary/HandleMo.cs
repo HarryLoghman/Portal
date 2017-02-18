@@ -44,7 +44,7 @@ namespace ShahreKalamehLibrary
                 }
                 if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                 {
-                    bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId);
+                    bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
                     if (isSubscriberdVerified == false)
                     {
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
