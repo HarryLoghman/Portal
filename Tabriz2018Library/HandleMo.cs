@@ -12,6 +12,7 @@ namespace Tabriz2018Library
         public static void ReceivedMessage(MessageObject message, Service service)
         {
             //System.Diagnostics.Debugger.Launch();
+            var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
@@ -23,6 +24,17 @@ namespace Tabriz2018Library
                     if (user != null && user.DeactivationDate == null)
                     {
                         message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                }
+                if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
+                {
+                    bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
+                    if (isSubscriberdVerified == false)
+                    {
+                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }

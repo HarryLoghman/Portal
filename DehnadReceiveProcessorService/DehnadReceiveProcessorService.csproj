@@ -119,6 +119,10 @@
       <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
       <Name>DonyayeAsatirLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
+      <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
+      <Name>JabehAbzarLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
@@ -150,6 +154,10 @@
     <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
       <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
       <Name>Tabriz2018Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TamlyLibrary\TamlyLibrary.csproj">
+      <Project>{412d2155-de02-4eb1-acfd-75d3aab55364}</Project>
+      <Name>TamlyLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\TirandaziLibrary\TirandaziLibrary.csproj">
       <Project>{45c21d1f-2d58-42ff-984d-02b5ce55243f}</Project>

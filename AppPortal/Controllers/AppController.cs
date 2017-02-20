@@ -17,10 +17,10 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh" };
+        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar" };
         private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir" };
 
         [HttpPost]
@@ -132,6 +132,46 @@ namespace Portal.Controllers
                                                 result = "Insufficient Balance";
                                             else
                                                 result.Status = "Unknown error";
+                                        }
+                                    }
+                                    else if (message.ServiceCode == "Tamly")
+                                    {
+                                        var singlecharge = TamlyLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                        if (singlecharge == null)
+                                            result.Status = "Error in Charging";
+                                        else
+                                        {
+                                            using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                                            {
+                                                entity.Singlecharges.Attach(singlecharge);
+                                                singlecharge.IsCalledFromInAppPurchase = true;
+                                                entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                                entity.SaveChanges();
+                                            }
+                                            if (singlecharge.IsSucceeded == true)
+                                                result.Status = "Success";
+                                            else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                                result.Status = "Insufficient Balance";
+                                        }
+                                    }
+                                    else if (message.ServiceCode == "JabehAbzar")
+                                    {
+                                        var singlecharge = JabehAbzarLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                        if (singlecharge == null)
+                                            result.Status = "Error in Charging";
+                                        else
+                                        {
+                                            using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                                            {
+                                                entity.Singlecharges.Attach(singlecharge);
+                                                singlecharge.IsCalledFromInAppPurchase = true;
+                                                entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                                entity.SaveChanges();
+                                            }
+                                            if (singlecharge.IsSucceeded == true)
+                                                result.Status = "Success";
+                                            else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                                result.Status = "Insufficient Balance";
                                         }
                                     }
                                     else
@@ -334,6 +374,30 @@ namespace Portal.Controllers
                             else if (messageObj.ServiceCode == "ShahreKalameh")
                             {
                                 using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                        daysLeft = 0;
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "Tamly")
+                            {
+                                using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                        daysLeft = 0;
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "JabehAbzar")
+                            {
+                                using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();

@@ -230,6 +230,22 @@
     <Compile Include="Areas\BimeKarbala\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\BimeKarbalaAreaRegistration.cs" />
     <Compile Include="Areas\MyLeague\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JabehAbzar\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\JabehAbzar\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\JabehAbzar\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\JabehAbzar\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\JabehAbzar\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JabehAbzar\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\JabehAbzar\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\JabehAbzar\JabehAbzarAreaRegistration.cs" />
+    <Compile Include="Areas\Tamly\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Tamly\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Tamly\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Tamly\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Tamly\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Tamly\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Tamly\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Tamly\TamlyAreaRegistration.cs" />
     <Compile Include="Areas\ShahreKalameh\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\ShahreKalameh\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\ShahreKalameh\Controllers\MonitoringController.cs" />
@@ -997,6 +1013,26 @@
     <Content Include="Areas\DonyayeAsatir\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\DonyayeAsatir\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\DonyayeAsatir\Views\web.config" />
+    <Content Include="Areas\JabehAbzar\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\JabehAbzar\Views\web.config" />
+    <Content Include="Areas\Tamly\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Tamly\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Tamly\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Tamly\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Tamly\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Tamly\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Tamly\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Tamly\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Tamly\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Tamly\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1351,6 +1387,7 @@
     <Folder Include="Areas\Boating\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />
     <Folder Include="Areas\DonyayeAsatir\Models\" />
+    <Folder Include="Areas\JabehAbzar\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
     <Folder Include="Areas\MyLeague\Models\" />
@@ -1359,6 +1396,7 @@
     <Folder Include="Areas\Soltan\Models\" />
     <Folder Include="Areas\Statistics\Models\" />
     <Folder Include="Areas\Tabriz2018\Models\" />
+    <Folder Include="Areas\Tamly\Models\" />
     <Folder Include="Areas\Tirandazi\Models\" />
     <Folder Include="bin\bg-BG\" />
     <Folder Include="bin\cs-CZ\" />
@@ -1412,6 +1450,10 @@
       <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
       <Name>DonyayeAsatirLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
+      <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
+      <Name>JabehAbzarLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
@@ -1443,6 +1485,10 @@
     <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
       <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
       <Name>Tabriz2018Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TamlyLibrary\TamlyLibrary.csproj">
+      <Project>{412d2155-de02-4eb1-acfd-75d3aab55364}</Project>
+      <Name>TamlyLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\TirandaziLibrary\TirandaziLibrary.csproj">
       <Project>{45c21d1f-2d58-42ff-984d-02b5ce55243f}</Project>
