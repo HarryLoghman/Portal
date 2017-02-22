@@ -13,10 +13,10 @@ namespace DehnadWcfService
     public interface IBimeIranService
     {
         [OperationContract]
-        InsuranceData GetNewInsuranceData();
+        InsuranceData GetNewUserData();
 
         [OperationContract]
-        DeliveryStatus ValidateNewInsuranceDataDelivery(int packageId);
+        DeliveryStatus ValidateNewUserDataDelivery(List<UsersInfo> userInfo);
     }
 
 

@@ -50,8 +50,9 @@ namespace ShahreKalamehLibrary
             return singlecharge;
         }
 
-        public static void DeleteFromSinglechargeQueue(string mobileNumber)
+        public static bool DeleteFromSinglechargeQueue(string mobileNumber)
         {
+            bool succeed = false;
             try
             {
                 using (var entity = new ShahreKalamehEntities())
@@ -62,12 +63,18 @@ namespace ShahreKalamehLibrary
                         entity.Entry(item).State = EntityState.Deleted;
                     }
                     entity.SaveChanges();
+                    succeed = true;
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Error in DeleteFromSinglechargeQueue: ", e);
+                while (succeed == false)
+                {
+                    succeed = DeleteFromSinglechargeQueue(mobileNumber);
+                }
             }
+            return succeed;
         }
 
         public static bool AddSubscriberToSinglechargeQueue(string mobileNumber, string content)

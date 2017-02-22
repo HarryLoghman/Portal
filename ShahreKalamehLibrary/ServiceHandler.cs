@@ -100,20 +100,34 @@ namespace ShahreKalamehLibrary
             return autochargeContent;
         }
 
-        public static void CancelUserInstallments(string mobileNumber)
+        public static bool CancelUserInstallments(string mobileNumber)
         {
-            using(var entity = new ShahreKalamehEntities())
+            bool succeed = false;
+            try
             {
-                var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
-                foreach (var installment in userinstallments)
+                using (var entity = new ShahreKalamehEntities())
                 {
-                    installment.IsUserCanceledTheInstallment = true;
-                    installment.CancelationDate = DateTime.Now;
-                    installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime();
-                    entity.Entry(installment).State = EntityState.Modified;
+                    var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
+                    foreach (var installment in userinstallments)
+                    {
+                        installment.IsUserCanceledTheInstallment = true;
+                        installment.CancelationDate = DateTime.Now;
+                        installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime();
+                        entity.Entry(installment).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                    succeed = true;
                 }
-                entity.SaveChanges();
             }
+            catch (Exception e)
+            {
+                logs.Error("Exception in CancelUserInstallments:" + e);
+                while (succeed == false)
+                {
+                    succeed = CancelUserInstallments(mobileNumber);
+                }
+            }
+            return succeed;
         }
 
         public static List<MessagesTemplate> GetServiceMessagesTemplate()
@@ -136,7 +150,7 @@ namespace ShahreKalamehLibrary
 
         public static List<ImiChargeCode> GetImiChargeCodes()
         {
-            using(var entity = new ShahreKalamehEntities())
+            using (var entity = new ShahreKalamehEntities())
             {
                 return entity.ImiChargeCodes.ToList();
             }

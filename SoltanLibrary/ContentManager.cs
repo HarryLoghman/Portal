@@ -50,8 +50,9 @@ namespace SoltanLibrary
             return singlecharge;
         }
 
-        public static void DeleteFromSinglechargeQueue(string mobileNumber)
+        public static bool DeleteFromSinglechargeQueue(string mobileNumber)
         {
+            bool succeed = false;
             try
             {
                 using (var entity = new SoltanEntities())
@@ -62,12 +63,18 @@ namespace SoltanLibrary
                         entity.Entry(item).State = EntityState.Deleted;
                     }
                     entity.SaveChanges();
+                    succeed = true;
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Error in DeleteFromSinglechargeQueue: ", e);
+                while(succeed == false)
+                {
+                    succeed = DeleteFromSinglechargeQueue(mobileNumber);
+                }
             }
+            return succeed;
         }
 
         public static bool AddSubscriberToSinglechargeQueue(string mobileNumber, string content)
@@ -111,7 +118,7 @@ namespace SoltanLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    if (message.Content != "111" || message.Content != "1" || message.Content != "2" || message.Content != "3" || message.Content != "4" || message.Content != "5" || message.Content != "6" || message.Content != "7" || message.Content != "8" || message.Content != "9")
+                    if (!service.OnKeywords.Contains(message.Content))
                     {
                         message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);

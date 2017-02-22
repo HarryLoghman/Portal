@@ -12,7 +12,7 @@ namespace DehnadWcfService
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class BimeIranService : IBimeIranService
     {
-        public InsuranceData GetNewInsuranceData()
+        public InsuranceData GetNewUserData()
         {
             var insuranceData = new InsuranceData();
             using (var entity = new BimeIranEntities())
@@ -23,7 +23,7 @@ namespace DehnadWcfService
                     insuranceData.PackageId = 1;
                 else
                     insuranceData.PackageId = lastPackageId.Value + 1;
-                var insurances = entity.InsuranceInfoes.Where(o => o.IsSendedToInsuranceCompany != true && o.DateCanceled == null).ToList();
+                var insurances = entity.InsuranceInfoes.Where(o => o.IsSendedToInsuranceCompany != true && o.DateCanceled == null).Take(100).ToList();
                 if (insurances.Count == 0)
                     insuranceData.PackageId = 0;
                 else
@@ -46,28 +46,27 @@ namespace DehnadWcfService
             return insuranceData;
         }
 
-        public DeliveryStatus ValidateNewInsuranceDataDelivery(int packageId)
+        public DeliveryStatus ValidateNewUserDataDelivery(List<UsersInfo> userInfo)
         {
             var status = new DeliveryStatus();
             status.IsSucessful = false;
             using (var entity = new BimeIranEntities())
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
-                
-                var insurances = entity.InsuranceInfoes.Where(o => o.PackageIdSendedToInsuranceCompany == packageId).ToList();
-                if (insurances.Count == 0)
-                    status.Description = "No Item found in package id of" + packageId;
-                else
+                foreach (var item in userInfo)
                 {
-                    foreach (var insurance in insurances)
+                    var insurance = entity.InsuranceInfoes.Where(o => o.SocialNumber == item.SocialNumber && o.ZipCode == item.ZipCode).FirstOrDefault();
+                    if (insurance == null)
+                        status.Description = "Information for Social Number:" + item.SocialNumber + " and Zipcode:" + item.ZipCode + " not found";
+                    else
                     {
                         insurance.IsSendedToInsuranceCompany = true;
                         entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
                     }
                     entity.SaveChanges();
-                    status.IsSucessful = true;
-                    status.Description = "Sucessful";
                 }
+                status.IsSucessful = true;
+                status.Description = "Sucessful";
             }
             return status;
         }

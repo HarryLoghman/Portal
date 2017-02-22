@@ -100,8 +100,9 @@ namespace SoltanLibrary
             return autochargeContent;
         }
 
-        public static void CancelUserInstallments(string mobileNumber)
+        public static bool CancelUserInstallments(string mobileNumber)
         {
+            bool succeed = false;
             try
             {
                 using (var entity = new SoltanEntities())
@@ -115,12 +116,18 @@ namespace SoltanLibrary
                         entity.Entry(installment).State = EntityState.Modified;
                     }
                     entity.SaveChanges();
+                    succeed = true;
                 }
             }
             catch(Exception e)
             {
                 logs.Error("Exception in CancelUserInstallments:" + e);
+                while (succeed == false)
+                {
+                    succeed = CancelUserInstallments(mobileNumber);
+                }
             }
+            return succeed;
         }
 
         public static List<MessagesTemplate> GetServiceMessagesTemplate()

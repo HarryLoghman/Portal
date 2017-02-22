@@ -100,20 +100,34 @@ namespace JabehAbzarLibrary
             return autochargeContent;
         }
 
-        public static void CancelUserInstallments(string mobileNumber)
+        public static bool CancelUserInstallments(string mobileNumber)
         {
-            using(var entity = new JabehAbzarEntities())
+            bool succeed = false;
+            try
             {
-                var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
-                foreach (var installment in userinstallments)
+                using (var entity = new JabehAbzarEntities())
                 {
-                    installment.IsUserCanceledTheInstallment = true;
-                    installment.CancelationDate = DateTime.Now;
-                    installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime();
-                    entity.Entry(installment).State = EntityState.Modified;
+                    var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
+                    foreach (var installment in userinstallments)
+                    {
+                        installment.IsUserCanceledTheInstallment = true;
+                        installment.CancelationDate = DateTime.Now;
+                        installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime();
+                        entity.Entry(installment).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                    succeed = true;
                 }
-                entity.SaveChanges();
             }
+            catch (Exception e)
+            {
+                logs.Error("Exception in CancelUserInstallments:" + e);
+                while (succeed == false)
+                {
+                    succeed = CancelUserInstallments(mobileNumber);
+                }
+            }
+            return succeed;
         }
 
         public static List<MessagesTemplate> GetServiceMessagesTemplate()
@@ -136,7 +150,7 @@ namespace JabehAbzarLibrary
 
         public static List<ImiChargeCode> GetImiChargeCodes()
         {
-            using(var entity = new JabehAbzarEntities())
+            using (var entity = new JabehAbzarEntities())
             {
                 return entity.ImiChargeCodes.ToList();
             }

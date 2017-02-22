@@ -279,7 +279,7 @@ namespace BimeIranLibrary
                 insuranceInfo.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
                 using (var entity = new BimeIranEntities())
                 {
-                    var exists = entity.InsuranceInfoes.FirstOrDefault(o => o.SocialNumber == socialCode && o.ZipCode == zipCode);
+                    var exists = entity.InsuranceInfoes.FirstOrDefault(o => o.ZipCode == zipCode);
                     if (exists != null)
                         return false;
                     entity.InsuranceInfoes.Add(insuranceInfo);
@@ -303,20 +303,6 @@ namespace BimeIranLibrary
                 entity.Entry(userInfo).State = EntityState.Modified;
                 entity.SaveChanges();
             }
-        }
-
-        private static string GetCorrectLevelMessage(int userLevel, List<MessagesTemplate> messagesTemplate, string userInput)
-        {
-            var content = "";
-            if (userLevel == 1)
-                content = messagesTemplate.Where(o => o.Title == "ServiceHelp").Select(o => o.Content).FirstOrDefault();
-            else if (userLevel == 2 && userInput == "3")
-                content = messagesTemplate.Where(o => o.Title == "ServiceHelp").Select(o => o.Content).FirstOrDefault();
-            else if (userLevel == 2)
-                content = messagesTemplate.Where(o => o.Title == "SendMessageBox2Content").Select(o => o.Content).FirstOrDefault();
-            else if (userLevel == 3 && userInput == "3")
-                content = messagesTemplate.Where(o => o.Title == "ServiceHelp").Select(o => o.Content).FirstOrDefault();
-            return content;
         }
 
         public static int GetUserLevel(long subscriberId)
