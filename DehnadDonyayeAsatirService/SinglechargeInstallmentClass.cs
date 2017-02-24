@@ -130,6 +130,13 @@ namespace DehnadDonyayeAsatirService
                         var priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList().Sum(o => o.Price);
                         if (priceUserChargedToday >= maxChargeLimit)
                         {
+                            bool isUserCanceledTheInstallment = entity.SinglechargeInstallments.AsNoTracking().FirstOrDefault(o => o.Id == installment.Id).IsUserCanceledTheInstallment;
+                            if (isUserCanceledTheInstallment == true)
+                            {
+                                installment.IsUserCanceledTheInstallment = true;
+                                installment.CancelationDate = DateTime.Now;
+                                installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            }
                             installment.IsExceededDailyChargeLimit = true;
                             entity.Entry(installment).State = EntityState.Modified;
                             batchSaveCounter += 1;
@@ -191,6 +198,13 @@ namespace DehnadDonyayeAsatirService
                         }
                         if (response.IsSucceeded == true)
                         {
+                            bool isUserCanceledTheInstallment = entity.SinglechargeInstallments.AsNoTracking().FirstOrDefault(o => o.Id == installment.Id).IsUserCanceledTheInstallment;
+                            if (isUserCanceledTheInstallment == true)
+                            {
+                                installment.IsUserCanceledTheInstallment = true;
+                                installment.CancelationDate = DateTime.Now;
+                                installment.PersianCancelationDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            }
                             installment.PricePayed += message.Price.GetValueOrDefault();
                             installment.PriceTodayCharged += message.Price.GetValueOrDefault();
                             if (installment.PricePayed >= installment.TotalPrice)

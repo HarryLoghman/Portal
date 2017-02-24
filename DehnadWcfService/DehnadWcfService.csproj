@@ -81,6 +81,7 @@
     <Compile Include="BimeIranService.svc.cs">
       <DependentUpon>BimeIranService.svc</DependentUpon>
     </Compile>
+    <Compile Include="Enums.cs" />
     <Compile Include="IBimeIranService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

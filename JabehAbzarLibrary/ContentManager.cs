@@ -83,10 +83,10 @@ namespace JabehAbzarLibrary
             {
                 using (var entity = new JabehAbzarEntities())
                 {
-                    var chargeCode = Convert.ToInt32(content);
-                    var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.ChargeCode == chargeCode);
-                    if (imichargeCode == null)
-                        return false;
+                    //var chargeCode = Convert.ToInt32(content);
+                    //var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.ChargeCode == chargeCode);
+                    //if (imichargeCode == null)
+                    //    return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
                     singlechargeQueueItem.Price = 10000;
