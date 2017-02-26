@@ -14,23 +14,37 @@ namespace BimeIranLibrary.Models
     
     public partial class InsuranceInfo
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public InsuranceInfo()
+        {
+            this.DamageReports = new HashSet<DamageReport>();
+        }
+    
         public long Id { get; set; }
         public string MobileNumber { get; set; }
         public string PassportNo { get; set; }
         public bool IsApproved { get; set; }
         public string ConfirmationCode { get; set; }
-        public System.DateTime DateCreated { get; set; }
-        public string PersianDateCreated { get; set; }
-        public Nullable<System.DateTime> DateApproved { get; set; }
-        public string PersianDateApproved { get; set; }
+        public System.DateTime DateInsuranceRequested { get; set; }
+        public string PersianDateInsuranceRequested { get; set; }
+        public Nullable<System.DateTime> DateInsuranceApproved { get; set; }
+        public string PersianDateInsuranceApproved { get; set; }
         public string InsuranceNo { get; set; }
         public string SocialNumber { get; set; }
         public string ZipCode { get; set; }
         public bool IsSendedToInsuranceCompany { get; set; }
         public Nullable<int> PackageIdSendedToInsuranceCompany { get; set; }
         public string InsuranceType { get; set; }
-        public Nullable<System.DateTime> DateCanceled { get; set; }
-        public string PersianDateCanceled { get; set; }
+        public Nullable<System.DateTime> DateCancelationRequested { get; set; }
+        public string PersianDateCancelationRequested { get; set; }
         public Nullable<bool> IsCancelationSendedToInsuranceCompany { get; set; }
+        public Nullable<bool> IsCancelationDeliveryReceivedFromInsuranceCompany { get; set; }
+        public Nullable<bool> IsSendedDeliveryReceivedFromInsuranceCompnay { get; set; }
+        public Nullable<System.DateTime> DateCancelationApproved { get; set; }
+        public string PersianDateCancelationApproved { get; set; }
+        public Nullable<bool> IsUserRequestedInsuranceCancelation { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DamageReport> DamageReports { get; set; }
     }
 }

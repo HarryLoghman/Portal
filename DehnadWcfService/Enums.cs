@@ -7,12 +7,12 @@ namespace DehnadWcfService
 {
     public class Enums
     {
-        public enum UserStatus
+        public enum UserRequest
         {
-            InsurancePlanA,
-            InsurancePlanB,
-            InsurancePlanC,
-            InsurancePlanD,
+            RegisterInsurancePlanA,
+            RegisterInsurancePlanB,
+            RegisterInsurancePlanC,
+            RegisterInsurancePlanD,
             DamageReport,
             CancelInsurnce
         }

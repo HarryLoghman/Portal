@@ -274,9 +274,18 @@ namespace BimeIranLibrary
                 insuranceInfo.IsApproved = true;
                 insuranceInfo.SocialNumber = socialCode;
                 insuranceInfo.ZipCode = zipCode;
-                insuranceInfo.InsuranceType = insuranceType;
-                insuranceInfo.DateCreated = DateTime.Now;
-                insuranceInfo.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
+                if(insuranceType == "1")
+                    insuranceInfo.InsuranceType = "A";
+                else if (insuranceType == "2")
+                    insuranceInfo.InsuranceType = "B";
+                else if (insuranceType == "1")
+                    insuranceInfo.InsuranceType = "C";
+                else if (insuranceType == "1")
+                    insuranceInfo.InsuranceType = "D";
+                else
+                    insuranceInfo.InsuranceType = "";
+                insuranceInfo.DateInsuranceRequested = DateTime.Now;
+                insuranceInfo.PersianDateInsuranceRequested = SharedLibrary.Date.GetPersianDateTime();
                 using (var entity = new BimeIranEntities())
                 {
                     var exists = entity.InsuranceInfoes.FirstOrDefault(o => o.ZipCode == zipCode);

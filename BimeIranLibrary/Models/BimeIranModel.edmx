@@ -213,6 +213,17 @@
           <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="int" />
           <Property Name="SumOfSinglechargeInAppPurchases" Type="int" />
         </EntityType>
+        <EntityType Name="DamageReport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InsuranceId" Type="bigint" Nullable="false" />
+          <Property Name="DateDamageReported" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateDamageReported" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsSendedToInsuranceCompany" Type="bit" Nullable="false" />
+          <Property Name="IsDeliveryReceivedFromInsuranceCompany" Type="bit" />
+        </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -275,19 +286,24 @@
           <Property Name="PassportNo" Type="nvarchar" MaxLength="50" />
           <Property Name="IsApproved" Type="bit" Nullable="false" />
           <Property Name="ConfirmationCode" Type="nvarchar" MaxLength="50" />
-          <Property Name="DateCreated" Type="datetime" Nullable="false" />
-          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="DateApproved" Type="datetime" />
-          <Property Name="PersianDateApproved" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateInsuranceRequested" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateInsuranceRequested" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateInsuranceApproved" Type="datetime" />
+          <Property Name="PersianDateInsuranceApproved" Type="nvarchar" MaxLength="50" />
           <Property Name="InsuranceNo" Type="nvarchar" MaxLength="50" />
           <Property Name="SocialNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ZipCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsSendedToInsuranceCompany" Type="bit" Nullable="false" />
           <Property Name="PackageIdSendedToInsuranceCompany" Type="int" />
           <Property Name="InsuranceType" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="DateCanceled" Type="datetime" />
-          <Property Name="PersianDateCanceled" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateCancelationRequested" Type="datetime" />
+          <Property Name="PersianDateCancelationRequested" Type="nvarchar" MaxLength="50" />
           <Property Name="IsCancelationSendedToInsuranceCompany" Type="bit" />
+          <Property Name="IsCancelationDeliveryReceivedFromInsuranceCompany" Type="bit" />
+          <Property Name="IsSendedDeliveryReceivedFromInsuranceCompnay" Type="bit" />
+          <Property Name="DateCancelationApproved" Type="datetime" />
+          <Property Name="PersianDateCancelationApproved" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsUserRequestedInsuranceCancelation" Type="bit" />
         </EntityType>
         <EntityType Name="MessagesArchive">
           <Key>
@@ -529,6 +545,18 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
+        <Association Name="FK_DamageReport_InsuranceInfo">
+          <End Role="InsuranceInfo" Type="Self.InsuranceInfo" Multiplicity="1" />
+          <End Role="DamageReport" Type="Self.DamageReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceInfo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DamageReport">
+              <PropertyRef Name="InsuranceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MiladiDate" Type="date" Mode="In" />
           <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
@@ -551,6 +579,7 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySet Name="AutochargeMessagesBuffer" EntityType="Self.AutochargeMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeTimeTable" EntityType="Self.AutochargeTimeTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistics" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DamageReport" EntityType="Self.DamageReport" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseMessagesBuffer" EntityType="Self.EventbaseMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCodes" Schema="dbo" store:Type="Tables" />
@@ -595,6 +624,10 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
     [vw_SentMessages].[DeliveryDescription] AS [DeliveryDescription]
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_DamageReport_InsuranceInfo" Association="Self.FK_DamageReport_InsuranceInfo">
+            <End Role="InsuranceInfo" EntitySet="InsuranceInfo" />
+            <End Role="DamageReport" EntitySet="DamageReport" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -1137,8 +1170,25 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
+          <EntitySet Name="DamageReports" EntityType="BimeIranModel.DamageReport" />
           <EntitySet Name="InsuranceInfoes" EntityType="BimeIranModel.InsuranceInfo" />
+          <AssociationSet Name="FK_DamageReport_InsuranceInfo" Association="BimeIranModel.FK_DamageReport_InsuranceInfo">
+            <End Role="InsuranceInfo" EntitySet="InsuranceInfoes" />
+            <End Role="DamageReport" EntitySet="DamageReports" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="DamageReport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InsuranceId" Type="Int64" Nullable="false" />
+          <Property Name="DateDamageReported" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateDamageReported" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsSendedToInsuranceCompany" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeliveryReceivedFromInsuranceCompany" Type="Boolean" />
+          <NavigationProperty Name="InsuranceInfo" Relationship="BimeIranModel.FK_DamageReport_InsuranceInfo" FromRole="DamageReport" ToRole="InsuranceInfo" />
+        </EntityType>
         <EntityType Name="InsuranceInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -1148,20 +1198,38 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="PassportNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsApproved" Type="Boolean" Nullable="false" />
           <Property Name="ConfirmationCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateApproved" Type="DateTime" Precision="3" />
-          <Property Name="PersianDateApproved" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateInsuranceRequested" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateInsuranceRequested" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateInsuranceApproved" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateInsuranceApproved" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InsuranceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="SocialNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ZipCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsSendedToInsuranceCompany" Type="Boolean" Nullable="false" />
           <Property Name="PackageIdSendedToInsuranceCompany" Type="Int32" />
           <Property Name="InsuranceType" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="DateCanceled" Type="DateTime" Precision="3" />
-          <Property Name="PersianDateCanceled" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCancelationRequested" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateCancelationRequested" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsCancelationSendedToInsuranceCompany" Type="Boolean" />
+          <Property Name="IsCancelationDeliveryReceivedFromInsuranceCompany" Type="Boolean" />
+          <Property Name="IsSendedDeliveryReceivedFromInsuranceCompnay" Type="Boolean" />
+          <Property Name="DateCancelationApproved" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateCancelationApproved" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DamageReports" Relationship="BimeIranModel.FK_DamageReport_InsuranceInfo" FromRole="InsuranceInfo" ToRole="DamageReport" />
+          <Property Name="IsUserRequestedInsuranceCancelation" Type="Boolean" />
         </EntityType>
+        <Association Name="FK_DamageReport_InsuranceInfo">
+          <End Type="BimeIranModel.InsuranceInfo" Role="InsuranceInfo" Multiplicity="1" />
+          <End Type="BimeIranModel.DamageReport" Role="DamageReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceInfo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DamageReport">
+              <PropertyRef Name="InsuranceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1686,22 +1754,39 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="BimeIranModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="BimeIranModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="BimeIranModel.Store.RetryUndeliveredMessages" />
+          <EntitySetMapping Name="DamageReports">
+            <EntityTypeMapping TypeName="BimeIranModel.DamageReport">
+              <MappingFragment StoreEntitySet="DamageReport">
+                <ScalarProperty Name="IsDeliveryReceivedFromInsuranceCompany" ColumnName="IsDeliveryReceivedFromInsuranceCompany" />
+                <ScalarProperty Name="IsSendedToInsuranceCompany" ColumnName="IsSendedToInsuranceCompany" />
+                <ScalarProperty Name="PersianDateDamageReported" ColumnName="PersianDateDamageReported" />
+                <ScalarProperty Name="DateDamageReported" ColumnName="DateDamageReported" />
+                <ScalarProperty Name="InsuranceId" ColumnName="InsuranceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="InsuranceInfoes">
             <EntityTypeMapping TypeName="BimeIranModel.InsuranceInfo">
               <MappingFragment StoreEntitySet="InsuranceInfo">
+                <ScalarProperty Name="IsUserRequestedInsuranceCancelation" ColumnName="IsUserRequestedInsuranceCancelation" />
+                <ScalarProperty Name="PersianDateCancelationApproved" ColumnName="PersianDateCancelationApproved" />
+                <ScalarProperty Name="DateCancelationApproved" ColumnName="DateCancelationApproved" />
+                <ScalarProperty Name="IsSendedDeliveryReceivedFromInsuranceCompnay" ColumnName="IsSendedDeliveryReceivedFromInsuranceCompnay" />
+                <ScalarProperty Name="IsCancelationDeliveryReceivedFromInsuranceCompany" ColumnName="IsCancelationDeliveryReceivedFromInsuranceCompany" />
                 <ScalarProperty Name="IsCancelationSendedToInsuranceCompany" ColumnName="IsCancelationSendedToInsuranceCompany" />
-                <ScalarProperty Name="PersianDateCanceled" ColumnName="PersianDateCanceled" />
-                <ScalarProperty Name="DateCanceled" ColumnName="DateCanceled" />
+                <ScalarProperty Name="PersianDateCancelationRequested" ColumnName="PersianDateCancelationRequested" />
+                <ScalarProperty Name="DateCancelationRequested" ColumnName="DateCancelationRequested" />
                 <ScalarProperty Name="InsuranceType" ColumnName="InsuranceType" />
                 <ScalarProperty Name="PackageIdSendedToInsuranceCompany" ColumnName="PackageIdSendedToInsuranceCompany" />
                 <ScalarProperty Name="IsSendedToInsuranceCompany" ColumnName="IsSendedToInsuranceCompany" />
                 <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
                 <ScalarProperty Name="SocialNumber" ColumnName="SocialNumber" />
                 <ScalarProperty Name="InsuranceNo" ColumnName="InsuranceNo" />
-                <ScalarProperty Name="PersianDateApproved" ColumnName="PersianDateApproved" />
-                <ScalarProperty Name="DateApproved" ColumnName="DateApproved" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateInsuranceApproved" ColumnName="PersianDateInsuranceApproved" />
+                <ScalarProperty Name="DateInsuranceApproved" ColumnName="DateInsuranceApproved" />
+                <ScalarProperty Name="PersianDateInsuranceRequested" ColumnName="PersianDateInsuranceRequested" />
+                <ScalarProperty Name="DateInsuranceRequested" ColumnName="DateInsuranceRequested" />
                 <ScalarProperty Name="ConfirmationCode" ColumnName="ConfirmationCode" />
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
                 <ScalarProperty Name="PassportNo" ColumnName="PassportNo" />

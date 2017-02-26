@@ -13,10 +13,10 @@ namespace DehnadWcfService
     public interface IBimeIranService
     {
         [OperationContract]
-        InsuranceData GetNewUserData();
+        InsuranceData GetData();
 
         [OperationContract]
-        DeliveryStatus ValidateNewUserDataDelivery(List<UsersInfo> userInfo);
+        DeliveryStatus ValidateDataDelivery(UsersInfo userInfo);
     }
 
 
@@ -24,9 +24,6 @@ namespace DehnadWcfService
     [DataContract]
     public class InsuranceData
     {
-        [DataMember]
-        public int PackageId { get; set; }
-
         [DataMember]
         public List<UsersInfo> UsersInfo { get; set; }
         public string Description { get; set; }
@@ -47,7 +44,8 @@ namespace DehnadWcfService
         public DateTime DateRequested { get; set; }
         public string MobileNumber { get; set; }
         public string SocialNumber { get; set; }
-        public string InsuranceType { get; set; }
+        public Enums.UserRequest UserRequest { get; set; }
         public string ZipCode { get; set; }
+        public string InsuranceCode { get; set; }
     }
 }

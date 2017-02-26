@@ -127,6 +127,8 @@ namespace Tabriz2018Library
                     {
                         messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         messages[index].ReferenceId = pardisResponse[index].ToString();
+                        if (messages[index].MessagePoint > 0)
+                            SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
                     }
                     else
                     {

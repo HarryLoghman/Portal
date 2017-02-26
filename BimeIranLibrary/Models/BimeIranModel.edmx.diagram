@@ -27,7 +27,9 @@
         <EntityTypeShape EntityType="BimeIranModel.SubscribersAdditionalInfo" Width="1.5" PointX="12.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="BimeIranModel.TimedTempMessagesBuffer" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="BimeIranModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="BimeIranModel.InsuranceInfo" Width="1.5" PointX="3.375" PointY="14.75" />
+        <EntityTypeShape EntityType="BimeIranModel.DamageReport" Width="1.5" PointX="5.625" PointY="16.625" />
+        <EntityTypeShape EntityType="BimeIranModel.InsuranceInfo" Width="1.5" PointX="3.375" PointY="15.125" />
+        <AssociationConnector Association="BimeIranModel.FK_DamageReport_InsuranceInfo" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
