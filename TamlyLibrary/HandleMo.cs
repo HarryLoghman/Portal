@@ -37,8 +37,8 @@ namespace TamlyLibrary
                     var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                     if (user != null && user.DeactivationDate == null)
                     {
-                        message.Content = content;
-                        ContentManager.HandleContent(message, service, user, messagesTemplate);
+                        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
                 }
@@ -82,13 +82,16 @@ namespace TamlyLibrary
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                 }
-                else
+                else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
                     ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                 }
+                else
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+
                 message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                 MessageHandler.InsertMessageToQueue(message);
                 //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)

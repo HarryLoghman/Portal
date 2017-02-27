@@ -13,27 +13,24 @@ namespace DehnadWcfService
     public interface IBimeIranService
     {
         [OperationContract]
-        InsuranceData GetData();
+        List<UsersInfo> GetData();
 
         [OperationContract]
-        DeliveryStatus ValidateDataDelivery(UsersInfo userInfo);
+        ResultStatus ValidateDataDelivery(UsersInfo userInfo);
+        [OperationContract]
+        Enums.Status ChangeZipCode(UsersInfo userInfo);
+        [OperationContract]
+        UsersInfo GetUserInfo(UsersInfo userInfo);
     }
 
 
     // Use a data contract as illustrated in the sample below to add composite types to service operations.
-    [DataContract]
-    public class InsuranceData
-    {
-        [DataMember]
-        public List<UsersInfo> UsersInfo { get; set; }
-        public string Description { get; set; }
-    }
 
     [DataContract]
-    public class DeliveryStatus
+    public class ResultStatus
     {
         [DataMember]
-        public bool IsSucessful { get; set; }
+        public Enums.Status Status { get; set; }
 
         [DataMember]
         public string Description { get; set; }
@@ -44,8 +41,9 @@ namespace DehnadWcfService
         public DateTime DateRequested { get; set; }
         public string MobileNumber { get; set; }
         public string SocialNumber { get; set; }
-        public Enums.UserRequest UserRequest { get; set; }
+        public Enums.Request Request { get; set; }
         public string ZipCode { get; set; }
         public string InsuranceCode { get; set; }
+        public string Description { get; set; }
     }
 }

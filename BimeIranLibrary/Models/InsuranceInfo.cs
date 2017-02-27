@@ -43,6 +43,10 @@ namespace BimeIranLibrary.Models
         public Nullable<System.DateTime> DateCancelationApproved { get; set; }
         public string PersianDateCancelationApproved { get; set; }
         public Nullable<bool> IsUserRequestedInsuranceCancelation { get; set; }
+        public Nullable<bool> IsUserWantsToChangeZipCode { get; set; }
+        public string NewZipCode { get; set; }
+        public Nullable<bool> IsNewZipCodeSendedToInsuranceCompany { get; set; }
+        public Nullable<bool> IsNewZipCodeDeliveredFromInsuranceCompany { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DamageReport> DamageReports { get; set; }

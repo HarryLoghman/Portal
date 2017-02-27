@@ -225,45 +225,6 @@ namespace BimeIranLibrary
             }
         }
 
-        private static Dictionary<string, string> CreateConfirmationCode(string mobileNumber)
-        {
-            var confirmation = new Dictionary<string, string>();
-            confirmation["PassportNo"] = "خطا";
-            confirmation["ConfirmationCode"] = "خطا";
-            try
-            {
-                using (var entity = new BimeIranEntities())
-                {
-                    var insuranceInfo = entity.InsuranceInfoes.Where(o => o.MobileNumber == mobileNumber && o.ConfirmationCode == null).OrderByDescending(o => o.Id).FirstOrDefault();
-                    var code = GenerateRandomString(11);
-                    insuranceInfo.ConfirmationCode = code;
-                    insuranceInfo.DateApproved = DateTime.Now;
-                    insuranceInfo.PersianDateApproved = SharedLibrary.Date.GetPersianDateTime();
-                    entity.Entry(insuranceInfo).State = EntityState.Modified;
-                    entity.SaveChanges();
-                    confirmation["PassportNo"] = insuranceInfo.PassportNo;
-                    confirmation["ConfirmationCode"] = code;
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in CreateConfirmationCode: ", e);
-            }
-            return confirmation;
-        }
-
-        public static string GenerateRandomString(int size)
-        {
-            Random random = new Random((int)DateTime.Now.Ticks);
-            string number = random.Next(1, 9).ToString();
-            for (int i = 1; i < size; i++)
-            {
-                number += random.Next(0, 9).ToString();
-            }
-
-            return number;
-        }
-
         private static bool CheckAndCreateInsuranceInfo(string mobileNumber, string passportNo, string socialCode, string zipCode, string insuranceType)
         {
             try

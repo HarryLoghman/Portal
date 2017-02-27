@@ -304,6 +304,10 @@
           <Property Name="DateCancelationApproved" Type="datetime" />
           <Property Name="PersianDateCancelationApproved" Type="nvarchar" MaxLength="50" />
           <Property Name="IsUserRequestedInsuranceCancelation" Type="bit" />
+          <Property Name="IsUserWantsToChangeZipCode" Type="bit" />
+          <Property Name="NewZipCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsNewZipCodeSendedToInsuranceCompany" Type="bit" />
+          <Property Name="IsNewZipCodeDeliveredFromInsuranceCompany" Type="bit" />
         </EntityType>
         <EntityType Name="MessagesArchive">
           <Key>
@@ -1217,6 +1221,10 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="PersianDateCancelationApproved" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="DamageReports" Relationship="BimeIranModel.FK_DamageReport_InsuranceInfo" FromRole="InsuranceInfo" ToRole="DamageReport" />
           <Property Name="IsUserRequestedInsuranceCancelation" Type="Boolean" />
+          <Property Name="IsUserWantsToChangeZipCode" Type="Boolean" />
+          <Property Name="NewZipCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsNewZipCodeSendedToInsuranceCompany" Type="Boolean" />
+          <Property Name="IsNewZipCodeDeliveredFromInsuranceCompany" Type="Boolean" />
         </EntityType>
         <Association Name="FK_DamageReport_InsuranceInfo">
           <End Type="BimeIranModel.InsuranceInfo" Role="InsuranceInfo" Multiplicity="1" />
@@ -1769,6 +1777,10 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="InsuranceInfoes">
             <EntityTypeMapping TypeName="BimeIranModel.InsuranceInfo">
               <MappingFragment StoreEntitySet="InsuranceInfo">
+                <ScalarProperty Name="IsNewZipCodeDeliveredFromInsuranceCompany" ColumnName="IsNewZipCodeDeliveredFromInsuranceCompany" />
+                <ScalarProperty Name="IsNewZipCodeSendedToInsuranceCompany" ColumnName="IsNewZipCodeSendedToInsuranceCompany" />
+                <ScalarProperty Name="NewZipCode" ColumnName="NewZipCode" />
+                <ScalarProperty Name="IsUserWantsToChangeZipCode" ColumnName="IsUserWantsToChangeZipCode" />
                 <ScalarProperty Name="IsUserRequestedInsuranceCancelation" ColumnName="IsUserRequestedInsuranceCancelation" />
                 <ScalarProperty Name="PersianDateCancelationApproved" ColumnName="PersianDateCancelationApproved" />
                 <ScalarProperty Name="DateCancelationApproved" ColumnName="DateCancelationApproved" />

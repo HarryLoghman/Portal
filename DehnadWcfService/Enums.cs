@@ -7,14 +7,22 @@ namespace DehnadWcfService
 {
     public class Enums
     {
-        public enum UserRequest
+        public enum Request
         {
             RegisterInsurancePlanA,
             RegisterInsurancePlanB,
             RegisterInsurancePlanC,
             RegisterInsurancePlanD,
             DamageReport,
-            CancelInsurnce
+            CancelInsurnce,
+            ChangeZipCode
+        }
+
+        public enum Status
+        {
+            Success,
+            User_Does_Not_Exists,
+            Zipcode_Already_Exists,
         }
     }
 }
