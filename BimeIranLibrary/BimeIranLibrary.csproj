@@ -95,6 +95,9 @@
     <Compile Include="Models\DamageReport.cs">
       <DependentUpon>BimeIranModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ErrorLog.cs">
+      <DependentUpon>BimeIranModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\EventbaseContent.cs">
       <DependentUpon>BimeIranModel.tt</DependentUpon>
     </Compile>

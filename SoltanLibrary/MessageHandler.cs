@@ -589,7 +589,12 @@ namespace SoltanLibrary
                         }
                         else
                         {
-                            logs.Info("SendMesssagesToTelepromo Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                            logs.Info("SendMesssagesToTelepromo MobileNumber:" + message.MobileNumber + " Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            message.ReferenceId = "error status:" + result["status"];
+                            message.SentDate = DateTime.Now;
+                            message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            entity.Entry(message).State = EntityState.Modified;
                         }
                     }
                     entity.SaveChanges();

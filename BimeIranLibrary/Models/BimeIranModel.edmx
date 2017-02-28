@@ -224,6 +224,16 @@
           <Property Name="IsSendedToInsuranceCompany" Type="bit" Nullable="false" />
           <Property Name="IsDeliveryReceivedFromInsuranceCompany" Type="bit" />
         </EntityType>
+        <EntityType Name="ErrorLogs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InsuranceId" Type="bigint" Nullable="false" />
+          <Property Name="Request" Type="nvarchar" MaxLength="100" />
+          <Property Name="Status" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+        </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -561,6 +571,18 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ErrorLogs_InsuranceInfo">
+          <End Role="InsuranceInfo" Type="Self.InsuranceInfo" Multiplicity="1" />
+          <End Role="ErrorLogs" Type="Self.ErrorLogs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceInfo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ErrorLogs">
+              <PropertyRef Name="InsuranceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MiladiDate" Type="date" Mode="In" />
           <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
@@ -584,6 +606,7 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySet Name="AutochargeTimeTable" EntityType="Self.AutochargeTimeTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistics" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DamageReport" EntityType="Self.DamageReport" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ErrorLogs" EntityType="Self.ErrorLogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseMessagesBuffer" EntityType="Self.EventbaseMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCodes" Schema="dbo" store:Type="Tables" />
@@ -631,6 +654,10 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <AssociationSet Name="FK_DamageReport_InsuranceInfo" Association="Self.FK_DamageReport_InsuranceInfo">
             <End Role="InsuranceInfo" EntitySet="InsuranceInfo" />
             <End Role="DamageReport" EntitySet="DamageReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ErrorLogs_InsuranceInfo" Association="Self.FK_ErrorLogs_InsuranceInfo">
+            <End Role="InsuranceInfo" EntitySet="InsuranceInfo" />
+            <End Role="ErrorLogs" EntitySet="ErrorLogs" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -1180,6 +1207,11 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
             <End Role="InsuranceInfo" EntitySet="InsuranceInfoes" />
             <End Role="DamageReport" EntitySet="DamageReports" />
           </AssociationSet>
+          <EntitySet Name="ErrorLogs" EntityType="BimeIranModel.ErrorLog" />
+          <AssociationSet Name="FK_ErrorLogs_InsuranceInfo" Association="BimeIranModel.FK_ErrorLogs_InsuranceInfo">
+            <End Role="InsuranceInfo" EntitySet="InsuranceInfoes" />
+            <End Role="ErrorLog" EntitySet="ErrorLogs" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="DamageReport">
           <Key>
@@ -1225,6 +1257,7 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="NewZipCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsNewZipCodeSendedToInsuranceCompany" Type="Boolean" />
           <Property Name="IsNewZipCodeDeliveredFromInsuranceCompany" Type="Boolean" />
+          <NavigationProperty Name="ErrorLogs" Relationship="BimeIranModel.FK_ErrorLogs_InsuranceInfo" FromRole="InsuranceInfo" ToRole="ErrorLog" />
         </EntityType>
         <Association Name="FK_DamageReport_InsuranceInfo">
           <End Type="BimeIranModel.InsuranceInfo" Role="InsuranceInfo" Multiplicity="1" />
@@ -1234,6 +1267,29 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="DamageReport">
+              <PropertyRef Name="InsuranceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ErrorLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InsuranceId" Type="Int64" Nullable="false" />
+          <Property Name="Request" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="InsuranceInfo" Relationship="BimeIranModel.FK_ErrorLogs_InsuranceInfo" FromRole="ErrorLog" ToRole="InsuranceInfo" />
+        </EntityType>
+        <Association Name="FK_ErrorLogs_InsuranceInfo">
+          <End Type="BimeIranModel.InsuranceInfo" Role="InsuranceInfo" Multiplicity="1" />
+          <End Type="BimeIranModel.ErrorLog" Role="ErrorLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceInfo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ErrorLog">
               <PropertyRef Name="InsuranceId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1803,6 +1859,17 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
                 <ScalarProperty Name="PassportNo" ColumnName="PassportNo" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ErrorLogs">
+            <EntityTypeMapping TypeName="BimeIranModel.ErrorLog">
+              <MappingFragment StoreEntitySet="ErrorLogs">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Request" ColumnName="Request" />
+                <ScalarProperty Name="InsuranceId" ColumnName="InsuranceId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

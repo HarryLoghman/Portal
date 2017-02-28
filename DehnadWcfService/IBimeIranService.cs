@@ -16,11 +16,11 @@ namespace DehnadWcfService
         List<UsersInfo> GetData();
 
         [OperationContract]
-        ResultStatus ValidateDataDelivery(UsersInfo userInfo);
+        ResultStatus ValidateDataDelivery(UsersInfo userInfo, ResultStatus deliveryStatus);
         [OperationContract]
-        Enums.Status ChangeZipCode(UsersInfo userInfo);
+        ResultStatus ChangeZipCode(UsersInfo userInfo);
         [OperationContract]
-        UsersInfo GetUserInfo(UsersInfo userInfo);
+        FullUsersInfo GetUserInfo(UsersInfo userInfo);
     }
 
 
@@ -44,6 +44,17 @@ namespace DehnadWcfService
         public Enums.Request Request { get; set; }
         public string ZipCode { get; set; }
         public string InsuranceCode { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class FullUsersInfo
+    {
+        public string MobileNumber { get; set; }
+        public string SocialNumber { get; set; }
+        public string InsuranceType { get; set; }
+        public string ZipCode { get; set; }
+        public string InsuranceCode { get; set; }
+        public string DateInsuranceRegistered { get; set; }
         public string Description { get; set; }
     }
 }

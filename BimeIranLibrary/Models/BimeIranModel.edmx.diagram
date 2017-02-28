@@ -30,6 +30,8 @@
         <EntityTypeShape EntityType="BimeIranModel.DamageReport" Width="1.5" PointX="5.625" PointY="16.625" />
         <EntityTypeShape EntityType="BimeIranModel.InsuranceInfo" Width="1.5" PointX="3.375" PointY="15.125" />
         <AssociationConnector Association="BimeIranModel.FK_DamageReport_InsuranceInfo" />
+        <EntityTypeShape EntityType="BimeIranModel.ErrorLog" Width="1.5" PointX="5.625" PointY="20.375" />
+        <AssociationConnector Association="BimeIranModel.FK_ErrorLogs_InsuranceInfo" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

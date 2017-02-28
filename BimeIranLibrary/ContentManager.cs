@@ -24,7 +24,15 @@ namespace BimeIranLibrary
                     if (userLevel == 0)
                         return;
                     var userInput = message.Content;
-                    if (userLevel == 1)
+                    if (message.Content == "off")
+                    {
+                        CancelUserInsuranceIfExists(subscriber);
+                    }
+                    else if (message.Content == "110")
+                    {
+                        message = CreateDamageReportIfConfirmed(subscriber, message, messagesTemplate);
+                    }
+                    else if (userLevel == 1)
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "FillInformationContent").Select(o => o.Content).FirstOrDefault();
                         ChangeUserLevel(subscriber.Id, 2);
@@ -76,20 +84,110 @@ namespace BimeIranLibrary
                                 message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
                                 MessageHandler.InsertMessageToQueue(message);
                                 message = TryToChargeUser(message, subscriber, messagesTemplate);
+                                if (GetUserLevel(subscriber.Id) == 4)
+                                {
+                                    AddUserForRegisteringInsurance(subscriber);
+                                }
                             }
                         }
                     }
-                    if(userLevel == 3)
+                    if (userLevel == 3)
                     {
                         message = TryToChargeUser(message, subscriber, messagesTemplate);
+                        if (GetUserLevel(subscriber.Id) == 4)
+                        {
+                            AddUserForRegisteringInsurance(subscriber);
+                        }
                     }
-                    MessageHandler.InsertMessageToQueue(message);
+                    if (message.Content != "")
+                        MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Error in HandleContent: ", e);
+            }
+        }
+
+        public static MessageObject CreateDamageReportIfConfirmed(Subscriber subscriber, MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            try
+            {
+                using (var entity = new BimeIranEntities())
+                {
+                    var insuranceInfo = entity.InsuranceInfoes.Where(o => o.MobileNumber == subscriber.MobileNumber && o.IsUserRequestedInsuranceCancelation != true).OrderByDescending(o => o.DateInsuranceRequested).FirstOrDefault();
+                    if (insuranceInfo == null)
+                        message.Content = "";
+                    else
+                    {
+                        var damage = entity.DamageReports.Where(o => o.InsuranceId == insuranceInfo.Id && o.IsSendedToInsuranceCompany == null && DbFunctions.AddDays(o.DateDamageReported, 1) < DateTime.Now).OrderByDescending(o => o.DateDamageReported).FirstOrDefault();
+                        if (damage == null)
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "DamageReportConfirmation").Select(o => o.Content).FirstOrDefault();
+                            var damageReport = new DamageReport();
+                            damageReport.InsuranceId = insuranceInfo.Id;
+                            damageReport.DateDamageReported = DateTime.Now;
+                            damageReport.PersianDateDamageReported = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            entity.DamageReports.Add(damageReport);
+                        }
+                        else
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "DamageReported").Select(o => o.Content).FirstOrDefault();
+                            damage.IsSendedToInsuranceCompany = false;
+                            entity.Entry(insuranceInfo).State = EntityState.Modified;
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in CreateDamageReportIfConfirmed: ", e);
+            }
+            return message;
+        }
+
+        private static void CancelUserInsuranceIfExists(Subscriber subscriber)
+        {
+            try
+            {
+                using (var entity = new BimeIranEntities())
+                {
+                    var insuranceInfo = entity.InsuranceInfoes.Where(o => o.MobileNumber == subscriber.MobileNumber && o.IsUserRequestedInsuranceCancelation != true).OrderByDescending(o => o.DateInsuranceRequested).FirstOrDefault();
+                    if (insuranceInfo == null)
+                        return;
+                    insuranceInfo.IsUserRequestedInsuranceCancelation = true;
+                    insuranceInfo.IsCancelationSendedToInsuranceCompany = false;
+                    insuranceInfo.DateCancelationRequested = DateTime.Now;
+                    insuranceInfo.PersianDateCancelationRequested = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    entity.Entry(insuranceInfo).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    ChangeUserLevel(subscriber.Id, 1);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in CancelUserInsuranceIfExists: ", e);
+            }
+        }
+
+        public static void AddUserForRegisteringInsurance(Subscriber subscriber)
+        {
+            try
+            {
+                using (var entity = new BimeIranEntities())
+                {
+                    var insuranceInfo = entity.InsuranceInfoes.Where(o => o.MobileNumber == subscriber.MobileNumber).OrderByDescending(o => o.DateInsuranceRequested).FirstOrDefault();
+                    insuranceInfo.IsSendedToInsuranceCompany = false;
+                    entity.Entry(insuranceInfo).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    ChangeUserLevel(subscriber.Id, 5);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in AddUserForRegisteringInsurance: ", e);
             }
         }
 
@@ -232,10 +330,10 @@ namespace BimeIranLibrary
                 var insuranceInfo = new InsuranceInfo();
                 insuranceInfo.MobileNumber = mobileNumber;
                 insuranceInfo.PassportNo = (passportNo == null || passportNo == "") ? null : passportNo;
-                insuranceInfo.IsApproved = true;
+                insuranceInfo.IsApproved = false;
                 insuranceInfo.SocialNumber = socialCode;
                 insuranceInfo.ZipCode = zipCode;
-                if(insuranceType == "1")
+                if (insuranceType == "1")
                     insuranceInfo.InsuranceType = "A";
                 else if (insuranceType == "2")
                     insuranceInfo.InsuranceType = "B";

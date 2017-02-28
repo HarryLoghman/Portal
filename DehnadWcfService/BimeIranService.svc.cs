@@ -83,7 +83,7 @@ namespace DehnadWcfService
                 }
                 if (currentTakedSize < 100)
                 {
-                    var cancelInsurancesList = entity.InsuranceInfoes.Where(o => o.IsSendedToInsuranceCompany != true && o.IsUserRequestedInsuranceCancelation == true && o.IsCancelationSendedToInsuranceCompany == false).Take(100 - currentTakedSize).ToList();
+                    var cancelInsurancesList = entity.InsuranceInfoes.Where(o => o.IsUserRequestedInsuranceCancelation == true && o.IsCancelationSendedToInsuranceCompany == false).Take(100 - currentTakedSize).ToList();
 
                     foreach (var cancelInsurance in cancelInsurancesList)
                     {
@@ -139,7 +139,7 @@ namespace DehnadWcfService
             }
         }
 
-        public ResultStatus ValidateDataDelivery(UsersInfo userInfo)
+        public ResultStatus ValidateDataDelivery(UsersInfo userInfo, ResultStatus deliveryStatus)
         {
             var status = new ResultStatus();
 
@@ -154,6 +154,17 @@ namespace DehnadWcfService
                 }
                 else
                 {
+                    if(deliveryStatus.Status == Enums.Status.Unsuccessful)
+                    {
+                        var error = new ErrorLog();
+                        error.InsuranceId = insurance.Id;
+                        error.Request = userInfo.Request.ToString();
+                        error.Status = deliveryStatus.Status.ToString();
+                        error.Description = deliveryStatus.Description;
+                        status.Status = Enums.Status.Success;
+                        status.Description = "Error Received";
+                        return status;
+                    }
                     if (userInfo.Request == Enums.Request.RegisterInsurancePlanA || userInfo.Request == Enums.Request.RegisterInsurancePlanB || userInfo.Request == Enums.Request.RegisterInsurancePlanC || userInfo.Request == Enums.Request.RegisterInsurancePlanD)
                     {
                         insurance.IsSendedDeliveryReceivedFromInsuranceCompnay = true;
@@ -189,38 +200,51 @@ namespace DehnadWcfService
             return status;
         }
 
-        public Enums.Status ChangeZipCode(UsersInfo userInfo)
+        public ResultStatus ChangeZipCode(UsersInfo userInfo)
         {
+            var result = new ResultStatus();
             using (var entity = new BimeIranEntities())
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 var insuranceInfo = entity.InsuranceInfoes.FirstOrDefault(o => o.MobileNumber == userInfo.MobileNumber && o.SocialNumber == userInfo.SocialNumber);
                 if (insuranceInfo == null)
-                    return Enums.Status.User_Does_Not_Exists;
-                var isZipcodeExists = entity.InsuranceInfoes.FirstOrDefault(o => o.ZipCode == userInfo.ZipCode && o.DateCancelationApproved != null);
-                if (isZipcodeExists != null)
-                    return Enums.Status.Zipcode_Already_Exists;
-                insuranceInfo.NewZipCode = userInfo.ZipCode;
-                insuranceInfo.IsUserWantsToChangeZipCode = true;
-                entity.Entry(insuranceInfo).State = System.Data.Entity.EntityState.Modified;
-                entity.SaveChanges();
-                return Enums.Status.Success;
+                    result.Status = Enums.Status.User_Does_Not_Exists;
+                else
+                {
+                    var isZipcodeExists = entity.InsuranceInfoes.FirstOrDefault(o => o.ZipCode == userInfo.ZipCode && o.DateCancelationApproved != null);
+                    if (isZipcodeExists != null)
+                        result.Status =  Enums.Status.Zipcode_Already_Exists;
+                    else
+                    {
+                        insuranceInfo.NewZipCode = userInfo.ZipCode;
+                        insuranceInfo.IsUserWantsToChangeZipCode = true;
+                        entity.Entry(insuranceInfo).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                        result.Status =  Enums.Status.Success;
+                    }
+                }
             }
+            return result;
         }
 
-        public UsersInfo GetUserInfo(UsersInfo userInfo)
+        public FullUsersInfo GetUserInfo(UsersInfo userInfo)
         {
             using (var entity = new BimeIranEntities())
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
-                var user = new UsersInfo();
+                var user = new FullUsersInfo();
                 var insuranceInfo = entity.InsuranceInfoes.FirstOrDefault(o => o.MobileNumber == userInfo.MobileNumber && o.SocialNumber == userInfo.SocialNumber);
                 if (insuranceInfo == null)
+                {
                     user.Description = "User does not exists";
-
-                user.MobileNumber = userInfo.MobileNumber;
-                user.SocialNumber = userInfo.SocialNumber;
-                user.ZipCode = userInfo.ZipCode;
+                    return user;
+                }
+                user.DateInsuranceRegistered = SharedLibrary.Date.GetPersianDate(insuranceInfo.DateInsuranceApproved);
+                user.MobileNumber = insuranceInfo.MobileNumber;
+                user.SocialNumber = insuranceInfo.SocialNumber;
+                user.ZipCode = insuranceInfo.ZipCode;
+                user.InsuranceCode = insuranceInfo.InsuranceNo;
+                user.InsuranceType = insuranceInfo.InsuranceType;
                 return user;
             }
         }

@@ -23,6 +23,7 @@ namespace DehnadWcfService
             Success,
             User_Does_Not_Exists,
             Zipcode_Already_Exists,
+            Unsuccessful
         }
     }
 }

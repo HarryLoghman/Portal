@@ -51,6 +51,7 @@ namespace BimeIranLibrary.Models
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<DamageReport> DamageReports { get; set; }
         public virtual DbSet<InsuranceInfo> InsuranceInfoes { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

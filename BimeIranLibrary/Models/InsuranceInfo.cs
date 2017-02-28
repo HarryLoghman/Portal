@@ -18,6 +18,7 @@ namespace BimeIranLibrary.Models
         public InsuranceInfo()
         {
             this.DamageReports = new HashSet<DamageReport>();
+            this.ErrorLogs = new HashSet<ErrorLog>();
         }
     
         public long Id { get; set; }
@@ -50,5 +51,7 @@ namespace BimeIranLibrary.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DamageReport> DamageReports { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ErrorLog> ErrorLogs { get; set; }
     }
 }

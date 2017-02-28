@@ -135,7 +135,12 @@ namespace Portal.Controllers
                         message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
                         message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                        SoltanLibrary.HandleMo.ReceivedMessage(message, service);
+                        if(service.ServiceCode == "Soltan")
+                            SoltanLibrary.HandleMo.ReceivedMessage(message, service);
+                        else if(service.ServiceCode == "JabehAbzar")
+                            JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
+                        else if (service.ServiceCode == "Tamly")
+                            TamlyLibrary.HandleMo.ReceivedMessage(message, service);
                         //var recievedMessage = new MessageObject();
                         //recievedMessage.Content = serviceId;
                         //recievedMessage.MobileNumber = mobileNumber;
