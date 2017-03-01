@@ -16,7 +16,7 @@ namespace DehnadDonyayeAsatirService
         private static int maxChargeLimit = 400;
         public void ProcessInstallment()
         {
-            if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
+            if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 7)
                 return;
             else
                 InstallmentJob();
