@@ -183,6 +183,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\BimeIran\BimeIranAreaRegistration.cs" />
+    <Compile Include="Areas\BimeIran\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\BimeIran\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\BimeIran\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\BimeIran\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\BimeIran\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\BimeIran\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\BimeIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Danestaneh\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\AutochargeContentsController.cs" />
@@ -1033,6 +1041,16 @@
     <Content Include="Areas\Tamly\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Tamly\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Tamly\Views\web.config" />
+    <Content Include="Areas\BimeIran\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BimeIran\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\BimeIran\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\BimeIran\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\BimeIran\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\BimeIran\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\BimeIran\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\BimeIran\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\BimeIran\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\BimeIran\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1383,6 +1401,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\BimeIran\Models\" />
     <Folder Include="Areas\BimeKarbala\Models\" />
     <Folder Include="Areas\Boating\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />

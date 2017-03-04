@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = ViewBag.ServiceName + " :: " + "ارسال پیغام مستقیم به کاربر";
+}
+
+<div class="demo-section k-content" id="container" style="height:230px;padding-right:10px">
+    <h4>@ViewBag.Title</h4>
+    <label for="mobile">شماره کاربر:</label>
+    <input id="mobile" class="k-textbox" required placeholder="09xxxxxxxxx" style="width: 10%;" />
+    <label for="message">متن پیغام:</label>
+    <textarea id="message" class="k-textbox" required style="width:30%;height:100px;"></textarea>
+    <label for="price">قیمت:</label>
+    <input id="price" class="k-textbox" value="0" required style="width: 7%;" />
+    <label for="point">امتیاز:</label>
+    <input id="point" class="k-textbox" value="0" required style="width: 7%;" />
+    <button id="send" class="k-primary k-button" style="width: 5%;margin-right:10px"><span>ارسال</span></button>
+</div>
+<span id="popupNotification"></span>
+<script>
+    $(document).ready(function () {
+        var container = $("#container");
+        function onShow(e) {
+            if (e.sender.getNotifications().length == 1) {
+                var element = e.element.parent(),
+                    eWidth = element.width(),
+                    eHeight = element.height(),
+                    wWidth = $(window).width(),
+                    wHeight = $(window).height(),
+                    newTop, newLeft;
+                        
+                newLeft = Math.floor(wWidth / 2 - eWidth / 2);
+                newTop = Math.floor(wHeight / 2 - eHeight / 2);
+
+                e.element.parent().css({top: newTop, left: newLeft});
+            }
+        }
+
+        function onClick(e) {
+            var mobile = $('#mobile').val();
+            var message = $('#message').val();
+            var price = $('#price').val();
+            var point = $('#point').val();
+            if (mobile === "" || mobile.length != 11 || message === "" || price === "" || point === "")
+                return;
+            kendo.ui.progress(container, true);
+            $.ajax({
+                url: '@Url.Action("Send", "SendDirectMessage")',
+                data: { mobile: mobile, message: message, price: price, point: point },
+                dataType: 'html',
+                success: function (data) {
+                    var popupNotification = $("#popupNotification").kendoNotification({ show: onShow }).data("kendoNotification");
+                    if (data == "Ok") {
+                        $('#mobile').val('');
+                        $('#message').val('');
+                        $('#price').val('0');
+                        $('#point').val('0');
+                        popupNotification.show("پیغام ارسال شد");
+                    }
+                    else if (data == "Cant add point to unsubscribed")
+                    {
+                        popupNotification.show("امکان اختصاص امتیاز به کاربر غیر عضو وجود ندارد");
+                    }
+                },
+                complete: function (data) {
+                    kendo.ui.progress(container, false);
+                }
+            });
+        }
+
+        $("#send").kendoButton({
+            click: onClick
+        });
+    });
+</script>

@@ -166,6 +166,28 @@ namespace BimeIranLibrary
                     subscriberPoint += point;
                     content = content.Replace("{TPOINT}", subscriberPoint.ToString());
                 }
+                if (content.Contains("{PACKAGE}"))
+                {
+                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(mobileNumber, serviceId);
+                    if (subscriberId != null)
+                    {
+                        var onkeyword = SharedLibrary.ServiceHandler.GetSubscriberOnKeyword(subscriberId.Value);
+                        content = content.Replace("{PACKAGE}", "شماره" + onkeyword);
+                    }
+                }
+                if (content.Contains("{INSNUMBER}"))
+                {
+                    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, serviceId);
+                    var insuranceInfo = ContentManager.GetUserActiveInsurance(subscriber);
+                    if (insuranceInfo != null)
+                        content = content.Replace("{INSNUMBER}", insuranceInfo.InsuranceNo);
+                    else
+                        content = content.Replace("{INSNUMBER}", "هنوز صادر نشده است");
+                }
+                if (content.Contains("{MSISDN}"))
+                {
+                    content = content.Replace("{MSISDN}", mobileNumber);
+                }
             }
             return content;
         }
@@ -515,7 +537,7 @@ namespace BimeIranLibrary
                     singlecharge.IsSucceeded = true;
                 else
                     singlecharge.IsSucceeded = false;
-                
+
                 singlecharge.Description = pardisResponse[2];
                 singlecharge.ReferenceId = pardisResponse[0];
             }

@@ -1,0 +1,374 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "گزارشات";
+}
+
+<style>
+    .loadAnimation {
+        position: relative;
+        margin-right: 30px;
+    }
+
+        .loadAnimation > .k-loading-mask > .k-loading-image {
+            background-size: contain;
+        }
+</style>
+
+<script src="@Url.Content("~/Scripts/Highstock/highstock.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/highcharts-3d.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/modules/exporting.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/modules/export-csv.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/themes/dark-unica.js")"></script>
+
+
+<div id="SubscriptionAndUnsubscriptionContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+<div id="subscribersStaticsContainer" style="height: 400px;direction:ltr !important;"></div>
+<div class="k-rtl" id="grid"></div>
+
+<!--DataSources-->
+<script>
+    var subscribersInfo;
+    var statisticsData;
+    var date = [];
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'Statistics/Statistics_Read',
+        async: false,
+        dataType: 'json',
+        success: function (result) {
+            statisticsData = result;
+            console.log(statisticsData);
+        }
+    });
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'Statistics/Subscribers_Read',
+        async: false,
+        dataType: 'json',
+        success: function (result) {
+            subscribersInfo = result;
+        }
+    });
+
+    jQuery.each(statisticsData, function (index, value) {
+        date[index] = Number(value.Date.replace(/[^0-9]/g, ''));
+    });
+
+    var subscriptionData = [];
+    var unSubcriptionData = [];
+    jQuery.each(statisticsData, function (index, value) {
+        subscriptionData[index] = [];
+        subscriptionData[index][0] = date[index];
+        subscriptionData[index][1] = value.NumberOfSubscriptions;
+
+        unSubcriptionData[index] = [];
+        unSubcriptionData[index][0] = date[index];
+        unSubcriptionData[index][1] = value.NumberOfUnsubscriptions;
+    });
+</script>
+
+<script>
+    window.ODate = Date;
+    window.Date = JDate;
+
+    Highcharts.setOptions({
+        chart: {
+            style: {
+                fontFamily: 'BMITRA BOLD'
+            },
+        },
+        credits: {
+            enabled: false,
+        },
+        lang: {
+            months: ['فروردين', 'ارديبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+            shortMonths: ['فروردين', 'ارديبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+            weekdays: ["یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"]
+        }
+    });
+</script>
+
+<!--Grid-->
+<script>
+    var gridElement = $("#grid");
+
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            { field: "TotalPostpaidSubscribers", title: "تعداد اعضای دائمی", width: 100 },
+            { field: "TotalPrepaidSubscribers", title: "تعداد اعضای اعتباری", width: 100 },
+            { field: "TotalSubscribers", title: "تعداد اعضای کل", width: 100 },
+            { field: "NumberOfPostpaidSubscriptions", title: "تعداد عضویت دائمی", width: 100 },
+            { field: "NumberOfPrepaidSubscriptions", title: "تعداد عضویت اعتباری", width: 100 },
+            { field: "NumberOfSubscriptions", title: "تعداد کل عضویت", width: 100 },
+            { field: "NumberOfPostpaidUnsubscriptions", title: "تعداد لغو عضویت دائمی", width: 100 },
+            { field: "NumberOfPrepaidUnsubscriptions", title: "تعداد لغو عضویت اعتباری", width: 100 },
+            { field: "NumberOfUnsubscriptions", title: "تعداد کل لغو عضویت", width: 100 },
+            { field: "SumOfPaidMessagesForPostPaidSubscribers", title: "درآمد تحقق یافته دائمی", width: 100 },
+            { field: "SumOfPaidMessagesForPrePaidSubscribers", title: "درآمد تحقق یافته اعتباری", width: 100 },
+            { field: "SumOfPaidMessages", title: "مجموع درآمد", width: 100 },
+            { field: "SumOfPaidEventbaseMessagesForPostPaidSubscribers", title: "مجموع درآمد دائمی ایونت بیس", width: 100 },
+            { field: "SumOfPaidEventbaseMessagesForPrePaidSubscribers", title: "مجموع درآمد اعتباری ایونت بیس", width: 100 },
+            { field: "SumOfpaidEventbaseMessages", title: "مجموع درآمد ایونت بیس", width: 100 },
+            { field: "SumOfPaidOnDemandMessagesForPostPaidSubscribers", title: "مجموع درآمد دائمی on-demand", width: 100 },
+            { field: "SumOfPaidOnDemandMessagesForPrePaidSubscribers", title: "مجموع درآمد اعتباری on-demand", width: 100 },
+            { field: "SumOfPaidOnDemandMessages", title: "مجموع درآمد on-demand", width: 100 },
+            { field: "NumberOfEventbasePostpaidMessagesSent", title: "تعداد پیامک ایونت بیس ارسال شده به دائمی", width: 100 },
+            { field: "NumberOfEventbasePrepaidMessagesSent", title: "تعداد پیامک ایونت بیس ارسال شده به اعتباری", width: 100 },
+            { field: "NumberOfEventbaseMessagesSent", title: "تعداد پیامک ایونت بیس ارسال شده", width: 100 },         
+            { field: "NumberOfEventbasePostpaidMessagesDelivered", title: "دلیوری ایونت بیس دائمی", width: 100 },
+            { field: "NumberOfEventbasePrepaidMessagesDelivered", title: "دلیوری ایونت بیس اعتباری", width: 100 },
+            { field: "NumberOfEventbaseMessagesDelivered", title: "دلیوری کل ایونت بیس", width: 100 },
+            { field: "NumberOfMessagesSent", title: "تعداد پیامک ارسال شده", width: 100 },
+            { field: "NumberOfPostpaidMessagesSent", title: "تعداد پیامک دائمی ارسال شده", width: 100 },
+            { field: "NumberOfPrepaidMessagesSent", title: "تعداد پیامک اعتباری ارسال شده", width: 100 },
+            { field: "NumberOfOnDemandMessagesSent", title: "تعداد پیامک OnDemand ارسال شده", width: 100 },
+            { field: "NumberOfAutochargeMessagesSent", title: "تعداد پیامک اتوشارژ ارسال شده", width: 100 },
+            { field: "NumberOfMessagesFailed", title: "تعداد پیامک ارسال نشده", width: 100 },
+            { field: "NumberOfOnDemandMessagesDelivered", title: "NumberOfOnDemandMessagesDelivered", width: 100 },
+{ field: "NumberOfOnDemandPostpaidMessagesDelivered", title: "NumberOfOnDemandPostpaidMessagesDelivered", width: 100 },
+{ field: "NumberOfMessagesFailed", title: "تعداد پیامک ارسال نشده", width: 100 },
+{ field: "NumberOfOnDemandPrepaidMessagesDelivered", title: "NumberOfOnDemandPrepaidMessagesDelivered", width: 100 },
+{ field: "NumberOfAutochargeMessagesDelivered", title: "NumberOfAutochargeMessagesDelivered", width: 100 },
+{ field: "NumberOfAutochargePostpaidMessagesDelivered", title: "NumberOfAutochargePostpaidMessagesDelivered", width: 100 },
+{ field: "NumberOfAutochargePrepaidMessagesDelivered", title: "NumberOfAutochargePrepaidMessagesDelivered", width: 100 },
+
+{ field: "NumberOfPostpaidMessagesDelivered", title: "NumberOfPostpaidMessagesDelivered", width: 100 },
+{ field: "NumberOfPrepaidMessagesDelivered", title: "NumberOfPrepaidMessagesDelivered", width: 100 },
+{ field: "NumberOfMessagesDelivered", title: "NumberOfMessagesDelivered", width: 100 },
+{ field: "NumberOfOnDemandMessagesDeliveryFailed", title: "NumberOfOnDemandMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfOnDemandPostpaidMessagesDeliveryFailed", title: "NumberOfOnDemandPostpaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfOnDemandPrepaidMessagesDeliveryFailed", title: "NumberOfOnDemandPrepaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfAutochargeMessagesDeliveryFailed", title: "NumberOfAutochargeMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfAutochargePostpaidMessagesDeliveryFailed", title: "NumberOfAutochargePostpaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfAutochargePrepaidMessagesDeliveryFailed", title: "NumberOfAutochargePrepaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfEventbaseMessagesDeliveryFailed", title: "NumberOfEventbaseMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfEventbasePostpaidMessagesDeliveryFailed", title: "NumberOfEventbasePostpaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfEventbasePrepaidMessagesDeliveryFailed", title: "NumberOfEventbasePrepaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfPostpaidMessagesDeliveryFailed", title: "NumberOfPostpaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfPrepaidMessagesDeliveryFailed", title: "NumberOfPrepaidMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfMessagesDeliveryFailed", title: "NumberOfMessagesDeliveryFailed", width: 100 },
+{ field: "NumberOfOnDemandMessagesDeliveryNotReceived", title: "NumberOfOnDemandMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfOnDemandPostpaidMessagesDeliveryNotReceived", title: "NumberOfOnDemandPostpaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfOnDemandPrepaidMessagesDeliveryNotReceived", title: "NumberOfOnDemandPrepaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfAutochargeMessagesDeliveryNotReceived", title: "NumberOfAutochargeMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfAutochargePostpaidMessagesDeliveryNotReceived", title: "NumberOfAutochargePostpaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfAutochargePrepaidMessagesDeliveryNotReceived", title: "NumberOfAutochargePrepaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfEventbaseMessagesDeliveryNotReceived", title: "NumberOfEventbaseMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfEventbasePostpaidMessagesDeliveryNotReceived", title: "NumberOfEventbasePostpaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfEventbasePrepaidMessagesDeliveryNotReceived", title: "NumberOfEventbasePrepaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfPostpaidMessagesDeliveryNotReceived", title: "NumberOfPostpaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfPrepaidMessagesDeliveryNotReceived", title: "NumberOfPrepaidMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfMessagesDeliveryNotReceived", title: "NumberOfMessagesDeliveryNotReceived", width: 100 },
+{ field: "NumberOfOnDemandMessagesThatUserHasNoCharge", title: "NumberOfOnDemandMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge", title: "NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge", title: "NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfAutochargeMessagesThatUserHasNoCharge", title: "NumberOfAutochargeMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfAutochargePostpaidMessagesThatUserHasNoCharge", title: "NumberOfAutochargePostpaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfAutochargePrepaidMessagesThatUserHasNoCharge", title: "NumberOfAutochargePrepaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfEventbaseMessagesThatUserHasNoCharge", title: "NumberOfEventbaseMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfEventbasePostpaidMessagesThatUserHasNoCharge", title: "NumberOfEventbasePostpaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfEventbasePrepaidMessagesThatUserHasNoCharge", title: "NumberOfEventbasePrepaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfPostpaidMessagesThatUserHasNoCharge", title: "NumberOfPostpaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfPrepaidMessagesThatUserHasNoCharge", title: "NumberOfPrepaidMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfMessagesThatUserHasNoCharge", title: "NumberOfMessagesThatUserHasNoCharge", width: 100 },
+{ field: "NumberOfFreeOnDemandMessagesSent", title: "NumberOfFreeOnDemandMessagesSent", width: 100 },
+{ field: "NumberOfFreeEventbaseMessagesSent", title: "NumberOfFreeEventbaseMessagesSent", width: 100 },
+{ field: "NumberOfFreeAutochargeMessagesSent", title: "NumberOfFreeAutochargeMessagesSent", width: 100 },
+{ field: "NumberOfFreeMessagesSent", title: "NumberOfFreeMessagesSent", width: 100 },
+{ field: "NumberOfFreeOnDemandMessagesDelivered", title: "NumberOfFreeOnDemandMessagesDelivered", width: 100 },
+{ field: "NumberOfFreeEventbaseMessagesDelivered", title: "NumberOfFreeEventbaseMessagesDelivered", width: 100 },
+{ field: "NumberOfFreeAutochargeMessagesDelivered", title: "", width: 100 },
+{ field: "NumberOfFreeMessagesDelivered", title: "NumberOfFreeMessagesDelivered", width: 100 },
+{ field: "NumberOfPaidOnDemandMessagesSent", title: "NumberOfPaidOnDemandMessagesSent", width: 100 },
+{ field: "NumberOfPaidEventbaseMessagesSent", title: "NumberOfPaidEventbaseMessagesSent", width: 100 },
+{ field: "NumberOfPaidAutochargeMessagesSent", title: "NumberOfPaidAutochargeMessagesSent", width: 100 },
+{ field: "NumberOfPaidMessagesSent", title: "NumberOfPaidMessagesSent", width: 100 },
+{ field: "NumberOfPaidOnDemandMessagesFailed", title: "NumberOfPaidOnDemandMessagesFailed", width: 100 },
+{ field: "NumberOfPaidEventbaseMessagesFailed", title: "NumberOfPaidEventbaseMessagesFailed", width: 100 },
+{ field: "NumberOfPaidAutochargeMessagesFailed", title: "NumberOfPaidAutochargeMessagesFailed", width: 100 },
+{ field: "NumberOfPaidMessagesFailed", title: "NumberOfPaidMessagesFailed", width: 100 },
+{ field: "SumOfPaidAutochargeMessages", title: "SumOfPaidAutochargeMessages", width: 100 },
+{ field: "SumOfPaidAutochargeMessagesForPostPaidSubscribers", title: "SumOfPaidAutochargeMessagesForPostPaidSubscribers", width: 100 },
+{ field: "SumOfPaidAutochargeMessagesForPrePaidSubscribers", title: "SumOfPaidAutochargeMessagesForPrePaidSubscribers", width: 100 },
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_GridRead",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "PersianDate", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+
+</script>
+
+<!--Subscribers-->
+<script type="text/javascript">
+    $(function () {
+        $('#subscribersStaticsContainer').highcharts({
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
+            },
+            title: {
+                text: 'تعداد اعضای سرویس'
+            },
+            subtitle: {
+                text: 'کل اعضا: ' + subscribersInfo['TotalSubscribers']
+            },
+            tooltip: {
+                pointFormat: ' <b>{point.y}نفر</b> <BR> {point.percentage:.1f} %',
+                shared: false,
+                useHTML: true
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                data: [
+                    ['فعال', subscribersInfo['ActiveSubscribers']],
+                    {
+                        name: 'غیر فعال',
+                        y: subscribersInfo['DeactiveSubscribers'],
+                        sliced: false,
+                        selected: true
+                    },
+                ]
+            }]
+        });
+    });
+</script>
+
+<!--SubscriptionAndUnsubscriptionChart-->
+<script>
+    $(function () {
+        $('#SubscriptionAndUnsubscriptionContainer').highcharts('StockChart', {
+
+            rangeSelector: {
+                allButtonsEnabled: false,
+                buttons: [{
+                    type: 'month',
+                    count: 3,
+                    text: 'روز',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['day', [1]]]
+                    }
+                }, ],
+                selected: 0
+            },
+
+            title: {
+                text: 'نمودار عضویت و لغو عضویت'
+            },
+
+            scrollbar: {
+                barBackgroundColor: 'gray',
+                barBorderRadius: 7,
+                barBorderWidth: 0,
+                buttonBackgroundColor: 'gray',
+                buttonBorderWidth: 0,
+                buttonBorderRadius: 7,
+                trackBackgroundColor: 'none',
+                trackBorderWidth: 1,
+                trackBorderRadius: 8,
+                trackBorderColor: '#CCC'
+            },
+
+            yAxis: {
+                allowDecimals: false,
+            },
+
+            plotOptions: {
+                series: {
+                    //compare: 'percent'
+                }
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> <br/>',
+                valueDecimals: 0,
+                useHTML: true,
+            },
+
+            series: [{
+                name: 'عضویت',
+                data: subscriptionData
+            },
+            {
+                name: 'لغو عضویت',
+                data: unSubcriptionData
+            },
+            ],
+        });
+    });
+</script>

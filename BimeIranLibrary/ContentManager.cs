@@ -28,14 +28,26 @@ namespace BimeIranLibrary
                     {
                         CancelUserInsuranceIfExists(subscriber);
                     }
-                    else if (message.Content == "110")
+                    else if (message.Content == "110" )
                     {
                         message = CreateDamageReportIfConfirmed(subscriber, message, messagesTemplate);
+                        if(message.Content == "")
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "NotHaveActiveInsurance").Select(o => o.Content).FirstOrDefault();
+                        }
                     }
                     else if (userLevel == 1)
                     {
-                        message.Content = messagesTemplate.Where(o => o.Title == "FillInformationContent").Select(o => o.Content).FirstOrDefault();
-                        ChangeUserLevel(subscriber.Id, 2);
+                        var isUserHaveActiveInsurance = GetUserActiveInsurance(subscriber);
+                        if (isUserHaveActiveInsurance == null)
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "FillInformationContent").Select(o => o.Content).FirstOrDefault();
+                            ChangeUserLevel(subscriber.Id, 2);
+                        }
+                        else
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "AlreadyHaveActiveInsurance").Select(o => o.Content).FirstOrDefault();
+                        }
                     }
                     else if (userLevel == 2)
                     {
@@ -108,6 +120,26 @@ namespace BimeIranLibrary
             {
                 logs.Error("Error in HandleContent: ", e);
             }
+        }
+
+        public static InsuranceInfo GetUserActiveInsurance(Subscriber subscriber)
+        {
+            try
+            {
+                using (var entity = new BimeIranEntities())
+                {
+                    var insuranceInfo = entity.InsuranceInfoes.Where(o => o.MobileNumber == subscriber.MobileNumber && o.IsUserRequestedInsuranceCancelation != true).OrderByDescending(o => o.DateInsuranceRequested).FirstOrDefault();
+                    if (insuranceInfo == null)
+                        return null;
+                    else
+                        return insuranceInfo;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in CheckIsUserHaveActiveInsurance: ", e);
+            }
+            return null;
         }
 
         public static MessageObject CreateDamageReportIfConfirmed(Subscriber subscriber, MessageObject message, List<MessagesTemplate> messagesTemplate)
