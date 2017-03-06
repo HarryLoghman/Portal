@@ -113,56 +113,58 @@ namespace Portal.Controllers
         public HttpResponseMessage UnSubscribe(string msisdn, string serviceId)
         {
             dynamic responseJson = new ExpandoObject();
+            Subscriber subscriber;
+            var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
             using (var entity = new PortalEntities())
             {
-                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
-                var subscriber = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceInfo.ServiceId).FirstOrDefault();
-                if (subscriber == null)
-                    responseJson.status = 4;
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                subscriber = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceInfo.ServiceId).FirstOrDefault();
+            }
+            if (subscriber == null)
+                responseJson.status = 4;
+            else
+            {
+                if (subscriber.DeactivationDate != null)
+                    responseJson.status = 1001;
                 else
                 {
-                    if (subscriber.DeactivationDate != null)
-                        responseJson.status = 1001;
-                    else
-                    {
-                        var message = new SharedLibrary.Models.MessageObject();
-                        message.MobileNumber = mobileNumber;
-                        message.ShortCode = serviceInfo.ShortCode;
-                        message.IsReceivedFromIntegratedPanel = true;
-                        message.Content = "off";
-                        message.ServiceId = serviceInfo.ServiceId;
-                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
-                        message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
-                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                        if(service.ServiceCode == "Soltan")
-                            SoltanLibrary.HandleMo.ReceivedMessage(message, service);
-                        else if(service.ServiceCode == "JabehAbzar")
-                            JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
-                        else if (service.ServiceCode == "Tamly")
-                            TamlyLibrary.HandleMo.ReceivedMessage(message, service);
-                        //var recievedMessage = new MessageObject();
-                        //recievedMessage.Content = serviceId;
-                        //recievedMessage.MobileNumber = mobileNumber;
-                        //recievedMessage.ShortCode = serviceInfo.ShortCode;
-                        //recievedMessage.IsReceivedFromIntegratedPanel = true;
-                        //SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                    var message = new SharedLibrary.Models.MessageObject();
+                    message.MobileNumber = mobileNumber;
+                    message.ShortCode = serviceInfo.ShortCode;
+                    message.IsReceivedFromIntegratedPanel = true;
+                    message.Content = "off";
+                    message.ServiceId = serviceInfo.ServiceId;
+                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                    message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                    var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+                    if (service.ServiceCode == "Soltan")
+                        SoltanLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "JabehAbzar")
+                        JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "Tamly")
+                        TamlyLibrary.HandleMo.ReceivedMessage(message, service);
+                    //var recievedMessage = new MessageObject();
+                    //recievedMessage.Content = serviceId;
+                    //recievedMessage.MobileNumber = mobileNumber;
+                    //recievedMessage.ShortCode = serviceInfo.ShortCode;
+                    //recievedMessage.IsReceivedFromIntegratedPanel = true;
+                    //SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
 
-                        //subscriber.DeactivationDate = DateTime.Now;
-                        //subscriber.PersianDeactivationDate = SharedLibrary.Date.GetPersianDateTime();
-                        //subscriber.OffMethod = "Integrated Panel";
-                        //subscriber.OffKeyword = "Integrated Panel";
-                        //entity.Entry(subscriber).State = System.Data.Entity.EntityState.Modified;
-                        //entity.SaveChanges();
-                        //var message = new MessageObject();
-                        //message.MobileNumber = mobileNumber;
-                        //message.ShortCode = serviceInfo.ShortCode;
-                        //message.IsReceivedFromIntegratedPanel = true;
-                        //message.Content = "Integrated Panel";
-                        //var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                        //SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null, serviceInfo);
-                        responseJson.status = 0;
-                    }
+                    //subscriber.DeactivationDate = DateTime.Now;
+                    //subscriber.PersianDeactivationDate = SharedLibrary.Date.GetPersianDateTime();
+                    //subscriber.OffMethod = "Integrated Panel";
+                    //subscriber.OffKeyword = "Integrated Panel";
+                    //entity.Entry(subscriber).State = System.Data.Entity.EntityState.Modified;
+                    //entity.SaveChanges();
+                    //var message = new MessageObject();
+                    //message.MobileNumber = mobileNumber;
+                    //message.ShortCode = serviceInfo.ShortCode;
+                    //message.IsReceivedFromIntegratedPanel = true;
+                    //message.Content = "Integrated Panel";
+                    //var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+                    //SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null, serviceInfo);
+                    responseJson.status = 0;
                 }
             }
             var json = JsonConvert.SerializeObject(responseJson);
@@ -249,7 +251,7 @@ namespace Portal.Controllers
                 DateTime? to = null;
                 if (fromDate != 0)
                     from = SharedLibrary.Date.UnixTimeStampToDateTime(fromDate);
-                if(toDate != 0)
+                if (toDate != 0)
                     to = SharedLibrary.Date.UnixTimeStampToDateTime(toDate);
 
                 IQueryable<SubscribersHistory> subscriberHistoryQuery;
@@ -260,9 +262,9 @@ namespace Portal.Controllers
 
                 if (from != null && to != null)
                     subscriberHistoryQuery = subscriberHistoryQuery.Where(o => o.DateTime >= from && o.DateTime <= to);
-                else if( from != null && to == null)
+                else if (from != null && to == null)
                     subscriberHistoryQuery = subscriberHistoryQuery.Where(o => o.DateTime >= from);
-                else if( from == null && to != null)
+                else if (from == null && to != null)
                     subscriberHistoryQuery = subscriberHistoryQuery.Where(o => o.DateTime <= to);
 
                 var subscriberHistory = subscriberHistoryQuery.ToList();
