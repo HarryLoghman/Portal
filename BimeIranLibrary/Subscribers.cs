@@ -107,6 +107,7 @@ namespace BimeIranLibrary
                         var subscriberAdditionalInfoObj = new SubscribersAdditionalInfo();
                         subscriberAdditionalInfoObj.SubscriberId = subscriberId.Value;
                         subscriberAdditionalInfoObj.SubscriberLevel = 1;
+                        subscriberAdditionalInfo.NumberOfWarningsSent = 0;
                         entity.SubscribersAdditionalInfoes.Add(subscriberAdditionalInfoObj);
                         entity.SaveChanges();
                     }

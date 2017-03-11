@@ -55,6 +55,7 @@ namespace DehnadWcfService
                         zipcode.IsNewZipCodeSendedToInsuranceCompany = true;
                         zipcode.IsUserWantsToChangeZipCode = false;
                         entity.Entry(zipcode).State = System.Data.Entity.EntityState.Modified;
+                        currentTakedSize++;
                     }
                 }
                 if (currentTakedSize < 100)
@@ -79,6 +80,7 @@ namespace DehnadWcfService
                         insuranceData.Add(userInfo);
                         insurance.IsSendedToInsuranceCompany = true;
                         entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
+                        currentTakedSize++;
                     }
                 }
                 if (currentTakedSize < 100)
@@ -97,6 +99,7 @@ namespace DehnadWcfService
                         insuranceData.Add(userInfo);
                         cancelInsurance.IsCancelationSendedToInsuranceCompany = true;
                         entity.Entry(cancelInsurance).State = System.Data.Entity.EntityState.Modified;
+                        currentTakedSize++;
                     }
                 }
                 entity.SaveChanges();

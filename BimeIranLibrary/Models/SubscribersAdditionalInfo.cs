@@ -20,5 +20,7 @@ namespace BimeIranLibrary.Models
         public Nullable<bool> IsSubscriberReceivedOffReasonPoint { get; set; }
         public Nullable<bool> IsSubscriberSendedOffReason { get; set; }
         public int SubscriberLevel { get; set; }
+        public Nullable<int> NumberOfWarningsSent { get; set; }
+        public Nullable<System.DateTime> DateWarningSent { get; set; }
     }
 }

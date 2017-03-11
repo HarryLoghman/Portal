@@ -8,6 +8,8 @@ namespace Portal.Controllers
 {
     public class ReceiveController : ApiController
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         // /Receive/Message?mobileNumber=09125612694&shortCode=2050&content=hi&receiveTime=22&messageId=45
         [HttpGet]
         [AllowAnonymous]
@@ -188,6 +190,16 @@ namespace Portal.Controllers
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage SdpNotification([FromBody]string messageXml)
+        {
+            logs.Info("SdpNotification:" + messageXml);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            //var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             return response;
         }
 

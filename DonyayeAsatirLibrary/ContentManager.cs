@@ -112,13 +112,7 @@ namespace DonyayeAsatirLibrary
                 using (var entity = new DonyayeAsatirEntities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                    if(message.Content == "77")
-                    {
-                        message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();
-                        MessageHandler.InsertMessageToQueue(message);
-                        return;
-                    }
-                    if (message.Content != "111" || message.Content != "1" || message.Content != "2")
+                    if (!service.OnKeywords.Contains(message.Content))
                     {
                         message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
@@ -140,7 +134,7 @@ namespace DonyayeAsatirLibrary
                     }
 
                     var isSuccessful = AddSubscriberToSinglechargeQueue(message.MobileNumber, message.Content);
-                    if(isSuccessful == true)
+                    if (isSuccessful == true)
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);

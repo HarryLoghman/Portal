@@ -14,7 +14,7 @@ namespace DehnadBimeIranService
         private Thread timedThread;
         private Thread informApplicationThread;
         private Thread singlechargeInstallmentThread;
-        private Thread singlechargeQueueThread;
+        private Thread reminderThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -51,9 +51,9 @@ namespace DehnadBimeIranService
             //singlechargeInstallmentThread.IsBackground = true;
             //singlechargeInstallmentThread.Start();
 
-            //singlechargeQueueThread = new Thread(SinglechargeQueueWorkerThread);
-            //singlechargeQueueThread.IsBackground = true;
-            //singlechargeQueueThread.Start();
+            reminderThread = new Thread(ReminderWorkerThread);
+            reminderThread.IsBackground = true;
+            reminderThread.Start();
         }
 
         protected override void OnStop()
@@ -102,11 +102,11 @@ namespace DehnadBimeIranService
                 //    singlechargeInstallmentThread.Abort();
                 //}
 
-                //shutdownEvent.Set();
-                //if (!singlechargeQueueThread.Join(3000))
-                //{
-                //    singlechargeQueueThread.Abort();
-                //}
+                shutdownEvent.Set();
+                if (!reminderThread.Join(3000))
+                {
+                    reminderThread.Abort();
+                }
             }
             catch (Exception exp)
             {
@@ -187,14 +187,14 @@ namespace DehnadBimeIranService
             //}
         }
 
-        private void SinglechargeQueueWorkerThread()
+        private void ReminderWorkerThread()
         {
-            //var singlechargeQueue = new SinglechargeQueue();
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    singlechargeQueue.ProcessQueue();
-            //    Thread.Sleep(1000);
-            //}
+            var reminder = new Reminder();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                reminder.Process();
+                Thread.Sleep(1000);
+            }
         }
     }
 }

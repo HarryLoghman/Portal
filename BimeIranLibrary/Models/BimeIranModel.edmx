@@ -493,6 +493,8 @@
           <Property Name="IsSubscriberReceivedOffReasonPoint" Type="bit" />
           <Property Name="IsSubscriberSendedOffReason" Type="bit" />
           <Property Name="SubscriberLevel" Type="int" Nullable="false" />
+          <Property Name="NumberOfWarningsSent" Type="int" />
+          <Property Name="DateWarningSent" Type="datetime" />
         </EntityType>
         <EntityType Name="TimedTempMessagesBuffer">
           <Key>
@@ -1099,6 +1101,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="IsSubscriberReceivedOffReasonPoint" Type="Boolean" />
           <Property Name="IsSubscriberSendedOffReason" Type="Boolean" />
           <Property Name="SubscriberLevel" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfWarningsSent" Type="Int32" />
+          <Property Name="DateWarningSent" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="TimedTempMessagesBuffer">
           <Key>
@@ -1747,6 +1751,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="SubscribersAdditionalInfoes">
             <EntityTypeMapping TypeName="BimeIranModel.SubscribersAdditionalInfo">
               <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
+                <ScalarProperty Name="DateWarningSent" ColumnName="DateWarningSent" />
+                <ScalarProperty Name="NumberOfWarningsSent" ColumnName="NumberOfWarningsSent" />
                 <ScalarProperty Name="SubscriberLevel" ColumnName="SubscriberLevel" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />

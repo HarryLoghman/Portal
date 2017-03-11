@@ -47,7 +47,7 @@ namespace BimeIranLibrary
                     Subscribers.CreateSubscriberAdditionalInfo(message.MobileNumber, service.Id);
                     Subscribers.AddSubscriptionPointIfItsFirstTime(message.MobileNumber, service.Id);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                    ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
+                    //ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                 {
@@ -55,6 +55,7 @@ namespace BimeIranLibrary
                     //var userLevel = ContentManager.GetUserLevel(subsciber.Id);
                     //if (userLevel < 3)
                     //    ContentManager.ChangeUserLevel(subsciber.Id, 1);
+                    ContentManager.ResetWarningsCounter(subsciber.Id);
                     ServiceHandler.CancelUserInstallments(message.MobileNumber);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
@@ -67,7 +68,8 @@ namespace BimeIranLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
-                    ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
+                    ContentManager.ResetWarningsCounter(subsciber.Id);
+                    //ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                 }
                 
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)

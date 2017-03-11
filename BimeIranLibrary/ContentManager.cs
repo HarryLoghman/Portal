@@ -93,22 +93,25 @@ namespace BimeIranLibrary
                             else
                             {
                                 ChangeUserLevel(subscriber.Id, 3);
+                                ResetWarningsCounter(subscriber.Id);
                                 message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
                                 MessageHandler.InsertMessageToQueue(message);
                                 message = TryToChargeUser(message, subscriber, messagesTemplate);
                                 if (GetUserLevel(subscriber.Id) == 4)
                                 {
                                     AddUserForRegisteringInsurance(subscriber);
+                                    ResetWarningsCounter(subscriber.Id);
                                 }
                             }
                         }
                     }
-                    if (userLevel == 3)
+                    else if (userLevel == 3 && userInput == "100")
                     {
                         message = TryToChargeUser(message, subscriber, messagesTemplate);
                         if (GetUserLevel(subscriber.Id) == 4)
                         {
                             AddUserForRegisteringInsurance(subscriber);
+                            ResetWarningsCounter(subscriber.Id);
                         }
                     }
                     if (message.Content != "")
@@ -119,6 +122,28 @@ namespace BimeIranLibrary
             catch (Exception e)
             {
                 logs.Error("Error in HandleContent: ", e);
+            }
+        }
+
+        public static void ResetWarningsCounter(long subscriberId)
+        {
+            try
+            {
+                using (var entity = new BimeIranEntities())
+                {
+                    var subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
+                    if (subscriberAdditionalInfo != null)
+                    {
+                        subscriberAdditionalInfo.DateWarningSent = null;
+                        subscriberAdditionalInfo.NumberOfWarningsSent = 0;
+                        entity.Entry(subscriberAdditionalInfo).State = EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in ResetWarningsCounter: " + e);
             }
         }
 

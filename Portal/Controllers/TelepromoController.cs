@@ -137,6 +137,7 @@ namespace Portal.Controllers
                     message.ServiceId = serviceInfo.ServiceId;
                     message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
                     message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                    message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                     var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
                     if (service.ServiceCode == "Soltan")
                         SoltanLibrary.HandleMo.ReceivedMessage(message, service);

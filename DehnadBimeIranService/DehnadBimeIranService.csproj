@@ -95,7 +95,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SinglechargeQueue.cs" />
+    <Compile Include="Reminder.cs" />
     <Compile Include="SinglechargeInstallmentClass.cs" />
     <Compile Include="Statistic.cs" />
     <Compile Include="Timed.cs" />
