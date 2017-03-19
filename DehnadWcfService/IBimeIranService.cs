@@ -21,6 +21,14 @@ namespace DehnadWcfService
         ResultStatus ChangeZipCode(UsersInfo userInfo);
         [OperationContract]
         FullUsersInfo GetUserInfo(UsersInfo userInfo);
+        [OperationContract]
+        ResultStatus SetIssuedInsuranceData(UsersInfo userInfo);
+        [OperationContract]
+        int GetDataCount();
+        [OperationContract]
+        ResultStatus CancelInsurance(CancelationInfo cancelationInfo);
+        [OperationContract]
+        ResultStatus SetDamageReport(DamageReportInfo damageReportInfo);
     }
 
 
@@ -43,7 +51,27 @@ namespace DehnadWcfService
         public string SocialNumber { get; set; }
         public Enums.Request Request { get; set; }
         public string ZipCode { get; set; }
+        public string NewZipCode { get; set; }
         public string InsuranceCode { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class CancelationInfo
+    {
+        public string SocialNumber { get; set; }
+        public string ZipCode { get; set; }
+        public string InsuranceCode { get; set; }
+        public string CancelationNumber { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class DamageReportInfo
+    {
+        public string SocialNumber { get; set; }
+        public string ZipCode { get; set; }
+        public string InsuranceCode { get; set; }
+        public string DamageReportNumber { get; set; }
+        public int DamagePrice { get; set; }
         public string Description { get; set; }
     }
 

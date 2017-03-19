@@ -48,6 +48,8 @@ namespace BimeIranLibrary.Models
         public string NewZipCode { get; set; }
         public Nullable<bool> IsNewZipCodeSendedToInsuranceCompany { get; set; }
         public Nullable<bool> IsNewZipCodeDeliveredFromInsuranceCompany { get; set; }
+        public string CancelationNumber { get; set; }
+        public string CancelationDescription { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DamageReport> DamageReports { get; set; }

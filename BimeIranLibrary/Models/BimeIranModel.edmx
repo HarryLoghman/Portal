@@ -223,6 +223,11 @@
           <Property Name="PersianDateDamageReported" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsSendedToInsuranceCompany" Type="bit" Nullable="false" />
           <Property Name="IsDeliveryReceivedFromInsuranceCompany" Type="bit" />
+          <Property Name="DamageNumber" Type="nvarchar" MaxLength="100" />
+          <Property Name="DamagePrice" Type="int" />
+          <Property Name="DamageDescription" Type="nvarchar(max)" />
+          <Property Name="DateDamageInfoReceivedFromInsuranceCompany" Type="datetime" />
+          <Property Name="PersianDateDamageInfoReceivedFromInsuranceCompany" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ErrorLogs">
           <Key>
@@ -318,6 +323,8 @@
           <Property Name="NewZipCode" Type="nvarchar" MaxLength="50" />
           <Property Name="IsNewZipCodeSendedToInsuranceCompany" Type="bit" />
           <Property Name="IsNewZipCodeDeliveredFromInsuranceCompany" Type="bit" />
+          <Property Name="CancelationNumber" Type="nvarchar" MaxLength="100" />
+          <Property Name="CancelationDescription" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="MessagesArchive">
           <Key>
@@ -1228,6 +1235,11 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="IsSendedToInsuranceCompany" Type="Boolean" Nullable="false" />
           <Property Name="IsDeliveryReceivedFromInsuranceCompany" Type="Boolean" />
           <NavigationProperty Name="InsuranceInfo" Relationship="BimeIranModel.FK_DamageReport_InsuranceInfo" FromRole="DamageReport" ToRole="InsuranceInfo" />
+          <Property Name="DamageNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DamagePrice" Type="Int32" />
+          <Property Name="DamageDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateDamageInfoReceivedFromInsuranceCompany" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateDamageInfoReceivedFromInsuranceCompany" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="InsuranceInfo">
           <Key>
@@ -1262,6 +1274,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="IsNewZipCodeSendedToInsuranceCompany" Type="Boolean" />
           <Property Name="IsNewZipCodeDeliveredFromInsuranceCompany" Type="Boolean" />
           <NavigationProperty Name="ErrorLogs" Relationship="BimeIranModel.FK_ErrorLogs_InsuranceInfo" FromRole="InsuranceInfo" ToRole="ErrorLog" />
+          <Property Name="CancelationNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CancelationDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_DamageReport_InsuranceInfo">
           <End Type="BimeIranModel.InsuranceInfo" Role="InsuranceInfo" Multiplicity="1" />
@@ -1827,6 +1841,11 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="DamageReports">
             <EntityTypeMapping TypeName="BimeIranModel.DamageReport">
               <MappingFragment StoreEntitySet="DamageReport">
+                <ScalarProperty Name="PersianDateDamageInfoReceivedFromInsuranceCompany" ColumnName="PersianDateDamageInfoReceivedFromInsuranceCompany" />
+                <ScalarProperty Name="DateDamageInfoReceivedFromInsuranceCompany" ColumnName="DateDamageInfoReceivedFromInsuranceCompany" />
+                <ScalarProperty Name="DamageDescription" ColumnName="DamageDescription" />
+                <ScalarProperty Name="DamagePrice" ColumnName="DamagePrice" />
+                <ScalarProperty Name="DamageNumber" ColumnName="DamageNumber" />
                 <ScalarProperty Name="IsDeliveryReceivedFromInsuranceCompany" ColumnName="IsDeliveryReceivedFromInsuranceCompany" />
                 <ScalarProperty Name="IsSendedToInsuranceCompany" ColumnName="IsSendedToInsuranceCompany" />
                 <ScalarProperty Name="PersianDateDamageReported" ColumnName="PersianDateDamageReported" />
@@ -1839,6 +1858,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="InsuranceInfoes">
             <EntityTypeMapping TypeName="BimeIranModel.InsuranceInfo">
               <MappingFragment StoreEntitySet="InsuranceInfo">
+                <ScalarProperty Name="CancelationDescription" ColumnName="CancelationDescription" />
+                <ScalarProperty Name="CancelationNumber" ColumnName="CancelationNumber" />
                 <ScalarProperty Name="IsNewZipCodeDeliveredFromInsuranceCompany" ColumnName="IsNewZipCodeDeliveredFromInsuranceCompany" />
                 <ScalarProperty Name="IsNewZipCodeSendedToInsuranceCompany" ColumnName="IsNewZipCodeSendedToInsuranceCompany" />
                 <ScalarProperty Name="NewZipCode" ColumnName="NewZipCode" />

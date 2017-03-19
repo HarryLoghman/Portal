@@ -49,7 +49,8 @@ namespace DehnadWcfService
                         userInfo.MobileNumber = zipcode.MobileNumber;
                         userInfo.SocialNumber = zipcode.SocialNumber;
                         userInfo.InsuranceCode = zipcode.InsuranceNo;
-                        userInfo.ZipCode = zipcode.NewZipCode;
+                        userInfo.ZipCode = zipcode.ZipCode;
+                        userInfo.NewZipCode = zipcode.NewZipCode;
                         userInfo.Request = Enums.Request.ChangeZipCode;
                         insuranceData.Add(userInfo);
                         zipcode.IsNewZipCodeSendedToInsuranceCompany = true;
@@ -107,7 +108,21 @@ namespace DehnadWcfService
             return insuranceData;
         }
 
-        public ResultStatus SetData(UsersInfo userInfo)
+        public int GetDataCount()
+        {
+            var size = 0;
+            using (var entity = new BimeIranEntities())
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                size = entity.DamageReports.Where(o => o.IsSendedToInsuranceCompany == false).Count();
+                size += entity.InsuranceInfoes.Where(o => o.IsUserWantsToChangeZipCode == true && o.IsNewZipCodeSendedToInsuranceCompany == false).Count();
+                size += entity.InsuranceInfoes.Where(o => o.IsSendedToInsuranceCompany == false && o.DateCancelationRequested == null).Count();
+                size += entity.InsuranceInfoes.Where(o => o.IsUserRequestedInsuranceCancelation == true && o.IsCancelationSendedToInsuranceCompany == false).Count();
+            }
+            return size;
+        }
+
+        public ResultStatus SetIssuedInsuranceData(UsersInfo userInfo)
         {
             var result = new ResultStatus();
             using (var entity = new BimeIranEntities())
@@ -126,20 +141,60 @@ namespace DehnadWcfService
                     entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
                     entity.SaveChanges();
                 }
-                if(userInfo.Request == Enums.Request.CancelInsurnce)
-                {
-                    var insurance = entity.InsuranceInfoes.FirstOrDefault(o => o.SocialNumber == userInfo.SocialNumber && o.ZipCode == userInfo.ZipCode);
-                    if (insurance == null)
-                    {
-                        result.Status = Enums.Status.User_Does_Not_Exists;
-                        return result;
-                    }
-                    insurance.DateCancelationApproved = DateTime.Now;
-                    insurance.PersianDateCancelationApproved = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                }
                 result.Status = Enums.Status.Success;
                 return result;
             }
+        }
+
+        public ResultStatus CancelInsurance(CancelationInfo cancelationInfo)
+        {
+            var result = new ResultStatus();
+            result.Status = Enums.Status.Unsuccessful;
+            using (var entity = new BimeIranEntities())
+            {
+                var insurance = entity.InsuranceInfoes.FirstOrDefault(o => o.SocialNumber == cancelationInfo.SocialNumber && o.ZipCode == cancelationInfo.ZipCode && o.InsuranceNo == cancelationInfo.InsuranceCode);
+                if (insurance == null)
+                    result.Status = Enums.Status.User_Does_Not_Exists;
+                else
+                {
+                    insurance.DateCancelationApproved = DateTime.Now;
+                    insurance.PersianDateCancelationApproved = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
+                    entity.SaveChanges();
+                    result.Status = Enums.Status.Success;
+                }
+            }
+            return result;
+        }
+
+        public ResultStatus SetDamageReport(DamageReportInfo damageReportInfo)
+        {
+            var result = new ResultStatus();
+            result.Status = Enums.Status.Unsuccessful;
+            using (var entity = new BimeIranEntities())
+            {
+                var insurance = entity.InsuranceInfoes.FirstOrDefault(o => o.SocialNumber == damageReportInfo.SocialNumber && o.ZipCode == damageReportInfo.ZipCode && o.InsuranceNo == damageReportInfo.InsuranceCode);
+                if (insurance == null)
+                    result.Status = Enums.Status.User_Does_Not_Exists;
+                else
+                {
+                    var damage = entity.DamageReports.Where(o => o.InsuranceId == insurance.Id && o.IsSendedToInsuranceCompany == true).OrderByDescending(o => o.DateDamageReported).FirstOrDefault();
+                    if (damage == null)
+                        result.Status = Enums.Status.No_Damage_Has_Been_Reported_From_This_User;
+                    else
+                    {
+                        damage.DamagePrice = damageReportInfo.DamagePrice;
+                        damage.DamageNumber = damageReportInfo.DamageReportNumber;
+                        damage.DamageDescription = damageReportInfo.Description;
+                        damage.DateDamageInfoReceivedFromInsuranceCompany = DateTime.Now;
+                        damage.PersianDateDamageInfoReceivedFromInsuranceCompany = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        entity.Entry(damage).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                        result.Status = Enums.Status.Success;
+                    }
+                }
+            }
+            return result;
         }
 
         public ResultStatus ValidateDataDelivery(UsersInfo userInfo, ResultStatus deliveryStatus)
@@ -157,7 +212,7 @@ namespace DehnadWcfService
                 }
                 else
                 {
-                    if(deliveryStatus.Status == Enums.Status.Unsuccessful)
+                    if (deliveryStatus.Status == Enums.Status.Unsuccessful || deliveryStatus.Status == Enums.Status.Zipcode_Already_Exists || deliveryStatus.Status == Enums.Status.Zip_Code_Format_Is_Incorrect || deliveryStatus.Status == Enums.Status.SocialNumber_Format_Is_Incorrect)
                     {
                         var error = new ErrorLog();
                         error.InsuranceId = insurance.Id;
@@ -216,14 +271,14 @@ namespace DehnadWcfService
                 {
                     var isZipcodeExists = entity.InsuranceInfoes.FirstOrDefault(o => o.ZipCode == userInfo.ZipCode && o.DateCancelationApproved != null);
                     if (isZipcodeExists != null)
-                        result.Status =  Enums.Status.Zipcode_Already_Exists;
+                        result.Status = Enums.Status.Zipcode_Already_Exists;
                     else
                     {
                         insuranceInfo.NewZipCode = userInfo.ZipCode;
                         insuranceInfo.IsUserWantsToChangeZipCode = true;
                         entity.Entry(insuranceInfo).State = System.Data.Entity.EntityState.Modified;
                         entity.SaveChanges();
-                        result.Status =  Enums.Status.Success;
+                        result.Status = Enums.Status.Success;
                     }
                 }
             }

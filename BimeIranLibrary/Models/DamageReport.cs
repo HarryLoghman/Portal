@@ -20,6 +20,11 @@ namespace BimeIranLibrary.Models
         public string PersianDateDamageReported { get; set; }
         public bool IsSendedToInsuranceCompany { get; set; }
         public Nullable<bool> IsDeliveryReceivedFromInsuranceCompany { get; set; }
+        public string DamageNumber { get; set; }
+        public Nullable<int> DamagePrice { get; set; }
+        public string DamageDescription { get; set; }
+        public Nullable<System.DateTime> DateDamageInfoReceivedFromInsuranceCompany { get; set; }
+        public string PersianDateDamageInfoReceivedFromInsuranceCompany { get; set; }
     
         public virtual InsuranceInfo InsuranceInfo { get; set; }
     }

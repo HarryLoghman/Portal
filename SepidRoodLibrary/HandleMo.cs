@@ -20,6 +20,9 @@ namespace SepidRoodLibrary
                     var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                     if (user != null && user.DeactivationDate == null)
                     {
+                        if (message.Content == "5" || message.Content == "22" || message.Content == "55" || message.Content == "9")
+                            message.Content = "2";
+
                         if (message.Content == "22" || message.Content == "55")
                         {
                             ContentManager.HandleContent(message, service, user, messagesTemplate);
@@ -71,6 +74,8 @@ namespace SepidRoodLibrary
                     Subscribers.CreateSubscriberAdditionalInfo(message.MobileNumber, service.Id);
                     Subscribers.AddSubscriptionPointIfItsFirstTime(message.MobileNumber, service.Id);
                     var subscriberData = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                    if (message.Content == "5" || message.Content == "22" || message.Content == "55" || message.Content == "9")
+                        message.Content = "2";
                     if (message.Content == "2" || message.Content == "5")
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);
@@ -96,6 +101,8 @@ namespace SepidRoodLibrary
                 {
                     var subscriberData = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
                     Subscribers.SetIsSubscriberSendedOffReason(subscriberData.Id, false);
+                    if (message.Content == "5" || message.Content == "22" || message.Content == "55" || message.Content == "9")
+                        message.Content = "2";
                     if (message.Content == "2" || message.Content == "5")
                     {
                         ServiceHandler.AddSubscriberToSubscriptionKeywords(message, subscriberData.Id);

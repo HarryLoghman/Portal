@@ -14,6 +14,54 @@ namespace Portal.Controllers
 {
     public class TelepromoController : ApiController
     {
+
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage Message(string da, string oa, string txt)
+        {
+            if (da == "989168623674")
+            {
+                var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
+                blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");
+                return blackListResponse;
+            }
+            var messageObj = new MessageObject();
+            messageObj.MobileNumber = da;
+            messageObj.ShortCode = oa;
+            messageObj.Content = txt;
+
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            string result = "";
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                result = "-1";
+            else
+            {
+                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                result = "";
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        // /Telepromo/Delivery?refId=44353535&deliveryStatus=0
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage Delivery(string refId, string deliveryStatus)
+        {
+            var delivery = new DeliveryObject();
+            delivery.ReferenceId = refId;
+            delivery.Status = deliveryStatus;
+            delivery.AggregatorId = 5;
+            SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+            var result = "";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage Services(string status, string msisdn, string serviceId = null)
@@ -102,6 +150,35 @@ namespace Portal.Controllers
             dynamic responseJson = new ExpandoObject();
             responseJson.status = 0;
             responseJson.result = history;
+            var json = JsonConvert.SerializeObject(responseJson);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage Notify(string type, string msisdn, string serviceId, string channel, string keyword, string eventId = null)
+        {
+            dynamic responseJson = new ExpandoObject();
+            
+            var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
+            var message = new SharedLibrary.Models.MessageObject();
+            message.MobileNumber = mobileNumber;
+            message.ShortCode = serviceInfo.ShortCode;
+            message.IsReceivedFromIntegratedPanel = true;
+            message.Content = keyword;
+            message.ServiceId = serviceInfo.ServiceId;
+            if(type == "SUBSCRIBE" || type == "RENEWAL")
+                message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
+            else if(type == "UNSUBSCRIBE")
+                message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
+            else
+                message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
+            SharedLibrary.MessageHandler.SaveReceivedMessage(message);
+
+            responseJson.status = 0;
             var json = JsonConvert.SerializeObject(responseJson);
             var response = Request.CreateResponse(HttpStatusCode.OK);
             response.Content = new StringContent(json, Encoding.UTF8, "application/json");

@@ -16,6 +16,8 @@ namespace SepidRoodLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
         {
+            if (message.Content == "5" || message.Content == "22" || message.Content == "55" || message.Content == "9")
+                message.Content = "2";
             var content = message.Content;
             MessageObject lastEventbaseContent;
             if (message.Content == "2")
