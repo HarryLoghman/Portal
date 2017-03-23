@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ShahreKalamehModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ShahreKalamehModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -519,6 +519,7 @@ warning 6002: The table/view 'ShahreKalameh.dbo.vw_SentMessages' does not have a
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
         <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SinglechargeLiveStatuses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="ShahreKalamehModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
@@ -570,8 +571,7 @@ warning 6002: The table/view 'ShahreKalameh.dbo.vw_SentMessages' does not have a
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ShahreKalamehModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1110,7 +1110,14 @@ warning 6002: The table/view 'ShahreKalameh.dbo.vw_SentMessages' does not have a
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
+          <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(ShahreKalamehModel.SinglechargeLiveStatuses_Result)" />
         </EntityContainer>
+        <ComplexType Name="SinglechargeLiveStatuses_Result">
+          <Property Type="Int32" Name="TotalTries" Nullable="true" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Int32" Name="DistinctNumbersTried" Nullable="true" />
+          <Property Type="Int32" Name="Income" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1633,6 +1640,16 @@ warning 6002: The table/view 'ShahreKalameh.dbo.vw_SentMessages' does not have a
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="ShahreKalamehModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="ShahreKalamehModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="ShahreKalamehModel.Store.RetryUndeliveredMessages" />
+          <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="ShahreKalamehModel.Store.SinglechargeLiveStatuses">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ShahreKalamehModel.SinglechargeLiveStatuses_Result">
+                <ScalarProperty Name="TotalTries" ColumnName="TotalTries" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DistinctNumbersTried" ColumnName="DistinctNumbersTried" />
+                <ScalarProperty Name="Income" ColumnName="Income" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

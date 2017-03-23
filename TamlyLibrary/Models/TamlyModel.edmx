@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="TamlyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="TamlyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -418,6 +418,16 @@
           <Property Name="IsRenewalMessageSent" Type="bit" />
           <Property Name="IsRenewd" Type="bit" />
         </EntityType>
+        <EntityType Name="SinglechargeLiveStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SinglechargeStatuses" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="NumberOfSinglechargesTried" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
             <PropertyRef Name="Id" />
@@ -519,6 +529,7 @@ warning 6002: The table/view 'Tamly.dbo.vw_SentMessages' does not have a primary
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
         <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SinglechargeLiveStatuses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="TamlyModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
@@ -538,6 +549,7 @@ warning 6002: The table/view 'Tamly.dbo.vw_SentMessages' does not have a primary
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeLiveStatus" EntityType="Self.SinglechargeLiveStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
@@ -570,8 +582,7 @@ warning 6002: The table/view 'Tamly.dbo.vw_SentMessages' does not have a primary
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="TamlyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1110,7 +1121,29 @@ warning 6002: The table/view 'Tamly.dbo.vw_SentMessages' does not have a primary
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
+          <EntitySet Name="SinglechargeLiveStatus" EntityType="TamlyModel.SinglechargeLiveStatu" />
+          <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(TamlyModel.SinglechargeLiveStatuses_Result1)" />
         </EntityContainer>
+        <EntityType Name="SinglechargeLiveStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SinglechargeStatuses" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NumberOfSinglechargesTried" Type="Int32" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="SinglechargeLiveStatuses_Result">
+          <Property Type="Int32" Name="TotalTries" Nullable="true" />
+          <Property Type="String" Name="Description" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SinglechargeLiveStatuses_Result1">
+          <Property Type="Int32" Name="TotalTries" Nullable="true" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Int32" Name="DistinctNumbersTried" Nullable="true" />
+          <Property Type="Int32" Name="Income" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1633,6 +1666,27 @@ warning 6002: The table/view 'Tamly.dbo.vw_SentMessages' does not have a primary
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="TamlyModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="TamlyModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="TamlyModel.Store.RetryUndeliveredMessages" />
+          <EntitySetMapping Name="SinglechargeLiveStatus">
+            <EntityTypeMapping TypeName="TamlyModel.SinglechargeLiveStatu">
+              <MappingFragment StoreEntitySet="SinglechargeLiveStatus">
+                <ScalarProperty Name="NumberOfSinglechargesTried" ColumnName="NumberOfSinglechargesTried" />
+                <ScalarProperty Name="SinglechargeStatuses" ColumnName="SinglechargeStatuses" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="TamlyModel.Store.SinglechargeLiveStatuses">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="TamlyModel.SinglechargeLiveStatuses_Result1">
+                <ScalarProperty Name="TotalTries" ColumnName="TotalTries" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DistinctNumbersTried" ColumnName="DistinctNumbersTried" />
+                <ScalarProperty Name="Income" ColumnName="Income" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

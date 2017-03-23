@@ -105,5 +105,10 @@ namespace ShahreKalamehLibrary.Models
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("RetryUndeliveredMessages");
         }
+    
+        public virtual ObjectResult<SinglechargeLiveStatuses_Result> SinglechargeLiveStatuses()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SinglechargeLiveStatuses_Result>("SinglechargeLiveStatuses");
+        }
     }
 }

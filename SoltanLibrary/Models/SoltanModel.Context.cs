@@ -105,5 +105,10 @@ namespace SoltanLibrary.Models
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("RetryUndeliveredMessages");
         }
+    
+        public virtual ObjectResult<SinglechargeLiveStatuses_Result1> SinglechargeLiveStatuses()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SinglechargeLiveStatuses_Result1>("SinglechargeLiveStatuses");
+        }
     }
 }

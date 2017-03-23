@@ -113,6 +113,15 @@
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>TamlyModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeLiveStatu.cs">
+      <DependentUpon>TamlyModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeLiveStatuses_Result.cs">
+      <DependentUpon>TamlyModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeLiveStatuses_Result1.cs">
+      <DependentUpon>TamlyModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeWaiting.cs">
       <DependentUpon>TamlyModel.tt</DependentUpon>
     </Compile>

@@ -128,6 +128,12 @@
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>JabehAbzarModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeLiveStatuses_Result.cs">
+      <DependentUpon>JabehAbzarModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeLiveStatuses_Result1.cs">
+      <DependentUpon>JabehAbzarModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeWaiting.cs">
       <DependentUpon>JabehAbzarModel.tt</DependentUpon>
     </Compile>

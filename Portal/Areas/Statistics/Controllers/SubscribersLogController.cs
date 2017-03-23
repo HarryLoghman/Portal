@@ -27,7 +27,6 @@ namespace Portal.Areas.Statistics.Controllers
             {
                 using (var entity = new SharedLibrary.Models.PortalEntities())
                 {
-                    logs.Info(mobileNumber);
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     if (mobileNumber == null || mobileNumber == "")

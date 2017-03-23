@@ -22,14 +22,30 @@
 
 
 <div id="SubscriptionAndUnsubscriptionContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+<BR>
 <div id="subscribersStaticsContainer" style="height: 400px;direction:ltr !important;"></div>
+<BR>
+<div id="singlechargeLiveStatusesContainer" style="height: 400px;direction:ltr !important;"></div>
+<BR>
 <div class="k-rtl" id="grid"></div>
 
 <!--DataSources-->
 <script>
     var subscribersInfo;
     var statisticsData;
+    var singlechargeLiveStatus;
     var date = [];
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'Statistics/SinglechargeLive_Read',
+        async: false,
+        dataType: 'json',
+        success: function (result) {
+            singlechargeLiveStatus = result;
+        }
+    });
 
     $.ajax(
     {
@@ -39,7 +55,6 @@
         dataType: 'json',
         success: function (result) {
             statisticsData = result;
-            console.log(statisticsData);
         }
     });
 
@@ -298,6 +313,54 @@
                 data: unSubcriptionData
             },
             ],
+        });
+    });
+</script>
+
+<!--Singlecharge Live Statuses Chart-->
+<script type="text/javascript">
+    $(function () {
+        $('#singlechargeLiveStatusesContainer').highcharts({
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
+            },
+            title: {
+                text: 'وضعیت سینگل شارژ'
+            },
+            subtitle: {
+                useHTML: true,
+                text: '<span style="text-align:right;float:right">' + 'تعداد کل تلاش برای سینگل شارژ در روز جاری: ' + singlechargeLiveStatus.TotalTries
+                + '<br>'
+                + 'تعداد شماره هایی که اقدام به شارژ شدن: ' + singlechargeLiveStatus.DistinctNumbersTried
+                + '<br>'
+                + 'در آمد روز جاری: ' + singlechargeLiveStatus.Income
+				+ '</span>'
+            },
+            tooltip: {
+                pointFormat: ' <b>{point.y} تلاش</b> <BR> {point.percentage:.1f} %',
+                shared: false,
+                useHTML: true
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name} کد'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                data: singlechargeLiveStatus.Data
+            }]
         });
     });
 </script>

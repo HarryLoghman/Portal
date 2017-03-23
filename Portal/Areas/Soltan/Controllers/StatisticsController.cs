@@ -185,6 +185,58 @@ namespace Portal.Areas.Soltan.Controllers
             }
         }
 
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult SinglechargeLive_Read([DataSourceRequest]DataSourceRequest request)
+        {
+            try
+            {
+                using (var entity = new SoltanEntities())
+                {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    entity.Database.CommandTimeout = 120;
+                    var query = entity.SinglechargeLiveStatuses().ToList();
+                    var totalTries = "0";
+                    var distinctNumbersTried = "0";
+                    var income = "0";
+                    List<SinglechargeLiveDataClass> data = new List<SinglechargeLiveDataClass>();
+                    if (query != null)
+                    {
+                        totalTries = query.FirstOrDefault().TotalTries.Value.ToString("N0");
+                        distinctNumbersTried = query.FirstOrDefault().DistinctNumbersTried.Value.ToString("N0");
+                        income = query.FirstOrDefault().Income.Value.ToString("N0");
+                        var codes = query.FirstOrDefault().Description.Split(',');
+                        foreach (var code in codes)
+                        {
+                            var codesClass = new SinglechargeLiveDataClass();
+                            var splitedCode = code.Split('=');
+                            if (splitedCode[0].Trim() == "")
+                                codesClass.name = "Failed";
+                            else
+                                codesClass.name = splitedCode[0];
+                            codesClass.value = Convert.ToInt32(splitedCode[1]);
+                            codesClass.y = Convert.ToInt32(splitedCode[1]);
+                            data.Add(codesClass);
+                        }
+                    }
+
+                    var result = new { TotalTries = totalTries, DistinctNumbersTried = distinctNumbersTried, Income = income, Data = data };
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in SinglechargeLive_Read:", e);
+            }
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
+        public class SinglechargeLiveDataClass
+        {
+            public string name { get; set; }
+            public int value { get; set; }
+            public int y { get; set; }
+        }
+
         [HttpPost]
         public ActionResult Excel_Export_Save(string contentType, string base64, string fileName)
         {
