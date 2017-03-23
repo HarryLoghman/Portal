@@ -194,17 +194,20 @@ namespace Portal.Areas.ShahreKalameh.Controllers
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
-                    var query = entity.SinglechargeLiveStatuses().ToList();
+                    var query = entity.SinglechargeLiveStatuses().FirstOrDefault();
                     var totalTries = "0";
                     var distinctNumbersTried = "0";
                     var income = "0";
                     List<SinglechargeLiveDataClass> data = new List<SinglechargeLiveDataClass>();
                     if (query != null)
                     {
-                        totalTries = query.FirstOrDefault().TotalTries.Value.ToString("N0");
-                        distinctNumbersTried = query.FirstOrDefault().DistinctNumbersTried.Value.ToString("N0");
-                        income = query.FirstOrDefault().Income.Value.ToString("N0");
-                        var codes = query.FirstOrDefault().Description.Split(',');
+                        if (query.TotalTries.HasValue)
+                            totalTries = query.TotalTries.Value.ToString("N0");
+                        if (query.DistinctNumbersTried.HasValue)
+                            distinctNumbersTried = query.DistinctNumbersTried.Value.ToString("N0");
+                        if (query.Income.HasValue)
+                            income = query.Income.Value.ToString("N0");
+                        var codes = query.Description.Split(',');
                         foreach (var code in codes)
                         {
                             var codesClass = new SinglechargeLiveDataClass();
