@@ -52,9 +52,9 @@ namespace DehnadSoltanService
             singlechargeInstallmentThread.IsBackground = true;
             singlechargeInstallmentThread.Start();
 
-            singlechargeInstallmentBalancerThread = new Thread(SinglechargeInstallmentBalancerWorkerThread);
-            singlechargeInstallmentBalancerThread.IsBackground = true;
-            singlechargeInstallmentBalancerThread.Start();
+            //singlechargeInstallmentBalancerThread = new Thread(SinglechargeInstallmentBalancerWorkerThread);
+            //singlechargeInstallmentBalancerThread.IsBackground = true;
+            //singlechargeInstallmentBalancerThread.Start();
 
             singlechargeQueueThread = new Thread(SinglechargeQueueWorkerThread);
             singlechargeQueueThread.IsBackground = true;
@@ -107,11 +107,11 @@ namespace DehnadSoltanService
                     singlechargeInstallmentThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!singlechargeInstallmentBalancerThread.Join(3000))
-                {
-                    singlechargeInstallmentBalancerThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!singlechargeInstallmentBalancerThread.Join(3000))
+                //{
+                //    singlechargeInstallmentBalancerThread.Abort();
+                //}
 
                 shutdownEvent.Set();
                 if (!singlechargeQueueThread.Join(3000))
@@ -202,30 +202,40 @@ namespace DehnadSoltanService
         private void SinglechargeInstallmentWorkerThread()
         {
             var singlechargeInstallment = new SinglechargeInstallmentClass();
+            int installmentCycleNumber = 1;
             while (!shutdownEvent.WaitOne(0))
             {
-                singlechargeInstallment.ProcessInstallment();
-                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 13)
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15)
+                {
+                    installmentCycleNumber = 1;
                     Thread.Sleep(50 * 60 * 1000);
+                }
                 else
+                {
+                    if (DateTime.Now.Hour >= 7)
+                    {
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                    }
                     Thread.Sleep(1000);
+                }
             }
         }
 
-        private void SinglechargeInstallmentBalancerWorkerThread()
-        {
-            while (!shutdownEvent.WaitOne(0))
-            {
-                var singlechargeInstallment = new SinglechargeInstallmentClass();
-                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute > 13 && DateTime.Now.Minute < 17)
-                {
-                    singlechargeInstallment.InstallmentDailyBalance();
-                    //singlechargeInstallment.ResetUserDailyChargeBalanceValue();
-                    Thread.Sleep(60 * 60 * 1000);
-                }
-                Thread.Sleep(1000);
-            }
-        }
+        //private void SinglechargeInstallmentBalancerWorkerThread()
+        //{
+        //    while (!shutdownEvent.WaitOne(0))
+        //    {
+        //        var singlechargeInstallment = new SinglechargeInstallmentClass();
+        //        if (DateTime.Now.Hour == 0 && DateTime.Now.Minute > 13 && DateTime.Now.Minute < 17)
+        //        {
+        //            singlechargeInstallment.InstallmentDailyBalance();
+        //            //singlechargeInstallment.ResetUserDailyChargeBalanceValue();
+        //            Thread.Sleep(60 * 60 * 1000);
+        //        }
+        //        Thread.Sleep(1000);
+        //    }
+        //}
 
         private void SinglechargeQueueWorkerThread()
         {

@@ -104,6 +104,9 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ShahreKalamehModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

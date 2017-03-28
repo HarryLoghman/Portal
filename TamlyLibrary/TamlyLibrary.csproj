@@ -104,6 +104,9 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>TamlyModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>TamlyModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>TamlyModel.tt</DependentUpon>
     </Compile>

@@ -81,12 +81,14 @@ namespace Tabriz2018Library
             if (subscriber == null)
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                if (message.Content == "101")
-                    message.Content = messagesTemplate.Where(o => o.Title == "101Content").Select(o => o.Content).FirstOrDefault();
-                else if (message.Content == "102")
-                    message.Content = messagesTemplate.Where(o => o.Title == "102Content").Select(o => o.Content).FirstOrDefault();
-                else if (message.Content == "103")
-                    message.Content = messagesTemplate.Where(o => o.Title == "103Content").Select(o => o.Content).FirstOrDefault();
+                if (message.Content.All(char.IsDigit))
+                {
+                    var contentInteger = Convert.ToInt32(message.Content);
+                    if (contentInteger >= 101 && contentInteger <= 150)
+                        message.Content = messagesTemplate.Where(o => o.Title == message.Content + "Content").Select(o => o.Content).FirstOrDefault();
+                    else
+                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                }
                 else
                     message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
@@ -105,12 +107,14 @@ namespace Tabriz2018Library
                 else
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                    if (message.Content == "101")
-                        message.Content = messagesTemplate.Where(o => o.Title == "101Content").Select(o => o.Content).FirstOrDefault();
-                    else if (message.Content == "102")
-                        message.Content = messagesTemplate.Where(o => o.Title == "102Content").Select(o => o.Content).FirstOrDefault();
-                    else if (message.Content == "103")
-                        message.Content = messagesTemplate.Where(o => o.Title == "103Content").Select(o => o.Content).FirstOrDefault();
+                    if (message.Content.All(char.IsDigit))
+                    {
+                        var contentInteger = Convert.ToInt32(message.Content);
+                        if (contentInteger >= 101 && contentInteger <= 150)
+                            message.Content = messagesTemplate.Where(o => o.Title == message.Content + "Content").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                    }
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);

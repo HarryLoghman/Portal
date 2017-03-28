@@ -50,6 +50,7 @@ namespace TamlyLibrary.Models
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<SinglechargeLiveStatu> SinglechargeLiveStatus { get; set; }
+        public virtual DbSet<ServicesRealtimeStatistic> ServicesRealtimeStatistics { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

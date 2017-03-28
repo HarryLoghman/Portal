@@ -195,20 +195,23 @@ namespace Portal.Areas.Tamly.Controllers
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
-                    var query = entity.SinglechargeLiveStatuses().FirstOrDefault();
+                    var query = entity.ServicesRealtimeStatistics.OrderByDescending(o => o.Id).FirstOrDefault();
+                    var dateUpdated = SharedLibrary.Date.GetPersianDateTime(query.Date);
                     var totalTries = "0";
                     var distinctNumbersTried = "0";
                     var income = "0";
                     List<SinglechargeLiveDataClass> data = new List<SinglechargeLiveDataClass>();
                     if (query != null)
                     {
-                        if (query.TotalTries.HasValue)
-                            totalTries = query.TotalTries.Value.ToString("N0");
-                        if (query.DistinctNumbersTried.HasValue)
-                            distinctNumbersTried = query.DistinctNumbersTried.Value.ToString("N0");
-                        if (query.Income.HasValue)
-                            income = query.Income.Value.ToString("N0");
-                        var codes = query.Description.Split(',');
+                        var description = query.Description.Split('|');
+                        var temp = description[0].Split(':');
+                        totalTries = Convert.ToInt32(temp[1]).ToString("N0");
+                        temp = description[1].Split(':');
+                        distinctNumbersTried = Convert.ToInt32(temp[1]).ToString("N0");
+                        temp = description[2].Split(':');
+                        income = Convert.ToInt32(temp[1]).ToString("N0");
+                        temp = description[3].Split(':');
+                        var codes = temp[1].Split(',');
                         foreach (var code in codes)
                         {
                             var codesClass = new SinglechargeLiveDataClass();
@@ -217,7 +220,6 @@ namespace Portal.Areas.Tamly.Controllers
                                 codesClass.name = "Failed";
                             else
                                 codesClass.name = splitedCode[0];
-                            codesClass.value = Convert.ToInt32(splitedCode[1]);
                             codesClass.y = Convert.ToInt32(splitedCode[1]);
                             data.Add(codesClass);
                         }

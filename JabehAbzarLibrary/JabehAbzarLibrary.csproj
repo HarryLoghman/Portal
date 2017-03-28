@@ -119,6 +119,9 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>JabehAbzarModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>JabehAbzarModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>JabehAbzarModel.tt</DependentUpon>
     </Compile>

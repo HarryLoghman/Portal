@@ -141,7 +141,7 @@ namespace DehnadShahreKalamehService
                     return;
                 }
                 logs.Info("installmentList count:" + installmentList.Count);
-                int takeSize = 5000;
+                int takeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
                 int[] take = new int[(installmentList.Count / takeSize) + 1];
                 int[] skip = new int[(installmentList.Count / takeSize) + 1];
                 skip[0] = 0;

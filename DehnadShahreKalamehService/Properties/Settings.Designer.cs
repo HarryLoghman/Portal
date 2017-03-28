@@ -118,5 +118,41 @@ namespace DehnadShahreKalamehService.Properties {
                 this["RetryNotDeliveredMessages"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
+        public int FirstSingleChargeTakeSize {
+            get {
+                return ((int)(this["FirstSingleChargeTakeSize"]));
+            }
+            set {
+                this["FirstSingleChargeTakeSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7000")]
+        public int SecondSingleChargeTakeSize {
+            get {
+                return ((int)(this["SecondSingleChargeTakeSize"]));
+            }
+            set {
+                this["SecondSingleChargeTakeSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9000")]
+        public int DefaultSingleChargeTakeSize {
+            get {
+                return ((int)(this["DefaultSingleChargeTakeSize"]));
+            }
+            set {
+                this["DefaultSingleChargeTakeSize"] = value;
+            }
+        }
     }
 }

@@ -104,6 +104,9 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>SoltanModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>SoltanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>SoltanModel.tt</DependentUpon>
     </Compile>
