@@ -224,7 +224,7 @@ namespace Portal.Areas.Soltan.Controllers
                         }
                     }
 
-                    var result = new { TotalTries = totalTries, DistinctNumbersTried = distinctNumbersTried, Income = income, Data = data };
+                    var result = new { DateUpdated = dateUpdated, TotalTries = totalTries, DistinctNumbersTried = distinctNumbersTried, Income = income, Data = data };
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
             }

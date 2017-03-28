@@ -121,7 +121,7 @@ namespace DehnadTamlyService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3000")]
         public int FirstSingleChargeTakeSize {
             get {
                 return ((int)(this["FirstSingleChargeTakeSize"]));
@@ -133,7 +133,7 @@ namespace DehnadTamlyService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
         public int SecondSingleChargeTakeSize {
             get {
                 return ((int)(this["SecondSingleChargeTakeSize"]));
@@ -145,7 +145,7 @@ namespace DehnadTamlyService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("9000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("7000")]
         public int DefaultSingleChargeTakeSize {
             get {
                 return ((int)(this["DefaultSingleChargeTakeSize"]));
