@@ -209,18 +209,21 @@ namespace Portal.Areas.JabehAbzar.Controllers
                             distinctNumbersTried = Convert.ToInt32(temp[1]).ToString("N0");
                         temp = description[2].Split(':');
                         income = Convert.ToInt32(temp[1]).ToString("N0");
-                        temp = description[3].Split(':');
-                        var codes = temp[1].Split(',');
-                        foreach (var code in codes)
+                        if (description.ElementAtOrDefault(3) != null)
                         {
-                            var codesClass = new SinglechargeLiveDataClass();
-                            var splitedCode = code.Split('=');
-                            if (splitedCode[0].Trim() == "")
-                                codesClass.name = "Failed";
-                            else
-                                codesClass.name = splitedCode[0];
-                            codesClass.y = Convert.ToInt32(splitedCode[1]);
-                            data.Add(codesClass);
+                            temp = description[3].Split(':');
+                            var codes = temp[1].Split(',');
+                            foreach (var code in codes)
+                            {
+                                var codesClass = new SinglechargeLiveDataClass();
+                                var splitedCode = code.Split('=');
+                                if (splitedCode[0].Trim() == "")
+                                    codesClass.name = "Failed";
+                                else
+                                    codesClass.name = splitedCode[0];
+                                codesClass.y = Convert.ToInt32(splitedCode[1]);
+                                data.Add(codesClass);
+                            }
                         }
                     }
 
