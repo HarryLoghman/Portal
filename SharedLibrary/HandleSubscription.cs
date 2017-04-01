@@ -91,7 +91,7 @@ namespace SharedLibrary
                 newSubscriber.OnKeyword = message.Content;
                 if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                     newSubscriber.OnMethod = "keyword";
-                else if(message.IsReceivedFromIntegratedPanel == true)
+                else if (message.IsReceivedFromIntegratedPanel == true)
                     newSubscriber.OnMethod = "Integrated Panel";
                 else
                     newSubscriber.OnMethod = "Web";
@@ -100,7 +100,7 @@ namespace SharedLibrary
                 newSubscriber.PersianActivationDate = Date.GetPersianDate();
                 newSubscriber.MobileOperator = message.MobileOperator;
                 newSubscriber.OperatorPlan = message.OperatorPlan;
-                newSubscriber.SubscriberUniqueId = CreateUniqueId();
+                newSubscriber.SubscriberUniqueId = AssignUniqueId(newSubscriber.MobileNumber);
                 entity.Subscribers.Add(newSubscriber);
                 entity.SaveChanges();
 
@@ -109,6 +109,21 @@ namespace SharedLibrary
                 AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             }
             return ServiceStatusForSubscriberState.Activated;
+        }
+
+        public static string AssignUniqueId(string mobileNumber)
+        {
+            using (var entity = new PortalEntities())
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                var subscriber = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber);
+                string uniqueId = "";
+                if (subscriber == null)
+                    uniqueId = CreateUniqueId();
+                else
+                    uniqueId = subscriber.SubscriberUniqueId;
+                return uniqueId;
+            }
         }
 
         public static string CreateUniqueId()
