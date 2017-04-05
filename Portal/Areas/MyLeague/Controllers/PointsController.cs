@@ -9,6 +9,7 @@ using System.Data.Entity;
 
 namespace Portal.Areas.MyLeague.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PointsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

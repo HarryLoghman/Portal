@@ -345,7 +345,7 @@
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\HubController.cs" />
-    <Compile Include="Controllers\Mapfa.cs" />
+    <Compile Include="Controllers\MapfaController.cs" />
     <Compile Include="Controllers\TelepromoController.cs" />
     <Compile Include="Controllers\ReceiveController.cs" />
     <Compile Include="Global.asax.cs">
@@ -756,6 +756,7 @@
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi.png" />
     <Content Include="Content\kendo\2016.2.504\Uniform\sprite_kpi_2x.png" />
     <Content Include="Content\Portal.css" />
+    <Content Include="Content\signin.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

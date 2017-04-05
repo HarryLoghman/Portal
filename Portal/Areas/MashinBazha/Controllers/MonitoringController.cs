@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.MashinBazha.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class MonitoringController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

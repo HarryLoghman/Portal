@@ -12,7 +12,7 @@ using System;
 
 namespace Portal.Controllers
 {
-    public class Mapfa : ApiController
+    public class MapfaController : ApiController
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 

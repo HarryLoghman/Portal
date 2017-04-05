@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Portal.Models
@@ -53,6 +54,22 @@ namespace Portal.Models
         [Display(Name = "ذخیره رمز عبور")]
         public bool RememberMe { get; set; }
     }
+
+    public class reCaptchaResponse
+    {
+        [JsonProperty("success")]
+        public bool Success { get; set; }
+
+        [JsonProperty("challenge_ts")]
+        public string ValidatedDateTime { get; set; }
+
+        [JsonProperty("hostname")]
+        public string HostName { get; set; }
+
+        [JsonProperty("error-codes")]
+        public List<string> ErrorCodes { get; set; }
+    }
+
 
     public class RegisterViewModel
     {

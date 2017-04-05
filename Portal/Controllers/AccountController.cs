@@ -9,6 +9,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Portal.Models;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Portal.Controllers
 {
@@ -73,9 +76,44 @@ namespace Portal.Controllers
                 return View(model);
             }
 
+            string urlToPost = "https://www.google.com/recaptcha/api/siteverify";
+            string secretKey = "6Le7MRsUAAAAAIw2AGxh0C9BoyZifOInmJWzMd_4";
+            string gRecaptchaResponse = Request["g-recaptcha-response"];
+
+            var postData = "secret=" + secretKey + "&response=" + gRecaptchaResponse;
+
+            // send post data
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlToPost);
+            request.Method = "POST";
+            request.ContentLength = postData.Length;
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                streamWriter.Write(postData);
+            }
+
+            // receive the response now
+            string captchaResult = string.Empty;
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    captchaResult = reader.ReadToEnd();
+                }
+            }
+
+            // validate the response from Google reCaptcha
+            var captChaesponse = JsonConvert.DeserializeObject<reCaptchaResponse>(captchaResult);
+            if (!captChaesponse.Success)
+            {
+                ModelState.AddModelError("", "کپچا اشتباه است.");
+                return View(model);
+            }
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, shouldLockout: true);
             switch (result)
             {
                 case SignInStatus.Success:

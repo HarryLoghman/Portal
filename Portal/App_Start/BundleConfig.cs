@@ -21,6 +21,7 @@ namespace Portal
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/signin.css",
                       "~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/kendojs").Include(

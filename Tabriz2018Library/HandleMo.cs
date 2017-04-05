@@ -74,6 +74,8 @@ namespace Tabriz2018Library
                 }
                 message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                 MessageHandler.InsertMessageToQueue(message);
+                if(serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                    ServiceHandler.InfromMapfaIntegratedPanel(serviceStatusForSubscriberState, message, service);
                 return;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);

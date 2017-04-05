@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using SharedLibrary;
 using SharedLibrary.Models;
 using Tabriz2018Library.Models;
+using System.Net.Http;
 
 namespace Tabriz2018Library
 {
@@ -118,6 +120,35 @@ namespace Tabriz2018Library
                     return true;
             }
             return false;
+        }
+
+        public static void InfromMapfaIntegratedPanel(HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, MessageObject message, Service service)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+                    string url = "http://10.20.22.18/getdata.aspx?" + "num=" + message.MobileNumber + "&sid=" + serviceInfo.AggregatorServiceId;
+                    if (serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                        url += "&st=0";
+                    else
+                        url += "&st=1";
+                    url += "&dt=" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                    url += "&SubUnsubMessage=" + message.Content;
+                    using (var response = client.GetAsync(new Uri(url)).Result)
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string httpResult = response.Content.ReadAsStringAsync().Result;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in InfromMapfaIntegratedPanel: " + e);
+            }
         }
 
         public static void RemoveSubscriberMobiles(long? subscriberId)

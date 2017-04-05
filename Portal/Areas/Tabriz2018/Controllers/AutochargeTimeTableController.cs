@@ -10,6 +10,7 @@ using System.Globalization;
 
 namespace Portal.Areas.Tabriz2018.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AutochargeTimeTableController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

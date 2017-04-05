@@ -6,9 +6,12 @@
     <li>
         @Html.ActionLink("تغییر رمز عبور", "ChangePassword", "Manage")
     </li>
-    <li>
-        @Html.ActionLink("ایجاد کاربر جدید", "Register", "Account")
-    </li>
+    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+    {
+        <li>
+            @Html.ActionLink("ایجاد کاربر جدید", "Register", "Account")
+        </li>
+    }
     <li>
         @Html.ActionLink("خروج", "LogOff", new { area = "", controller = "Account" })
     </li>

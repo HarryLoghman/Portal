@@ -24,8 +24,16 @@ namespace Portal.Controllers
             text = HttpUtility.UrlDecode(text, System.Text.UnicodeEncoding.Default);
             var messageObj = new MessageObject();
             messageObj.MobileNumber = from;
-            messageObj.ShortCode = to;
             messageObj.Content = text;
+            if (to == null || to == "" || to == "@To")
+            {
+                messageObj.Content = "545";
+                messageObj.ShortCode = "405505";
+                messageObj.IsReceivedFromIntegratedPanel = true;
+            }
+            else
+                messageObj.ShortCode = to;
+            
             messageObj.MessageId = smsId;
 
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
@@ -44,7 +52,7 @@ namespace Portal.Controllers
             return response;
         }
 
-        //Hub Integrated Panel
+        
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage SinglechargeDelivery(string ChargeId, string StatusId, string Recipient, string AppliedPrice, string TransactionCode, string description)
@@ -62,45 +70,6 @@ namespace Portal.Controllers
                 entity.SaveChanges();
             }
             var result = "1";
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
-            return response;
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public HttpResponseMessage Message(string Text, string SmsId, string Mobile, string UserId)
-        {
-            var messageObj = new MessageObject();
-            messageObj.MobileNumber = Mobile;
-            messageObj.MessageId = SmsId;
-            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-            messageObj.IsReceivedFromIntegratedPanel = true;
-            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-            string result = "";
-
-            if (messageObj.MobileNumber == "Invalid Mobile Number")
-                result = "-1";
-            else
-            {
-                using (var entity = new PortalEntities())
-                {
-                    entity.Configuration.AutoDetectChangesEnabled = false;
-                    var subscriber = entity.Subscribers.Where(o => o.MobileNumber == messageObj.MobileNumber && o.DeactivationDate == null).ToList();
-                    foreach (var item in subscriber)
-                    {
-                        var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(item.ServiceId);
-                        if (serviceInfo.AggregatorId == 6)
-                        {
-                            messageObj.Content = serviceInfo.AggregatorServiceId;
-                            messageObj.ShortCode = serviceInfo.ShortCode;
-                            messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                            SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                        }
-                    }
-                }
-                result = "1";
-            }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.Boating.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class EventbaseContentsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
