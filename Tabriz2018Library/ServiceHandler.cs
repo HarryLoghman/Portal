@@ -122,7 +122,7 @@ namespace Tabriz2018Library
             return false;
         }
 
-        public static void InfromMapfaIntegratedPanel(HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, MessageObject message, Service service)
+        public static void InfromMapfaIntegratedPanel(HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, MessageObject message, Service service, string keyword)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace Tabriz2018Library
                     else
                         url += "&st=1";
                     url += "&dt=" + DateTime.Now.ToString("yyyyMMddHHmmss");
-                    url += "&SubUnsubMessage=" + message.Content;
+                    url += "&SubUnsubMessage=" + keyword;
                     using (var response = client.GetAsync(new Uri(url)).Result)
                     {
                         if (response.IsSuccessStatusCode)
