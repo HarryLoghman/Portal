@@ -261,6 +261,52 @@ namespace Portal.Areas.Tamly.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
 
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult SinglechargeLiveSubscribersStatus_Read([DataSourceRequest]DataSourceRequest request)
+        {
+            try
+            {
+                var query = db.ServicesRealtimeStatistics.OrderByDescending(o => o.Id).FirstOrDefault();
+                var dateUpdated = SharedLibrary.Date.GetPersianDateTime(query.Date);
+                List<SinglechargeLiveDataClass> data = new List<SinglechargeLiveDataClass>();
+                var totalSubscribers = "0";
+                if (query != null)
+                {
+                    
+                    var description = query.Description.Split('|');
+                    
+                    var temp = description[4].Split(':');
+                    totalSubscribers = temp[1];
+                    temp = description[5].Split(':');
+                    var codesClass = new SinglechargeLiveDataClass();
+                    codesClass.name = "کاربرانی که شارژ کامل شده اند";
+                    codesClass.y = Convert.ToInt32(temp[1]);
+                    data.Add(codesClass);
+                    temp = description[6].Split(':');
+                    codesClass = new SinglechargeLiveDataClass();
+                    codesClass.name = "کاربران دوره رایگان";
+                    codesClass.y = Convert.ToInt32(temp[1]);
+                    data.Add(codesClass);
+                    temp = description[7].Split(':');
+                    codesClass = new SinglechargeLiveDataClass();
+                    codesClass.name = "کاربران در لیست شارژینگ";
+                    codesClass.y = Convert.ToInt32(temp[1]);
+                    data.Add(codesClass);
+                }
+
+                var result = new { DateUpdated = dateUpdated, TotalSubscribers = totalSubscribers, Data = data };
+                if (User.IsInRole("Admin"))
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(null, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in SinglechargeLiveSubscribersStatus_Read:", e);
+            }
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
         public class SinglechargeLiveDataClass
         {
             public string name { get; set; }
