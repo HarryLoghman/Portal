@@ -32,11 +32,6 @@
     <div id="singlechargeLiveStatusesContainer" style="height: 400px;direction:ltr !important;"></div>
     <BR>
 }
-@if (ViewContext.HttpContext.User.IsInRole("Admin"))
-{
-    <div id="singlechargeSubscribersLiveStatusesContainer" style="height: 400px;direction:ltr !important;"></div>
-    <BR>
-}
 <div class="k-rtl" id="grid"></div>
 
 <!--DataSources-->
@@ -44,7 +39,6 @@
     var subscribersInfo;
     var statisticsData;
     var singlechargeLiveStatus;
-    var singlechargeSubscribersLiveStatus;
     var date = [];
 
     $.ajax(
@@ -57,17 +51,6 @@
             singlechargeLiveStatus = result;
         }
     });
-
-    $.ajax(
-{
-    type: 'POST',
-    url: 'Statistics/SinglechargeLiveSubscribersStatus_Read',
-    async: false,
-    dataType: 'json',
-    success: function (result) {
-        singlechargeSubscribersLiveStatus = result;
-    }
-});
 
     $.ajax(
     {
@@ -441,6 +424,14 @@ else
                 + 'تعداد شماره هایی که اقدام به شارژ شدن: ' + singlechargeLiveStatus.DistinctNumbersTried
                 + '<br>'
                 + 'در آمد روز جاری: ' + singlechargeLiveStatus.Income
+                + '<br>'
+                + 'تعداد کل کاربران فعال: ' + singlechargeLiveStatus.TotalSubscribers
+                + '<br>'
+                + 'کاربرانی که شارژ کامل شده اند: ' + singlechargeLiveStatus.TotalSubscribersFullyCharged
+                + '<br>'
+                + 'کاربرانی که در دوره رایگان هستند: ' + singlechargeLiveStatus.TotalSubscribersInWaitingList
+                + '<br>'
+                + 'کاربران در لیست شارژینگ: ' + singlechargeLiveStatus.TotalSubscribersMustBeCharged
 				+ '</span>'
             },
             tooltip: {
@@ -462,53 +453,6 @@ else
             series: [{
                 type: 'pie',
                 data: singlechargeLiveStatus.Data
-            }]
-        });
-    });
-    </script>
-}
-
-@if (ViewContext.HttpContext.User.IsInRole("Admin"))
-{
-    <!--Singlecharge Subscribers Live Statuses Chart-->
-    <script type="text/javascript">
-    $(function () {
-        $('#singlechargeSubscribersLiveStatusesContainer').highcharts({
-            chart: {
-                type: 'pie',
-                options3d: {
-                    enabled: true,
-                    alpha: 45,
-                    beta: 0
-                }
-            },
-            title: {
-                useHTML: true,
-                text: ' وضعیت کاربران برای سینگل شارژ آخرین بروزرسانی ' + '<span style="float:left">' + singlechargeSubscribersLiveStatus.DateUpdated + '</span>'
-            },
-            subtitle: {
-                useHTML: true,
-                text: '<span style="text-align:right;float:right">' + 'تعداد کل تلاش برای سینگل شارژ در روز جاری: ' + singlechargeSubscribersLiveStatus.TotalSubscribers + '</span>'
-            },
-            tooltip: {
-                pointFormat: ' <b>{point.y} نفر</b> <BR> {point.percentage:.1f} %',
-                shared: false,
-                useHTML: true
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    depth: 35,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.name}'
-                    }
-                }
-            },
-            series: [{
-                type: 'pie',
-                data: singlechargeSubscribersLiveStatus.Data
             }]
         });
     });

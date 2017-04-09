@@ -25,10 +25,10 @@ namespace Portal.Controllers
             var messageObj = new MessageObject();
             messageObj.MobileNumber = from;
             messageObj.Content = text;
-            if (to == null || to == "" || to == "@To")
+            messageObj.ShortCode = to;
+            if (smsId == null || smsId == "")
             {
                 messageObj.Content = "545";
-                messageObj.ShortCode = "405505";
                 messageObj.IsReceivedFromIntegratedPanel = true;
             }
             else

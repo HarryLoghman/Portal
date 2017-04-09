@@ -131,9 +131,9 @@ namespace Tabriz2018Library
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
                     string url = "http://10.20.22.18/getdata.aspx?" + "num=" + message.MobileNumber + "&sid=" + serviceInfo.AggregatorServiceId;
                     if (serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                        url += "&st=0";
-                    else
                         url += "&st=1";
+                    else
+                        url += "&st=0";
                     url += "&dt=" + DateTime.Now.ToString("yyyyMMddHHmmss");
                     url += "&SubUnsubMessage=" + keyword;
                     using (var response = client.GetAsync(new Uri(url)).Result)

@@ -210,91 +210,52 @@ namespace Portal.Areas.Tamly.Controllers
         {
             try
             {
-                using (var entity = new TamlyEntities())
-                {
-                    entity.Configuration.AutoDetectChangesEnabled = false;
-                    entity.Database.CommandTimeout = 120;
-                    var query = entity.ServicesRealtimeStatistics.OrderByDescending(o => o.Id).FirstOrDefault();
-                    var dateUpdated = SharedLibrary.Date.GetPersianDateTime(query.Date);
-                    var totalTries = "0";
-                    var distinctNumbersTried = "0";
-                    var income = "0";
-                    List<SinglechargeLiveDataClass> data = new List<SinglechargeLiveDataClass>();
-                    if (query != null)
-                    {
-                        var description = query.Description.Split('|');
-                        var temp = description[0].Split(':');
-                        totalTries = Convert.ToInt32(temp[1]).ToString("N0");
-                        temp = description[1].Split(':');
-                        distinctNumbersTried = Convert.ToInt32(temp[1]).ToString("N0");
-                        temp = description[2].Split(':');
-                        income = Convert.ToInt32(temp[1]).ToString("N0");
-                        if (description.ElementAtOrDefault(3) != null)
-                        {
-                            temp = description[3].Split(':');
-                            var codes = temp[1].Split(',');
-                            foreach (var code in codes)
-                            {
-                                var codesClass = new SinglechargeLiveDataClass();
-                                var splitedCode = code.Split('=');
-                                if (splitedCode[0].Trim() == "")
-                                    codesClass.name = "Failed";
-                                else
-                                    codesClass.name = splitedCode[0];
-                                codesClass.y = Convert.ToInt32(splitedCode[1]);
-                                data.Add(codesClass);
-                            }
-                        }
-                    }
-
-                    var result = new { DateUpdated = dateUpdated, TotalTries = totalTries, DistinctNumbersTried = distinctNumbersTried, Income = income, Data = data };
-                    if (User.IsInRole("Admin"))
-                        return Json(result, JsonRequestBehavior.AllowGet);
-                    else
-                        return Json(null, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in SinglechargeLive_Read:", e);
-            }
-            return Json("", JsonRequestBehavior.AllowGet);
-        }
-
-        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult SinglechargeLiveSubscribersStatus_Read([DataSourceRequest]DataSourceRequest request)
-        {
-            try
-            {
                 var query = db.ServicesRealtimeStatistics.OrderByDescending(o => o.Id).FirstOrDefault();
                 var dateUpdated = SharedLibrary.Date.GetPersianDateTime(query.Date);
-                List<SinglechargeLiveDataClass> data = new List<SinglechargeLiveDataClass>();
+                var totalTries = "0";
+                var distinctNumbersTried = "0";
+                var income = "0";
                 var totalSubscribers = "0";
+                var totalSubscribersFullyCharged = "0";
+                var totalSubscribersInWaitingList = "0";
+                var totalSubscribersMustBeCharged = "0";
+                List<SinglechargeLiveDataClass> data = new List<SinglechargeLiveDataClass>();
                 if (query != null)
                 {
-                    
                     var description = query.Description.Split('|');
-                    
-                    var temp = description[4].Split(':');
-                    totalSubscribers = temp[1];
+                    var temp = description[0].Split(':');
+                    totalTries = Convert.ToInt32(temp[1]).ToString("N0");
+                    temp = description[1].Split(':');
+                    distinctNumbersTried = Convert.ToInt32(temp[1]).ToString("N0");
+                    temp = description[2].Split(':');
+                    income = Convert.ToInt32(temp[1]).ToString("N0");
+                    temp = description[4].Split(':');
+                    totalSubscribers = Convert.ToInt32(temp[1]).ToString("N0");
                     temp = description[5].Split(':');
-                    var codesClass = new SinglechargeLiveDataClass();
-                    codesClass.name = "کاربرانی که شارژ کامل شده اند";
-                    codesClass.y = Convert.ToInt32(temp[1]);
-                    data.Add(codesClass);
+                    totalSubscribersFullyCharged = Convert.ToInt32(temp[1]).ToString("N0");
                     temp = description[6].Split(':');
-                    codesClass = new SinglechargeLiveDataClass();
-                    codesClass.name = "کاربران دوره رایگان";
-                    codesClass.y = Convert.ToInt32(temp[1]);
-                    data.Add(codesClass);
+                    totalSubscribersInWaitingList = Convert.ToInt32(temp[1]).ToString("N0");
                     temp = description[7].Split(':');
-                    codesClass = new SinglechargeLiveDataClass();
-                    codesClass.name = "کاربران در لیست شارژینگ";
-                    codesClass.y = Convert.ToInt32(temp[1]);
-                    data.Add(codesClass);
+                    totalSubscribersMustBeCharged = Convert.ToInt32(temp[1]).ToString("N0");
+                    if (description.ElementAtOrDefault(3) != null)
+                    {
+                        temp = description[3].Split(':');
+                        var codes = temp[1].Split(',');
+                        foreach (var code in codes)
+                        {
+                            var codesClass = new SinglechargeLiveDataClass();
+                            var splitedCode = code.Split('=');
+                            if (splitedCode[0].Trim() == "")
+                                codesClass.name = "Failed";
+                            else
+                                codesClass.name = splitedCode[0];
+                            codesClass.y = Convert.ToInt32(splitedCode[1]);
+                            data.Add(codesClass);
+                        }
+                    }
                 }
 
-                var result = new { DateUpdated = dateUpdated, TotalSubscribers = totalSubscribers, Data = data };
+                var result = new { DateUpdated = dateUpdated, TotalTries = totalTries, DistinctNumbersTried = distinctNumbersTried, Income = income, Data = data, TotalSubscribers = totalSubscribers, TotalSubscribersFullyCharged = totalSubscribersFullyCharged, TotalSubscribersInWaitingList = totalSubscribersInWaitingList, TotalSubscribersMustBeCharged = totalSubscribersMustBeCharged };
                 if (User.IsInRole("Admin"))
                     return Json(result, JsonRequestBehavior.AllowGet);
                 else
@@ -302,7 +263,7 @@ namespace Portal.Areas.Tamly.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Error in SinglechargeLiveSubscribersStatus_Read:", e);
+                logs.Error("Error in SinglechargeLive_Read:", e);
             }
             return Json("", JsonRequestBehavior.AllowGet);
         }
