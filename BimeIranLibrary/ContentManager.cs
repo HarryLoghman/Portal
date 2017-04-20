@@ -20,18 +20,44 @@ namespace BimeIranLibrary
                 using (var entity = new BimeIranEntities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    var userInput = message.Content;
                     var userLevel = GetUserLevel(subscriber.Id);
                     if (userLevel == 0)
-                        return;
-                    var userInput = message.Content;
-                    if (message.Content == "off")
+                    {
+                        var extractedNumber = SharedLibrary.HelpfulFunctions.GetAllTheNumbersFromComplexString(userInput);
+                        if (extractedNumber.Count() > 0)
+                        {
+                            var packageNumber = extractedNumber.Substring(0, 1);
+                            var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
+                            bool isChargeCodeFound = false;
+                            foreach (var item in imiChargeCodes)
+                            {
+                                if (item.ChargeCode.ToString() == packageNumber)
+                                {
+                                    isChargeCodeFound = true;
+                                    break;
+                                }
+                            }
+                            if (isChargeCodeFound)
+                            {
+                                SharedLibrary.HandleSubscription.ChangeSubscriptionKeyword(subscriber, packageNumber);
+                                ChangeUserLevel(subscriber.Id, 2);
+                                message.Content = messagesTemplate.Where(o => o.Title == "FillInformationContent").Select(o => o.Content).FirstOrDefault();
+                            }
+                            else
+                                message.Content = messagesTemplate.Where(o => o.Title == "EnterInsurancePackageNumber").Select(o => o.Content).FirstOrDefault();
+                        }
+                        else
+                            message.Content = messagesTemplate.Where(o => o.Title == "EnterInsurancePackageNumber").Select(o => o.Content).FirstOrDefault();
+                    }
+                    else if (message.Content == "off")
                     {
                         CancelUserInsuranceIfExists(subscriber);
                     }
-                    else if (message.Content == "110" )
+                    else if (message.Content == "110")
                     {
                         message = CreateDamageReportIfConfirmed(subscriber, message, messagesTemplate);
-                        if(message.Content == "")
+                        if (message.Content == "")
                         {
                             message.Content = messagesTemplate.Where(o => o.Title == "NotHaveActiveInsurance").Select(o => o.Content).FirstOrDefault();
                         }
@@ -95,13 +121,6 @@ namespace BimeIranLibrary
                                 ChangeUserLevel(subscriber.Id, 3);
                                 ResetWarningsCounter(subscriber.Id);
                                 message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
-                                MessageHandler.InsertMessageToQueue(message);
-                                message = TryToChargeUser(message, subscriber, messagesTemplate);
-                                if (GetUserLevel(subscriber.Id) == 4)
-                                {
-                                    AddUserForRegisteringInsurance(subscriber);
-                                    ResetWarningsCounter(subscriber.Id);
-                                }
                             }
                         }
                     }
@@ -113,6 +132,22 @@ namespace BimeIranLibrary
                             AddUserForRegisteringInsurance(subscriber);
                             ResetWarningsCounter(subscriber.Id);
                         }
+                    }
+                    else if (userLevel == 3 && userInput == "101")
+                    {
+                        ChangeUserLevel(subscriber.Id, 2);
+                        RemoveInsurance(subscriber);
+                        message.Content = messagesTemplate.Where(o => o.Title == "FillInformationContent").Select(o => o.Content).FirstOrDefault();
+                    }
+                    else if (userLevel == 3 && userInput == "102")
+                    {
+                        ChangeUserLevel(subscriber.Id, 0);
+                        RemoveInsurance(subscriber);
+                        message.Content = messagesTemplate.Where(o => o.Title == "EnterInsurancePackageNumber").Select(o => o.Content).FirstOrDefault();
+                    }
+                    else if(userLevel == 3)
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
                     }
                     if (message.Content != "")
                         MessageHandler.InsertMessageToQueue(message);
@@ -417,6 +452,26 @@ namespace BimeIranLibrary
                 logs.Error("Error in CreateInsuranceInfo: ", e);
             }
             return false;
+        }
+
+        public static void RemoveInsurance(Subscriber subscriber)
+        {
+            try
+            {
+                using (var entity = new BimeIranEntities())
+                {
+                    var userInsurance = entity.InsuranceInfoes.Where(o => o.MobileNumber == subscriber.MobileNumber).OrderByDescending(o => o.Id).FirstOrDefault();
+                    if (userInsurance != null)
+                    {
+                        entity.InsuranceInfoes.Remove(userInsurance);
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in RemoveInsurance: " + e);
+            }
         }
 
         public static void ChangeUserLevel(long subscriberId, int level)

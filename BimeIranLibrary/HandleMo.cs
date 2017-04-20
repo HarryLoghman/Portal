@@ -63,11 +63,11 @@ namespace BimeIranLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else
+                else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                    Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
+                    //Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
                     ContentManager.ResetWarningsCounter(subsciber.Id);
                     //ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                 }

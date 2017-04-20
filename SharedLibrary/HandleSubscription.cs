@@ -8,6 +8,7 @@ namespace SharedLibrary
 {
     public class HandleSubscription
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, Service service, bool isUserWantsToUnsubscribe)
         {
             var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
@@ -226,6 +227,21 @@ namespace SharedLibrary
                 AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null, serviceInfo);
             }
             return ServiceStatusForSubscriberState.Deactivated;
+        }
+
+        public static void ChangeSubscriptionKeyword(Subscriber subscriber, string keyword)
+        {
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ChangeSubscriptionKeyword: " + e);
+            }
         }
 
         public enum ServiceStatusForSubscriberState

@@ -16,11 +16,53 @@ namespace DehnadBimeIranService
         {
             try
             {
-                SendWarningToUsers();
+                SendInsuranceNumbersToUsers();
+                //SendWarningToUsers();
             }
             catch (Exception e)
             {
                 logs.Error("Exception in Reminder Process : ", e);
+            }
+        }
+
+        private void SendInsuranceNumbersToUsers()
+        {
+            try
+            {
+                int batchSaveCounter = 0;
+                var serviceId = SharedLibrary.ServiceHandler.GetServiceId("BimeIran");
+                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
+                var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(0, null);
+                var aggregatorName = Properties.Settings.Default.AggregatorName;
+                var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
+                using (var entity = new BimeIranEntities())
+                {
+                    var users = entity.InsuranceInfoes.Where(o => o.InsuranceNo == null && o.IsInsuranceNumberSendedToUser != true).ToList();
+                    if (users.Count > 0)
+                    {
+                        var messageContent = messagesTemplate.Where(o => o.Title == "InformInsuranceNumber").Select(o => o.Content).FirstOrDefault();
+                        foreach (var user in users)
+                        {
+                            if(batchSaveCounter > 1000)
+                            {
+                                batchSaveCounter = 0;
+                                entity.SaveChanges();
+                            }
+                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(user.MobileNumber, serviceId.Value);
+                            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, messageContent, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, aggregatorId, 0, null, 0);
+                            MessageHandler.InsertMessageToQueue(message);
+                            user.IsInsuranceNumberSendedToUser = true;
+                            entity.Entry(user).State = EntityState.Modified;
+                            batchSaveCounter++;
+                        }
+                        entity.SaveChanges();
+                        
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in Reminder SendInsuranceNumbersToUsers : ", e);
             }
         }
 
@@ -51,7 +93,7 @@ namespace DehnadBimeIranService
 
                         if ((item.SubscriberLevel == 2 || item.SubscriberLevel == 3) && item.NumberOfWarningsSent > 3)
                             continue;
-                        if(item.SubscriberLevel == 4 && item.NumberOfWarningsSent > 7)
+                        if (item.SubscriberLevel == 4 && item.NumberOfWarningsSent > 7)
                         {
                             //Cancel user insurance
                             continue;

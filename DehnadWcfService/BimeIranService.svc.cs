@@ -12,100 +12,111 @@ namespace DehnadWcfService
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class BimeIranService : IBimeIranService
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public List<UsersInfo> GetData()
         {
-            var insuranceData = new List<UsersInfo>();
-            using (var entity = new BimeIranEntities())
+            try
             {
-                var currentTakedSize = 0;
-                entity.Configuration.AutoDetectChangesEnabled = false;
 
-                var damageReportList = entity.DamageReports.Where(o => o.IsSendedToInsuranceCompany == false).Take(100).ToList();
 
-                foreach (var damageReport in damageReportList)
+                var insuranceData = new List<UsersInfo>();
+                using (var entity = new BimeIranEntities())
                 {
-                    if (currentTakedSize > 100)
-                        break;
-                    var userInfo = new UsersInfo();
-                    userInfo.DateRequested = damageReport.DateDamageReported;
-                    userInfo.MobileNumber = damageReport.InsuranceInfo.MobileNumber;
-                    userInfo.SocialNumber = damageReport.InsuranceInfo.SocialNumber;
-                    userInfo.ZipCode = damageReport.InsuranceInfo.ZipCode;
-                    userInfo.InsuranceCode = damageReport.InsuranceInfo.InsuranceNo;
-                    userInfo.Request = Enums.Request.DamageReport;
-                    damageReport.IsSendedToInsuranceCompany = true;
-                    entity.Entry(damageReport).State = System.Data.Entity.EntityState.Modified;
-                    insuranceData.Add(userInfo);
-                    currentTakedSize++;
-                }
-                if (currentTakedSize < 100)
-                {
-                    var zipcodes = entity.InsuranceInfoes.Where(o => o.IsUserWantsToChangeZipCode == true && o.IsNewZipCodeSendedToInsuranceCompany == false).Take(100 - currentTakedSize).ToList();
+                    var currentTakedSize = 0;
+                    entity.Configuration.AutoDetectChangesEnabled = false;
 
-                    foreach (var zipcode in zipcodes)
+                    var damageReportList = entity.DamageReports.Where(o => o.IsSendedToInsuranceCompany == false).Take(100).ToList();
+
+                    foreach (var damageReport in damageReportList)
                     {
+                        if (currentTakedSize > 100)
+                            break;
                         var userInfo = new UsersInfo();
-                        userInfo.DateRequested = DateTime.Now;
-                        userInfo.MobileNumber = zipcode.MobileNumber;
-                        userInfo.SocialNumber = zipcode.SocialNumber;
-                        userInfo.InsuranceCode = zipcode.InsuranceNo;
-                        userInfo.ZipCode = zipcode.ZipCode;
-                        userInfo.NewZipCode = zipcode.NewZipCode;
-                        userInfo.Request = Enums.Request.ChangeZipCode;
+                        userInfo.DateRequested = damageReport.DateDamageReported;
+                        userInfo.MobileNumber = damageReport.InsuranceInfo.MobileNumber;
+                        userInfo.SocialNumber = damageReport.InsuranceInfo.SocialNumber;
+                        userInfo.ZipCode = damageReport.InsuranceInfo.ZipCode;
+                        userInfo.InsuranceCode = damageReport.InsuranceInfo.InsuranceNo;
+                        userInfo.Request = Enums.Request.DamageReport;
+                        damageReport.IsSendedToInsuranceCompany = true;
+                        entity.Entry(damageReport).State = System.Data.Entity.EntityState.Modified;
                         insuranceData.Add(userInfo);
-                        zipcode.IsNewZipCodeSendedToInsuranceCompany = true;
-                        zipcode.IsUserWantsToChangeZipCode = false;
-                        entity.Entry(zipcode).State = System.Data.Entity.EntityState.Modified;
                         currentTakedSize++;
                     }
-                }
-                if (currentTakedSize < 100)
-                {
-                    var insurances = entity.InsuranceInfoes.Where(o => o.IsSendedToInsuranceCompany == false && o.DateCancelationRequested == null).Take(100 - currentTakedSize).ToList();
-
-                    foreach (var insurance in insurances)
+                    if (currentTakedSize < 100)
                     {
-                        var userInfo = new UsersInfo();
-                        userInfo.DateRequested = insurance.DateInsuranceRequested;
-                        userInfo.MobileNumber = insurance.MobileNumber;
-                        userInfo.SocialNumber = insurance.SocialNumber;
-                        userInfo.ZipCode = insurance.ZipCode;
-                        if (insurance.InsuranceType == "A")
-                            userInfo.Request = Enums.Request.RegisterInsurancePlanA;
-                        else if (insurance.InsuranceType == "B")
-                            userInfo.Request = Enums.Request.RegisterInsurancePlanB;
-                        else if (insurance.InsuranceType == "C")
-                            userInfo.Request = Enums.Request.RegisterInsurancePlanC;
-                        else if (insurance.InsuranceType == "D")
-                            userInfo.Request = Enums.Request.RegisterInsurancePlanD;
-                        insuranceData.Add(userInfo);
-                        insurance.IsSendedToInsuranceCompany = true;
-                        entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
-                        currentTakedSize++;
-                    }
-                }
-                if (currentTakedSize < 100)
-                {
-                    var cancelInsurancesList = entity.InsuranceInfoes.Where(o => o.IsUserRequestedInsuranceCancelation == true && o.IsCancelationSendedToInsuranceCompany == false).Take(100 - currentTakedSize).ToList();
+                        var zipcodes = entity.InsuranceInfoes.Where(o => o.IsUserWantsToChangeZipCode == true && o.IsNewZipCodeSendedToInsuranceCompany == false).Take(100 - currentTakedSize).ToList();
 
-                    foreach (var cancelInsurance in cancelInsurancesList)
-                    {
-                        var userInfo = new UsersInfo();
-                        userInfo.DateRequested = cancelInsurance.DateCancelationRequested.GetValueOrDefault();
-                        userInfo.MobileNumber = cancelInsurance.MobileNumber;
-                        userInfo.SocialNumber = cancelInsurance.SocialNumber;
-                        userInfo.ZipCode = cancelInsurance.ZipCode;
-                        userInfo.InsuranceCode = cancelInsurance.InsuranceNo;
-                        userInfo.Request = Enums.Request.CancelInsurnce;
-                        insuranceData.Add(userInfo);
-                        cancelInsurance.IsCancelationSendedToInsuranceCompany = true;
-                        entity.Entry(cancelInsurance).State = System.Data.Entity.EntityState.Modified;
-                        currentTakedSize++;
+                        foreach (var zipcode in zipcodes)
+                        {
+                            var userInfo = new UsersInfo();
+                            userInfo.DateRequested = DateTime.Now;
+                            userInfo.MobileNumber = zipcode.MobileNumber;
+                            userInfo.SocialNumber = zipcode.SocialNumber;
+                            userInfo.InsuranceCode = zipcode.InsuranceNo;
+                            userInfo.ZipCode = zipcode.ZipCode;
+                            userInfo.NewZipCode = zipcode.NewZipCode;
+                            userInfo.Request = Enums.Request.ChangeZipCode;
+                            insuranceData.Add(userInfo);
+                            zipcode.IsNewZipCodeSendedToInsuranceCompany = true;
+                            zipcode.IsUserWantsToChangeZipCode = false;
+                            entity.Entry(zipcode).State = System.Data.Entity.EntityState.Modified;
+                            currentTakedSize++;
+                        }
                     }
+                    if (currentTakedSize < 100)
+                    {
+                        var insurances = entity.InsuranceInfoes.Where(o => o.IsSendedToInsuranceCompany == false && o.DateCancelationRequested == null).Take(100 - currentTakedSize).ToList();
+
+                        foreach (var insurance in insurances)
+                        {
+                            var userInfo = new UsersInfo();
+                            userInfo.DateRequested = insurance.DateInsuranceRequested;
+                            userInfo.MobileNumber = insurance.MobileNumber;
+                            userInfo.SocialNumber = insurance.SocialNumber;
+                            userInfo.ZipCode = insurance.ZipCode;
+                            if (insurance.InsuranceType == "A")
+                                userInfo.Request = Enums.Request.RegisterInsurancePlanA;
+                            else if (insurance.InsuranceType == "B")
+                                userInfo.Request = Enums.Request.RegisterInsurancePlanB;
+                            else if (insurance.InsuranceType == "C")
+                                userInfo.Request = Enums.Request.RegisterInsurancePlanC;
+                            else if (insurance.InsuranceType == "D")
+                                userInfo.Request = Enums.Request.RegisterInsurancePlanD;
+                            insuranceData.Add(userInfo);
+                            insurance.IsSendedToInsuranceCompany = true;
+                            entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
+                            currentTakedSize++;
+                        }
+                    }
+                    if (currentTakedSize < 100)
+                    {
+                        var cancelInsurancesList = entity.InsuranceInfoes.Where(o => o.IsUserRequestedInsuranceCancelation == true && o.IsCancelationSendedToInsuranceCompany == false).Take(100 - currentTakedSize).ToList();
+
+                        foreach (var cancelInsurance in cancelInsurancesList)
+                        {
+                            var userInfo = new UsersInfo();
+                            userInfo.DateRequested = cancelInsurance.DateCancelationRequested.GetValueOrDefault();
+                            userInfo.MobileNumber = cancelInsurance.MobileNumber;
+                            userInfo.SocialNumber = cancelInsurance.SocialNumber;
+                            userInfo.ZipCode = cancelInsurance.ZipCode;
+                            userInfo.InsuranceCode = cancelInsurance.InsuranceNo;
+                            userInfo.Request = Enums.Request.CancelInsurnce;
+                            insuranceData.Add(userInfo);
+                            cancelInsurance.IsCancelationSendedToInsuranceCompany = true;
+                            entity.Entry(cancelInsurance).State = System.Data.Entity.EntityState.Modified;
+                            currentTakedSize++;
+                        }
+                    }
+                    entity.SaveChanges();
                 }
-                entity.SaveChanges();
+                return insuranceData;
             }
-            return insuranceData;
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetData", e);
+                return null;
+            }
         }
 
         public int GetDataCount()
@@ -125,25 +136,33 @@ namespace DehnadWcfService
         public ResultStatus SetIssuedInsuranceData(UsersInfo userInfo)
         {
             var result = new ResultStatus();
-            using (var entity = new BimeIranEntities())
+            try
             {
-                if (userInfo.Request == Enums.Request.RegisterInsurancePlanA || userInfo.Request == Enums.Request.RegisterInsurancePlanB || userInfo.Request == Enums.Request.RegisterInsurancePlanC || userInfo.Request == Enums.Request.RegisterInsurancePlanD)
+                using (var entity = new BimeIranEntities())
                 {
-                    var insurance = entity.InsuranceInfoes.FirstOrDefault(o => o.SocialNumber == userInfo.SocialNumber && o.ZipCode == userInfo.ZipCode);
-                    if (insurance == null)
+                    if (userInfo.Request == Enums.Request.RegisterInsurancePlanA || userInfo.Request == Enums.Request.RegisterInsurancePlanB || userInfo.Request == Enums.Request.RegisterInsurancePlanC || userInfo.Request == Enums.Request.RegisterInsurancePlanD)
                     {
-                        result.Status = Enums.Status.User_Does_Not_Exists;
-                        return result;
+                        var insurance = entity.InsuranceInfoes.FirstOrDefault(o => o.SocialNumber == userInfo.SocialNumber && o.ZipCode == userInfo.ZipCode);
+                        if (insurance == null)
+                        {
+                            result.Status = Enums.Status.User_Does_Not_Exists;
+                            return result;
+                        }
+                        insurance.DateInsuranceApproved = DateTime.Now;
+                        insurance.PersianDateInsuranceApproved = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        insurance.InsuranceNo = userInfo.InsuranceCode;
+                        entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
                     }
-                    insurance.DateInsuranceApproved = DateTime.Now;
-                    insurance.PersianDateInsuranceApproved = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    insurance.InsuranceNo = userInfo.InsuranceCode;
-                    entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
-                    entity.SaveChanges();
+                    result.Status = Enums.Status.Success;
                 }
-                result.Status = Enums.Status.Success;
-                return result;
             }
+            catch (Exception e)
+            {
+                logs.Error("SetIssuedInsuranceData exception:" + e);
+                result.Status = Enums.Status.Unsuccessful;
+            }
+            return result;
         }
 
         public ResultStatus CancelInsurance(CancelationInfo cancelationInfo)
@@ -159,7 +178,10 @@ namespace DehnadWcfService
                 {
                     insurance.DateCancelationApproved = DateTime.Now;
                     insurance.PersianDateCancelationApproved = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    insurance.CancelationNumber = cancelationInfo.CancelationNumber;
+                    insurance.CancelationDescription = cancelationInfo.Description;
                     entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
+
                     entity.SaveChanges();
                     result.Status = Enums.Status.Success;
                 }
@@ -188,6 +210,8 @@ namespace DehnadWcfService
                         damage.DamageDescription = damageReportInfo.Description;
                         damage.DateDamageInfoReceivedFromInsuranceCompany = DateTime.Now;
                         damage.PersianDateDamageInfoReceivedFromInsuranceCompany = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        damage.DateDamagePayed = damageReportInfo.DateDamagePayed;
+                        damage.PersianDateDamagePayed = SharedLibrary.Date.GetPersianDateTime(damageReportInfo.DateDamagePayed);
                         entity.Entry(damage).State = System.Data.Entity.EntityState.Modified;
                         entity.SaveChanges();
                         result.Status = Enums.Status.Success;

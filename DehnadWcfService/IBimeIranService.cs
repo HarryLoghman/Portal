@@ -73,6 +73,7 @@ namespace DehnadWcfService
         public string DamageReportNumber { get; set; }
         public int DamagePrice { get; set; }
         public string Description { get; set; }
+        public DateTime DateDamagePayed { get; set; }
     }
 
     public class FullUsersInfo

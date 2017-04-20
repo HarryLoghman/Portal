@@ -15,6 +15,7 @@ namespace DehnadBimeIranService
         private Thread informApplicationThread;
         private Thread singlechargeInstallmentThread;
         private Thread reminderThread;
+        private Thread reinsertDataForBimeInQueue;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -26,6 +27,10 @@ namespace DehnadBimeIranService
             //prepareAutochargeThread = new Thread(AutochargeWorkerThread);
             //prepareAutochargeThread.IsBackground = true;
             //prepareAutochargeThread.Start();
+
+            reinsertDataForBimeInQueue = new Thread(ReinsertDataForBimeInQueueWorkerThread);
+            reinsertDataForBimeInQueue.IsBackground = true;
+            reinsertDataForBimeInQueue.Start();
 
             prepareEventbaseThread = new Thread(EventbaseWorkerThread);
             prepareEventbaseThread.IsBackground = true;
@@ -70,6 +75,12 @@ namespace DehnadBimeIranService
                 if (!prepareEventbaseThread.Join(3000))
                 {
                     prepareEventbaseThread.Abort();
+                }
+
+                shutdownEvent.Set();
+                if (!reinsertDataForBimeInQueue.Join(3000))
+                {
+                    reinsertDataForBimeInQueue.Abort();
                 }
 
                 shutdownEvent.Set();
@@ -194,6 +205,16 @@ namespace DehnadBimeIranService
             {
                 reminder.Process();
                 Thread.Sleep(1000);
+            }
+        }
+
+        private void ReinsertDataForBimeInQueueWorkerThread()
+        {
+            var reInsert = new BimeProcessor();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                
+                Thread.Sleep(15 * 60 * 1000);
             }
         }
     }

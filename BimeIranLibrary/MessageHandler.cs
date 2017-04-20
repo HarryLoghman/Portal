@@ -172,8 +172,22 @@ namespace BimeIranLibrary
                     if (subscriberId != null)
                     {
                         var onkeyword = SharedLibrary.ServiceHandler.GetSubscriberOnKeyword(subscriberId.Value);
-                        content = content.Replace("{PACKAGE}", "شماره" + onkeyword);
+                        content = content.Replace("{PACKAGE}", onkeyword);
                     }
+                }
+                if (content.Contains("{PRICE}"))
+                {
+                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(mobileNumber, serviceId);
+                    if (subscriberId != null)
+                    {
+                        var onkeyword = SharedLibrary.ServiceHandler.GetSubscriberOnKeyword(subscriberId.Value);
+                        var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
+                        var chargeCode = imiChargeCodes.FirstOrDefault(o => o.ChargeCode.ToString() == onkeyword);
+                        if (chargeCode != null)
+                            content = content.Replace("{PRICE}", chargeCode.Price.ToString());
+                    }
+                    else
+                        content = content.Replace("{PRICE}", "-");
                 }
                 if (content.Contains("{INSNUMBER}"))
                 {
@@ -187,6 +201,24 @@ namespace BimeIranLibrary
                 if (content.Contains("{MSISDN}"))
                 {
                     content = content.Replace("{MSISDN}", mobileNumber);
+                }
+                if (content.Contains("{ZIPCODE}"))
+                {
+                    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, serviceId);
+                    var insuranceInfo = ContentManager.GetUserActiveInsurance(subscriber);
+                    if (insuranceInfo != null)
+                        content = content.Replace("{ZIPCODE}", insuranceInfo.ZipCode);
+                    else
+                        content = content.Replace("{ZIPCODE}", "نا مشخص");
+                }
+                if (content.Contains("SOCIALNUMBER"))
+                {
+                    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, serviceId);
+                    var insuranceInfo = ContentManager.GetUserActiveInsurance(subscriber);
+                    if (insuranceInfo != null)
+                        content = content.Replace("{SOCIALNUMBER}", insuranceInfo.SocialNumber);
+                    else
+                        content = content.Replace("{SOCIALNUMBER}", "نا مشخص");
                 }
             }
             return content;

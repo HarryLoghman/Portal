@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Autocharge.cs" />
+    <Compile Include="BimeProcessor.cs" />
     <Compile Include="Eventbase.cs" />
     <Compile Include="InformApplication.cs" />
     <Compile Include="ProjectInstaller.cs">
