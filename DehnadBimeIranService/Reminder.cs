@@ -37,7 +37,7 @@ namespace DehnadBimeIranService
                 var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                 using (var entity = new BimeIranEntities())
                 {
-                    var users = entity.InsuranceInfoes.Where(o => o.InsuranceNo == null && o.IsInsuranceNumberSendedToUser != true).ToList();
+                    var users = entity.InsuranceInfoes.Where(o => o.InsuranceNo != null && o.IsInsuranceNumberSendedToUser != true).ToList();
                     if (users.Count > 0)
                     {
                         var messageContent = messagesTemplate.Where(o => o.Title == "InformInsuranceNumber").Select(o => o.Content).FirstOrDefault();
