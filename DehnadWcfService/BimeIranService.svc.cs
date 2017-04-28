@@ -151,6 +151,14 @@ namespace DehnadWcfService
                         insurance.DateInsuranceApproved = DateTime.Now;
                         insurance.PersianDateInsuranceApproved = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                         insurance.InsuranceNo = userInfo.InsuranceCode;
+                        var serviceId = SharedLibrary.ServiceHandler.GetServiceId("BimeIran");
+                        var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(insurance.MobileNumber, serviceId.Value);
+                        var subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
+                        var nextRenewalDate = BimeIranLibrary.ContentManager.GetNextRenewalDate(DateTime.Now);
+                        insurance.NextRenewalDate = nextRenewalDate;
+                        insurance.PersianNextRenewalDate = SharedLibrary.Date.GetPersianDateTime(nextRenewalDate);
+                        subscriberAdditionalInfo.SubscriberLevel = 6;
+                        entity.Entry(subscriberAdditionalInfo).State = System.Data.Entity.EntityState.Modified;
                         entity.Entry(insurance).State = System.Data.Entity.EntityState.Modified;
                         entity.SaveChanges();
                     }

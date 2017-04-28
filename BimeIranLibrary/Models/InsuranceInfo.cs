@@ -51,6 +51,8 @@ namespace BimeIranLibrary.Models
         public string CancelationNumber { get; set; }
         public string CancelationDescription { get; set; }
         public Nullable<bool> IsInsuranceNumberSendedToUser { get; set; }
+        public Nullable<System.DateTime> NextRenewalDate { get; set; }
+        public string PersianNextRenewalDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DamageReport> DamageReports { get; set; }

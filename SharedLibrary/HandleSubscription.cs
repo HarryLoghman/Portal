@@ -235,7 +235,10 @@ namespace SharedLibrary
             {
                 using (var entity = new PortalEntities())
                 {
-
+                    var sub = entity.Subscribers.FirstOrDefault(o => o.Id == subscriber.Id);
+                    sub.OnKeyword = keyword;
+                    entity.Entry(sub).State = EntityState.Modified;
+                    entity.SaveChanges();
                 }
             }
             catch (Exception e)

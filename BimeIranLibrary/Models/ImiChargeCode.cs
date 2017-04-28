@@ -19,5 +19,6 @@ namespace BimeIranLibrary.Models
         public int Price { get; set; }
         public string ChargeKey { get; set; }
         public string Description { get; set; }
+        public Nullable<int> Days { get; set; }
     }
 }

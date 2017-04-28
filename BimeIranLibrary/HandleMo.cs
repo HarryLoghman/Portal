@@ -71,9 +71,17 @@ namespace BimeIranLibrary
                     ContentManager.ResetWarningsCounter(subsciber.Id);
                     //ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                 }
-                
+                else
+                {
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                    MessageHandler.InsertMessageToQueue(message);
+                    return;
+                }
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                 {
+                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                    MessageHandler.InsertMessageToQueue(message);
                     if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                         content = "off";
                     message.Content = content;

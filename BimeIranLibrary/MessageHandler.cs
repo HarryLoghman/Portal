@@ -172,10 +172,17 @@ namespace BimeIranLibrary
                     if (subscriberId != null)
                     {
                         var onkeyword = SharedLibrary.ServiceHandler.GetSubscriberOnKeyword(subscriberId.Value);
-                        content = content.Replace("{PACKAGE}", onkeyword);
+                        if(onkeyword == "1")
+                            content = content.Replace("{PACKAGE}", @"بسته « 1 » ماهانه مبلغ 7500 تومان به مدت یکسال (سقف تعهدات 140 میلیون تومان)");
+                        else if( onkeyword == "2")
+                            content = content.Replace("{PACKAGE}", @"بسته « 2 » ماهانه مبلغ 10500 تومان به مدت یکسال(سقف تعهدات 190 میلیون تومان)");
+                        else if (onkeyword == "3")
+                            content = content.Replace("{PACKAGE}", @"بسته « 3 » ماهانه مبلغ 15000 تومان به مدت یکسال(سقف تعهدات 280 میلیون تومان)");
+                        else if (onkeyword == "4")
+                            content = content.Replace("{PACKAGE}", @"بسته « 4 » ماهانه مبلغ 30000 تومان به مدت یکسال(سقف تعهدات 560 میلیون تومان)");
                     }
                 }
-                if (content.Contains("{PRICE}"))
+                if (content.Contains("{ PRICE}"))
                 {
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(mobileNumber, serviceId);
                     if (subscriberId != null)

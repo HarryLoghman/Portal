@@ -22,7 +22,13 @@ namespace BimeIranLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     var userInput = message.Content;
                     var userLevel = GetUserLevel(subscriber.Id);
-                    if (userLevel == 0)
+                    if (message.Content == "off")
+                    {
+                        bool isCanceled = CancelUserInsuranceIfExists(subscriber);
+                        if(isCanceled)
+                            ChangeUserLevel(subscriber.Id, 1);
+                    }
+                    else if (userLevel == 0)
                     {
                         var extractedNumber = SharedLibrary.HelpfulFunctions.GetAllTheNumbersFromComplexString(userInput);
                         if (extractedNumber.Count() > 0)
@@ -41,18 +47,14 @@ namespace BimeIranLibrary
                             if (isChargeCodeFound)
                             {
                                 SharedLibrary.HandleSubscription.ChangeSubscriptionKeyword(subscriber, packageNumber);
-                                ChangeUserLevel(subscriber.Id, 2);
-                                message.Content = messagesTemplate.Where(o => o.Title == "FillInformationContent").Select(o => o.Content).FirstOrDefault();
+                                ChangeUserLevel(subscriber.Id, 3);
+                                message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
                             }
                             else
                                 message.Content = messagesTemplate.Where(o => o.Title == "EnterInsurancePackageNumber").Select(o => o.Content).FirstOrDefault();
                         }
                         else
                             message.Content = messagesTemplate.Where(o => o.Title == "EnterInsurancePackageNumber").Select(o => o.Content).FirstOrDefault();
-                    }
-                    else if (message.Content == "off")
-                    {
-                        CancelUserInsuranceIfExists(subscriber);
                     }
                     else if (message.Content == "110")
                     {
@@ -145,9 +147,45 @@ namespace BimeIranLibrary
                         RemoveInsurance(subscriber);
                         message.Content = messagesTemplate.Where(o => o.Title == "EnterInsurancePackageNumber").Select(o => o.Content).FirstOrDefault();
                     }
-                    else if(userLevel == 3)
+                    else if (userLevel == 3)
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "InformationSuccessfulyEntredContent").Select(o => o.Content).FirstOrDefault();
+                    }
+                    else if (userLevel == 5)
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "SingleChargeSuccessful").Select(o => o.Content).FirstOrDefault();
+                    }
+                    else if (userLevel == 6)
+                    {
+                        var messageContent = messagesTemplate.Where(o => o.Title == "InformInsuranceNumber").Select(o => o.Content).FirstOrDefault();
+                    }
+                    else if (userLevel == 7 && userInput == "100")
+                    {
+                        Singlecharge singlecharge = new Singlecharge();
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("BimeIran", "Telepromo");
+                        var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
+                        var insuranceInfo = GetUserActiveInsurance(subscriber);
+                        var imiChargeCode = SelectChargeCode(imiChargeCodes, insuranceInfo.InsuranceType, insuranceInfo.NextRenewalDate.Value);
+                        message = MessageHandler.SetImiChargeInfo(message, imiChargeCode.Price, 0, null);
+                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
+
+                        if (singlecharge.IsSucceeded == true)
+                        {
+                            var nextRenewalDate = BimeIranLibrary.ContentManager.GetNextRenewalDate(insuranceInfo.NextRenewalDate.Value);
+                            entity.InsuranceInfoes.Attach(insuranceInfo);
+                            insuranceInfo.NextRenewalDate = nextRenewalDate;
+                            insuranceInfo.PersianNextRenewalDate = SharedLibrary.Date.GetPersianDateTime(nextRenewalDate);
+                            entity.Entry(insuranceInfo).State = EntityState.Modified;
+                            entity.SaveChanges();
+                            message.Content = messagesTemplate.Where(o => o.Title == "SingleChargeSuccessful").Select(o => o.Content).FirstOrDefault();
+                            ChangeUserLevel(subscriber.Id, 6);
+                        }
+                        else
+                            message.Content = messagesTemplate.Where(o => o.Title == "SingleChargeNotSuccessful").Select(o => o.Content).FirstOrDefault();
+                    }
+                    else if (userInput == message.Content)
+                    {
+                        message.Content = "";
                     }
                     if (message.Content != "")
                         MessageHandler.InsertMessageToQueue(message);
@@ -158,6 +196,24 @@ namespace BimeIranLibrary
             {
                 logs.Error("Error in HandleContent: ", e);
             }
+        }
+
+        public static ImiChargeCode SelectChargeCode(List<ImiChargeCode> imiChargeCodes, string insuranceType, DateTime renewalDate)
+        {
+            var nextRenewalDate = BimeIranLibrary.ContentManager.GetNextRenewalDate(renewalDate);
+            var daysDifference = nextRenewalDate.Subtract(renewalDate).TotalDays;
+            int chargeKey;
+            if (insuranceType == "A")
+                chargeKey = 1;
+            else if (insuranceType == "B")
+                chargeKey = 2;
+            else if (insuranceType == "C")
+                chargeKey = 3;
+            else
+                chargeKey = 4;
+
+            var imi = imiChargeCodes.FirstOrDefault(o => o.ChargeCode == chargeKey && o.Days == daysDifference);
+            return imi;
         }
 
         public static void ResetWarningsCounter(long subscriberId)
@@ -240,7 +296,7 @@ namespace BimeIranLibrary
             return message;
         }
 
-        private static void CancelUserInsuranceIfExists(Subscriber subscriber)
+        public static bool CancelUserInsuranceIfExists(Subscriber subscriber)
         {
             try
             {
@@ -248,20 +304,21 @@ namespace BimeIranLibrary
                 {
                     var insuranceInfo = entity.InsuranceInfoes.Where(o => o.MobileNumber == subscriber.MobileNumber && o.IsUserRequestedInsuranceCancelation != true).OrderByDescending(o => o.DateInsuranceRequested).FirstOrDefault();
                     if (insuranceInfo == null)
-                        return;
+                        return false;
                     insuranceInfo.IsUserRequestedInsuranceCancelation = true;
                     insuranceInfo.IsCancelationSendedToInsuranceCompany = false;
                     insuranceInfo.DateCancelationRequested = DateTime.Now;
                     insuranceInfo.PersianDateCancelationRequested = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     entity.Entry(insuranceInfo).State = EntityState.Modified;
                     entity.SaveChanges();
-                    ChangeUserLevel(subscriber.Id, 1);
+                    return true;
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Error in CancelUserInsuranceIfExists: ", e);
             }
+            return false;
         }
 
         public static void AddUserForRegisteringInsurance(Subscriber subscriber)
@@ -287,10 +344,14 @@ namespace BimeIranLibrary
         {
             var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
             var onKeyword = Convert.ToInt32(SharedLibrary.ServiceHandler.GetSubscriberOnKeyword(subscriber.Id));
+            var now = DateTime.Now;
+            var nextRenewalDate = GetNextRenewalDate(now);
+            var daysDifference = nextRenewalDate.Subtract(now).TotalDays;
+            
             Singlecharge singlecharge = new Singlecharge();
             foreach (var imiChargecode in imiChargeCodes)
             {
-                if (imiChargecode.ChargeCode == onKeyword)
+                if (imiChargecode.ChargeCode == onKeyword && imiChargecode.Days == daysDifference)
                 {
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("BimeIran", "Telepromo");
                     message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
@@ -415,6 +476,16 @@ namespace BimeIranLibrary
             }
         }
 
+        public static DateTime GetNextRenewalDate(DateTime date)
+        {
+            var splittedPersianDate = SharedLibrary.Date.GetPersianDate(date).Split('-');
+            if (splittedPersianDate[1] == "01" || splittedPersianDate[1] == "02" || splittedPersianDate[1] == "03" || splittedPersianDate[1] == "04" || splittedPersianDate[1] == "05" || splittedPersianDate[1] == "06")
+                return date.AddDays(31);
+            else if (splittedPersianDate[1] == "12")
+                return date.AddDays(29);
+            else
+                return date.AddDays(30);
+        }
         private static bool CheckAndCreateInsuranceInfo(string mobileNumber, string passportNo, string socialCode, string zipCode, string insuranceType)
         {
             try
