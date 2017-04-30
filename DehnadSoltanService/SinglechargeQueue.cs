@@ -126,7 +126,7 @@ namespace DehnadSoltanService
                 int batchSaveCounter = 0;
                 using (var entity = new SoltanEntities())
                 {
-
+                    entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
                     var QueueList = entity.SinglechargeInstallments.Where(o => now > DbFunctions.AddDays(o.DateCreated, 30) && o.DateCreated > DbFunctions.AddDays(now, -32) && o.IsUserCanceledTheInstallment != true && o.IsRenewd != true).ToList();
@@ -140,6 +140,9 @@ namespace DehnadSoltanService
                     var shortCode = serviceInfo.ShortCode;
                     foreach (var item in QueueList)
                     {
+                        var isMobileExists = entity.SinglechargeInstallments.Where(o => o.MobileNumber == item.MobileNumber && o.IsUserCanceledTheInstallment != true && o.DateCreated < now && o.DateCreated > DbFunctions.AddDays(now, -2)).FirstOrDefault();
+                        if (isMobileExists != null)
+                            continue;
                         if (batchSaveCounter >= 500)
                         {
                             entity.SaveChanges();
