@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadTamlyService", "Dehna
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadJabehAbzarService", "DehnadJabehAbzarService\DehnadJabehAbzarService.csproj", "{D21C124C-AB6D-F3FB-9C2C-227FE2534535}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadShenoYadService", "DehnadShenoYadService\DehnadShenoYadService.csproj", "{C23C124D-1B6D-F3FB-9C2C-227FE2534512}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -78,6 +80,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamlyLibrary", "TamlyLibrary\TamlyLibrary.csproj", "{412D2155-DE02-4EB1-ACFD-75D3AAB55364}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabehAbzarLibrary", "JabehAbzarLibrary\JabehAbzarLibrary.csproj", "{5D2C145C-DE02-4EB1-ACFC-45D2AAB5536F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShenoYadLibrary", "ShenoYadLibrary\ShenoYadLibrary.csproj", "{2C2C445D-3E02-4EB1-ACFC-45D2AAB5556B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,6 +165,10 @@ Global
 		{D21C124C-AB6D-F3FB-9C2C-227FE2534535}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D21C124C-AB6D-F3FB-9C2C-227FE2534535}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D21C124C-AB6D-F3FB-9C2C-227FE2534535}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C23C124D-1B6D-F3FB-9C2C-227FE2534512}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C23C124D-1B6D-F3FB-9C2C-227FE2534512}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C23C124D-1B6D-F3FB-9C2C-227FE2534512}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C23C124D-1B6D-F3FB-9C2C-227FE2534512}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -237,6 +245,10 @@ Global
 		{5D2C145C-DE02-4EB1-ACFC-45D2AAB5536F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D2C145C-DE02-4EB1-ACFC-45D2AAB5536F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D2C145C-DE02-4EB1-ACFC-45D2AAB5536F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C2C445D-3E02-4EB1-ACFC-45D2AAB5556B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C2C445D-3E02-4EB1-ACFC-45D2AAB5556B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C2C445D-3E02-4EB1-ACFC-45D2AAB5556B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C2C445D-3E02-4EB1-ACFC-45D2AAB5556B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -180,6 +180,8 @@ namespace DehnadReceiveProcessorService
                     JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Tamly")
                     TamlyLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "ShenoYad")
+                    ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -221,6 +223,8 @@ namespace DehnadReceiveProcessorService
                     JabehAbzarLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "Tamly")
                     TamlyLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "ShenoYad")
+                    ShenoYadLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

@@ -222,6 +222,8 @@ namespace Portal.Controllers
                         JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "Tamly")
                         TamlyLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "ShenoYad")
+                        ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
                     //var recievedMessage = new MessageObject();
                     //recievedMessage.Content = serviceId;
                     //recievedMessage.MobileNumber = mobileNumber;

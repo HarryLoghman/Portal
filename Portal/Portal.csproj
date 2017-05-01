@@ -246,6 +246,14 @@
     <Compile Include="Areas\JabehAbzar\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\JabehAbzar\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\JabehAbzar\JabehAbzarAreaRegistration.cs" />
+    <Compile Include="Areas\ShenoYad\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\ShenoYad\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\ShenoYad\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\ShenoYad\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\ShenoYad\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\ShenoYad\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\ShenoYad\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\ShenoYad\ShenoYadAreaRegistration.cs" />
     <Compile Include="Areas\Tamly\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Tamly\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Tamly\Controllers\MonitoringController.cs" />
@@ -1052,6 +1060,16 @@
     <Content Include="Areas\BimeIran\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\BimeIran\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\BimeIran\Views\web.config" />
+    <Content Include="Areas\ShenoYad\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\ShenoYad\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1413,6 +1431,7 @@
     <Folder Include="Areas\MyLeague\Models\" />
     <Folder Include="Areas\SepidRood\Models\" />
     <Folder Include="Areas\ShahreKalameh\Models\" />
+    <Folder Include="Areas\ShenoYad\Models\" />
     <Folder Include="Areas\Soltan\Models\" />
     <Folder Include="Areas\Statistics\Models\" />
     <Folder Include="Areas\Tabriz2018\Models\" />
@@ -1497,6 +1516,10 @@
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShenoYadLibrary\ShenoYadLibrary.csproj">
+      <Project>{2c2c445d-3e02-4eb1-acfc-45d2aab5556b}</Project>
+      <Name>ShenoYadLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
       <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
