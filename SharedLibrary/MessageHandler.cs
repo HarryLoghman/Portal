@@ -13,6 +13,8 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
+                if (message.Content == null)
+                    message.Content = " ";
                 var mo = new ReceievedMessage()
                 {
                     MobileNumber = message.MobileNumber,
