@@ -32,9 +32,9 @@ namespace ShahreKalamehLibrary
             return autochargeContent;
         }
 
-        public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
+        public static string IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
         {
-            var result = false;
+            var result = "";
             using (var entity = new PortalEntities())
             {
                 try
@@ -48,14 +48,10 @@ namespace ShahreKalamehLibrary
                         verify.UsedKeyword = keyword;
                         entity.VerifySubscribers.Add(verify);
                     }
-                    else if (user.UsedKeyword == keyword)
-                        result = false;
-                    else if (keyword != "9")
-                        return false;
-                    else
+                    else if(keyword == "Subscription".ToLower() || keyword == "Renewal".ToLower())
                     {
+                        result = user.UsedKeyword;
                         entity.VerifySubscribers.Remove(user);
-                        result = true;
                     }
                     entity.SaveChanges();
                 }

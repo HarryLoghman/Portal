@@ -12,6 +12,12 @@ namespace ShahreKalamehLibrary
         public static void ReceivedMessage(MessageObject message, Service service)
         {
             var content = message.Content;
+            var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+            if (content == "9" || isUserWantsToUnsubscribe == true)
+                return;
+            //if (isUserWantsToUnsubscribe)
+                //return;
+            
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
             {
@@ -29,7 +35,11 @@ namespace ShahreKalamehLibrary
                 return;
             }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
-            var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+            
+            if (content == "Subscription".ToLower() || content == "Renewal".ToLower())
+                isUserSendsSubscriptionKeyword = true;
+            else if (content == "Unsubscription".ToLower())
+                isUserWantsToUnsubscribe = true;
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
@@ -44,14 +54,16 @@ namespace ShahreKalamehLibrary
                 }
                 if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                 {
-                    bool isSubscriberdVerified = ShahreKalamehLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
-                    if (isSubscriberdVerified == false)
+                    string subscriberdUsedKeyword = ShahreKalamehLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
+                    if (subscriberdUsedKeyword == "")
                     {
                         //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                         //message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                         //MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
+                    else
+                        content = message.Content = subscriberdUsedKeyword;
                 }
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)

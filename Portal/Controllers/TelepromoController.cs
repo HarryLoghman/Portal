@@ -167,7 +167,7 @@ namespace Portal.Controllers
             var message = new SharedLibrary.Models.MessageObject();
             message.MobileNumber = mobileNumber;
             message.ShortCode = serviceInfo.ShortCode;
-            message.IsReceivedFromIntegratedPanel = true;
+            message.IsReceivedFromIntegratedPanel = false;
             message.Content = keyword;
             message.ServiceId = serviceInfo.ServiceId;
             if(type == "SUBSCRIBE" || type == "RENEWAL")

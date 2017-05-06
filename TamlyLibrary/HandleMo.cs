@@ -30,8 +30,8 @@ namespace TamlyLibrary
             }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            //if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-            //    return;
+            if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                return;
             if (message.ReceivedFrom.Contains("Register"))
                 isUserSendsSubscriptionKeyword = true;
             else if (message.ReceivedFrom.Contains("Unsubscribe"))
@@ -50,12 +50,12 @@ namespace TamlyLibrary
                 }
                 if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                 {
-                    bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
+                    bool isSubscriberdVerified = TamlyLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
                     if (isSubscriberdVerified == false)
                     {
-                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                        message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
-                        MessageHandler.InsertMessageToQueue(message);
+                        //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        //message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
+                        //MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
                 }
@@ -87,6 +87,7 @@ namespace TamlyLibrary
                     ServiceHandler.CancelUserInstallments(message.MobileNumber);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                    return;
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {

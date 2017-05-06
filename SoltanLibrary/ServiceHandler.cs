@@ -52,6 +52,39 @@ namespace SoltanLibrary
             }
         }
 
+        public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
+        {
+            var result = false;
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    var user = entity.VerifySubscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
+                    if (user == null)
+                    {
+                        var verify = new VerifySubscriber();
+                        verify.MobileNumber = mobileNumber;
+                        verify.ServiceId = serviceId;
+                        verify.UsedKeyword = keyword;
+                        entity.VerifySubscribers.Add(verify);
+                    }
+                    else if (keyword != "9")
+                        result = false;
+                    else
+                    {
+                        entity.VerifySubscribers.Remove(user);
+                        result = true;
+                    }
+                    entity.SaveChanges();
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in IsUserVerifedTheSubscription: " + e);
+                }
+                return result;
+            }
+        }
+
         public static void AddToAutochargeContentSendedToUserTable(long subscriberId, long autochargeId, long mobileId)
         {
             try
