@@ -13,7 +13,7 @@ namespace ShahreKalamehLibrary
         {
             var content = message.Content;
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            if (content == "9" || isUserWantsToUnsubscribe == true)
+            if ((content == "9" || isUserWantsToUnsubscribe == true) && message.IsReceivedFromIntegratedPanel != true)
                 return;
             //if (isUserWantsToUnsubscribe)
                 //return;

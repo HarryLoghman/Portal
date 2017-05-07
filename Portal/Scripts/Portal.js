@@ -72,3 +72,25 @@ function getProcessStatus(Status) {
     else
         return "نامشخص";
 }
+
+function portalTooltip(gridName, columnName, columnIndex) {
+    $("#"+gridName).kendoTooltip({
+        show: function (e) {
+            if (this.content.text().length > 30) {
+                this.content.parent().css("visibility", "visible");
+            }
+        },
+        hide: function (e) {
+            this.content.parent().css("visibility", "hidden");
+        },
+        filter: "td:nth-child("+ columnIndex +")", //this filter selects the column cell number
+        position: "center",
+        content: function (e) {
+            var dataItem = $("#"+gridName).data("kendoGrid").dataItem(e.target.closest("tr"));
+            var content;
+            if (columnName in dataItem)
+                content = dataItem[columnName];
+            return content;
+        }
+    }).data("kendoTooltip");
+}

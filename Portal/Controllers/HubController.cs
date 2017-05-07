@@ -33,7 +33,7 @@ namespace Portal.Controllers
             }
             else
                 messageObj.ShortCode = to;
-            
+
             messageObj.MessageId = smsId;
 
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
@@ -52,7 +52,16 @@ namespace Portal.Controllers
             return response;
         }
 
-        
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage OTPStatus(string otpId, string statusId, string recipient)
+        {
+            string result = "";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage SinglechargeDelivery(string ChargeId, string StatusId, string Recipient, string AppliedPrice, string TransactionCode, string description)

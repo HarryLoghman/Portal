@@ -8,7 +8,6 @@ using System.Data.Entity;
 
 namespace Portal.Areas.Statistics.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class SubscribersLogController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -28,8 +27,9 @@ namespace Portal.Areas.Statistics.Controllers
             {
                 using (var entity = new SharedLibrary.Models.PortalEntities())
                 {
+                    logs.Info(mobileNumber);
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    entity.Database.CommandTimeout = 120;
+                    entity.Database.CommandTimeout = 2400;
                     if (mobileNumber == null || mobileNumber == "")
                         return Json("", JsonRequestBehavior.AllowGet);
                     var query = entity.GetUserLog(mobileNumber).ToList();
@@ -62,6 +62,23 @@ namespace Portal.Areas.Statistics.Controllers
                 MobileNumber = messagesSendedToUserLog.MobileNumber,
                 ServiceName = messagesSendedToUserLog.Service.Name,
                 PersianActivationDate = messagesSendedToUserLog.PersianActivationDate,
+                ShortCode = messagesSendedToUserLog.Service.ServiceInfoes.Where(o => o.ServiceId == messagesSendedToUserLog.ServiceId).FirstOrDefault().ShortCode,
+            });
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult UserSubscriptionLog_Read([DataSourceRequest]DataSourceRequest request, string mobileNumber)
+        {
+            //var mobileNumber = "";
+            DataSourceResult result = db.Subscribers.Where(o => o.MobileNumber == mobileNumber).ToDataSourceResult(request, messagesSendedToUserLog => new
+            {
+                MobileNumber = messagesSendedToUserLog.MobileNumber,
+                ServiceName = messagesSendedToUserLog.Service.Name,
+                PersianActivationDate = messagesSendedToUserLog.PersianActivationDate,
+                PersianDeactivationDate = messagesSendedToUserLog.PersianDeactivationDate,
+                OnKeyword = messagesSendedToUserLog.OnKeyword,
+                OffKeyword = messagesSendedToUserLog.OffKeyword,
                 ShortCode = messagesSendedToUserLog.Service.ServiceInfoes.Where(o => o.ServiceId == messagesSendedToUserLog.ServiceId).FirstOrDefault().ShortCode,
             });
             return Json(result, JsonRequestBehavior.AllowGet);
@@ -102,6 +119,7 @@ namespace Portal.Areas.Statistics.Controllers
             var serviceOnKeyword = SharedLibrary.ServiceHandler.getFirstOnKeywordOfService(subscriberService.Service.OnKeywords);
             message.Content = "Off " + serviceOnKeyword;
             message.ReceivedFrom = "Portal";
+            message.IsReceivedFromIntegratedPanel = true;
             message.ShortCode = subscriberService.Service.ServiceInfoes.FirstOrDefault(o => o.ServiceId == subscriberService.ServiceId).ShortCode;
             SharedLibrary.MessageHandler.SaveReceivedMessage(message);
             return Content("Ok");

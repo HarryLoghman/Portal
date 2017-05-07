@@ -625,8 +625,21 @@
                                         </li>
                                     }
                                 </ul>
-
                             </li>
+                            @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))
+                            {
+                                <li>
+                                    گزارشات
+                                    <ul>
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))
+                                        {
+                                            <li>
+                                                @Html.ActionLink("لاگ کاربران", "Index", "SubscribersLog", new { area = "Statistics" }, null)
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
                             <li style="float:left;">
                                 @Html.Partial("_LoginPartial")
                             </li>

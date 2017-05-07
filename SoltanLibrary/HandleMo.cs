@@ -22,13 +22,16 @@ namespace SoltanLibrary
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            logs.Info("message.ReceivedFrom:" + message.ReceivedFrom);
-            if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                return;
-            if (message.ReceivedFrom.Contains("Register"))
-                isUserSendsSubscriptionKeyword = true;
-            else if (message.ReceivedFrom.Contains("Unsubscribe"))
-                isUserWantsToUnsubscribe = true;
+
+            if (message.IsReceivedFromIntegratedPanel != true)
+            {
+                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                    return;
+                if (message.ReceivedFrom.Contains("Register"))
+                    isUserSendsSubscriptionKeyword = true;
+                else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                    isUserWantsToUnsubscribe = true;
+            }
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
