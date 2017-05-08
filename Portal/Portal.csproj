@@ -246,6 +246,14 @@
     <Compile Include="Areas\JabehAbzar\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\JabehAbzar\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\JabehAbzar\JabehAbzarAreaRegistration.cs" />
+    <Compile Include="Areas\FitShow\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\FitShow\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\FitShow\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\FitShow\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\FitShow\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\FitShow\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\FitShow\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\FitShow\FitShowAreaRegistration.cs" />
     <Compile Include="Areas\ShenoYad\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\ShenoYad\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\ShenoYad\Controllers\MonitoringController.cs" />
@@ -1070,6 +1078,16 @@
     <Content Include="Areas\ShenoYad\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\ShenoYad\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\ShenoYad\Views\web.config" />
+    <Content Include="Areas\FitShow\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\FitShow\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\FitShow\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\FitShow\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\FitShow\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\FitShow\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\FitShow\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\FitShow\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\FitShow\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\FitShow\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1425,6 +1443,7 @@
     <Folder Include="Areas\Boating\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />
     <Folder Include="Areas\DonyayeAsatir\Models\" />
+    <Folder Include="Areas\FitShow\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
@@ -1488,6 +1507,10 @@
     <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
       <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
       <Name>DonyayeAsatirLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FitShowLibrary\FitShowLibrary.csproj">
+      <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
+      <Name>FitShowLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
       <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>

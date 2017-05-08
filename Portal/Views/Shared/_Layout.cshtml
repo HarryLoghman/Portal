@@ -601,7 +601,7 @@
                                     @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShenoYadUser"))
                                     {
                                         <li>
-                                            شن و یاد
+                                            شنویاد
                                             <ul>
                                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                 {
@@ -620,6 +620,32 @@
                                                 }
                                                 <li>
                                                     @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "ShenoYad" }, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FitShowUser"))
+                                    {
+                                        <li>
+                                            فیت شو
+                                            <ul>
+                                                @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                {
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "FitShow" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "FitShow" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "FitShow" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "FitShow" }, null)
+                                                    </li>
+                                                }
+                                                <li>
+                                                    @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "FitShow" }, null)
                                                 </li>
                                             </ul>
                                         </li>

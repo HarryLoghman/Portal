@@ -182,6 +182,8 @@ namespace DehnadReceiveProcessorService
                     TamlyLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "ShenoYad")
                     ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "FitShow")
+                    FitShowLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -225,6 +227,8 @@ namespace DehnadReceiveProcessorService
                     TamlyLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "ShenoYad")
                     ShenoYadLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "FitShow")
+                    FitShowLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

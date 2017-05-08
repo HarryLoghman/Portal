@@ -119,6 +119,10 @@
       <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
       <Name>DonyayeAsatirLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FitShowLibrary\FitShowLibrary.csproj">
+      <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
+      <Name>FitShowLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
       <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
       <Name>JabehAbzarLibrary</Name>

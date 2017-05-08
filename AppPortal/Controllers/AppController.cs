@@ -17,10 +17,10 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad" };
+        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow" };
         private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir" };
 
         [HttpPost]
@@ -182,6 +182,26 @@ namespace Portal.Controllers
                                         else
                                         {
                                             using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                                            {
+                                                entity.Singlecharges.Attach(singlecharge);
+                                                singlecharge.IsCalledFromInAppPurchase = true;
+                                                entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                                entity.SaveChanges();
+                                            }
+                                            if (singlecharge.IsSucceeded == true)
+                                                result.Status = "Success";
+                                            else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                                result.Status = "Insufficient Balance";
+                                        }
+                                    }
+                                    else if (message.ServiceCode == "FitShow")
+                                    {
+                                        var singlecharge = FitShowLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                        if (singlecharge == null)
+                                            result.Status = "Error in Charging";
+                                        else
+                                        {
+                                            using (var entity = new FitShowLibrary.Models.FitShowEntities())
                                             {
                                                 entity.Singlecharges.Attach(singlecharge);
                                                 singlecharge.IsCalledFromInAppPurchase = true;
@@ -448,6 +468,24 @@ namespace Portal.Controllers
                             else if (messageObj.ServiceCode == "ShenoYad")
                             {
                                 using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                    {
+                                        var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
+                                        if (installmentQueue != null)
+                                            daysLeft = 30;
+                                        else
+                                            daysLeft = 0;
+                                    }
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "FitShow")
+                            {
+                                using (var entity = new FitShowLibrary.Models.FitShowEntities())
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();

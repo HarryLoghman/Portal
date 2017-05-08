@@ -18,7 +18,7 @@ namespace Portal.Areas.ShenoYad.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "شن و یاد";
+            ViewBag.ServiceName = "شنویاد";
             return View();
         }
         
