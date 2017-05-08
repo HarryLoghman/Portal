@@ -626,7 +626,7 @@
                                     }
                                 </ul>
                             </li>
-                            @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))
+                            if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))
                             {
                                 <li>
                                     گزارشات
