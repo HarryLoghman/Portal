@@ -119,7 +119,6 @@ namespace Portal.Areas.Statistics.Controllers
             var serviceOnKeyword = SharedLibrary.ServiceHandler.getFirstOnKeywordOfService(subscriberService.Service.OnKeywords);
             message.Content = "Off " + serviceOnKeyword;
             message.ReceivedFrom = "Portal";
-            message.IsReceivedFromIntegratedPanel = true;
             message.ShortCode = subscriberService.Service.ServiceInfoes.FirstOrDefault(o => o.ServiceId == subscriberService.ServiceId).ShortCode;
             SharedLibrary.MessageHandler.SaveReceivedMessage(message);
             return Content("Ok");

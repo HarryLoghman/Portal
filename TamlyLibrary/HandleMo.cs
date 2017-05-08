@@ -30,7 +30,7 @@ namespace TamlyLibrary
             }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            if (message.IsReceivedFromIntegratedPanel != true)
+            if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
             {
                 if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                     return;
