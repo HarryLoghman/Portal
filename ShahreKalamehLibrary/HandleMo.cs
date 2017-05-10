@@ -13,7 +13,8 @@ namespace ShahreKalamehLibrary
         {
             var content = message.Content;
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            if ((content == "9" || isUserWantsToUnsubscribe == true) && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
+            var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
+            if ((content == "9" || isUserWantsToUnsubscribe == true || isUserSendsSubscriptionKeyword == true) && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
                 return;
             //if (isUserWantsToUnsubscribe)
                 //return;
@@ -34,7 +35,6 @@ namespace ShahreKalamehLibrary
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
-            var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             
             if (content == "Subscription".ToLower() || content == "Renewal".ToLower())
                 isUserSendsSubscriptionKeyword = true;
