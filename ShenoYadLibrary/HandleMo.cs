@@ -11,6 +11,7 @@ namespace ShenoYadLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void ReceivedMessage(MessageObject message, Service service)
         {
+            logs.Info("1");
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
@@ -29,10 +30,12 @@ namespace ShenoYadLibrary
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
+            logs.Info("2");
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
+                logs.Info("3");
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
                 {
                     var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
@@ -43,6 +46,7 @@ namespace ShenoYadLibrary
                         return;
                     }
                 }
+                logs.Info("4");
                 if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                 {
                     bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
@@ -54,6 +58,7 @@ namespace ShenoYadLibrary
                         return;
                     }
                 }
+                logs.Info("5");
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
