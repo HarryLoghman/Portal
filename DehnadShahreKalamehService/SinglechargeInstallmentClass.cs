@@ -249,6 +249,7 @@ namespace DehnadShahreKalamehService
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
                         var response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
 
+                        
                         if (response.IsSucceeded == true)
                         {
                             bool isUserCanceledTheInstallment = entity.SinglechargeInstallments.AsNoTracking().FirstOrDefault(o => o.Id == installment.Id).IsUserCanceledTheInstallment;

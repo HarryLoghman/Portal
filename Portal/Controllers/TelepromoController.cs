@@ -161,7 +161,7 @@ namespace Portal.Controllers
         public HttpResponseMessage Notify(string type, string msisdn, string serviceId, string channel, string keyword, string eventId = null)
         {
             dynamic responseJson = new ExpandoObject();
-            
+
             var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
             var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
             var message = new SharedLibrary.Models.MessageObject();
@@ -170,13 +170,134 @@ namespace Portal.Controllers
             message.IsReceivedFromIntegratedPanel = false;
             message.Content = keyword;
             message.ServiceId = serviceInfo.ServiceId;
-            if(type == "SUBSCRIBE" || type == "RENEWAL")
-                message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
-            else if(type == "UNSUBSCRIBE")
-                message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
+            if (type == "RENEWAL")
+            {
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+                if(service.ServiceCode == "JabehAbzar")
+                {
+                    using(var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                    {
+                        var singlecharge = new JabehAbzarLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+                else if (service.ServiceCode == "Tamly")
+                {
+                    using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                    {
+                        var singlecharge = new TamlyLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+                else if (service.ServiceCode == "Soltan")
+                {
+                    using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                    {
+                        var singlecharge = new SoltanLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+                else if (service.ServiceCode == "ShenoYad")
+                {
+                    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                    {
+                        var singlecharge = new ShenoYadLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+                else if (service.ServiceCode == "FitShow")
+                {
+                    using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                    {
+                        var singlecharge = new FitShowLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+                else if (service.ServiceCode == "Takavar")
+                {
+                    using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                    {
+                        var singlecharge = new TakavarLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+            }
             else
-                message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
-            SharedLibrary.MessageHandler.SaveReceivedMessage(message);
+            {
+                if (type == "SUBSCRIBE")
+                    message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
+                else if (type == "UNSUBSCRIBE")
+                    message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
+                else
+                    message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
+                SharedLibrary.MessageHandler.SaveReceivedMessage(message);
+            }
 
             responseJson.status = 0;
             var json = JsonConvert.SerializeObject(responseJson);
@@ -224,6 +345,10 @@ namespace Portal.Controllers
                         TamlyLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "ShenoYad")
                         ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "FitShow")
+                        FitShowLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "Takavar")
+                        TakavarLibrary.HandleMo.ReceivedMessage(message, service);
                     //var recievedMessage = new MessageObject();
                     //recievedMessage.Content = serviceId;
                     //recievedMessage.MobileNumber = mobileNumber;

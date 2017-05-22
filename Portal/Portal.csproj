@@ -193,6 +193,14 @@
     <Compile Include="Areas\BimeIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Danestaneh\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Takavar\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Takavar\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Takavar\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Takavar\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Takavar\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Takavar\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Takavar\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Takavar\TakavarAreaRegistration.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\AutochargeContentsController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\AutochargeTimeTableController.cs" />
     <Compile Include="Areas\MashinBazha\Controllers\EventbaseContentsController.cs" />
@@ -1088,6 +1096,16 @@
     <Content Include="Areas\FitShow\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\FitShow\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\FitShow\Views\web.config" />
+    <Content Include="Areas\Takavar\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Takavar\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Takavar\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Takavar\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Takavar\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Takavar\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Takavar\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Takavar\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Takavar\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Takavar\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1454,6 +1472,7 @@
     <Folder Include="Areas\Soltan\Models\" />
     <Folder Include="Areas\Statistics\Models\" />
     <Folder Include="Areas\Tabriz2018\Models\" />
+    <Folder Include="Areas\Takavar\Models\" />
     <Folder Include="Areas\Tamly\Models\" />
     <Folder Include="Areas\Tirandazi\Models\" />
     <Folder Include="bin\bg-BG\" />
@@ -1551,6 +1570,10 @@
     <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
       <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
       <Name>Tabriz2018Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TakavarLibrary\TakavarLibrary.csproj">
+      <Project>{52c36255-330f-25b1-abf2-4dd22ab523a1}</Project>
+      <Name>TakavarLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\TamlyLibrary\TamlyLibrary.csproj">
       <Project>{412d2155-de02-4eb1-acfd-75d3aab55364}</Project>

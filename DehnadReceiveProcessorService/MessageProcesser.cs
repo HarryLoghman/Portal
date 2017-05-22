@@ -184,6 +184,8 @@ namespace DehnadReceiveProcessorService
                     ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "FitShow")
                     FitShowLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Takavar")
+                    TakavarLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -229,6 +231,8 @@ namespace DehnadReceiveProcessorService
                     ShenoYadLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "FitShow")
                     FitShowLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Takavar")
+                    TakavarLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

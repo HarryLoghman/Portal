@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using SharedLibrary.Models;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace SharedLibrary
 {
@@ -244,6 +245,31 @@ namespace SharedLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in ChangeSubscriptionKeyword: " + e);
+            }
+        }
+
+        public static void UnsubscribeUserFromTelepromoService(long serviceId, string mobileNumber)
+        {
+            var url = "http://10.20.9.135:8600/samsson-sdp/pin/cancel?";
+            var sc = "Dehnad";
+            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Telepromo");
+            var username = serviceAdditionalInfo["username"];
+            var password = serviceAdditionalInfo["password"];
+            var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
+            var to = "98" + mobileNumber.TrimStart('0');
+            var urlWithParameters = url + String.Format("sc={0}&to={1}&serviceId={2}&username={3}&password={4}", sc, to, serviceId, username, password);
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    using (var response = client.GetAsync(new Uri(url)).Result)
+                    {
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in UnsubscribeUserFromTelepromoService: " + e);
             }
         }
 

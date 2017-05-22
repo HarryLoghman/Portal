@@ -650,6 +650,32 @@
                                             </ul>
                                         </li>
                                     }
+                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Takavar"))
+                                    {
+                                        <li>
+                                            تکاور
+                                            <ul>
+                                                @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                {
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Takavar" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Takavar" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Takavar" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Takavar" }, null)
+                                                    </li>
+                                                }
+                                                <li>
+                                                    @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Takavar" }, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
                                 </ul>
                             </li>
                             if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))

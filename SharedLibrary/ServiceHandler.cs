@@ -26,6 +26,23 @@ namespace SharedLibrary
             return sendInfoDic;
         }
 
+        public static Dictionary<string, string> GetAdditionalServiceInfoForSendingMessage(long serviceId, string aggregatorName)
+        {
+            var sendInfoDic = new Dictionary<string, string>();
+            using (var entity = new PortalEntities())
+            {
+                var aggregatorInfo = entity.Aggregators.FirstOrDefault(o => o.AggregatorName == aggregatorName);
+                sendInfoDic["username"] = aggregatorInfo.AggregatorUsername;
+                sendInfoDic["password"] = aggregatorInfo.AggregatorPassword;
+                var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.AggregatorId == aggregatorInfo.Id && o.ServiceId == serviceId);
+                sendInfoDic["shortCode"] = serviceInfo.ShortCode;
+                sendInfoDic["serviceId"] = serviceId.ToString();
+                sendInfoDic["aggregatorId"] = serviceInfo.AggregatorId.ToString();
+                sendInfoDic["aggregatorServiceId"] = serviceInfo.AggregatorServiceId.ToString();
+            }
+            return sendInfoDic;
+        }
+
         public static ServiceInfo GetServiceInfoFromAggregatorServiceId(string aggregatorServiceId)
         {
             using (var entity = new PortalEntities())
