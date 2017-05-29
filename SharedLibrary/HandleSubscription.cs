@@ -256,8 +256,8 @@ namespace SharedLibrary
             var username = serviceAdditionalInfo["username"];
             var password = serviceAdditionalInfo["password"];
             var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
-            var to = "98" + mobileNumber.TrimStart('0');
-            var urlWithParameters = url + String.Format("sc={0}&to={1}&serviceId={2}&username={3}&password={4}", sc, to, serviceId, username, password);
+            var msisdn = "98" + mobileNumber.TrimStart('0');
+            var urlWithParameters = url + String.Format("sc={0}&msisdn={1}&serviceId={2}&username={3}&password={4}", sc, msisdn, serviceId, username, password);
             try
             {
                 using (var client = new HttpClient())
