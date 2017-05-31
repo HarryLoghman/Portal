@@ -52,7 +52,7 @@ namespace Portal.Controllers
             }
             else
             {
-                if (smsId == null || smsId == "")
+                if (smsId == null || smsId == "" || smsId == "null")
                 {
                     messageObj.Content = "545";
                     messageObj.IsReceivedFromIntegratedPanel = true;

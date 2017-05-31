@@ -208,7 +208,7 @@
 
     </script>
 }
-else
+else if(ViewContext.HttpContext.User.IsInRole("ShahreKalameh"))
 {
     <script>
     var gridElement = $("#grid");
@@ -282,6 +282,8 @@ else
 
 
 <!--Subscribers-->
+@if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Advertise"))
+{
 <script type="text/javascript">
     $(function () {
         $('#subscribersStaticsContainer').highcharts({
@@ -330,6 +332,7 @@ else
         });
     });
 </script>
+    }
 
 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
 {

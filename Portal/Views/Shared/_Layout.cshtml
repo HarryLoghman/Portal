@@ -492,7 +492,7 @@
                                             </ul>
                                         </li>
                                     }
-                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShahreKalamehUser"))
+                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShahreKalamehUser") || ViewContext.HttpContext.User.IsInRole("Advertise"))
                                     {
                                         <li>
                                             شهر کلمه
@@ -507,10 +507,13 @@
                                                         @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "ShahreKalameh" }, null)
                                                     </li>
                                                     <li>
-                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "ShahreKalameh" }, null)
-                                                    </li>
-                                                    <li>
                                                         @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "ShahreKalameh" }, null)
+                                                    </li>
+                                                }
+                                                @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Advertise"))
+                                                {
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "ShahreKalameh" }, null)
                                                     </li>
                                                 }
                                                 <li>

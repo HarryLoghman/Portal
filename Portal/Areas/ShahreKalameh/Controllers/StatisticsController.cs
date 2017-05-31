@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.ShahreKalameh.Controllers
 {
-    [Authorize(Roles = "Admin, ShahreKalamehUser")]
+    [Authorize(Roles = "Admin, ShahreKalamehUser, Advertise")]
     public class StatisticsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

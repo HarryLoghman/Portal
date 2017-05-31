@@ -10,7 +10,7 @@ using System.Data.Entity;
 
 namespace Portal.Areas.ShahreKalameh.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Advertise")]
     public class ReceiveController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -26,16 +26,31 @@ namespace Portal.Areas.ShahreKalameh.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Receive_Read([DataSourceRequest]DataSourceRequest request)
         {
+            DataSourceResult result;
             var service = db.Services.FirstOrDefault(o => o.ServiceCode == "ShahreKalameh");
             var shortCode = db.ServiceInfoes.Where(o => o.ServiceId == service.Id).Select(o => o.ShortCode).FirstOrDefault();
-            DataSourceResult result = db.vw_ReceivedMessages.Where(o => o.ShortCode == shortCode).ToDataSourceResult(request, receivedMessages => new
+            if (User.IsInRole("ShahreKalamehUser"))
             {
-                Id = receivedMessages.Id,
-                MobileNumber = receivedMessages.MobileNumber,
-                PersianReceivedTime = receivedMessages.PersianReceivedTime,
-                Content = receivedMessages.Content,
-                IsReceivedFromIntegratedPanel = receivedMessages.IsReceivedFromIntegratedPanel
-            });
+                result = db.vw_ReceivedMessages.Where(o => o.ShortCode == shortCode).ToDataSourceResult(request, receivedMessages => new
+                {
+                    Id = receivedMessages.Id,
+                    MobileNumber = receivedMessages.MobileNumber,
+                    PersianReceivedTime = receivedMessages.PersianReceivedTime,
+                    Content = receivedMessages.Content,
+                    IsReceivedFromIntegratedPanel = receivedMessages.IsReceivedFromIntegratedPanel
+                });
+            }
+            else if (User.IsInRole("Advertise"))
+            {
+                result = db.vw_ReceivedMessages.Where(o => o.ShortCode == shortCode).ToDataSourceResult(request, receivedMessages => new
+                {
+                    Id = receivedMessages.Id,
+                    PersianReceivedTime = receivedMessages.PersianReceivedTime,
+                    Content = receivedMessages.Content,
+                });
+            }
+            else
+                result = null;
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
