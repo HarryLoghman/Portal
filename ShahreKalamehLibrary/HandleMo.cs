@@ -36,7 +36,7 @@ namespace ShahreKalamehLibrary
                 return;
             }
             
-            if (content == "Subscription".ToLower() || content == "Renewal".ToLower())
+            if (content == "Subscription".ToLower())
                 isUserSendsSubscriptionKeyword = true;
             else if (content == "Unsubscription".ToLower() || message.IsReceivedFromIntegratedPanel == true)
                 isUserWantsToUnsubscribe = true;
