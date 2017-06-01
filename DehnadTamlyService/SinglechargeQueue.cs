@@ -18,7 +18,7 @@ namespace DehnadTamlyService
             {
                 //SendWarningToSinglechargeUsersInQueue();
                 ChargeUsersFromSinglechargeQueue();
-                SendRenewalWarningToSinglechargeUsersInQueue();
+                //SendRenewalWarningToSinglechargeUsersInQueue();
                 RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)

@@ -18,7 +18,7 @@ namespace DehnadShahreKalamehService
             {
                 //SendWarningToSinglechargeUsersInQueue();
                 ChargeUsersFromSinglechargeQueue();
-                SendRenewalWarningToSinglechargeUsersInQueue();
+                //SendRenewalWarningToSinglechargeUsersInQueue();
                 RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)

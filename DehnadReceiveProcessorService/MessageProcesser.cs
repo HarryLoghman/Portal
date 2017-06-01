@@ -186,6 +186,10 @@ namespace DehnadReceiveProcessorService
                     FitShowLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Takavar")
                     TakavarLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "MenchBaz")
+                    MenchBazLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "AvvalPod")
+                    AvvalPodLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -233,6 +237,10 @@ namespace DehnadReceiveProcessorService
                     FitShowLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "Takavar")
                     TakavarLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "MenchBaz")
+                    MenchBazLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "AvvalPod")
+                    AvvalPodLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

@@ -193,6 +193,22 @@
     <Compile Include="Areas\BimeIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Danestaneh\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\AvvalPod\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\AvvalPod\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\AvvalPod\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\AvvalPod\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\AvvalPod\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\AvvalPod\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\AvvalPod\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\AvvalPod\AvvalPodAreaRegistration.cs" />
+    <Compile Include="Areas\MenchBaz\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\MenchBaz\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\MenchBaz\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\MenchBaz\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\MenchBaz\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\MenchBaz\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\MenchBaz\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\MenchBaz\MenchBazAreaRegistration.cs" />
     <Compile Include="Areas\Takavar\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Takavar\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Takavar\Controllers\MonitoringController.cs" />
@@ -1106,6 +1122,26 @@
     <Content Include="Areas\Takavar\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Takavar\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Takavar\Views\web.config" />
+    <Content Include="Areas\MenchBaz\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\MenchBaz\Views\web.config" />
+    <Content Include="Areas\AvvalPod\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\AvvalPod\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1456,6 +1492,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\AvvalPod\Models\" />
     <Folder Include="Areas\BimeIran\Models\" />
     <Folder Include="Areas\BimeKarbala\Models\" />
     <Folder Include="Areas\Boating\Models\" />
@@ -1464,6 +1501,7 @@
     <Folder Include="Areas\FitShow\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
+    <Folder Include="Areas\MenchBaz\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
     <Folder Include="Areas\MyLeague\Models\" />
     <Folder Include="Areas\SepidRood\Models\" />
@@ -1507,6 +1545,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
+      <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
+      <Name>AvvalPodLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
       <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>
       <Name>BimeIranLibrary</Name>
@@ -1538,6 +1580,10 @@
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
+      <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>
+      <Name>MenchBazLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
       <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>

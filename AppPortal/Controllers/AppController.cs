@@ -17,11 +17,11 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar" };
-        private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir" };
+        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod" };
+        private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz" };
 
         [HttpPost]
         [AllowAnonymous]
@@ -100,6 +100,26 @@ namespace Portal.Controllers
                                         else
                                         {
                                             using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                                            {
+                                                entity.Singlecharges.Attach(singlecharge);
+                                                singlecharge.IsCalledFromInAppPurchase = true;
+                                                entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                                entity.SaveChanges();
+                                            }
+                                            if (singlecharge.IsSucceeded == true)
+                                                result.Status = "Success";
+                                            else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                                result.Status = "Insufficient Balance";
+                                        }
+                                    }
+                                    else if (message.ServiceCode == "MenchBaz")
+                                    {
+                                        var singlecharge = MenchBazLibrary.ContentManager.HandleSinglechargeContent(message, service, null, MenchBazLibrary.ServiceHandler.GetServiceMessagesTemplate());
+                                        if (singlecharge == null)
+                                            result.Status = "Error in Charging";
+                                        else
+                                        {
+                                            using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
                                             {
                                                 entity.Singlecharges.Attach(singlecharge);
                                                 singlecharge.IsCalledFromInAppPurchase = true;
@@ -222,6 +242,26 @@ namespace Portal.Controllers
                                         else
                                         {
                                             using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                                            {
+                                                entity.Singlecharges.Attach(singlecharge);
+                                                singlecharge.IsCalledFromInAppPurchase = true;
+                                                entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                                entity.SaveChanges();
+                                            }
+                                            if (singlecharge.IsSucceeded == true)
+                                                result.Status = "Success";
+                                            else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                                result.Status = "Insufficient Balance";
+                                        }
+                                    }
+                                    else if (message.ServiceCode == "AvvalPod")
+                                    {
+                                        var singlecharge = AvvalPodLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                        if (singlecharge == null)
+                                            result.Status = "Error in Charging";
+                                        else
+                                        {
+                                            using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
                                             {
                                                 entity.Singlecharges.Attach(singlecharge);
                                                 singlecharge.IsCalledFromInAppPurchase = true;
@@ -431,6 +471,29 @@ namespace Portal.Controllers
                                     }
                                 }
                             }
+                            else if (messageObj.ServiceCode == "MenchBaz")
+                            {
+                                using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                        pricePayed = -1;
+                                    else
+                                    {
+                                        var originalPriceBalancedForInAppRequest = singlechargeInstallment.PriceBalancedForInAppRequest;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest == null)
+                                            singlechargeInstallment.PriceBalancedForInAppRequest = 0;
+                                        pricePayed = singlechargeInstallment.PricePayed - singlechargeInstallment.PriceBalancedForInAppRequest.Value;
+                                        singlechargeInstallment.PriceBalancedForInAppRequest += pricePayed;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest != originalPriceBalancedForInAppRequest)
+                                        {
+                                            entity.Entry(singlechargeInstallment).State = EntityState.Modified;
+                                            entity.SaveChanges();
+                                        }
+                                    }
+                                }
+                            }
                             else if (messageObj.ServiceCode == "ShahreKalameh")
                             {
                                 using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
@@ -524,6 +587,24 @@ namespace Portal.Controllers
                             else if (messageObj.ServiceCode == "Takavar")
                             {
                                 using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                    {
+                                        var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
+                                        if (installmentQueue != null)
+                                            daysLeft = 30;
+                                        else
+                                            daysLeft = 0;
+                                    }
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "AvvalPod")
+                            {
+                                using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();

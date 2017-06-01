@@ -29,7 +29,7 @@ namespace Portal.Areas.ShahreKalameh.Controllers
             DataSourceResult result;
             var service = db.Services.FirstOrDefault(o => o.ServiceCode == "ShahreKalameh");
             var shortCode = db.ServiceInfoes.Where(o => o.ServiceId == service.Id).Select(o => o.ShortCode).FirstOrDefault();
-            if (User.IsInRole("ShahreKalamehUser"))
+            if (User.IsInRole("Admin"))
             {
                 result = db.vw_ReceivedMessages.Where(o => o.ShortCode == shortCode).ToDataSourceResult(request, receivedMessages => new
                 {

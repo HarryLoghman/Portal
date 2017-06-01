@@ -99,6 +99,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
+      <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
+      <Name>AvvalPodLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
       <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>
       <Name>BimeIranLibrary</Name>
@@ -130,6 +134,10 @@
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
+      <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>
+      <Name>MenchBazLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
       <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>

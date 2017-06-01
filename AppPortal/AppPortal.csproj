@@ -1085,6 +1085,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
+      <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
+      <Name>AvvalPodLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BimeKarbalaLibrary\BimeKarbalaLibrary.csproj">
       <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
       <Name>BimeKarbalaLibrary</Name>
@@ -1112,6 +1116,10 @@
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
+      <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>
+      <Name>MenchBazLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
       <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>
