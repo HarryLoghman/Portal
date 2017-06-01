@@ -19,7 +19,7 @@ namespace Portal.Areas.MenchBaz.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "جعبه ابزار";
+            ViewBag.ServiceName = "منچ باز";
             return View();
         }
 
@@ -27,7 +27,7 @@ namespace Portal.Areas.MenchBaz.Controllers
         public ActionResult Statistics_GridRead([DataSourceRequest]DataSourceRequest request)
         {
             DataSourceResult result;
-            if (User.IsInRole("External"))
+            if (User.IsInRole("Admin"))
             {
 
                 result = db.DailyStatistics.ToDataSourceResult(request, dailyStatistics => new

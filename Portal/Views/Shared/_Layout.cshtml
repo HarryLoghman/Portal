@@ -679,6 +679,58 @@
                                             </ul>
                                         </li>
                                     }
+                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MenchBazUser"))
+                                    {
+                                        <li>
+                                            منچ باز
+                                            <ul>
+                                                @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                {
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "MenchBaz" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "MenchBaz" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "MenchBaz" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "MenchBaz" }, null)
+                                                    </li>
+                                                }
+                                                <li>
+                                                    @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "MenchBaz" }, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AvvalPodUser"))
+                                    {
+                                        <li>
+                                            منچ باز
+                                            <ul>
+                                                @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                {
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "AvvalPod" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "AvvalPod" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "AvvalPod" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "AvvalPod" }, null)
+                                                    </li>
+                                                }
+                                                <li>
+                                                    @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "AvvalPod" }, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
                                 </ul>
                             </li>
                             if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))
