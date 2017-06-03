@@ -18,7 +18,7 @@ namespace DehnadMenchBazService
             {
                 //SendWarningToSinglechargeUsersInQueue();
                 ChargeUsersFromSinglechargeQueue();
-                SendRenewalWarningToSinglechargeUsersInQueue();
+                //SendRenewalWarningToSinglechargeUsersInQueue();
                 RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)
@@ -188,7 +188,7 @@ namespace DehnadMenchBazService
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now).ToList();
+                    var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("MenchBaz");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
@@ -206,7 +206,7 @@ namespace DehnadMenchBazService
                         }
                         var message = new SharedLibrary.Models.MessageObject();
                         message.MobileNumber = item.MobileNumber;
-                        message.ImiChargeKey = chargeCodes.FirstOrDefault(o => o.Price == item.Price).ChargeKey;
+                        //message.ImiChargeKey = chargeCodes.FirstOrDefault(o => o.Price == item.Price).ChargeKey;
                         message.ShortCode = shortCode;
                         message.Price = item.Price;
                         //var singlecharge = MenchBazLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
