@@ -32,13 +32,15 @@ namespace JabehAbzarLibrary
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
             {
-                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe != true))
                     return;
                 if (message.ReceivedFrom.Contains("Register"))
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
             }
+            if (isUserWantsToUnsubscribe == true)
+                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
@@ -90,7 +92,6 @@ namespace JabehAbzarLibrary
                     ServiceHandler.CancelUserInstallments(message.MobileNumber);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                    SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
                     return;
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
