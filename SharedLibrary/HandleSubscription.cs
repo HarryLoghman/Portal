@@ -4,6 +4,7 @@ using System.Linq;
 using SharedLibrary.Models;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Xml;
 
 namespace SharedLibrary
 {
@@ -270,6 +271,50 @@ namespace SharedLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in UnsubscribeUserFromTelepromoService: " + e);
+            }
+        }
+
+        public static void UnsubscribeUserFromHubService(long serviceId, string mobileNumber)
+        {
+            try
+            {
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Hub");
+                
+                XmlDocument doc = new XmlDocument();
+                XmlElement root = doc.CreateElement("xmsrequest");
+                XmlElement userid = doc.CreateElement("userid");
+                XmlElement password = doc.CreateElement("password");
+                XmlElement action = doc.CreateElement("action");
+                XmlElement body = doc.CreateElement("body");
+                XmlElement recipient = doc.CreateElement("recipient");
+                recipient.InnerText = mobileNumber;
+                XmlElement serviceid = doc.CreateElement("serviceid");
+                serviceid.InnerText = serviceAdditionalInfo["aggregatorServiceId"];
+                body.AppendChild(serviceid);
+                body.AppendChild(recipient);
+
+                //Random random = new Random();
+                //var randomNumber = random.Next(1000000, 9999999);
+                //XmlAttribute doerId = doc.CreateAttribute("doerId");
+                //doerId.InnerText = randomNumber.ToString();
+                //recipient.Attributes.Append(doerId);
+
+                userid.InnerText = serviceAdditionalInfo["username"];
+                password.InnerText = serviceAdditionalInfo["password"];
+                action.InnerText = "crm";
+                
+                doc.AppendChild(root);
+                root.AppendChild(userid);
+                root.AppendChild(password);
+                root.AppendChild(action);
+                root.AppendChild(body);
+                string stringedXml = doc.OuterXml;
+                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();                
+                string response = hubClient.XmsRequest(stringedXml).ToString();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in UnsubscribeUserFromHubService: " + e);
             }
         }
 
