@@ -22,20 +22,20 @@ namespace FitShowLibrary
                 var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
                 foreach (var imiChargecode in imiChargeCodes)
                 {
-                    if (imiChargecode.ChargeCode == content || imiChargecode.Price == content)
+                    if (imiChargecode.Price == content)
                     {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("FitShow", "PardisImi");
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("FitShow", "Telepromo");
                         message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
                         chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToPardisImi(message);
+                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
                         break;
                     }
                 }
-                //if (chargecodeFound == false)
-                //{
-                //    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                //    MessageHandler.InsertMessageToQueue(message);
-                //}
+                if (chargecodeFound == false)
+                {
+                    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                    MessageHandler.InsertMessageToQueue(message);
+                }
                 if (singlecharge.IsSucceeded == true)
                 {
                     message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";
@@ -84,7 +84,7 @@ namespace FitShowLibrary
                 using (var entity = new FitShowEntities())
                 {
                     //var chargeCode = Convert.ToInt32(content);
-                    //var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
+                    //var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.ChargeCode == chargeCode);
                     //if (imichargeCode == null)
                     //    return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();

@@ -22,20 +22,20 @@ namespace ShenoYadLibrary
                 var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
                 foreach (var imiChargecode in imiChargeCodes)
                 {
-                    if (imiChargecode.ChargeCode == content || imiChargecode.Price == content)
+                    if (imiChargecode.Price == content)
                     {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("ShenoYad", "PardisImi");
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("ShenoYad", "Telepromo");
                         message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
                         chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToPardisImi(message);
+                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
                         break;
                     }
                 }
-                //if (chargecodeFound == false)
-                //{
-                //    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                //    MessageHandler.InsertMessageToQueue(message);
-                //}
+                if (chargecodeFound == false)
+                {
+                    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                    MessageHandler.InsertMessageToQueue(message);
+                }
                 if (singlecharge.IsSucceeded == true)
                 {
                     message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";

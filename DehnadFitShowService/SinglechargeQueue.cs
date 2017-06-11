@@ -18,7 +18,7 @@ namespace DehnadFitShowService
             {
                 //SendWarningToSinglechargeUsersInQueue();
                 ChargeUsersFromSinglechargeQueue();
-                SendRenewalWarningToSinglechargeUsersInQueue();
+                //SendRenewalWarningToSinglechargeUsersInQueue();
                 RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)
@@ -187,7 +187,7 @@ namespace DehnadFitShowService
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now).ToList();
+                    var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("FitShow");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
@@ -213,7 +213,7 @@ namespace DehnadFitShowService
                         //{
                         var installment = new SinglechargeInstallment();
                         installment.MobileNumber = message.MobileNumber;
-                        installment.TotalPrice = 10000;
+                        installment.TotalPrice = item.Price;
                         installment.IsExceededDailyChargeLimit = false;
                         installment.IsFullyPaid = false;
                         installment.PricePayed = 0;

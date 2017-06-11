@@ -230,6 +230,25 @@ namespace Portal.Controllers
                         entity.SaveChanges();
                     }
                 }
+                else if (service.ServiceCode == "DonyayeAsatir")
+                {
+                    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                    {
+                        var singlecharge = new DonyayeAsatirLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
                 else if (service.ServiceCode == "ShenoYad")
                 {
                     using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
@@ -343,6 +362,8 @@ namespace Portal.Controllers
                         JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "Tamly")
                         TamlyLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "DonyayeAsatir")
+                        DonyayeAsatirLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "ShenoYad")
                         ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "FitShow")

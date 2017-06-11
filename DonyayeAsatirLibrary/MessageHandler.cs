@@ -537,6 +537,283 @@ namespace DonyayeAsatirLibrary
             return result;
         }
 
+        public static async Task SendMesssagesToHub(DonyayeAsatirEntities entityDisposeIt, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            try
+            {
+                await Task.Delay(10); // for making it async
+                var messagesCount = messages.Count;
+                if (messagesCount == 0)
+                    return;
+                using (var entity = new DonyayeAsatirEntities())
+                {
+                    var aggregatorUsername = serviceAdditionalInfo["username"];
+                    var aggregatorPassword = serviceAdditionalInfo["password"];
+                    var from = serviceAdditionalInfo["shortCode"];
+                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    var subUnsubXmlStringList = new List<string>();
+
+                    XmlDocument doc = new XmlDocument();
+                    XmlElement root = doc.CreateElement("xmsrequest");
+                    XmlElement userid = doc.CreateElement("userid");
+                    XmlElement password = doc.CreateElement("password");
+                    XmlElement action = doc.CreateElement("action");
+                    XmlElement body = doc.CreateElement("body");
+                    XmlElement type = doc.CreateElement("type");
+                    type.InnerText = "oto";
+                    body.AppendChild(type);
+                    XmlElement serviceid = doc.CreateElement("serviceid");
+                    serviceid.InnerText = serviceId;
+                    body.AppendChild(serviceid);
+
+                    foreach (var message in messages)
+                    {
+                        if (message.ImiChargeKey == "UnSubscription" || message.ImiChargeKey == "Register" || message.ImiChargeKey == "Renewal")
+                        {
+                            XmlDocument doc1 = new XmlDocument();
+                            XmlElement root1 = doc1.CreateElement("xmsrequest");
+                            XmlElement userid1 = doc1.CreateElement("userid");
+                            XmlElement password1 = doc1.CreateElement("password");
+                            XmlElement action1 = doc1.CreateElement("action");
+                            XmlElement body1 = doc1.CreateElement("body");
+                            XmlElement serviceid1 = doc1.CreateElement("serviceid");
+                            XmlElement mobile1 = doc1.CreateElement("mobile");
+                            XmlElement smsid = doc1.CreateElement("smsid");
+                            XmlElement subUnSub;
+                            serviceid1.InnerText = serviceId;
+                            body1.AppendChild(serviceid1);
+
+                            mobile1.InnerText = message.MobileNumber;
+                            body1.AppendChild(mobile1);
+
+                            smsid.InnerText = "-1";
+                            body1.AppendChild(smsid);
+
+
+                            if (message.ImiChargeKey == "UnSubscription")
+                            {
+                                subUnSub = doc1.CreateElement("sendgoodbye");
+                                action1.InnerText = "vasremovemember";
+                            }
+                            else
+                            {
+                                subUnSub = doc1.CreateElement("sendwellcome");
+                                action1.InnerText = "vasaddmember";
+                            }
+                            subUnSub.InnerText = "0";
+                            body1.AppendChild(subUnSub);
+
+                            userid1.InnerText = aggregatorUsername;
+                            password1.InnerText = aggregatorPassword;
+
+                            doc1.AppendChild(root1);
+                            root1.AppendChild(userid1);
+                            root1.AppendChild(password1);
+                            root1.AppendChild(action1);
+                            root1.AppendChild(body1);
+
+                            subUnsubXmlStringList.Add(doc1.OuterXml);
+                        }
+                        XmlElement recipient = doc.CreateElement("recipient");
+                        recipient.InnerText = message.Content;
+                        body.AppendChild(recipient);
+
+                        XmlAttribute mobile = doc.CreateAttribute("mobile");
+                        recipient.Attributes.Append(mobile);
+                        mobile.InnerText = message.MobileNumber;
+
+                        XmlAttribute originator = doc.CreateAttribute("originator");
+                        originator.InnerText = from;
+                        recipient.Attributes.Append(originator);
+
+                        XmlAttribute cost = doc.CreateAttribute("cost");
+                        cost.InnerText = message.Price.ToString();
+                        recipient.Attributes.Append(cost);
+
+                        //XmlAttribute type1 = doc.CreateAttribute("type");
+                        //type1.InnerText = "250";
+                        //recipient.Attributes.Append(type1);
+                    }
+
+                    userid.InnerText = aggregatorUsername;
+                    password.InnerText = aggregatorPassword;
+                    action.InnerText = "smssend";
+                    //
+                    doc.AppendChild(root);
+                    root.AppendChild(userid);
+                    root.AppendChild(password);
+                    root.AppendChild(action);
+                    root.AppendChild(body);
+                    //
+                    string stringedXml = doc.OuterXml;
+                    SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                    foreach (var subUnsubStringXml in subUnsubXmlStringList)
+                    {
+                        string subUnsubResponse = hubClient.XmsRequest(subUnsubStringXml).ToString();
+                    }
+                    string response = hubClient.XmsRequest(stringedXml).ToString();
+                    XmlDocument xml = new XmlDocument();
+                    xml.LoadXml(response);
+                    XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                    foreach (XmlNode error in OK)
+                    {
+                        if (error.InnerText != "" && error.InnerText != "ok")
+                        {
+                            logs.Error("Error in sending message to Hub");
+                        }
+                        else
+                        {
+                            var i = 0;
+                            XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                            foreach (XmlNode xn in xnList)
+                            {
+                                string responseCode = (xn.Attributes["status"].Value).ToString();
+                                if (responseCode == "40")
+                                {
+                                    messages[i].ReferenceId = xn.InnerText;
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                    if (messages[i].MessagePoint > 0)
+                                        SharedLibrary.MessageHandler.SetSubscriberPoint(messages[i].MobileNumber, messages[i].ServiceId, messages[i].MessagePoint);
+                                }
+                                else
+                                {
+                                    messages[i].ReferenceId = "failed:" + responseCode;
+                                    messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                }
+                                messages[i].SentDate = DateTime.Now;
+                                messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                entity.Entry(messages[i]).State = EntityState.Modified;
+                                i++;
+                            }
+                            entity.SaveChanges();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendMessagesToHub: " + e);
+            }
+        }
+
+        public static async Task<Singlecharge> SendSinglechargeMesssageToHub(MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        {
+            var singlecharge = new Singlecharge();
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var aggregatorUsername = serviceAdditionalInfo["username"];
+                var aggregatorPassword = serviceAdditionalInfo["password"];
+                var from = serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+
+                XmlDocument doc = new XmlDocument();
+                XmlElement root = doc.CreateElement("xmsrequest");
+                XmlElement userid = doc.CreateElement("userid");
+                XmlElement password = doc.CreateElement("password");
+                XmlElement action = doc.CreateElement("action");
+                XmlElement body = doc.CreateElement("body");
+                XmlElement serviceid = doc.CreateElement("serviceid");
+                serviceid.InnerText = serviceId;
+                body.AppendChild(serviceid);
+
+                XmlElement recipient = doc.CreateElement("recipient");
+                body.AppendChild(recipient);
+
+                XmlAttribute mobile = doc.CreateAttribute("mobile");
+                recipient.Attributes.Append(mobile);
+                mobile.InnerText = message.MobileNumber;
+
+                XmlAttribute originator = doc.CreateAttribute("originator");
+                originator.InnerText = from;
+                recipient.Attributes.Append(originator);
+
+                XmlAttribute cost = doc.CreateAttribute("cost");
+                cost.InnerText = (message.Price * 10).ToString();
+                recipient.Attributes.Append(cost);
+
+                //XmlAttribute type1 = doc.CreateAttribute("type");
+                //type1.InnerText = "250";
+                //recipient.Attributes.Append(type1);
+
+                userid.InnerText = aggregatorUsername;
+                password.InnerText = aggregatorPassword;
+                action.InnerText = "singlecharge";
+                //
+                doc.AppendChild(root);
+                root.AppendChild(userid);
+                root.AppendChild(password);
+                root.AppendChild(action);
+                root.AppendChild(body);
+                //
+                string stringedXml = doc.OuterXml;
+                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                logs.Info(stringedXml);
+                string response = hubClient.XmsRequest(stringedXml).ToString();
+                logs.Info(response);
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(response);
+                XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                foreach (XmlNode error in OK)
+                {
+                    if (error.InnerText != "" && error.InnerText != "ok")
+                    {
+                        logs.Error("Error in Singlecharge using Hub");
+                    }
+                    else
+                    {
+                        var i = 0;
+                        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                        foreach (XmlNode xn in xnList)
+                        {
+                            string responseCode = (xn.Attributes["status"].Value).ToString();
+                            if (responseCode == "40")
+                            {
+                                singlecharge.IsSucceeded = false;
+                                singlecharge.Description = responseCode;
+                                singlecharge.ReferenceId = xn.InnerText;
+                            }
+                            else
+                            {
+                                singlecharge.IsSucceeded = false;
+                                singlecharge.Description = responseCode;
+                                //singlecharge.ReferenceId = xn.InnerText;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToHub: " + e);
+            }
+            try
+            {
+                if (singlecharge.IsSucceeded == null)
+                    singlecharge.IsSucceeded = false;
+                if (singlecharge.ReferenceId == null)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                if (installmentId != 0)
+                    singlecharge.InstallmentId = installmentId;
+
+                using (var entity = new DonyayeAsatirEntities())
+                {
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToHub on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
         public static async Task SendMesssagesToTelepromo(DonyayeAsatirEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try
@@ -589,7 +866,12 @@ namespace DonyayeAsatirLibrary
                         }
                         else
                         {
-                            logs.Info("SendMesssagesToTelepromo Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                            logs.Info("SendMesssagesToTelepromo MobileNumber:" + message.MobileNumber + " Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            message.ReferenceId = "error status:" + result["status"];
+                            message.SentDate = DateTime.Now;
+                            message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            entity.Entry(message).State = EntityState.Modified;
                         }
                     }
                     entity.SaveChanges();

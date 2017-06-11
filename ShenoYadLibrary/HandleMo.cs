@@ -11,7 +11,6 @@ namespace ShenoYadLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void ReceivedMessage(MessageObject message, Service service)
         {
-            //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
@@ -31,6 +30,17 @@ namespace ShenoYadLibrary
             }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+            if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
+            {
+                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe != true))
+                    return;
+                if (message.ReceivedFrom.Contains("Register"))
+                    isUserSendsSubscriptionKeyword = true;
+                else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                    isUserWantsToUnsubscribe = true;
+            }
+            if (isUserWantsToUnsubscribe == true)
+                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
@@ -45,12 +55,12 @@ namespace ShenoYadLibrary
                 }
                 if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                 {
-                    bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
+                    bool isSubscriberdVerified = ShenoYadLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
                     if (isSubscriberdVerified == false)
                     {
-                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                        message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
-                        MessageHandler.InsertMessageToQueue(message);
+                        //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        //message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
+                        //MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
                 }
@@ -82,6 +92,7 @@ namespace ShenoYadLibrary
                     ServiceHandler.CancelUserInstallments(message.MobileNumber);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                    return;
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
@@ -124,7 +135,7 @@ namespace ShenoYadLibrary
 
         public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)
         {
-            //System.Diagnostics.Debugger.Launch();
+            message.Content = message.Price.ToString();
             var content = message.Content;
             var singlecharge = new Singlecharge();
             if (message.Content.All(char.IsDigit))
@@ -137,6 +148,7 @@ namespace ShenoYadLibrary
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+
             if (subscriber == null)
                 isUserSendsSubscriptionKeyword = true;
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
