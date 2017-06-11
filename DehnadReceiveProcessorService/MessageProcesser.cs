@@ -190,6 +190,8 @@ namespace DehnadReceiveProcessorService
                     MenchBazLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "AvvalPod")
                     AvvalPodLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "AvvalYad")
+                    AvvalYadLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -241,6 +243,8 @@ namespace DehnadReceiveProcessorService
                     MenchBazLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "AvvalPod")
                     AvvalPodLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "AvvalYad")
+                    AvvalYadLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

@@ -183,6 +183,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\AvvalYad\AvvalYadAreaRegistration.cs" />
+    <Compile Include="Areas\AvvalYad\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\AvvalYad\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\AvvalYad\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\AvvalYad\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\AvvalYad\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\AvvalYad\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\AvvalYad\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeIran\BimeIranAreaRegistration.cs" />
     <Compile Include="Areas\BimeIran\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\BimeIran\Controllers\MessagesTemplate.cs" />
@@ -1142,6 +1150,16 @@
     <Content Include="Areas\AvvalPod\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\AvvalPod\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\AvvalPod\Views\web.config" />
+    <Content Include="Areas\AvvalYad\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\AvvalYad\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1493,6 +1511,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\AvvalPod\Models\" />
+    <Folder Include="Areas\AvvalYad\Models\" />
     <Folder Include="Areas\BimeIran\Models\" />
     <Folder Include="Areas\BimeKarbala\Models\" />
     <Folder Include="Areas\Boating\Models\" />
@@ -1548,6 +1567,10 @@
     <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
       <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
       <Name>AvvalPodLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvvalYadLibrary\AvvalYadLibrary.csproj">
+      <Project>{c113b241-33f5-c224-2122-4bc23f4d235f}</Project>
+      <Name>AvvalYadLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
       <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>

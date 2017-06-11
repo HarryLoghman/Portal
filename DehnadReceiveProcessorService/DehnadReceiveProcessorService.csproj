@@ -103,6 +103,10 @@
       <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
       <Name>AvvalPodLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvvalYadLibrary\AvvalYadLibrary.csproj">
+      <Project>{c113b241-33f5-c224-2122-4bc23f4d235f}</Project>
+      <Name>AvvalYadLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
       <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>
       <Name>BimeIranLibrary</Name>

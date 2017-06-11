@@ -306,6 +306,44 @@ namespace Portal.Controllers
                         entity.SaveChanges();
                     }
                 }
+                else if (service.ServiceCode == "AvvalPod")
+                {
+                    using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
+                    {
+                        var singlecharge = new AvvalPodLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+                else if (service.ServiceCode == "AvvalYad")
+                {
+                    using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
+                    {
+                        var singlecharge = new AvvalYadLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = message.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
             }
             else
             {
@@ -370,6 +408,10 @@ namespace Portal.Controllers
                         FitShowLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "Takavar")
                         TakavarLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "AvvalPod")
+                        AvvalPodLibrary.HandleMo.ReceivedMessage(message, service);
+                    else if (service.ServiceCode == "AvvalYad")
+                        AvvalYadLibrary.HandleMo.ReceivedMessage(message, service);
                     //var recievedMessage = new MessageObject();
                     //recievedMessage.Content = serviceId;
                     //recievedMessage.MobileNumber = mobileNumber;
