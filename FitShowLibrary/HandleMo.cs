@@ -11,7 +11,7 @@ namespace FitShowLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void ReceivedMessage(MessageObject message, Service service)
         {
-            var content = message.Content;
+            var content = message.Content;            
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
             {
@@ -33,11 +33,12 @@ namespace FitShowLibrary
 
             if (isUserWantsToUnsubscribe == true ||  (message.ReceivedFrom.Contains("Portal") && isUserWantsToUnsubscribe == true) || message.IsReceivedFromIntegratedPanel == true)
                 SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-
+            
             if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
             {
                 if (!message.ReceivedFrom.Contains("IMI") && !message.ReceivedFrom.Contains("Verification") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                     return;
+
                 if (message.ReceivedFrom.Contains("Register"))
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))

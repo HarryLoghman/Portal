@@ -31,7 +31,7 @@ namespace ShenoYadLibrary
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
-            if (isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true)
+            if (isUserWantsToUnsubscribe == true || (message.ReceivedFrom.Contains("Portal") && isUserWantsToUnsubscribe == true) || message.IsReceivedFromIntegratedPanel == true)
                 SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
 
             if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))

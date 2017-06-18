@@ -3,12 +3,26 @@ using SharedLibrary.Models;
 using System.Web;
 using System.Net.Http;
 using System.Net;
+using System;
+using System.Collections.Generic;
 
 namespace Portal.Controllers
 {
     public class ReceiveController : ApiController
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public Dictionary<string, string> pardisImiMciServiceIds = new Dictionary<string, string>()
+            {
+                { "5530", "Danestaneh" },
+                { "6409", "Mobiligia" },
+                { "6411", "MashinBazha" },
+                { "5328", "MyLeague" },
+                { "6523", "BimeKarbala" },
+                { "6516", "Tirandazi" },
+                { "6560", "Boating" },
+                { "6489", "SepidRood" },
+            };
 
         // /Receive/Message?mobileNumber=09125612694&shortCode=2050&content=hi&receiveTime=22&messageId=45
         [HttpGet]
@@ -80,7 +94,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage TelepromoMessage(string da, string oa, string txt)
         {
-            if(da == "989168623674")
+            if (da == "989168623674")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
                 blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");
@@ -169,23 +183,60 @@ namespace Portal.Controllers
         public HttpResponseMessage PardisIntegratedPanel([FromUri]IntegratedPanel integratedPanelObj)
         {
             var result = "1";
-            if (integratedPanelObj.EventID == "1.2" && integratedPanelObj.NewStatus == 5)
+            ServiceInfo serviceInfo = null;
+            Service service = null;
+            if (pardisImiMciServiceIds.ContainsKey(integratedPanelObj.ServiceID))
             {
-                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(integratedPanelObj.ServiceID);
-                integratedPanelObj.Address = SharedLibrary.MessageHandler.ValidateNumber(integratedPanelObj.Address);
-
-                if (integratedPanelObj.Address == "Invalid Mobile Number")
-                    result = "-1";
+                service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(pardisImiMciServiceIds[integratedPanelObj.ServiceID]);
+                serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+            }
+            else
+            {
+                serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(integratedPanelObj.ServiceID);
+                service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+            }
+            if (integratedPanelObj.EventID == "1.2" /* && integratedPanelObj.NewStatus == 5*/)
+            {
+                if (serviceInfo == null)
+                    result = "-999";
                 else
                 {
-                    var recievedMessage = new MessageObject();
-                    recievedMessage.Content = integratedPanelObj.ServiceID;
-                    recievedMessage.MobileNumber = integratedPanelObj.Address;
-                    recievedMessage.ShortCode = serviceInfo.ShortCode;
-                    recievedMessage.IsReceivedFromIntegratedPanel = true;
-                    recievedMessage.MobileNumber = integratedPanelObj.Address;
-                    SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
-                    result = "1";
+                    integratedPanelObj.Address = SharedLibrary.MessageHandler.ValidateNumber(integratedPanelObj.Address);
+                    if (integratedPanelObj.Address == "Invalid Mobile Number")
+                        result = "-1";
+                    else
+                    {
+                        var recievedMessage = new MessageObject();
+                        recievedMessage.Content = integratedPanelObj.ServiceID;
+                        recievedMessage.MobileNumber = integratedPanelObj.Address;
+                        recievedMessage.ShortCode = serviceInfo.ShortCode;
+                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifyUnsubscription" : null;
+                        recievedMessage.IsReceivedFromIntegratedPanel = true;
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                        result = "1";
+                    }
+                }
+            }
+            else if (integratedPanelObj.EventID == "1.1")
+            {
+                if (serviceInfo == null)
+                    result = "-999";
+                else
+                {
+                    integratedPanelObj.Address = SharedLibrary.MessageHandler.ValidateNumber(integratedPanelObj.Address);
+
+                    if (integratedPanelObj.Address == "Invalid Mobile Number")
+                        result = "-1";
+                    else
+                    {
+                        var recievedMessage = new MessageObject();
+                        recievedMessage.Content = SharedLibrary.ServiceHandler.getFirstOnKeywordOfService(service.OnKeywords);
+                        recievedMessage.ShortCode = serviceInfo.ShortCode;
+                        recievedMessage.MobileNumber = integratedPanelObj.Address;
+                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifySubscription" : null;
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                        result = "1";
+                    }
                 }
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);

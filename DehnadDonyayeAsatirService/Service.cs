@@ -190,12 +190,15 @@ namespace DehnadDonyayeAsatirService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            //var singlechargeInstallment = new SinglechargeInstallmentClass();
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    singlechargeInstallment.ProcessInstallment();
-            //    Thread.Sleep(7200000);
-            //}
+            var singlechargeInstallment = new SinglechargeInstallmentClass();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                if (DateTime.Now.Hour > 2 && DateTime.Now.Hour < 3)
+                {
+                    singlechargeInstallment.ProcessInstallment();
+                    Thread.Sleep(2 * 60 * 60 * 1000);
+                }
+            }
         }
 
         private void SinglechargeInstallmentBalancerWorkerThread()

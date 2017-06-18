@@ -30,17 +30,19 @@ namespace TamlyLibrary
             }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+
+            if (isUserWantsToUnsubscribe == true || (message.ReceivedFrom.Contains("Portal") && isUserWantsToUnsubscribe == true) || message.IsReceivedFromIntegratedPanel == true)
+                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+
             if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
             {
-                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe != true))
+                if (!message.ReceivedFrom.Contains("IMI") && !message.ReceivedFrom.Contains("Verification") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                     return;
                 if (message.ReceivedFrom.Contains("Register"))
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
             }
-            if (isUserWantsToUnsubscribe == true)
-                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)

@@ -10,7 +10,7 @@ namespace SepidRoodLibrary
         public static void ReceivedMessage(MessageObject message, Service service)
         {
             //System.Diagnostics.Debugger.Launch();
-            if (message.Content == "2" || message.Content == "5" || message.Content == "22" || message.Content == "55")
+            if (message.Content == "9")
                 return;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);

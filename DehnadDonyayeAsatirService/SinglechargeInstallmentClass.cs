@@ -16,10 +16,11 @@ namespace DehnadDonyayeAsatirService
         private static int maxChargeLimit = 400;
         public void ProcessInstallment()
         {
-            if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 7)
-                return;
-            else
-                InstallmentJob();
+            FakeInstallmentJob();
+            //if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 7)
+            //    return;
+            //else
+            //    InstallmentJob();
 
             //if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
             //    InstallmentDailyBalance();
@@ -29,6 +30,31 @@ namespace DehnadDonyayeAsatirService
             //{
             //    ResetUserDailyChargeBalanceValue();
             //}
+        }
+
+        public static void FakeInstallmentJob()
+        {
+            using (var entity = new DonyayeAsatirEntities())
+            {
+                var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
+                var batchSaveCounter = 0;
+                foreach (var installment in installmentList)
+                {
+                    if (batchSaveCounter >= 1000)
+                    {
+                        entity.SaveChanges();
+                        batchSaveCounter = 0;
+                    }
+                    installment.PricePayed += maxChargeLimit;
+                    installment.IsExceededDailyChargeLimit = true;
+                    installment.PriceTodayCharged += maxChargeLimit;
+                    if (installment.PricePayed >= installment.TotalPrice)
+                        installment.IsFullyPaid = true;
+                    entity.Entry(installment).State = EntityState.Modified;
+                    batchSaveCounter++;
+                }
+                entity.SaveChanges();
+            }
         }
 
         private void DeactivateChargingUsersAfter30Days()
@@ -62,7 +88,7 @@ namespace DehnadDonyayeAsatirService
             {
                 logs.Error("Exception in SinglechargeInstallment InstallmentDailyBalance: ", e);
             }
-            
+
         }
 
         public void InstallmentDailyBalance()
@@ -147,13 +173,13 @@ namespace DehnadDonyayeAsatirService
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = DonyayeAsatirLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
+                        var response = DonyayeAsatirLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                         {
                             if (message.Price == 400)
                             {
                                 SetMessagePrice(message, chargeCodes, 300);
-                                response = DonyayeAsatirLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
+                                response = DonyayeAsatirLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);
