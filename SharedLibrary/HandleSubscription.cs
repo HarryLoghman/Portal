@@ -259,12 +259,17 @@ namespace SharedLibrary
             var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
             var msisdn = "98" + mobileNumber.TrimStart('0');
             var urlWithParameters = url + String.Format("sc={0}&msisdn={1}&serviceId={2}&username={3}&password={4}", sc, msisdn, serviceId, username, password);
+            logs.Info("telepromo cancel api request: " + urlWithParameters);
             try
             {
                 using (var client = new HttpClient())
                 {
                     using (var response = client.GetAsync(new Uri(url)).Result)
                     {
+                        if (response.IsSuccessStatusCode)
+                            logs.Info("telepromo cancel api response: " + response.Content.ReadAsStringAsync().Result);
+                        else
+                            logs.Info("telepromo cancel api response: " + response.StatusCode);
                     }
                 }
             }
@@ -309,8 +314,10 @@ namespace SharedLibrary
                 root.AppendChild(action);
                 root.AppendChild(body);
                 string stringedXml = doc.OuterXml;
+                logs.Info("hub cancel api request: " + stringedXml);
                 SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();                
                 string response = hubClient.XmsRequest(stringedXml).ToString();
+                logs.Info("hub cancel api response: " + response);
             }
             catch (Exception e)
             {
