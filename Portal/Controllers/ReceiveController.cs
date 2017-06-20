@@ -185,6 +185,7 @@ namespace Portal.Controllers
             var result = "1";
             ServiceInfo serviceInfo = null;
             Service service = null;
+            bool IsNotified = true;
             if (pardisImiMciServiceIds.ContainsKey(integratedPanelObj.ServiceID))
             {
                 service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(pardisImiMciServiceIds[integratedPanelObj.ServiceID]);
@@ -192,6 +193,7 @@ namespace Portal.Controllers
             }
             else
             {
+                IsNotified = false;
                 serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(integratedPanelObj.ServiceID);
                 service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
             }
@@ -207,11 +209,22 @@ namespace Portal.Controllers
                     else
                     {
                         var recievedMessage = new MessageObject();
-                        recievedMessage.Content = integratedPanelObj.ServiceID;
-                        recievedMessage.MobileNumber = integratedPanelObj.Address;
-                        recievedMessage.ShortCode = serviceInfo.ShortCode;
-                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifyUnsubscription" : null;
-                        recievedMessage.IsReceivedFromIntegratedPanel = true;
+                        if (IsNotified == true)
+                        {
+                            recievedMessage.Content = "off notify";
+                            recievedMessage.MobileNumber = integratedPanelObj.Address;
+                            recievedMessage.ShortCode = serviceInfo.ShortCode;
+                            recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifyUnsubscription" : null;
+                            recievedMessage.IsReceivedFromIntegratedPanel = false;
+                        }
+                        else
+                        {
+                            recievedMessage.Content = integratedPanelObj.ServiceID;
+                            recievedMessage.MobileNumber = integratedPanelObj.Address;
+                            recievedMessage.ShortCode = serviceInfo.ShortCode;
+                            recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                            recievedMessage.IsReceivedFromIntegratedPanel = true;
+                        }
                         SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
                         result = "1";
                     }

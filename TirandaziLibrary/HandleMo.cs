@@ -10,11 +10,15 @@ namespace TirandaziLibrary
         public static void ReceivedMessage(MessageObject message, Service service)
         {
             //System.Diagnostics.Debugger.Launch();
-            if (message.Content == "9")
-                return;
-            var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+
+            if (message.Content == "9" || isUserSendsSubscriptionKeyword == true)
+                return;
+            if (!message.ReceivedFrom.Contains("Notify") && message.IsReceivedFromIntegratedPanel != true && isUserWantsToUnsubscribe == true)
+                return;
+
+            var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
