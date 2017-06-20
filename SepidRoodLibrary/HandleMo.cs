@@ -13,7 +13,7 @@ namespace SepidRoodLibrary
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
-            if (message.Content == "9" || isUserSendsSubscriptionKeyword == true)
+            if (message.Content == "9" || (isUserSendsSubscriptionKeyword == true && !message.ReceivedFrom.Contains("Notify")))
                 return;
             if (!message.ReceivedFrom.Contains("Notify") && message.IsReceivedFromIntegratedPanel != true && isUserWantsToUnsubscribe == true)
                 return;
