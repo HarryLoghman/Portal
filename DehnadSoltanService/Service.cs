@@ -205,10 +205,10 @@ namespace DehnadSoltanService
             int installmentCycleNumber = 1;
             while (!shutdownEvent.WaitOne(0))
             {
-                if(DateTime.Now.Hour > 2 && DateTime.Now.Hour < 3)
+                if(DateTime.Now.Hour > 3)
                 {
                     singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                    Thread.Sleep(2 * 60 * 60 * 1000);
+                    Thread.Sleep(60 * 60 * 1000);
                 }
                     
                 //    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15)

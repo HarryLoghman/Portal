@@ -31,10 +31,12 @@ namespace FitShowLibrary
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
-            if (isUserWantsToUnsubscribe == true ||  (message.ReceivedFrom.Contains("Portal") && isUserWantsToUnsubscribe == true) || message.IsReceivedFromIntegratedPanel == true)
+            if (isUserWantsToUnsubscribe == true ||  message.IsReceivedFromIntegratedPanel == true)
                 SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-            
-            if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
+
+            if (message.ReceivedFrom.Contains("IMI"))
+                return;
+            if (message.Content != "9" && isUserWantsToUnsubscribe != true && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
             {
                 if (!message.ReceivedFrom.Contains("IMI") && !message.ReceivedFrom.Contains("Verification") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                     return;
