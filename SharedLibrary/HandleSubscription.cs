@@ -258,7 +258,7 @@ namespace SharedLibrary
             var password = serviceAdditionalInfo["password"];
             var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
             var msisdn = "98" + mobileNumber.TrimStart('0');
-            var urlWithParameters = url + String.Format("sc={0}&msisdn={1}&serviceId={2}&username={3}&password={4}", sc, msisdn, serviceId, username, password);
+            var urlWithParameters = url + String.Format("sc={0}&msisdn={1}&serviceId={2}&username={3}&password={4}", sc, msisdn, aggregatorServiceId, username, password);
             logs.Info("telepromo cancel api request: " + urlWithParameters);
             try
             {

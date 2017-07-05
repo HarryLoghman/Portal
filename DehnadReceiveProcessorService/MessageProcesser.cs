@@ -80,19 +80,20 @@ namespace DehnadReceiveProcessorService
                     var isUserSendedGeneralUnsubscribeKeyword = SharedLibrary.ServiceHandler.CheckIfUserSendedUnsubscribeContentToShortCode(message.Content);
                     if (isUserSendedGeneralUnsubscribeKeyword == true && message.IsReceivedFromIntegratedPanel == false && serviceShortCodes.Count() > 1)
                     {
-                        var servicesThatUserSubscribedOnShortCode = SharedLibrary.ServiceHandler.GetServicesThatUserSubscribedOnShortCode(message.MobileNumber, message.ShortCode);
-                        message.Content = SharedLibrary.MessageHandler.PrepareGeneralOffMessage(message, servicesThatUserSubscribedOnShortCode);
-                        if(serviceShortCodes.FirstOrDefault().AggregatorId == 2)
-                            message = MyLeagueLibrary.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                        else if(serviceShortCodes.FirstOrDefault().AggregatorId == 5)
-                            message = SoltanLibrary.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                        else if (serviceShortCodes.FirstOrDefault().AggregatorId == 6)
-                            message = ShahreKalamehLibrary.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                        else
-                            message = Tabriz2018Library.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                        serviceId = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == message.ShortCode).ServiceId;
-                        var serviceCode = entity.Services.FirstOrDefault(o => o.Id == serviceId).ServiceCode;
-                        SendMessageUsingServiceCode(serviceCode, message);
+                        UnsubscribeUserOnAllServicesForShortCode(message);
+                        //var servicesThatUserSubscribedOnShortCode = SharedLibrary.ServiceHandler.GetServicesThatUserSubscribedOnShortCode(message.MobileNumber, message.ShortCode);
+                        //message.Content = SharedLibrary.MessageHandler.PrepareGeneralOffMessage(message, servicesThatUserSubscribedOnShortCode);
+                        //if(serviceShortCodes.FirstOrDefault().AggregatorId == 2)
+                        //    message = MyLeagueLibrary.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        //else if(serviceShortCodes.FirstOrDefault().AggregatorId == 5)
+                        //    message = SoltanLibrary.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        //else if (serviceShortCodes.FirstOrDefault().AggregatorId == 6)
+                        //    message = ShahreKalamehLibrary.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        //else
+                        //    message = Tabriz2018Library.MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        //serviceId = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == message.ShortCode).ServiceId;
+                        //var serviceCode = entity.Services.FirstOrDefault(o => o.Id == serviceId).ServiceCode;
+                        //SendMessageUsingServiceCode(serviceCode, message);
                         return;
                     }
                     else if (message.IsReceivedFromIntegratedPanel == true)
@@ -133,10 +134,19 @@ namespace DehnadReceiveProcessorService
                 using (var entity = new PortalEntities())
                 {
                     var serviceIds = entity.ServiceInfoes.Where(o => o.ShortCode == message.ShortCode).Select(o => o.ServiceId);
-                    foreach (var serviceId in serviceIds)
+                    var userSubscribedServices = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && serviceIds.Contains(o.ServiceId) && o.DeactivationDate == null).Select(o => o.ServiceId).ToList();
+                    if (userSubscribedServices == null)
                     {
-                        var service = entity.Services.FirstOrDefault(o => o.Id == serviceId);
+                        var service = entity.Services.FirstOrDefault(o => o.Id == serviceIds.FirstOrDefault());
                         ChooseService(message, service);
+                    }
+                    else
+                    {
+                        foreach (var serviceId in userSubscribedServices)
+                        {
+                            var service = entity.Services.FirstOrDefault(o => o.Id == serviceId);
+                            ChooseService(message, service);
+                        }
                     }
                 }
             }
