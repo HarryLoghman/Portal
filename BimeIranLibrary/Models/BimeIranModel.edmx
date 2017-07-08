@@ -65,6 +65,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -283,6 +285,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -360,6 +364,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -414,6 +420,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -739,6 +747,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -929,6 +939,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -969,6 +981,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -1023,6 +1037,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -1368,6 +1384,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="BimeIranModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1562,6 +1580,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="BimeIranModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1604,6 +1624,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="MessagesArchives">
             <EntityTypeMapping TypeName="BimeIranModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1661,6 +1683,8 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="BimeIranModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />

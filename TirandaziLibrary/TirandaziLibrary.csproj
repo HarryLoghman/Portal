@@ -107,6 +107,9 @@
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>TirandaziModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeArchive.cs">
+      <DependentUpon>TirandaziModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>TirandaziModel.tt</DependentUpon>
     </Compile>

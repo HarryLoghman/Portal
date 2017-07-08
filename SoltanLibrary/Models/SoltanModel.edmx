@@ -65,6 +65,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -255,6 +257,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -294,6 +298,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -348,6 +354,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -407,6 +415,26 @@
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TotalPrice" Type="int" Nullable="false" />
+          <Property Name="PricePayed" Type="int" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="bit" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="bit" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="int" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="bit" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="bit" Nullable="false" />
+          <Property Name="CancelationDate" Type="datetime" />
+          <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsRenewalMessageSent" Type="bit" />
+          <Property Name="IsRenewd" Type="bit" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallmentArchive">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -527,7 +555,9 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
         </Function>
         <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <Function Name="SinglechargeLiveStatuses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SinglechargeLiveStatuses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="SoltanModelStoreContainer">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
@@ -548,6 +578,7 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeInstallmentArchive" EntityType="Self.SinglechargeInstallmentArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
@@ -765,6 +796,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -804,6 +837,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -858,6 +893,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -943,8 +980,11 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySet Name="SinglechargeWaitings" EntityType="SoltanModel.SinglechargeWaiting" />
           <FunctionImport Name="RetryUndeliveredMessages" />
           <EntitySet Name="SinglechargeArchives" EntityType="SoltanModel.SinglechargeArchive" />
-          <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(SoltanModel.SinglechargeLiveStatuses_Result1)" />
+          <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(SoltanModel.SinglechargeLiveStatuses_Result1)" >
+            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          </FunctionImport>
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="SoltanModel.ServicesRealtimeStatistic" />
+          <EntitySet Name="SinglechargeInstallmentArchives" EntityType="SoltanModel.SinglechargeInstallmentArchive" />
         </EntityContainer>
         <EntityType Name="AutochargeContent">
           <Key>
@@ -1025,6 +1065,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="AutochargeHeaderFooter">
           <Key>
@@ -1139,6 +1181,26 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallmentArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TotalPrice" Type="Int32" Nullable="false" />
+          <Property Name="PricePayed" Type="Int32" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="Boolean" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="Boolean" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="Int32" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="Boolean" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="Boolean" Nullable="false" />
+          <Property Name="CancelationDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsRenewalMessageSent" Type="Boolean" />
+          <Property Name="IsRenewd" Type="Boolean" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1304,6 +1366,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="SoltanModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
                 <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
@@ -1345,6 +1409,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="MessagesArchives">
             <EntityTypeMapping TypeName="SoltanModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
                 <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
@@ -1402,6 +1468,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="SoltanModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
                 <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
@@ -1530,6 +1598,8 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="SoltanModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
                 <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
@@ -1677,6 +1747,27 @@ warning 6002: The table/view 'Soltan.dbo.vw_SentMessages' does not have a primar
               <MappingFragment StoreEntitySet="ServicesRealtimeStatistics">
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeInstallmentArchives">
+            <EntityTypeMapping TypeName="SoltanModel.SinglechargeInstallmentArchive">
+              <MappingFragment StoreEntitySet="SinglechargeInstallmentArchive">
+                <ScalarProperty Name="IsRenewd" ColumnName="IsRenewd" />
+                <ScalarProperty Name="IsRenewalMessageSent" ColumnName="IsRenewalMessageSent" />
+                <ScalarProperty Name="PersianCancelationDate" ColumnName="PersianCancelationDate" />
+                <ScalarProperty Name="CancelationDate" ColumnName="CancelationDate" />
+                <ScalarProperty Name="IsUserCanceledTheInstallment" ColumnName="IsUserCanceledTheInstallment" />
+                <ScalarProperty Name="IsUserDailyChargeBalanced" ColumnName="IsUserDailyChargeBalanced" />
+                <ScalarProperty Name="PriceTodayCharged" ColumnName="PriceTodayCharged" />
+                <ScalarProperty Name="IsExceededDailyChargeLimit" ColumnName="IsExceededDailyChargeLimit" />
+                <ScalarProperty Name="IsFullyPaid" ColumnName="IsFullyPaid" />
+                <ScalarProperty Name="PricePayed" ColumnName="PricePayed" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

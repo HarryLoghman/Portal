@@ -72,13 +72,13 @@ namespace DehnadShahreKalamehService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Telepromo")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Hub")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -96,13 +96,13 @@ namespace DehnadShahreKalamehService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Telepromo")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Hub")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -120,13 +120,13 @@ namespace DehnadShahreKalamehService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Telepromo")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Hub")
-                        TaskList.Add(ShahreKalamehLibrary.MessageHandler.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());

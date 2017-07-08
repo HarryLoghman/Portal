@@ -29,6 +29,7 @@
         <EntityTypeShape EntityType="MyLeagueModel.Singlecharge" Width="1.5" PointX="13.375" PointY="6.75" />
         <EntityTypeShape EntityType="MyLeagueModel.SinglechargeInstallment" Width="1.5" PointX="13.375" PointY="10.75" />
         <EntityTypeShape EntityType="MyLeagueModel.SinglechargeWaiting" Width="1.5" PointX="15.375" PointY="0.75" />
+        <EntityTypeShape EntityType="MyLeagueModel.SinglechargeArchive" Width="1.5" PointX="0.75" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

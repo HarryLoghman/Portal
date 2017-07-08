@@ -50,6 +50,7 @@ namespace ShahreKalamehLibrary.Models
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<ServicesRealtimeStatistic> ServicesRealtimeStatistics { get; set; }
+        public virtual DbSet<SinglechargeInstallmentArchive> SinglechargeInstallmentArchives { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {
@@ -107,9 +108,13 @@ namespace ShahreKalamehLibrary.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("RetryUndeliveredMessages");
         }
     
-        public virtual ObjectResult<SinglechargeLiveStatuses_Result> SinglechargeLiveStatuses()
+        public virtual ObjectResult<SinglechargeLiveStatuses_Result> SinglechargeLiveStatuses(string serviceCode)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SinglechargeLiveStatuses_Result>("SinglechargeLiveStatuses");
+            var serviceCodeParameter = serviceCode != null ?
+                new ObjectParameter("ServiceCode", serviceCode) :
+                new ObjectParameter("ServiceCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SinglechargeLiveStatuses_Result>("SinglechargeLiveStatuses", serviceCodeParameter);
         }
     }
 }

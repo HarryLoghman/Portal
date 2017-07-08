@@ -122,6 +122,9 @@
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>SepidRoodModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeArchive.cs">
+      <DependentUpon>SepidRoodModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>SepidRoodModel.tt</DependentUpon>
     </Compile>

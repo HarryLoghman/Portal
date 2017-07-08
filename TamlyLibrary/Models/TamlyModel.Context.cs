@@ -51,6 +51,7 @@ namespace TamlyLibrary.Models
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<SinglechargeLiveStatu> SinglechargeLiveStatus { get; set; }
         public virtual DbSet<ServicesRealtimeStatistic> ServicesRealtimeStatistics { get; set; }
+        public virtual DbSet<SinglechargeInstallmentArchive> SinglechargeInstallmentArchives { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {
@@ -108,9 +109,13 @@ namespace TamlyLibrary.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("RetryUndeliveredMessages");
         }
     
-        public virtual ObjectResult<SinglechargeLiveStatuses_Result1> SinglechargeLiveStatuses()
+        public virtual ObjectResult<SinglechargeLiveStatuses_Result1> SinglechargeLiveStatuses(string serviceCode)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SinglechargeLiveStatuses_Result1>("SinglechargeLiveStatuses");
+            var serviceCodeParameter = serviceCode != null ?
+                new ObjectParameter("ServiceCode", serviceCode) :
+                new ObjectParameter("ServiceCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SinglechargeLiveStatuses_Result1>("SinglechargeLiveStatuses", serviceCodeParameter);
         }
     }
 }

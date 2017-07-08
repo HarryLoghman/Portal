@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="FitShowModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="FitShowModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -65,6 +65,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -255,6 +257,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -294,6 +298,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -348,6 +354,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -614,8 +622,7 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="FitShowModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -679,6 +686,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -869,6 +878,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -908,6 +919,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -962,6 +975,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -1196,7 +1211,7 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
           <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(String)">
-            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
       </Schema>
@@ -1243,6 +1258,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="FitShowModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1437,6 +1454,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="FitShowModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1478,6 +1497,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="MessagesArchives">
             <EntityTypeMapping TypeName="FitShowModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1535,6 +1556,8 @@ warning 6002: The table/view 'FitShow.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="FitShowModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />

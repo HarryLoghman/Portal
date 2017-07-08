@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SharedLibrary.Models;
 using SoltanLibrary.Models;
 using System.Linq;
+using System.Collections;
 
 namespace DehnadSoltanService
 {
@@ -35,9 +36,9 @@ namespace DehnadSoltanService
                 using (var entity = new SoltanEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    autochargeMessages = SoltanLibrary.MessageHandler.GetUnprocessedAutochargeMessages(entity, readSize);
-                    eventbaseMessages = SoltanLibrary.MessageHandler.GetUnprocessedEventbaseMessages(entity, readSize);
-                    onDemandMessages = SoltanLibrary.MessageHandler.GetUnprocessedOnDemandMessages(entity, readSize);
+                    autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
+                    eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
+                    onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
 
                     if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
                     {
@@ -48,11 +49,12 @@ namespace DehnadSoltanService
                             entity.RetryUndeliveredMessages();
                         }
                     }
-                }
 
-                SendAutochargeMessages(autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                SendEventbaseMessages(eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                SendOnDemandMessages(onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    SharedLibrary.MessageHandler.SendSelectedMessages(entity, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                }
+                //SendAutochargeMessages(autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                //SendEventbaseMessages(eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                //SendOnDemandMessages(onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
 
             }
             catch (Exception e)
@@ -72,11 +74,11 @@ namespace DehnadSoltanService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Telepromo")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -94,11 +96,11 @@ namespace DehnadSoltanService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Telepromo")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());
@@ -116,11 +118,11 @@ namespace DehnadSoltanService
                 {
                     var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
                     if (aggregatorName == "Hamrahvas")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "PardisImi")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                     else if (aggregatorName == "Telepromo")
-                        TaskList.Add(SoltanLibrary.MessageHandler.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
                 }
             }
             Task.WaitAll(TaskList.ToArray());

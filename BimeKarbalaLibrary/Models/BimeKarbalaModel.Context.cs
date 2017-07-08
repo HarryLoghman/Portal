@@ -49,6 +49,7 @@ namespace BimeKarbalaLibrary.Models
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
         public virtual DbSet<InsuranceInfo> InsuranceInfoes { get; set; }
+        public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

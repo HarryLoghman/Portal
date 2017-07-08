@@ -131,6 +131,9 @@
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeInstallmentArchive.cs">
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeLiveStatuses_Result.cs">
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>

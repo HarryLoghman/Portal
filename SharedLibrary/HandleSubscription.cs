@@ -264,12 +264,12 @@ namespace SharedLibrary
             {
                 using (var client = new HttpClient())
                 {
-                    using (var response = client.GetAsync(new Uri(url)).Result)
+                    using (var response = client.GetAsync(new Uri(urlWithParameters)).Result)
                     {
                         if (response.IsSuccessStatusCode)
                             logs.Info("telepromo cancel api response: " + response.Content.ReadAsStringAsync().Result);
                         else
-                            logs.Info("telepromo cancel api response: " + response.StatusCode);
+                            logs.Info("telepromo cancel api response: Error " + response.StatusCode);
                     }
                 }
             }

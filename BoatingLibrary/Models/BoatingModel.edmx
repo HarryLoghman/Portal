@@ -65,6 +65,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -207,6 +209,11 @@
           <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
           <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
           <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" Type="int" />
+          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="int" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="int" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="int" />
+          <Property Name="SumOfSinglechargeInAppPurchases" Type="int" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -251,6 +258,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="ImiChargeCodes">
           <Key>
@@ -290,6 +299,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -344,6 +355,8 @@
           <Property Name="Price" Type="int" />
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -363,6 +376,22 @@
           <Property Name="Reason" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsSucceeded" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
+          <Property Name="InstallmentId" Type="bigint" />
+          <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeArchive">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -537,6 +566,7 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
@@ -637,6 +667,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="AutochargeTimeTable">
           <Key>
@@ -779,6 +811,11 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
           <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
           <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" Type="Int32" />
+          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="Int32" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="Int32" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="Int32" />
+          <Property Name="SumOfSinglechargeInAppPurchases" Type="Int32" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -823,6 +860,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="ImiChargeCode">
           <Key>
@@ -862,6 +901,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="MessagesMonitoring">
           <Key>
@@ -916,6 +957,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <Property Name="Price" Type="Int32" />
           <Property Name="DeliveryStatus" Type="Boolean" />
           <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
         </EntityType>
         <EntityType Name="PointsTable">
           <Key>
@@ -1115,7 +1158,24 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
             <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
+          <EntitySet Name="SinglechargeArchives" EntityType="BoatingModel.SinglechargeArchive" />
         </EntityContainer>
+        <EntityType Name="SinglechargeArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1160,6 +1220,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="AutochargeMessagesBuffers">
             <EntityTypeMapping TypeName="BoatingModel.AutochargeMessagesBuffer">
               <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1199,6 +1261,11 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="DailyStatistics">
             <EntityTypeMapping TypeName="BoatingModel.DailyStatistic">
               <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="SumOfSinglechargeInAppPurchases" ColumnName="SumOfSinglechargeInAppPurchases" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesSucceeded" ColumnName="NumberOfSinglechargeInAppPurchasesSucceeded" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesFailed" ColumnName="NumberOfSinglechargeInAppPurchasesFailed" />
+                <ScalarProperty Name="TotalNumberOfSinglechargeInAppPurchases" ColumnName="TotalNumberOfSinglechargeInAppPurchases" />
+                <ScalarProperty Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" ColumnName="NumberOfSinglechargeDistinctNumbersTriedToCharge" />
                 <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
                 <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
                 <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
@@ -1350,6 +1417,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="EventbaseMessagesBuffers">
             <EntityTypeMapping TypeName="BoatingModel.EventbaseMessagesBuffer">
               <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1391,6 +1460,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="MessagesArchives">
             <EntityTypeMapping TypeName="BoatingModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1448,6 +1519,8 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="BoatingModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
@@ -1641,6 +1714,23 @@ warning 6002: The table/view 'Boating.dbo.vw_SentMessages' does not have a prima
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="BoatingModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="BoatingModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="BoatingModel.Store.RetryUndeliveredMessages" />
+          <EntitySetMapping Name="SinglechargeArchives">
+            <EntityTypeMapping TypeName="BoatingModel.SinglechargeArchive">
+              <MappingFragment StoreEntitySet="SinglechargeArchive">
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

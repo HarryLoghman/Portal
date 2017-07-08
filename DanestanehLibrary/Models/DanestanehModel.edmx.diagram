@@ -27,6 +27,7 @@
         <EntityTypeShape EntityType="DanestanehModel.Singlecharge" Width="1.5" PointX="3.375" PointY="13.75" />
         <EntityTypeShape EntityType="DanestanehModel.SinglechargeInstallment" Width="1.5" PointX="5.375" PointY="13.75" />
         <EntityTypeShape EntityType="DanestanehModel.SinglechargeWaiting" Width="1.5" PointX="13.375" PointY="7.75" />
+        <EntityTypeShape EntityType="DanestanehModel.SinglechargeArchive" Width="1.5" PointX="13.375" PointY="10.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -51,6 +51,7 @@ namespace SepidRoodLibrary.Models
         public virtual DbSet<SusbcribersSubscriptionKeyword> SusbcribersSubscriptionKeywords { get; set; }
         public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
         public virtual DbSet<DailyStatistic> DailyStatistics { get; set; }
+        public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

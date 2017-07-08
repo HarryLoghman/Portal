@@ -29,6 +29,7 @@
         <EntityTypeShape EntityType="TirandaziModel.SusbcribersSubscriptionKeyword" Width="1.5" PointX="12.75" PointY="12.75" IsExpanded="true" />
         <EntityTypeShape EntityType="TirandaziModel.TimedTempMessagesBuffer" Width="1.5" PointX="2.75" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="TirandaziModel.vw_SentMessages" Width="1.5" PointX="4.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TirandaziModel.SinglechargeArchive" Width="1.5" PointX="15.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

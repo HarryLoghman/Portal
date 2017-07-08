@@ -143,5 +143,10 @@ namespace MyLeagueLibrary.Models
         public Nullable<int> SumOfSinglechargeSuccessfulPrepaidIncompleteCharge { get; set; }
         public Nullable<int> SumOfSinglechargeSuccessfulPostpaidIncompleteCharge { get; set; }
         public Nullable<int> SumOfSinglechargeSuccessfulIncompleteCharge { get; set; }
+        public Nullable<int> NumberOfSinglechargeDistinctNumbersTriedToCharge { get; set; }
+        public Nullable<int> TotalNumberOfSinglechargeInAppPurchases { get; set; }
+        public Nullable<int> NumberOfSinglechargeInAppPurchasesFailed { get; set; }
+        public Nullable<int> NumberOfSinglechargeInAppPurchasesSucceeded { get; set; }
+        public Nullable<int> SumOfSinglechargeInAppPurchases { get; set; }
     }
 }

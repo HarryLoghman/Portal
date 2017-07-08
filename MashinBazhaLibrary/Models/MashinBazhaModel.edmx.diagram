@@ -28,6 +28,7 @@
         <EntityTypeShape EntityType="MashinBazhaModel.Singlecharge" Width="1.5" PointX="14.375" PointY="13.75" />
         <EntityTypeShape EntityType="MashinBazhaModel.SinglechargeInstallment" Width="1.5" PointX="15.375" PointY="0.75" />
         <EntityTypeShape EntityType="MashinBazhaModel.SinglechargeWaiting" Width="1.5" PointX="15.375" PointY="5.75" />
+        <EntityTypeShape EntityType="MashinBazhaModel.SinglechargeArchive" Width="1.5" PointX="15.375" PointY="8.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

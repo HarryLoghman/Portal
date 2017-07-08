@@ -28,6 +28,7 @@
         <EntityTypeShape EntityType="MobiligaModel.Singlecharge" Width="1.5" PointX="9.375" PointY="12.75" />
         <EntityTypeShape EntityType="MobiligaModel.SinglechargeInstallment" Width="1.5" PointX="3.375" PointY="13.75" />
         <EntityTypeShape EntityType="MobiligaModel.SinglechargeWaiting" Width="1.5" PointX="11.375" PointY="13.75" />
+        <EntityTypeShape EntityType="MobiligaModel.SinglechargeArchive" Width="1.5" PointX="13.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

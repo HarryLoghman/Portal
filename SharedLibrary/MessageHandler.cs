@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using SharedLibrary.Models;
 using System.Text.RegularExpressions;
+using System.Collections;
+using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace SharedLibrary
 {
@@ -290,13 +293,52 @@ namespace SharedLibrary
 
         public static void SetSubscriberPoint(string mobileNumber, long serviceId, int point)
         {
-            using (var entity = new PortalEntities())
+            try
             {
-                var pointObj = entity.SubscribersPoints.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
-                pointObj.Point += point;
-                entity.Entry(pointObj).State = System.Data.Entity.EntityState.Modified;
-                entity.SaveChanges();
+                using (var entity = new PortalEntities())
+                {
+                    var pointObj = entity.SubscribersPoints.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
+                    pointObj.Point += point;
+                    entity.Entry(pointObj).State = System.Data.Entity.EntityState.Modified;
+                    entity.SaveChanges();
+                }
             }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SetSubscriberPoint: ", e);
+            }
+        }
+
+        public static dynamic GetUnprocessedMessages(dynamic entity, MessageType messageType, int readSize)
+        {
+            var today = DateTime.Now.Date;
+            if (messageType == MessageType.AutoCharge)
+                return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
+            else if (messageType == MessageType.EventBase)
+                return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
+            else if (messageType == MessageType.OnDemand)
+                return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend).Take(readSize).ToList();
+            else
+                return new List<dynamic>();
+        }
+
+        public static void SendSelectedMessages(dynamic entity, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
+        {
+            if (messages.Count == 0)
+                return;
+
+            List<Task> TaskList = new List<Task>();
+            for (int i = 0; i < take.Length; i++)
+            {
+                var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
+                if (aggregatorName == "Hamrahvas")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "PardisImi")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "Telepromo")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+            }
+            Task.WaitAll(TaskList.ToArray());
         }
 
         public enum MessageType

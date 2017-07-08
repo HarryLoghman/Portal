@@ -51,6 +51,7 @@ namespace MyLeagueLibrary.Models
         public virtual DbSet<Singlecharge> Singlecharges { get; set; }
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
         public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
+        public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

@@ -29,6 +29,7 @@
         <EntityTypeShape EntityType="SepidRoodModel.SusbcribersSubscriptionKeyword" Width="1.5" PointX="15.375" PointY="0.75" />
         <EntityTypeShape EntityType="SepidRoodModel.EventbaseContent" Width="1.5" PointX="15.375" PointY="3.75" />
         <EntityTypeShape EntityType="SepidRoodModel.DailyStatistic" Width="1.5" PointX="15.375" PointY="7.75" />
+        <EntityTypeShape EntityType="SepidRoodModel.SinglechargeArchive" Width="1.5" PointX="0.75" PointY="6.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

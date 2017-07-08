@@ -38,5 +38,7 @@ namespace TamlyLibrary.Models
         public Nullable<int> Price { get; set; }
         public Nullable<bool> DeliveryStatus { get; set; }
         public string DeliveryDescription { get; set; }
+        public Nullable<System.DateTime> DateLastTried { get; set; }
+        public Nullable<int> RetryCount { get; set; }
     }
 }

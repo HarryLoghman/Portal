@@ -110,6 +110,9 @@
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>Tabriz2018Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SinglechargeArchive.cs">
+      <DependentUpon>Tabriz2018Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeInstallment.cs">
       <DependentUpon>Tabriz2018Model.tt</DependentUpon>
     </Compile>
