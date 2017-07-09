@@ -26,6 +26,14 @@ namespace SharedLibrary
             return sendInfoDic;
         }
 
+        public static List<Models.ParidsShortCode> GetPardisShortcodesFromServiceId(long serviceId)
+        {
+            using (var portalEntity = new PortalEntities())
+            {
+                return portalEntity.ParidsShortCodes.Where(o => o.ServiceId == serviceId).ToList();
+            }
+        }
+
         public static Dictionary<string, string> GetAdditionalServiceInfoForSendingMessage(long serviceId, string aggregatorName)
         {
             var sendInfoDic = new Dictionary<string, string>();

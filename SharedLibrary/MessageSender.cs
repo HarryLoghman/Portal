@@ -15,7 +15,8 @@ namespace SharedLibrary
     public class MessageSender
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        public static int retryCountMax = 3;
+        public static int retryPauseBeforeSendByMinute = -30;
         public static async Task SendMesssagesToTelepromo(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try
@@ -35,13 +36,13 @@ namespace SharedLibrary
                 {
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount != null && message.RetryCount > 3)
+                        if (message.RetryCount != null && message.RetryCount > retryCountMax)
                         {
                             message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                             entity.Entry(message).State = EntityState.Modified;
                             continue;
                         }
-                        else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddHours(-1))
+                        else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute))
                             continue;
                         var to = "98" + message.MobileNumber.TrimStart('0');
                         var messageContent = message.Content;
@@ -84,7 +85,7 @@ namespace SharedLibrary
                             }
                             else
                             {
-                                if (message.RetryCount > 3)
+                                if (message.RetryCount > retryCountMax)
                                     message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                                 message.RetryCount += 1;
                                 message.DateLastTried = DateTime.Now;
@@ -107,7 +108,7 @@ namespace SharedLibrary
                     }
                     else
                     {
-                        if (message.RetryCount > 3)
+                        if (message.RetryCount > retryCountMax)
                             message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         message.RetryCount += 1;
                         message.DateLastTried = DateTime.Now;
@@ -233,13 +234,13 @@ namespace SharedLibrary
 
                 foreach (var message in messages)
                 {
-                    if (message.RetryCount != null && message.RetryCount > 3)
+                    if (message.RetryCount != null && message.RetryCount > retryCountMax)
                     {
                         message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         entity.Entry(message).State = EntityState.Modified;
                         continue;
                     }
-                    else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddHours(-1))
+                    else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
                         continue;
 
                     if (message.ImiChargeKey == "UnSubscription" || message.ImiChargeKey == "Register" || message.ImiChargeKey == "Renewal")
@@ -343,7 +344,7 @@ namespace SharedLibrary
                             }
                             else
                             {
-                                if (message.RetryCount > 3)
+                                if (message.RetryCount > retryCountMax)
                                     message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                                 message.RetryCount += 1;
                                 message.DateLastTried = DateTime.Now;
@@ -376,7 +377,7 @@ namespace SharedLibrary
                                 }
                                 else
                                 {
-                                    if (messages[i].RetryCount > 3)
+                                    if (messages[i].RetryCount > retryCountMax)
                                         messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                                     messages[i].RetryCount += 1;
                                     messages[i].DateLastTried = DateTime.Now;
@@ -403,7 +404,7 @@ namespace SharedLibrary
                     }
                     else
                     {
-                        if (message.RetryCount > 3)
+                        if (message.RetryCount > retryCountMax)
                             message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         message.RetryCount += 1;
                         message.DateLastTried = DateTime.Now;
@@ -528,21 +529,36 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task SendMesssagesToPardisPlatform(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo, List<ParidsShortCode> paridsShortCodes)
+        public static async Task SendMesssagesToPardisPlatform(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try
             {
                 var messagesCount = messages.Count;
                 if (messagesCount == 0)
                     return;
+                var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
                 string[] mobileNumbers = new string[messagesCount];
                 string[] shortCodes = new string[messagesCount];
                 string[] messageContents = new string[messagesCount];
                 string[] aggregatorServiceIds = new string[messagesCount];
                 string[] udhs = new string[messagesCount];
                 string[] mclass = new string[messagesCount];
+
+                foreach (var message in messages)
+                {
+                    if (message.RetryCount != null && message.RetryCount > retryCountMax)
+                    {
+                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                }
+                entity.SaveChanges();
+
                 for (int index = 0; index < messagesCount; index++)
                 {
+                    if (messages[index].DateLastTried != null && messages[index].DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
+                        continue;
                     mobileNumbers[index] = "98" + messages[index].MobileNumber.TrimStart('0');
                     shortCodes[index] = "98" + paridsShortCodes.FirstOrDefault(o => o.Price == messages[index].Price).ShortCode;
                     messageContents[index] = messages[index].Content;
@@ -550,6 +566,11 @@ namespace SharedLibrary
                     udhs[index] = "";
                     mclass[index] = "";
                 }
+                mobileNumbers = mobileNumbers.Where(o => !string.IsNullOrEmpty(o)).ToArray();
+                shortCodes = shortCodes.Where(o => !string.IsNullOrEmpty(o)).ToArray();
+                messageContents = messageContents.Where(o => !string.IsNullOrEmpty(o)).ToArray();
+                aggregatorServiceIds = aggregatorServiceIds.Where(o => !string.IsNullOrEmpty(o)).ToArray();
+
                 var pardisClient = new SharedLibrary.PardisPlatformServiceReference.ServiceCallClient();
                 var pardisResponse = pardisClient.ServiceSend(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], "pardis1", 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
                 logs.Info("pardis Response count: " + pardisResponse.Count());
@@ -584,6 +605,23 @@ namespace SharedLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in SendMesssagesToPardisPlatform: " + e);
+                foreach (var message in messages)
+                {
+                    if (message.RetryCount == null)
+                    {
+                        message.RetryCount = 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    else
+                    {
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.RetryCount += 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    entity.Entry(message).State = EntityState.Modified;
+                }
+                entity.SaveChanges();
             }
         }
 
@@ -596,8 +634,20 @@ namespace SharedLibrary
                     return;
                 var SPID = "RESA";
                 SharedLibrary.PardisImiServiceReference.SMS[] smsList = new SharedLibrary.PardisImiServiceReference.SMS[messagesCount];
+
+                foreach (var message in messages)
+                {
+                    if (message.RetryCount != null && message.RetryCount > retryCountMax)
+                    {
+                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                }
+
                 for (int index = 0; index < messagesCount; index++)
                 {
+                    if (messages[index].DateLastTried != null && messages[index].DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
+                        continue;
                     smsList[index] = new SharedLibrary.PardisImiServiceReference.SMS()
                     {
                         Index = index + 1,
@@ -609,6 +659,7 @@ namespace SharedLibrary
                         SubUnsubType = messages[index].SubUnSubType
                     };
                 }
+                smsList = smsList.Where(o => o.Index != null).ToArray();
                 var pardisClient = new SharedLibrary.PardisImiServiceReference.MTSoapClient();
                 var pardisResponse = pardisClient.SendSMS(SPID, smsList);
                 if (pardisResponse.Rows.Count == 0)
@@ -625,6 +676,23 @@ namespace SharedLibrary
                         logs.Info("SubUnsubType: " + sms.SubUnsubType);
                         logs.Info("++++++++++++++++++++++++++++++++++");
                     }
+                    foreach (var message in messages)
+                    {
+                        if (message.RetryCount == null)
+                        {
+                            message.RetryCount = 1;
+                            message.DateLastTried = DateTime.Now;
+                        }
+                        else
+                        {
+                            if (message.RetryCount > retryCountMax)
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            message.RetryCount += 1;
+                            message.DateLastTried = DateTime.Now;
+                        }
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
                     return;
                 }
                 for (int index = 0; index < messagesCount; index++)
@@ -642,6 +710,23 @@ namespace SharedLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in SendMesssagesToPardisImi: " + e);
+                foreach (var message in messages)
+                {
+                    if (message.RetryCount == null)
+                    {
+                        message.RetryCount = 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    else
+                    {
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.RetryCount += 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    entity.Entry(message).State = EntityState.Modified;
+                }
+                entity.SaveChanges();
             }
         }
         public static async Task SendMesssagesToHamrahvas(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)

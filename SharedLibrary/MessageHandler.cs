@@ -313,32 +313,50 @@ namespace SharedLibrary
         {
             var today = DateTime.Now.Date;
             if (messageType == MessageType.AutoCharge)
-                return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
+                return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
             else if (messageType == MessageType.EventBase)
-                return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
+                return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
             else if (messageType == MessageType.OnDemand)
-                return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend).Take(readSize).ToList();
+                return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
             else
                 return new List<dynamic>();
         }
 
         public static void SendSelectedMessages(dynamic entity, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
         {
-            if (messages.Count == 0)
+            if (((IEnumerable)messages).Cast<dynamic>().Count() == 0)
                 return;
 
             List<Task> TaskList = new List<Task>();
             for (int i = 0; i < take.Length; i++)
             {
-                var chunkedMessages = messages.Skip(skip[i]).Take(take[i]).ToList();
+                var chunkedMessages = ((IEnumerable)messages).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
                 if (aggregatorName == "Hamrahvas")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisImi")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "Telepromo")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "Hub")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "PardisPlatform")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo));
             }
             Task.WaitAll(TaskList.ToArray());
+        }
+
+        public static Dictionary<string,int[]> CalculateServiceSendMessageThreadNumbers(int readSize, int takeSize)
+        {
+            int[] take = new int[(readSize / takeSize)];
+            int[] skip = new int[(readSize / takeSize)];
+            skip[0] = 0;
+            take[0] = takeSize;
+            for (int i = 1; i < take.Length; i++)
+            {
+                take[i] = takeSize;
+                skip[i] = skip[i - 1] + takeSize;
+            }
+            return new Dictionary<string, int[]>() { { "take", take } , { "skip", skip } };
         }
 
         public enum MessageType
