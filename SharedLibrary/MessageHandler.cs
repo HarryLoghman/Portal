@@ -313,9 +313,9 @@ namespace SharedLibrary
         {
             var today = DateTime.Now.Date;
             if (messageType == MessageType.AutoCharge)
-                return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
+                return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
             else if (messageType == MessageType.EventBase)
-                return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
+                return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
             else if (messageType == MessageType.OnDemand)
                 return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= 3)).Take(readSize).ToList();
             else

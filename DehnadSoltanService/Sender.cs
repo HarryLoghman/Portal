@@ -46,8 +46,11 @@ namespace DehnadSoltanService
                         }
                     }
 
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entity, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entity, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
+                    {
+                        SharedLibrary.MessageHandler.SendSelectedMessages(entity, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                        SharedLibrary.MessageHandler.SendSelectedMessages(entity, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    }
                     SharedLibrary.MessageHandler.SendSelectedMessages(entity, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 }
             }

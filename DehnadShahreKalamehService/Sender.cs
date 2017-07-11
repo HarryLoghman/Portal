@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SharedLibrary.Models;
 using ShahreKalamehLibrary.Models;
 using System.Linq;
+using System.Collections;
 
 namespace DehnadShahreKalamehService
 {
@@ -31,9 +32,10 @@ namespace DehnadShahreKalamehService
                 using (var entity = new ShahreKalamehEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    autochargeMessages = ShahreKalamehLibrary.MessageHandler.GetUnprocessedAutochargeMessages(entity, readSize);
-                    eventbaseMessages = ShahreKalamehLibrary.MessageHandler.GetUnprocessedEventbaseMessages(entity, readSize);
-                    onDemandMessages = ShahreKalamehLibrary.MessageHandler.GetUnprocessedOnDemandMessages(entity, readSize);
+
+                    autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
+                    eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
+                    onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
 
                     if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
                     {
@@ -44,9 +46,11 @@ namespace DehnadShahreKalamehService
                             entity.RetryUndeliveredMessages();
                         }
                     }
-
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entity, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entity, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
+                    {
+                        SharedLibrary.MessageHandler.SendSelectedMessages(entity, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                        SharedLibrary.MessageHandler.SendSelectedMessages(entity, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    }
                     SharedLibrary.MessageHandler.SendSelectedMessages(entity, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 }
             }
