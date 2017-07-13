@@ -26,10 +26,10 @@ namespace SoltanLibrary
             if (isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true)
                 SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
 
-            if (message.ReceivedFrom.Contains("IMI"))
+            if (message.ReceivedFrom.Contains("IMI") || message.Content.ToLower() == "off" || message.Content.ToLower() == "خاموش")
                 return;
 
-            if (message.Content != "9" && isUserWantsToUnsubscribe != true && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
+            if (message.Content != "9" && isUserSendsSubscriptionKeyword != true && isUserWantsToUnsubscribe != true && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
             {
                 if (!message.ReceivedFrom.Contains("IMI") && !message.ReceivedFrom.Contains("Verification") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                     return;

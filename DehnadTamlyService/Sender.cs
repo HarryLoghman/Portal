@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SharedLibrary.Models;
 using TamlyLibrary.Models;
 using System.Linq;
+using System.Collections;
 
 namespace DehnadTamlyService
 {
@@ -23,21 +24,17 @@ namespace DehnadTamlyService
                 bool retryNotDelieveredMessages = Properties.Settings.Default.RetryNotDeliveredMessages;
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Tamly", aggregatorName);
-                int[] take = new int[(readSize / takeSize)];
-                int[] skip = new int[(readSize / takeSize)];
-                skip[0] = 0;
-                take[0] = takeSize;
-                for (int i = 1; i < take.Length; i++)
-                {
-                    take[i] = takeSize;
-                    skip[i] = skip[i - 1] + takeSize;
-                }
+
+                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(readSize, takeSize);
+                var take = threadsNo["take"];
+                var skip = threadsNo["skip"];
+
                 using (var entity = new TamlyEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    autochargeMessages = TamlyLibrary.MessageHandler.GetUnprocessedAutochargeMessages(entity, readSize);
-                    eventbaseMessages = TamlyLibrary.MessageHandler.GetUnprocessedEventbaseMessages(entity, readSize);
-                    onDemandMessages = TamlyLibrary.MessageHandler.GetUnprocessedOnDemandMessages(entity, readSize);
+                    autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
+                    eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
+                    onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
 
                     if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
                     {
@@ -48,11 +45,14 @@ namespace DehnadTamlyService
                             entity.RetryUndeliveredMessages();
                         }
                     }
-                }
 
-                SendAutochargeMessages(autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                SendEventbaseMessages(eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                SendOnDemandMessages(onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
+                    {
+                        SharedLibrary.MessageHandler.SendSelectedMessages(entity, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                        SharedLibrary.MessageHandler.SendSelectedMessages(entity, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    }
+                    SharedLibrary.MessageHandler.SendSelectedMessages(entity, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                }
 
             }
             catch (Exception e)
