@@ -202,6 +202,8 @@ namespace DehnadReceiveProcessorService
                     AvvalPodLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "AvvalYad")
                     AvvalYadLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "IrancellTest")
+                    IrancellTestLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -255,6 +257,8 @@ namespace DehnadReceiveProcessorService
                     AvvalPodLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "AvvalYad")
                     AvvalYadLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "IrancellTest")
+                    IrancellTestLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

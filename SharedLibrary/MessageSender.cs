@@ -816,9 +816,8 @@ namespace SharedLibrary
                 if (messagesCount == 0)
                     return;
                 var url = "http://92.42.55.180:8310/SendSmsService/services/SendSms";
-                var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
-
+                var serviceId = serviceAdditionalInfo["serviceId"];
                 using (var client = new HttpClient())
                 {
                     foreach (var message in messages)
@@ -831,9 +830,8 @@ namespace SharedLibrary
                         }
                         else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute))
                             continue;
-                        var mobileNumber = SharedLibrary.MessageHandler.PrepareMTNMobileNumbers(message.MobileNumber);
                         var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-                        string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, mobileNumber, serviceAdditionalInfo["shortCode"], message.Content);
+                        string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, serviceId);
 
                         var result = new Dictionary<string, string>();
                         result["status"] = "";
@@ -917,8 +915,27 @@ namespace SharedLibrary
                     if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
                     {
                         string httpResult = response.Content.ReadAsStringAsync().Result;
-                        XDocument xmlResult = XDocument.Parse(httpResult);
-                        result["message"] = httpResult;
+                        XmlDocument xml = new XmlDocument();
+                        xml.LoadXml(httpResult);
+                        XmlNodeList successNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns1:sendSmsResponse");
+                        if (successNode.Count > 0)
+                        {
+                            foreach (XmlNode success in successNode)
+                            {
+                                XmlNode successResultNode = success.SelectSingleNode("ns1:result");
+                                result["message"] = successResultNode.InnerText;
+                            }
+                        }
+                        else
+                        {
+                            XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault");
+                            foreach (XmlNode fault in faultNode)
+                            {
+                                XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
+                                XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
+                                result["message"] = faultCodeNode.InnerText + ": " + faultStringNode.InnerText;
+                            }
+                        }
                     }
                     else
                         result["message"] = response.StatusCode.ToString();

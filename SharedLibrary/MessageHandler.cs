@@ -344,6 +344,8 @@ namespace SharedLibrary
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisPlatform")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "MTN")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMtn(entity, chunkedMessages, serviceAdditionalInfo));
             }
             Task.WaitAll(TaskList.ToArray());
         }
@@ -376,7 +378,7 @@ namespace SharedLibrary
             return stringedMobileNumbers;
         }
 
-        public static string CreateMtnSoapEnvelopeString(string agggregatorServiceId, string timeStamp, string mobileNumbers, string shortCode, string messageContent)
+        public static string CreateMtnSoapEnvelopeString(string agggregatorServiceId, string timeStamp, string mobileNumbers, string shortCode, string messageContent, string innerServiceId)
         {
             string xmlString = string.Format(@"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v2_2/local"">
@@ -393,14 +395,14 @@ namespace SharedLibrary
             <loc:senderName>{3}</loc:senderName>
             <loc:message>{4}</loc:message>
             <loc:receiptRequest>
-                <endpoint>http://79.175.170.122:200/api/Mtn/SubUnsubNotify</endpoint>
+                <endpoint>http://79.175.170.122:200/api/Mtn/Delivery</endpoint>
                 <interfaceName>SmsNotification</interfaceName>
-                <correlator>00001</correlator>
+                <correlator>{5}</correlator>
             </loc:receiptRequest>
         </loc:sendSms>
     </soapenv:Body>
 </soapenv:Envelope>"
-, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent);
+, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent, innerServiceId);
             return xmlString;
         }
 

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{37495619-2577-47B7-A46D-8DFEE103B653}</ProjectGuid>
+    <ProjectGuid>{1D125336-1724-A2F1-3C23-3B452FC3452D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DehnadReceiveProcessorService</RootNamespace>
-    <AssemblyName>DehnadReceiveProcessorService</AssemblyName>
+    <RootNamespace>DehnadIrancellTestService</RootNamespace>
+    <AssemblyName>DehnadIrancellTestService</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -45,11 +45,24 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,7 +72,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageProcesser.cs" />
+    <Compile Include="Autocharge.cs" />
+    <Compile Include="Eventbase.cs" />
+    <Compile Include="InformApplication.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -71,6 +86,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Sender.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -79,11 +95,17 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SinglechargeQueue.cs" />
+    <Compile Include="SinglechargeInstallmentClass.cs" />
+    <Compile Include="Statistic.cs" />
+    <Compile Include="Timed.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
+    <None Include="bin\Debug\Install.bat" />
+    <None Include="bin\Debug\Uninstall.bat" />
+    <None Include="bin\Release\Install.bat" />
+    <None Include="bin\Release\Uninstall.bat" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -94,105 +116,23 @@
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Service.resx">
-      <DependentUpon>Service.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
-      <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
-      <Name>AvvalPodLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvvalYadLibrary\AvvalYadLibrary.csproj">
-      <Project>{c113b241-33f5-c224-2122-4bc23f4d235f}</Project>
-      <Name>AvvalYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
-      <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>
-      <Name>BimeIranLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BimeKarbalaLibrary\BimeKarbalaLibrary.csproj">
-      <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
-      <Name>BimeKarbalaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BoatingLibrary\BoatingLibrary.csproj">
-      <Project>{11bd1312-2d38-42ff-944d-02b5ce3457c1}</Project>
-      <Name>BoatingLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
-      <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
-      <Name>DanestanehLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
-      <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
-      <Name>DonyayeAsatirLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FitShowLibrary\FitShowLibrary.csproj">
-      <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
-      <Name>FitShowLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IrancellTestLibrary\IrancellTestLibrary.csproj">
       <Project>{d112bf46-33f5-c224-2122-4bc23f4d2122}</Project>
       <Name>IrancellTestLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
-      <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
-      <Name>JabehAbzarLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
-      <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
-      <Name>MashinBazhaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
-      <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>
-      <Name>MenchBazLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
-      <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>
-      <Name>MobiligaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MyLeagueLibrary\MyLeagueLibrary.csproj">
-      <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
-      <Name>MyLeagueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
-      <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
-      <Name>SepidRoodLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ShahreKalamehLibrary\ShahreKalamehLibrary.csproj">
-      <Project>{23bd342d-2d3f-4cf2-944d-02b5ce34242d}</Project>
-      <Name>ShahreKalamehLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShenoYadLibrary\ShenoYadLibrary.csproj">
-      <Project>{2c2c445d-3e02-4eb1-acfc-45d2aab5556b}</Project>
-      <Name>ShenoYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
-      <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
-      <Name>SoltanLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
-      <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
-      <Name>Tabriz2018Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TakavarLibrary\TakavarLibrary.csproj">
-      <Project>{52c36255-330f-25b1-abf2-4dd22ab523a1}</Project>
-      <Name>TakavarLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TamlyLibrary\TamlyLibrary.csproj">
-      <Project>{412d2155-de02-4eb1-acfd-75d3aab55364}</Project>
-      <Name>TamlyLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TirandaziLibrary\TirandaziLibrary.csproj">
-      <Project>{45c21d1f-2d58-42ff-984d-02b5ce55243f}</Project>
-      <Name>TirandaziLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
