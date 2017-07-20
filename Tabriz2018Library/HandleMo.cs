@@ -12,6 +12,8 @@ namespace Tabriz2018Library
         public static void ReceivedMessage(MessageObject message, Service service)
         {
             //System.Diagnostics.Debugger.Launch();
+            if (message.Content.ToLower() == "off" || message.Content == "خاموش" || message.Content == "لغو")
+                return;
             var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
@@ -74,7 +76,7 @@ namespace Tabriz2018Library
                 }
                 message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                 MessageHandler.InsertMessageToQueue(message);
-                if(serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                     ServiceHandler.InfromMapfaIntegratedPanel(serviceStatusForSubscriberState, message, service, content);
                 return;
             }

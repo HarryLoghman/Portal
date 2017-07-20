@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +17,8 @@ namespace SharedLibrary
     public class MessageSender
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static int retryCountMax = 3;
-        public static int retryPauseBeforeSendByMinute = -30;
+        public static int retryCountMax = 15;
+        public static int retryPauseBeforeSendByMinute = -1;
         public static async Task SendMesssagesToTelepromo(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try
@@ -804,6 +806,129 @@ namespace SharedLibrary
             }
             entity.SaveChanges();
             logs.Info(" Send function ended ");
+        }
+
+        public static async Task SendMesssagesToMtn(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            try
+            {
+                var messagesCount = messages.Count;
+                if (messagesCount == 0)
+                    return;
+                var url = "http://92.42.55.180:8310/SendSmsService/services/SendSms";
+                var sc = "Dehnad";
+                var username = serviceAdditionalInfo["username"];
+
+                using (var client = new HttpClient())
+                {
+                    foreach (var message in messages)
+                    {
+                        if (message.RetryCount != null && message.RetryCount > retryCountMax)
+                        {
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            entity.Entry(message).State = EntityState.Modified;
+                            continue;
+                        }
+                        else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute))
+                            continue;
+                        var mobileNumber = SharedLibrary.MessageHandler.PrepareMTNMobileNumbers(message.MobileNumber);
+                        var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+                        string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, mobileNumber, serviceAdditionalInfo["shortCode"], message.Content);
+
+                        var result = new Dictionary<string, string>();
+                        result["status"] = "";
+                        result["message"] = "";
+                        try
+                        {
+                            result = await SendSingleMessageToMtn(client, url, payload);
+                        }
+                        catch (Exception e)
+                        {
+                            logs.Error("Exception in SendSingleMessageToMtn: " + e);
+                        }
+
+
+                        if (result["status"] == "OK")
+                        {
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                            message.ReferenceId = result["message"];
+                            message.SentDate = DateTime.Now;
+                            message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            if (message.MessagePoint > 0)
+                                SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+                            entity.Entry(message).State = EntityState.Modified;
+                        }
+                        else
+                        {
+                            logs.Info("SendMesssagesToMtn Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                            if (message.RetryCount == null)
+                            {
+                                message.RetryCount = 1;
+                                message.DateLastTried = DateTime.Now;
+                            }
+                            else
+                            {
+                                if (message.RetryCount > retryCountMax)
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                message.RetryCount += 1;
+                                message.DateLastTried = DateTime.Now;
+                            }
+                            entity.Entry(message).State = EntityState.Modified;
+                        }
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendMessagesToMtn: " + e);
+                foreach (var message in messages)
+                {
+                    if (message.RetryCount == null)
+                    {
+                        message.RetryCount = 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    else
+                    {
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.RetryCount += 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    entity.Entry(message).State = EntityState.Modified;
+                }
+                entity.SaveChanges();
+            }
+        }
+
+        public static async Task<Dictionary<string, string>> SendSingleMessageToMtn(HttpClient client, string url, string payload)
+        {
+            var result = new Dictionary<string, string>();
+            result["status"] = "";
+            result["message"] = "";
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
+                using (var response = await client.SendAsync(request))
+                {
+                    result["status"] = response.StatusCode.ToString();
+                    if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
+                    {
+                        string httpResult = response.Content.ReadAsStringAsync().Result;
+                        XDocument xmlResult = XDocument.Parse(httpResult);
+                        result["message"] = httpResult;
+                    }
+                    else
+                        result["message"] = response.StatusCode.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSingleMessageToMtn: " + e);
+            }
+            return result;
         }
     }
 }

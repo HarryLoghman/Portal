@@ -394,6 +394,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\HubController.cs" />
     <Compile Include="Controllers\MapfaController.cs" />
+    <Compile Include="Controllers\MtnController.cs" />
     <Compile Include="Controllers\TelepromoController.cs" />
     <Compile Include="Controllers\ReceiveController.cs" />
     <Compile Include="Global.asax.cs">

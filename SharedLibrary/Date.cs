@@ -46,5 +46,12 @@ namespace SharedLibrary
             return (TimeZoneInfo.ConvertTimeToUtc(dateTime) -
                    new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;
         }
+
+        public static string MTNTimestamp(DateTime? date = null)
+        {
+            if (date == null)
+                date = DateTime.Now;
+            return date.Value.ToString("yyyyMMddHHmmss");
+        }
     }
 }

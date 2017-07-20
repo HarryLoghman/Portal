@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Data.Entity;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Net;
+using System.IO;
 
 namespace SharedLibrary
 {
@@ -345,7 +348,7 @@ namespace SharedLibrary
             Task.WaitAll(TaskList.ToArray());
         }
 
-        public static Dictionary<string,int[]> CalculateServiceSendMessageThreadNumbers(int readSize, int takeSize)
+        public static Dictionary<string, int[]> CalculateServiceSendMessageThreadNumbers(int readSize, int takeSize)
         {
             int[] take = new int[(readSize / takeSize)];
             int[] skip = new int[(readSize / takeSize)];
@@ -356,8 +359,59 @@ namespace SharedLibrary
                 take[i] = takeSize;
                 skip[i] = skip[i - 1] + takeSize;
             }
-            return new Dictionary<string, int[]>() { { "take", take } , { "skip", skip } };
+            return new Dictionary<string, int[]>() { { "take", take }, { "skip", skip } };
         }
+
+        public static string PrepareMTNMobileNumbers(List<string> mobileNumbers)
+        {
+            string stringedMobileNumbers = "tel:";
+            for (var i = 0; i < mobileNumbers.Count; i++)
+            {
+                if (mobileNumbers[i].Length == 11)
+                    stringedMobileNumbers += "98" + mobileNumbers[i].TrimStart('0') + ",";
+                else
+                    stringedMobileNumbers += mobileNumbers[i] + ",";
+            }
+            stringedMobileNumbers = stringedMobileNumbers.TrimEnd(',');
+            return stringedMobileNumbers;
+        }
+
+        public static string CreateMtnSoapEnvelopeString(string agggregatorServiceId, string timeStamp, string mobileNumbers, string shortCode, string messageContent)
+        {
+            string xmlString = string.Format(@"
+<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v2_2/local"">
+    <soapenv:Header>
+        <v2:RequestSOAPHeader>
+            <v2:spId>980110006379</v2:spId>
+            <v2:serviceId>{0}</v2:serviceId>
+            <v2:timeStamp>{1}</v2:timeStamp>
+        </v2:RequestSOAPHeader>
+    </soapenv:Header>
+    <soapenv:Body>
+        <loc:sendSms>
+            <loc:addresses>{2}</loc:addresses>
+            <loc:senderName>{3}</loc:senderName>
+            <loc:message>{4}</loc:message>
+            <loc:receiptRequest>
+                <endpoint>http://79.175.170.122:200/api/Mtn/SubUnsubNotify</endpoint>
+                <interfaceName>SmsNotification</interfaceName>
+                <correlator>00001</correlator>
+            </loc:receiptRequest>
+        </loc:sendSms>
+    </soapenv:Body>
+</soapenv:Envelope>"
+, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent);
+            return xmlString;
+        }
+
+        public static void InsertSoapEnvelopeIntoWebRequest(XmlDocument soapEnvelopeXml, HttpWebRequest webRequest)
+        {
+            using (Stream stream = webRequest.GetRequestStream())
+            {
+                soapEnvelopeXml.Save(stream);
+            }
+        }
+
 
         public enum MessageType
         {
