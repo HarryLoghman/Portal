@@ -221,5 +221,17 @@ namespace Portal.Controllers
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/html");
             return response;
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage SyncOrderRelationRequest()
+        {
+            var syncData = Request.Content.ReadAsStringAsync().Result;
+            logs.Info(syncData);
+            string result = @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/data/sync/v1_0/local"">     <soapenv:Header/>     <soapenv:Body>        <loc:syncOrderRelationResponse>           <loc:result>0</loc:result>           <loc:resultDescription>OK</loc:resultDescription>                 </loc:syncOrderRelationResponse>     </soapenv:Body>  </soapenv:Envelope>";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/xml");
+            return response;
+        }
     }
 }

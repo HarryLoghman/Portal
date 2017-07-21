@@ -181,11 +181,69 @@ namespace SharedLibrary
             return singlecharge;
         }
 
+        public static async Task<dynamic> TelepromoOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
+                var url = "http://10.20.9.135:8600" + "/pin/generate?";
+                var sc = "Dehnad";
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var from = "98" + serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                using (var client = new HttpClient())
+                {
+                    var to = "98" + message.MobileNumber.TrimStart('0');
+                    var messageContent = "InAppPurchase";
+                    Random random = new Random();
+                    var contentId = random.Next(00001, 99999).ToString();
+                    var messageId = Guid.NewGuid().ToString();
+                    var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}&contentId={8}&chargingCode={9}"
+                                                            , sc, username, password, from, serviceId, to, messageContent, messageId, contentId, message.ImiChargeKey);
+                    var result = new Dictionary<string, string>();
+                    result["status"] = "";
+                    result["message"] = "";
+                    result = await SendSingleMessageToTelepromo(client, urlWithParameters);
+                    if (result["status"] == "0" && result["message"].Contains("description=ACCEPTED"))
+                        singlecharge.IsSucceeded = false;
+
+                    singlecharge.Description = result["message"];
+                    singlecharge.ReferenceId = result["transactionId"];
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoOTPRequest: " + e);
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoOTPRequest on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
         private static async Task<Dictionary<string, string>> SendSingleMessageToTelepromo(HttpClient client, string url)
         {
             var result = new Dictionary<string, string>();
             result["status"] = "";
             result["message"] = "";
+            result["transactionId"] = "";
             try
             {
                 using (var response = client.GetAsync(new Uri(url)).Result)
@@ -196,6 +254,8 @@ namespace SharedLibrary
                         XDocument xmlResult = XDocument.Parse(httpResult);
                         result["status"] = xmlResult.Root.Descendants("status").Select(e => e.Value).FirstOrDefault();
                         result["message"] = xmlResult.Root.Descendants("message").Select(e => e.Value).FirstOrDefault();
+                        if (xmlResult.Root.Descendants("transactionId") != null)
+                            result["transactionId"] = xmlResult.Root.Descendants("transactionId").Select(e => e.Value).FirstOrDefault();
                     }
                 }
             }
@@ -960,10 +1020,10 @@ namespace SharedLibrary
             if (isRefund == true)
                 charge = "refundAmount";
             else
-                charge = "chargeAmount";   
+                charge = "chargeAmount";
             message.MobileNumber = "98" + message.MobileNumber.TrimStart('0');
             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-            int rialedPrice = message.Price .Value * 10;
+            int rialedPrice = message.Price.Value * 10;
             Random random = new Random();
             var referenceCode = random.Next(000000001, 999999999).ToString();
             var url = "http://92.42.55.180:8310/AmountChargingService/services/AmountCharging";
@@ -1025,7 +1085,7 @@ namespace SharedLibrary
                     singlecharge.ReferenceId = "Exception occurred!";
                 singlecharge.DateCreated = DateTime.Now;
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                if(isRefund == true)
+                if (isRefund == true)
                     singlecharge.Price = message.Price.GetValueOrDefault() * -1;
                 else
                     singlecharge.Price = message.Price.GetValueOrDefault();
@@ -1035,7 +1095,7 @@ namespace SharedLibrary
 
                 singlecharge.IsCalledFromInAppPurchase = isInAppPurchase;
 
-                entity.Singlecharges.Add(singlecharge); 
+                entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
             }
             catch (Exception e)
