@@ -917,23 +917,28 @@ namespace SharedLibrary
                         string httpResult = response.Content.ReadAsStringAsync().Result;
                         XmlDocument xml = new XmlDocument();
                         xml.LoadXml(httpResult);
-                        XmlNodeList successNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns1:sendSmsResponse");
+                        XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                        manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                        manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                        manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/sms/send/v2_2/local");
+                        XmlNodeList successNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns1:sendSmsResponse", manager);
                         if (successNode.Count > 0)
                         {
                             foreach (XmlNode success in successNode)
                             {
-                                XmlNode successResultNode = success.SelectSingleNode("ns1:result");
-                                result["message"] = successResultNode.InnerText;
+                                XmlNode successResultNode = success.SelectSingleNode("ns1:result", manager);
+                                result["message"] = successResultNode.InnerText.Trim();
                             }
                         }
                         else
                         {
-                            XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault");
+                            manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
+                            XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
                             foreach (XmlNode fault in faultNode)
                             {
                                 XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
                                 XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
-                                result["message"] = faultCodeNode.InnerText + ": " + faultStringNode.InnerText;
+                                result["message"] = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
                             }
                         }
                     }
@@ -946,6 +951,95 @@ namespace SharedLibrary
                 logs.Error("Exception in SendSingleMessageToMtn: " + e);
             }
             return result;
+        }
+
+        public static async Task<dynamic> ChargeMtnSubscriber(dynamic entity, dynamic singlecharge, MessageObject message, bool isRefund, bool isInAppPurchase, long installmentId = 0)
+        {
+            string charge = "";
+            singlecharge.MobileNumber = message.MobileNumber;
+            if (isRefund == true)
+                charge = "refundAmount";
+            else
+                charge = "chargeAmount";   
+            message.MobileNumber = "98" + message.MobileNumber.TrimStart('0');
+            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            int rialedPrice = message.Price .Value * 10;
+            Random random = new Random();
+            var referenceCode = random.Next(000000001, 999999999).ToString();
+            var url = "http://92.42.55.180:8310/AmountChargingService/services/AmountCharging";
+            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>980110006379</spId>               <timeStamp>{0}</timeStamp>           </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
+, timeStamp, message.MobileNumber, rialedPrice, referenceCode, charge);
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Post, url);
+                    request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
+                    using (var response = await client.SendAsync(request))
+                    {
+                        if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
+                        {
+                            string httpResult = response.Content.ReadAsStringAsync().Result;
+                            XmlDocument xml = new XmlDocument();
+                            xml.LoadXml(httpResult);
+                            XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                            manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                            manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                            manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local");
+                            XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns1:chargeAmountResponse", manager);
+                            if (successNode != null)
+                            {
+                                singlecharge.IsSucceeded = true;
+                            }
+                            else
+                            {
+                                singlecharge.IsSucceeded = false;
+                                manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
+                                XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
+                                foreach (XmlNode fault in faultNode)
+                                {
+                                    XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
+                                    XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
+                                    singlecharge.Description = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            singlecharge.IsSucceeded = false;
+                            singlecharge.Description = response.StatusCode.ToString();
+                        }
+                        singlecharge.ReferenceId = referenceCode;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ChargeMtnSubscriber: " + e);
+            }
+            try
+            {
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "IsSucceeded") != true)
+                    singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                if(isRefund == true)
+                    singlecharge.Price = message.Price.GetValueOrDefault() * -1;
+                else
+                    singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                if (installmentId != 0)
+                    singlecharge.InstallmentId = installmentId;
+
+                singlecharge.IsCalledFromInAppPurchase = isInAppPurchase;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ChargeMtnSubscriber on saving values to db: " + e);
+            }
+            return singlecharge;
         }
     }
 }

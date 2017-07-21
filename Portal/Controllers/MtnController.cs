@@ -160,17 +160,21 @@ namespace Portal.Controllers
                             result = "description= " + httpResult;
                             XmlDocument xml = new XmlDocument();
                             xml.LoadXml(httpResult);
-                            XmlNodeList messages = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns1:getReceivedSmsResponse/ns1:result");
+                            XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                            manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                            manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                            manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/sms/receive/v2_2/local");
+                            XmlNodeList messages = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns1:getReceivedSmsResponse/ns1:result", manager);
                             foreach (XmlNode message in messages)
                             {
                                 var newMessage = new MessageObject();
                                 XmlNode contentNode = message.SelectSingleNode("message");
                                 XmlNode mobileNumberNode = message.SelectSingleNode("senderAddress");
                                 XmlNode shortCodeNode = message.SelectSingleNode("smsServiceActivationNumber");
-                                newMessage.Content = contentNode.InnerText;
-                                newMessage.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(mobileNumberNode.InnerText.Replace("tel:", ""));
-                                newMessage.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(shortCodeNode.InnerText);
-                                newMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                                newMessage.Content = HttpUtility.UrlDecode(contentNode.InnerText, System.Text.UnicodeEncoding.Default);
+                                newMessage.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(mobileNumberNode.InnerText.Replace("tel:", "").Trim());
+                                newMessage.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(shortCodeNode.InnerText.Replace("tel:", "").Trim());
+                                newMessage.ReceivedFrom = "92.42.55.180";
                                 SharedLibrary.MessageHandler.SaveReceivedMessage(newMessage);
                             }
                         }
@@ -181,6 +185,37 @@ namespace Portal.Controllers
             {
                 logs.Error("Exception in getReceivedSms: " + e);
                 result = "Exception in getReceivedSms:" + e.Message;
+            }
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/html");
+            return response;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> ChargeTest(string mobileNumber, int price, bool isRefund = false, bool isInAppPurchase = false)
+        {
+            string result = "";
+            try
+            {
+                using (var entity = new IrancellTestLibrary.Models.IrancellTestEntities())
+                {
+                    var singleCharge = new IrancellTestLibrary.Models.Singlecharge();
+                    MessageObject message = new MessageObject();
+                    message.MobileNumber = mobileNumber;
+                    message.Price = price;
+                    singleCharge = await SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singleCharge, message, isRefund, isInAppPurchase);
+                    entity.Singlecharges.Add(singleCharge);
+                    entity.SaveChanges();
+                    result = "isSuccessed: " + singleCharge.IsSucceeded + Environment.NewLine;
+                    result += "Description: " + singleCharge.Description + Environment.NewLine;
+                    result += "ReferenceId: " + singleCharge.ReferenceId + Environment.NewLine; 
+                }
+            }
+            catch (Exception e)
+            {
+                result = "Exception in chargeTest:" + e.Message;
             }
 
             var response = new HttpResponseMessage(HttpStatusCode.OK);
