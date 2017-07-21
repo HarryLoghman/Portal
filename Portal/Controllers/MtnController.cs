@@ -206,8 +206,7 @@ namespace Portal.Controllers
                     message.MobileNumber = mobileNumber;
                     message.Price = price;
                     singleCharge = await SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singleCharge, message, isRefund, isInAppPurchase);
-                    entity.Singlecharges.Add(singleCharge);
-                    entity.SaveChanges();
+                    
                     result = "isSuccessed: " + singleCharge.IsSucceeded + Environment.NewLine;
                     result += "Description: " + singleCharge.Description + Environment.NewLine;
                     result += "ReferenceId: " + singleCharge.ReferenceId + Environment.NewLine; 

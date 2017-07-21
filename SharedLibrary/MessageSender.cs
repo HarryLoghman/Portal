@@ -1034,6 +1034,9 @@ namespace SharedLibrary
                     singlecharge.InstallmentId = installmentId;
 
                 singlecharge.IsCalledFromInAppPurchase = isInAppPurchase;
+
+                entity.Singlecharges.Add(singlecharge); 
+                entity.SaveChanges();
             }
             catch (Exception e)
             {
