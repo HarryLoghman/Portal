@@ -8,6 +8,7 @@ namespace DehnadReceiveProcessorService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Thread processThread;
+        private Thread getIrancellsMoThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -19,6 +20,10 @@ namespace DehnadReceiveProcessorService
             processThread = new Thread(MessageProcessorWorkerThread);
             processThread.IsBackground = true;
             processThread.Start();
+
+            getIrancellsMoThread = new Thread(IrancellMoWorkerThread);
+            getIrancellsMoThread.IsBackground = true;
+            getIrancellsMoThread.Start();
         }
 
         protected override void OnStop()
@@ -29,6 +34,10 @@ namespace DehnadReceiveProcessorService
                 if (!processThread.Join(3000))
                 {
                     processThread.Abort();
+                }
+                if (!getIrancellsMoThread.Join(3000))
+                {
+                    getIrancellsMoThread.Abort();
                 }
             }
             catch (Exception exp)
@@ -47,7 +56,16 @@ namespace DehnadReceiveProcessorService
                 messageProcessor.Process();
                 Thread.Sleep(1000);
             }
+        }
 
+        private void IrancellMoWorkerThread()
+        {
+            var irancell = new Irancell();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                irancell.GetMo();
+                Thread.Sleep(5000);
+            }
         }
     }
 }

@@ -174,6 +174,23 @@ namespace SharedLibrary
             }
         }
 
+        public static List<ServiceInfo> GetAllServicesByAggregatorId(long aggregatorId)
+        {
+            List<ServiceInfo> serviceInfoList = new List<ServiceInfo>();
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    serviceInfoList = entity.ServiceInfoes.Where(o => o.AggregatorId == aggregatorId).ToList();
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in GetAllServicesByAggregatorId: " + e);
+                }
+                return serviceInfoList;
+            }
+        }
+
         public static bool CheckIfUserSendedUnsubscribeContentToShortCode(string content)
         {
             foreach (var offKeyword in ServiceOffKeywords())
