@@ -206,10 +206,9 @@ namespace SharedLibrary
                     result["status"] = "";
                     result["message"] = "";
                     result = await SendSingleMessageToTelepromo(client, urlWithParameters);
-                    if (result["status"] == "0" && result["message"].Contains("description=ACCEPTED"))
-                        singlecharge.IsSucceeded = false;
+                    if (result["status"] == "0" && result["message"].Contains("SUCCESS"))
+                        singlecharge.Description = "SUCCESS-Pending Confirmation";
 
-                    singlecharge.Description = result["message"];
                     singlecharge.ReferenceId = result["transactionId"];
                 }
             }
@@ -235,6 +234,47 @@ namespace SharedLibrary
             {
                 logs.Error("Exception in TelepromoOTPRequest on saving values to db: " + e);
             }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> TelepromoOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            try
+            {
+                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
+                var url = "http://10.20.9.135:8600" + "/pin/confirm?";
+                var sc = "Dehnad";
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var from = "98" + serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                using (var client = new HttpClient())
+                {
+                    var to = "98" + message.MobileNumber.TrimStart('0');
+                    var messageContent = "InAppPurchase";
+                    Random random = new Random();
+                    var messageId = Guid.NewGuid().ToString();
+                    var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}&pin={8}"
+                                                            , sc, username, password, from, serviceId, to, messageContent, messageId, confirmationCode);
+                    var result = new Dictionary<string, string>();
+                    result["status"] = "";
+                    result["message"] = "";
+                    result = await SendSingleMessageToTelepromo(client, urlWithParameters);
+                    singlecharge.Description = result["message"] + "-code:" + confirmationCode;
+                    if (result["status"] == "0" && result["message"].Contains("SUCCESS"))
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = result["message"] + "-code:" + confirmationCode;
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+            
             return singlecharge;
         }
 

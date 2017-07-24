@@ -31,6 +31,22 @@ namespace TakavarLibrary
             }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+
+            if (isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true)
+                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+
+            if (message.ReceivedFrom.Contains("IMI"))
+                return;
+            if (message.Content != "9" && isUserSendsSubscriptionKeyword != true && isUserWantsToUnsubscribe != true && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
+            {
+                if (!message.ReceivedFrom.Contains("IMI") && !message.ReceivedFrom.Contains("Verification") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                    return;
+                if (message.ReceivedFrom.Contains("Register"))
+                    isUserSendsSubscriptionKeyword = true;
+                else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                    isUserWantsToUnsubscribe = true;
+            }
+
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)

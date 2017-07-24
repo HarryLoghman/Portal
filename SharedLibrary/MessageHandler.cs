@@ -312,7 +312,46 @@ namespace SharedLibrary
             }
         }
 
-        public static dynamic GetUnprocessedMessages(dynamic entity, MessageType messageType, int readSize)
+        public static dynamic GetOTPRequestId(dynamic entity, MessageObject message)
+        {
+            try
+            {
+                var singlecharge = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == message.MobileNumber && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                if (singlecharge != null)
+                    return singlecharge;
+                else
+                    return null;
+            }
+            catch(Exception e)
+            {
+                logs.Error("Exception in GetOTPRequestId: ", e);
+            }
+            return null;
+        }
+
+        public static MessageObject SetImiChargeInfo(dynamic entity, dynamic imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
+        {
+            if (subscriberState == null && price > 0)
+                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price);
+            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "Register");
+            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
+            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
+            else
+                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "Free");
+
+            if (imiChargeCode.ChargeCode != null)
+            {
+                message.ImiChargeCode = imiChargeCode.ChargeCode;
+                message.ImiChargeKey = imiChargeCode.ChargeKey;
+                message.ImiMessageType = messageType;
+                message.Price = price;
+            }
+            return message;
+        }
+            public static dynamic GetUnprocessedMessages(dynamic entity, MessageType messageType, int readSize)
         {
             var today = DateTime.Now.Date;
             if (messageType == MessageType.AutoCharge)
