@@ -22,15 +22,45 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage SubUnsubNotify()
         {
-            var mo = Request.Content.ReadAsStringAsync().Result;
-            logs.Info(mo);
+            var notify = Request.Content.ReadAsStringAsync().Result;
+            XmlDocument xml = new XmlDocument();
+            xml.LoadXml(notify);
+            XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+            manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+            manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            manager.AddNamespace("ns1", "http://www.huawei.com.cn/schema/common/v2_1");
+            manager.AddNamespace("ns2", "http://www.csapi.org/schema/parlayx/data/sync/v1_0/local");
+            XmlNode mobileNumberNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:userID/ID", manager);
+            XmlNode mobileNumberTypeNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:userID/type", manager);
+            XmlNode serviceIdNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:serviceID", manager);
+            XmlNode subscriptionTypeNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:updateType", manager);
+            XmlNodeList extensionInfoList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:extensionInfo/item", manager);
+            var shortCode =  "";
+            foreach (XmlNode item in extensionInfoList)
+            {
+                XmlNode key = item.SelectSingleNode("key");
+                if(key.InnerText.Trim() == "shortCode")
+                {
+                    XmlNode value = item.SelectSingleNode("value");
+                    shortCode = value.InnerText.Trim();
+                    break;
+                }
+            }
+            var message = new SharedLibrary.Models.MessageObject();
+            message.MobileNumber = mobileNumberNode.InnerText.Trim();
+            if (mobileNumberTypeNode.InnerText.Trim() == "0")
+                message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
+            if (subscriptionTypeNode.InnerText.Trim() == "1" || subscriptionTypeNode.InnerText.Trim() == "6")
+                message.Content = "Subscription";
+            else
+                message.Content = "Unsubscription";
+            message.MobileOperator = 2;
+            message.ReceivedFrom = "92.42.55.180-Notify";
+
+            SharedLibrary.MessageHandler.SaveReceivedMessage(message);
+
             string result = @"
-<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local"">    
-<soapenv:Header/>    
-<soapenv:Body>
-<loc:notifySmsReceptionResponse/>
-</soapenv:Body>
-</soapenv:Envelope>";
+<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/data/sync/v1_0/local"">     <soapenv:Header/>     <soapenv:Body>        <loc:syncOrderRelationResponse>           <loc:result>0</loc:result>           <loc:resultDescription>OK</loc:resultDescription>                 </loc:syncOrderRelationResponse>     </soapenv:Body>  </soapenv:Envelope> ";
 
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/xml");
@@ -42,7 +72,23 @@ namespace Portal.Controllers
         public HttpResponseMessage Delivery()
         {
             var deliveryData = Request.Content.ReadAsStringAsync().Result;
-            logs.Info(deliveryData);
+            XmlDocument xml = new XmlDocument();
+            xml.LoadXml(deliveryData);
+            XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+            manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+            manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            manager.AddNamespace("ns1", "http://www.huawei.com.cn/schema/common/v2_1");
+            manager.AddNamespace("ns2", "http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local");
+            XmlNode transactionId = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Header/ns1:NotifySOAPHeader/ns1:traceUniqueID", manager);
+            XmlNode delvieryStatusNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/deliveryStatus", manager);
+
+
+            var delivery = new DeliveryObject();
+            delivery.ReferenceId = transactionId.InnerText.Trim();
+            delivery.Status = delvieryStatusNode.InnerText.Trim();
+            delivery.AggregatorId = 7;
+            SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+
             string result = @"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local"">    
             <soapenv:Header/>    
