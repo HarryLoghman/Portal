@@ -106,6 +106,18 @@ namespace SharedLibrary
             }
         }
 
+        public static ServiceInfo GetServiceInfoFromShortCode(string shortCode)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == shortCode);
+                if (serviceInfo != null)
+                    return serviceInfo;
+                else
+                    return null;
+            }
+        }
+
         public static List<Subscriber> GetServiceActiveSubscribersFromServiceCode(string serviceCode)
         {
             List<Subscriber> subscriberList = new List<Subscriber>();

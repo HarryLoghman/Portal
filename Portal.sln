@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadAvvalYadService", "De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadIrancellTestService", "DehnadIrancellTestService\DehnadIrancellTestService.csproj", "{1D125336-1724-A2F1-3C23-3B452FC3452D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadSoratyService", "DehnadSoratyService\DehnadSoratyService.csproj", "{1D121234-1D24-A2F1-3CD3-31452FC34525}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -106,6 +108,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvvalYadLibrary", "AvvalYadLibrary\AvvalYadLibrary.csproj", "{C113B241-33F5-C224-2122-4BC23F4D235F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrancellTestLibrary", "IrancellTestLibrary\IrancellTestLibrary.csproj", "{D112BF46-33F5-C224-2122-4BC23F4D2122}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoratyLibrary", "SoratyLibrary\SoratyLibrary.csproj", "{D124B1F6-3BF5-2124-5172-1BC23F4D216C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -217,6 +221,10 @@ Global
 		{1D125336-1724-A2F1-3C23-3B452FC3452D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D125336-1724-A2F1-3C23-3B452FC3452D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D125336-1724-A2F1-3C23-3B452FC3452D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D121234-1D24-A2F1-3CD3-31452FC34525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D121234-1D24-A2F1-3CD3-31452FC34525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D121234-1D24-A2F1-3CD3-31452FC34525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D121234-1D24-A2F1-3CD3-31452FC34525}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -321,6 +329,10 @@ Global
 		{D112BF46-33F5-C224-2122-4BC23F4D2122}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D112BF46-33F5-C224-2122-4BC23F4D2122}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D112BF46-33F5-C224-2122-4BC23F4D2122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D124B1F6-3BF5-2124-5172-1BC23F4D216C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D124B1F6-3BF5-2124-5172-1BC23F4D216C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D124B1F6-3BF5-2124-5172-1BC23F4D216C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D124B1F6-3BF5-2124-5172-1BC23F4D216C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

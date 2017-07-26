@@ -1153,6 +1153,10 @@
       <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
       <Name>SoltanLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SoratyLibrary\SoratyLibrary.csproj">
+      <Project>{d124b1f6-3bf5-2124-5172-1bc23f4d216c}</Project>
+      <Name>SoratyLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
       <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
       <Name>Tabriz2018Library</Name>

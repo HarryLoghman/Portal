@@ -17,11 +17,11 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad" };
+        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty" };
         private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "AvvalYad" };
-        private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz" };
+        private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty" };
 
         [HttpPost]
         [AllowAnonymous]
@@ -120,6 +120,26 @@ namespace Portal.Controllers
                                         else
                                         {
                                             using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                                            {
+                                                entity.Singlecharges.Attach(singlecharge);
+                                                singlecharge.IsCalledFromInAppPurchase = true;
+                                                entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                                entity.SaveChanges();
+                                            }
+                                            if (singlecharge.IsSucceeded == true)
+                                                result.Status = "Success";
+                                            else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                                result.Status = "Insufficient Balance";
+                                        }
+                                    }
+                                    else if (message.ServiceCode == "Soraty")
+                                    {
+                                        var singlecharge = SoratyLibrary.ContentManager.HandleSinglechargeContent(message, service, null, SoratyLibrary.ServiceHandler.GetServiceMessagesTemplate());
+                                        if (singlecharge == null)
+                                            result.Status = "Error in Charging";
+                                        else
+                                        {
+                                            using (var entity = new SoratyLibrary.Models.SoratyEntities())
                                             {
                                                 entity.Singlecharges.Attach(singlecharge);
                                                 singlecharge.IsCalledFromInAppPurchase = true;
@@ -494,6 +514,29 @@ namespace Portal.Controllers
                             else if (messageObj.ServiceCode == "MenchBaz")
                             {
                                 using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                        pricePayed = -1;
+                                    else
+                                    {
+                                        var originalPriceBalancedForInAppRequest = singlechargeInstallment.PriceBalancedForInAppRequest;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest == null)
+                                            singlechargeInstallment.PriceBalancedForInAppRequest = 0;
+                                        pricePayed = singlechargeInstallment.PricePayed - singlechargeInstallment.PriceBalancedForInAppRequest.Value;
+                                        singlechargeInstallment.PriceBalancedForInAppRequest += pricePayed;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest != originalPriceBalancedForInAppRequest)
+                                        {
+                                            entity.Entry(singlechargeInstallment).State = EntityState.Modified;
+                                            entity.SaveChanges();
+                                        }
+                                    }
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "Soraty")
+                            {
+                                using (var entity = new SoratyLibrary.Models.SoratyEntities())
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();

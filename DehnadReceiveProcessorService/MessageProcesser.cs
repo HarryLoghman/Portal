@@ -204,6 +204,8 @@ namespace DehnadReceiveProcessorService
                     AvvalYadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "IrancellTest")
                     IrancellTestLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Soraty")
+                    SoratyLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -259,6 +261,8 @@ namespace DehnadReceiveProcessorService
                     AvvalYadLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "IrancellTest")
                     IrancellTestLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Soraty")
+                    SoratyLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

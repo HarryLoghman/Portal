@@ -94,7 +94,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage TelepromoMessage(string da, string oa, string txt)
         {
-            if (da == "989168623674")
+            if (da == "989168623674" || da == "989195411097")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
                 blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");

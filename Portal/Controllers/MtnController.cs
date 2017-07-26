@@ -35,21 +35,22 @@ namespace Portal.Controllers
             XmlNode serviceIdNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:serviceID", manager);
             XmlNode subscriptionTypeNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:updateType", manager);
             XmlNodeList extensionInfoList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns2:syncOrderRelation/ns2:extensionInfo/item", manager);
-            var shortCode =  "";
+            var message = new SharedLibrary.Models.MessageObject();
             foreach (XmlNode item in extensionInfoList)
             {
                 XmlNode key = item.SelectSingleNode("key");
-                if(key.InnerText.Trim() == "shortCode")
+                if (key.InnerText.Trim() == "shortCode")
                 {
                     XmlNode value = item.SelectSingleNode("value");
-                    shortCode = value.InnerText.Trim();
+                    message.ShortCode = value.InnerText.Trim();
                     break;
                 }
             }
-            var message = new SharedLibrary.Models.MessageObject();
+            
             message.MobileNumber = mobileNumberNode.InnerText.Trim();
             if (mobileNumberTypeNode.InnerText.Trim() == "0")
                 message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
+            logs.Info("type:" + subscriptionTypeNode.InnerText.Trim());
             if (subscriptionTypeNode.InnerText.Trim() == "1" || subscriptionTypeNode.InnerText.Trim() == "6")
                 message.Content = "Subscription";
             else
