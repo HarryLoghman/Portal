@@ -34,7 +34,8 @@ namespace Portal.Areas.Soltan.Controllers
                 MobileNumber = receivedMessages.MobileNumber,
                 PersianReceivedTime = receivedMessages.PersianReceivedTime,
                 Content = receivedMessages.Content,
-                IsReceivedFromIntegratedPanel = receivedMessages.IsReceivedFromIntegratedPanel
+                IsReceivedFromIntegratedPanel = receivedMessages.IsReceivedFromIntegratedPanel,
+                ReceivedFrom = receivedMessages.ReceivedFrom
             });
             return Json(result, JsonRequestBehavior.AllowGet);
         }

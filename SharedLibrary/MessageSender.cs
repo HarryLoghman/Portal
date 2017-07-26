@@ -1,4 +1,5 @@
-﻿using SharedLibrary.Models;
+﻿using Newtonsoft.Json;
+using SharedLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -186,11 +187,11 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
-                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
-                var url = "http://10.20.9.135:8600" + "/pin/generate?";
+                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/pin/generate?";
+                var url = "http://10.20.9.135:8600" + "/samsson-sdp/pin/generate?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
-                var password = serviceAdditionalInfo["password"];
+                var password = serviceAdditionalInfo["password"]; 
                 var from = "98" + serviceAdditionalInfo["shortCode"];
                 var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
                 using (var client = new HttpClient())
@@ -205,7 +206,7 @@ namespace SharedLibrary
                     var result = new Dictionary<string, string>();
                     result["status"] = "";
                     result["message"] = "";
-                    result = await SendSingleMessageToTelepromo(client, urlWithParameters);
+                    result = await SendSingleMessageToTelepromoJsonResponse(client, urlWithParameters);
                     if (result["status"] == "0" && result["message"].Contains("SUCCESS"))
                         singlecharge.Description = "SUCCESS-Pending Confirmation";
 
@@ -215,6 +216,7 @@ namespace SharedLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in TelepromoOTPRequest: " + e);
+                singlecharge.Description = "Exception";
             }
             try
             {
@@ -241,8 +243,8 @@ namespace SharedLibrary
         {
             try
             {
-                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
-                var url = "http://10.20.9.135:8600" + "/pin/confirm?";
+                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/pin/confirm?";
+                var url = "http://10.20.9.135:8600" + "/samsson-sdp/pin/confirm?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -259,7 +261,7 @@ namespace SharedLibrary
                     var result = new Dictionary<string, string>();
                     result["status"] = "";
                     result["message"] = "";
-                    result = await SendSingleMessageToTelepromo(client, urlWithParameters);
+                    result = await SendSingleMessageToTelepromoJsonResponse(client, urlWithParameters);
                     singlecharge.Description = result["message"] + "-code:" + confirmationCode;
                     if (result["status"] == "0" && result["message"].Contains("SUCCESS"))
                     {
@@ -296,6 +298,34 @@ namespace SharedLibrary
                         result["message"] = xmlResult.Root.Descendants("message").Select(e => e.Value).FirstOrDefault();
                         if (xmlResult.Root.Descendants("transactionId") != null)
                             result["transactionId"] = xmlResult.Root.Descendants("transactionId").Select(e => e.Value).FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSingleMessageToTelepromo: " + e);
+            }
+            return result;
+        }
+
+        private static async Task<Dictionary<string, string>> SendSingleMessageToTelepromoJsonResponse(HttpClient client, string url)
+        {
+            var result = new Dictionary<string, string>();
+            result["status"] = "";
+            result["message"] = "";
+            result["transactionId"] = "";
+            try
+            {
+                using (var response = client.GetAsync(new Uri(url)).Result)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string httpResult = response.Content.ReadAsStringAsync().Result;
+                        dynamic results = JsonConvert.DeserializeObject<dynamic>(httpResult);
+                        result["status"] = results.status;
+                        result["message"] = results.message;
+                        if (HelpfulFunctions.IsPropertyExist(result, "transactionId"))
+                            result["transactionId"] = results.transactionId;
                     }
                 }
             }

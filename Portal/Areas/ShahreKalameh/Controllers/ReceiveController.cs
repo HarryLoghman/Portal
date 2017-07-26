@@ -37,7 +37,8 @@ namespace Portal.Areas.ShahreKalameh.Controllers
                     MobileNumber = receivedMessages.MobileNumber,
                     PersianReceivedTime = receivedMessages.PersianReceivedTime,
                     Content = receivedMessages.Content,
-                    IsReceivedFromIntegratedPanel = receivedMessages.IsReceivedFromIntegratedPanel
+                    IsReceivedFromIntegratedPanel = receivedMessages.IsReceivedFromIntegratedPanel,
+                    ReceivedFrom = receivedMessages.ReceivedFrom
                 });
             }
             else if (User.IsInRole("Advertise"))

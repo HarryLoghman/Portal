@@ -342,7 +342,7 @@ namespace SharedLibrary
             else
                 imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "Free");
 
-            if (imiChargeCode.ChargeCode != null)
+            if (imiChargeCode != null)
             {
                 message.ImiChargeCode = imiChargeCode.ChargeCode;
                 message.ImiChargeKey = imiChargeCode.ChargeKey;

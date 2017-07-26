@@ -46,10 +46,13 @@ namespace Portal.Controllers
                                     result = "Invalid Price";
                                 else
                                 {
+                                    logs.Info("1");
                                     var singleCharge = new SoltanLibrary.Models.Singlecharge();
                                     string aggregatorName = "Telepromo";
                                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", aggregatorName);
+                                    logs.Info("2");
                                     singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                    logs.Info("3");
                                     result = singleCharge.Description;
                                 }
                             }
