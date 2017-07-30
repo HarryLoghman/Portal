@@ -12,8 +12,6 @@ namespace Tabriz2018Library
         public static void ReceivedMessage(MessageObject message, Service service)
         {
             //System.Diagnostics.Debugger.Launch();
-            if (message.Content.ToLower() == "off" || message.Content == "خاموش" || message.Content == "لغو")
-                return;
             var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);

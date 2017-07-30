@@ -209,8 +209,10 @@ namespace SharedLibrary
                     result = await SendSingleMessageToTelepromoJsonResponse(client, urlWithParameters);
                     if (result["status"] == "0" && result["message"].Contains("SUCCESS"))
                         singlecharge.Description = "SUCCESS-Pending Confirmation";
+                    else
+                        singlecharge.Description = result["message"];
 
-                    singlecharge.ReferenceId = result["transactionId"];
+                    singlecharge.ReferenceId = result["messageId"] + "_" + result["transactionId"];
                 }
             }
             catch (Exception e)
@@ -255,9 +257,12 @@ namespace SharedLibrary
                     var to = "98" + message.MobileNumber.TrimStart('0');
                     var messageContent = "InAppPurchase";
                     Random random = new Random();
-                    var messageId = Guid.NewGuid().ToString();
-                    var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}&pin={8}"
-                                                            , sc, username, password, from, serviceId, to, messageContent, messageId, confirmationCode);
+                    string otpIds = singlecharge.ReferenceId;
+                    var optIdsSplitted = otpIds.Split('_');
+                    var messageId = optIdsSplitted[0];
+                    var transactionId = optIdsSplitted[1];
+                    var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}&transactionId={8}&pin={9}"
+                                                            , sc, username, password, from, serviceId, to, messageContent, messageId, transactionId, confirmationCode);
                     var result = new Dictionary<string, string>();
                     result["status"] = "";
                     result["message"] = "";
@@ -268,6 +273,7 @@ namespace SharedLibrary
                         singlecharge.IsSucceeded = true;
                         singlecharge.Description = result["message"] + "-code:" + confirmationCode;
                         entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
                     }
                 }
             }
@@ -314,6 +320,7 @@ namespace SharedLibrary
             result["status"] = "";
             result["message"] = "";
             result["transactionId"] = "";
+            result["messageId"] = "";
             try
             {
                 using (var response = client.GetAsync(new Uri(url)).Result)
@@ -324,14 +331,16 @@ namespace SharedLibrary
                         dynamic results = JsonConvert.DeserializeObject<dynamic>(httpResult);
                         result["status"] = results.status;
                         result["message"] = results.message;
-                        if (HelpfulFunctions.IsPropertyExist(result, "transactionId"))
-                            result["transactionId"] = results.transactionId;
+                        result["messageId"] = results["messageId"];
+                        result["transactionId"] = results["transactionId"];
                     }
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Exception in SendSingleMessageToTelepromo: " + e);
+                result["status"] = "900";
+                result["message"] = "Exception in calling aggregator webservice";
             }
             return result;
         }
