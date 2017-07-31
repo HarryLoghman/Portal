@@ -89,7 +89,7 @@ namespace MenchBazLibrary
                     //    return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
-                    singlechargeQueueItem.Price = 10000;
+                    singlechargeQueueItem.Price = 25000;
                     singlechargeQueueItem.DateAdded = DateTime.Now;
                     singlechargeQueueItem.PersianDateAdded = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlechargeQueueItem.IsLastDayWarningSent = false;

@@ -13,13 +13,14 @@ namespace DehnadMenchBazService
     public class SinglechargeInstallmentClass
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private static int maxChargeLimit = 400;
+        private static int maxChargeLimit = 1000;
         public void ProcessInstallment()
         {
-            if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 7)
-                return;
-            else
-                InstallmentJob();
+            FakeInstallmentJob();
+            //if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 7)
+            //    return;
+            //else
+            //    InstallmentJob();
 
             //if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
             //    InstallmentDailyBalance();
@@ -62,7 +63,7 @@ namespace DehnadMenchBazService
             {
                 logs.Error("Exception in SinglechargeInstallment InstallmentDailyBalance: ", e);
             }
-            
+
         }
 
         public void InstallmentDailyBalance()
@@ -106,6 +107,42 @@ namespace DehnadMenchBazService
             }
         }
 
+        public static void FakeInstallmentJob()
+        {
+            var today = DateTime.Now.Date;
+            int batchSaveCounter = 0;
+            logs.Info("InstallmentJob start!");
+            try
+            {
+                using (var entity = new MenchBazEntities())
+                {
+                    var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
+                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", "Telepromo");
+                    foreach (var installment in installmentList)
+                    {
+                        if (batchSaveCounter >= 500)
+                        {
+                            entity.SaveChanges();
+                            batchSaveCounter = 0;
+                        }
+                        installment.PriceTodayCharged = 1000;
+                        installment.PricePayed += 1000;
+                        installment.IsExceededDailyChargeLimit = true;
+                        if (installment.PricePayed > installment.TotalPrice)
+                            installment.IsFullyPaid = true;
+                        entity.Entry(installment).State = EntityState.Modified;
+                        batchSaveCounter++;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SinglechargeInstallment InstallmentJob: ", e);
+            }
+            logs.Info("InstallmentJob ended!");
+        }
+
         private void InstallmentJob()
         {
             try
@@ -147,13 +184,13 @@ namespace DehnadMenchBazService
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = MenchBazLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
+                        var response = MenchBazLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                         {
                             if (message.Price == 400)
                             {
                                 SetMessagePrice(message, chargeCodes, 300);
-                                response = MenchBazLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo ,installment.Id).Result;
+                                response = MenchBazLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);

@@ -190,12 +190,11 @@ namespace DehnadMenchBazService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            //var singlechargeInstallment = new SinglechargeInstallmentClass();
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    singlechargeInstallment.ProcessInstallment();
-            //    Thread.Sleep(7200000);
-            //}
+            while (!shutdownEvent.WaitOne(0))
+            {
+                SinglechargeInstallmentClass.FakeInstallmentJob();
+                Thread.Sleep(7200000);
+            }
         }
 
         private void SinglechargeInstallmentBalancerWorkerThread()
