@@ -50,6 +50,16 @@ namespace Portal.Controllers
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                 result = "1";
             }
+            if (messageObj.Content == null || messageObj.Content == "")
+            {
+                if (HttpContext.Current.Request.Headers["action"] != null)
+                {
+                    if (HttpContext.Current.Request.Headers["action"] == "subscribe")
+                        messageObj.Content = "1-header";
+                    else if (HttpContext.Current.Request.Headers["action"] == "unsubscribe")
+                        messageObj.Content = "off";
+                }
+            }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
@@ -254,16 +264,6 @@ namespace Portal.Controllers
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
-            return response;
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public HttpResponseMessage SdpNotification([FromBody]string messageXml)
-        {
-            logs.Info("SdpNotification:" + messageXml);
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            //var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             return response;
         }
 
