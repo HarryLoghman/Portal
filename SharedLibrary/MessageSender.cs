@@ -20,6 +20,9 @@ namespace SharedLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int retryCountMax = 15;
         public static int retryPauseBeforeSendByMinute = -1;
+        public static string telepromoIp = "http://10.20.9.135:8600"; //"http://10.20.9.159:8600"
+        public static string irancellIp = "http://92.42.55.180:8310";
+
         public static async Task SendMesssagesToTelepromo(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try
@@ -27,8 +30,7 @@ namespace SharedLibrary
                 var messagesCount = messages.Count;
                 if (messagesCount == 0)
                     return;
-                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/send?";
-                var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/send?";
+                var url = telepromoIp + "/samsson-sdp/transfer/send?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -52,7 +54,7 @@ namespace SharedLibrary
                         var messageId = Guid.NewGuid().ToString();
                         var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}"
                                                                 , sc, username, password, from, serviceId, to, messageContent, messageId);
-                        if (message.ImiChargeKey != "FREE")
+                        if (message.Price > 0)
                             urlWithParameters += String.Format("&chargingCode={0}", message.ImiChargeKey);
 
                         var result = new Dictionary<string, string>();
@@ -127,8 +129,7 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
-                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
-                var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/charge?";
+                var url = telepromoIp + "/samsson-sdp/transfer/charge?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -187,8 +188,7 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
-                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/pin/generate?";
-                var url = "http://10.20.9.135:8600" + "/samsson-sdp/pin/generate?";
+                var url = telepromoIp + "/samsson-sdp/pin/generate?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"]; 
@@ -245,8 +245,7 @@ namespace SharedLibrary
         {
             try
             {
-                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/pin/confirm?";
-                var url = "http://10.20.9.135:8600" + "/samsson-sdp/pin/confirm?";
+                var url = telepromoIp + "/samsson-sdp/pin/confirm?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -954,7 +953,7 @@ namespace SharedLibrary
                 var messagesCount = messages.Count;
                 if (messagesCount == 0)
                     return;
-                var url = "http://92.42.55.180:8310/SendSmsService/services/SendSms";
+                var url = irancellIp + "/SendSmsService/services/SendSms";
                 var username = serviceAdditionalInfo["username"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
                 using (var client = new HttpClient())
@@ -1105,7 +1104,7 @@ namespace SharedLibrary
             int rialedPrice = message.Price.Value * 10;
             Random random = new Random();
             var referenceCode = random.Next(000000001, 999999999).ToString();
-            var url = "http://92.42.55.180:8310/AmountChargingService/services/AmountCharging";
+            var url = irancellIp + "/AmountChargingService/services/AmountCharging";
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>980110006379</spId>               <timeStamp>{0}</timeStamp>           </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
 , timeStamp, message.MobileNumber, rialedPrice, referenceCode, charge);
             try
