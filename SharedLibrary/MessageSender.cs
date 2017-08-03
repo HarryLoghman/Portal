@@ -191,7 +191,7 @@ namespace SharedLibrary
                 var url = telepromoIp + "/samsson-sdp/pin/generate?";
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
-                var password = serviceAdditionalInfo["password"]; 
+                var password = serviceAdditionalInfo["password"];
                 var from = "98" + serviceAdditionalInfo["shortCode"];
                 var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
                 using (var client = new HttpClient())
@@ -281,7 +281,7 @@ namespace SharedLibrary
                 logs.Error("Exception in TelepromoOTPConfirm: " + e);
                 singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
             }
-            
+
             return singlecharge;
         }
 
@@ -703,7 +703,7 @@ namespace SharedLibrary
                 recipient.Attributes.Append(cost);
 
                 var random = new Random();
-                long doer = random.Next(10000000,999999999);
+                long doer = random.Next(10000000, 999999999);
                 XmlAttribute doerid = doc.CreateAttribute("doerid");
                 doerid.InnerText = doer.ToString();
                 recipient.Attributes.Append(doerid);
@@ -867,6 +867,88 @@ namespace SharedLibrary
             return singlecharge;
         }
 
+        public static async Task<dynamic> PardisImiOtpChargeRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var SPID = "RESA";
+                var otpRequest = new SharedLibrary.PardisOTPServiceReference.CPOTPRequest();
+                string mobileNumber = message.MobileNumber;
+                otpRequest.MobileNo = Convert.ToInt64("98" + mobileNumber.TrimStart('0'));
+                otpRequest.ShortCode = Convert.ToInt64("98" + serviceAdditionalInfo["shortCode"]);
+                otpRequest.ChargeCode = message.ImiChargeKey;
+
+                var pardisClient = new SharedLibrary.PardisOTPServiceReference.OTPSoapClient();
+                var pardisResponse = pardisClient.Request(SPID, otpRequest);
+                if (pardisResponse.OTPTransactionId != null)
+                {
+                    singlecharge.Description = "SUCCESS-Pending Confirmation";
+                    singlecharge.ReferenceId = pardisResponse.ReferenceCode + "_" + pardisResponse.OTPTransactionId;
+                }
+                else
+                    singlecharge.Description = pardisResponse.ErrorCode + ":" + pardisResponse.ErrorMessage;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in PardisImiOtpChargeRequest: " + e);
+                singlecharge.Description = "Exception Occurred";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in PardisImiOtpChargeRequest on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> PardisImiOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            try
+            {
+                var SPID = "RESA";
+                var otpConfirm = new SharedLibrary.PardisOTPServiceReference.CPOTPConfirm();
+                string mobileNumber = message.MobileNumber;
+                otpConfirm.MobileNo = Convert.ToInt64("98" + mobileNumber.TrimStart('0'));
+                otpConfirm.ShortCode = Convert.ToInt64("98" + serviceAdditionalInfo["shortCode"]);
+                otpConfirm.PIN = confirmationCode;
+                string otpIds = singlecharge.ReferenceId;
+                var optIdsSplitted = otpIds.Split('_');
+                var messageId = optIdsSplitted[0];
+                var transactionId = optIdsSplitted[1];
+                otpConfirm.OTPTransactionId = Convert.ToInt64(transactionId);
+
+                var pardisClient = new SharedLibrary.PardisOTPServiceReference.OTPSoapClient();
+                var pardisResponse = pardisClient.Confirm(SPID, otpConfirm);
+                    if (pardisResponse.ReferenceCode != null)
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = "Success" + "-code:" + confirmationCode;
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                    else
+                    singlecharge.Description = pardisResponse.ErrorCode + ":" + pardisResponse.ErrorMessage;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in PardisImiOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+
+            return singlecharge;
+        }
 
         public static async Task SendMesssagesToPardisPlatform(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
