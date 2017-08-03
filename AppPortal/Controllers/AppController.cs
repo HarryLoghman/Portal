@@ -18,7 +18,7 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> AppChargeUserAllowedServiceCode = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty" };
+        private List<string> OtpAllowedServiceCodes = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty" };
         private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty" };
         private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty" };
         private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "AvvalYad" };
@@ -29,19 +29,20 @@ namespace Portal.Controllers
         public async Task<HttpResponseMessage> OtpCharge([FromBody]MessageObject messageObj)
         {
             dynamic result = new ExpandoObject();
-            var hash = SharedLibrary.Security.GetSha256Hash("OTPCharge" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.Price);
-            if (messageObj.AccessKey != hash)
-                result.Status = "You do not have permission";
-            else if (!AppMessageAllowedServiceCode.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 0)
-                result.Status = "This ServiceCode does not have permission";
-            else
+            try
             {
-                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                if (messageObj.MobileNumber == "Invalid Mobile Number")
-                    result.Status = "Invalid Mobile Number";
+                result.MobileNumber = messageObj.MobileNumber;
+                var hash = SharedLibrary.Security.GetSha256Hash("OTPCharge" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.Price);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 0)
+                    result.Status = "This ServiceCode does not have permission for OTP operation";
                 else
                 {
-                    try
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.MobileNumber == "Invalid Mobile Number")
+                        result.Status = "Invalid Mobile Number";
+                    else
                     {
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
@@ -56,6 +57,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new SoltanLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -64,7 +70,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new SoltanLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -77,6 +83,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new MenchBazLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -85,7 +96,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new MenchBazLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -98,6 +109,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new DonyayeAsatirLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -106,7 +122,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -119,6 +135,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new AvvalPodLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -127,7 +148,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new AvvalPodLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -140,6 +161,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new FitShowLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -148,7 +174,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new FitShowLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -161,6 +187,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new JabehAbzarLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -169,7 +200,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -182,6 +213,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new ShenoYadLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -190,7 +226,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -203,6 +239,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new TakavarLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -211,7 +252,7 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new TakavarLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
@@ -224,6 +265,11 @@ namespace Portal.Controllers
                                     var imiChargeCode = new TamlyLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -232,8 +278,60 @@ namespace Portal.Controllers
                                     {
                                         var singleCharge = new TamlyLibrary.Models.Singlecharge();
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
+                            else if (service.ServiceCode == "ShahreKalameh")
+                            {
+                                using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                                {
+                                    var imiChargeCode = new ShahreKalamehLibrary.Models.ImiChargeCode();
+                                    if (messageObj.Price.Value == 0)
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
+                                    else
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                    if (messageObj.Price == null)
+                                        result.Status = "Invalid Price";
+                                    else
+                                    {
+                                        var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
+                                        string aggregatorName = "Hub";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
+                            else if (service.ServiceCode == "Soraty")
+                            {
+                                using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                                {
+                                    var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
+                                    if (messageObj.Price.Value == 0)
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
+                                    else
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                    if (messageObj.Price == null)
+                                        result.Status = "Invalid Price";
+                                    else
+                                    {
+                                        var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                        string aggregatorName = "Hub";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -242,14 +340,15 @@ namespace Portal.Controllers
                                 result.Status = "Service does not defined";
                         }
                     }
-                    catch (Exception e)
-                    {
-                        logs.Error("Excepiton in OtpCharge method: ", e);
-                    }
                 }
             }
+            catch (Exception e)
+            {
+                logs.Error("Excepiton in OtpCharge method: ", e);
+            }
+            var json = JsonConvert.SerializeObject(result);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
             return response;
         }
 
@@ -258,18 +357,20 @@ namespace Portal.Controllers
         public async Task<HttpResponseMessage> OtpConfirm([FromBody]MessageObject messageObj)
         {
             dynamic result = new ExpandoObject();
-            var hash = SharedLibrary.Security.GetSha256Hash("OTPConfirm" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.ConfirmCode);
-            if (messageObj.AccessKey != hash)
-                result.Status = "You do not have permission";
-            else
+            try
             {
-                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                if (messageObj.MobileNumber == "Invalid Mobile Number")
-                    result.Status = "Invalid Mobile Number";
+                result.MobileNumber = messageObj.MobileNumber;
+                var hash = SharedLibrary.Security.GetSha256Hash("OTPConfirm" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.ConfirmCode);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
                 else
                 {
-                    try
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.MobileNumber == "Invalid Mobile Number")
+                        result.Status = "Invalid Mobile Number";
+                    else
                     {
+
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                             result.Status = "Invalid serviceId";
@@ -287,7 +388,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -304,7 +405,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -321,7 +422,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -338,7 +439,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -355,7 +456,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -372,7 +473,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -389,7 +490,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -406,7 +507,7 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
@@ -423,8 +524,42 @@ namespace Portal.Controllers
                                     else
                                     {
                                         string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("MenchBaz", aggregatorName);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
+                            else if (service.ServiceCode == "ShahreKalameh")
+                            {
+                                using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                                {
+                                    var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
+                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        string aggregatorName = "Hub";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.HubOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
+                            else if (service.ServiceCode == "Soraty")
+                            {
+                                using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                                {
+                                    var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        string aggregatorName = "Hub";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.HubOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -433,14 +568,15 @@ namespace Portal.Controllers
                                 result.Status = "Service does not defined";
                         }
                     }
-                    catch (Exception e)
-                    {
-                        logs.Error("Excepiton in OtpConfirm method: ", e);
-                    }
                 }
             }
+            catch (Exception e)
+            {
+                logs.Error("Excepiton in OtpConfirm method: ", e);
+            }
+            var json = JsonConvert.SerializeObject(result);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
             return response;
         }
 

@@ -608,9 +608,7 @@ namespace SharedLibrary
                 SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
                 logs.Info(stringedXml);
                 string response = hubClient.XmsRequest(stringedXml).ToString();
-                logs.Info(response);
                 XmlDocument xml = new XmlDocument();
-                xml.LoadXml(response);
                 XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
                 foreach (XmlNode error in OK)
                 {
@@ -668,6 +666,207 @@ namespace SharedLibrary
             }
             return singlecharge;
         }
+
+        public static async Task<dynamic> HubOtpChargeRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var aggregatorUsername = serviceAdditionalInfo["username"];
+                var aggregatorPassword = serviceAdditionalInfo["password"];
+                var from = serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+
+                XmlDocument doc = new XmlDocument();
+                XmlElement root = doc.CreateElement("xmsrequest");
+                XmlElement userid = doc.CreateElement("userid");
+                XmlElement password = doc.CreateElement("password");
+                XmlElement action = doc.CreateElement("action");
+                XmlElement body = doc.CreateElement("body");
+                XmlElement serviceid = doc.CreateElement("serviceid");
+                serviceid.InnerText = serviceId;
+                body.AppendChild(serviceid);
+
+                XmlElement recipient = doc.CreateElement("recipient");
+                body.AppendChild(recipient);
+
+                XmlAttribute mobile = doc.CreateAttribute("mobile");
+                recipient.Attributes.Append(mobile);
+                mobile.InnerText = message.MobileNumber;
+
+                XmlAttribute originator = doc.CreateAttribute("originator");
+                originator.InnerText = from;
+                recipient.Attributes.Append(originator);
+
+                XmlAttribute cost = doc.CreateAttribute("cost");
+                cost.InnerText = (message.Price * 10).ToString();
+                recipient.Attributes.Append(cost);
+
+                var random = new Random();
+                long doer = random.Next(10000000,999999999);
+                XmlAttribute doerid = doc.CreateAttribute("doerid");
+                doerid.InnerText = doer.ToString();
+                recipient.Attributes.Append(doerid);
+
+                userid.InnerText = aggregatorUsername;
+                password.InnerText = aggregatorPassword;
+                action.InnerText = "PushOtp";
+                //
+                doc.AppendChild(root);
+                root.AppendChild(userid);
+                root.AppendChild(password);
+                root.AppendChild(action);
+                root.AppendChild(body);
+                //
+                string stringedXml = doc.OuterXml;
+                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                logs.Info("request:" + stringedXml);
+                string response = hubClient.XmsRequest(stringedXml).ToString();
+                logs.Info("response:" + response);
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(response);
+                XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                foreach (XmlNode error in OK)
+                {
+                    if (error.InnerText != "" && error.InnerText != "ok")
+                    {
+                        logs.Error("Error in OtpChargeReuqest using Hub");
+                    }
+                    else
+                    {
+                        var i = 0;
+                        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                        foreach (XmlNode xn in xnList)
+                        {
+                            string responseCode = (xn.Attributes["status"].Value).ToString();
+                            if (responseCode == "41")
+                            {
+                                singlecharge.Description = "SUCCESS-Pending Confirmation";
+                                singlecharge.ReferenceId = xn.InnerText;
+                            }
+                            else
+                            {
+                                singlecharge.Description = responseCode;
+                                //singlecharge.ReferenceId = xn.InnerText;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in HubOtpChargeRequest: " + e);
+                singlecharge.Description = "Exception Occurred";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in HubOtpChargeRequest on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> HubOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            try
+            {
+                var aggregatorUsername = serviceAdditionalInfo["username"];
+                var aggregatorPassword = serviceAdditionalInfo["password"];
+                var from = serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+
+                XmlDocument doc = new XmlDocument();
+                XmlElement root = doc.CreateElement("xmsrequest");
+                XmlElement userid = doc.CreateElement("userid");
+                XmlElement password = doc.CreateElement("password");
+                XmlElement action = doc.CreateElement("action");
+                XmlElement body = doc.CreateElement("body");
+                XmlElement serviceid = doc.CreateElement("serviceid");
+                serviceid.InnerText = serviceId;
+                body.AppendChild(serviceid);
+
+                XmlElement recipient = doc.CreateElement("recipient");
+                body.AppendChild(recipient);
+
+                XmlAttribute mobile = doc.CreateAttribute("mobile");
+                recipient.Attributes.Append(mobile);
+                mobile.InnerText = message.MobileNumber;
+
+                XmlAttribute originator = doc.CreateAttribute("originator");
+                originator.InnerText = from;
+                recipient.Attributes.Append(originator);
+
+                XmlAttribute pin = doc.CreateAttribute("pin");
+                pin.InnerText = confirmationCode;
+                recipient.Attributes.Append(pin);
+
+                userid.InnerText = aggregatorUsername;
+                password.InnerText = aggregatorPassword;
+                action.InnerText = "chargeotp";
+                //
+                doc.AppendChild(root);
+                root.AppendChild(userid);
+                root.AppendChild(password);
+                root.AppendChild(action);
+                root.AppendChild(body);
+                //
+                string stringedXml = doc.OuterXml;
+                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                string response = hubClient.XmsRequest(stringedXml).ToString();
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(response);
+                XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                foreach (XmlNode error in OK)
+                {
+                    if (error.InnerText != "" && error.InnerText != "ok")
+                    {
+                        logs.Error("Error in HubOtpConfrim");
+                    }
+                    else
+                    {
+                        var i = 0;
+                        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                        foreach (XmlNode xn in xnList)
+                        {
+                            string responseCode = (xn.Attributes["status"].Value).ToString();
+                            if (responseCode == "48")
+                            {
+                                singlecharge.Description = "SUCCESS" + "-code:" + confirmationCode;
+                                singlecharge.ReferenceId = xn.InnerText;
+                                singlecharge.IsSucceeded = true;
+                                entity.Entry(singlecharge).State = EntityState.Modified;
+                                entity.SaveChanges();
+                            }
+                            else
+                            {
+                                singlecharge.Description = responseCode;
+                                //singlecharge.ReferenceId = xn.InnerText;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in HubOtpConfrim: " + e);
+                singlecharge.Description = "Exception Occurred";
+            }
+            return singlecharge;
+        }
+
 
         public static async Task SendMesssagesToPardisPlatform(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
