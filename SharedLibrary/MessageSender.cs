@@ -41,7 +41,7 @@ namespace SharedLibrary
                 {
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount != null && message.RetryCount > retryCountMax)
+                        if (message.RetryCount != null && message.RetryCount >= retryCountMax)
                         {
                             message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                             entity.Entry(message).State = EntityState.Modified;
@@ -346,13 +346,13 @@ namespace SharedLibrary
 
         public static async Task SendMesssagesToHub(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
+            var waitingForRetryMobileNumbers = new List<string>();
             try
             {
                 await Task.Delay(10); // for making it async
                 var messagesCount = messages.Count;
                 if (messagesCount == 0)
                     return;
-
                 var aggregatorUsername = serviceAdditionalInfo["username"];
                 var aggregatorPassword = serviceAdditionalInfo["password"];
                 var from = serviceAdditionalInfo["shortCode"];
@@ -371,18 +371,21 @@ namespace SharedLibrary
                 XmlElement serviceid = doc.CreateElement("serviceid");
                 serviceid.InnerText = serviceId;
                 body.AppendChild(serviceid);
-
+                
                 foreach (var message in messages)
                 {
-                    if (message.RetryCount != null && message.RetryCount > retryCountMax)
+                    if (message.RetryCount != null && message.RetryCount >= retryCountMax)
                     {
+                        waitingForRetryMobileNumbers.Add(message.MobileNumber);
                         message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         entity.Entry(message).State = EntityState.Modified;
                         continue;
                     }
-                    else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
+                    else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute))
+                    {
+                        waitingForRetryMobileNumbers.Add(message.MobileNumber);
                         continue;
-
+                    }
                     if (message.ImiChargeKey == "UnSubscription" || message.ImiChargeKey == "Register" || message.ImiChargeKey == "Renewal")
                     {
                         XmlDocument doc1 = new XmlDocument();
@@ -477,6 +480,8 @@ namespace SharedLibrary
                         logs.Error("Error in sending message to Hub");
                         foreach (var message in messages)
                         {
+                            if (waitingForRetryMobileNumbers.Contains(message.MobileNumber))
+                                continue;
                             if (message.RetryCount == null)
                             {
                                 message.RetryCount = 1;
@@ -537,6 +542,8 @@ namespace SharedLibrary
                 logs.Error("Exception in SendMessagesToHub: " + e);
                 foreach (var message in messages)
                 {
+                    if (waitingForRetryMobileNumbers.Contains(message.MobileNumber))
+                        continue;
                     if (message.RetryCount == null)
                     {
                         message.RetryCount = 1;
