@@ -18,11 +18,11 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> OtpAllowedServiceCodes = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty" };
+        private List<string> OtpAllowedServiceCodes = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran" };
         private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "AvvalYad" };
-        private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty" };
+        private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran" };
 
         [HttpPost]
         [AllowAnonymous]
@@ -336,6 +336,32 @@ namespace Portal.Controllers
                                     }
                                 }
                             }
+                            else if (service.ServiceCode == "DefendIran")
+                            {
+                                using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                                {
+                                    var imiChargeCode = new DefendIranLibrary.Models.ImiChargeCode();
+                                    if (messageObj.Price.Value == 0)
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
+                                    else
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                    if (messageObj.Price == null)
+                                        result.Status = "Invalid Price";
+                                    else
+                                    {
+                                        var singleCharge = new DefendIranLibrary.Models.Singlecharge();
+                                        string aggregatorName = "Hub";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
                             else if (service.ServiceCode == "SepidRood")
                             {
                                 using (var entity = new SepidRoodLibrary.Models.SepidRoodEntities())
@@ -590,6 +616,23 @@ namespace Portal.Controllers
                                     }
                                 }
                             }
+                            else if (service.ServiceCode == "DefendIran")
+                            {
+                                using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                                {
+                                    var singleCharge = new DefendIranLibrary.Models.Singlecharge();
+                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        string aggregatorName = "Hub";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.HubOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
                             else if (service.ServiceCode == "SepidRood")
                             {
                                 using (var entity = new SepidRoodLibrary.Models.SepidRoodEntities())
@@ -827,6 +870,29 @@ namespace Portal.Controllers
                             else if (messageObj.ServiceCode == "Soraty")
                             {
                                 using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                        pricePayed = -1;
+                                    else
+                                    {
+                                        var originalPriceBalancedForInAppRequest = singlechargeInstallment.PriceBalancedForInAppRequest;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest == null)
+                                            singlechargeInstallment.PriceBalancedForInAppRequest = 0;
+                                        pricePayed = singlechargeInstallment.PricePayed - singlechargeInstallment.PriceBalancedForInAppRequest.Value;
+                                        singlechargeInstallment.PriceBalancedForInAppRequest += pricePayed;
+                                        if (singlechargeInstallment.PriceBalancedForInAppRequest != originalPriceBalancedForInAppRequest)
+                                        {
+                                            entity.Entry(singlechargeInstallment).State = EntityState.Modified;
+                                            entity.SaveChanges();
+                                        }
+                                    }
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "DefendIran")
+                            {
+                                using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();

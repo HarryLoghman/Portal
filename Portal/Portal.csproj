@@ -209,6 +209,14 @@
     <Compile Include="Areas\AvvalPod\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\AvvalPod\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\AvvalPod\AvvalPodAreaRegistration.cs" />
+    <Compile Include="Areas\DefendIran\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\DefendIran\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\DefendIran\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\DefendIran\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\DefendIran\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\DefendIran\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\DefendIran\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\DefendIran\DefendIranAreaRegistration.cs" />
     <Compile Include="Areas\Soraty\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Soraty\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Soraty\Controllers\MonitoringController.cs" />
@@ -1179,6 +1187,16 @@
     <Content Include="Areas\Soraty\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Soraty\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Soraty\Views\web.config" />
+    <Content Include="Areas\DefendIran\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\DefendIran\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\DefendIran\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\DefendIran\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\DefendIran\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\DefendIran\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\DefendIran\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\DefendIran\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\DefendIran\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\DefendIran\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1535,6 +1553,7 @@
     <Folder Include="Areas\BimeKarbala\Models\" />
     <Folder Include="Areas\Boating\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />
+    <Folder Include="Areas\DefendIran\Models\" />
     <Folder Include="Areas\DonyayeAsatir\Models\" />
     <Folder Include="Areas\FitShow\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
@@ -1607,6 +1626,10 @@
     <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
       <Name>DanestanehLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DefendIranLibrary\DefendIranLibrary.csproj">
+      <Project>{d124b1f6-3bf5-2124-537f-1bc43b41256d}</Project>
+      <Name>DefendIranLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
       <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>

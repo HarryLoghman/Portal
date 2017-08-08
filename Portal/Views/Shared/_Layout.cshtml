@@ -783,6 +783,32 @@
                                             </ul>
                                         </li>
                                     }
+                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("DefendIranUser"))
+                                    {
+                                        <li>
+                                            دفاع از ایران
+                                            <ul>
+                                                @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                {
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "DefendIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "DefendIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "DefendIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "DefendIran" }, null)
+                                                    </li>
+                                                }
+                                                <li>
+                                                    @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "DefendIran" }, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
                                 </ul>
                             </li>
                             if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))

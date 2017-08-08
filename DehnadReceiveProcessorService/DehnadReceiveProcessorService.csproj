@@ -121,6 +121,10 @@
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
       <Name>DanestanehLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DefendIranLibrary\DefendIranLibrary.csproj">
+      <Project>{d124b1f6-3bf5-2124-537f-1bc43b41256d}</Project>
+      <Name>DefendIranLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
       <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
       <Name>DonyayeAsatirLibrary</Name>

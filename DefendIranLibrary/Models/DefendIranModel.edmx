@@ -1,0 +1,1694 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="DefendIranModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AutochargeContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsAddedToSendQueue" Type="bit" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Title" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SendDate" Type="datetime" />
+          <Property Name="PersianSendDate" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AutochargeContentsSendedToUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="bigint" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AutochargeHeaderFooter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Header" Type="nvarchar(max)" />
+          <Property Name="Footer" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AutochargeMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Tag" Type="int" Nullable="false" />
+          <Property Name="SendTime" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DailyStatistics">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="PersianDate" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="NumberOfSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="TotalSubscribers" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesDelivered" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDelivered" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesDelivered" Type="int" />
+          <Property Name="NumberOfMessagesDelivered" Type="int" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfFreeOnDemandMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeEventbaseMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeAutochargeMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeOnDemandMessagesDelivered" Type="int" />
+          <Property Name="NumberOfFreeEventbaseMessagesDelivered" Type="int" />
+          <Property Name="NumberOfFreeAutochargeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfFreeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfPaidOnDemandMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidEventbaseMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidAutochargeMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidOnDemandMessagesFailed" Type="int" />
+          <Property Name="NumberOfPaidEventbaseMessagesFailed" Type="int" />
+          <Property Name="NumberOfPaidAutochargeMessagesFailed" Type="int" />
+          <Property Name="NumberOfPaidMessagesFailed" Type="int" />
+          <Property Name="SumOfPaidOnDemandMessages" Type="int" />
+          <Property Name="SumOfpaidEventbaseMessages" Type="int" />
+          <Property Name="SumOfPaidAutochargeMessages" Type="int" />
+          <Property Name="SumOfPaidMessages" Type="int" />
+          <Property Name="ServiceId" Type="bigint" />
+          <Property Name="TotalPrepaidSubscribers" Type="int" />
+          <Property Name="TotalPostpaidSubscribers" Type="int" />
+          <Property Name="TotalUnSubscribers" Type="int" />
+          <Property Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" Type="int" />
+          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="int" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="int" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="int" />
+          <Property Name="SumOfSinglechargeInAppPurchases" Type="int" />
+        </EntityType>
+        <EntityType Name="EventbaseContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="int" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="bit" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
+        </EntityType>
+        <EntityType Name="ImiChargeCodes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChargeCode" Type="int" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="ChargeKey" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="MessagesArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
+        </EntityType>
+        <EntityType Name="MessagesMonitoring">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="TotalMessages" Type="int" Nullable="false" />
+          <Property Name="TotalSuccessfulySended" Type="int" Nullable="false" />
+          <Property Name="TotalFailed" Type="int" Nullable="false" />
+          <Property Name="TotalWithoutCharge" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PersianTitle" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="OnDemandMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
+        </EntityType>
+        <EntityType Name="PointsTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+          <Property Name="PersianTitle" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceOffReason">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="Reason" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsSucceeded" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
+          <Property Name="InstallmentId" Type="bigint" />
+          <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsSucceeded" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
+          <Property Name="InstallmentId" Type="bigint" />
+          <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TotalPrice" Type="int" Nullable="false" />
+          <Property Name="PricePayed" Type="int" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="bit" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="bit" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="int" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="bit" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="bit" Nullable="false" />
+          <Property Name="CancelationDate" Type="datetime" />
+          <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsRenewalMessageSent" Type="bit" />
+          <Property Name="IsRenewd" Type="bit" />
+          <Property Name="PriceBalancedForInAppRequest" Type="int" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAdded" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsLastDayWarningSent" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="bit" />
+          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="bit" />
+          <Property Name="IsSubscriberSendedOffReason" Type="bit" />
+        </EntityType>
+        <EntityType Name="TimedTempMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DefendIran.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_SentMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ProcessStatus" />
+            <PropertyRef Name="DateAddedToQueue" />
+            <PropertyRef Name="PersianDateAddedToQueue" />
+            <PropertyRef Name="MessageType" />
+            <PropertyRef Name="AggregatorId" />
+            <PropertyRef Name="ServiceId" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="DeliveryStatus" Type="bit" />
+          <Property Name="DeliveryDescription" Type="nvarchar(max)" />
+          <Property Name="DateLastTried" Type="datetime" />
+          <Property Name="RetryCount" Type="int" />
+        </EntityType>
+        <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MiladiDate" Type="date" Mode="In" />
+          <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="ArchiveMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MessageType" Type="int" Mode="In" />
+          <Parameter Name="ContentId" Type="bigint" Mode="In" />
+          <Parameter Name="Tag" Type="int" Mode="In" />
+          <Parameter Name="PersianDate" Type="nvarchar" Mode="In" />
+          <Parameter Name="CurrentStatus" Type="int" Mode="In" />
+          <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
+          <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="RetryUndeliveredMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="DefendIranModelStoreContainer">
+          <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeHeaderFooter" EntityType="Self.AutochargeHeaderFooter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeMessagesBuffer" EntityType="Self.AutochargeMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeTimeTable" EntityType="Self.AutochargeTimeTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistics" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventbaseMessagesBuffer" EntityType="Self.EventbaseMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesArchive" EntityType="Self.MessagesArchive" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesMonitoring" EntityType="Self.MessagesMonitoring" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OnDemandMessagesBuffer" EntityType="Self.OnDemandMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_SentMessages].[Id] AS [Id], 
+    [vw_SentMessages].[MobileNumber] AS [MobileNumber], 
+    [vw_SentMessages].[Content] AS [Content], 
+    [vw_SentMessages].[ProcessStatus] AS [ProcessStatus], 
+    [vw_SentMessages].[SentDate] AS [SentDate], 
+    [vw_SentMessages].[PersianSentDate] AS [PersianSentDate], 
+    [vw_SentMessages].[DateAddedToQueue] AS [DateAddedToQueue], 
+    [vw_SentMessages].[PersianDateAddedToQueue] AS [PersianDateAddedToQueue], 
+    [vw_SentMessages].[MessageType] AS [MessageType], 
+    [vw_SentMessages].[AggregatorId] AS [AggregatorId], 
+    [vw_SentMessages].[ServiceId] AS [ServiceId], 
+    [vw_SentMessages].[ReferenceId] AS [ReferenceId], 
+    [vw_SentMessages].[ContentId] AS [ContentId], 
+    [vw_SentMessages].[MessagePoint] AS [MessagePoint], 
+    [vw_SentMessages].[ImiChargeCode] AS [ImiChargeCode], 
+    [vw_SentMessages].[ImiMessageType] AS [ImiMessageType], 
+    [vw_SentMessages].[SubscriberId] AS [SubscriberId], 
+    [vw_SentMessages].[ImiChargeKey] AS [ImiChargeKey], 
+    [vw_SentMessages].[SubUnSubMoMssage] AS [SubUnSubMoMssage], 
+    [vw_SentMessages].[SubUnSubType] AS [SubUnSubType], 
+    [vw_SentMessages].[Tag] AS [Tag], 
+    [vw_SentMessages].[Price] AS [Price], 
+    [vw_SentMessages].[DeliveryStatus] AS [DeliveryStatus], 
+    [vw_SentMessages].[DeliveryDescription] AS [DeliveryDescription], 
+    [vw_SentMessages].[DateLastTried] AS [DateLastTried], 
+    [vw_SentMessages].[RetryCount] AS [RetryCount]
+    FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DefendIranModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AutochargeContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsAddedToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SendDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSendDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutochargeContentsSendedToUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="AutochargeHeaderFooter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Header" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Footer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutochargeMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tag" Type="Int32" Nullable="false" />
+          <Property Name="SendTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DailyStatistic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PersianDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="TotalSubscribers" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfFreeOnDemandMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeEventbaseMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeAutochargeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeOnDemandMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeEventbaseMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeAutochargeMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfPaidOnDemandMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidEventbaseMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidAutochargeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidOnDemandMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidEventbaseMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidAutochargeMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidMessagesFailed" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessages" Type="Int32" />
+          <Property Name="SumOfpaidEventbaseMessages" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessages" Type="Int32" />
+          <Property Name="SumOfPaidMessages" Type="Int32" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="TotalPrepaidSubscribers" Type="Int32" />
+          <Property Name="TotalPostpaidSubscribers" Type="Int32" />
+          <Property Name="TotalUnSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" Type="Int32" />
+          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="Int32" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="Int32" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="Int32" />
+          <Property Name="SumOfSinglechargeInAppPurchases" Type="Int32" />
+        </EntityType>
+        <EntityType Name="EventbaseContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="Int32" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ImiChargeCode">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChargeCode" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="ChargeKey" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="MessagesArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MessagesMonitoring">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="TotalMessages" Type="Int32" Nullable="false" />
+          <Property Name="TotalSuccessfulySended" Type="Int32" Nullable="false" />
+          <Property Name="TotalFailed" Type="Int32" Nullable="false" />
+          <Property Name="TotalWithoutCharge" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PersianTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OnDemandMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="PointsTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="PersianTitle" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceOffReason">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="Reason" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SinglechargeInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TotalPrice" Type="Int32" Nullable="false" />
+          <Property Name="PricePayed" Type="Int32" Nullable="false" />
+          <Property Name="IsFullyPaid" Type="Boolean" Nullable="false" />
+          <Property Name="IsExceededDailyChargeLimit" Type="Boolean" Nullable="false" />
+          <Property Name="PriceTodayCharged" Type="Int32" Nullable="false" />
+          <Property Name="IsUserDailyChargeBalanced" Type="Boolean" Nullable="false" />
+          <Property Name="IsUserCanceledTheInstallment" Type="Boolean" Nullable="false" />
+          <Property Name="CancelationDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsRenewalMessageSent" Type="Boolean" />
+          <Property Name="IsRenewd" Type="Boolean" />
+          <Property Name="PriceBalancedForInAppRequest" Type="Int32" />
+        </EntityType>
+        <EntityType Name="SinglechargeWaiting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAdded" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="Boolean" />
+          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="Boolean" />
+          <Property Name="IsSubscriberSendedOffReason" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="TimedTempMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+        </EntityType>
+        <EntityType Name="vw_SentMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ProcessStatus" />
+            <PropertyRef Name="DateAddedToQueue" />
+            <PropertyRef Name="PersianDateAddedToQueue" />
+            <PropertyRef Name="MessageType" />
+            <PropertyRef Name="AggregatorId" />
+            <PropertyRef Name="ServiceId" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="DeliveryStatus" Type="Boolean" />
+          <Property Name="DeliveryDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateLastTried" Type="DateTime" Precision="3" />
+          <Property Name="RetryCount" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="DefendIranEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContent" />
+          <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUser" />
+          <EntitySet Name="AutochargeHeaderFooters" EntityType="Self.AutochargeHeaderFooter" />
+          <EntitySet Name="AutochargeMessagesBuffers" EntityType="Self.AutochargeMessagesBuffer" />
+          <EntitySet Name="AutochargeTimeTables" EntityType="Self.AutochargeTimeTable" />
+          <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistic" />
+          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContent" />
+          <EntitySet Name="EventbaseMessagesBuffers" EntityType="Self.EventbaseMessagesBuffer" />
+          <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCode" />
+          <EntitySet Name="MessagesArchives" EntityType="Self.MessagesArchive" />
+          <EntitySet Name="MessagesMonitorings" EntityType="Self.MessagesMonitoring" />
+          <EntitySet Name="MessagesTemplates" EntityType="Self.MessagesTemplate" />
+          <EntitySet Name="OnDemandMessagesBuffers" EntityType="Self.OnDemandMessagesBuffer" />
+          <EntitySet Name="PointsTables" EntityType="Self.PointsTable" />
+          <EntitySet Name="ServiceOffReasons" EntityType="Self.ServiceOffReason" />
+          <EntitySet Name="Singlecharges" EntityType="Self.Singlecharge" />
+          <EntitySet Name="SinglechargeArchives" EntityType="Self.SinglechargeArchive" />
+          <EntitySet Name="SinglechargeInstallments" EntityType="Self.SinglechargeInstallment" />
+          <EntitySet Name="SinglechargeWaitings" EntityType="Self.SinglechargeWaiting" />
+          <EntitySet Name="SubscribersAdditionalInfoes" EntityType="Self.SubscribersAdditionalInfo" />
+          <EntitySet Name="TimedTempMessagesBuffers" EntityType="Self.TimedTempMessagesBuffer" />
+          <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" />
+          <FunctionImport Name="AggregateDailyStatistics">
+            <Parameter Name="MiladiDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ArchiveMessages" />
+          <FunctionImport Name="ChangeMessageStatus">
+            <Parameter Name="MessageType" Mode="In" Type="Int32" />
+            <Parameter Name="ContentId" Mode="In" Type="Int64" />
+            <Parameter Name="Tag" Mode="In" Type="Int32" />
+            <Parameter Name="PersianDate" Mode="In" Type="String" />
+            <Parameter Name="CurrentStatus" Mode="In" Type="Int32" />
+            <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
+            <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="RetryUndeliveredMessages" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DefendIranModelStoreContainer" CdmEntityContainer="DefendIranEntities">
+          <EntitySetMapping Name="AutochargeContents">
+            <EntityTypeMapping TypeName="DefendIranModel.AutochargeContent">
+              <MappingFragment StoreEntitySet="AutochargeContents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsAddedToSendQueue" ColumnName="IsAddedToSendQueue" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="SendDate" ColumnName="SendDate" />
+                <ScalarProperty Name="PersianSendDate" ColumnName="PersianSendDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeContentsSendedToUsers">
+            <EntityTypeMapping TypeName="DefendIranModel.AutochargeContentsSendedToUser">
+              <MappingFragment StoreEntitySet="AutochargeContentsSendedToUsers">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeHeaderFooters">
+            <EntityTypeMapping TypeName="DefendIranModel.AutochargeHeaderFooter">
+              <MappingFragment StoreEntitySet="AutochargeHeaderFooter">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="Footer" ColumnName="Footer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeMessagesBuffers">
+            <EntityTypeMapping TypeName="DefendIranModel.AutochargeMessagesBuffer">
+              <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeTimeTables">
+            <EntityTypeMapping TypeName="DefendIranModel.AutochargeTimeTable">
+              <MappingFragment StoreEntitySet="AutochargeTimeTable">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DailyStatistics">
+            <EntityTypeMapping TypeName="DefendIranModel.DailyStatistic">
+              <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="NumberOfSubscriptions" ColumnName="NumberOfSubscriptions" />
+                <ScalarProperty Name="NumberOfUnsubscriptions" ColumnName="NumberOfUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidSubscriptions" ColumnName="NumberOfPostpaidSubscriptions" />
+                <ScalarProperty Name="NumberOfPrepaidSubscriptions" ColumnName="NumberOfPrepaidSubscriptions" />
+                <ScalarProperty Name="NumberOfMessagesSent" ColumnName="NumberOfMessagesSent" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesSent" ColumnName="NumberOfPostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesSent" ColumnName="NumberOfPrepaidMessagesSent" />
+                <ScalarProperty Name="TotalSubscribers" ColumnName="TotalSubscribers" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesSent" ColumnName="NumberOfOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesSent" ColumnName="NumberOfOnDemandPostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesSent" ColumnName="NumberOfOnDemandPrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesSent" ColumnName="NumberOfAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesSent" ColumnName="NumberOfAutochargePostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesSent" ColumnName="NumberOfAutochargePrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesSent" ColumnName="NumberOfEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesSent" ColumnName="NumberOfEventbasePostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesSent" ColumnName="NumberOfEventbasePrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPostpaidUnsubscriptions" ColumnName="NumberOfPostpaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPrepaidUnsubscriptions" ColumnName="NumberOfPrepaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfMessagesFailed" ColumnName="NumberOfMessagesFailed" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesFailed" ColumnName="NumberOfPostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesFailed" ColumnName="NumberOfPrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesFailed" ColumnName="NumberOfOnDemandMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesFailed" ColumnName="NumberOfOnDemandPostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesFailed" ColumnName="NumberOfOnDemandPrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesFailed" ColumnName="NumberOfAutochargeMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesFailed" ColumnName="NumberOfAutochargePostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesFailed" ColumnName="NumberOfAutochargePrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesFailed" ColumnName="NumberOfEventbaseMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesFailed" ColumnName="NumberOfEventbasePostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesFailed" ColumnName="NumberOfEventbasePrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDelivered" ColumnName="NumberOfOnDemandMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDelivered" ColumnName="NumberOfOnDemandPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDelivered" ColumnName="NumberOfOnDemandPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDelivered" ColumnName="NumberOfAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDelivered" ColumnName="NumberOfAutochargePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDelivered" ColumnName="NumberOfAutochargePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDelivered" ColumnName="NumberOfEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDelivered" ColumnName="NumberOfEventbasePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDelivered" ColumnName="NumberOfEventbasePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDelivered" ColumnName="NumberOfPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDelivered" ColumnName="NumberOfPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfMessagesDelivered" ColumnName="NumberOfMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryFailed" ColumnName="NumberOfOnDemandMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryFailed" ColumnName="NumberOfAutochargeMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryFailed" ColumnName="NumberOfEventbaseMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryFailed" ColumnName="NumberOfPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryFailed" ColumnName="NumberOfPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryFailed" ColumnName="NumberOfMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargeMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryNotReceived" ColumnName="NumberOfEventbaseMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryNotReceived" ColumnName="NumberOfMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargeMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbaseMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfMessagesThatUserHasNoCharge" ColumnName="NumberOfMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesSent" ColumnName="NumberOfFreeOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesSent" ColumnName="NumberOfFreeEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesSent" ColumnName="NumberOfFreeAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeMessagesSent" ColumnName="NumberOfFreeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesDelivered" ColumnName="NumberOfFreeOnDemandMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesDelivered" ColumnName="NumberOfFreeEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesDelivered" ColumnName="NumberOfFreeAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeMessagesDelivered" ColumnName="NumberOfFreeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesSent" ColumnName="NumberOfPaidOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesSent" ColumnName="NumberOfPaidEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesSent" ColumnName="NumberOfPaidAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidMessagesSent" ColumnName="NumberOfPaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesFailed" ColumnName="NumberOfPaidOnDemandMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesFailed" ColumnName="NumberOfPaidEventbaseMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesFailed" ColumnName="NumberOfPaidAutochargeMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidMessagesFailed" ColumnName="NumberOfPaidMessagesFailed" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessages" ColumnName="SumOfPaidOnDemandMessages" />
+                <ScalarProperty Name="SumOfpaidEventbaseMessages" ColumnName="SumOfpaidEventbaseMessages" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessages" ColumnName="SumOfPaidAutochargeMessages" />
+                <ScalarProperty Name="SumOfPaidMessages" ColumnName="SumOfPaidMessages" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
+                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
+                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulFullCharge" ColumnName="NumberOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulFullCharge" ColumnName="SumOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" ColumnName="NumberOfSinglechargeDistinctNumbersTriedToCharge" />
+                <ScalarProperty Name="TotalNumberOfSinglechargeInAppPurchases" ColumnName="TotalNumberOfSinglechargeInAppPurchases" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesFailed" ColumnName="NumberOfSinglechargeInAppPurchasesFailed" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesSucceeded" ColumnName="NumberOfSinglechargeInAppPurchasesSucceeded" />
+                <ScalarProperty Name="SumOfSinglechargeInAppPurchases" ColumnName="SumOfSinglechargeInAppPurchases" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseContents">
+            <EntityTypeMapping TypeName="DefendIranModel.EventbaseContent">
+              <MappingFragment StoreEntitySet="EventbaseContents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="SubscriberNotSendedMoInDays" ColumnName="SubscriberNotSendedMoInDays" />
+                <ScalarProperty Name="IsAddingMessagesToSendQueue" ColumnName="IsAddingMessagesToSendQueue" />
+                <ScalarProperty Name="IsAddedToSendQueueFinished" ColumnName="IsAddedToSendQueueFinished" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseMessagesBuffers">
+            <EntityTypeMapping TypeName="DefendIranModel.EventbaseMessagesBuffer">
+              <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ImiChargeCodes">
+            <EntityTypeMapping TypeName="DefendIranModel.ImiChargeCode">
+              <MappingFragment StoreEntitySet="ImiChargeCodes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ChargeCode" ColumnName="ChargeCode" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ChargeKey" ColumnName="ChargeKey" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesArchives">
+            <EntityTypeMapping TypeName="DefendIranModel.MessagesArchive">
+              <MappingFragment StoreEntitySet="MessagesArchive">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesMonitorings">
+            <EntityTypeMapping TypeName="DefendIranModel.MessagesMonitoring">
+              <MappingFragment StoreEntitySet="MessagesMonitoring">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="TotalMessages" ColumnName="TotalMessages" />
+                <ScalarProperty Name="TotalSuccessfulySended" ColumnName="TotalSuccessfulySended" />
+                <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
+                <ScalarProperty Name="TotalWithoutCharge" ColumnName="TotalWithoutCharge" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesTemplates">
+            <EntityTypeMapping TypeName="DefendIranModel.MessagesTemplate">
+              <MappingFragment StoreEntitySet="MessagesTemplate">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OnDemandMessagesBuffers">
+            <EntityTypeMapping TypeName="DefendIranModel.OnDemandMessagesBuffer">
+              <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PointsTables">
+            <EntityTypeMapping TypeName="DefendIranModel.PointsTable">
+              <MappingFragment StoreEntitySet="PointsTable">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceOffReasons">
+            <EntityTypeMapping TypeName="DefendIranModel.ServiceOffReason">
+              <MappingFragment StoreEntitySet="ServiceOffReason">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Singlecharges">
+            <EntityTypeMapping TypeName="DefendIranModel.Singlecharge">
+              <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeArchives">
+            <EntityTypeMapping TypeName="DefendIranModel.SinglechargeArchive">
+              <MappingFragment StoreEntitySet="SinglechargeArchive">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeInstallments">
+            <EntityTypeMapping TypeName="DefendIranModel.SinglechargeInstallment">
+              <MappingFragment StoreEntitySet="SinglechargeInstallment">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="PricePayed" ColumnName="PricePayed" />
+                <ScalarProperty Name="IsFullyPaid" ColumnName="IsFullyPaid" />
+                <ScalarProperty Name="IsExceededDailyChargeLimit" ColumnName="IsExceededDailyChargeLimit" />
+                <ScalarProperty Name="PriceTodayCharged" ColumnName="PriceTodayCharged" />
+                <ScalarProperty Name="IsUserDailyChargeBalanced" ColumnName="IsUserDailyChargeBalanced" />
+                <ScalarProperty Name="IsUserCanceledTheInstallment" ColumnName="IsUserCanceledTheInstallment" />
+                <ScalarProperty Name="CancelationDate" ColumnName="CancelationDate" />
+                <ScalarProperty Name="PersianCancelationDate" ColumnName="PersianCancelationDate" />
+                <ScalarProperty Name="IsRenewalMessageSent" ColumnName="IsRenewalMessageSent" />
+                <ScalarProperty Name="IsRenewd" ColumnName="IsRenewd" />
+                <ScalarProperty Name="PriceBalancedForInAppRequest" ColumnName="PriceBalancedForInAppRequest" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeWaitings">
+            <EntityTypeMapping TypeName="DefendIranModel.SinglechargeWaiting">
+              <MappingFragment StoreEntitySet="SinglechargeWaiting">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
+                <ScalarProperty Name="IsLastDayWarningSent" ColumnName="IsLastDayWarningSent" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersAdditionalInfoes">
+            <EntityTypeMapping TypeName="DefendIranModel.SubscribersAdditionalInfo">
+              <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="IsSubscriberReceivedSubscriptionPoint" ColumnName="IsSubscriberReceivedSubscriptionPoint" />
+                <ScalarProperty Name="IsSubscriberReceivedOffReasonPoint" ColumnName="IsSubscriberReceivedOffReasonPoint" />
+                <ScalarProperty Name="IsSubscriberSendedOffReason" ColumnName="IsSubscriberSendedOffReason" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimedTempMessagesBuffers">
+            <EntityTypeMapping TypeName="DefendIranModel.TimedTempMessagesBuffer">
+              <MappingFragment StoreEntitySet="TimedTempMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_SentMessages">
+            <EntityTypeMapping TypeName="DefendIranModel.vw_SentMessages">
+              <MappingFragment StoreEntitySet="vw_SentMessages">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="DeliveryDescription" ColumnName="DeliveryDescription" />
+                <ScalarProperty Name="DateLastTried" ColumnName="DateLastTried" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="DefendIranModel.Store.AggregateDailyStatistics" />
+          <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="DefendIranModel.Store.ArchiveMessages" />
+          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="DefendIranModel.Store.ChangeMessageStatus" />
+          <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="DefendIranModel.Store.RetryUndeliveredMessages" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
