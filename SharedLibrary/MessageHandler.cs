@@ -28,7 +28,7 @@ namespace SharedLibrary
                     ReceivedTime = DateTime.Now,
                     PersianReceivedTime = Date.GetPersianDateTime(DateTime.Now),
                     MessageId = message.MessageId,
-                    Content = message.Content,
+                    Content = (message.Content == null) ? "null received" : message.Content,
                     IsProcessed = false,
                     IsReceivedFromIntegratedPanel = (message.IsReceivedFromIntegratedPanel == null) ? false : message.IsReceivedFromIntegratedPanel,
                     IsReceivedFromWeb = (message.IsReceivedFromWeb == null) ? false : message.IsReceivedFromWeb,
