@@ -13,24 +13,29 @@ namespace AvvalYadLibrary
         {
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
+            if ((message.ReceivedFrom == "138.68.38.140" || message.ReceivedFrom == "31.187.71.85" || message.ReceivedFrom == "138.68.152.71" || message.ReceivedFrom == "138.68.140.120" || message.ReceivedFrom == "188.166.173.46" || message.ReceivedFrom == "178.62.51.95") && message.Content.Length > 3)
+            {
+                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+                MessageHandler.InsertMessageToQueue(message);
+                return;
+            }
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
-            if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
-            {
-                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
-                MessageHandler.InsertMessageToQueue(message);
-                return;
-            }
-            else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
-            {
-                var verficationMessage = message.Content.Split('-');
-                message.Content = messagesTemplate.Where(o => o.Title == "VerificationMessage").Select(o => o.Content).FirstOrDefault();
-                message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
-                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
-                MessageHandler.InsertMessageToQueue(message);
-                return;
-            }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+
+            if (isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true)
+                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+
+            if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
+            {
+                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                    return;
+                if (message.ReceivedFrom.Contains("Register"))
+                    isUserSendsSubscriptionKeyword = true;
+                else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                    isUserWantsToUnsubscribe = true;
+            }
+
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
                 if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)

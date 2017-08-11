@@ -29,5 +29,6 @@ namespace AvvalYadLibrary.Models
         public string PersianCancelationDate { get; set; }
         public Nullable<bool> IsRenewalMessageSent { get; set; }
         public Nullable<bool> IsRenewd { get; set; }
+        public Nullable<int> PriceBalancedForInAppRequest { get; set; }
     }
 }

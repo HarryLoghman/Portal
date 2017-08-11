@@ -433,6 +433,7 @@
           <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
           <Property Name="IsRenewalMessageSent" Type="bit" />
           <Property Name="IsRenewd" Type="bit" />
+          <Property Name="PriceBalancedForInAppRequest" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeInstallmentArchive">
           <Key>
@@ -453,6 +454,7 @@
           <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
           <Property Name="IsRenewalMessageSent" Type="bit" />
           <Property Name="IsRenewd" Type="bit" />
+          <Property Name="PriceBalancedForInAppRequest" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeLiveStatus">
           <Key>
@@ -1054,6 +1056,7 @@ warning 6002: The table/view 'AvvalYad.dbo.vw_SentMessages' does not have a prim
           <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsRenewalMessageSent" Type="Boolean" />
           <Property Name="IsRenewd" Type="Boolean" />
+          <Property Name="PriceBalancedForInAppRequest" Type="Int32" />
         </EntityType>
         <EntityType Name="SinglechargeInstallmentArchive">
           <Key>
@@ -1074,6 +1077,7 @@ warning 6002: The table/view 'AvvalYad.dbo.vw_SentMessages' does not have a prim
           <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsRenewalMessageSent" Type="Boolean" />
           <Property Name="IsRenewd" Type="Boolean" />
+          <Property Name="PriceBalancedForInAppRequest" Type="Int32" />
         </EntityType>
         <EntityType Name="SinglechargeLiveStatu">
           <Key>
@@ -1650,6 +1654,7 @@ warning 6002: The table/view 'AvvalYad.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="SinglechargeInstallments">
             <EntityTypeMapping TypeName="AvvalYadModel.SinglechargeInstallment">
               <MappingFragment StoreEntitySet="SinglechargeInstallment">
+                <ScalarProperty Name="PriceBalancedForInAppRequest" ColumnName="PriceBalancedForInAppRequest" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
@@ -1671,6 +1676,7 @@ warning 6002: The table/view 'AvvalYad.dbo.vw_SentMessages' does not have a prim
           <EntitySetMapping Name="SinglechargeInstallmentArchives">
             <EntityTypeMapping TypeName="AvvalYadModel.SinglechargeInstallmentArchive">
               <MappingFragment StoreEntitySet="SinglechargeInstallmentArchive">
+                <ScalarProperty Name="PriceBalancedForInAppRequest" ColumnName="PriceBalancedForInAppRequest" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
