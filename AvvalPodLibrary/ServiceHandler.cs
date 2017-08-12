@@ -173,6 +173,7 @@ namespace AvvalPodLibrary
             {
                 "off",
                 "of",
+                "oof",
                 "cancel",
                 "stop",
                 "laghv",

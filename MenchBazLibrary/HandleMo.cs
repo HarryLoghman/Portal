@@ -32,18 +32,18 @@ namespace MenchBazLibrary
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
-            if (isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true)
-                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-
-            if (message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
+            if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
             {
-                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                    return;
-                if (message.ReceivedFrom.Contains("Register"))
-                    isUserSendsSubscriptionKeyword = true;
-                else if (message.ReceivedFrom.Contains("Unsubscribe"))
-                    isUserWantsToUnsubscribe = true;
+                SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+                return;
             }
+
+            if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                return;
+            if (message.ReceivedFrom.Contains("Register"))
+                isUserSendsSubscriptionKeyword = true;
+            else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                isUserWantsToUnsubscribe = true;
 
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
@@ -94,8 +94,9 @@ namespace MenchBazLibrary
                 {
                     ContentManager.DeleteFromSinglechargeQueue(message.MobileNumber);
                     ServiceHandler.CancelUserInstallments(message.MobileNumber);
-                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                    //var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
+                    //message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                    return;
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
