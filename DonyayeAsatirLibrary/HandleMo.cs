@@ -120,14 +120,20 @@ namespace DonyayeAsatirLibrary
 
             if (subscriber == null)
             {
-                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (message.Content == null || message.Content == "" || message.Content == " ")
+                    message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                else
+                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
             {
-                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                if (message.Content == null || message.Content == "" || message.Content == " ")
+                    message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                else
+                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
                 return;
             }

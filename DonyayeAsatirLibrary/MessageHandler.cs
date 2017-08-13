@@ -22,6 +22,20 @@ namespace DonyayeAsatirLibrary
             return message;
         }
 
+        public static MessageObject EmptyContentWhenNotSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message.Content = messagesTemplate.Where(o => o.Title == "EmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
+        public static MessageObject EmptyContentWhenSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message.Content = messagesTemplate.Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
         public static void InsertMessageToQueue(MessageObject message)
         {
             using (var entity = new DonyayeAsatirEntities())
