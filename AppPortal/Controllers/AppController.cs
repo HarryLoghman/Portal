@@ -799,7 +799,7 @@ namespace Portal.Controllers
                             }
                             else
                             {
-                                messageObj.Content = "SendServiceHelp";
+                                messageObj.Content = "SendServiceSubscriptionHelp";
                                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Verification" : null;
                                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                                 result.Status = "NotSubscribed";

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SharedLibrary.Models;
+using System.Collections;
 
 namespace SharedLibrary
 {
@@ -221,12 +222,12 @@ namespace SharedLibrary
                 try
                 {
                     servicesThatUserSubscribedOnShortCode = (from s in entity.Services
-                                                   join sub in entity.Subscribers on s.Id equals sub.ServiceId
-                                                   join sInfo in entity.ServiceInfoes on s.Id equals sInfo.ServiceId
-                                                   where sub.MobileNumber == mobileNumber && sub.DeactivationDate == null && sInfo.ShortCode == shortCode
-                                                   select new { ServiceId = s.Id, ServiceOnKeywords = s.OnKeywords, ServiceName = s.Name })
+                                                             join sub in entity.Subscribers on s.Id equals sub.ServiceId
+                                                             join sInfo in entity.ServiceInfoes on s.Id equals sInfo.ServiceId
+                                                             where sub.MobileNumber == mobileNumber && sub.DeactivationDate == null && sInfo.ShortCode == shortCode
+                                                             select new { ServiceId = s.Id, ServiceOnKeywords = s.OnKeywords, ServiceName = s.Name })
                                                    .AsEnumerable()
-                                                   .Select( o => new Service { Id = o.ServiceId, Name = o.ServiceName, OnKeywords = o.ServiceOnKeywords })
+                                                   .Select(o => new Service { Id = o.ServiceId, Name = o.ServiceName, OnKeywords = o.ServiceOnKeywords })
                                                    .ToList();
                 }
                 catch (System.Exception e)
@@ -235,6 +236,19 @@ namespace SharedLibrary
                 }
                 return servicesThatUserSubscribedOnShortCode;
             }
+        }
+
+        public static dynamic GetServiceImiChargeCodes(dynamic entity)
+        {
+            try
+            {
+                return ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().ToList();
+            }
+            catch (System.Exception e)
+            {
+                logs.Error("Error in GetServiceImiChargeCodes: " + e);
+            }
+            return new List<dynamic>();
         }
 
         public static ServiceInfo GetServiceInfoFromServiceId(long serviceId)

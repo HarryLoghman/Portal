@@ -351,7 +351,15 @@ namespace SharedLibrary
             }
             return message;
         }
-            public static dynamic GetUnprocessedMessages(dynamic entity, MessageType messageType, int readSize)
+
+        public static MessageObject SendServiceSubscriptionHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        {
+            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
+        public static dynamic GetUnprocessedMessages(dynamic entity, MessageType messageType, int readSize)
         {
             var today = DateTime.Now.Date;
             var maxRetryCount = SharedLibrary.MessageSender.retryCountMax;
