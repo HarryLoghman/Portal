@@ -115,7 +115,7 @@ namespace Portal.Controllers
 <spId>980110006379</spId>  
 <serviceId>{0}</serviceId>           <timeStamp>{1}</timeStamp>        </RequestSOAPHeader>     
 </soapenv:Header>     
-<soapenv:Body>        <loc:startSmsNotification>           <loc:reference>              <endpoint>http://79.175.170.122:200/api/mtn/SubUnsubNotify</endpoint>              <interfaceName>notifySmsReception</interfaceName>              <correlator>{2}</correlator>           </loc:reference>           <loc:smsServiceActivationNumber>{3}</loc:smsServiceActivationNumber>           <loc:criteria>demand</loc:criteria>        </loc:startSmsNotification>     </soapenv:Body>  </soapenv:Envelope>  "
+<soapenv:Body>        <loc:startSmsNotification>           <loc:reference>              <endpoint>http://79.175.164.51:200/api/mtn/SubUnsubNotify</endpoint>              <interfaceName>notifySmsReception</interfaceName>              <correlator>{2}</correlator>           </loc:reference>           <loc:smsServiceActivationNumber>{3}</loc:smsServiceActivationNumber>           <loc:criteria>demand</loc:criteria>        </loc:startSmsNotification>     </soapenv:Body>  </soapenv:Envelope>  "
 , serviceId, timeStamp, correlatorId, shortCode);
             try
             {
