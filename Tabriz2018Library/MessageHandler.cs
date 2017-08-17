@@ -112,7 +112,7 @@ namespace Tabriz2018Library
                     udhs[index] = "";
                     mclass[index] = "";
                 }
-                var pardisClient = new SharedLibrary.PardisPlatformServiceReference.ServiceCallClient();
+                var pardisClient = new SharedLibrary.PardisPlatformServiceReference.SendClient();
                 var pardisResponse = pardisClient.ServiceSend(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], "pardis1", 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
                 logs.Info("pardis Response count: " + pardisResponse.Count());
                 if (pardisResponse == null || pardisResponse.Count() < messagesCount)

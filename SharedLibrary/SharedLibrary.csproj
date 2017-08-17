@@ -234,23 +234,14 @@
     <None Include="Service References\PardisOTPServiceReference\SharedLibrary.PardisOTPServiceReference.RequestResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\PardisPlatformServiceReference\PardisPlatform.wsdl" />
-    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.getHelloWorldAsStringResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
+    <None Include="Service References\PardisPlatformServiceReference\pardisSend.wsdl" />
     <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.RSendResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.ServiceSendResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.SubscribeResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.UltraSendResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\PardisPlatformServiceReference\SharedLibrary.PardisPlatformServiceReference.UnsubscribeResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
   </ItemGroup>
