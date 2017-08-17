@@ -35,7 +35,7 @@ namespace TakavarLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else if (message.ReceivedFrom.Contains("sendservicesubscriptionhelp"))
+                else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                 {
                     message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
