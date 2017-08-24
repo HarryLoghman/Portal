@@ -270,7 +270,7 @@ namespace SharedLibrary
                     if (result["status"] == "0" && result["message"].Contains("SUCCESS"))
                     {
                         singlecharge.IsSucceeded = true;
-                        singlecharge.Description = result["message"] + "-code:" + confirmationCode;
+                        singlecharge.Description = "SUCCESS";
                         entity.Entry(singlecharge).State = EntityState.Modified;
                         entity.SaveChanges();
                     }
@@ -308,6 +308,7 @@ namespace SharedLibrary
             }
             catch (Exception e)
             {
+                logs.Error("request:" + url);
                 logs.Error("Exception in SendSingleMessageToTelepromo: " + e);
             }
             return result;
@@ -371,7 +372,7 @@ namespace SharedLibrary
                 XmlElement serviceid = doc.CreateElement("serviceid");
                 serviceid.InnerText = serviceId;
                 body.AppendChild(serviceid);
-                
+
                 foreach (var message in messages)
                 {
                     if (message.RetryCount != null && message.RetryCount >= retryCountMax)
@@ -850,7 +851,7 @@ namespace SharedLibrary
                             string responseCode = (xn.Attributes["status"].Value).ToString();
                             if (responseCode == "48")
                             {
-                                singlecharge.Description = "SUCCESS" + "-code:" + confirmationCode;
+                                singlecharge.Description = "SUCCESS";
                                 singlecharge.ReferenceId = xn.InnerText;
                                 singlecharge.IsSucceeded = true;
                                 entity.Entry(singlecharge).State = EntityState.Modified;
@@ -938,14 +939,14 @@ namespace SharedLibrary
 
                 var pardisClient = new SharedLibrary.PardisOTPServiceReference.OTPSoapClient();
                 var pardisResponse = pardisClient.Confirm(SPID, otpConfirm);
-                    if (pardisResponse.ReferenceCode != null)
-                    {
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.Description = "Success" + "-code:" + confirmationCode;
-                        entity.Entry(singlecharge).State = EntityState.Modified;
-                        entity.SaveChanges();
-                    }
-                    else
+                if (pardisResponse.ReferenceCode != null)
+                {
+                    singlecharge.IsSucceeded = true;
+                    singlecharge.Description = "Success";
+                    entity.Entry(singlecharge).State = EntityState.Modified;
+                    entity.SaveChanges();
+                }
+                else
                     singlecharge.Description = pardisResponse.ErrorCode + ":" + pardisResponse.ErrorMessage;
             }
             catch (Exception e)
