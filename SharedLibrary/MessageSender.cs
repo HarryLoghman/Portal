@@ -942,7 +942,7 @@ namespace SharedLibrary
                 if (pardisResponse.ReferenceCode != null)
                 {
                     singlecharge.IsSucceeded = true;
-                    singlecharge.Description = "Success";
+                    singlecharge.Description = "SUCCESS";
                     entity.Entry(singlecharge).State = EntityState.Modified;
                     entity.SaveChanges();
                 }
