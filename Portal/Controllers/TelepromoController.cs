@@ -350,7 +350,14 @@ namespace Portal.Controllers
                 if (type == "SUBSCRIBE")
                     message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
                 else if (type == "UNSUBSCRIBE")
+                {
                     message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
+                    if(message.Content == null || message.Content.ToLower() == "null")
+                    {
+                        message.IsReceivedFromIntegratedPanel = true;
+                        message.Content = "Off";
+                    }
+                }
                 else
                     message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
                 SharedLibrary.MessageHandler.SaveReceivedMessage(message);
