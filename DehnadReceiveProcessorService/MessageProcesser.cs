@@ -208,6 +208,8 @@ namespace DehnadReceiveProcessorService
                     SoratyLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "DefendIran")
                     DefendIranLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "TahChin")
+                    TahChinLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -267,6 +269,8 @@ namespace DehnadReceiveProcessorService
                     SoratyLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "DefendIran")
                     DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "TahChin")
+                    TahChinLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {
