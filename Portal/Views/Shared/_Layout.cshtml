@@ -811,7 +811,7 @@
                                     }
                                 </ul>
                             </li>
-                            @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("IrancellGroup"))
+                            if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("IrancellGroup"))
                             {
                                 <li>
                                     ایرانسل
