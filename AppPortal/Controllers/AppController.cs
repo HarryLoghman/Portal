@@ -1003,6 +1003,24 @@ namespace Portal.Controllers
                                         daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
                                 }
                             }
+                            else if (messageObj.ServiceCode == "TahChin")
+                            {
+                                using (var entity = new TahChinLibrary.Models.TahChinEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                    {
+                                        var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
+                                        if (installmentQueue != null)
+                                            daysLeft = 30;
+                                        else
+                                            daysLeft = 0;
+                                    }
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
                             else if (messageObj.ServiceCode == "JabehAbzar")
                             {
                                 using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())

@@ -71,6 +71,7 @@
     <Compile Include="Date.cs" />
     <Compile Include="HandleSubscription.cs" />
     <Compile Include="HelpfulFunctions.cs" />
+    <Compile Include="InstallmentHandler.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="MessageSender.cs" />
     <Compile Include="Models\Aggregator.cs">

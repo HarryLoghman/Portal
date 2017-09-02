@@ -187,7 +187,7 @@ namespace DehnadTahChinService
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now).ToList();
+                    var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("TahChin");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
@@ -205,12 +205,7 @@ namespace DehnadTahChinService
                         }
                         var message = new SharedLibrary.Models.MessageObject();
                         message.MobileNumber = item.MobileNumber;
-                        //message.ImiChargeKey = chargeCodes.FirstOrDefault(o => o.Price == item.Price).ChargeKey;
-                        //message.ShortCode = shortCode;
-                        //message.Price = item.Price;
-                        //var singlecharge = TahChinLibrary.MessageHandler.SendSinglechargeMesssageToPardisImi(message);
-                        //if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient balance"))
-                        //{
+
                         var installment = new SinglechargeInstallment();
                         installment.MobileNumber = message.MobileNumber;
                         installment.TotalPrice = 10000;

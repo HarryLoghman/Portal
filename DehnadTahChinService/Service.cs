@@ -190,25 +190,25 @@ namespace DehnadTahChinService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            //var singlechargeInstallment = new SinglechargeInstallmentClass();
-            //int installmentCycleNumber = 1;
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15)
-            //    {
-            //        installmentCycleNumber = 1;
-            //        Thread.Sleep(50 * 60 * 1000);
-            //    }
-            //    else
-            //    {
-            //        if (DateTime.Now.Hour >= 7)
-            //        {
-            //            singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-            //            installmentCycleNumber++;
-            //        }
-            //        Thread.Sleep(1000);
-            //    }
-            //}
+            var singlechargeInstallment = new SinglechargeInstallmentClass();
+            int installmentCycleNumber = 1;
+            while (!shutdownEvent.WaitOne(0))
+            {
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15)
+                {
+                    installmentCycleNumber = 1;
+                    Thread.Sleep(50 * 60 * 1000);
+                }
+                else
+                {
+                    if (DateTime.Now.Hour >= 2)
+                    {
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                    }
+                    Thread.Sleep(1000);
+                }
+            }
         }
 
         //private void SinglechargeInstallmentBalancerWorkerThread()
