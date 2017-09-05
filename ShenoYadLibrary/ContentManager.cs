@@ -105,7 +105,7 @@ namespace ShenoYadLibrary
             }
         }
 
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate, List<ImiChargeCode> imiChargeCodes)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace ShenoYadLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                     {
-                        message = MessageHandler.EmptyContentWhenSubscribed(message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }

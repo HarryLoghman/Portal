@@ -135,7 +135,7 @@ namespace ShenoYadLibrary
                 if (subscriber == null)
                 {
                     if (message.Content == null || message.Content == "" || message.Content == " ")
-                        message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
@@ -145,14 +145,14 @@ namespace ShenoYadLibrary
                 if (subscriber.DeactivationDate != null)
                 {
                     if (message.Content == null || message.Content == "" || message.Content == " ")
-                        message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
                 message.Content = content;
-                ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+                ContentManager.HandleContent(message, service, subscriber, messagesTemplate, imiChargeCodes);
             }
         }
 

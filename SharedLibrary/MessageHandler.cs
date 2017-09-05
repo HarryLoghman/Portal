@@ -19,8 +19,6 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
-                if (message.Content == null)
-                    message.Content = " ";
                 var mo = new ReceievedMessage()
                 {
                     MobileNumber = message.MobileNumber,
@@ -28,7 +26,7 @@ namespace SharedLibrary
                     ReceivedTime = DateTime.Now,
                     PersianReceivedTime = Date.GetPersianDateTime(DateTime.Now),
                     MessageId = message.MessageId,
-                    Content = (message.Content == null) ? "null received" : message.Content,
+                    Content = (message.Content == null) ? "" : message.Content,
                     IsProcessed = false,
                     IsReceivedFromIntegratedPanel = (message.IsReceivedFromIntegratedPanel == null) ? false : message.IsReceivedFromIntegratedPanel,
                     IsReceivedFromWeb = (message.IsReceivedFromWeb == null) ? false : message.IsReceivedFromWeb,
@@ -356,6 +354,27 @@ namespace SharedLibrary
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
             message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
+        public static MessageObject SendServiceOTPHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        {
+            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceOTPHelp").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
+        public static MessageObject EmptyContentWhenNotSubscribed(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        {
+            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "EmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
+        public static MessageObject EmptyContentWhenSubscribed(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        {
+            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 

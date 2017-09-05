@@ -21,6 +21,7 @@ namespace Portal.Controllers
         public HttpResponseMessage Message(string text, string from, string to, string smsId, string userId)
         {
             string result = "";
+            text = (text == null) ? "" : text;
             text = HttpUtility.UrlDecode(text, System.Text.UnicodeEncoding.Default);
             text = HttpUtility.UrlDecode(text, System.Text.UnicodeEncoding.Default);
             var messageObj = new MessageObject();
