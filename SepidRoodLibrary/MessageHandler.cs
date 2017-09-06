@@ -357,6 +357,8 @@ namespace SepidRoodLibrary
             {
                 if (eventbaseContent.SubscriberNotSendedMoInDays == 0)
                     subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
+                else if(eventbaseContent.SubscriberNotSendedMoInDays == 999)
+                    subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && (o.PersianDeactivationDate == "1396-06-10" || o.PersianDeactivationDate == "1396-06-11")).ToList();
                 else
                     subscribers = (from s in entity.Subscribers join r in entity.ReceivedMessagesArchives on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
             }

@@ -37,6 +37,50 @@
            });
     }
 
+	var subscriberNotSendedMoInDaysDataSourceExtra = [{
+    "Id": 0,
+    "Value": "همه اعضا",
+}, {
+    "Id": 1,
+    "Value": "1 روز",
+}, {
+    "Id": 2,
+    "Value": "2 روز",
+}, {
+    "Id": 3,
+    "Value": "3 روز",
+}, {
+    "Id": 7,
+    "Value": "1 هفته",
+}, {
+    "Id": 14,
+    "Value": "2 هفته",
+}, {
+    "Id": 30,
+    "Value": "1 ماه",
+}, {
+    "Id": 999,
+    "Value": "اعضایی که 10 و 11 شهریور لغو عضویت کردند",
+}];
+
+    function subscriberNotSendedMoInDaysDropDownEditorExtra(container, options) {
+    $('<input data-text-field="Value" data-value-field="Id" data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+       .kendoDropDownList({
+           dataSource: subscriberNotSendedMoInDaysDataSourceExtra,
+           dataTextField: "Value",
+           dataValueField: "Id"
+       });
+}
+
+    function getSubscriberNotSendedMoInDaysValueExtra(Id) {
+    for (var idx = 0, length = subscriberNotSendedMoInDaysDataSourceExtra.length; idx < length; idx++) {
+        if (subscriberNotSendedMoInDaysDataSourceExtra[idx].Id === Id) {
+            return subscriberNotSendedMoInDaysDataSourceExtra[idx].Value;
+        }
+    }
+}
+
     $("#grid").kendoGrid({
 
         columns: [
@@ -44,7 +88,7 @@
             { field: "PersianDateCreated", title: "تاریخ ایجاد", width: 200 },
             { field: "SubscriptionKeywordId", title: "کلید واژه عضویت", editor: subscriptionKeywordsDropDownEditor, template: "#=getSubscriptionKeyword(SubscriptionKeywordId)#", width: 200 },
             { field: "Content", title: "محتوی", editor: textAreaEditor },
-            { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند", editor: subscriberNotSendedMoInDaysDropDownEditor, template: "#=getSubscriberNotSendedMoInDaysValue(SubscriberNotSendedMoInDays)#", width: 100 },
+            { field: "SubscriberNotSendedMoInDays", title: "ارسال به اعضایی که محتوایی ارسال نکرده اند", editor: subscriberNotSendedMoInDaysDropDownEditorExtra, template: "#=getSubscriberNotSendedMoInDaysValueExtra(SubscriberNotSendedMoInDays)#", width: 100 },
             { field: "Price", title: "هزینه پیام", width: 150 },
             { field: "Point", title: "امتیاز", width: 150 },
             { command: ["edit", "destroy", { text: "انتقال به صف", click: sendToMessagesQueue }], width: 300 }
