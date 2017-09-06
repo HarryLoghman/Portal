@@ -39,7 +39,7 @@ namespace Portal.Controllers
             foreach (XmlNode item in extensionInfoList)
             {
                 XmlNode key = item.SelectSingleNode("key");
-                if (key.InnerText.Trim() == "shortCode")
+                if (key.InnerText.Trim() == "shortCode" || key.InnerText.Trim() == "accessCode")
                 {
                     XmlNode value = item.SelectSingleNode("value");
                     message.ShortCode = value.InnerText.Trim();
@@ -50,13 +50,13 @@ namespace Portal.Controllers
             message.MobileNumber = mobileNumberNode.InnerText.Trim();
             if (mobileNumberTypeNode.InnerText.Trim() == "0")
                 message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
-            logs.Info("type:" + subscriptionTypeNode.InnerText.Trim());
             if (subscriptionTypeNode.InnerText.Trim() == "1" || subscriptionTypeNode.InnerText.Trim() == "6")
                 message.Content = "Subscription";
-            else
+            else if(subscriptionTypeNode.InnerText.Trim() == "2")
                 message.Content = "Unsubscription";
+
             message.MobileOperator = 2;
-            message.ReceivedFrom = "92.42.55.180-Notify";
+            message.ReceivedFrom = "92.42.55.180-Notify-" + subscriptionTypeNode.InnerText.Trim();
 
             SharedLibrary.MessageHandler.SaveReceivedMessage(message);
 

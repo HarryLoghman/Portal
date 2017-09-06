@@ -356,11 +356,18 @@ namespace SharedLibrary
             message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
             return message;
         }
-
+        
         public static MessageObject SendServiceOTPHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
             message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceOTPHelp").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
+        public static MessageObject SendServiceOTPRequestExists(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        {
+            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceOTPRequestExists").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 

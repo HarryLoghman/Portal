@@ -215,7 +215,9 @@ namespace TahChinLibrary
                 "لغو",
                 "کنسل",
                 "توقف",
-                "پایان"
+                "پایان",
+                "l",
+                "L"
             };
             return offContents;
         }
