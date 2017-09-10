@@ -1388,14 +1388,14 @@ namespace SharedLibrary
                 charge = "refundAmount";
             else
                 charge = "chargeAmount";
-            message.MobileNumber = "98" + message.MobileNumber.TrimStart('0');
+            var mobile = "98" + message.MobileNumber.TrimStart('0');
             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
             int rialedPrice = message.Price.Value * 10;
             Random random = new Random();
             var referenceCode = random.Next(000000001, 999999999).ToString();
             var url = irancellIp + "/AmountChargingService/services/AmountCharging";
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>980110006379</spId>               <timeStamp>{0}</timeStamp>           </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
-, timeStamp, message.MobileNumber, rialedPrice, referenceCode, charge);
+, timeStamp, mobile, rialedPrice, referenceCode, charge);
             try
             {
                 using (var client = new HttpClient())

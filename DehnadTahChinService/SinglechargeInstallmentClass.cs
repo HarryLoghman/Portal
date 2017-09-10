@@ -32,6 +32,9 @@ namespace DehnadTahChinService
                     installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
                     int installmentListCount = installmentList.Count;
                     var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                    if (installmentListCount < installmentListTakeSize)
+                        installmentListTakeSize = installmentListCount;
+
                     SharedLibrary.InstallmentHandler.InstallmentJob(entity, maxChargeLimit, installmentCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singlecharge);
                 }
             }

@@ -35,8 +35,7 @@ namespace SharedLibrary
                 List<Task> TaskList = new List<Task>();
                 for (int i = 0; i < take.Length; i++)
                 {
-
-                    var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
+                    var chunkedInstallmentList = ((IEnumerable)installmentList).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
                     TaskList.Add(ProcessMtnInstallmentChunk(entity, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, singlecharge));
                 }
                 Task.WaitAll(TaskList.ToArray());
@@ -49,7 +48,7 @@ namespace SharedLibrary
             logs.Info("InstallmentJob ended!");
         }
 
-        private static async Task ProcessMtnInstallmentChunk(dynamic entity, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, List<dynamic> chargeCodes, int taskId, int installmentCycleNumber, dynamic singlecharge)
+        private static async Task ProcessMtnInstallmentChunk(dynamic entity, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, dynamic singlecharge)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -66,6 +65,7 @@ namespace SharedLibrary
                         entity.SaveChanges();
                         batchSaveCounter = 0;
                     }
+
                     int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList().Sum(o => o.Price);
                     if (priceUserChargedToday >= maxChargeLimit)
                     {
@@ -77,7 +77,6 @@ namespace SharedLibrary
                     var message = new SharedLibrary.Models.MessageObject();
                     message.MobileNumber = installment.MobileNumber;
                     message.ShortCode = serviceAdditionalInfo["shortCode"];
-
                     message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
                     var response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
                     if (response.IsSucceeded == false && installmentCycleNumber == 1)
@@ -91,7 +90,7 @@ namespace SharedLibrary
                             if (response.IsSucceeded == false)
                             {
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                                response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
                                 if (response.IsSucceeded == false)
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
@@ -136,7 +135,7 @@ namespace SharedLibrary
             logs.Info("InstallmentJob Chunk task " + taskId + " ended");
         }
 
-        private static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, List<dynamic> chargeCodes, int priceUserChargedToday, int maxChargeLimit)
+        private static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
         {
             if (priceUserChargedToday == 0)
             {
@@ -157,9 +156,9 @@ namespace SharedLibrary
             return message;
         }
 
-        private static SharedLibrary.Models.MessageObject SetMessagePrice(SharedLibrary.Models.MessageObject message, List<dynamic> chargeCodes, int price)
+        private static SharedLibrary.Models.MessageObject SetMessagePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int price)
         {
-            var chargecode = chargeCodes.FirstOrDefault(o => o.Price == price);
+            var chargecode = ((IEnumerable)chargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price);
             message.Price = chargecode.Price;
             message.ImiChargeKey = chargecode.ChargeKey;
             return message;
