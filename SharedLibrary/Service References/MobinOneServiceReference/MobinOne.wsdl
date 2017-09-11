@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:tpswsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:tpswsdl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:tpswsdl">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+      <xsd:complexType name="ArrayReq">
+        <xsd:sequence>
+          <xsd:element name="username" type="xsd:string" />
+          <xsd:element name="password" type="xsd:string" />
+          <xsd:element name="shortcode" type="xsd:string" />
+          <xsd:element name="servicekey" type="xsd:string" />
+          <xsd:element name="number" type="tns:dataArray" />
+          <xsd:element name="message" type="tns:dataArray" />
+          <xsd:element name="chargecode" type="tns:dataArray" />
+          <xsd:element name="amount" type="tns:dataArray" />
+          <xsd:element name="type" type="xsd:string" />
+          <xsd:element name="requestId" type="tns:dataArray" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="dataArray">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute wsdl:arrayType="xsd:string[]" ref="SOAP-ENC:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="chargeRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="shortcode" type="xsd:string" />
+    <wsdl:part name="servicekey" type="xsd:string" />
+    <wsdl:part name="chargecode" type="xsd:string" />
+    <wsdl:part name="number" type="xsd:string" />
+    <wsdl:part name="amount" type="xsd:string" />
+    <wsdl:part name="requestId" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="chargeResponse">
+    <wsdl:part name="return" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="chargeStatusRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="requestId" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="chargeStatusResponse">
+    <wsdl:part name="return" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="inAppChargeRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="shortcode" type="xsd:string" />
+    <wsdl:part name="servicekey" type="xsd:string" />
+    <wsdl:part name="chargecode" type="xsd:string" />
+    <wsdl:part name="number" type="xsd:string" />
+    <wsdl:part name="amount" type="xsd:string" />
+    <wsdl:part name="requestId" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="inAppChargeResponse">
+    <wsdl:part name="return" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="inAppChargeConfirmRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="OTPTransactionId" type="xsd:string" />
+    <wsdl:part name="tps_id" type="xsd:string" />
+    <wsdl:part name="transactionPIN" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="inAppChargeConfirmResponse">
+    <wsdl:part name="return" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="sendSmsRequest">
+    <wsdl:part name="msg" type="tns:ArrayReq" />
+  </wsdl:message>
+  <wsdl:message name="sendSmsResponse">
+    <wsdl:part name="return" type="tns:dataArray" />
+  </wsdl:message>
+  <wsdl:message name="smsStatusRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="requestId" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="smsStatusResponse">
+    <wsdl:part name="return" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="deRegisterRequest">
+    <wsdl:part name="username" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="servicekey" type="xsd:string" />
+    <wsdl:part name="number" type="xsd:string" />
+    <wsdl:part name="requestId" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="deRegisterResponse">
+    <wsdl:part name="return" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:portType name="tpsPortType">
+    <wsdl:operation name="charge">
+      <documentation>Request Daily Charging for a User</documentation>
+      <wsdl:input message="tns:chargeRequest" />
+      <wsdl:output message="tns:chargeResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="chargeStatus">
+      <documentation>Get Status of Daily Charging for a User</documentation>
+      <wsdl:input message="tns:chargeStatusRequest" />
+      <wsdl:output message="tns:chargeStatusResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="inAppCharge">
+      <documentation>in-app purchase and Register User via App</documentation>
+      <wsdl:input message="tns:inAppChargeRequest" />
+      <wsdl:output message="tns:inAppChargeResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="inAppChargeConfirm">
+      <documentation>Confirm in-app purchase and Register User via App</documentation>
+      <wsdl:input message="tns:inAppChargeConfirmRequest" />
+      <wsdl:output message="tns:inAppChargeConfirmResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="sendSms">
+      <documentation>send Single/Batch SMS</documentation>
+      <wsdl:input message="tns:sendSmsRequest" />
+      <wsdl:output message="tns:sendSmsResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="smsStatus">
+      <documentation>Get Status of sent SMS</documentation>
+      <wsdl:input message="tns:smsStatusRequest" />
+      <wsdl:output message="tns:smsStatusResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="deRegister">
+      <documentation>Unsubscribe User via Call center or Integration Panel</documentation>
+      <wsdl:input message="tns:deRegisterRequest" />
+      <wsdl:output message="tns:deRegisterResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="tpsBinding" type="tns:tpsPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="charge">
+      <soap:operation soapAction="urn:tpswsdl#charge" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="chargeStatus">
+      <soap:operation soapAction="urn:tpswsdl#chargeStatus" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inAppCharge">
+      <soap:operation soapAction="urn:tpswsdl#charge" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inAppChargeConfirm">
+      <soap:operation soapAction="urn:tpswsdl#charge" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendSms">
+      <soap:operation soapAction="urn:tpswsdl#sendSms" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="smsStatus">
+      <soap:operation soapAction="urn:tpswsdl#smsStatus" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deRegister">
+      <soap:operation soapAction="urn:tpswsdl#deRegister" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="urn:tpswsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="tps">
+    <wsdl:port name="tpsPort" binding="tns:tpsBinding">
+      <soap:address location="http://10.20.9.6:8080/server.php" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

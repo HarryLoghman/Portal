@@ -20,7 +20,7 @@ namespace SharedLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int retryCountMax = 15;
         public static int retryPauseBeforeSendByMinute = -1;
-        public static string telepromoIp = "http://10.20.9.135:8600"; //"http://10.20.9.159:8600"
+        public static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
         public static string irancellIp = "http://92.42.55.180:8310";
 
         public static async Task SendMesssagesToTelepromo(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
@@ -1470,6 +1470,111 @@ namespace SharedLibrary
                 logs.Error("Exception in ChargeMtnSubscriber on saving values to db: " + e);
             }
             return singlecharge;
+        }
+
+        public static async Task SendMesssagesToMobinOne(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            try
+            {
+                var messagesCount = messages.Count;
+                if (messagesCount == 0)
+                    return;
+                var SPID = "RESA";
+                SharedLibrary.PardisImiServiceReference.SMS[] smsList = new SharedLibrary.PardisImiServiceReference.SMS[messagesCount];
+
+                foreach (var message in messages)
+                {
+                    if (message.RetryCount != null && message.RetryCount > retryCountMax)
+                    {
+                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                }
+
+                for (int index = 0; index < messagesCount; index++)
+                {
+                    if (messages[index].DateLastTried != null && messages[index].DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
+                        continue;
+                    smsList[index] = new SharedLibrary.PardisImiServiceReference.SMS()
+                    {
+                        Index = index + 1,
+                        Addresses = "98" + messages[index].MobileNumber.TrimStart('0'),
+                        ShortCode = "98" + serviceAdditionalInfo["shortCode"],
+                        Message = messages[index].Content,
+                        ChargeCode = messages[index].ImiChargeKey,
+                        SubUnsubMoMessage = messages[index].SubUnSubMoMssage,
+                        SubUnsubType = messages[index].SubUnSubType
+                    };
+                }
+                smsList = smsList.Where(o => o.Index != null).ToArray();
+                var pardisClient = new SharedLibrary.PardisImiServiceReference.MTSoapClient();
+                var pardisResponse = pardisClient.SendSMS(SPID, smsList);
+                if (pardisResponse.Rows.Count == 0)
+                {
+                    logs.Info("SendMessagesToPardisImi does not return response there must be somthing wrong with the parameters");
+                    foreach (var sms in smsList)
+                    {
+                        logs.Info("Index: " + sms.Index);
+                        logs.Info("Addresses: " + sms.Addresses);
+                        logs.Info("ShortCode: " + sms.ShortCode);
+                        logs.Info("Message: " + sms.Message);
+                        logs.Info("ChargeCode: " + sms.ChargeCode);
+                        logs.Info("SubUnsubMoMessage: " + sms.SubUnsubMoMessage);
+                        logs.Info("SubUnsubType: " + sms.SubUnsubType);
+                        logs.Info("++++++++++++++++++++++++++++++++++");
+                    }
+                    foreach (var message in messages)
+                    {
+                        if (message.RetryCount == null)
+                        {
+                            message.RetryCount = 1;
+                            message.DateLastTried = DateTime.Now;
+                        }
+                        else
+                        {
+                            if (message.RetryCount > retryCountMax)
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            message.RetryCount += 1;
+                            message.DateLastTried = DateTime.Now;
+                        }
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                    return;
+                }
+                for (int index = 0; index < messagesCount; index++)
+                {
+                    messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                    messages[index].ReferenceId = pardisResponse.Rows[index]["Correlator"].ToString();
+                    messages[index].SentDate = DateTime.Now;
+                    messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    if (messages[index].MessagePoint > 0)
+                        SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
+                    entity.Entry(messages[index]).State = EntityState.Modified;
+                }
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendMesssagesToPardisImi: " + e);
+                foreach (var message in messages)
+                {
+                    if (message.RetryCount == null)
+                    {
+                        message.RetryCount = 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    else
+                    {
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.RetryCount += 1;
+                        message.DateLastTried = DateTime.Now;
+                    }
+                    entity.Entry(message).State = EntityState.Modified;
+                }
+                entity.SaveChanges();
+            }
         }
     }
 }

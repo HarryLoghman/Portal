@@ -19,24 +19,24 @@ namespace DehnadTahChinService
         {
             try
             {
-                int maxChargeLimit = 300;
-                string aggregatorName = Properties.Settings.Default.AggregatorName;
-                var serviceCode = "TahChin";
-                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
-                List<SinglechargeInstallment> installmentList;
-                Singlecharge singlecharge = new Singlecharge();
-                using (var entity = new TahChinEntities())
-                {
-                    entity.Configuration.AutoDetectChangesEnabled = false;
-                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                    installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
-                    int installmentListCount = installmentList.Count;
-                    var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                    if (installmentListCount < installmentListTakeSize)
-                        installmentListTakeSize = installmentListCount;
+                //int maxChargeLimit = 300;
+                //string aggregatorName = Properties.Settings.Default.AggregatorName;
+                //var serviceCode = "TahChin";
+                //var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                //List<SinglechargeInstallment> installmentList;
+                //Singlecharge singlecharge = new Singlecharge();
+                //using (var entity = new TahChinEntities())
+                //{
+                //    entity.Configuration.AutoDetectChangesEnabled = false;
+                //    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                //    installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
+                //    int installmentListCount = installmentList.Count;
+                //    var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                //    if (installmentListCount < installmentListTakeSize)
+                //        installmentListTakeSize = installmentListCount;
 
-                    SharedLibrary.InstallmentHandler.InstallmentJob(entity, maxChargeLimit, installmentCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singlecharge);
-                }
+                //    SharedLibrary.InstallmentHandler.InstallmentJob(entity, maxChargeLimit, installmentCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singlecharge);
+                //}
             }
             catch (Exception e)
             {

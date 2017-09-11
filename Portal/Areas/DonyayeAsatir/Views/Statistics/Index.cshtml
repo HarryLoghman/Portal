@@ -20,16 +20,37 @@
 <script src="@Url.Content("~/Scripts/Highstock/modules/export-csv.js")"></script>
 <script src="@Url.Content("~/Scripts/Highstock/themes/dark-unica.js")"></script>
 
-
-<div id="SubscriptionAndUnsubscriptionContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <div id="SubscriptionAndUnsubscriptionContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+    <BR>
+}
 <div id="subscribersStaticsContainer" style="height: 400px;direction:ltr !important;"></div>
+<BR>
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <div id="singlechargeLiveStatusesContainer" style="height: 400px;direction:ltr !important;"></div>
+    <BR>
+}
 <div class="k-rtl" id="grid"></div>
 
 <!--DataSources-->
 <script>
     var subscribersInfo;
     var statisticsData;
+    var singlechargeLiveStatus;
     var date = [];
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'Statistics/SinglechargeLive_Read',
+        async: false,
+        dataType: 'json',
+        success: function (result) {
+            singlechargeLiveStatus = result;
+        }
+    });
 
     $.ajax(
     {
@@ -39,7 +60,6 @@
         dataType: 'json',
         success: function (result) {
             statisticsData = result;
-            console.log(statisticsData);
         }
     });
 
@@ -93,9 +113,10 @@
 </script>
 
 <!--Grid-->
-<script>
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <script>
     var gridElement = $("#grid");
-
     $("#grid").kendoGrid({
 
         columns: [
@@ -185,7 +206,80 @@
         }
     });
 
-</script>
+    </script>
+}
+else
+{
+    <script>
+    var gridElement = $("#grid");
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulCharge", title: "مجموع درآمد", width: 100 },
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_GridRead",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "PersianDate", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+
+    </script>
+}
+
 
 <!--Subscribers-->
 <script type="text/javascript">
@@ -237,8 +331,10 @@
     });
 </script>
 
-<!--SubscriptionAndUnsubscriptionChart-->
-<script>
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <!--SubscriptionAndUnsubscriptionChart-->
+    <script>
     $(function () {
         $('#SubscriptionAndUnsubscriptionContainer').highcharts('StockChart', {
 
@@ -300,4 +396,65 @@
             ],
         });
     });
-</script>
+    </script>
+}
+
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <!--Singlecharge Live Statuses Chart-->
+    <script type="text/javascript">
+    $(function () {
+        $('#singlechargeLiveStatusesContainer').highcharts({
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
+            },
+            title: {
+                useHTML: true,
+                text: ' وضعیت سینگل شارژ آخرین بروزرسانی ' + '<span style="float:left">' + singlechargeLiveStatus.DateUpdated + '</span>'
+            },
+            subtitle: {
+                useHTML: true,
+                text: '<span style="text-align:right;float:right">' + 'تعداد کل تلاش برای سینگل شارژ در روز جاری: ' + singlechargeLiveStatus.TotalTries
+                + '<br>'
+                + 'تعداد شماره هایی که اقدام به شارژ شدن: ' + singlechargeLiveStatus.DistinctNumbersTried
+                + '<br>'
+                + 'در آمد روز جاری: ' + singlechargeLiveStatus.Income
+                + '<br>'
+                + 'تعداد کل کاربران فعال: ' + singlechargeLiveStatus.TotalSubscribers
+                + '<br>'
+                + 'کاربرانی که شارژ کامل شده اند: ' + singlechargeLiveStatus.TotalSubscribersFullyCharged
+                + '<br>'
+                + 'کاربرانی که در دوره رایگان هستند: ' + singlechargeLiveStatus.TotalSubscribersInWaitingList
+                + '<br>'
+                + 'کاربران در لیست شارژینگ: ' + singlechargeLiveStatus.TotalSubscribersMustBeCharged
+				+ '</span>'
+            },
+            tooltip: {
+                pointFormat: ' <b>{point.y} تلاش</b> <BR> {point.percentage:.1f} %',
+                shared: false,
+                useHTML: true
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name} کد'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                data: singlechargeLiveStatus.Data
+            }]
+        });
+    });
+    </script>
+}

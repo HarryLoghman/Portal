@@ -32,7 +32,7 @@ namespace Portal.Controllers
             try
             {
                 result.MobileNumber = messageObj.MobileNumber;
-                var hash = SharedLibrary.Security.GetSha256Hash("OTPCharge" + messageObj.ServiceCode + messageObj.MobileNumber);
+                var hash = SharedLibrary.Security.GetSha256Hash("OtpCharge" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
                 else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 0)
@@ -438,7 +438,7 @@ namespace Portal.Controllers
             try
             {
                 result.MobileNumber = messageObj.MobileNumber;
-                var hash = SharedLibrary.Security.GetSha256Hash("OTPConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
+                var hash = SharedLibrary.Security.GetSha256Hash("OtpConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
                 else

@@ -172,6 +172,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Service References\MobinOneServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\PardisImiServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -211,6 +216,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\HubServiceReference\sms.wsdl" />
+    <None Include="Service References\MobinOneServiceReference\MobinOne.wsdl" />
     <None Include="Service References\PardisImiServiceReference\pardis-imi-mt.wsdl" />
     <None Include="Service References\PardisImiServiceReference\SharedLibrary.PardisImiServiceReference.SendSMS2Response.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -274,6 +280,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\HubServiceReference\" />
+    <WCFMetadataStorage Include="Service References\MobinOneServiceReference\" />
     <WCFMetadataStorage Include="Service References\PardisImiServiceReference\" />
     <WCFMetadataStorage Include="Service References\PardisImiSinglechargeServiceReference\" />
     <WCFMetadataStorage Include="Service References\PardisOTPServiceReference\" />
@@ -290,6 +297,12 @@
       <DependentUpon>PortalModel.edmx</DependentUpon>
       <LastGenOutput>PortalModel.cs</LastGenOutput>
     </Content>
+    <None Include="Service References\MobinOneServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\MobinOneServiceReference\configuration.svcinfo" />
+    <None Include="Service References\MobinOneServiceReference\configuration91.svcinfo" />
     <None Include="Service References\PardisOTPServiceReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
