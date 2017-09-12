@@ -248,15 +248,15 @@ namespace Portal.Controllers
             {
                 using (var entity = new IrancellTestLibrary.Models.IrancellTestEntities())
                 {
-                    var singleCharge = new IrancellTestLibrary.Models.Singlecharge();
-                    MessageObject message = new MessageObject();
-                    message.MobileNumber = mobileNumber;
-                    message.Price = price;
-                    singleCharge = await SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singleCharge, message, isRefund, isInAppPurchase);
+                    //var singleCharge = new IrancellTestLibrary.Models.Singlecharge();
+                    //MessageObject message = new MessageObject();
+                    //message.MobileNumber = mobileNumber;
+                    //message.Price = price;
+                    //singleCharge = await SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singleCharge, message, isRefund, isInAppPurchase, );
                     
-                    result = "isSuccessed: " + singleCharge.IsSucceeded + Environment.NewLine;
-                    result += "Description: " + singleCharge.Description + Environment.NewLine;
-                    result += "ReferenceId: " + singleCharge.ReferenceId + Environment.NewLine; 
+                    //result = "isSuccessed: " + singleCharge.IsSucceeded + Environment.NewLine;
+                    //result += "Description: " + singleCharge.Description + Environment.NewLine;
+                    //result += "ReferenceId: " + singleCharge.ReferenceId + Environment.NewLine; 
                 }
             }
             catch (Exception e)

@@ -78,7 +78,7 @@ namespace SharedLibrary
                     message.MobileNumber = installment.MobileNumber;
                     message.ShortCode = serviceAdditionalInfo["shortCode"];
                     message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
-                    var response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                    var response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                     if (response.IsSucceeded == false && installmentCycleNumber == 1)
                         continue;
                     else if (response.IsSucceeded == false)

@@ -1380,7 +1380,7 @@ namespace SharedLibrary
             return result;
         }
 
-        public static async Task<dynamic> ChargeMtnSubscriber(dynamic entity, dynamic singlecharge, MessageObject message, bool isRefund, bool isInAppPurchase, long installmentId = 0)
+        public static async Task<dynamic> ChargeMtnSubscriber(dynamic entity, dynamic singlecharge, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             string charge = "";
             singlecharge.MobileNumber = message.MobileNumber;
@@ -1394,8 +1394,8 @@ namespace SharedLibrary
             Random random = new Random();
             var referenceCode = random.Next(000000001, 999999999).ToString();
             var url = irancellIp + "/AmountChargingService/services/AmountCharging";
-            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>980110006379</spId>               <timeStamp>{0}</timeStamp>           </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
-, timeStamp, mobile, rialedPrice, referenceCode, charge);
+            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>980110006379</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
+, timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"]);
             try
             {
                 using (var client = new HttpClient())
