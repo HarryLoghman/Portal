@@ -1540,11 +1540,22 @@ namespace SharedLibrary
                 }
                 for (int index = 0; index < messagesCount; index++)
                 {
-                    messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                    messages[index].SentDate = DateTime.Now;
-                    messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    if (messages[index].MessagePoint > 0)
-                        SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
+                    var res = result[index].Split('-');
+                    if (res[0] == "Success")
+                    {
+                        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                        if (messages[index].MessagePoint > 0)
+                            SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
+                        messages[index].SentDate = DateTime.Now;
+                        messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    }
+                    else
+                    {
+                        if (messages[index].RetryCount > retryCountMax)
+                            messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        messages[index].RetryCount += 1;
+                        messages[index].DateLastTried = DateTime.Now;
+                    }
                     entity.Entry(messages[index]).State = EntityState.Modified;
                 }
                 entity.SaveChanges();
@@ -1628,15 +1639,15 @@ namespace SharedLibrary
                 var client = new MobinOneServiceReference.tpsPortTypeClient();
                 var result = client.chargeStatus(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], transactionId);
                 var splitedResult = result.Split('-');
-                    
-                    singlecharge.Description = splitedResult[3] + "-code:" + confirmationCode;
-                    if (splitedResult[3] == "ACCEPTED")
-                    {
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.Description = "SUCCESS";
-                        entity.Entry(singlecharge).State = EntityState.Modified;
-                        entity.SaveChanges();
-                    }
+
+                singlecharge.Description = splitedResult[3] + "-code:" + confirmationCode;
+                if (splitedResult[3] == "ACCEPTED")
+                {
+                    singlecharge.IsSucceeded = true;
+                    singlecharge.Description = "SUCCESS";
+                    entity.Entry(singlecharge).State = EntityState.Modified;
+                    entity.SaveChanges();
+                }
             }
             catch (Exception e)
             {
