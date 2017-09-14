@@ -1472,15 +1472,13 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task SendMesssagesToMobinOne(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task SendMesssagesToMobinOne(dynamic entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo, bool isBulk = false)
         {
             try
             {
                 var messagesCount = messages.Count;
                 if (messagesCount == 0)
                     return;
-                var SPID = "RESA";
-                SharedLibrary.PardisImiServiceReference.SMS[] smsList = new SharedLibrary.PardisImiServiceReference.SMS[messagesCount];
 
                 foreach (var message in messages)
                 {
@@ -1491,38 +1489,36 @@ namespace SharedLibrary
                     }
                 }
 
+                var smsList = new MobinOneServiceReference.ArrayReq();
+                if (isBulk)
+                    smsList.type = "bulk";
+                else
+                    smsList.type = "mt";
+
+                smsList.username = serviceAdditionalInfo["username"];
+                smsList.password = serviceAdditionalInfo["password"];
+                smsList.shortcode = "98" + serviceAdditionalInfo["shortCode"];
+                smsList.servicekey = serviceAdditionalInfo["aggregatorServiceId"];
+
                 for (int index = 0; index < messagesCount; index++)
                 {
                     if (messages[index].DateLastTried != null && messages[index].DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
                         continue;
-                    smsList[index] = new SharedLibrary.PardisImiServiceReference.SMS()
-                    {
-                        Index = index + 1,
-                        Addresses = "98" + messages[index].MobileNumber.TrimStart('0'),
-                        ShortCode = "98" + serviceAdditionalInfo["shortCode"],
-                        Message = messages[index].Content,
-                        ChargeCode = messages[index].ImiChargeKey,
-                        SubUnsubMoMessage = messages[index].SubUnSubMoMssage,
-                        SubUnsubType = messages[index].SubUnSubType
-                    };
+                    smsList.number[index] = "98" + messages[index].MobileNumber.TrimStart('0');
+                    if (messages[index].ImiChargeKey == "Free")
+                        smsList.chargecode[index] = "";
+                    else
+                        smsList.chargecode[index] = messages[index].ImiChargeKey;
+                    smsList.amount[index] = messages[index].Price;
+                    smsList.requestId[index] = Guid.NewGuid().ToString();
                 }
-                smsList = smsList.Where(o => o.Index != null).ToArray();
-                var pardisClient = new SharedLibrary.PardisImiServiceReference.MTSoapClient();
-                var pardisResponse = pardisClient.SendSMS(SPID, smsList);
-                if (pardisResponse.Rows.Count == 0)
+
+                var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient();
+                var result = mobineOneClient.sendSms(smsList);
+
+                if (result.Length == 0)
                 {
-                    logs.Info("SendMessagesToPardisImi does not return response there must be somthing wrong with the parameters");
-                    foreach (var sms in smsList)
-                    {
-                        logs.Info("Index: " + sms.Index);
-                        logs.Info("Addresses: " + sms.Addresses);
-                        logs.Info("ShortCode: " + sms.ShortCode);
-                        logs.Info("Message: " + sms.Message);
-                        logs.Info("ChargeCode: " + sms.ChargeCode);
-                        logs.Info("SubUnsubMoMessage: " + sms.SubUnsubMoMessage);
-                        logs.Info("SubUnsubType: " + sms.SubUnsubType);
-                        logs.Info("++++++++++++++++++++++++++++++++++");
-                    }
+                    logs.Info("SendMesssagesToMobinOne does not return response there must be somthing wrong with the parameters");
                     foreach (var message in messages)
                     {
                         if (message.RetryCount == null)
@@ -1545,7 +1541,6 @@ namespace SharedLibrary
                 for (int index = 0; index < messagesCount; index++)
                 {
                     messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                    messages[index].ReferenceId = pardisResponse.Rows[index]["Correlator"].ToString();
                     messages[index].SentDate = DateTime.Now;
                     messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     if (messages[index].MessagePoint > 0)
@@ -1556,7 +1551,7 @@ namespace SharedLibrary
             }
             catch (Exception e)
             {
-                logs.Error("Exception in SendMesssagesToPardisImi: " + e);
+                logs.Error("Exception in SendMesssagesToMobinOne: " + e);
                 foreach (var message in messages)
                 {
                     if (message.RetryCount == null)
@@ -1575,6 +1570,81 @@ namespace SharedLibrary
                 }
                 entity.SaveChanges();
             }
+        }
+
+        public static async Task<dynamic> MobinOneOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var shortCode = "98" + serviceAdditionalInfo["shortCode"];
+                var mobile = "98" + message.MobileNumber.TrimStart('0');
+                var client = new MobinOneServiceReference.tpsPortTypeClient();
+                var result = client.charge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, message.Price.ToString(), Guid.NewGuid().ToString());
+                var splitedResult = result.Split('-');
+
+                if (splitedResult[0] == "Success")
+                    singlecharge.Description = "SUCCESS-Pending Confirmation";
+                else
+                    singlecharge.Description = splitedResult[1];
+
+                singlecharge.ReferenceId = splitedResult[3];
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MobinOneOTPRequest: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MobinOneOTPRequest on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> MobinOneOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            try
+            {
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                string otpIds = singlecharge.ReferenceId;
+                var optIdsSplitted = otpIds.Split('_');
+                var transactionId = optIdsSplitted[1];
+                var client = new MobinOneServiceReference.tpsPortTypeClient();
+                var result = client.chargeStatus(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], transactionId);
+                var splitedResult = result.Split('-');
+                    
+                    singlecharge.Description = splitedResult[3] + "-code:" + confirmationCode;
+                    if (splitedResult[3] == "ACCEPTED")
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = "SUCCESS";
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MobinOneOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+
+            return singlecharge;
         }
     }
 }

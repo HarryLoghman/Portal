@@ -86,33 +86,32 @@ namespace SharedLibrary
                         if (message.Price == 300)
                         {
                             SetMessagePrice(message, chargeCodes, 200);
-                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                             if (response.IsSucceeded == false)
                             {
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                                response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false)
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
-                                    response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                                    response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                                 }
                             }
                         }
                         else if (message.Price == 200)
                         {
                             message.Price = 100;
-                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                             if (response.IsSucceeded == false)
                             {
-                                continue; ////// TEMPORARY!!!!!!!
                                 message.Price = 50;
-                                response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                                response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                             }
                         }
                         else if (message.Price == 100)
                         {
                             message.Price = 50;
-                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, installment.Id).Result;
+                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                         }
                     }
                     if (response.IsSucceeded == true)

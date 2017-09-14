@@ -205,6 +205,7 @@ namespace DehnadTahChinService
                     {
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
+                        Thread.Sleep(4 * 60 * 60 * 1000);
                     }
                     Thread.Sleep(1000);
                 }
