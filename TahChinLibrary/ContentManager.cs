@@ -11,44 +11,6 @@ namespace TahChinLibrary
     public class ContentManager
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static Singlecharge HandleSinglechargeContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
-        {
-            Singlecharge singlecharge = new Singlecharge();
-            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            try
-            {
-                var content = Convert.ToInt32(message.Content);
-                bool chargecodeFound = false;
-                var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
-                foreach (var imiChargecode in imiChargeCodes)
-                {
-                    if (imiChargecode.Price == content)
-                    {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("TahChin", "Telepromo");
-                        message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
-                        chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo).Result;
-                        break;
-                    }
-                }
-                if (chargecodeFound == false)
-                {
-                    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                    MessageHandler.InsertMessageToQueue(message);
-                }
-                if (singlecharge.IsSucceeded == true)
-                {
-                    message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                    MessageHandler.InsertMessageToQueue(message);
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in ContentManager: ", e);
-            }
-            return singlecharge;
-        }
 
         public static bool DeleteFromSinglechargeQueue(string mobileNumber)
         {
@@ -114,8 +76,8 @@ namespace TahChinLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (!service.OnKeywords.Contains(message.Content))
                     {
-                        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                        MessageHandler.InsertMessageToQueue(message);
+                        //message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        //MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
                     var isUserAlreadyInSinglechargeQueue = IsUserAlreadyInSinglechargeQueue(message.MobileNumber);
@@ -134,7 +96,7 @@ namespace TahChinLibrary
                     }
 
                     var isSuccessful = AddSubscriberToSinglechargeQueue(message.MobileNumber, message.Content);
-                    if(isSuccessful == true)
+                    if (isSuccessful == true)
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);

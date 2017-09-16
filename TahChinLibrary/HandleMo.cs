@@ -105,26 +105,21 @@ namespace TahChinLibrary
 
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                     MessageHandler.InsertMessageToQueue(message);
-                    //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                    //{
-                    //    message.Content = content;
-                    //    ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
-                    //}
                     return;
                 }
                 var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
                 if (subscriber == null)
                 {
-                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                    MessageHandler.InsertMessageToQueue(message);
+                    //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                    //MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
                 message.SubscriberId = subscriber.Id;
                 if (subscriber.DeactivationDate != null)
                 {
-                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                    MessageHandler.InsertMessageToQueue(message);
+                    //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                    //MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
                 message.Content = content;

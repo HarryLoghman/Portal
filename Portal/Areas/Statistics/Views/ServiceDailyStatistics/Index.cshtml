@@ -1,0 +1,344 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName; //+ " : " + "لیست پیغام های ارسالی و دریافتی";
+}
+<div class="demo-section k-content" id="container" style="height:100px;padding-right:10px">
+    <label for="mobileNumber">شماره موبایل:</label>
+    <input id="mobileNumber" class="k-textbox" style="width: 10%;" />
+    <button id="getLog" class="k-primary k-button" style="width: 10%;margin-right:10px"><span>دریافت لاگ</span></button>
+    <button id="getActiveServices" class="k-primary k-button" style="width: 15%;margin-right:10px"><span>دریافت سرویس های فعال</span></button>
+    <button id="getUserSubscriptionLog" class="k-primary k-button" style="width: 15%;margin-right:10px"><span>دریافت تاریخچه عضویت</span></button>
+</div>
+<div class="k-rtl" id="userActiveServicesGridDataSource"><span id="userActiveServicesGridTitle" style="visibility:hidden">سرویس های فعال کاربر</span></div>
+<br />
+<br />
+<div class="k-rtl" id="userLogGridDataSource"><span id="userLogGridTitle" style="visibility:hidden">لاگ کاربر</span></div>
+<br />
+<br />
+<div class="k-rtl" id="userSubscriptionLogGridDataSource"><span id="userSubscriptionLogGridTitle" style="visibility:hidden">تاریخچه عضویت کاربر</span></div>
+<script>
+    $(document).ready(function () {
+        function ongetLogClick(e) {
+            mobileNumber = $('#mobileNumber').val();
+            if (mobileNumber === "")
+                return;
+
+            var userLogGridDataSource = new kendo.data.DataSource({
+                type: "aspnetmvc-ajax",
+                transport: {
+                    read: {
+                        url: "SubscribersLog/UserLog_Read",
+                        type: "POST",
+                        data: { MobileNumber: mobileNumber },
+                        complete: function (data, status) {
+                            if (status === "success") {
+                                $('#userLogGridDataSource').css('visibility', 'visible');
+                            }
+                            else {
+                                $('#userLogGridDataSource').css('visibility', 'hidden');
+                            }
+                        }
+                    },
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                        }
+                    }
+                },
+                serverSorting: true,
+                serverFiltering: true,
+                pageSize: 50,
+                serverPaging: true,
+                sort: [
+                    { field: "PersianDate", dir: "desc" },
+                    { field: "Time", dir: "desc" }
+                ]
+            });
+
+            portalTooltip('userLogGridDataSource', 'Content', 7);
+            $("#userLogGridDataSource").kendoGrid({
+                columns: [
+                    { field: "Type", title: "mt/mo" },
+                    { field: "ServiceName", title: "نام سرویس" },
+                    { field: "MobileNumber", title: "شماره موبایل" },
+                    { field: "ShortCode", title: "سرشماره" },
+                    { field: "PersianDate", title: "تاریخ", attributes: { style: "direction:ltr" } },
+                    { field: "Time", title: "ساعت", },
+                    { field: "Content", title: "متن", template: "#if(Content.length > 30){# # var myContent =Content; #  # var dcontent = myContent.substring(0,30) + ' ...'; # <span>#=kendo.toString(dcontent)#</span> #}else{# <span>#=Content#</span> #}#" },
+                ],
+                toolbar: ["excel"],
+                excel: {
+                    allPages: true
+                },
+                excel: {
+                    fileName: mobileNumber + " Log.xlsx",
+                    allPages: true,
+                    filterable: true
+                },
+                dataSource: userLogGridDataSource,
+                columnMenu: true,
+                editable: {
+                    mode: "popup",
+                    window: {
+                        title: "ویرایش",
+                        width: 500
+                    },
+                    confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+                },
+                pageable: {
+                    refresh: true,
+                    pageSizes: [10, 25, 50, 100, 200],
+                    buttonCount: 10,
+                    input: true
+                },
+                navigatable: true,
+                selectable: "single row",
+                sortable: {
+                    mode: "multiple",
+                    allowUnsort: false
+                },
+                filterable: true,
+                scrollable: false,
+                dataBound: function (e) {
+                    e.sender.dataItems().forEach(function (entry) {
+                        if (entry.IsAddedToSendQueue == true)
+                            disableGridButtons(entry.uid);
+                    });
+                }
+            });
+        }
+
+        function ongetActiveServicesClick(e) {
+            mobileNumber = $('#mobileNumber').val();
+            if (mobileNumber === "")
+                return;
+
+            var userLogGridDataSource = new kendo.data.DataSource({
+                type: "aspnetmvc-ajax",
+                transport: {
+                    read: {
+                        url: "SubscribersLog/UserActiveServices_Read",
+                        type: "POST",
+                        data: { MobileNumber: mobileNumber },
+                        complete: function (data, status) {
+                            if (status === "success") {
+                                $('#userActiveServicesGridDataSource').css('visibility', 'visible');
+                            }
+                            else {
+                                $('#userActiveServicesGridDataSource').css('visibility', 'hidden');
+                            }
+                        }
+                    },
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                        }
+                    }
+                },
+                serverSorting: true,
+                serverFiltering: true,
+                pageSize: 50,
+                serverPaging: true,
+                sort: [
+                    { field: "PersianActivationDate", dir: "desc" }
+                ]
+            });
+
+            $("#userActiveServicesGridDataSource").kendoGrid({
+
+                columns: [
+                    { field: "MobileNumber", title: "شماره موبایل" },
+                    { field: "ServiceName", title: "نام سرویس" },
+                    { field: "PersianActivationDate", title: "تاریخ فعال سازی" },
+                    { field: "ShortCode", title: "سرشماره" },
+                    { command: [{ text: "لغو عضویت کاربر", click: UnSubscribeUser }], width: 300 }
+                ],
+                toolbar: ["excel"],
+                excel: {
+                    allPages: true
+                },
+                excel: {
+                    fileName: mobileNumber + " Active Serivces.xlsx",
+                    allPages: true,
+                    filterable: true
+                },
+                dataSource: userLogGridDataSource,
+                columnMenu: true,
+                editable: {
+                    mode: "popup",
+                    window: {
+                        title: "ویرایش",
+                        width: 500
+                    },
+                    confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+                },
+                pageable: {
+                    refresh: true,
+                    pageSizes: [10, 25, 50, 100],
+                    buttonCount: 10,
+                    input: true
+                },
+                navigatable: true,
+                selectable: "single row",
+                sortable: {
+                    mode: "multiple",
+                    allowUnsort: false
+                },
+                filterable: true,
+                scrollable: false,
+                dataBound: function (e) {
+                    e.sender.dataItems().forEach(function (entry) {
+                        if (entry.IsAddedToSendQueue == true)
+                            disableGridButtons(entry.uid);
+                    });
+                }
+            });
+        }
+        function onUserSubscriptionLog(e) {
+            mobileNumber = $('#mobileNumber').val();
+            if (mobileNumber === "")
+                return;
+
+            var userLogGridDataSource = new kendo.data.DataSource({
+                type: "aspnetmvc-ajax",
+                transport: {
+                    read: {
+                        url: "SubscribersLog/UserSubscriptionLog_Read",
+                        type: "POST",
+                        data: { MobileNumber: mobileNumber },
+                        complete: function (data, status) {
+                            if (status === "success") {
+                                $('#userSubscriptionLogGridDataSource').css('visibility', 'visible');
+                            }
+                            else {
+                                $('#userSubscriptionLogGridDataSource').css('visibility', 'hidden');
+                            }
+                        }
+                    },
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                        }
+                    }
+                },
+                serverSorting: true,
+                serverFiltering: true,
+                pageSize: 50,
+                serverPaging: true,
+                sort: [
+                    { field: "PersianActivationDate", dir: "desc" }
+                ]
+            });
+
+            $("#userSubscriptionLogGridDataSource").kendoGrid({
+
+                columns: [
+                    { field: "MobileNumber", title: "شماره موبایل" },
+                    { field: "ServiceName", title: "نام سرویس" },
+                    { field: "PersianActivationDate", title: "تاریخ فعال سازی" },
+                    { field: "PersianDeactivationDate", title: "تاریخ غیر فعال سازی" },
+                    { field: "OnKeyword", title: "کلید واژه عضویت" },
+                    { field: "OffKeyword", title: "کلید واژه لغو عضویت" },
+                    { field: "ShortCode", title: "سرشماره" },
+                ],
+                toolbar: ["excel"],
+                excel: {
+                    allPages: true
+                },
+                excel: {
+                    fileName: mobileNumber + " Subscription Log.xlsx",
+                    allPages: true,
+                    filterable: true
+                },
+                dataSource: userLogGridDataSource,
+                columnMenu: true,
+                editable: {
+                    mode: "popup",
+                    window: {
+                        title: "ویرایش",
+                        width: 500
+                    },
+                    confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+                },
+                pageable: {
+                    refresh: true,
+                    pageSizes: [10, 25, 50, 100],
+                    buttonCount: 10,
+                    input: true
+                },
+                navigatable: true,
+                selectable: "single row",
+                sortable: {
+                    mode: "multiple",
+                    allowUnsort: false
+                },
+                filterable: true,
+                scrollable: false,
+                dataBound: function (e) {
+                    e.sender.dataItems().forEach(function (entry) {
+                        if (entry.IsAddedToSendQueue == true)
+                            disableGridButtons(entry.uid);
+                    });
+                }
+            });
+        }
+
+        $("#getLog").kendoButton({
+            click: ongetLogClick
+        });
+
+        $("#getActiveServices").kendoButton({
+            click: ongetActiveServicesClick
+        });
+
+        $("#getUserSubscriptionLog").kendoButton({
+            click: onUserSubscriptionLog
+        });
+
+        function UnSubscribeUser(e) {
+            e.preventDefault();
+
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            if (IsGridButtonDisabled(dataItem.uid))
+                return;
+            kendo.ui.progress($("#userActiveServicesGridDataSource"), true);
+            $.ajax({
+                url: '@Url.Action("UnSubscribeUser", "SubscribersLog")',
+                data: { MobileNumber: dataItem.MobileNumber, ServiceName: dataItem.ServiceName },
+                dataType: 'html',
+                success: function (data) {
+                },
+                complete: function (data) {
+                    kendo.ui.progress($("#userActiveServicesGridDataSource"), false);
+                    DisbaleGridButtons(dataItem.uid);
+                },
+            });
+        }
+
+        function IsGridButtonDisabled(entry) {
+            var IsGridButtonDisabled = $("#userActiveServicesGridDataSource").find('[data-uid="' + entry + '"]').find(".k-button").hasClass("k-state-disabled");
+            if (IsGridButtonDisabled === true)
+                return true;
+            else
+                return false;
+        }
+        function DisbaleGridButtons(entry) {
+            $("#userActiveServicesGridDataSource").find('[data-uid="' + entry + '"]').find(".k-button").addClass("k-state-disabled");
+        }
+    });
+</script>

@@ -9,12 +9,18 @@ using System.Dynamic;
 using System.Text;
 using Newtonsoft.Json;
 using System;
+using System.Net.Http.Formatting;
 
 namespace Portal.Controllers
 {
     public class MobinOneController : ApiController
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public Dictionary<string, string> mobinOneMciServiceIds = new Dictionary<string, string>()
+            {
+                { "5530", "Danestaneh" },
+            };
 
         [HttpGet]
         [AllowAnonymous]
@@ -57,85 +63,71 @@ namespace Portal.Controllers
 
         }
 
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public HttpResponseMessage Notification(string sid, string msisdn, string datetime, string shortcode, string keyword, string chargecode, string basepricepoint,string billedpricepoint, string eventtype, string validity, string nextrenewaldate, string status)
-        //{
-        //    var result = "1";
-        //    ServiceInfo serviceInfo = null;
-        //    Service service = null;
-        //    bool IsNotified = true;
-        //    var message = new MessageObject();
+        //public HttpResponseMessage Notification(string sid, string msisdn, string datetime, string shortcode, string keyword, string chargecode, string basepricepoint, string billedpricepoint, string eventtype, string validity, string nextrenewaldate, string status)
+        public HttpResponseMessage Notification()
+        {
+            var result = "1";
+            ServiceInfo serviceInfo = null;
+            Service service = null;
+            var message = new MessageObject();
+            var queryString = this.Request.GetQueryNameValuePairs();
+            var sid = queryString.FirstOrDefault(o => o.Key == "sid").Value;
+            var msisdn = queryString.FirstOrDefault(o => o.Key == "msisdn").Value;
+            var keyword = queryString.FirstOrDefault(o => o.Key == "keyword").Value;
+            var eventType = queryString.FirstOrDefault(o => o.Key == "event-type").Value;
 
-        //    if (pardisImiMciServiceIds.ContainsKey(integratedPanelObj.ServiceID))
-        //    {
-        //        service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(pardisImiMciServiceIds[integratedPanelObj.ServiceID]);
-        //        serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-        //    }
-        //    else
-        //    {
-        //        IsNotified = false;
-        //        serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(integratedPanelObj.ServiceID);
-        //        service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-        //    }
-        //    if (integratedPanelObj.EventID == "1.2" /* && integratedPanelObj.NewStatus == 5*/)
-        //    {
-        //        if (serviceInfo == null)
-        //            result = "-999";
-        //        else
-        //        {
-        //            integratedPanelObj.Address = SharedLibrary.MessageHandler.ValidateNumber(integratedPanelObj.Address);
-        //            if (integratedPanelObj.Address == "Invalid Mobile Number")
-        //                result = "-1";
-        //            else
-        //            {
-        //                var recievedMessage = new MessageObject();
-        //                if (IsNotified == true)
-        //                {
-        //                    recievedMessage.Content = "off notify";
-        //                    recievedMessage.MobileNumber = integratedPanelObj.Address;
-        //                    recievedMessage.ShortCode = serviceInfo.ShortCode;
-        //                    recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifyUnsubscription" : null;
-        //                    recievedMessage.IsReceivedFromIntegratedPanel = false;
-        //                }
-        //                else
-        //                {
-        //                    recievedMessage.Content = integratedPanelObj.ServiceID;
-        //                    recievedMessage.MobileNumber = integratedPanelObj.Address;
-        //                    recievedMessage.ShortCode = serviceInfo.ShortCode;
-        //                    recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-        //                    recievedMessage.IsReceivedFromIntegratedPanel = true;
-        //                }
-        //                SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
-        //                result = "1";
-        //            }
-        //        }
-        //    }
-        //    else if (integratedPanelObj.EventID == "1.1")
-        //    {
-        //        if (serviceInfo == null)
-        //            result = "-999";
-        //        else
-        //        {
-        //            integratedPanelObj.Address = SharedLibrary.MessageHandler.ValidateNumber(integratedPanelObj.Address);
+            if (mobinOneMciServiceIds.ContainsKey(sid))
+            {
+                service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(mobinOneMciServiceIds[sid]);
+                serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+            }
 
-        //            if (integratedPanelObj.Address == "Invalid Mobile Number")
-        //                result = "-1";
-        //            else
-        //            {
-        //                var recievedMessage = new MessageObject();
-        //                recievedMessage.Content = SharedLibrary.ServiceHandler.getFirstOnKeywordOfService(service.OnKeywords);
-        //                recievedMessage.ShortCode = serviceInfo.ShortCode;
-        //                recievedMessage.MobileNumber = integratedPanelObj.Address;
-        //                recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifySubscription" : null;
-        //                SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
-        //                result = "1";
-        //            }
-        //        }
-        //    }
-        //    var response = new HttpResponseMessage(HttpStatusCode.OK);
-        //    response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
-        //    return response;
-        //}
+            if (eventType == "1.2")
+            {
+                if (serviceInfo == null)
+                    result = "-999";
+                else
+                {
+                    message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                    if (message.MobileNumber == "Invalid Mobile Number")
+                        result = "-1";
+                    else
+                    {
+                        var recievedMessage = new MessageObject();
+                        recievedMessage.Content = keyword;
+                        recievedMessage.MobileNumber = message.MobileNumber;
+                        recievedMessage.ShortCode = serviceInfo.ShortCode;
+                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifyUnsubscription" : null;
+                        recievedMessage.IsReceivedFromIntegratedPanel = false;
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                        result = "1";
+                    }
+                }
+            }
+            else if (eventType == "1.1")
+            {
+                if (serviceInfo == null)
+                    result = "-999";
+                else
+                {
+                    message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                    if (message.MobileNumber == "Invalid Mobile Number")
+                        result = "-1";
+                    else
+                    {
+                        var recievedMessage = new MessageObject();
+                        recievedMessage.Content = keyword;
+                        recievedMessage.ShortCode = serviceInfo.ShortCode;
+                        recievedMessage.MobileNumber = message.MobileNumber;
+                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifySubscription" : null;
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                        result = "1";
+                    }
+                }
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
     }
 }

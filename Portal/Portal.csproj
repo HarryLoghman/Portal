@@ -218,6 +218,7 @@
     <Compile Include="Areas\DefendIran\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\DefendIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\DefendIran\DefendIranAreaRegistration.cs" />
+    <Compile Include="Areas\Statistics\Controllers\ServiceDailyStatisticsController.cs" />
     <Compile Include="Areas\TahChin\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\TahChin\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\TahChin\Controllers\MonitoringController.cs" />
@@ -1217,6 +1218,7 @@
     <Content Include="Areas\TahChin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\TahChin\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\TahChin\Views\web.config" />
+    <Content Include="Areas\Statistics\Views\ServiceDailyStatistics\Index.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
