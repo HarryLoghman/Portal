@@ -53,6 +53,7 @@ namespace SharedLibrary
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
             int batchSaveCounter = 0;
+            dynamic reserverdSingleCharge = singlecharge;
             await Task.Delay(10); // for making it async
             try
             {
@@ -65,8 +66,8 @@ namespace SharedLibrary
                         entity.SaveChanges();
                         batchSaveCounter = 0;
                     }
-
-                    int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated).Value == today).ToList().Sum(o => o.Price);
+                    singlecharge = reserverdSingleCharge;
+                    int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && o.DateCreated.Date.Equals(today.Date)).ToList().Sum(o => o.Price);
                     if (priceUserChargedToday >= maxChargeLimit)
                     {
                         installment.IsExceededDailyChargeLimit = true;
@@ -83,16 +84,19 @@ namespace SharedLibrary
                         continue;
                     else if (response.IsSucceeded == false)
                     {
+                        singlecharge = reserverdSingleCharge;
                         if (message.Price == 300)
                         {
                             SetMessagePrice(message, chargeCodes, 200);
                             response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                             if (response.IsSucceeded == false)
                             {
+                                singlecharge = reserverdSingleCharge;
                                 SetMessagePrice(message, chargeCodes, 100);
                                 response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false)
                                 {
+                                    singlecharge = reserverdSingleCharge;
                                     SetMessagePrice(message, chargeCodes, 50);
                                     response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                                 }
@@ -104,12 +108,14 @@ namespace SharedLibrary
                             response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                             if (response.IsSucceeded == false)
                             {
+                                singlecharge = reserverdSingleCharge;
                                 message.Price = 50;
                                 response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                             }
                         }
                         else if (message.Price == 100)
                         {
+                            singlecharge = reserverdSingleCharge;
                             message.Price = 50;
                             response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                         }

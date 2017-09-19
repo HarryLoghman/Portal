@@ -787,7 +787,7 @@ namespace Portal.Controllers
                             messageObj.ServiceId = service.Id;
                             messageObj.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id).ShortCode;
                             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
-                            if (subscriber != null && subscriber.DeactivationDate == null)
+                            if (subscriber != null && (subscriber.DeactivationDate == null || subscriber.ServiceId == 10004))
                             {
                                 Random random = new Random();
                                 var verficationId = random.Next(1000, 9999).ToString();

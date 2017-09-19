@@ -201,7 +201,7 @@ namespace DehnadTahChinService
                 }
                 else
                 {
-                    if (DateTime.Now.Hour >= 2)
+                    if (DateTime.Now.Hour >= 3)
                     {
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;

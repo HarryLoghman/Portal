@@ -76,8 +76,11 @@ namespace TahChinLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (!service.OnKeywords.Contains(message.Content))
                     {
-                        //message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                        //MessageHandler.InsertMessageToQueue(message);
+                        if (subscriber.ActivationDate.Value.AddMinutes(1) < DateTime.Now)
+                        {
+                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
                         return;
                     }
                     var isUserAlreadyInSinglechargeQueue = IsUserAlreadyInSinglechargeQueue(message.MobileNumber);

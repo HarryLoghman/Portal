@@ -11,45 +11,6 @@ namespace DefendIranLibrary
     public class ContentManager
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static Singlecharge HandleSinglechargeContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
-        {
-            Singlecharge singlecharge = new Singlecharge();
-            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            try
-            {
-                var content = Convert.ToInt32(message.Content);
-                bool chargecodeFound = false;
-                var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
-                foreach (var imiChargecode in imiChargeCodes)
-                {
-                    if (imiChargecode.ChargeCode == content || imiChargecode.Price == content)
-                    {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("DefendIran", "PardisImi");
-                        message = MessageHandler.SetImiChargeInfo(message, imiChargecode.Price, 0, null);
-                        chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToPardisImi(message);
-                        break;
-                    }
-                }
-                //if (chargecodeFound == false)
-                //{
-                //    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                //    MessageHandler.InsertMessageToQueue(message);
-                //}
-                if (singlecharge.IsSucceeded == true)
-                {
-                    message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                    MessageHandler.InsertMessageToQueue(message);
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in ContentManager: ", e);
-            }
-            return singlecharge;
-        }
-
         public static bool DeleteFromSinglechargeQueue(string mobileNumber)
         {
             bool succeed = false;
@@ -89,7 +50,7 @@ namespace DefendIranLibrary
                     //    return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
-                    singlechargeQueueItem.Price = 25000;
+                    singlechargeQueueItem.Price = 10000;
                     singlechargeQueueItem.DateAdded = DateTime.Now;
                     singlechargeQueueItem.PersianDateAdded = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlechargeQueueItem.IsLastDayWarningSent = false;
@@ -105,13 +66,19 @@ namespace DefendIranLibrary
             }
         }
 
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate, List<ImiChargeCode> imiChargeCodes)
         {
             try
             {
                 using (var entity = new DefendIranEntities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    if (message.Content == null || message.Content == "" || message.Content == " ")
+                    {
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
                     if (!service.OnKeywords.Contains(message.Content))
                     {
                         message = MessageHandler.SendServiceHelp(message, messagesTemplate);
