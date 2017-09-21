@@ -12,13 +12,14 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class OperatorsPrefix
+    public partial class BulkList
     {
         public long Id { get; set; }
-        public int OperatorId { get; set; }
-        public int OperatorPlan { get; set; }
-        public string Prefix { get; set; }
-        public string Province { get; set; }
-        public string City { get; set; }
+        public string MobileNumbersList { get; set; }
+        public string Message { get; set; }
+        public string ServiceCode { get; set; }
+        public bool IsDone { get; set; }
+        public System.DateTime DateAdded { get; set; }
+        public string PersianDateAdded { get; set; }
     }
 }

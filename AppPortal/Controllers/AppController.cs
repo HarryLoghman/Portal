@@ -316,12 +316,9 @@ namespace Portal.Controllers
                                 {
                                     var imiChargeCode = new ShahreKalamehLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        messageObj.Price = 5; //5 is Sub for hub
                                     else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
+                                        messageObj.Price = 6; //6 is Unsub for hub
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -342,12 +339,9 @@ namespace Portal.Controllers
                                 {
                                     var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        messageObj.Price = 5; //5 is Sub for hub
                                     else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
+                                        messageObj.Price = 6; //6 is Unsub for hub
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
@@ -366,21 +360,18 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
                                 {
-                                    var imiChargeCode = new DefendIranLibrary.Models.ImiChargeCode();
+                                    var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        messageObj.Price = 5; //5 is Sub for hub
                                     else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
+                                        messageObj.Price = 6; //6 is Unsub for hub
                                     else
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     if (messageObj.Price == null)
                                         result.Status = "Invalid Price";
                                     else
                                     {
-                                        var singleCharge = new DefendIranLibrary.Models.Singlecharge();
+                                        var singleCharge = new SoratyLibrary.Models.Singlecharge();
                                         string aggregatorName = "Hub";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);

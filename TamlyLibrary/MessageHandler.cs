@@ -64,6 +64,7 @@ namespace TamlyLibrary
         {
             using (var entity = new TamlyEntities())
             {
+                entity.Configuration.AutoDetectChangesEnabled = false;
                 int counter = 0;
                 foreach (var message in messages)
                 {

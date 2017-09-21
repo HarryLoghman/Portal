@@ -285,7 +285,7 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        private static async Task<Dictionary<string, string>> SendSingleMessageToTelepromo(HttpClient client, string url)
+        public static async Task<Dictionary<string, string>> SendSingleMessageToTelepromo(HttpClient client, string url)
         {
             var result = new Dictionary<string, string>();
             result["status"] = "";
@@ -707,7 +707,11 @@ namespace SharedLibrary
                 recipient.Attributes.Append(originator);
 
                 XmlAttribute cost = doc.CreateAttribute("cost");
-                cost.InnerText = (message.Price * 10).ToString();
+                if (message.Price == 5 || message.Price == 6) // 5 for Sub and 6 for Unsub price on otp
+                    cost.InnerText = message.Price.ToString();
+                else
+                    cost.InnerText = (message.Price * 10).ToString();
+
                 recipient.Attributes.Append(cost);
 
                 var random = new Random();
@@ -728,9 +732,7 @@ namespace SharedLibrary
                 //
                 string stringedXml = doc.OuterXml;
                 SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
-                logs.Info("request:" + stringedXml);
                 string response = hubClient.XmsRequest(stringedXml).ToString();
-                logs.Info("response:" + response);
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(response);
                 XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
@@ -747,7 +749,7 @@ namespace SharedLibrary
                         foreach (XmlNode xn in xnList)
                         {
                             string responseCode = (xn.Attributes["status"].Value).ToString();
-                            if (responseCode == "41")
+                            if (responseCode == "40")
                             {
                                 singlecharge.Description = "SUCCESS-Pending Confirmation";
                                 singlecharge.ReferenceId = xn.InnerText;
@@ -772,7 +774,10 @@ namespace SharedLibrary
                 singlecharge.IsSucceeded = false;
                 singlecharge.DateCreated = DateTime.Now;
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                singlecharge.Price = message.Price.GetValueOrDefault();
+                if (message.Price == 5 || message.Price == 6)
+                    singlecharge.Price = 0;
+                else
+                    singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
                 singlecharge.IsCalledFromInAppPurchase = true;
 
@@ -816,6 +821,10 @@ namespace SharedLibrary
                 originator.InnerText = from;
                 recipient.Attributes.Append(originator);
 
+                XmlAttribute doerid = doc.CreateAttribute("doerid");
+                doerid.InnerText = singlecharge.ReferenceId;
+                recipient.Attributes.Append(doerid);
+
                 XmlAttribute pin = doc.CreateAttribute("pin");
                 pin.InnerText = confirmationCode;
                 recipient.Attributes.Append(pin);
@@ -833,6 +842,8 @@ namespace SharedLibrary
                 string stringedXml = doc.OuterXml;
                 SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
                 string response = hubClient.XmsRequest(stringedXml).ToString();
+                logs.Info("request: " + stringedXml);
+                logs.Info("response: " + response);
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(response);
                 XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");

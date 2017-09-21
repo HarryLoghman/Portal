@@ -78,6 +78,18 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="BulkList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumbersList" Type="varchar(max)" Nullable="false" />
+          <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ServiceCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsDone" Type="bit" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAdded" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="Delivery">
           <Key>
             <PropertyRef Name="Id" />
@@ -112,6 +124,8 @@
           <Property Name="OperatorId" Type="int" Nullable="false" />
           <Property Name="OperatorPlan" Type="int" Nullable="false" />
           <Property Name="Prefix" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Province" Type="nvarchar" MaxLength="50" />
+          <Property Name="City" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ParidsShortCodes">
           <Key>
@@ -433,6 +447,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BulkList" EntityType="Self.BulkList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Operators" EntityType="Self.Operators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
@@ -612,6 +627,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="OperatorId" Type="Int32" Nullable="false" />
           <Property Name="OperatorPlan" Type="Int32" Nullable="false" />
           <Property Name="Prefix" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Province" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ReceievedMessage">
           <Key>
@@ -857,6 +874,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             <End Role="SubscribersPoint" EntitySet="SubscribersPoints" />
           </AssociationSet>
           <EntitySet Name="VerifySubscribers" EntityType="PortalModel.VerifySubscriber" />
+          <EntitySet Name="BulkLists" EntityType="PortalModel.BulkList" />
         </EntityContainer>
         <EntityType Name="Delivery">
           <Key>
@@ -978,6 +996,18 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="ServiceId" Type="Int64" Nullable="false" />
           <Property Name="UsedKeyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="BulkList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumbersList" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDone" Type="Boolean" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1071,6 +1101,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="OperatorsPrefixs">
             <EntityTypeMapping TypeName="PortalModel.OperatorsPrefix">
               <MappingFragment StoreEntitySet="OperatorsPrefixs">
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
                 <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
@@ -1297,6 +1329,19 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="UsedKeyword" ColumnName="UsedKeyword" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BulkLists">
+            <EntityTypeMapping TypeName="PortalModel.BulkList">
+              <MappingFragment StoreEntitySet="BulkList">
+                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="IsDone" ColumnName="IsDone" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="MobileNumbersList" ColumnName="MobileNumbersList" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

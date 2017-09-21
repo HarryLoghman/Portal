@@ -143,6 +143,7 @@ namespace DehnadJabehAbzarService
             while (!shutdownEvent.WaitOne(0))
             {
                 eventbase.InsertEventbaseMessagesToQueue();
+                eventbase.InsertBulkMessagesToEventBaseQueue();
                 Thread.Sleep(1000);
             }
         }

@@ -140,7 +140,7 @@ namespace SharedLibrary
             logs.Info("InstallmentJob Chunk task " + taskId + " ended");
         }
 
-        private static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
+        public static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
         {
             if (priceUserChargedToday == 0)
             {
@@ -161,7 +161,7 @@ namespace SharedLibrary
             return message;
         }
 
-        private static SharedLibrary.Models.MessageObject SetMessagePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int price)
+        public static SharedLibrary.Models.MessageObject SetMessagePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int price)
         {
             var chargecode = ((IEnumerable)chargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price);
             message.Price = chargecode.Price;

@@ -50,6 +50,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<SinglechargeDelivery> SinglechargeDeliveries { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<VerifySubscriber> VerifySubscribers { get; set; }
+        public virtual DbSet<BulkList> BulkLists { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

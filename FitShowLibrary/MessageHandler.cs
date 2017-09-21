@@ -64,6 +64,7 @@ namespace FitShowLibrary
         {
             using (var entity = new FitShowEntities())
             {
+                entity.Configuration.AutoDetectChangesEnabled = false;
                 int counter = 0;
                 foreach (var message in messages)
                 {

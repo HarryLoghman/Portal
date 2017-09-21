@@ -474,6 +474,9 @@
                                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                 {
                                                     <li>
+                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Soltan" }, null)
+                                                    </li>
+                                                    <li>
                                                         @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Soltan" }, null)
                                                     </li>
                                                     <li>
@@ -531,6 +534,9 @@
                                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                 {
                                                     <li>
+                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "DonyayeAsatir" }, null)
+                                                    </li>
+                                                    <li>
                                                         @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "DonyayeAsatir" }, null)
                                                     </li>
                                                     <li>
@@ -556,6 +562,9 @@
                                             <ul>
                                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                 {
+                                                    <li>
+                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Tamly" }, null)
+                                                    </li>
                                                     <li>
                                                         @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Tamly" }, null)
                                                     </li>
@@ -583,6 +592,9 @@
                                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                 {
                                                     <li>
+                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "JabehAbzar" }, null)
+                                                    </li>
+                                                    <li>
                                                         @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "JabehAbzar" }, null)
                                                     </li>
                                                     <li>
@@ -609,6 +621,9 @@
                                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                 {
                                                     <li>
+                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "ShenoYad" }, null)
+                                                    </li>
+                                                    <li>
                                                         @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "ShenoYad" }, null)
                                                     </li>
                                                     <li>
@@ -634,6 +649,9 @@
                                             <ul>
                                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                 {
+                                                    <li>
+                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "FitShow" }, null)
+                                                    </li>
                                                     <li>
                                                         @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "FitShow" }, null)
                                                     </li>
@@ -854,6 +872,20 @@
                                         {
                                             <li>
                                                 @Html.ActionLink("لاگ کاربران", "Index", "SubscribersLog", new { area = "Statistics" }, null)
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                            {
+                                <li>
+                                    ابزار ها
+                                    <ul>
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                        {
+                                            <li>
+                                                @Html.ActionLink("ارسال بالک", "Index", "SendBulkMessage", new { area = "Tools" }, null)
                                             </li>
                                         }
                                     </ul>

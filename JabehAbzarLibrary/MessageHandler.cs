@@ -64,6 +64,7 @@ namespace JabehAbzarLibrary
         {
             using (var entity = new JabehAbzarEntities())
             {
+                entity.Configuration.AutoDetectChangesEnabled = false;
                 int counter = 0;
                 foreach (var message in messages)
                 {

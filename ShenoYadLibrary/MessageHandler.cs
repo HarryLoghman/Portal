@@ -64,6 +64,7 @@ namespace ShenoYadLibrary
         {
             using (var entity = new ShenoYadEntities())
             {
+                entity.Configuration.AutoDetectChangesEnabled = false;
                 int counter = 0;
                 foreach (var message in messages)
                 {

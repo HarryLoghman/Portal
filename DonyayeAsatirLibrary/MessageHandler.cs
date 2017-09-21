@@ -78,6 +78,7 @@ namespace DonyayeAsatirLibrary
         {
             using (var entity = new DonyayeAsatirEntities())
             {
+                entity.Configuration.AutoDetectChangesEnabled = false;
                 int counter = 0;
                 foreach (var message in messages)
                 {

@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = ViewBag.ServiceName;
+}
+
+<div class="demo-section k-content" id="container" style="height:230px;padding-right:10px">
+    <h4>@ViewBag.Title</h4>
+    <div id="cap-view" class="demo-section k-content">
+        <h4><label for="serviceCode">نام سرویس</label></h4>
+        <input id="serviceCode" style="width: 10%;" />
+        <label for="mobileNumbersList">لیست شماره ها:</label>
+        <textarea id="mobileNumbersList" rows="10" cols="10" required placeholder="هر شماره در یک خط باشد. حداکثر 2 میلیون شماره در این کادر قرار گیرد" style="width: 10%;direction:ltr"></textarea>
+        <label for="message">متن پیغام:</label>
+        <textarea id="message" required placeholder="برای نمایش شماره کاربر در متن از تگ {MSISDN} استفاده نمایید." style="width:30%;height:100px;"></textarea>
+        <button id="send" class="k-primary k-button" style="width: 5%;margin-right:10px"><span>ارسال</span></button>
+    </div>
+    <span id="popupNotification"></span>
+    <script>
+    $(document).ready(function () {
+        var container = $("#container");
+        function onShow(e) {
+            if (e.sender.getNotifications().length == 1) {
+                var element = e.element.parent(),
+                    eWidth = element.width(),
+                    eHeight = element.height(),
+                    wWidth = $(window).width(),
+                    wHeight = $(window).height(),
+                    newTop, newLeft;
+
+                newLeft = Math.floor(wWidth / 2 - eWidth / 2);
+                newTop = Math.floor(wHeight / 2 - eHeight / 2);
+
+                e.element.parent().css({top: newTop, left: newLeft});
+            }
+        }
+
+        var ServicesData = [
+                        {text:"شهروار", value:"Soltan"},
+                        {text:"نبرد اساطیر", value:"DonyayeAsatir"},
+                        {text:"تاملی",value:"Tamly"},
+                        {text:"همراه ابزار",value:"JabehAbzar"},
+                        {text:"فیت شو",value:"FitShow"},
+                        {text:"شنویاد",value:"ShenoYad"},
+                    ];
+
+    $.ajax({
+            url: '@Url.Action("GetServices", "SendBulkMessage")',
+            dataType: 'html',
+            success: function (data) {
+                // create DropDownList from input HTML element
+                    $("#serviceCode").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: ServicesData,
+                        index: 0,
+                    });
+            }
+        });
+
+		function onClick(e) {
+            var serviceCode = $('#serviceCode').val();
+            var mobileNumbers = $('#mobileNumbersList').val();
+            var content = $('#message').val();
+            if (mobileNumbers === "" || content === ""){
+        popupNotification.show("مقادیر فیلدها نباید خالی باشند.");
+        return;
+        }
+            kendo.ui.progress(container, true);
+            $.ajax({
+                url: '@Url.Action("SendBulkMessageToQueue", "SendBulkMessage")',
+                type: 'post',
+                data: { serviceCode: serviceCode, mobileNumbers: mobileNumbers, content: content },
+                dataType: 'html',
+                success: function (data) {
+                    var popupNotification = $("#popupNotification").kendoNotification({ show: onShow }).data("kendoNotification");
+                    if (data == "Ok") {
+                        $('#mobileNumbersList').val('');
+                        $('#message').val('');
+                        popupNotification.show("پیغام پس از چند دقیقه در مانیتورینگ سرویس مربوطه اضافه خواهد شد، شروع ارسال را از آنجا انجام دهید.");
+                    }
+                },
+                complete: function (data) {
+                    kendo.ui.progress(container, false);
+                }
+            });
+        }
+
+        $("#send").kendoButton({
+            click: onClick
+        });
+    });
+    </script>
