@@ -14,7 +14,7 @@ namespace DehnadSoltanService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)

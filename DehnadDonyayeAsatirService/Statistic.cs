@@ -14,7 +14,7 @@ namespace DehnadDonyayeAsatirService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)

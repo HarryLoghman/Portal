@@ -14,7 +14,7 @@ namespace DehnadShenoYadService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)

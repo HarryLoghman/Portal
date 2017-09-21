@@ -14,7 +14,7 @@ namespace DehnadJabehAbzarService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)

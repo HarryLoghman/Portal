@@ -14,7 +14,7 @@ namespace DehnadTamlyService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)

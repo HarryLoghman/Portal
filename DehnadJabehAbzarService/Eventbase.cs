@@ -54,7 +54,7 @@ namespace DehnadJabehAbzarService
                             else
                                 mobileNumbers = item.MobileNumbersList.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                             var existingSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null).Select(o => o.MobileNumber).ToList();
-                            var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e)));
+                            var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
                             var imiChargeObject = JabehAbzarLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
                             var aggregatorName = Properties.Settings.Default.AggregatorName;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
@@ -62,8 +62,8 @@ namespace DehnadJabehAbzarService
                             long contentId = rnd.Next(10000, 99999);
 
                             int takeSize = 10000;
-                            int[] take = new int[(mobileNumbers.Count() / takeSize) + 1];
-                            int[] skip = new int[(mobileNumbers.Count() / takeSize) + 1];
+                            int[] take = new int[(finalMobileNumbers.Count() / takeSize) + 1];
+                            int[] skip = new int[(finalMobileNumbers.Count() / takeSize) + 1];
                             skip[0] = 0;
                             take[0] = takeSize;
                             for (int i = 1; i < take.Length; i++)
@@ -76,11 +76,11 @@ namespace DehnadJabehAbzarService
                             for (int i = 0; i < take.Length; i++)
                             {
 
-                                var chunkedmobileNumbersList = mobileNumbers.Skip(skip[i]).Take(take[i]).ToList();
+                                var chunkedmobileNumbersList = finalMobileNumbers.Skip(skip[i]).Take(take[i]).ToList();
                                 TaskList.Add(ProcessSubscribersListChunk(chunkedmobileNumbersList, item.Message, imiChargeObject, service.Id, aggregatorId, i, contentId));
                             }
                             Task.WaitAll(TaskList.ToArray());
-                            JabehAbzarLibrary.MessageHandler.CreateMonitoringItem(contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
+                            JabehAbzarLibrary.MessageHandler.CreateMonitoringItem(contentId, SharedLibrary.MessageHandler.MessageType.EventBase, finalMobileNumbers.Count(), null);
                         }
                         catch (Exception e)
                         {

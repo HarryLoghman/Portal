@@ -48,7 +48,7 @@ namespace DehnadSoltanService
                     //}
 
                     SharedLibrary.MessageHandler.SendSelectedMessages(entity, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                    if (DateTime.Now.Hour <= 20 && DateTime.Now.Hour >= 8)
+                    if (DateTime.Now.Hour <= 20 && DateTime.Now.Hour >= 7)
                     {
                         autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
                         eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entity, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();

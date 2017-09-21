@@ -14,7 +14,7 @@ namespace DehnadFitShowService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)
