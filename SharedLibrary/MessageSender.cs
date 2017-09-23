@@ -821,13 +821,17 @@ namespace SharedLibrary
                 originator.InnerText = from;
                 recipient.Attributes.Append(originator);
 
+                var random = new Random();
+                long doer = random.Next(10000000, 999999999);
                 XmlAttribute doerid = doc.CreateAttribute("doerid");
-                doerid.InnerText = singlecharge.ReferenceId;
+                doerid.InnerText = doer.ToString();
                 recipient.Attributes.Append(doerid);
 
                 XmlAttribute pin = doc.CreateAttribute("pin");
                 pin.InnerText = confirmationCode;
                 recipient.Attributes.Append(pin);
+
+                recipient.InnerText = singlecharge.ReferenceId;
 
                 userid.InnerText = aggregatorUsername;
                 password.InnerText = aggregatorPassword;
@@ -860,7 +864,7 @@ namespace SharedLibrary
                         foreach (XmlNode xn in xnList)
                         {
                             string responseCode = (xn.Attributes["status"].Value).ToString();
-                            if (responseCode == "48")
+                            if (responseCode == "41")
                             {
                                 singlecharge.Description = "SUCCESS";
                                 singlecharge.ReferenceId = xn.InnerText;
