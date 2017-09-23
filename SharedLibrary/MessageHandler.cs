@@ -320,7 +320,7 @@ namespace SharedLibrary
                 else
                     return null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logs.Error("Exception in GetOTPRequestId: ", e);
             }
@@ -356,7 +356,7 @@ namespace SharedLibrary
             message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
             return message;
         }
-        
+
         public static MessageObject SendServiceOTPHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
@@ -426,8 +426,16 @@ namespace SharedLibrary
 
         public static Dictionary<string, int[]> CalculateServiceSendMessageThreadNumbers(int readSize, int takeSize)
         {
-            int[] take = new int[(readSize / takeSize)];
-            int[] skip = new int[(readSize / takeSize)];
+            if (readSize < takeSize)
+            {
+                int[] takes = new int[1];
+                int[] skips = new int[1];
+                skips[0] = 0;
+                takes[0] = takeSize;
+                return new Dictionary<string, int[]>() { { "take", takes }, { "skip", skips } };
+            }
+            int[] take = new int[(readSize / takeSize) + 1];
+            int[] skip = new int[(readSize / takeSize) + 1];
             skip[0] = 0;
             take[0] = takeSize;
             for (int i = 1; i < take.Length; i++)

@@ -51,7 +51,7 @@ namespace TahChinLibrary
                     //    return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
-                    singlechargeQueueItem.Price = 10000;
+                    singlechargeQueueItem.Price = 9000;
                     singlechargeQueueItem.DateAdded = DateTime.Now;
                     singlechargeQueueItem.PersianDateAdded = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlechargeQueueItem.IsLastDayWarningSent = false;
@@ -76,11 +76,11 @@ namespace TahChinLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (!service.OnKeywords.Contains(message.Content))
                     {
-                        if (subscriber.ActivationDate.Value.AddMinutes(1) < DateTime.Now)
-                        {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                            MessageHandler.InsertMessageToQueue(message);
-                        }
+                        //if (subscriber.ActivationDate.Value.AddMinutes(1) < DateTime.Now)
+                        //{
+                        //    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        //    MessageHandler.InsertMessageToQueue(message);
+                        //}
                         return;
                     }
                     var isUserAlreadyInSinglechargeQueue = IsUserAlreadyInSinglechargeQueue(message.MobileNumber);

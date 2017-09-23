@@ -208,7 +208,7 @@ namespace DehnadTahChinService
 
                         var installment = new SinglechargeInstallment();
                         installment.MobileNumber = message.MobileNumber;
-                        installment.TotalPrice = 10000;
+                        installment.TotalPrice = item.Price;
                         installment.IsExceededDailyChargeLimit = false;
                         installment.IsFullyPaid = false;
                         installment.PricePayed = 0;
