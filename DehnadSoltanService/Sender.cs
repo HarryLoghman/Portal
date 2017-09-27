@@ -81,6 +81,7 @@ namespace DehnadSoltanService
         {
             var retryCountMax = SharedLibrary.MessageSender.retryCountMax;
             var retryPauseBeforeSendByMinute = SharedLibrary.MessageSender.retryPauseBeforeSendByMinute;
+            await Task.Delay(5);
             using (var entity = new SoltanEntities())
             {
                 try

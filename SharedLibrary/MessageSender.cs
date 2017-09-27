@@ -51,7 +51,8 @@ namespace SharedLibrary
                             continue;
                         var to = "98" + message.MobileNumber.TrimStart('0');
                         var messageContent = message.Content;
-                        var messageId = Guid.NewGuid().ToString();
+                        Random rnd = new Random();
+                        var messageId = rnd.Next(1000000,9999999).ToString();
                         var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}"
                                                                 , sc, username, password, from, serviceId, to, messageContent, messageId);
                         if (message.Price > 0)
@@ -139,7 +140,8 @@ namespace SharedLibrary
                 {
                     var to = "98" + message.MobileNumber.TrimStart('0');
                     var messageContent = "InAppPurchase";
-                    var messageId = Guid.NewGuid().ToString();
+                    Random rnd = new Random();
+                    var messageId = rnd.Next(1000000, 9999999).ToString();
                     var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}"
                                                             , sc, username, password, from, serviceId, to, messageContent, messageId);
                     urlWithParameters += String.Format("&chargingCode={0}", message.ImiChargeKey);
@@ -200,7 +202,8 @@ namespace SharedLibrary
                     var messageContent = "InAppPurchase";
                     Random random = new Random();
                     var contentId = random.Next(00001, 99999).ToString();
-                    var messageId = Guid.NewGuid().ToString();
+                    Random rnd = new Random();
+                    var messageId = rnd.Next(1000000, 9999999).ToString();
                     var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}&contentId={8}&chargingCode={9}"
                                                             , sc, username, password, from, serviceId, to, messageContent, messageId, contentId, message.ImiChargeKey);
                     var result = new Dictionary<string, string>();
@@ -255,7 +258,6 @@ namespace SharedLibrary
                 {
                     var to = "98" + message.MobileNumber.TrimStart('0');
                     var messageContent = "InAppPurchase";
-                    Random random = new Random();
                     string otpIds = singlecharge.ReferenceId;
                     var optIdsSplitted = otpIds.Split('_');
                     var messageId = optIdsSplitted[0];
@@ -846,8 +848,6 @@ namespace SharedLibrary
                 string stringedXml = doc.OuterXml;
                 SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
                 string response = hubClient.XmsRequest(stringedXml).ToString();
-                logs.Info("request: " + stringedXml);
-                logs.Info("response: " + response);
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(response);
                 XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
