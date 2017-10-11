@@ -210,6 +210,8 @@ namespace DehnadReceiveProcessorService
                     DefendIranLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "TahChin")
                     TahChinLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Nebula")
+                    NebulaLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -271,6 +273,8 @@ namespace DehnadReceiveProcessorService
                     DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "TahChin")
                     TahChinLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Nebula")
+                    NebulaLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

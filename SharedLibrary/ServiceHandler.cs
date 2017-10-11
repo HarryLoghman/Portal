@@ -296,6 +296,7 @@ namespace SharedLibrary
         {
             var offContents = new string[]
             {
+                "Off",
                 "off",
                 "of",
                 "cancel",

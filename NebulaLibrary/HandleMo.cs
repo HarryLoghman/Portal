@@ -13,13 +13,15 @@ namespace NebulaLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void ReceivedMessage(MessageObject message, Service service)
         {
+            logs.Info("1");
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new NebulaEntities())
             {
+                logs.Info("2");
                 var content = message.Content;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-
+                logs.Info("3");
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -41,23 +43,24 @@ namespace NebulaLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-
+                logs.Info("4");
                 var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-
-                if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
-                {
-                    SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-                    return;
-                }
-
-                if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                    return;
+                logs.Info("5");
+                //UNCOMMENT BELOW LINE!!!!
+                //if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
+                //{
+                //    SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+                //    return;
+                //}
+                //UNCOMMENT BELOW LINE!!!!
+                ////////if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                ////////    return;
                 if (message.ReceivedFrom.Contains("Register"))
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
-
+                logs.Info("6");
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
                     if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
@@ -81,6 +84,7 @@ namespace NebulaLibrary
                             return;
                         }
                     }
+                    logs.Info("7");
                     var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                     if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {

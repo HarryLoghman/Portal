@@ -171,6 +171,7 @@ namespace NebulaLibrary
         {
             var offContents = new string[]
             {
+                "Off",
                 "off",
                 "of",
                 "cancel",

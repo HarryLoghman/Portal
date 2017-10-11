@@ -1711,6 +1711,10 @@
       <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
       <Name>MyLeagueLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NebulaLibrary\NebulaLibrary.csproj">
+      <Project>{41b321f6-3bf5-2126-337d-3bcb3b411264}</Project>
+      <Name>NebulaLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
       <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
       <Name>SepidRoodLibrary</Name>

@@ -133,7 +133,6 @@ namespace FitShowLibrary
             }
             message.Content = content;
             ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
-
         }
 
         public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)
