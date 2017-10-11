@@ -23,7 +23,7 @@ namespace DehnadAvvalYadService
                 int takeSize = Convert.ToInt32(Properties.Settings.Default.Take);
                 bool retryNotDelieveredMessages = Properties.Settings.Default.RetryNotDeliveredMessages;
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
-                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Takavar", aggregatorName);
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(aggregatorName, aggregatorName);
 
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(readSize, takeSize);
                 var take = threadsNo["take"];
