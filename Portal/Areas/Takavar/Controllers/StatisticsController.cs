@@ -173,6 +173,9 @@ namespace Portal.Areas.Takavar.Controllers
                 {
                     Id = dailyStatistics.Id,
                     PersianDate = dailyStatistics.PersianDate,
+                    TotalSubscribers = dailyStatistics.TotalSubscribers,
+                    NumberOfSubscriptions = dailyStatistics.NumberOfSubscriptions,
+                    NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions,
                     SumOfSinglechargeSuccessfulCharge = dailyStatistics.SumOfSinglechargeSuccessfulCharge,
                 });
             }
