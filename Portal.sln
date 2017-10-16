@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadTahChinService", "Deh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadNebulaService", "DehnadNebulaService\DehnadNebulaService.csproj", "{2C5232B2-5C24-22C1-3C44-3B454FB83953}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadDezhbanService", "DehnadDezhbanService\DehnadDezhbanService.csproj", "{A3B23222-4C24-2221-3C44-3145DFBF39A1}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -122,6 +124,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TahChinLibrary", "TahChinLibrary\TahChinLibrary.csproj", "{B12311F6-3BF5-2126-337F-3BC43B41256F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NebulaLibrary", "NebulaLibrary\NebulaLibrary.csproj", "{41B321F6-3BF5-2126-337D-3BCB3B411264}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DezhbanLibrary", "DezhbanLibrary\DezhbanLibrary.csproj", "{211D214A-3B15-2126-337D-3BCB3B5424FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -249,6 +253,10 @@ Global
 		{2C5232B2-5C24-22C1-3C44-3B454FB83953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C5232B2-5C24-22C1-3C44-3B454FB83953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C5232B2-5C24-22C1-3C44-3B454FB83953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3B23222-4C24-2221-3C44-3145DFBF39A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3B23222-4C24-2221-3C44-3145DFBF39A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3B23222-4C24-2221-3C44-3145DFBF39A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3B23222-4C24-2221-3C44-3145DFBF39A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -369,6 +377,10 @@ Global
 		{41B321F6-3BF5-2126-337D-3BCB3B411264}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41B321F6-3BF5-2126-337D-3BCB3B411264}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41B321F6-3BF5-2126-337D-3BCB3B411264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{211D214A-3B15-2126-337D-3BCB3B5424FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{211D214A-3B15-2126-337D-3BCB3B5424FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{211D214A-3B15-2126-337D-3BCB3B5424FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{211D214A-3B15-2126-337D-3BCB3B5424FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

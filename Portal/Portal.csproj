@@ -226,6 +226,14 @@
     <Compile Include="Areas\Nebula\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Nebula\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Nebula\NebulaAreaRegistration.cs" />
+    <Compile Include="Areas\Dezhban\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Dezhban\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Dezhban\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Dezhban\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Dezhban\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Dezhban\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Dezhban\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Dezhban\DezhbanAreaRegistration.cs" />
     <Compile Include="Areas\Tools\Controllers\SendBulkMessageController.cs" />
     <Compile Include="Areas\Tools\ToolsAreaRegistration.cs" />
     <Compile Include="Areas\Statistics\Controllers\ServiceDailyStatisticsController.cs" />
@@ -1242,6 +1250,16 @@
     <Content Include="Areas\Nebula\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Nebula\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Nebula\Views\web.config" />
+    <Content Include="Areas\Dezhban\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Dezhban\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Dezhban\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Dezhban\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Dezhban\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Dezhban\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Dezhban\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Dezhban\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Dezhban\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Dezhban\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1599,6 +1617,7 @@
     <Folder Include="Areas\Boating\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />
     <Folder Include="Areas\DefendIran\Models\" />
+    <Folder Include="Areas\Dezhban\Models\" />
     <Folder Include="Areas\DonyayeAsatir\Models\" />
     <Folder Include="Areas\FitShow\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
@@ -1678,6 +1697,10 @@
     <ProjectReference Include="..\DefendIranLibrary\DefendIranLibrary.csproj">
       <Project>{d124b1f6-3bf5-2124-537f-1bc43b41256d}</Project>
       <Name>DefendIranLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DezhbanLibrary\DezhbanLibrary.csproj">
+      <Project>{211d214a-3b15-2126-337d-3bcb3b5424fa}</Project>
+      <Name>DezhbanLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
       <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>

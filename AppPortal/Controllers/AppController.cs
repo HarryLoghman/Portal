@@ -19,9 +19,9 @@ namespace Portal.Controllers
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<string> OtpAllowedServiceCodes = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { "Soltan", "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban" };
         private List<string> PriceBasedServices = new List<string>() { "Soltan", "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad" };
 
         [HttpPost]
@@ -289,6 +289,32 @@ namespace Portal.Controllers
                                 using (var entity = new TamlyLibrary.Models.TamlyEntities())
                                 {
                                     var imiChargeCode = new TamlyLibrary.Models.ImiChargeCode();
+                                    if (messageObj.Price.Value == 0)
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
+                                    else
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                    if (messageObj.Price == null)
+                                        result.Status = "Invalid Price";
+                                    else
+                                    {
+                                        var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                        string aggregatorName = "Telepromo";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
+                            else if (service.ServiceCode == "Dezhban")
+                            {
+                                using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
+                                {
+                                    var imiChargeCode = new DezhbanLibrary.Models.ImiChargeCode();
                                     if (messageObj.Price.Value == 0)
                                         messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                     else if (messageObj.Price.Value == -1)
@@ -630,6 +656,23 @@ namespace Portal.Controllers
                                 using (var entity = new TamlyLibrary.Models.TamlyEntities())
                                 {
                                     var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        string aggregatorName = "Telepromo";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
+                            else if (service.ServiceCode == "Dezhban")
+                            {
+                                using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
+                                {
+                                    var singleCharge = new DezhbanLibrary.Models.Singlecharge();
                                     singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
@@ -1022,6 +1065,24 @@ namespace Portal.Controllers
                             else if (messageObj.ServiceCode == "Tamly")
                             {
                                 using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                    {
+                                        var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
+                                        if (installmentQueue != null)
+                                            daysLeft = 30;
+                                        else
+                                            daysLeft = 0;
+                                    }
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "Dezhban")
+                            {
+                                using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();

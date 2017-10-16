@@ -897,6 +897,32 @@
                                                 </ul>
                                             </li>
                                         }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Dezhban"))
+                                        {
+                                            <li>
+                                                دژبان
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Dezhban" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }
