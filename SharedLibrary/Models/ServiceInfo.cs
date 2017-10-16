@@ -19,6 +19,7 @@ namespace SharedLibrary.Models
         public long ServiceId { get; set; }
         public string ShortCode { get; set; }
         public string AggregatorServiceId { get; set; }
+        public string OperatorServiceId { get; set; }
     
         public virtual Aggregator Aggregator { get; set; }
         public virtual Service Service { get; set; }

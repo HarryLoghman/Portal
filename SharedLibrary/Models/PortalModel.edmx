@@ -178,6 +178,7 @@
           <Property Name="ServiceId" Type="bigint" Nullable="false" />
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="AggregatorServiceId" Type="nvarchar" MaxLength="50" />
+          <Property Name="OperatorServiceId" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ServiceKeywords">
           <Key>
@@ -673,6 +674,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Aggregator" Relationship="Self.FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregators" />
           <NavigationProperty Name="Service" Relationship="PortalModel.FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Service" />
+          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ServiceKeyword">
           <Key>
@@ -1147,6 +1149,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="ServiceInfoes">
             <EntityTypeMapping TypeName="PortalModel.ServiceInfo">
               <MappingFragment StoreEntitySet="ServiceInfo">
+                <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
