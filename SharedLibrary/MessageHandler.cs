@@ -462,11 +462,13 @@ namespace SharedLibrary
 
         public static string CreateMtnSoapEnvelopeString(string agggregatorServiceId, string timeStamp, string mobileNumbers, string shortCode, string messageContent, string innerServiceId)
         {
+            var spId = "980110006379";
+            var deliveryUrl = "http://79.175.164.51:200/api/Mtn/Delivery";
             string xmlString = string.Format(@"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v2_2/local"">
     <soapenv:Header>
         <v2:RequestSOAPHeader>
-            <v2:spId>980110006379</v2:spId>
+            <v2:spId>{6}</v2:spId>
             <v2:serviceId>{0}</v2:serviceId>
             <v2:timeStamp>{1}</v2:timeStamp>
         </v2:RequestSOAPHeader>
@@ -477,14 +479,14 @@ namespace SharedLibrary
             <loc:senderName>{3}</loc:senderName>
             <loc:message>{4}</loc:message>
             <loc:receiptRequest>
-                <endpoint>http://79.175.170.122:200/api/Mtn/Delivery</endpoint>
+                <endpoint>{7}</endpoint>
                 <interfaceName>SmsNotification</interfaceName>
                 <correlator>{5}</correlator>
             </loc:receiptRequest>
         </loc:sendSms>
     </soapenv:Body>
 </soapenv:Envelope>"
-, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent, innerServiceId);
+, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent, innerServiceId, spId, deliveryUrl);
             return xmlString;
         }
 

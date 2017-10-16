@@ -108,15 +108,17 @@ namespace Portal.Controllers
         public async Task<HttpResponseMessage> startSmsNotificationRequest(string serviceId, string correlatorId, string shortCode)
         {
             string result = "";
+            var spId = "980110006379";
+            var endpointUrl = "http://79.175.164.51:200/api/mtn/SubUnsubNotify";
             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
             string payload = string.Format(@"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification_manager/v2_3/local"">
 <soapenv:Header>        <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">
-<spId>980110006379</spId>  
+<spId>{4}</spId>  
 <serviceId>{0}</serviceId>           <timeStamp>{1}</timeStamp>        </RequestSOAPHeader>     
 </soapenv:Header>     
-<soapenv:Body>        <loc:startSmsNotification>           <loc:reference>              <endpoint>http://79.175.164.51:200/api/mtn/SubUnsubNotify</endpoint>              <interfaceName>notifySmsReception</interfaceName>              <correlator>{2}</correlator>           </loc:reference>           <loc:smsServiceActivationNumber>{3}</loc:smsServiceActivationNumber>           <loc:criteria>demand</loc:criteria>        </loc:startSmsNotification>     </soapenv:Body>  </soapenv:Envelope>  "
-, serviceId, timeStamp, correlatorId, shortCode);
+<soapenv:Body>        <loc:startSmsNotification>           <loc:reference>              <endpoint>{5}</endpoint>              <interfaceName>notifySmsReception</interfaceName>              <correlator>{2}</correlator>           </loc:reference>           <loc:smsServiceActivationNumber>{3}</loc:smsServiceActivationNumber>           <loc:criteria>demand</loc:criteria>        </loc:startSmsNotification>     </soapenv:Body>  </soapenv:Envelope>  "
+, serviceId, timeStamp, correlatorId, shortCode, spId, endpointUrl);
             try
             {
                 string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/startSmsNotificationRequest";
@@ -151,9 +153,10 @@ namespace Portal.Controllers
         public async Task<HttpResponseMessage> stopSmsNotificationRequest(string serviceId, string correlatorId)
         {
             string result = "";
+            var spId = "980110006379";
             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification_manager/v2_3/local"">     <soapenv:Header>        <v2:RequestSOAPHeader>           <v2:spId>980110006379</v2:spId>     <v2:serviceId>{0}</v2:serviceId>           <v2:timeStamp>{1}</v2:timeStamp>        </v2:RequestSOAPHeader>     </soapenv:Header>     <soapenv:Body>        <loc:stopSmsNotification>          <loc:correlator>{2}</loc:correlator>        </loc:stopSmsNotification>     </soapenv:Body>   </soapenv:Envelope>  "
-, serviceId, timeStamp, correlatorId);
+            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification_manager/v2_3/local"">     <soapenv:Header>        <v2:RequestSOAPHeader>           <v2:spId>{3}</v2:spId>     <v2:serviceId>{0}</v2:serviceId>           <v2:timeStamp>{1}</v2:timeStamp>        </v2:RequestSOAPHeader>     </soapenv:Header>     <soapenv:Body>        <loc:stopSmsNotification>          <loc:correlator>{2}</loc:correlator>        </loc:stopSmsNotification>     </soapenv:Body>   </soapenv:Envelope>  "
+, serviceId, timeStamp, correlatorId, spId);
             try
             {
                 string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/stopSmsNotificationRequest";
@@ -188,9 +191,10 @@ namespace Portal.Controllers
         public async Task<HttpResponseMessage> getReceivedSms(string serviceId, string shortCode)
         {
             string result = "";
+            var spId = "980110006379";
             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/receive/v2_2/local"">     <soapenv:Header>        <v2:RequestSOAPHeader>           <v2:spId>980110006379</v2:spId>           <v2:serviceId>{0}</v2:serviceId>           <v2:timeStamp>{1}</v2:timeStamp>        </v2:RequestSOAPHeader>     </soapenv:Header>     <soapenv:Body>        <loc:getReceivedSms>            <loc:registrationIdentifier>{2}</loc:registrationIdentifier>        </loc:getReceivedSms>     </soapenv:Body>  </soapenv:Envelope> "
-, serviceId, timeStamp, shortCode);
+            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/receive/v2_2/local"">     <soapenv:Header>        <v2:RequestSOAPHeader>           <v2:spId>{3}</v2:spId>           <v2:serviceId>{0}</v2:serviceId>           <v2:timeStamp>{1}</v2:timeStamp>        </v2:RequestSOAPHeader>     </soapenv:Header>     <soapenv:Body>        <loc:getReceivedSms>            <loc:registrationIdentifier>{2}</loc:registrationIdentifier>        </loc:getReceivedSms>     </soapenv:Body>  </soapenv:Envelope> "
+, serviceId, timeStamp, shortCode, spId);
             try
             {
                 string url = "http://92.42.55.180:8310/ReceiveSmsService/services/ReceiveSms/getReceivedSmsRequest";
