@@ -931,11 +931,12 @@
                                 <li>
                                     ایرانسل
                                     <ul>
-                                        <li>
-                                            ته چین
-                                            <ul>
-                                                @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                                                {
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                        {
+                                            <li>
+                                                ته چین
+                                                <ul>
+
                                                     <li>
                                                         @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "TahChin" }, null)
                                                     </li>
@@ -948,15 +949,42 @@
                                                     <li>
                                                         @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "TahChin" }, null)
                                                     </li>
-                                                }
-                                                @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TahChinUser"))
-                                                {
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TahChinUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "TahChin" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MusicYadUser"))
+                                        {
+                                            <li>
+                                                موزیک یاد
+                                                <ul>
+
                                                     <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "TahChin" }, null)
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "MusicYad" }, null)
                                                     </li>
-                                                }
-                                            </ul>
-                                        </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "MusicYad" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "MusicYad" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "MusicYad" }, null)
+                                                    </li>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MusicYadUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "MusicYad" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }

@@ -117,13 +117,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NebulaLibrary\NebulaLibrary.csproj">
+      <Project>{41b321f6-3bf5-2126-337d-3bcb3b411264}</Project>
+      <Name>NebulaLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NebulaLibrary\NebulaLibrary.csproj">
-      <Project>{52c36255-330f-25b1-abf2-4dd22ab523a1}</Project>
-      <Name>NebulaLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

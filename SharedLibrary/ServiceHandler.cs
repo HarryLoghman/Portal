@@ -23,7 +23,7 @@ namespace SharedLibrary
                 sendInfoDic["serviceId"] = service.Id.ToString();
                 sendInfoDic["aggregatorId"] = serviceInfo.AggregatorId.ToString();
                 sendInfoDic["aggregatorServiceId"] = serviceInfo.AggregatorServiceId.ToString();
-                sendInfoDic["OperatorServiceId"] = serviceInfo.OperatorServiceId;
+                sendInfoDic["OperatorServiceId"] = (serviceInfo.OperatorServiceId == null) ? null : serviceInfo.OperatorServiceId;
             }
             return sendInfoDic;
         }

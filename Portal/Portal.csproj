@@ -234,6 +234,14 @@
     <Compile Include="Areas\Dezhban\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Dezhban\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Dezhban\DezhbanAreaRegistration.cs" />
+    <Compile Include="Areas\MusicYad\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\MusicYad\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\MusicYad\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\MusicYad\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\MusicYad\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\MusicYad\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\MusicYad\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\MusicYad\MusicYadAreaRegistration.cs" />
     <Compile Include="Areas\Tools\Controllers\SendBulkMessageController.cs" />
     <Compile Include="Areas\Tools\ToolsAreaRegistration.cs" />
     <Compile Include="Areas\Statistics\Controllers\ServiceDailyStatisticsController.cs" />
@@ -1260,6 +1268,16 @@
     <Content Include="Areas\Dezhban\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Dezhban\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Dezhban\Views\web.config" />
+    <Content Include="Areas\MusicYad\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\MusicYad\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\MusicYad\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\MusicYad\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\MusicYad\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\MusicYad\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\MusicYad\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\MusicYad\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\MusicYad\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\MusicYad\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1624,6 +1642,7 @@
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\MenchBaz\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
+    <Folder Include="Areas\MusicYad\Models\" />
     <Folder Include="Areas\MyLeague\Models\" />
     <Folder Include="Areas\Nebula\Models\" />
     <Folder Include="Areas\SepidRood\Models\" />
@@ -1729,6 +1748,10 @@
     <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
       <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>
       <Name>MobiligaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MusicYadLibrary\MusicYadLibrary.csproj">
+      <Project>{4211b11c-3511-a1b6-431d-fbc23b13d4b2}</Project>
+      <Name>MusicYadLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MyLeagueLibrary\MyLeagueLibrary.csproj">
       <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>

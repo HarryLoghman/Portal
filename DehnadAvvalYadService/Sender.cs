@@ -23,7 +23,8 @@ namespace DehnadAvvalYadService
                 int takeSize = Convert.ToInt32(Properties.Settings.Default.Take);
                 bool retryNotDelieveredMessages = Properties.Settings.Default.RetryNotDeliveredMessages;
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
-                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(aggregatorName, aggregatorName);
+                string serviceCode = Properties.Settings.Default.ServiceCode;
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
 
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(readSize, takeSize);
                 var take = threadsNo["take"];
@@ -46,7 +47,7 @@ namespace DehnadAvvalYadService
                         }
                     }
 
-                    if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
+                    if (DateTime.Now.Hour < 20 && DateTime.Now.Hour > 8)
                     {
                         SharedLibrary.MessageHandler.SendSelectedMessages(entity, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                         SharedLibrary.MessageHandler.SendSelectedMessages(entity, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
