@@ -385,21 +385,26 @@ namespace SharedLibrary
             return message;
         }
 
-        public static dynamic GetUnprocessedMessages(dynamic entity, MessageType messageType, int readSize)
+        public static dynamic GetUnprocessedMessages(Type entityType, MessageType messageType, int readSize)
         {
             var today = DateTime.Now.Date;
             var maxRetryCount = SharedLibrary.MessageSender.retryCountMax;
-            if (messageType == MessageType.AutoCharge)
-                return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
-            else if (messageType == MessageType.EventBase)
-                return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
-            else if (messageType == MessageType.OnDemand)
-                return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
-            else
-                return new List<dynamic>();
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+
+                if (messageType == MessageType.AutoCharge)
+                    return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
+                else if (messageType == MessageType.EventBase)
+                    return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
+                else if (messageType == MessageType.OnDemand)
+                    return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
+                else
+                    return new List<dynamic>();
+            }
         }
 
-        public static void SendSelectedMessages(dynamic entity, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
+        public static void SendSelectedMessages(Type entityType, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
         {
             if (((IEnumerable)messages).Cast<dynamic>().Count() == 0)
                 return;
@@ -409,17 +414,19 @@ namespace SharedLibrary
             {
                 var chunkedMessages = ((IEnumerable)messages).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
                 if (aggregatorName == "Hamrahvas")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entity, chunkedMessages, serviceAdditionalInfo));
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisImi")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entity, chunkedMessages, serviceAdditionalInfo));
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "Telepromo")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entity, chunkedMessages, serviceAdditionalInfo));
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "Hub")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entity, chunkedMessages, serviceAdditionalInfo));
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisPlatform")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entity, chunkedMessages, serviceAdditionalInfo));
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "MTN")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMtn(entity, chunkedMessages, serviceAdditionalInfo));
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMtn(entityType, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "MobinOne")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMobinOne(entityType, chunkedMessages, serviceAdditionalInfo));
             }
             Task.WaitAll(TaskList.ToArray());
         }
