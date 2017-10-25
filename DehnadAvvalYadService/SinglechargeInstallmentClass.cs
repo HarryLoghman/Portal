@@ -16,7 +16,8 @@ namespace DehnadAvvalYadService
         private static int maxChargeLimit = 400;
         public void ProcessInstallment(int installmentCycleNumber)
         {
-            InstallmentJob(installmentCycleNumber);
+            FakeInstallmentJob();
+            //InstallmentJob(installmentCycleNumber);
 
             //if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
             //    InstallmentDailyBalance();
@@ -26,6 +27,31 @@ namespace DehnadAvvalYadService
             //{
             //    ResetUserDailyChargeBalanceValue();
             //}
+        }
+
+        public static void FakeInstallmentJob()
+        {
+            using (var entity = new AvvalYadEntities())
+            {
+                var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
+                var batchSaveCounter = 0;
+                foreach (var installment in installmentList)
+                {
+                    if (batchSaveCounter >= 1000)
+                    {
+                        entity.SaveChanges();
+                        batchSaveCounter = 0;
+                    }
+                    installment.PricePayed += maxChargeLimit;
+                    installment.IsExceededDailyChargeLimit = true;
+                    installment.PriceTodayCharged += maxChargeLimit;
+                    if (installment.PricePayed >= installment.TotalPrice)
+                        installment.IsFullyPaid = true;
+                    entity.Entry(installment).State = EntityState.Modified;
+                    batchSaveCounter++;
+                }
+                entity.SaveChanges();
+            }
         }
 
         private void DeactivateChargingUsersAfter30Days()
