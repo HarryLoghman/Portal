@@ -43,9 +43,8 @@
                 read: {
                     url: "ServiceDailyStatistics/RealTimeStatisticsFor3GServices_Read",
                     type: "POST"
-                    },
+					},
                 },
-            },
             schema: {
                 data: "Data",
                 total: "Total",
@@ -110,9 +109,8 @@
                 read: {
                     url: "ServiceDailyStatistics/RealTimeStatisticsFor2GServices_Read",
                     type: "POST"
-                    },
+					},
                 },
-            },
             schema: {
                 data: "Data",
                 total: "Total",
@@ -154,13 +152,14 @@
 
     $(document).ready(function()
     {
+		$("#realTimeStatisticsFor3GServicesGrid .k-grid-toolbar").prepend("<div class='gridTitle'><h3>سرویس های 3G</h3></div>");
+		$("#realTimeStatisticsFor2GServicesGrid .k-grid-toolbar").prepend("<div class='gridTitle'><h3>سرویس های 2G</h3></div>");
+
         var refreshInterval = 60000;
 
-        function RefreshGrid() {
-            setInterval(function () {
-                $('#realTimeStatisticsFor3GServicesGrid').data('kendoGrid').dataSource.read();
-                $('#realTimeStatisticsFor2GServicesGrid').data('kendoGrid').dataSource.read();
-            }, refreshInterval);
-        }
-    }
+		setInterval(function () {
+			$('#realTimeStatisticsFor3GServicesGrid').data('kendoGrid').dataSource.read();
+			$('#realTimeStatisticsFor2GServicesGrid').data('kendoGrid').dataSource.read();
+		}, refreshInterval);
+    });
 </script>
