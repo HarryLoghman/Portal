@@ -16,17 +16,17 @@
     $("#realTimeStatisticsFor3GServicesGrid").kendoGrid({
 
         columns: [
-            { field: "PersianDate", title: "تاریخ", width: 200 },
-            { field: "ServiceName", title: "سرویس", width: 200 },
+            { field: "PersianDate", title: "تاریخ", width: 150 },
+            { field: "ServiceName", title: "سرویس", width: 150 },
             { field: "TotalSubscriptions", title: "ورود کل یوزرها", width: 150 },
             { field: "TotalUnsubscriptions", title: "لغو عضویت کل", width: 150 },
-            { field: "TodayGenuineSubscriptions", title: "ورودی خالص امروز", width: 150 },
+            { field: "TodayGenuineSubscriptions", title: "ورودی خالص امروز", width: 170 },
             { field: "ActivationRateByMinute", title: "عضویت بر دقیقه", width: 150 },
             { field: "ActivationRateByHour", title: "عضویت بر ساعت", width: 150 },
-            { field: "DeactivationRateByMinute", title: "لغو عضویت بر دقیقه", width: 150 },
-            { field: "DeactivationRateByHour", title: "لغو عضویت بر ساعت", width: 150 },
-            { field: "GeniuneActivationRateByMinute", title: "عضویت خالص بر دقیقه", width: 150 },
-            { field: "GeniueActivationRateByHour", title: "عضویت بر ساعت", width: 150 },
+            { field: "DeactivationRateByMinute", title: "لغو عضویت بر دقیقه", width: 175 },
+            { field: "DeactivationRateByHour", title: "لغو عضویت بر ساعت", width: 175 },
+            { field: "GeniuneActivationRateByMinute", title: "عضویت خالص بر دقیقه", width: 190 },
+            { field: "GeniueActivationRateByHour", title: "عضویت خالص بر ساعت", width: 190 },
         ],
         toolbar: ["excel"],
                 excel: {
@@ -51,10 +51,10 @@
                 errors: "Errors",
 
             },
-            serverSorting: true,
-            serverFiltering: true,
-            pageSize: 15,
-            serverPaging: true,
+            serverSorting: false,
+            serverFiltering: false,
+            pageSize: 5,
+            serverPaging: false,
             sort: [
                 { field: "PersianDate", dir: "desc" }
             ]
@@ -70,8 +70,8 @@
         },
         pageable: {
             refresh: true,
-            pageSizes: [15, 25, 50, 100],
-            buttonCount: 15,
+            pageSizes: [5, 10, 15, 25, 50, 100],
+            buttonCount: 10,
             input: true
         },
         navigatable: true,
@@ -81,18 +81,18 @@
             allowUnsort: false
         },
         filterable: true,
-        scrollable: false,
+        scrollable: true,
     });
 
     $("#realTimeStatisticsFor2GServicesGrid").kendoGrid({
 
         columns: [
-            { field: "PersianDate", title: "تاریخ", width: 200 },
-            { field: "ServiceName", title: "سرویس", width: 200 },
+            { field: "PersianDate", title: "تاریخ", width: 150 },
+            { field: "ServiceName", title: "سرویس", width: 150 },
             { field: "PrepaidSubscriptions", title: "تعداد عضویت اعتباری", width: 150 },
-            { field: "PostPaidSubscriptions", title: "تعداد عضویت دائمی", width: 150 },
-            { field: "PrepaidUnsubscriptions", title: "تعداد لغو عضویت اعتباری", width: 150 },
-            { field: "PostPaidUnsubscriptions", title: "تعداد لغو عضویت دائمی", width: 150 },
+            { field: "PostPaidSubscriptions", title: "تعداد عضویت دائمی", width: 200 },
+            { field: "PrepaidUnsubscriptions", title: "تعداد لغو عضویت اعتباری", width: 200 },
+            { field: "PostPaidUnsubscriptions", title: "تعداد لغو عضویت دائمی", width: 200 },
         ],
         toolbar: ["excel"],
                 excel: {
@@ -117,10 +117,10 @@
                 errors: "Errors",
 
             },
-            serverSorting: true,
-            serverFiltering: true,
-            pageSize: 15,
-            serverPaging: true,
+            serverSorting: false,
+            serverFiltering: false,
+            pageSize: 5,
+            serverPaging: false,
             sort: [
                 { field: "PersianDate", dir: "desc" }
             ]
@@ -136,8 +136,8 @@
         },
         pageable: {
             refresh: true,
-            pageSizes: [15, 25, 50, 100],
-            buttonCount: 15,
+            pageSizes: [5, 10, 15, 25, 50, 100],
+            buttonCount: 10,
             input: true
         },
         navigatable: true,
@@ -147,7 +147,7 @@
             allowUnsort: false
         },
         filterable: true,
-        scrollable: false,
+        scrollable: true,
     });
 
     $(document).ready(function()
