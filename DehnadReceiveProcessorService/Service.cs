@@ -9,6 +9,7 @@ namespace DehnadReceiveProcessorService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Thread processThread;
         private Thread getIrancellsMoThread;
+        private Thread getFtpThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -24,6 +25,10 @@ namespace DehnadReceiveProcessorService
             getIrancellsMoThread = new Thread(IrancellMoWorkerThread);
             getIrancellsMoThread.IsBackground = true;
             getIrancellsMoThread.Start();
+
+            getFtpThread = new Thread(FtpWorkerThread);
+            getFtpThread.IsBackground = true;
+            getFtpThread.Start();
         }
 
         protected override void OnStop()
@@ -38,6 +43,10 @@ namespace DehnadReceiveProcessorService
                 if (!getIrancellsMoThread.Join(3000))
                 {
                     getIrancellsMoThread.Abort();
+                }
+                if (!getFtpThread.Join(3000))
+                {
+                    getFtpThread.Abort();
                 }
             }
             catch (Exception exp)
@@ -65,6 +74,20 @@ namespace DehnadReceiveProcessorService
             {
                 irancell.GetMo();
                 Thread.Sleep(5000);
+            }
+        }
+
+        private void FtpWorkerThread()
+        {
+            var ftp = new Ftp();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                if (DateTime.Now.Hour == 10 && DateTime.Now.Minute > 5 && DateTime.Now.Minute < 10)
+                {
+                    ftp.ProcessTelepromoFtpFiles();
+                    Thread.Sleep(23 * 60 * 60 * 1000);
+                }
+                Thread.Sleep(2 * 60 * 1000);
             }
         }
     }

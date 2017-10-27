@@ -136,6 +136,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PortalModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\RealtimeStatisticsFor2GServices.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RealtimeStatisticsFor3GServices.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ReceievedMessage.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

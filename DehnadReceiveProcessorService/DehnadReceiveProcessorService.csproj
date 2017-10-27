@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ftp.cs" />
     <Compile Include="Irancell.cs" />
     <Compile Include="MessageProcesser.cs" />
     <Compile Include="ProjectInstaller.cs">

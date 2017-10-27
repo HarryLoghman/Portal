@@ -16,38 +16,67 @@ namespace Portal.Areas.Statistics.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "گزارش روز سرویس ها";
+            ViewBag.ServiceName = "گزارش روزانه سرویس ها";
             return View();
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult UserLog_Read([DataSourceRequest]DataSourceRequest request, string mobileNumber)
+        public ActionResult RealTimeStatisticsFor3GServices_Read([DataSourceRequest]DataSourceRequest request)
         {
             try
             {
                 using (var entity = new SharedLibrary.Models.PortalEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    entity.Database.CommandTimeout = 2400;
-                    if (mobileNumber == null || mobileNumber == "")
-                        return Json("", JsonRequestBehavior.AllowGet);
-                    var query = entity.GetUserLog(mobileNumber).ToList();
-                    DataSourceResult result = query.ToDataSourceResult(request, messagesSendedToUserLog => new
+                    DataSourceResult result = entity.RealtimeStatisticsFor3GServices.AsNoTracking().ToDataSourceResult(request, realtimeStatisticsFor3GServices => new
                     {
-                        Type = messagesSendedToUserLog.Type,
-                        ServiceName = messagesSendedToUserLog.ServiceName,
-                        MobileNumber = messagesSendedToUserLog.MobileNumber,
-                        ShortCode = messagesSendedToUserLog.ShortCode,
-                        PersianDate = messagesSendedToUserLog.PersianDate,
-                        Time = messagesSendedToUserLog.Time,
-                        Content = messagesSendedToUserLog.Content
+                        Id = realtimeStatisticsFor3GServices.Id,
+                        ServiceName = realtimeStatisticsFor3GServices.ServiceName,
+                        PersianDate = realtimeStatisticsFor3GServices.PersianDate,
+                        TotalSubscriptions = realtimeStatisticsFor3GServices.TotalSubscriptions,
+                        TotalUnsubscriptions = realtimeStatisticsFor3GServices.TotalUnsubscriptions,
+                        TodayGenuineSubscriptions = realtimeStatisticsFor3GServices.TodayGenuineSubscriptions,
+                        ActivationRateByMinute = realtimeStatisticsFor3GServices.ActivationRateByMinute,
+                        ActivationRateByHour = realtimeStatisticsFor3GServices.ActivationRateByHour,
+                        DeactivationRateByMinute = realtimeStatisticsFor3GServices.DeactivationRateByMinute,
+                        DeactivationRateByHour = realtimeStatisticsFor3GServices.DeactivationRateByHour,
+                        GeniuneActivationRateByMinute = realtimeStatisticsFor3GServices.GeniuneActivationRateByMinute,
+                        GeniueActivationRateByHour = realtimeStatisticsFor3GServices.GeniueActivationRateByHour,
                     });
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception e)
             {
-                logs.Error("Error in UserLog_Read:", e);
+                logs.Error("Error in RealTimeStatisticsFor3GServices_Read:", e);
+            }
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult RealTimeStatisticsFor2GServices_Read([DataSourceRequest]DataSourceRequest request)
+        {
+            try
+            {
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    DataSourceResult result = entity.RealtimeStatisticsFor2GServices.AsNoTracking().ToDataSourceResult(request, realtimeStatisticsFor2GServices => new
+                    {
+                        Id = realtimeStatisticsFor2GServices.Id,
+                        ServiceName = realtimeStatisticsFor2GServices.ServiceName,
+                        PersianDate = realtimeStatisticsFor2GServices.PersianDate,
+                        PrepaidSubscriptions = realtimeStatisticsFor2GServices.PrepaidSubscriptions,
+                        PostPaidSubscriptions = realtimeStatisticsFor2GServices.PostPaidSubscriptions,
+                        PrepaidUnsubscriptions = realtimeStatisticsFor2GServices.PrepaidUnsubscriptions,
+                        PostPaidUnsubscriptions = realtimeStatisticsFor2GServices.PostPaidUnsubscriptions,
+                    });
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in RealTimeStatisticsFor2GServices_Read:", e);
             }
             return Json("", JsonRequestBehavior.AllowGet);
         }

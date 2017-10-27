@@ -60,7 +60,7 @@ namespace Portal.Controllers
                         singlecharge.MobileNumber = messageObj.MobileNumber;
                         singlecharge.DateCreated = DateTime.Now;
                         singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 500;
+                        singlecharge.Price = 400;
                         if (messageObj.Content == "Renewal")
                             singlecharge.IsSucceeded = true;
                         else
@@ -74,7 +74,29 @@ namespace Portal.Controllers
                         entity.SaveChanges();
                     }
                 }
-                    result = "1";
+                else if (messageObj.ShortCode == "405522")
+                {
+                    using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                    {
+                        var singlecharge = new DefendIranLibrary.Models.Singlecharge();
+                        singlecharge.MobileNumber = messageObj.MobileNumber;
+                        singlecharge.DateCreated = DateTime.Now;
+                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                        singlecharge.Price = 400;
+                        if (messageObj.Content == "Renewal")
+                            singlecharge.IsSucceeded = true;
+                        else
+                            singlecharge.IsSucceeded = false;
+                        singlecharge.IsApplicationInformed = false;
+                        singlecharge.IsCalledFromInAppPurchase = false;
+                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                        if (installment != null)
+                            singlecharge.InstallmentId = installment.Id;
+                        entity.Singlecharges.Add(singlecharge);
+                        entity.SaveChanges();
+                    }
+                }
+                result = "1";
             }
             else
             {

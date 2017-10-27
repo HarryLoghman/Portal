@@ -999,6 +999,12 @@
                                                 @Html.ActionLink("لاگ کاربران", "Index", "SubscribersLog", new { area = "Statistics" }, null)
                                             </li>
                                         }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                        {
+                                            <li>
+                                                @Html.ActionLink("گزارش روزانه سرویس ها", "Index", "ServiceDailyStatistics", new { area = "Statistics" }, null)
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }

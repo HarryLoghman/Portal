@@ -51,6 +51,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<VerifySubscriber> VerifySubscribers { get; set; }
         public virtual DbSet<BulkList> BulkLists { get; set; }
+        public virtual DbSet<RealtimeStatisticsFor3GServices> RealtimeStatisticsFor3GServices { get; set; }
+        public virtual DbSet<RealtimeStatisticsFor2GServices> RealtimeStatisticsFor2GServices { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

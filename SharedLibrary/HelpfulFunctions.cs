@@ -38,6 +38,18 @@ namespace SharedLibrary
                 Client.DownloadFile(uri, filePath + fileName);
                 return true;
             }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                {
+                    var response = e.Response as HttpWebResponse;
+                    if (response != null)
+                        if (response.StatusCode == HttpStatusCode.NotFound)
+                            return true;
+                }
+                logs.Error("WebException in DownloadFileFromWeb-" + uri + ":", e);
+                return false;
+            }
             catch (Exception e)
             {
                 logs.Error("Exception in DownloadFileFromWeb-" + uri + ":", e);
@@ -45,7 +57,7 @@ namespace SharedLibrary
             }
         }
 
-        private static bool DeleteFile(string fileUri)
+        public static bool DeleteFile(string fileUri)
         {
             try
             {

@@ -137,6 +137,41 @@
           <Property Name="PardisServiceId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Price" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="RealtimeStatisticsFor2GServices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="PersianDate" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="30" />
+          <Property Name="LastUpdateTime" Type="datetime" />
+          <Property Name="PrepaidSubscriptions" Type="int" />
+          <Property Name="PostPaidSubscriptions" Type="int" />
+          <Property Name="PrepaidUnsubscriptions" Type="int" />
+          <Property Name="PostPaidUnsubscriptions" Type="int" />
+        </EntityType>
+        <EntityType Name="RealtimeStatisticsFor3GServices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="PersianDate" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="TotalSubscriptions" Type="int" />
+          <Property Name="TotalUnsubscriptions" Type="int" />
+          <Property Name="TodayGenuineSubscriptions" Type="int" />
+          <Property Name="ActivationRateByMinute" Type="int" />
+          <Property Name="ActivationRateByHour" Type="int" />
+          <Property Name="DeactivationRateByMinute" Type="int" />
+          <Property Name="DeactivationRateByHour" Type="int" />
+          <Property Name="GeniuneActivationRateByMinute" Type="int" />
+          <Property Name="GeniueActivationRateByHour" Type="int" />
+          <Property Name="LastUpdateTime" Type="datetime" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="30" />
+        </EntityType>
         <EntityType Name="ReceievedMessages">
           <Key>
             <PropertyRef Name="Id" />
@@ -454,6 +489,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ParidsShortCodes" EntityType="Self.ParidsShortCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="Self.RealtimeStatisticsFor2GServices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceInfo" EntityType="Self.ServiceInfo" Schema="dbo" store:Type="Tables" />
@@ -877,6 +914,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           </AssociationSet>
           <EntitySet Name="VerifySubscribers" EntityType="PortalModel.VerifySubscriber" />
           <EntitySet Name="BulkLists" EntityType="PortalModel.BulkList" />
+          <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="PortalModel.RealtimeStatisticsFor3GServices" />
+          <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="PortalModel.RealtimeStatisticsFor2GServices" />
         </EntityContainer>
         <EntityType Name="Delivery">
           <Key>
@@ -1009,6 +1048,41 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="IsDone" Type="Boolean" Nullable="false" />
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RealtimeStatisticsFor3GServices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDate" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="TotalSubscriptions" Type="Int32" />
+          <Property Name="TotalUnsubscriptions" Type="Int32" />
+          <Property Name="TodayGenuineSubscriptions" Type="Int32" />
+          <Property Name="ActivationRateByMinute" Type="Int32" />
+          <Property Name="ActivationRateByHour" Type="Int32" />
+          <Property Name="DeactivationRateByMinute" Type="Int32" />
+          <Property Name="DeactivationRateByHour" Type="Int32" />
+          <Property Name="GeniuneActivationRateByMinute" Type="Int32" />
+          <Property Name="GeniueActivationRateByHour" Type="Int32" />
+          <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
+          <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="RealtimeStatisticsFor2GServices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDate" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
+          <Property Name="PrepaidSubscriptions" Type="Int32" />
+          <Property Name="PostPaidSubscriptions" Type="Int32" />
+          <Property Name="PrepaidUnsubscriptions" Type="Int32" />
+          <Property Name="PostPaidUnsubscriptions" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1345,6 +1419,43 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
                 <ScalarProperty Name="Message" ColumnName="Message" />
                 <ScalarProperty Name="MobileNumbersList" ColumnName="MobileNumbersList" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RealtimeStatisticsFor3GServices">
+            <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor3GServices">
+              <MappingFragment StoreEntitySet="RealtimeStatisticsFor3GServices">
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
+                <ScalarProperty Name="GeniueActivationRateByHour" ColumnName="GeniueActivationRateByHour" />
+                <ScalarProperty Name="GeniuneActivationRateByMinute" ColumnName="GeniuneActivationRateByMinute" />
+                <ScalarProperty Name="DeactivationRateByHour" ColumnName="DeactivationRateByHour" />
+                <ScalarProperty Name="DeactivationRateByMinute" ColumnName="DeactivationRateByMinute" />
+                <ScalarProperty Name="ActivationRateByHour" ColumnName="ActivationRateByHour" />
+                <ScalarProperty Name="ActivationRateByMinute" ColumnName="ActivationRateByMinute" />
+                <ScalarProperty Name="TodayGenuineSubscriptions" ColumnName="TodayGenuineSubscriptions" />
+                <ScalarProperty Name="TotalUnsubscriptions" ColumnName="TotalUnsubscriptions" />
+                <ScalarProperty Name="TotalSubscriptions" ColumnName="TotalSubscriptions" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RealtimeStatisticsFor2GServices">
+            <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor2GServices">
+              <MappingFragment StoreEntitySet="RealtimeStatisticsFor2GServices">
+                <ScalarProperty Name="PostPaidUnsubscriptions" ColumnName="PostPaidUnsubscriptions" />
+                <ScalarProperty Name="PrepaidUnsubscriptions" ColumnName="PrepaidUnsubscriptions" />
+                <ScalarProperty Name="PostPaidSubscriptions" ColumnName="PostPaidSubscriptions" />
+                <ScalarProperty Name="PrepaidSubscriptions" ColumnName="PrepaidSubscriptions" />
+                <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
