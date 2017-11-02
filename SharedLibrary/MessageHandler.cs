@@ -389,16 +389,18 @@ namespace SharedLibrary
         {
             var today = DateTime.Now.Date;
             var maxRetryCount = SharedLibrary.MessageSender.retryCountMax;
+            var retryPauseBeforeSendByMinute = SharedLibrary.MessageSender.retryPauseBeforeSendByMinute;
+            var retryTimeOut = DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute); 
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
 
                 if (messageType == MessageType.AutoCharge)
-                    return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
+                    return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
                 else if (messageType == MessageType.EventBase)
-                    return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
+                    return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
                 else if (messageType == MessageType.OnDemand)
-                    return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount)).Take(readSize).ToList();
+                    return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
                 else
                     return new List<dynamic>();
             }

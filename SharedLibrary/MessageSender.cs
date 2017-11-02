@@ -50,8 +50,7 @@ namespace SharedLibrary
                                 entity.Entry(message).State = EntityState.Modified;
                                 continue;
                             }
-                            else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute))
-                                continue;
+
                             var to = "98" + message.MobileNumber.TrimStart('0');
                             var messageContent = message.Content;
                             Random rnd = new Random();
@@ -87,18 +86,10 @@ namespace SharedLibrary
                             else
                             {
                                 logs.Info("SendMesssagesToTelepromo Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
-                                if (message.RetryCount == null)
-                                {
-                                    message.RetryCount = 1;
-                                    message.DateLastTried = DateTime.Now;
-                                }
-                                else
-                                {
-                                    if (message.RetryCount > retryCountMax)
-                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    message.RetryCount += 1;
-                                    message.DateLastTried = DateTime.Now;
-                                }
+                                if (message.RetryCount > retryCountMax)
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                message.DateLastTried = DateTime.Now;
+                                message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                                 entity.Entry(message).State = EntityState.Modified;
                             }
                         }
@@ -110,18 +101,10 @@ namespace SharedLibrary
                     logs.Error("Exception in SendMessagesToTelepromo: " + e);
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount == null)
-                        {
-                            message.RetryCount = 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (message.RetryCount > retryCountMax)
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            message.RetryCount += 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                         entity.Entry(message).State = EntityState.Modified;
                     }
                     entity.SaveChanges();
@@ -397,11 +380,6 @@ namespace SharedLibrary
                             entity.Entry(message).State = EntityState.Modified;
                             continue;
                         }
-                        else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute))
-                        {
-                            waitingForRetryMobileNumbers.Add(message.MobileNumber);
-                            continue;
-                        }
                         if (message.ImiChargeKey == "UnSubscription" || message.ImiChargeKey == "Register" || message.ImiChargeKey == "Renewal")
                         {
                             XmlDocument doc1 = new XmlDocument();
@@ -498,18 +476,10 @@ namespace SharedLibrary
                             {
                                 if (waitingForRetryMobileNumbers.Contains(message.MobileNumber))
                                     continue;
-                                if (message.RetryCount == null)
-                                {
-                                    message.RetryCount = 1;
-                                    message.DateLastTried = DateTime.Now;
-                                }
-                                else
-                                {
-                                    if (message.RetryCount > retryCountMax)
-                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    message.RetryCount += 1;
-                                    message.DateLastTried = DateTime.Now;
-                                }
+                                if (message.RetryCount > retryCountMax)
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                message.DateLastTried = DateTime.Now;
+                                message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                                 entity.Entry(message).State = EntityState.Modified;
                             }
                             entity.SaveChanges();
@@ -560,18 +530,10 @@ namespace SharedLibrary
                     {
                         if (waitingForRetryMobileNumbers.Contains(message.MobileNumber))
                             continue;
-                        if (message.RetryCount == null)
-                        {
-                            message.RetryCount = 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (message.RetryCount > retryCountMax)
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            message.RetryCount += 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                         entity.Entry(message).State = EntityState.Modified;
                     }
                     entity.SaveChanges();
@@ -1026,8 +988,6 @@ namespace SharedLibrary
 
                     for (int index = 0; index < messagesCount; index++)
                     {
-                        if (messages[index].DateLastTried != null && messages[index].DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
-                            continue;
                         mobileNumbers[index] = "98" + messages[index].MobileNumber.TrimStart('0');
                         shortCodes[index] = "98" + paridsShortCodes.FirstOrDefault(o => o.Price == messages[index].Price).ShortCode;
                         messageContents[index] = messages[index].Content;
@@ -1076,18 +1036,10 @@ namespace SharedLibrary
                     logs.Error("Exception in SendMesssagesToPardisPlatform: " + e);
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount == null)
-                        {
-                            message.RetryCount = 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (message.RetryCount > retryCountMax)
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            message.RetryCount += 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                         entity.Entry(message).State = EntityState.Modified;
                     }
                     entity.SaveChanges();
@@ -1119,8 +1071,6 @@ namespace SharedLibrary
 
                     for (int index = 0; index < messagesCount; index++)
                     {
-                        if (messages[index].DateLastTried != null && messages[index].DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
-                            continue;
                         smsList[index] = new SharedLibrary.PardisImiServiceReference.SMS()
                         {
                             Index = index + 1,
@@ -1151,18 +1101,10 @@ namespace SharedLibrary
                         }
                         foreach (var message in messages)
                         {
-                            if (message.RetryCount == null)
-                            {
-                                message.RetryCount = 1;
-                                message.DateLastTried = DateTime.Now;
-                            }
-                            else
-                            {
-                                if (message.RetryCount > retryCountMax)
-                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                message.RetryCount += 1;
-                                message.DateLastTried = DateTime.Now;
-                            }
+                            if (message.RetryCount > retryCountMax)
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            message.DateLastTried = DateTime.Now;
+                            message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                             entity.Entry(message).State = EntityState.Modified;
                         }
                         entity.SaveChanges();
@@ -1185,18 +1127,10 @@ namespace SharedLibrary
                     logs.Error("Exception in SendMesssagesToPardisImi: " + e);
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount == null)
-                        {
-                            message.RetryCount = 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (message.RetryCount > retryCountMax)
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            message.RetryCount += 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                         entity.Entry(message).State = EntityState.Modified;
                     }
                     entity.SaveChanges();
@@ -1305,8 +1239,7 @@ namespace SharedLibrary
                                 entity.Entry(message).State = EntityState.Modified;
                                 continue;
                             }
-                            else if (message.DateLastTried != null && message.DateLastTried > DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute))
-                                continue;
+
                             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
                             string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, serviceId);
 
@@ -1336,18 +1269,10 @@ namespace SharedLibrary
                             else
                             {
                                 logs.Info("SendMesssagesToMtn Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
-                                if (message.RetryCount == null)
-                                {
-                                    message.RetryCount = 1;
-                                    message.DateLastTried = DateTime.Now;
-                                }
-                                else
-                                {
-                                    if (message.RetryCount > retryCountMax)
-                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    message.RetryCount += 1;
-                                    message.DateLastTried = DateTime.Now;
-                                }
+                                if (message.RetryCount > retryCountMax)
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                message.DateLastTried = DateTime.Now;
+                                message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                                 entity.Entry(message).State = EntityState.Modified;
                             }
                         }
@@ -1359,18 +1284,10 @@ namespace SharedLibrary
                     logs.Error("Exception in SendMessagesToMtn: " + e);
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount == null)
-                        {
-                            message.RetryCount = 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (message.RetryCount > retryCountMax)
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            message.RetryCount += 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                         entity.Entry(message).State = EntityState.Modified;
                     }
                     entity.SaveChanges();
@@ -1549,6 +1466,12 @@ namespace SharedLibrary
                     }
 
                     var smsList = new MobinOneServiceReference.ArrayReq();
+                    smsList.number = new string[messagesCount];
+                    smsList.message = new string[messagesCount];
+                    smsList.chargecode = new string[messagesCount];
+                    smsList.amount = new string[messagesCount];
+                    smsList.requestId = new string[messagesCount];
+
                     if (isBulk)
                         smsList.type = "bulk";
                     else
@@ -1558,88 +1481,92 @@ namespace SharedLibrary
                     smsList.password = serviceAdditionalInfo["password"];
                     smsList.shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     smsList.servicekey = serviceAdditionalInfo["aggregatorServiceId"];
-
+                    Random rnd = new Random();
                     for (int index = 0; index < messagesCount; index++)
                     {
-                        if (messages[index].DateLastTried != null && messages[index].DateLastTried > DateTime.Now.AddHours(retryPauseBeforeSendByMinute))
-                            continue;
                         smsList.number[index] = "98" + messages[index].MobileNumber.TrimStart('0');
-                        if (messages[index].ImiChargeKey == "Free")
+                        smsList.message[index] = messages[index].Content;
+                        if (messages[index].ImiChargeKey == "FREE")
                             smsList.chargecode[index] = "";
                         else
                             smsList.chargecode[index] = messages[index].ImiChargeKey;
-                        smsList.amount[index] = messages[index].Price;
-                        smsList.requestId[index] = Guid.NewGuid().ToString();
+                        if (messages[index].Price == 0)
+                            smsList.amount[index] = "";
+                        else
+                            smsList.amount[index] = messages[index].Price.ToString();
+
+                        var messageId = rnd.Next(1000000, 9999999).ToString();
+                        smsList.requestId[index] = messageId.ToString();
                     }
-
+                    logs.Info("1");
+                    logs.InfoFormat("smsCount:" + smsList.number.Count());
+                    logs.Info(smsList.username);
+                    logs.Info(smsList.password);
+                    logs.Info(smsList.shortcode);
+                    logs.Info(smsList.servicekey);
+                    logs.Info(smsList.type);
+                    for (int i = 0; i < smsList.number.Count(); i++)
+                    {
+                        logs.Info(smsList.number[i]);
+                        logs.Info(smsList.message[i]);
+                        logs.Info(smsList.chargecode[i]);
+                        logs.Info(smsList.amount[i]);
+                        logs.Info(smsList.requestId[i]);
+                    }
                     var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient();
+                    logs.Info("2");
                     var result = mobineOneClient.sendSms(smsList);
-
+                    logs.Info("3");
+                    logs.Info("response:" + result);
                     if (result.Length == 0)
                     {
                         logs.Info("SendMesssagesToMobinOne does not return response there must be somthing wrong with the parameters");
                         foreach (var message in messages)
                         {
-                            if (message.RetryCount == null)
+                            if (message.RetryCount > retryCountMax)
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                            message.DateLastTried = DateTime.Now;
+                            entity.Entry(message).State = EntityState.Modified;
+                        }
+                    }
+                    else
+                    {
+                        for (int index = 0; index < messagesCount; index++)
+                        {
+                            var res = result[index].Split('-');
+                            if (res[0] == "Success")
                             {
-                                message.RetryCount = 1;
-                                message.DateLastTried = DateTime.Now;
+                                messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                if (messages[index].MessagePoint > 0)
+                                    SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
+                                messages[index].SentDate = DateTime.Now;
+                                messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                             }
                             else
                             {
-                                if (message.RetryCount > retryCountMax)
-                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                message.RetryCount += 1;
-                                message.DateLastTried = DateTime.Now;
+                                if (messages[index].RetryCount > retryCountMax)
+                                    messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                messages[index].RetryCount = messages[index].RetryCount == null ? 1 : messages[index].RetryCount + 1;
+                                messages[index].DateLastTried = DateTime.Now;
                             }
-                            entity.Entry(message).State = EntityState.Modified;
+                            entity.Entry(messages[index]).State = EntityState.Modified;
                         }
-                        entity.SaveChanges();
-                        return;
                     }
-                    for (int index = 0; index < messagesCount; index++)
-                    {
-                        var res = result[index].Split('-');
-                        if (res[0] == "Success")
-                        {
-                            messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                            if (messages[index].MessagePoint > 0)
-                                SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
-                            messages[index].SentDate = DateTime.Now;
-                            messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        }
-                        else
-                        {
-                            if (messages[index].RetryCount > retryCountMax)
-                                messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            messages[index].RetryCount += 1;
-                            messages[index].DateLastTried = DateTime.Now;
-                        }
-                        entity.Entry(messages[index]).State = EntityState.Modified;
-                    }
-                    entity.SaveChanges();
                 }
                 catch (Exception e)
                 {
                     logs.Error("Exception in SendMesssagesToMobinOne: " + e);
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount == null)
-                        {
-                            message.RetryCount = 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (message.RetryCount > retryCountMax)
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            message.RetryCount += 1;
-                            message.DateLastTried = DateTime.Now;
-                        }
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
                         entity.Entry(message).State = EntityState.Modified;
                     }
-                    entity.SaveChanges();
                 }
+                entity.SaveChanges();
             }
         }
 

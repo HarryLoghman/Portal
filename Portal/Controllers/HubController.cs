@@ -35,7 +35,7 @@ namespace Portal.Controllers
                     using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
                     {
                         var singlecharge = new ShahreKalamehLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = messageObj.MobileNumber;
+                        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                         singlecharge.DateCreated = DateTime.Now;
                         singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                         singlecharge.Price = 500;
@@ -57,7 +57,7 @@ namespace Portal.Controllers
                     using (var entity = new SoratyLibrary.Models.SoratyEntities())
                     {
                         var singlecharge = new SoratyLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = messageObj.MobileNumber;
+                        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                         singlecharge.DateCreated = DateTime.Now;
                         singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                         singlecharge.Price = 400;
@@ -79,7 +79,7 @@ namespace Portal.Controllers
                     using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
                     {
                         var singlecharge = new DefendIranLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = messageObj.MobileNumber;
+                        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                         singlecharge.DateCreated = DateTime.Now;
                         singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                         singlecharge.Price = 400;
