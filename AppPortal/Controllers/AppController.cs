@@ -864,7 +864,7 @@ namespace Portal.Controllers
                             messageObj.ServiceId = service.Id;
                             messageObj.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id).ShortCode;
                             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
-                            if (subscriber != null && (subscriber.DeactivationDate == null || subscriber.ServiceId == 10004))
+                            if (subscriber != null && subscriber.DeactivationDate == null)
                             {
                                 Random random = new Random();
                                 var verficationId = random.Next(1000, 9999).ToString();
@@ -876,11 +876,38 @@ namespace Portal.Controllers
                             }
                             else
                             {
-                                messageObj.Content = "SendServiceSubscriptionHelp";
-                                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Verification" : null;
-                                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                                result.Status = "NotSubscribed";
-                                result.ActivationCode = null;
+                                if (service.ServiceCode == "DonyayeAsatir")
+                                {
+                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, 10004);
+                                    if (sub != null && sub.DeactivationDate == null)
+                                    {
+                                        messageObj.ServiceId = 10004;
+                                        messageObj.ShortCode = "307229";
+                                        Random random = new Random();
+                                        var verficationId = random.Next(1000, 9999).ToString();
+                                        messageObj.Content = "SendVerification-" + verficationId;
+                                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-AppVerification" : null;
+                                        SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                                        result.Status = "Subscribed";
+                                        result.ActivationCode = verficationId;
+                                    }
+                                    else
+                                    {
+                                        messageObj.Content = "SendServiceSubscriptionHelp";
+                                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Verification" : null;
+                                        SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                                        result.Status = "NotSubscribed";
+                                        result.ActivationCode = null;
+                                    }
+                                }
+                                else
+                                {
+                                    messageObj.Content = "SendServiceSubscriptionHelp";
+                                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Verification" : null;
+                                    SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                                    result.Status = "NotSubscribed";
+                                    result.ActivationCode = null;
+                                }
                             }
                         }
                     }
@@ -959,7 +986,15 @@ namespace Portal.Controllers
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
                                     if (singlechargeInstallment == null)
-                                        pricePayed = -1;
+                                    {
+                                        var singlecharge = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                        if (singlecharge != null)
+                                        {
+                                            pricePayed = 0;
+                                        }
+                                        else
+                                            pricePayed = -1;
+                                    }
                                     else
                                     {
                                         var originalPriceBalancedForInAppRequest = singlechargeInstallment.PriceBalancedForInAppRequest;
