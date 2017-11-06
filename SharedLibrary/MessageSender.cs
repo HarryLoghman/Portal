@@ -1559,10 +1559,15 @@ namespace SharedLibrary
                     logs.Error("Exception in SendMesssagesToMobinOne: " + e);
                     foreach (var message in messages)
                     {
-                        if (message.RetryCount > retryCountMax)
-                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                        message.DateLastTried = DateTime.Now;
-                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                        //if (message.RetryCount > retryCountMax)
+                        //    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        //message.DateLastTried = DateTime.Now;
+                        //message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                        if (message.MessagePoint > 0)
+                            SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+                        message.SentDate = DateTime.Now;
+                        message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                         entity.Entry(message).State = EntityState.Modified;
                     }
                 }
