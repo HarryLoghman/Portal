@@ -170,6 +170,10 @@
       <Project>{41b321f6-3bf5-2126-337d-3bcb3b411264}</Project>
       <Name>NebulaLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PhantomLibrary\PhantomLibrary.csproj">
+      <Project>{b232d11f-151b-a5b6-131d-4bc28b1314c8}</Project>
+      <Name>PhantomLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
       <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
       <Name>SepidRoodLibrary</Name>

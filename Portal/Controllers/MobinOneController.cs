@@ -19,7 +19,7 @@ namespace Portal.Controllers
 
         public Dictionary<string, string> mobinOneMciServiceIds = new Dictionary<string, string>()
             {
-                { "5530", "Danestaneh" },
+                { "8071", "Nebula" },
             };
 
         [HttpGet]
@@ -63,7 +63,8 @@ namespace Portal.Controllers
 
         }
 
-        //public HttpResponseMessage Notification(string sid, string msisdn, string datetime, string shortcode, string keyword, string chargecode, string basepricepoint, string billedpricepoint, string eventtype, string validity, string nextrenewaldate, string status)
+        [HttpGet]
+        [AllowAnonymous]
         public HttpResponseMessage Notification()
         {
             var result = "1";
@@ -97,7 +98,7 @@ namespace Portal.Controllers
                         recievedMessage.Content = keyword;
                         recievedMessage.MobileNumber = message.MobileNumber;
                         recievedMessage.ShortCode = serviceInfo.ShortCode;
-                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifyUnsubscription" : null;
+                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
                         recievedMessage.IsReceivedFromIntegratedPanel = false;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
                         result = "1";
@@ -119,7 +120,7 @@ namespace Portal.Controllers
                         recievedMessage.Content = keyword;
                         recievedMessage.ShortCode = serviceInfo.ShortCode;
                         recievedMessage.MobileNumber = message.MobileNumber;
-                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifySubscription" : null;
+                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
                         result = "1";
                     }

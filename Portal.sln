@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadDezhbanService", "Deh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMusicYadService", "DehnadMusicYadService\DehnadMusicYadService.csproj", "{2B312224-4C24-2221-4CAB-3114DF3F39BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadPhantomService", "DehnadPhantomService\DehnadPhantomService.csproj", "{1CF15125-4D21-8222-4DA1-3154DB3439C1}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -130,6 +132,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DezhbanLibrary", "DezhbanLibrary\DezhbanLibrary.csproj", "{211D214A-3B15-2126-337D-3BCB3B5424FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicYadLibrary", "MusicYadLibrary\MusicYadLibrary.csproj", "{4211B11C-3511-A1B6-431D-FBC23B13D4B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhantomLibrary", "PhantomLibrary\PhantomLibrary.csproj", "{B232D11F-151B-A5B6-131D-4BC28B1314C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -265,6 +269,10 @@ Global
 		{2B312224-4C24-2221-4CAB-3114DF3F39BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B312224-4C24-2221-4CAB-3114DF3F39BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B312224-4C24-2221-4CAB-3114DF3F39BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CF15125-4D21-8222-4DA1-3154DB3439C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CF15125-4D21-8222-4DA1-3154DB3439C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CF15125-4D21-8222-4DA1-3154DB3439C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CF15125-4D21-8222-4DA1-3154DB3439C1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -393,6 +401,10 @@ Global
 		{4211B11C-3511-A1B6-431D-FBC23B13D4B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4211B11C-3511-A1B6-431D-FBC23B13D4B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4211B11C-3511-A1B6-431D-FBC23B13D4B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B232D11F-151B-A5B6-131D-4BC28B1314C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B232D11F-151B-A5B6-131D-4BC28B1314C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B232D11F-151B-A5B6-131D-4BC28B1314C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B232D11F-151B-A5B6-131D-4BC28B1314C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -216,6 +216,8 @@ namespace DehnadReceiveProcessorService
                     DezhbanLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "MusicYad")
                     MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Phantom")
+                    PhantomLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -283,6 +285,8 @@ namespace DehnadReceiveProcessorService
                     DezhbanLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "MusicYad")
                     MusicYadLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Phantom")
+                    PhantomLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

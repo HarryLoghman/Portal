@@ -218,6 +218,14 @@
     <Compile Include="Areas\DefendIran\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\DefendIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\DefendIran\DefendIranAreaRegistration.cs" />
+    <Compile Include="Areas\Phantom\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Phantom\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Phantom\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Phantom\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Phantom\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Phantom\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Phantom\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Phantom\PhantomAreaRegistration.cs" />
     <Compile Include="Areas\Nebula\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Nebula\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Nebula\Controllers\MonitoringController.cs" />
@@ -1278,6 +1286,16 @@
     <Content Include="Areas\MusicYad\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\MusicYad\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\MusicYad\Views\web.config" />
+    <Content Include="Areas\Phantom\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Phantom\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Phantom\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Phantom\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Phantom\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Phantom\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Phantom\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Phantom\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Phantom\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Phantom\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1645,6 +1663,7 @@
     <Folder Include="Areas\MusicYad\Models\" />
     <Folder Include="Areas\MyLeague\Models\" />
     <Folder Include="Areas\Nebula\Models\" />
+    <Folder Include="Areas\Phantom\Models\" />
     <Folder Include="Areas\SepidRood\Models\" />
     <Folder Include="Areas\ShahreKalameh\Models\" />
     <Folder Include="Areas\ShenoYad\Models\" />
@@ -1760,6 +1779,10 @@
     <ProjectReference Include="..\NebulaLibrary\NebulaLibrary.csproj">
       <Project>{41b321f6-3bf5-2126-337d-3bcb3b411264}</Project>
       <Name>NebulaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhantomLibrary\PhantomLibrary.csproj">
+      <Project>{b232d11f-151b-a5b6-131d-4bc28b1314c8}</Project>
+      <Name>PhantomLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
       <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>

@@ -111,12 +111,12 @@
                             if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FederationUser"))
                             {
                                 <li>
-                                    سرویس های 2G
+                                    سرویس های پردیس
                                     <ul>
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FederationUser"))
                                         {
                                             <li>
-                                                سپید رود
+                                                سپید رود (2G)
                                                 <ul>
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
@@ -154,48 +154,10 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                                        {
-                                            <li>
-                                                بیمه ایران
-                                                <ul>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "BimeIran" }, null)
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        }
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FederationUser"))
                                         {
                                             <li>
-                                                تیراندازی
+                                                تیراندازی (2G)
                                                 <ul>
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
@@ -236,7 +198,7 @@
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FederationUser"))
                                         {
                                             <li>
-                                                تبریز 2018
+                                                تبریز 2018 (2G)
                                                 <ul>
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
@@ -277,7 +239,7 @@
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FederationUser"))
                                         {
                                             <li>
-                                                قایقرانی
+                                                قایقرانی (2G)
                                                 <ul>
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
@@ -318,7 +280,7 @@
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                         {
                                             <li>
-                                                بیمه کربلا
+                                                بیمه کربلا (2G)
                                                 <ul>
                                                     <li>
                                                         @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "BimeKarbala" }, null)
@@ -344,171 +306,13 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                                        {
-                                            <li>
-                                                لیگ من
-                                                <ul>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("لیست لیگ ها", "Index", "LeagueList", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "MyLeague" }, null)
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                                        {
-                                            <li>
-                                                دانستانه
-                                                <ul>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Danestaneh" }, null)
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                                        {
-                                            <li>
-                                                موبایلیگا
-                                                <ul>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("لیست موبایل ها", "Index", "MobilesList", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Mobiliga" }, null)
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                                        {
-                                            <li>
-                                                ماشین بازها
-                                                <ul>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("لیست ماشین ها", "Index", "CarBrandsList", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                    <li>
-                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "MashinBazha" }, null)
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        }
                                     </ul>
                                 </li>
                             }
                             if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MciGroup"))
                             {
                                 <li>
-                                    سرویس های 3G
+                                    سرویس های تله پرومو
                                     <ul>
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("SoltanUser"))
                                         {
@@ -539,37 +343,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShahreKalamehUser") || ViewContext.HttpContext.User.IsInRole("Advertise"))
-                                        {
-                                            <li>
-                                                شهر کلمه
-                                                <ul>
-                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                                                    {
-                                                        <li>
-                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "ShahreKalameh" }, null)
-                                                        </li>
 
-                                                        <li>
-                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "ShahreKalameh" }, null)
-                                                        </li>
-                                                        <li>
-                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "ShahreKalameh" }, null)
-                                                        </li>
-                                                    }
-                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Advertise"))
-                                                    {
-                                                        <li>
-                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "ShahreKalameh" }, null)
-                                                        </li>
-                                                    }
-                                                    <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "ShahreKalameh" }, null)
-                                                    </li>
-
-                                                </ul>
-                                            </li>
-                                        }
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("DonyayeAsatirUser"))
                                         {
                                             <li>
@@ -819,6 +593,109 @@
                                                 </ul>
                                             </li>
                                         }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Dezhban"))
+                                        {
+                                            <li>
+                                                دژبان
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Dezhban" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Dezhban" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                        {
+                                            <li>
+                                                بیمه ایران (2G)
+                                                <ul>
+                                                    <li>
+                                                        @Html.ActionLink("محتوای اتوشارژ", "Index", "AutochargeContents", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("محتوای Eventbase", "Index", "EventbaseContents", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("تعیین امتیازات", "Index", "Points", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("تنظیمات", "Index", "Settings", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "BimeIran" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MciGroup"))
+                            {
+                                <li>
+                                    سرویس های هاب
+                                    <ul>
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShahreKalamehUser") || ViewContext.HttpContext.User.IsInRole("Advertise"))
+                                        {
+                                            <li>
+                                                شهر کلمه
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "ShahreKalameh" }, null)
+                                                        </li>
+
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "ShahreKalameh" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "ShahreKalameh" }, null)
+                                                        </li>
+                                                    }
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Advertise"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "ShahreKalameh" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "ShahreKalameh" }, null)
+                                                    </li>
+
+                                                </ul>
+                                            </li>
+                                        }
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("SoratyUser"))
                                         {
                                             <li>
@@ -871,6 +748,14 @@
                                                 </ul>
                                             </li>
                                         }
+                                    </ul>
+                                </li>
+                            }
+                            if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MciGroup"))
+                            {
+                                <li>
+                                    سرویس های مبین وان
+                                    <ul>
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Nebula"))
                                         {
                                             <li>
@@ -897,28 +782,28 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Dezhban"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Phantom"))
                                         {
                                             <li>
-                                                دژبان
+                                                فانتوم
                                                 <ul>
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
                                                         <li>
-                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Dezhban" }, null)
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Phantom" }, null)
                                                         </li>
                                                         <li>
-                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Dezhban" }, null)
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Phantom" }, null)
                                                         </li>
                                                         <li>
-                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Dezhban" }, null)
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Phantom" }, null)
                                                         </li>
                                                         <li>
-                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Dezhban" }, null)
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Phantom" }, null)
                                                         </li>
                                                     }
                                                     <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Dezhban" }, null)
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Phantom" }, null)
                                                     </li>
                                                 </ul>
                                             </li>
