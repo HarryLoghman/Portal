@@ -1498,8 +1498,6 @@ namespace SharedLibrary
                         var messageId = rnd.Next(1000000, 9999999).ToString();
                         smsList.requestId[index] = messageId.ToString();
                     }
-                    logs.Info("1");
-                    logs.InfoFormat("smsCount:" + smsList.number.Count());
                     logs.Info(smsList.username);
                     logs.Info(smsList.password);
                     logs.Info(smsList.shortcode);
@@ -1514,9 +1512,7 @@ namespace SharedLibrary
                         logs.Info(smsList.requestId[i]);
                     }
                     var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient();
-                    logs.Info("2");
                     var result = mobineOneClient.sendSms(smsList);
-                    logs.Info("3");
                     logs.Info("response:" + result);
                     if (result.Length == 0)
                     {

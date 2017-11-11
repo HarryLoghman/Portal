@@ -172,17 +172,8 @@ namespace AvvalYadLibrary
             var offContents = new string[]
             {
                 "off",
-                "of",
-                "cancel",
-                "stop",
-                "laghv",
-                "lagv",
-                "khamoosh",
+                "Off",
                 "خاموش",
-                "لغو",
-                "کنسل",
-                "توقف",
-                "پایان"
             };
             return offContents;
         }
