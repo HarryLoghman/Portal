@@ -14,8 +14,8 @@ namespace DehnadSoratyService
         {
             try
             {
-                AutochargeStatistic();
-                EventbaseStatistic();
+                //AutochargeStatistic();
+                //EventbaseStatistic();
             }
             catch (Exception e)
             {

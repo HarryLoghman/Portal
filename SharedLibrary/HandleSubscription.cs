@@ -251,78 +251,78 @@ namespace SharedLibrary
 
         public static void UnsubscribeUserFromTelepromoService(long serviceId, string mobileNumber)
         {
-            var url = "http://10.20.9.135:8600/samsson-sdp/pin/cancel?";
-            var sc = "Dehnad";
-            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Telepromo");
-            var username = serviceAdditionalInfo["username"];
-            var password = serviceAdditionalInfo["password"];
-            var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
-            var msisdn = "98" + mobileNumber.TrimStart('0');
-            var urlWithParameters = url + String.Format("sc={0}&msisdn={1}&serviceId={2}&username={3}&password={4}", sc, msisdn, aggregatorServiceId, username, password);
-            logs.Info("telepromo cancel api request: " + urlWithParameters);
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    using (var response = client.GetAsync(new Uri(urlWithParameters)).Result)
-                    {
-                        if (response.IsSuccessStatusCode)
-                            logs.Info("telepromo cancel api response: " + response.Content.ReadAsStringAsync().Result);
-                        else
-                            logs.Info("telepromo cancel api response: Error " + response.StatusCode);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in UnsubscribeUserFromTelepromoService: " + e);
-            }
+            //var url = "http://10.20.9.135:8600/samsson-sdp/pin/cancel?";
+            //var sc = "Dehnad";
+            //var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Telepromo");
+            //var username = serviceAdditionalInfo["username"];
+            //var password = serviceAdditionalInfo["password"];
+            //var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
+            //var msisdn = "98" + mobileNumber.TrimStart('0');
+            //var urlWithParameters = url + String.Format("sc={0}&msisdn={1}&serviceId={2}&username={3}&password={4}", sc, msisdn, aggregatorServiceId, username, password);
+            //logs.Info("telepromo cancel api request: " + urlWithParameters);
+            //try
+            //{
+            //    using (var client = new HttpClient())
+            //    {
+            //        using (var response = client.GetAsync(new Uri(urlWithParameters)).Result)
+            //        {
+            //            if (response.IsSuccessStatusCode)
+            //                logs.Info("telepromo cancel api response: " + response.Content.ReadAsStringAsync().Result);
+            //            else
+            //                logs.Info("telepromo cancel api response: Error " + response.StatusCode);
+            //        }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    logs.Error("Exception in UnsubscribeUserFromTelepromoService: " + e);
+            //}
         }
 
         public static void UnsubscribeUserFromHubService(long serviceId, string mobileNumber)
         {
-            try
-            {
-                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Hub");
+            //try
+            //{
+            //    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Hub");
                 
-                XmlDocument doc = new XmlDocument();
-                XmlElement root = doc.CreateElement("xmsrequest");
-                XmlElement userid = doc.CreateElement("userid");
-                XmlElement password = doc.CreateElement("password");
-                XmlElement action = doc.CreateElement("action");
-                XmlElement body = doc.CreateElement("body");
-                XmlElement recipient = doc.CreateElement("recipient");
-                recipient.InnerText = mobileNumber;
-                XmlElement serviceid = doc.CreateElement("serviceid");
-                serviceid.InnerText = serviceAdditionalInfo["aggregatorServiceId"];
-                body.AppendChild(serviceid);
-                body.AppendChild(recipient);
+            //    XmlDocument doc = new XmlDocument();
+            //    XmlElement root = doc.CreateElement("xmsrequest");
+            //    XmlElement userid = doc.CreateElement("userid");
+            //    XmlElement password = doc.CreateElement("password");
+            //    XmlElement action = doc.CreateElement("action");
+            //    XmlElement body = doc.CreateElement("body");
+            //    XmlElement recipient = doc.CreateElement("recipient");
+            //    recipient.InnerText = mobileNumber;
+            //    XmlElement serviceid = doc.CreateElement("serviceid");
+            //    serviceid.InnerText = serviceAdditionalInfo["aggregatorServiceId"];
+            //    body.AppendChild(serviceid);
+            //    body.AppendChild(recipient);
 
-                //Random random = new Random();
-                //var randomNumber = random.Next(1000000, 9999999);
-                //XmlAttribute doerId = doc.CreateAttribute("doerId");
-                //doerId.InnerText = randomNumber.ToString();
-                //recipient.Attributes.Append(doerId);
+            //    //Random random = new Random();
+            //    //var randomNumber = random.Next(1000000, 9999999);
+            //    //XmlAttribute doerId = doc.CreateAttribute("doerId");
+            //    //doerId.InnerText = randomNumber.ToString();
+            //    //recipient.Attributes.Append(doerId);
 
-                userid.InnerText = serviceAdditionalInfo["username"];
-                password.InnerText = serviceAdditionalInfo["password"];
-                action.InnerText = "crm";
+            //    userid.InnerText = serviceAdditionalInfo["username"];
+            //    password.InnerText = serviceAdditionalInfo["password"];
+            //    action.InnerText = "crm";
                 
-                doc.AppendChild(root);
-                root.AppendChild(userid);
-                root.AppendChild(password);
-                root.AppendChild(action);
-                root.AppendChild(body);
-                string stringedXml = doc.OuterXml;
-                logs.Info("hub cancel api request: " + stringedXml);
-                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();                
-                string response = hubClient.XmsRequest(stringedXml).ToString();
-                logs.Info("hub cancel api response: " + response);
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in UnsubscribeUserFromHubService: " + e);
-            }
+            //    doc.AppendChild(root);
+            //    root.AppendChild(userid);
+            //    root.AppendChild(password);
+            //    root.AppendChild(action);
+            //    root.AppendChild(body);
+            //    string stringedXml = doc.OuterXml;
+            //    logs.Info("hub cancel api request: " + stringedXml);
+            //    SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();                
+            //    string response = hubClient.XmsRequest(stringedXml).ToString();
+            //    logs.Info("hub cancel api response: " + response);
+            //}
+            //catch (Exception e)
+            //{
+            //    logs.Error("Exception in UnsubscribeUserFromHubService: " + e);
+            //}
         }
 
         public enum ServiceStatusForSubscriberState

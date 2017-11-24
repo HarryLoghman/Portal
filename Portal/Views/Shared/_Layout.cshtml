@@ -704,6 +704,10 @@
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
                                                         <li>
+                                                            @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Soraty" }, null)
+                                                        </li>
+
+                                                        <li>
                                                             @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Soraty" }, null)
                                                         </li>
                                                         <li>

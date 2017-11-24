@@ -201,11 +201,19 @@ namespace DehnadTahChinService
                 }
                 else
                 {
-                    if (DateTime.Now.Hour >= 3)
+                    if (DateTime.Now.Hour >= 1)
                     {
+                        var startTime = DateTime.Now;
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
-                        Thread.Sleep(4 * 60 * 60 * 1000);
+                        var endTime = DateTime.Now;
+                        TimeSpan hours = TimeSpan.FromHours(4);
+                        TimeSpan timeDiff = endTime - startTime;
+                        if (timeDiff.Hours < 4)
+                        {
+                            TimeSpan sleepTime = hours - timeDiff;
+                            Thread.Sleep(sleepTime.Milliseconds);
+                        }
                     }
                     Thread.Sleep(1000);
                 }
