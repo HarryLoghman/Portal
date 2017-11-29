@@ -879,6 +879,53 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public HttpResponseMessage IsUserSubscribed([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            result.MobileNumber = messageObj.MobileNumber;
+            try
+            {
+                var hash = SharedLibrary.Security.GetSha256Hash("IsUserSubscribed" + messageObj.ServiceCode + messageObj.MobileNumber);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else
+                {
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.MobileNumber == "Invalid Mobile Number")
+                        result.Status = "Invalid Mobile Number";
+                    else if (!VerificactionAllowedServiceCode.Contains(messageObj.ServiceCode))
+                        result.Status = "This ServiceCode does not have permission";
+                    else
+                    {
+                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                        if (service == null)
+                        {
+                            result.Status = "Invalid ServiceCode";
+                        }
+                        else
+                        {
+                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
+                            if (subscriber != null && subscriber.DeactivationDate == null)
+                                result.Status = "Subscribed";
+                            else
+                                result.Status = "NotSubscribed";
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in IsUserSubscribed:" + e);
+                result.Status = "General error occurred";
+            }
+            var json = JsonConvert.SerializeObject(result);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public HttpResponseMessage Verification([FromBody]MessageObject messageObj)
         {
             dynamic result = new ExpandoObject();
@@ -1163,7 +1210,7 @@ namespace Portal.Controllers
                                 using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
                                 {
                                     var now = DateTime.Now;
-                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();
                                     if (singlechargeInstallment == null)
                                     {
                                         var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);

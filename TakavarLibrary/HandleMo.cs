@@ -11,12 +11,14 @@ namespace TakavarLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public async static void ReceivedMessage(MessageObject message, Service service)
         {
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new TakavarEntities())
             {
                 var content = message.Content;
+                message.ServiceCode = service.ServiceCode;
+                message.ServiceId = service.Id;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
 
@@ -39,6 +41,41 @@ namespace TakavarLibrary
                 {
                     message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
+                    return;
+                }
+                else if (message.Content.ToLower() == "abc") //Otp Help
+                {
+                    var mobile = message.MobileNumber;
+                    var singleCharge = new Singlecharge();
+                    var imiChargeCode = new ImiChargeCode();
+                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
+                    if (singleCharge != null && singleCharge.DateCreated.AddMinutes(5) > DateTime.Now)
+                    {
+                        message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+                        message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
+                        //message = SharedLibrary.MessageHandler.SendServiceOTPRequestExists(entity, imiChargeCodes, message, messagesTemplate);
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Telepromo");
+                    message = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                    //message = SharedLibrary.MessageHandler.SendServiceOTPHelp(entity, imiChargeCodes, message, messagesTemplate);
+                    //MessageHandler.InsertMessageToQueue(message);
+                    message.Price = 0;
+                    message.MobileNumber = mobile;
+                    singleCharge = new Singlecharge();
+                    await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, message, serviceAdditionalInfo);
+                    return;
+                }
+                else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
+                {
+                    var singleCharge = new Singlecharge();
+                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
+                    if (singleCharge != null)
+                    {
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Telepromo");
+                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, message, serviceAdditionalInfo, message.Content);
+                    }
                     return;
                 }
 
