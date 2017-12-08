@@ -538,5 +538,14 @@ namespace SharedLibrary
             Postpaid = 1,
             Prepaid = 2
         }
+
+        public enum MapfaChannels
+        {
+            SMS = 1,
+            USSD = 2,
+            MMS = 3,
+            IVR = 4,
+            ThreeG = 5
+        }
     }
 }

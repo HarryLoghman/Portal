@@ -213,6 +213,7 @@ namespace DehnadTahChinService
                         {
                             TimeSpan sleepTime = hours - timeDiff;
                             Thread.Sleep(sleepTime.Milliseconds);
+                            //Thread.Sleep((int)sleepTime.TotalMilliseconds);
                         }
                     }
                     Thread.Sleep(1000);

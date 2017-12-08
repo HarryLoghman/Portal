@@ -74,6 +74,12 @@ namespace MusicYadLibrary
                 using (var entity = new MusicYadEntities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    if (message.Content == "77" || message.Content.ToLower() == "m")
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
                     if (!service.OnKeywords.Contains(message.Content))
                     {
                         //if (subscriber.ActivationDate.Value.AddMinutes(1) < DateTime.Now)
@@ -83,6 +89,7 @@ namespace MusicYadLibrary
                         //}
                         return;
                     }
+                   
                     var isUserAlreadyInSinglechargeQueue = IsUserAlreadyInSinglechargeQueue(message.MobileNumber);
                     if (isUserAlreadyInSinglechargeQueue == true)
                     {

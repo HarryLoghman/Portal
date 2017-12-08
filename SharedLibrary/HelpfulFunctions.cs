@@ -120,5 +120,13 @@ namespace SharedLibrary
             }
             return imiDataList;
         }
+
+        public static bool IsPropertyExistInDynamicObject(dynamic dynamicObject, string propertyName)
+        {
+            if (dynamicObject is ExpandoObject)
+                return ((IDictionary<string, object>)dynamicObject).ContainsKey(propertyName);
+
+            return dynamicObject.GetType().GetProperty(propertyName) != null;
+        }
     }
 }

@@ -80,43 +80,12 @@ namespace SharedLibrary
                     message.ShortCode = serviceAdditionalInfo["shortCode"];
                     message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
                     var response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                    if (response.IsSucceeded == false && installmentCycleNumber == 1)
-                        continue;
-                    else if (response.IsSucceeded == false)
+                    if (response.IsSucceeded == false)
                     {
-                        singlecharge = reserverdSingleCharge;
                         if (message.Price == 300)
                         {
-                            SetMessagePrice(message, chargeCodes, 200);
-                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                            if (response.IsSucceeded == false)
-                            {
-                                singlecharge = reserverdSingleCharge;
-                                SetMessagePrice(message, chargeCodes, 100);
-                                response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false)
-                                {
-                                    singlecharge = reserverdSingleCharge;
-                                    SetMessagePrice(message, chargeCodes, 50);
-                                    response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                                }
-                            }
-                        }
-                        else if (message.Price == 200)
-                        {
-                            message.Price = 100;
-                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                            if (response.IsSucceeded == false)
-                            {
-                                singlecharge = reserverdSingleCharge;
-                                message.Price = 50;
-                                response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                            }
-                        }
-                        else if (message.Price == 100)
-                        {
                             singlecharge = reserverdSingleCharge;
-                            message.Price = 50;
+                            message = SetMessagePrice(message, chargeCodes, 100);
                             response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                         }
                     }
