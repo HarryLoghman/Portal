@@ -14,7 +14,7 @@ namespace SharedLibrary
 
         public static dynamic GetInstallmentList(dynamic entity)
         {
-            return ((IEnumerable)entity.SinglechargeInstallments).Cast<dynamic>().Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
+            return ((IEnumerable)entity.SinglechargeInstallments).Cast<dynamic>().Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false && o.IsRenewd != true).ToList();
         }
 
         public static void InstallmentJob(dynamic entity, int maxChargeLimit, int installmentCycleNumber, string serviceCode, dynamic chargeCodes, dynamic installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)

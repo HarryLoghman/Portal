@@ -121,6 +121,73 @@ namespace SharedLibrary
             return imiDataList;
         }
 
+        public static Dictionary<string, int> GetIncomeAndSubscriptionsFromImiDataFile(List<ImiData> imiDatas)
+        {
+            Dictionary<string, int> result = new Dictionary<string, int>();
+            result["prepaidSubscriptions"] = 0;
+            result["postpaidSubscriptions"] = 0;
+            result["prepaidUnsubscriptions"] = 0;
+            result["postpaidUnsubscriptions"] = 0;
+            result["prepaidCharges"] = 0;
+            result["postpaidCharges"] = 0;
+            result["sumOfCharges"] = 0;
+            try
+            {
+                foreach (var data in imiDatas)
+                {
+                    if (data.eventType == "1.5")
+                    {
+                        var message = new MessageObject();
+                        message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);
+                        if(message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
+                            result["postpaidCharges"] += data.billedPricePoint.Value;
+                        else
+                            result["prepaidCharges"] += data.billedPricePoint.Value;
+                        result["sumOfCharges"] += data.billedPricePoint.Value;
+                    }
+                    else if(data.eventType == "1.2")
+                    {
+                        var message = new MessageObject();
+                        message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);
+                        if (message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
+                            result["postpaidUnsubscriptions"] += 1;
+                        else
+                            result["prepaidUnsubscriptions"] += 1;
+                    }
+                    else if (data.eventType == "1.1")
+                    {
+                        var message = new MessageObject();
+                        message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);
+                        if (message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
+                            result["postpaidSubscriptions"] += 1;
+                        else
+                            result["prepaidSubscriptions"] += 1;
+                    }
+                }
+                if (result["postpaidCharges"] > 0)
+                    result["postpaidCharges"] /= 10;
+                if (result["prepaidCharges"] > 0)
+                    result["prepaidCharges"] /= 10;
+                if (result["sumOfCharges"] > 0)
+                    result["sumOfCharges"] /= 10;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetIncomeAndSubscriptionsFromImiDataFile:", e);
+                result["prepaidSubscriptions"] = 0;
+                result["postpaidSubscriptions"] = 0;
+                result["prepaidUnsubscriptions"] = 0;
+                result["postpaidUnsubscriptions"] = 0;
+                result["prepaidCharges"] = 0;
+                result["postpaidCharges"] = 0;
+                result["sumOfCharges"] = 0;
+            }
+            return result;
+        }
+
         public static bool IsPropertyExistInDynamicObject(dynamic dynamicObject, string propertyName)
         {
             if (dynamicObject is ExpandoObject)

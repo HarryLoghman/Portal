@@ -201,7 +201,7 @@ namespace DehnadTahChinService
                 }
                 else
                 {
-                    if (DateTime.Now.Hour >= 1)
+                    if (DateTime.Now.Hour >= 3)
                     {
                         var startTime = DateTime.Now;
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
@@ -212,8 +212,8 @@ namespace DehnadTahChinService
                         if (timeDiff.Hours < 4)
                         {
                             TimeSpan sleepTime = hours - timeDiff;
-                            Thread.Sleep(sleepTime.Milliseconds);
-                            //Thread.Sleep((int)sleepTime.TotalMilliseconds);
+                            //Thread.Sleep(sleepTime.Milliseconds);
+                            Thread.Sleep((int)sleepTime.TotalMilliseconds);
                         }
                     }
                     Thread.Sleep(1000);

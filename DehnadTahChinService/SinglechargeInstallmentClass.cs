@@ -98,7 +98,7 @@ namespace DehnadTahChinService
                             batchSaveCounter = 0;
                         }
                         //singlecharge = reserverdSingleCharge;
-                        int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.IsApplicationInformed == false && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
                         if (priceUserChargedToday >= maxChargeLimit)
                         {
                             installment.IsExceededDailyChargeLimit = true;
@@ -113,7 +113,7 @@ namespace DehnadTahChinService
                         var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && installmentCycleNumber == 1)
                             continue;
-                        if (message.Price == 300)
+                        if (response.IsSucceeded == false && message.Price == 300)
                         {
                             message.Price = 200;
                             response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
@@ -130,7 +130,7 @@ namespace DehnadTahChinService
                                 }
                             }
                         }
-                        else if (message.Price == 200)
+                        else if (response.IsSucceeded == false && message.Price == 200)
                         {
                             message.Price = 100;
                             response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
@@ -141,7 +141,7 @@ namespace DehnadTahChinService
                                 response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                             }
                         }
-                        else if (message.Price == 100)
+                        else if (response.IsSucceeded == false && message.Price == 100)
                         {
                             //singlecharge = reserverdSingleCharge;
                             message.Price = 50;

@@ -82,9 +82,9 @@ namespace DehnadReceiveProcessorService
             var ftp = new Ftp();
             while (!shutdownEvent.WaitOne(0))
             {
-                if (DateTime.Now.Hour == 10 && DateTime.Now.Minute > 5 && DateTime.Now.Minute < 10)
+                if (DateTime.Now.Hour == 10 && DateTime.Now.Minute > 30 && DateTime.Now.Minute < 40)
                 {
-                    ftp.ProcessTelepromoFtpFiles();
+                    ftp.TelepromoIncomeReport();
                     Thread.Sleep(23 * 60 * 60 * 1000);
                 }
                 Thread.Sleep(2 * 60 * 1000);

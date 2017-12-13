@@ -212,7 +212,7 @@ namespace SharedLibrary
             return mobileNumber;
         }
 
-        private static MessageObject GetSubscriberOperatorInfo(MessageObject message)
+        public static MessageObject GetSubscriberOperatorInfo(MessageObject message)
         {
             using (var entities = new PortalEntities())
             {
