@@ -38,7 +38,7 @@ namespace DehnadReceiveProcessorService
         {
             try
             {
-                var startDate = DateTime.Now.AddDays(-24).Date;
+                var startDate = DateTime.Now.AddDays(-10).Date;
                 string filePath = @"E:\ImiFtps\";
                 string fileArchivePath = @"E:\ImiFtps\Archive\";
                 using (dynamic entity = Activator.CreateInstance(entityType))
