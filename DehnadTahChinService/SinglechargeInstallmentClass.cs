@@ -33,11 +33,15 @@ namespace DehnadTahChinService
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                    installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
-                    int installmentListCount = installmentList.Count;
-                    var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-
-                    InstallmentJob(maxChargeLimit, installmentCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singlecharge);
+                    for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 2; installmentInnerCycleNumber++)
+                    {
+                        logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
+                        installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
+                        int installmentListCount = installmentList.Count;
+                        var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                        InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singlecharge);
+                        logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
+                    }
                 }
             }
             catch (Exception e)
@@ -46,7 +50,7 @@ namespace DehnadTahChinService
             }
         }
 
-        public static void InstallmentJob(int maxChargeLimit, int installmentCycleNumber, string serviceCode, dynamic chargeCodes, List<SinglechargeInstallment> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
+        public static void InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<SinglechargeInstallment> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
         {
             try
             {
@@ -65,7 +69,7 @@ namespace DehnadTahChinService
                 for (int i = 0; i < take.Length; i++)
                 {
                     var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
-                    TaskList.Add(ProcessMtnInstallmentChunk(maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, singlecharge));
+                    TaskList.Add(ProcessMtnInstallmentChunk(maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlecharge));
                 }
                 Task.WaitAll(TaskList.ToArray());
             }
@@ -77,7 +81,7 @@ namespace DehnadTahChinService
             logs.Info("InstallmentJob ended!");
         }
 
-        private static async Task ProcessMtnInstallmentChunk(int maxChargeLimit, List<SinglechargeInstallment> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, dynamic singlecharge)
+        private static async Task ProcessMtnInstallmentChunk(int maxChargeLimit, List<SinglechargeInstallment> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -90,7 +94,7 @@ namespace DehnadTahChinService
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 5)
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
                         {
@@ -110,43 +114,16 @@ namespace DehnadTahChinService
                         message.MobileNumber = installment.MobileNumber;
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
                         message = SharedLibrary.InstallmentHandler.ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
-                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                        if (response.IsSucceeded == false && installmentCycleNumber == 1)
+                        if (installmentInnerCycleNumber == 1 && message.Price != 300)
                             continue;
-                        if (response.IsSucceeded == false && message.Price == 300)
-                        {
-                            message.Price = 200;
-                            response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                            if (response.IsSucceeded == false)
-                            {
-                                //singlecharge = reserverdSingleCharge;
-                                message.Price = 100;
-                                response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                                if (response.IsSucceeded == false)
-                                {
-                                    //singlecharge = reserverdSingleCharge;
-                                    message.Price = 50;
-                                    response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                                }
-                            }
-                        }
-                        else if (response.IsSucceeded == false && message.Price == 200)
-                        {
+                        else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
                             message.Price = 100;
-                            response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                            if (response.IsSucceeded == false)
-                            {
-                                //singlecharge = reserverdSingleCharge;
-                                message.Price = 50;
-                                response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                            }
-                        }
-                        else if (response.IsSucceeded == false && message.Price == 100)
-                        {
-                            //singlecharge = reserverdSingleCharge;
-                            message.Price = 50;
-                            response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                        }
+                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
+                        //if (response.IsSucceeded == false && message.Price == 300)
+                        //{
+                        //    message.Price = 100;
+                        //    response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
+                        //}
                         if (response.IsSucceeded == true)
                         {
                             installment.PricePayed += message.Price.GetValueOrDefault();

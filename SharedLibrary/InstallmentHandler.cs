@@ -67,7 +67,7 @@ namespace SharedLibrary
                         batchSaveCounter = 0;
                     }
                     singlecharge = reserverdSingleCharge;
-                    int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.InstallmentId == installment.Id && o.DateCreated.Date.Equals(today.Date)).ToList().Sum(o => o.Price);
+                    int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.DateCreated.Date.Equals(today.Date)).ToList().Sum(o => o.Price);
                     if (priceUserChargedToday >= maxChargeLimit)
                     {
                         installment.IsExceededDailyChargeLimit = true;
@@ -115,18 +115,12 @@ namespace SharedLibrary
             {
                 message.Price = maxChargeLimit;
             }
-            else if (priceUserChargedToday <= 100)
-            {
-                message.Price = 200;
-            }
             else if (priceUserChargedToday <= 200)
             {
                 message.Price = 100;
             }
-            else if (priceUserChargedToday <= 250)
-            {
-                message.Price = 50;
-            }
+            else
+                message.Price = 0;
             return message;
         }
 
