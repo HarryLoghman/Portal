@@ -43,7 +43,7 @@ namespace DezhbanLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else if (message.Content.ToLower() == "abc") //Otp Help
+                else if (message.Content.ToLower().Contains("abc")) //Otp Help
                 {
                     var mobile = message.MobileNumber;
                     var singleCharge = new Singlecharge();

@@ -71,7 +71,7 @@ namespace SoratyLibrary
                         await MessageHandler.HubOtpChargeRequest(message, serviceAdditionalInfo);
                         return;
                     }
-                    else if (message.Content.ToLower() == "abc") //Otp Help
+                    else if (message.Content.ToLower().Contains("abc")) //Otp Help
                     {
                         var mobile = message.MobileNumber;
                         var singleCharge = new Singlecharge();
@@ -91,6 +91,7 @@ namespace SoratyLibrary
                         //MessageHandler.InsertMessageToQueue(message);
                         message.Price = 5; //Hub Subscription is 5
                         message.MobileNumber = mobile;
+                        singleCharge = new Singlecharge();
                         await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, message, serviceAdditionalInfo);
                         return;
                     }
