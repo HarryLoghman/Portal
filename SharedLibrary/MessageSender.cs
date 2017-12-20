@@ -33,6 +33,7 @@ namespace SharedLibrary
                     var messagesCount = messages.Count;
                     if (messagesCount == 0)
                         return;
+
                     var url = telepromoIp + "/samsson-sdp/transfer/send?";
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];

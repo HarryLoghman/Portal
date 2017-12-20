@@ -911,7 +911,7 @@
                                     </ul>
                                 </li>
                             }
-                            <li style="float:left;">
+                            <li class="last-item" style="float:left;">
                                 @Html.Partial("_LoginPartial")
                             </li>
                         }
@@ -981,4 +981,9 @@
             clear: left;
             margin: 5px 0 5px 12px;
         }
+
+    .last-item > .k-animation-container {
+        left: 0px !important;
+    }
+
 </style>

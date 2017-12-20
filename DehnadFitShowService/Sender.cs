@@ -17,6 +17,7 @@ namespace DehnadFitShowService
         {
             try
             {
+                logs.Info("A1:start of send process");
                 var today = DateTime.Now.Date;
                 List<AutochargeMessagesBuffer> autochargeMessages;
                 List<EventbaseMessagesBuffer> eventbaseMessages;
@@ -34,7 +35,7 @@ namespace DehnadFitShowService
 
                 Type entityType = typeof(FitShowEntities);
 
-                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
+                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, readSize)).OfType<OnDemandMessagesBuffer>().ToList();
 
                 //if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
                 //{
@@ -47,18 +48,22 @@ namespace DehnadFitShowService
                 //}
 
                 SharedLibrary.MessageHandler.SendSelectedMessages(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                if (DateTime.Now.Hour <= 20 && DateTime.Now.Hour >= 8)
+                if (DateTime.Now.Hour >= 8 && DateTime.Now.Hour < 20)
                 {
-                    autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
-                    eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
+                    autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, readSize)).OfType<AutochargeMessagesBuffer>().ToList();
+                    logs.Info("A2:start of reading eventbasemessages");
+                    eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, readSize)).OfType<EventbaseMessagesBuffer>().ToList();
+                    logs.Info("A3:end of reading eventbasemessages");
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    logs.Info("A4:end of sending eventbasemessages");
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Error in SendHandler:" + e);
             }
+            logs.Info("A5:end of send process");
         }
     }
 }
