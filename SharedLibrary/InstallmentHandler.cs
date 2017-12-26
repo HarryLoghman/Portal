@@ -17,7 +17,7 @@ namespace SharedLibrary
             return ((IEnumerable)entity.SinglechargeInstallments).Cast<dynamic>().Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false && o.IsRenewd != true).ToList();
         }
 
-        public static void InstallmentJob(dynamic entity, int maxChargeLimit, int installmentCycleNumber, string serviceCode, dynamic chargeCodes, dynamic installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
+        public static void MtnInstallmentJob(Type entityType, int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, dynamic installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, Type singlechargeType)
         {
             try
             {
@@ -35,8 +35,8 @@ namespace SharedLibrary
                 List<Task> TaskList = new List<Task>();
                 for (int i = 0; i < take.Length; i++)
                 {
-                    var chunkedInstallmentList = ((IEnumerable)installmentList).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
-                    TaskList.Add(ProcessMtnInstallmentChunk(entity, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, singlecharge));
+                    var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
+                    TaskList.Add(MtnProcessInstallmentChunk(entityType, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlechargeType));
                 }
                 Task.WaitAll(TaskList.ToArray());
             }
@@ -48,58 +48,57 @@ namespace SharedLibrary
             logs.Info("InstallmentJob ended!");
         }
 
-        private static async Task ProcessMtnInstallmentChunk(dynamic entity, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, dynamic singlecharge)
+        private static async Task MtnProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
             int batchSaveCounter = 0;
-            dynamic reserverdSingleCharge = singlecharge;
+            dynamic singlecharge =  Activator.CreateInstance(singlechargeType);
+            dynamic reserverdSingleCharge = Activator.CreateInstance(singlechargeType);
             await Task.Delay(10); // for making it async
             try
             {
-                foreach (var installment in chunkedSingleChargeInstallment)
+                using (dynamic entity = Activator.CreateInstance(entityType))
                 {
-                    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 5)
-                        break;
-                    if (batchSaveCounter >= 500)
+                    foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        entity.SaveChanges();
-                        batchSaveCounter = 0;
-                    }
-                    singlecharge = reserverdSingleCharge;
-                    int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.DateCreated.Date.Equals(today.Date)).ToList().Sum(o => o.Price);
-                    if (priceUserChargedToday >= maxChargeLimit)
-                    {
-                        installment.IsExceededDailyChargeLimit = true;
-                        entity.Entry(installment).State = EntityState.Modified;
-                        batchSaveCounter += 1;
-                        continue;
-                    }
-                    var message = new SharedLibrary.Models.MessageObject();
-                    message.MobileNumber = installment.MobileNumber;
-                    message.ShortCode = serviceAdditionalInfo["shortCode"];
-                    message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
-                    var response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                    if (response.IsSucceeded == false)
-                    {
-                        if (message.Price == 300)
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
+                            break;
+                        if (batchSaveCounter >= 500)
                         {
-                            singlecharge = reserverdSingleCharge;
-                            message = SetMessagePrice(message, chargeCodes, 100);
-                            response = SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singlecharge, message, false, false, serviceAdditionalInfo, installment.Id).Result;
+                            entity.SaveChanges();
+                            batchSaveCounter = 0;
                         }
+                        //singlecharge = reserverdSingleCharge;
+                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.IsApplicationInformed == false && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
+                        if (priceUserChargedToday >= maxChargeLimit)
+                        {
+                            installment.IsExceededDailyChargeLimit = true;
+                            entity.Entry(installment).State = EntityState.Modified;
+                            batchSaveCounter += 1;
+                            continue;
+                        }
+                        var message = new SharedLibrary.Models.MessageObject();
+                        message.MobileNumber = installment.MobileNumber;
+                        message.ShortCode = serviceAdditionalInfo["shortCode"];
+                        message = SharedLibrary.InstallmentHandler.ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
+                        if (installmentInnerCycleNumber == 1 && message.Price != 300)
+                            continue;
+                        else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
+                            message.Price = 100;
+                        var response = MessageSender.ChargeMtnSubscriber(entityType, singlechargeType, message, false, false, serviceAdditionalInfo, installment.Id).Result;
+                        if (response.IsSucceeded == true)
+                        {
+                            installment.PricePayed += message.Price.GetValueOrDefault();
+                            installment.PriceTodayCharged += message.Price.GetValueOrDefault();
+                            if (installment.PricePayed >= installment.TotalPrice)
+                                installment.IsFullyPaid = true;
+                            entity.Entry(installment).State = EntityState.Modified;
+                        }
+                        batchSaveCounter++;
                     }
-                    if (response.IsSucceeded == true)
-                    {
-                        installment.PricePayed += message.Price.GetValueOrDefault();
-                        installment.PriceTodayCharged += message.Price.GetValueOrDefault();
-                        if (installment.PricePayed >= installment.TotalPrice)
-                            installment.IsFullyPaid = true;
-                        entity.Entry(installment).State = EntityState.Modified;
-                    }
-                    batchSaveCounter++;
+                    entity.SaveChanges();
                 }
-                entity.SaveChanges();
             }
             catch (Exception e)
             {

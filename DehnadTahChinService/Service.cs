@@ -195,7 +195,7 @@ namespace DehnadTahChinService
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             while (!shutdownEvent.WaitOne(0))
             {
-                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 04))
+                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 05))
                 {
                     installmentCycleNumber = 1;
                     Thread.Sleep(/*50 * 60 * */1000);

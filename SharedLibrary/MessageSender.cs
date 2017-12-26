@@ -40,7 +40,7 @@ namespace SharedLibrary
                     var password = serviceAdditionalInfo["password"];
                     var from = "98" + serviceAdditionalInfo["shortCode"];
                     var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-
+                    Random rnd = new Random();
                     using (var client = new HttpClient())
                     {
                         foreach (var message in messages)
@@ -54,7 +54,7 @@ namespace SharedLibrary
 
                             var to = "98" + message.MobileNumber.TrimStart('0');
                             var messageContent = message.Content;
-                            Random rnd = new Random();
+
                             var messageId = rnd.Next(1000000, 9999999).ToString();
                             var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}"
                                                                     , sc, username, password, from, serviceId, to, messageContent, messageId);
@@ -1516,13 +1516,13 @@ namespace SharedLibrary
             return result;
         }
 
-        public static async Task<dynamic> ChargeMtnSubscriber(Type entityType, dynamic singlecharge, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<dynamic> ChargeMtnSubscriber(Type entityType, Type singlechargeType, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
-                entity.Configuration.AutoDetectChangesEnabled = false;
                 string charge = "";
                 var spId = "980110006379";
+                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
                 singlecharge.MobileNumber = message.MobileNumber;
                 if (isRefund == true)
                     charge = "refundAmount";
@@ -1532,9 +1532,9 @@ namespace SharedLibrary
                 var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
                 int rialedPrice = message.Price.Value * 10;
                 var referenceCode = Guid.NewGuid().ToString();
-                var url = irancellIp + "/AmountChargingService/services/AmountCharging";
+                var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
                 string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
-        , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"]);
+    , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
                 try
                 {
                     using (var client = new HttpClient())
