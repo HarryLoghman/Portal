@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace Portal.Areas.Soltan.Controllers
+namespace Portal.Areas.NabardGah.Controllers
 {
     [Authorize(Roles = "Admin, SoltanUser")]
     public class StatisticsController : Controller

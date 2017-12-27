@@ -173,7 +173,9 @@ namespace Portal.Areas.Soraty.Controllers
                 {
                     Id = dailyStatistics.Id,
                     PersianDate = dailyStatistics.PersianDate,
-                    SumOfSinglechargeSuccessfulFullCharge = dailyStatistics.SumOfSinglechargeSuccessfulFullCharge,
+                    NumberOfSubscriptions = dailyStatistics.NumberOfSubscriptions,
+                    TotalSubscribers = dailyStatistics.TotalSubscribers,
+                    NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions,
                 });
             }
             else

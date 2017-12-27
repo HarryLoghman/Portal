@@ -35,6 +35,8 @@ namespace Portal.Controllers
                 var hash = SharedLibrary.Security.GetSha256Hash("OtpCharge" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
+                if (messageObj.ServiceCode == "NabardGah")
+                    messageObj.ServiceCode = "Soltan";
                 else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 7) // Hub use price 5 and 6 for sub and unsub
                     result.Status = "This ServiceCode does not have permission for OTP operation";
                 else
@@ -512,6 +514,8 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
+                    if (messageObj.ServiceCode == "NabardGah")
+                        messageObj.ServiceCode = "Soltan";
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
@@ -842,6 +846,8 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
+                    if (messageObj.ServiceCode == "NabardGah")
+                        messageObj.ServiceCode = "Soltan";
                     if (messageObj.Address != null)
                     {
                         messageObj.MobileNumber = messageObj.Address;
@@ -890,6 +896,8 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
+                    if (messageObj.ServiceCode == "NabardGah")
+                        messageObj.ServiceCode = "Soltan";
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
@@ -937,6 +945,8 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
+                    if (messageObj.ServiceCode == "NabardGah")
+                        messageObj.ServiceCode = "Soltan";
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
@@ -1027,6 +1037,8 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
+                    if (messageObj.ServiceCode == "NabardGah")
+                        messageObj.ServiceCode = "Soltan";
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";

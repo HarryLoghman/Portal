@@ -7,7 +7,7 @@ using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;
 
-namespace Portal.Areas.Soltan.Controllers
+namespace Portal.Areas.NabardGah.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class SendDirectMessageController : Controller
@@ -18,7 +18,7 @@ namespace Portal.Areas.Soltan.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "شهر وار";
+            ViewBag.ServiceName = "نبردگاه";
             return View();
         }
         

@@ -7,7 +7,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace Portal.Areas.Soltan.Controllers
+namespace Portal.Areas.NabardGah.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class EventbaseContentsController : Controller
@@ -18,7 +18,7 @@ namespace Portal.Areas.Soltan.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "شهر وار";
+            ViewBag.ServiceName = "نبردگاه";
             return View();
         }
 

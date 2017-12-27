@@ -1,22 +1,22 @@
 ﻿using System.Web.Mvc;
 
-namespace Portal.Areas.Soltan
+namespace Portal.Areas.NabardGah
 {
-    public class SoltanAreaRegistration : AreaRegistration 
+    public class NabardGahAreaRegistration : AreaRegistration 
     {
         public override string AreaName 
         {
             get 
             {
-                return "Soltan";
+                return "NabardGah";
             }
         }
 
         public override void RegisterArea(AreaRegistrationContext context) 
         {
             context.MapRoute(
-                "Soltan_default",
-                "Soltan/{controller}/{action}/{id}",
+                "NabardGah_default",
+                "NabardGah/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
         }
