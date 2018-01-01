@@ -63,6 +63,16 @@ namespace SharedLibrary
             }
         }
 
+        public static ServiceInfo GetServiceInfoFromOperatorServiceId(string operatorServiceId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.OperatorServiceId == operatorServiceId);
+                return serviceInfo;
+            }
+        }
+
+
         public static long GetAggregatorIdFromAggregatorName(string aggregatorName)
         {
             using (var entity = new PortalEntities())

@@ -25,7 +25,7 @@ namespace DehnadPhantomService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MobinOne")]
+        [global::System.Configuration.DefaultSettingValueAttribute("MobinOneMapfa")]
         public string AggregatorName {
             get {
                 return ((string)(this["AggregatorName"]));
@@ -80,18 +80,6 @@ namespace DehnadPhantomService.Properties {
             }
             set {
                 this["ReadSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
-        public int Take {
-            get {
-                return ((int)(this["Take"]));
-            }
-            set {
-                this["Take"] = value;
             }
         }
         
@@ -152,6 +140,18 @@ namespace DehnadPhantomService.Properties {
             }
             set {
                 this["DefaultSingleChargeTakeSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public int Take {
+            get {
+                return ((int)(this["Take"]));
+            }
+            set {
+                this["Take"] = value;
             }
         }
     }

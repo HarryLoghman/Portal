@@ -189,6 +189,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Service References\MobinOneMapfaChargingServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MobinOneMapfaSendServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\MobinOneServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -214,6 +224,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+	<Compile Include="Service References\MobinOneMapfaChargingServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="ServiceHandler.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -229,10 +244,36 @@
     </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\System.Data.DataTable.datasource" />
+	<None Include="Service References\MobinOneMapfaChargingServiceReference\ChargeServiceService.wsdl" />
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\Charging.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\HubServiceReference\SharedLibrary.HubServiceReference.XmsRequestResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\HubServiceReference\sms.wsdl" />
+    <None Include="Service References\MobinOneMapfaSendServiceReference\MobinOneMapfaSend.wsdl" />
+    <None Include="Service References\MobinOneMapfaSendServiceReference\SharedLibrary.MobinOneMapfaSendServiceReference.RSendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MobinOneMapfaSendServiceReference\SharedLibrary.MobinOneMapfaSendServiceReference.ServiceSendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MobinOneMapfaSendServiceReference\SharedLibrary.MobinOneMapfaSendServiceReference.UltraSendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\MobinOneServiceReference\MobinOne.wsdl" />
     <None Include="Service References\PardisImiServiceReference\pardis-imi-mt.wsdl" />
     <None Include="Service References\PardisImiServiceReference\SharedLibrary.PardisImiServiceReference.SendSMS2Response.datasource">
@@ -297,6 +338,8 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\HubServiceReference\" />
+    <WCFMetadataStorage Include="Service References\MobinOneMapfaChargingServiceReference\" />
+    <WCFMetadataStorage Include="Service References\MobinOneMapfaSendServiceReference\" />
     <WCFMetadataStorage Include="Service References\MobinOneServiceReference\" />
     <WCFMetadataStorage Include="Service References\PardisImiServiceReference\" />
     <WCFMetadataStorage Include="Service References\PardisImiSinglechargeServiceReference\" />
@@ -314,6 +357,18 @@
       <DependentUpon>PortalModel.edmx</DependentUpon>
       <LastGenOutput>PortalModel.cs</LastGenOutput>
     </Content>
+    <None Include="Service References\MobinOneMapfaSendServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\MobinOneMapfaSendServiceReference\configuration.svcinfo" />
+    <None Include="Service References\MobinOneMapfaSendServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\configuration.svcinfo" />
+    <None Include="Service References\MobinOneMapfaChargingServiceReference\configuration91.svcinfo" />
     <None Include="Service References\MobinOneServiceReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>

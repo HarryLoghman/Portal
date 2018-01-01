@@ -218,6 +218,14 @@
     <Compile Include="Areas\DefendIran\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\DefendIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\DefendIran\DefendIranAreaRegistration.cs" />
+    <Compile Include="Areas\Medio\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Medio\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Medio\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Medio\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Medio\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Medio\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Medio\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Medio\MedioAreaRegistration.cs" />
     <Compile Include="Areas\Phantom\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Phantom\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Phantom\Controllers\MonitoringController.cs" />
@@ -1296,6 +1304,16 @@
     <Content Include="Areas\Phantom\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Phantom\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Phantom\Views\web.config" />
+    <Content Include="Areas\Medio\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Medio\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Medio\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Medio\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Medio\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Medio\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Medio\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Medio\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Medio\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Medio\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1658,6 +1676,7 @@
     <Folder Include="Areas\FitShow\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
+    <Folder Include="Areas\Medio\Models\" />
     <Folder Include="Areas\MenchBaz\Models\" />
     <Folder Include="Areas\Mobiliga\Models\" />
     <Folder Include="Areas\MusicYad\Models\" />
@@ -1759,6 +1778,10 @@
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MedioLibrary\MedioLibrary.csproj">
+      <Project>{1232d11f-151b-a5b5-1311-4bc28b33144f}</Project>
+      <Name>MedioLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
       <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>

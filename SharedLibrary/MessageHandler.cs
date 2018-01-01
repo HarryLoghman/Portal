@@ -425,6 +425,8 @@ namespace SharedLibrary
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisPlatform")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entityType, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "MobinOneMapfa")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "MTN")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMtn(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "MobinOne")

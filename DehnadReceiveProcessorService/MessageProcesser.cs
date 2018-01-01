@@ -218,6 +218,8 @@ namespace DehnadReceiveProcessorService
                     MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Phantom")
                     PhantomLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Medio")
+                    MedioLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -287,6 +289,8 @@ namespace DehnadReceiveProcessorService
                     MusicYadLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "Phantom")
                     PhantomLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Medio")
+                    MedioLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

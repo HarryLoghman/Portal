@@ -1129,6 +1129,10 @@
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MedioLibrary\MedioLibrary.csproj">
+      <Project>{1232d11f-151b-a5b5-1311-4bc28b33144f}</Project>
+      <Name>MedioLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
       <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>
       <Name>MenchBazLibrary</Name>

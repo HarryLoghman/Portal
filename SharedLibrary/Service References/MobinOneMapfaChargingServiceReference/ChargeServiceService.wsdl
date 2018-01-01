@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://services.mapfa.net" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" name="ChargeServiceService" targetNamespace="http://services.mapfa.net" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://10.20.9.8:9005/charging_websrv/services/Charging?xsd=1" namespace="http://services.mapfa.net" />
+    </xsd:schema>
+  </types>
+  <message name="singleCharge">
+    <part name="parameters" element="tns:singleCharge" />
+  </message>
+  <message name="singleChargeResponse">
+    <part name="parameters" element="tns:singleChargeResponse" />
+  </message>
+  <message name="dynamicCharge">
+    <part name="parameters" element="tns:dynamicCharge" />
+  </message>
+  <message name="dynamicChargeResponse">
+    <part name="parameters" element="tns:dynamicChargeResponse" />
+  </message>
+  <message name="sendVerificationCode">
+    <part name="parameters" element="tns:sendVerificationCode" />
+  </message>
+  <message name="sendVerificationCodeResponse">
+    <part name="parameters" element="tns:sendVerificationCodeResponse" />
+  </message>
+  <message name="verifySubscriber">
+    <part name="parameters" element="tns:verifySubscriber" />
+  </message>
+  <message name="verifySubscriberResponse">
+    <part name="parameters" element="tns:verifySubscriberResponse" />
+  </message>
+  <portType name="Charging">
+    <operation name="singleCharge">
+      <input wsam:Action="http://services.mapfa.net/Charging/singleChargeRequest" message="tns:singleCharge" />
+      <output wsam:Action="http://services.mapfa.net/Charging/singleChargeResponse" message="tns:singleChargeResponse" />
+    </operation>
+    <operation name="dynamicCharge">
+      <input wsam:Action="http://services.mapfa.net/Charging/dynamicChargeRequest" message="tns:dynamicCharge" />
+      <output wsam:Action="http://services.mapfa.net/Charging/dynamicChargeResponse" message="tns:dynamicChargeResponse" />
+    </operation>
+    <operation name="sendVerificationCode">
+      <input wsam:Action="http://services.mapfa.net/Charging/sendVerificationCodeRequest" message="tns:sendVerificationCode" />
+      <output wsam:Action="http://services.mapfa.net/Charging/sendVerificationCodeResponse" message="tns:sendVerificationCodeResponse" />
+    </operation>
+    <operation name="verifySubscriber">
+      <input wsam:Action="http://services.mapfa.net/Charging/verifySubscriberRequest" message="tns:verifySubscriber" />
+      <output wsam:Action="http://services.mapfa.net/Charging/verifySubscriberResponse" message="tns:verifySubscriberResponse" />
+    </operation>
+  </portType>
+  <binding name="ChargingPortBinding" type="tns:Charging">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="singleCharge">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="dynamicCharge">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendVerificationCode">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="verifySubscriber">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="ChargeServiceService">
+    <port name="ChargingPort" binding="tns:ChargingPortBinding">
+      <soap:address location="http://10.20.9.8:9005/charging_websrv/services/Charging" />
+    </port>
+  </service>
+</definitions>

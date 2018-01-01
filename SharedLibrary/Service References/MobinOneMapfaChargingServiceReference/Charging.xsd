@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://services.mapfa.net" targetNamespace="http://services.mapfa.net" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="dynamicCharge" type="tns:dynamicCharge" />
+  <xs:element name="dynamicChargeResponse" type="tns:dynamicChargeResponse" />
+  <xs:element name="sendVerificationCode" type="tns:sendVerificationCode" />
+  <xs:element name="sendVerificationCodeResponse" type="tns:sendVerificationCodeResponse" />
+  <xs:element name="singleCharge" type="tns:singleCharge" />
+  <xs:element name="singleChargeResponse" type="tns:singleChargeResponse" />
+  <xs:element name="verifySubscriber" type="tns:verifySubscriber" />
+  <xs:element name="verifySubscriberResponse" type="tns:verifySubscriberResponse" />
+  <xs:complexType name="singleCharge">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="username" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="domain" type="xs:string" />
+      <xs:element name="channel" type="xs:int" />
+      <xs:element minOccurs="0" name="mobilenum" type="xs:string" />
+      <xs:element minOccurs="0" name="serviceId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="singleChargeResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="verifySubscriber">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="username" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="domain" type="xs:string" />
+      <xs:element name="channel" type="xs:int" />
+      <xs:element minOccurs="0" name="mobilenum" type="xs:string" />
+      <xs:element minOccurs="0" name="serviceId" type="xs:string" />
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="verifySubscriberResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dynamicCharge">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="username" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="domain" type="xs:string" />
+      <xs:element name="channel" type="xs:int" />
+      <xs:element minOccurs="0" name="mobilenum" type="xs:string" />
+      <xs:element minOccurs="0" name="serviceId" type="xs:string" />
+      <xs:element name="price" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dynamicChargeResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendVerificationCode">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="username" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="domain" type="xs:string" />
+      <xs:element name="channel" type="xs:int" />
+      <xs:element minOccurs="0" name="mobilenum" type="xs:string" />
+      <xs:element minOccurs="0" name="serviceId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendVerificationCodeResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

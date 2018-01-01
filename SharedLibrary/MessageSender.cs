@@ -970,6 +970,15 @@ namespace SharedLibrary
                         return;
                     var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
                     var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                    var username = serviceAdditionalInfo["username"];
+                    var password = serviceAdditionalInfo["password"];
+                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                    var domain = "";
+                    if (aggregatorId == "3")
+                        domain = "pardis1";
+                    else
+                        domain = "alladmin";
+
                     string[] mobileNumbers = new string[messagesCount];
                     string[] shortCodes = new string[messagesCount];
                     string[] messageContents = new string[messagesCount];
@@ -1000,12 +1009,24 @@ namespace SharedLibrary
                     shortCodes = shortCodes.Where(o => !string.IsNullOrEmpty(o)).ToArray();
                     messageContents = messageContents.Where(o => !string.IsNullOrEmpty(o)).ToArray();
                     aggregatorServiceIds = aggregatorServiceIds.Where(o => !string.IsNullOrEmpty(o)).ToArray();
-
-                    var pardisClient = new SharedLibrary.PardisPlatformServiceReference.SendClient();
-                    var pardisResponse = pardisClient.ServiceSend(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], "pardis1", 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                    long[] pardisResponse;
+                    if (aggregatorId == "3")
+                    {
+                        var pardisClient = new SharedLibrary.PardisPlatformServiceReference.SendClient();
+                        pardisResponse = pardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                    }
+                    else
+                    {
+                        var mobinonePardisClient = new SharedLibrary.MobinOneMapfaSendServiceReference.SendClient();
+                        pardisResponse = mobinonePardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                    }
                     logs.Info("pardis Response count: " + pardisResponse.Count());
                     if (pardisResponse == null || pardisResponse.Count() < messagesCount)
                     {
+                        foreach (var item in pardisResponse)
+                        {
+                            logs.Info("paridsResposne when count < messageCount: " + item);
+                        }
                         pardisResponse = new long[messagesCount];
                     }
                     for (int index = 0; index < messagesCount; index++)
@@ -1056,11 +1077,20 @@ namespace SharedLibrary
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
+                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price).PardisServiceId;
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
-                    var domain = "";///PLEASE FILL THIS!
-                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
+                    var domain = "";
+                    if (aggregatorId == "3")
+                        domain = "pardis1";
+                    else
+                        domain = "alladmin";
                     var to = "98" + message.MobileNumber.TrimStart('0');
+                    //var client = mobinone
                     var result = 0;
                     if (result == 0)
                         singlecharge.Description = "SUCCESS-Pending Confirmation";

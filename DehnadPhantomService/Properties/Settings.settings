@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="AggregatorName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">MobinOne</Value>
+      <Value Profile="(Default)">MobinOneMapfa</Value>
     </Setting>
     <Setting Name="InsertAutochargeMessageInQueueTime" Type="System.String" Scope="User">
       <Value Profile="(Default)">03:15:00</Value>
@@ -16,9 +16,6 @@
     </Setting>
     <Setting Name="ReadSize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1000</Value>
-    </Setting>
-    <Setting Name="Take" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">20</Value>
     </Setting>
     <Setting Name="ServiceCode" Type="System.String" Scope="User">
       <Value Profile="(Default)">Phantom</Value>
@@ -34,6 +31,9 @@
     </Setting>
     <Setting Name="DefaultSingleChargeTakeSize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7000</Value>
+    </Setting>
+    <Setting Name="Take" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">20</Value>
     </Setting>
   </Settings>
 </SettingsFile>

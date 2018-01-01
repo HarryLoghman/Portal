@@ -35,7 +35,7 @@ namespace SharedLibrary
                 List<Task> TaskList = new List<Task>();
                 for (int i = 0; i < take.Length; i++)
                 {
-                    var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
+                    var chunkedInstallmentList = ((IEnumerable)installmentList).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
                     TaskList.Add(MtnProcessInstallmentChunk(entityType, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlechargeType));
                 }
                 Task.WaitAll(TaskList.ToArray());

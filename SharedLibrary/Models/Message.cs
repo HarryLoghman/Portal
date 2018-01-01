@@ -38,5 +38,6 @@ namespace SharedLibrary.Models
         public string ServiceCode { get; set; }
         public string AccessKey { get; set; }
         public string ConfirmCode { get; set; }
+        public string Text { get; set; }
     }
 }
