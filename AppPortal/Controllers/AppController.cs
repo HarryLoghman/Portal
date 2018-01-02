@@ -461,6 +461,7 @@ namespace Portal.Controllers
                             }
                             else if (service.ServiceCode == "Phantom")
                             {
+                                Type entityType = typeof(PhantomLibrary.Models.PhantomEntities);
                                 using (var entity = new PhantomLibrary.Models.PhantomEntities())
                                 {
                                     var imiChargeCode = new PhantomLibrary.Models.ImiChargeCode();
@@ -477,10 +478,10 @@ namespace Portal.Controllers
                                         result.Status = "Invalid Price";
                                     else
                                     {
-                                        var singleCharge = new MobiligaLibrary.Models.Singlecharge();
+                                        var singleCharge = new PhantomLibrary.Models.Singlecharge();
                                         string aggregatorName = "MobinOneMapfa";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MobinOneOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entityType, singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -503,10 +504,10 @@ namespace Portal.Controllers
                                         result.Status = "Invalid Price";
                                     else
                                     {
-                                        var singleCharge = new MobiligaLibrary.Models.Singlecharge();
+                                        var singleCharge = new MedioLibrary.Models.Singlecharge();
                                         string aggregatorName = "MobinOneMapfa";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MobinOneOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(typeof(MedioLibrary.Models.MedioEntities), singleCharge, messageObj, serviceAdditionalInfo);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -836,9 +837,9 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MobinOne";
+                                        string aggregatorName = "MobinOneMapfa";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MobinOneOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(typeof(PhantomLibrary.Models.PhantomEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -855,7 +856,7 @@ namespace Portal.Controllers
                                     {
                                         string aggregatorName = "MobinOneMapfa";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MobinOneOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(typeof(MedioLibrary.Models.MedioEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }

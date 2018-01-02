@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
+namespace SharedLibrary.MobinOneMapfaChargingServiceReference {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -17,31 +17,31 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
         
         // CODEGEN: Generating message contract since element name username from namespace  is not marked nillable
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/singleChargeRequest", ReplyAction="http://services.mapfa.net/Charging/singleChargeResponse")]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponse singleCharge(ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest request);
+        SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponse singleCharge(SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/singleChargeRequest", ReplyAction="http://services.mapfa.net/Charging/singleChargeResponse")]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponse> singleChargeAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest request);
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponse> singleChargeAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest request);
         
         // CODEGEN: Generating message contract since element name username from namespace  is not marked nillable
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/dynamicChargeRequest", ReplyAction="http://services.mapfa.net/Charging/dynamicChargeResponse")]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponse dynamicCharge(ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request);
+        SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponse dynamicCharge(SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/dynamicChargeRequest", ReplyAction="http://services.mapfa.net/Charging/dynamicChargeResponse")]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponse> dynamicChargeAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request);
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponse> dynamicChargeAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request);
         
         // CODEGEN: Generating message contract since element name username from namespace  is not marked nillable
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/sendVerificationCodeRequest", ReplyAction="http://services.mapfa.net/Charging/sendVerificationCodeResponse")]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse sendVerificationCode(ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request);
+        SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse sendVerificationCode(SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/sendVerificationCodeRequest", ReplyAction="http://services.mapfa.net/Charging/sendVerificationCodeResponse")]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse> sendVerificationCodeAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request);
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse> sendVerificationCodeAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request);
         
         // CODEGEN: Generating message contract since element name username from namespace  is not marked nillable
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/verifySubscriberRequest", ReplyAction="http://services.mapfa.net/Charging/verifySubscriberResponse")]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponse verifySubscriber(ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request);
+        SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponse verifySubscriber(SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://services.mapfa.net/Charging/verifySubscriberRequest", ReplyAction="http://services.mapfa.net/Charging/verifySubscriberResponse")]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponse> verifySubscriberAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request);
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponse> verifySubscriberAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -51,12 +51,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class singleChargeRequest {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="singleCharge", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequestBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequestBody Body;
         
         public singleChargeRequest() {
         }
         
-        public singleChargeRequest(ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequestBody Body) {
+        public singleChargeRequest(SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequestBody Body) {
             this.Body = Body;
         }
     }
@@ -105,12 +105,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class singleChargeResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="singleChargeResponse", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponseBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponseBody Body;
         
         public singleChargeResponse() {
         }
         
-        public singleChargeResponse(ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponseBody Body) {
+        public singleChargeResponse(SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponseBody Body) {
             this.Body = Body;
         }
     }
@@ -139,12 +139,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class dynamicChargeRequest {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="dynamicCharge", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody Body;
         
         public dynamicChargeRequest() {
         }
         
-        public dynamicChargeRequest(ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody Body) {
+        public dynamicChargeRequest(SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody Body) {
             this.Body = Body;
         }
     }
@@ -197,12 +197,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class dynamicChargeResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="dynamicChargeResponse", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponseBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponseBody Body;
         
         public dynamicChargeResponse() {
         }
         
-        public dynamicChargeResponse(ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponseBody Body) {
+        public dynamicChargeResponse(SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponseBody Body) {
             this.Body = Body;
         }
     }
@@ -231,12 +231,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class sendVerificationCodeRequest {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="sendVerificationCode", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody Body;
         
         public sendVerificationCodeRequest() {
         }
         
-        public sendVerificationCodeRequest(ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody Body) {
+        public sendVerificationCodeRequest(SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody Body) {
             this.Body = Body;
         }
     }
@@ -285,12 +285,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class sendVerificationCodeResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="sendVerificationCodeResponse", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponseBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponseBody Body;
         
         public sendVerificationCodeResponse() {
         }
         
-        public sendVerificationCodeResponse(ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponseBody Body) {
+        public sendVerificationCodeResponse(SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponseBody Body) {
             this.Body = Body;
         }
     }
@@ -319,12 +319,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class verifySubscriberRequest {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="verifySubscriber", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody Body;
         
         public verifySubscriberRequest() {
         }
         
-        public verifySubscriberRequest(ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody Body) {
+        public verifySubscriberRequest(SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody Body) {
             this.Body = Body;
         }
     }
@@ -377,12 +377,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     public partial class verifySubscriberResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="verifySubscriberResponse", Namespace="http://services.mapfa.net", Order=0)]
-        public ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponseBody Body;
+        public SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponseBody Body;
         
         public verifySubscriberResponse() {
         }
         
-        public verifySubscriberResponse(ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponseBody Body) {
+        public verifySubscriberResponse(SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponseBody Body) {
             this.Body = Body;
         }
     }
@@ -405,12 +405,12 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface ChargingChannel : ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging, System.ServiceModel.IClientChannel {
+    public interface ChargingChannel : SharedLibrary.MobinOneMapfaChargingServiceReference.Charging, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class ChargingClient : System.ServiceModel.ClientBase<ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging>, ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging {
+    public partial class ChargingClient : System.ServiceModel.ClientBase<SharedLibrary.MobinOneMapfaChargingServiceReference.Charging>, SharedLibrary.MobinOneMapfaChargingServiceReference.Charging {
         
         public ChargingClient() {
         }
@@ -432,48 +432,48 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponse ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.singleCharge(ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest request) {
+        SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponse SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.singleCharge(SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest request) {
             return base.Channel.singleCharge(request);
         }
         
         public long singleCharge(string username, string password, string domain, int channel, string mobilenum, string serviceId) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequestBody();
+            SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
             inValue.Body.channel = channel;
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponse retVal = ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).singleCharge(inValue);
+            SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponse retVal = ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).singleCharge(inValue);
             return retVal.Body.@return;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponse> ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.singleChargeAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest request) {
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponse> SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.singleChargeAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest request) {
             return base.Channel.singleChargeAsync(request);
         }
         
-        public System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeResponse> singleChargeAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.singleChargeRequestBody();
+        public System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeResponse> singleChargeAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId) {
+            SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.singleChargeRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
             inValue.Body.channel = channel;
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
-            return ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).singleChargeAsync(inValue);
+            return ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).singleChargeAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponse ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.dynamicCharge(ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request) {
+        SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponse SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.dynamicCharge(SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request) {
             return base.Channel.dynamicCharge(request);
         }
         
         public long dynamicCharge(string username, string password, string domain, int channel, string mobilenum, string serviceId, long price) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody();
+            SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
@@ -481,18 +481,18 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
             inValue.Body.price = price;
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponse retVal = ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).dynamicCharge(inValue);
+            SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponse retVal = ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).dynamicCharge(inValue);
             return retVal.Body.@return;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponse> ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.dynamicChargeAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request) {
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponse> SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.dynamicChargeAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest request) {
             return base.Channel.dynamicChargeAsync(request);
         }
         
-        public System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeResponse> dynamicChargeAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId, long price) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody();
+        public System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeResponse> dynamicChargeAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId, long price) {
+            SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.dynamicChargeRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
@@ -500,52 +500,52 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
             inValue.Body.price = price;
-            return ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).dynamicChargeAsync(inValue);
+            return ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).dynamicChargeAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.sendVerificationCode(ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request) {
+        SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.sendVerificationCode(SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request) {
             return base.Channel.sendVerificationCode(request);
         }
         
         public long sendVerificationCode(string username, string password, string domain, int channel, string mobilenum, string serviceId) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody();
+            SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
             inValue.Body.channel = channel;
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse retVal = ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).sendVerificationCode(inValue);
+            SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse retVal = ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).sendVerificationCode(inValue);
             return retVal.Body.@return;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse> ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.sendVerificationCodeAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request) {
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse> SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.sendVerificationCodeAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest request) {
             return base.Channel.sendVerificationCodeAsync(request);
         }
         
-        public System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse> sendVerificationCodeAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody();
+        public System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeResponse> sendVerificationCodeAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId) {
+            SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.sendVerificationCodeRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
             inValue.Body.channel = channel;
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
-            return ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).sendVerificationCodeAsync(inValue);
+            return ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).sendVerificationCodeAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponse ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.verifySubscriber(ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request) {
+        SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponse SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.verifySubscriber(SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request) {
             return base.Channel.verifySubscriber(request);
         }
         
         public long verifySubscriber(string username, string password, string domain, int channel, string mobilenum, string serviceId, string token) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody();
+            SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
@@ -553,18 +553,18 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
             inValue.Body.token = token;
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponse retVal = ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).verifySubscriber(inValue);
+            SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponse retVal = ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).verifySubscriber(inValue);
             return retVal.Body.@return;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponse> ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging.verifySubscriberAsync(ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request) {
+        System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponse> SharedLibrary.MobinOneMapfaChargingServiceReference.Charging.verifySubscriberAsync(SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest request) {
             return base.Channel.verifySubscriberAsync(request);
         }
         
-        public System.Threading.Tasks.Task<ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberResponse> verifySubscriberAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId, string token) {
-            ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest inValue = new ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequest();
-            inValue.Body = new ConsoleApp1.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody();
+        public System.Threading.Tasks.Task<SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberResponse> verifySubscriberAsync(string username, string password, string domain, int channel, string mobilenum, string serviceId, string token) {
+            SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest inValue = new SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequest();
+            inValue.Body = new SharedLibrary.MobinOneMapfaChargingServiceReference.verifySubscriberRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
             inValue.Body.domain = domain;
@@ -572,7 +572,7 @@ namespace ConsoleApp1.MobinOneMapfaChargingServiceReference {
             inValue.Body.mobilenum = mobilenum;
             inValue.Body.serviceId = serviceId;
             inValue.Body.token = token;
-            return ((ConsoleApp1.MobinOneMapfaChargingServiceReference.Charging)(this)).verifySubscriberAsync(inValue);
+            return ((SharedLibrary.MobinOneMapfaChargingServiceReference.Charging)(this)).verifySubscriberAsync(inValue);
         }
     }
 }

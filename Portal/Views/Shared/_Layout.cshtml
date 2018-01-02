@@ -812,6 +812,32 @@
                                                 </ul>
                                             </li>
                                         }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Medio"))
+                                        {
+                                            <li>
+                                                مدیو
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Medio" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Medio" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Medio" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Medio" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Medio" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }

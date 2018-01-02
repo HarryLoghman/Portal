@@ -42,14 +42,11 @@ namespace TamlyLibrary
                     {
                         message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                         message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        //message = SharedLibrary.MessageHandler.SendServiceOTPRequestExists(entity, imiChargeCodes, message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Telepromo");
                     message = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                    //message = SharedLibrary.MessageHandler.SendServiceOTPHelp(entity, imiChargeCodes, message, messagesTemplate);
-                    //MessageHandler.InsertMessageToQueue(message);
                     message.Price = 0;
                     message.MobileNumber = mobile;
                     singleCharge = new Singlecharge();

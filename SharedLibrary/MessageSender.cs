@@ -1069,7 +1069,7 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaOTPRequest(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, MessageHandler.MapfaChannels channel)
+        public static async Task<dynamic> MapfaOTPRequest(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
@@ -1079,7 +1079,7 @@ namespace SharedLibrary
                 {
                     var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
                     var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
-                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price).PardisServiceId;
+                    var aggregatorServiceId = paridsShortCodes.OrderByDescending(o => o.Price).FirstOrDefault().PardisServiceId;
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
                     var aggregatorId = serviceAdditionalInfo["aggregatorId"];
@@ -1089,13 +1089,14 @@ namespace SharedLibrary
                         domain = "pardis1";
                     else
                         domain = "alladmin";
-                    var to = "98" + message.MobileNumber.TrimStart('0');
-                    //var client = mobinone
-                    var result = 0;
+                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
+                    var result = client.sendVerificationCode(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
+
                     if (result == 0)
                         singlecharge.Description = "SUCCESS-Pending Confirmation";
                     else
-                        singlecharge.Description = result;
+                        singlecharge.Description = result.ToString();
                 }
                 catch (Exception e)
                 {
@@ -1122,27 +1123,36 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaOTPConfirm(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, MessageHandler.MapfaChannels channel, string confirmationCode)
+        public static async Task<dynamic> MapfaOTPConfirm(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 try
                 {
+                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                    var aggregatorServiceId = paridsShortCodes.OrderByDescending(o => o.Price).FirstOrDefault().PardisServiceId;
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
-                    var domain = "";///PLEASE FILL THIS!
-                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-                    var to = "98" + message.MobileNumber.TrimStart('0');
-                    var result = 0;
-                    singlecharge.Description = result;
+                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
+                    var domain = "";
+                    if (aggregatorId == "3")
+                        domain = "pardis1";
+                    else
+                        domain = "alladmin";
+                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
+                    var result = client.verifySubscriber(username, password, domain, channelType, mobileNumber, aggregatorServiceId, confirmationCode);
+                    singlecharge.Description = result.ToString();
                     if (result == 0)
                     {
                         singlecharge.IsSucceeded = true;
                         singlecharge.Description = "SUCCESS";
-                        entity.Entry(singlecharge).State = EntityState.Modified;
-                        entity.SaveChanges();
                     }
+                    entity.Entry(singlecharge).State = EntityState.Modified;
+                    entity.SaveChanges();
                 }
                 catch (Exception e)
                 {
@@ -1153,7 +1163,7 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaStaticPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, MessageHandler.MapfaChannels channel)
+        public static async Task<dynamic> MapfaStaticPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
@@ -1161,18 +1171,27 @@ namespace SharedLibrary
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
+                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
-                    var domain = "";///PLEASE FILL THIS!
-                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-                    var to = "98" + message.MobileNumber.TrimStart('0');
-                    var result = 0;
+                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
+                    var domain = "";
+                    if (aggregatorId == "3")
+                        domain = "pardis1";
+                    else
+                        domain = "alladmin";
+                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
+                    var result = client.singleCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
                     if (result == 0)
                         singlecharge.IsSucceeded = true;
                     else
                         singlecharge.IsSucceeded = false;
 
-                    singlecharge.Description = result;
+                    singlecharge.Description = result.ToString();
                 }
                 catch (Exception e)
                 {
@@ -1187,7 +1206,8 @@ namespace SharedLibrary
                     singlecharge.Price = message.Price.GetValueOrDefault();
                     singlecharge.IsApplicationInformed = false;
                     singlecharge.IsCalledFromInAppPurchase = false;
-
+                    if (installmentId != 0)
+                        singlecharge.InstallmentId = installmentId;
                     entity.Singlecharges.Add(singlecharge);
                     entity.SaveChanges();
                 }
@@ -1199,7 +1219,7 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaDynamicPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, MessageHandler.MapfaChannels channel)
+        public static async Task<dynamic> MapfaDynamicPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
@@ -1207,13 +1227,22 @@ namespace SharedLibrary
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
+                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
-                    var domain = "";///PLEASE FILL THIS!
-                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-                    var to = "98" + message.MobileNumber.TrimStart('0');
-                    var price = Convert.ToInt64(message.Price);
-                    var result = 0;
+                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
+                    var domain = "";
+                    if (aggregatorId == "3")
+                        domain = "pardis1";
+                    else
+                        domain = "alladmin";
+                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                    var price = Convert.ToInt64(message.Price.Value * 10);
+                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
+                    var result = client.dynamicCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId, price);
                     if (result == 0)
                         singlecharge.IsSucceeded = true;
                     else
@@ -1233,7 +1262,8 @@ namespace SharedLibrary
                     singlecharge.Price = message.Price.GetValueOrDefault();
                     singlecharge.IsApplicationInformed = false;
                     singlecharge.IsCalledFromInAppPurchase = false;
-
+                    if (installmentId != 0)
+                        singlecharge.InstallmentId = installmentId;
                     entity.Singlecharges.Add(singlecharge);
                     entity.SaveChanges();
                 }

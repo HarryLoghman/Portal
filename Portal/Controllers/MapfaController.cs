@@ -20,7 +20,6 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Message([FromUri]MessageObject messageObj)
         {
-            //var messageObj = new SharedLibrary.Models.MessageObject();
             messageObj.MobileNumber = messageObj.From;
             messageObj.ShortCode = messageObj.To;
             messageObj.Content = messageObj.Text;
