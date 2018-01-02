@@ -190,25 +190,67 @@ namespace DehnadPhantomService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            //var singlechargeInstallment = new SinglechargeInstallmentClass();
-            //int installmentCycleNumber = 1;
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15)
-            //    {
-            //        installmentCycleNumber = 1;
-            //        Thread.Sleep(50 * 60 * 1000);
-            //    }
-            //    else
-            //    {
-            //        if (DateTime.Now.Hour >= 7)
-            //        {
-            //            singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-            //            installmentCycleNumber++;
-            //        }
-            //        Thread.Sleep(1000);
-            //    }
-            //}
+            var singlechargeInstallment = new SinglechargeInstallmentClass();
+            int installmentCycleNumber = 1;
+            TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
+            while (!shutdownEvent.WaitOne(0))
+            {
+                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15))
+                {
+                    installmentCycleNumber = 1;
+                    Thread.Sleep(/*50 * 60 * */1000);
+                }
+                else
+                {
+                    var startTime = DateTime.Now;
+                    if (installmentCycleNumber == 1)
+                    {
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                        var endTime = DateTime.Now;
+                    }
+                    else if (installmentCycleNumber == 2)
+                    {
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                        var endTime = DateTime.Now;
+                    }
+                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour < 16)
+                    {
+                        TimeSpan hour = TimeSpan.Parse("16:00:00");
+                        timeDiffs = hour - startTime.TimeOfDay;
+                        if (timeDiffs.TotalSeconds >= 5)
+                            Thread.Sleep((int)timeDiffs.TotalMilliseconds);
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                        var endTime = DateTime.Now;
+                    }
+                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour > 16 && DateTime.Now.Hour < 21)
+                    {
+                        TimeSpan hour = TimeSpan.Parse("21:00:00");
+                        timeDiffs = hour - startTime.TimeOfDay;
+                        if (timeDiffs.TotalSeconds >= 5)
+                            Thread.Sleep((int)timeDiffs.TotalMilliseconds);
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                        var endTime = DateTime.Now;
+
+                    }
+                    else if (installmentCycleNumber == 5 && DateTime.Now.Hour > 21 && (DateTime.Now.Hour <= 22 && DateTime.Now.Minute < 30))
+                    {
+                        TimeSpan hour = TimeSpan.Parse("22:30:00");
+                        timeDiffs = hour - startTime.TimeOfDay;
+                        if (timeDiffs.TotalSeconds >= 5)
+                            Thread.Sleep((int)timeDiffs.TotalMilliseconds);
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                        var endTime = DateTime.Now;
+
+                    }
+                    else
+                        Thread.Sleep(1000);
+                }
+            }
         }
 
         //private void SinglechargeInstallmentBalancerWorkerThread()

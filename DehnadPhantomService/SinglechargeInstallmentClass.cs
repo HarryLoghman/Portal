@@ -7,72 +7,44 @@ using PhantomLibrary.Models;
 using PhantomLibrary;
 using System.Data.Entity;
 using System.Threading;
+using System.Collections;
 
 namespace DehnadPhantomService
 {
     public class SinglechargeInstallmentClass
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private static int maxChargeLimit = 400;
+        private static int maxChargeLimit = 500;
         public void ProcessInstallment(int installmentCycleNumber)
         {
-            InstallmentJob(installmentCycleNumber);
-
-            //if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
-            //    InstallmentDailyBalance();
-            //else
-            //    InstallmentJob();
-            //if (DateTime.Now.Hour == 5 || DateTime.Now.Hour == 6 || DateTime.Now.Hour == 7)
-            //{
-            //    ResetUserDailyChargeBalanceValue();
-            //}
-        }
-
-        private void DeactivateChargingUsersAfter30Days()
-        {
             try
             {
-                using (var entity = new PhantomEntities())
-                {
-                    var today = DateTime.Now;
-                    entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
-                    entity.SaveChanges();
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in SinglechargeInstallment InstallmentDailyBalance: ", e);
-            }
-        }
+                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                var serviceCode = Properties.Settings.Default.ServiceCode;
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                List<SinglechargeInstallment> installmentList;
+                Type entityType = typeof(PhantomEntities);
+                Type singleChargeType = typeof(Singlecharge);
 
-        public void ResetUserDailyChargeBalanceValue()
-        {
-            try
-            {
-                int batchSaveCounter = 0;
                 using (var entity = new PhantomEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
-                    foreach (var item in userDailyBalnace)
+                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {
-                        if (batchSaveCounter >= 1000)
-                        {
-                            entity.SaveChanges();
-                            batchSaveCounter = 0;
-                        }
-                        item.IsUserDailyChargeBalanced = false;
-                        entity.Entry(item).State = EntityState.Modified;
-                        batchSaveCounter++;
+                        logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
+                        installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
+                        int installmentListCount = installmentList.Count;
+                        var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                        SharedLibrary.InstallmentHandler.MapfaInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
-                    entity.SaveChanges();
                 }
             }
             catch (Exception e)
             {
-                logs.Error("Exception in SinglechargeInstallment InstallmentDailyBalance: ", e);
+                logs.Error("Exception in ProcessInstallment:", e);
             }
-
         }
 
         public void InstallmentDailyBalance()

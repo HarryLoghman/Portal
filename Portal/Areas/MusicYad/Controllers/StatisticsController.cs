@@ -184,7 +184,7 @@ namespace Portal.Areas.MusicYad.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Statistics_Read([DataSourceRequest]DataSourceRequest request)
         {
-            var result = db.DailyStatistics.OrderBy(o => o.Date);
+            var result = db.DailyStatistics.Select(o => new { o.Date, o.NumberOfSubscriptions, o.NumberOfUnsubscriptions }).OrderBy(o => o.Date);
             if (User.IsInRole("Admin"))
                 return Json(result, JsonRequestBehavior.AllowGet);
             else

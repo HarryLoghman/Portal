@@ -83,13 +83,9 @@ namespace MedioLibrary
             {
                 using (var entity = new MedioEntities())
                 {
-                    //var chargeCode = Convert.ToInt32(content);
-                    //var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
-                    //if (imichargeCode == null)
-                    //    return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
-                    singlechargeQueueItem.Price = 100000;
+                    singlechargeQueueItem.Price = 12000;
                     singlechargeQueueItem.DateAdded = DateTime.Now;
                     singlechargeQueueItem.PersianDateAdded = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlechargeQueueItem.IsLastDayWarningSent = false;

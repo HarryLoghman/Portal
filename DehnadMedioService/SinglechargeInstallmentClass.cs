@@ -7,6 +7,7 @@ using MedioLibrary.Models;
 using MedioLibrary;
 using System.Data.Entity;
 using System.Threading;
+using System.Collections;
 
 namespace DehnadMedioService
 {
@@ -16,16 +17,34 @@ namespace DehnadMedioService
         private static int maxChargeLimit = 400;
         public void ProcessInstallment(int installmentCycleNumber)
         {
-            InstallmentJob(installmentCycleNumber);
+            try
+            {
+                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                var serviceCode = Properties.Settings.Default.ServiceCode;
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                List<SinglechargeInstallment> installmentList;
+                Type entityType = typeof(MedioEntities);
+                Type singleChargeType = typeof(Singlecharge);
 
-            //if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
-            //    InstallmentDailyBalance();
-            //else
-            //    InstallmentJob();
-            //if (DateTime.Now.Hour == 5 || DateTime.Now.Hour == 6 || DateTime.Now.Hour == 7)
-            //{
-            //    ResetUserDailyChargeBalanceValue();
-            //}
+                using (var entity = new MedioEntities())
+                {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
+                    {
+                        logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
+                        installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
+                        int installmentListCount = installmentList.Count;
+                        var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                        SharedLibrary.InstallmentHandler.MapfaInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ProcessInstallment:", e);
+            }
         }
 
         private void DeactivateChargingUsersAfter30Days()

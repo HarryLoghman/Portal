@@ -1163,11 +1163,12 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaStaticPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<dynamic> MapfaStaticPriceSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
+                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
@@ -1219,11 +1220,12 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaDynamicPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<dynamic> MapfaDynamicPriceSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
+                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
