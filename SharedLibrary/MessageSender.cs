@@ -1187,7 +1187,7 @@ namespace SharedLibrary
                     var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                     var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
                     var result = client.singleCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
-                    if (result == 0)
+                    if (result > 10000)
                         singlecharge.IsSucceeded = true;
                     else
                         singlecharge.IsSucceeded = false;
@@ -1245,7 +1245,7 @@ namespace SharedLibrary
                     var price = Convert.ToInt64(message.Price.Value * 10);
                     var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
                     var result = client.dynamicCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId, price);
-                    if (result == 0)
+                    if (result > 10000)
                         singlecharge.IsSucceeded = true;
                     else
                         singlecharge.IsSucceeded = false;

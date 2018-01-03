@@ -88,6 +88,8 @@ namespace SharedLibrary
                         {
                             installment.PricePayed += message.Price.GetValueOrDefault();
                             installment.PriceTodayCharged += message.Price.GetValueOrDefault();
+                            if (installment.PriceTodayCharged >= maxChargeLimit)
+                                installment.IsExceededDailyChargeLimit = true;
                             if (installment.PricePayed >= installment.TotalPrice)
                                 installment.IsFullyPaid = true;
                             entity.Entry(installment).State = EntityState.Modified;
