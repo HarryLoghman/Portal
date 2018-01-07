@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadPhantomService", "Deh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMedioService", "DehnadMedioService\DehnadMedioService.csproj", "{1CF14122-4D21-8222-4D51-3D541B3439B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadNotificationService", "DehnadNotificationService\DehnadNotificationService.csproj", "{1DF14122-4D21-8222-4D51-34141B3539C1}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -281,6 +283,10 @@ Global
 		{1CF14122-4D21-8222-4D51-3D541B3439B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CF14122-4D21-8222-4D51-3D541B3439B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CF14122-4D21-8222-4D51-3D541B3439B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DF14122-4D21-8222-4D51-34141B3539C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DF14122-4D21-8222-4D51-34141B3539C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DF14122-4D21-8222-4D51-34141B3539C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DF14122-4D21-8222-4D51-34141B3539C1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU

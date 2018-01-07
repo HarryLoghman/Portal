@@ -195,7 +195,7 @@ namespace DehnadPhantomService
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             while (!shutdownEvent.WaitOne(0))
             {
-                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15))
+                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 59) || (DateTime.Now.Hour < 8 ))
                 {
                     installmentCycleNumber = 1;
                     Thread.Sleep(/*50 * 60 * */1000);
@@ -209,43 +209,30 @@ namespace DehnadPhantomService
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
                     }
-                    else if (installmentCycleNumber == 2)
+                    else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 13)
                     {
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
                     }
-                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour < 16)
+                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 16)
                     {
-                        TimeSpan hour = TimeSpan.Parse("16:00:00");
-                        timeDiffs = hour - startTime.TimeOfDay;
-                        if (timeDiffs.TotalSeconds >= 5)
-                            Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
                     }
-                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour > 16 && DateTime.Now.Hour < 21)
+                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 19)
                     {
-                        TimeSpan hour = TimeSpan.Parse("21:00:00");
-                        timeDiffs = hour - startTime.TimeOfDay;
-                        if (timeDiffs.TotalSeconds >= 5)
-                            Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
 
                     }
-                    else if (installmentCycleNumber == 5 && DateTime.Now.Hour > 21 && (DateTime.Now.Hour <= 22 && DateTime.Now.Minute < 30))
+                    else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 22)
                     {
-                        TimeSpan hour = TimeSpan.Parse("22:30:00");
-                        timeDiffs = hour - startTime.TimeOfDay;
-                        if (timeDiffs.TotalSeconds >= 5)
-                            Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
-
                     }
                     else
                         Thread.Sleep(1000);

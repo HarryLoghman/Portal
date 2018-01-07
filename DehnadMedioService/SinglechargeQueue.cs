@@ -129,7 +129,7 @@ namespace DehnadMedioService
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeInstallments.Where(o => now > DbFunctions.AddDays(o.DateCreated, 30) && o.DateCreated > DbFunctions.AddDays(now, -32) && o.IsUserCanceledTheInstallment != true && o.IsRenewd != true).ToList();
+                    var QueueList = entity.SinglechargeInstallments.Where(o => now.Date >= DbFunctions.TruncateTime(DbFunctions.AddDays(o.DateCreated, 31)) && o.IsUserCanceledTheInstallment != true && o.IsRenewd != true).ToList();
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Medio");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
