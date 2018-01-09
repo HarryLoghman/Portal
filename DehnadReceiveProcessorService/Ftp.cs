@@ -27,6 +27,10 @@ namespace DehnadReceiveProcessorService
                 TelepromoGetIncome(typeof(AvvalPodLibrary.Models.AvvalPodEntities), "AvvalPod");
                 TelepromoGetIncome(typeof(AvvalYadLibrary.Models.AvvalYadEntities), "AvvalYad");
                 TelepromoGetIncome(typeof(DezhbanLibrary.Models.DezhbanEntities), "Dezhban");
+                TelepromoGetIncome(typeof(AvvalPod500Library.Models.AvvalPod500Entities), "AvvalPod500");
+                TelepromoGetIncome(typeof(BehAmooz500Library.Models.BehAmooz500Entities), "BehAmooz500");
+                TelepromoGetIncome(typeof(ShenoYad500Library.Models.ShenoYad500Entities), "ShenoYad500");
+                TelepromoGetIncome(typeof(Tamly500Library.Models.Tamly500Entities), "Tamly500");
             }
             catch (Exception e)
             {

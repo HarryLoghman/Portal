@@ -109,7 +109,21 @@ namespace DehnadReceiveProcessorService
                         if (serviceShortCodes.Count() == 1)
                             serviceId = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == message.ShortCode).ServiceId;
                         else
-                            serviceId = SharedLibrary.MessageHandler.GetServiceIdFromUserMessage(message.Content, message.ShortCode);
+                        {
+                            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromShortCode(message.ShortCode);
+                            if (serviceInfo.AggregatorId == 5)
+                            {
+                                if (message.ReceivedFrom.Contains("-New500-"))
+                                {
+                                    var telepromoServices = SharedLibrary.ServiceHandler.GetAllServicesByAggregatorId(5);
+                                    serviceId = telepromoServices.Where(o => o.ShortCode == message.ShortCode).OrderByDescending(o => o.ServiceId).Select(o => o.ServiceId).FirstOrDefault();
+                                }
+                                else
+                                    serviceId = serviceInfo.ServiceId;
+                            }
+                            else
+                                serviceId = SharedLibrary.MessageHandler.GetServiceIdFromUserMessage(message.Content, message.ShortCode);
+                        }
                         if (serviceId == 0)
                             serviceId = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == message.ShortCode).ServiceId;
                     }
@@ -190,8 +204,12 @@ namespace DehnadReceiveProcessorService
                     JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Tamly")
                     TamlyLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Tamly500")
+                    Tamly500Library.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "ShenoYad")
                     ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "ShenoYad500")
+                    ShenoYad500Library.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "FitShow")
                     FitShowLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Takavar")
@@ -200,8 +218,12 @@ namespace DehnadReceiveProcessorService
                     MenchBazLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "AvvalPod")
                     AvvalPodLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "AvvalPod500")
+                    AvvalPod500Library.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "AvvalYad")
                     AvvalYadLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "BehAmooz500")
+                    BehAmooz500Library.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "IrancellTest")
                     IrancellTestLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Soraty")

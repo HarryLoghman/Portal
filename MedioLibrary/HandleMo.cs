@@ -158,8 +158,8 @@ namespace MedioLibrary
                             message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
                         message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
-                        if (isUserWantsToUnsubscribe != true)
-                            MessageHandler.InsertMessageToQueue(message);
+
+                        MessageHandler.InsertMessageToQueue(message);
                         //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                         //{
                         //    message.Content = content;

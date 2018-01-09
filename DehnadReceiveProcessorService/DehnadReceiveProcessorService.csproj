@@ -104,6 +104,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvvalPod500Library\AvvalPod500Library.csproj">
+      <Project>{11f5a255-33f1-3544-2c12-48224341251b}</Project>
+      <Name>AvvalPod500Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
       <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
       <Name>AvvalPodLibrary</Name>
@@ -111,6 +115,10 @@
     <ProjectReference Include="..\AvvalYadLibrary\AvvalYadLibrary.csproj">
       <Project>{c113b241-33f5-c224-2122-4bc23f4d235f}</Project>
       <Name>AvvalYadLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BehAmooz500Library\BehAmooz500Library.csproj">
+      <Project>{c1134245-33f5-c521-2122-4bcb334d234a}</Project>
+      <Name>BehAmooz500Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
       <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>
@@ -196,6 +204,10 @@
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ShenoYad500Library\ShenoYad500Library.csproj">
+      <Project>{1c2c541d-aa02-1ec1-acfc-45d23145b565}</Project>
+      <Name>ShenoYad500Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShenoYadLibrary\ShenoYadLibrary.csproj">
       <Project>{2c2c445d-3e02-4eb1-acfc-45d2aab5556b}</Project>
       <Name>ShenoYadLibrary</Name>
@@ -219,6 +231,10 @@
     <ProjectReference Include="..\TakavarLibrary\TakavarLibrary.csproj">
       <Project>{52c36255-330f-25b1-abf2-4dd22ab523a1}</Project>
       <Name>TakavarLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tamly500Library\Tamly500Library.csproj">
+      <Project>{312d1145-de02-4eb1-1cbd-75b1a4b5436f}</Project>
+      <Name>Tamly500Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\TamlyLibrary\TamlyLibrary.csproj">
       <Project>{412d2155-de02-4eb1-acfd-75d3aab55364}</Project>

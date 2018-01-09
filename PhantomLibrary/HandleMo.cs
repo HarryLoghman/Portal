@@ -93,7 +93,7 @@ namespace PhantomLibrary
                         isUserSendsSubscriptionKeyword = true;
                     else if (message.ReceivedFrom.Contains("Unsubscribe"))
                         isUserWantsToUnsubscribe = true;
-                    logs.Info("6");
+
                     if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                     {
                         if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
@@ -117,7 +117,7 @@ namespace PhantomLibrary
                                 return;
                             }
                         }
-                        logs.Info("7");
+
                         var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                         if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                         {
@@ -158,8 +158,8 @@ namespace PhantomLibrary
                             message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
                         message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
-                        if (isUserWantsToUnsubscribe != true)
-                            MessageHandler.InsertMessageToQueue(message);
+
+                        MessageHandler.InsertMessageToQueue(message);
                         //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                         //{
                         //    message.Content = content;

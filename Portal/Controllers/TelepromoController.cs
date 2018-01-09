@@ -173,9 +173,9 @@ namespace Portal.Controllers
             if (type == "RENEWAL")
             {
                 var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                if(service.ServiceCode == "JabehAbzar")
+                if (service.ServiceCode == "JabehAbzar")
                 {
-                    using(var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
                     {
                         var singlecharge = new JabehAbzarLibrary.Models.Singlecharge();
                         singlecharge.MobileNumber = message.MobileNumber;
@@ -348,18 +348,31 @@ namespace Portal.Controllers
             else
             {
                 if (type == "SUBSCRIBE")
-                    message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
+                {
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c")
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI-Register" : null;
+                    else
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
+                }
                 else if (type == "UNSUBSCRIBE")
                 {
-                    message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
-                    if(message.Content == null || message.Content.ToLower() == "null")
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c")
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI-Unsubscribe" : null;
+                    else
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
+                    if (message.Content == null || message.Content.ToLower() == "null")
                     {
                         message.IsReceivedFromIntegratedPanel = true;
                         message.Content = "Off";
                     }
                 }
                 else
-                    message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
+                {
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c")
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI" : null;
+                    else
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
+                }
                 SharedLibrary.MessageHandler.SaveReceivedMessage(message);
             }
 
