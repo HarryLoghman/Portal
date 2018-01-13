@@ -86,16 +86,16 @@ namespace FitShowLibrary
 
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
-                    if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                    {
-                        var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                        if (user != null && user.DeactivationDate == null)
-                        {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                            MessageHandler.InsertMessageToQueue(message);
-                            return;
-                        }
-                    }
+                    //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                    //{
+                    //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                    //    if (user != null && user.DeactivationDate == null)
+                    //    {
+                    //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                    //        MessageHandler.InsertMessageToQueue(message);
+                    //        return;
+                    //    }
+                    //}
                     if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                     {
                         bool isSubscriberdVerified = FitShowLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
@@ -196,16 +196,16 @@ namespace FitShowLibrary
                 isUserSendsSubscriptionKeyword = true;
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
-                if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                {
-                    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                    if (user != null && user.DeactivationDate == null)
-                    {
-                        message.Content = content;
-                        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
-                        return singlecharge;
-                    }
-                }
+                //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                //{
+                //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                //    if (user != null && user.DeactivationDate == null)
+                //    {
+                //        message.Content = content;
+                //        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
+                //        return singlecharge;
+                //    }
+                //}
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {

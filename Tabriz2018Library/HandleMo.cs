@@ -18,16 +18,16 @@ namespace Tabriz2018Library
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
-                if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                {
-                    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                    if (user != null && user.DeactivationDate == null)
-                    {
-                        message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
-                        MessageHandler.InsertMessageToQueue(message);
-                        return;
-                    }
-                }
+                //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                //{
+                //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                //    if (user != null && user.DeactivationDate == null)
+                //    {
+                //        message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
+                //        MessageHandler.InsertMessageToQueue(message);
+                //        return;
+                //    }
+                //}
                 if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                 {
                     bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);

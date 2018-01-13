@@ -96,16 +96,28 @@ namespace ShenoYad500Library
 
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
-                    if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                    if (isUserSendsSubscriptionKeyword == true)
                     {
-                        var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                        if (user != null && user.DeactivationDate == null)
+                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("ShenoYad");
+                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                        if (oldServiceSubscriber.DeactivationDate == null)
                         {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                            MessageHandler.InsertMessageToQueue(message);
-                            return;
+                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(oldService.ServiceCode, "Telepromo");
+                            message.Price = -1;
+                            var singleCharge = new Singlecharge();
+                            await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, message, serviceAdditionalInfo);
                         }
                     }
+                    //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                    //{
+                    //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                    //    if (user != null && user.DeactivationDate == null)
+                    //    {
+                    //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                    //        MessageHandler.InsertMessageToQueue(message);
+                    //        return;
+                    //    }
+                    //}
                     if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                     {
                         bool isSubscriberdVerified = ShenoYad500Library.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
@@ -213,16 +225,16 @@ namespace ShenoYad500Library
                 isUserSendsSubscriptionKeyword = true;
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
-                if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                {
-                    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                    if (user != null && user.DeactivationDate == null)
-                    {
-                        message.Content = content;
-                        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
-                        return singlecharge;
-                    }
-                }
+                //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                //{
+                //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                //    if (user != null && user.DeactivationDate == null)
+                //    {
+                //        message.Content = content;
+                //        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
+                //        return singlecharge;
+                //    }
+                //}
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {

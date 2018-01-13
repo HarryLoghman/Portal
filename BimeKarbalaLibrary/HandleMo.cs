@@ -17,16 +17,16 @@ namespace BimeKarbalaLibrary
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
-                if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                {
-                    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                    if (user != null && user.DeactivationDate == null)
-                    {
-                        message.Content = content;
-                        ContentManager.HandleContent(message, service, user, messagesTemplate);
-                        return;
-                    }
-                }
+                //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                //{
+                //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                //    if (user != null && user.DeactivationDate == null)
+                //    {
+                //        message.Content = content;
+                //        ContentManager.HandleContent(message, service, user, messagesTemplate);
+                //        return;
+                //    }
+                //}
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {

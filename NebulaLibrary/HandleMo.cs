@@ -13,15 +13,15 @@ namespace NebulaLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void ReceivedMessage(MessageObject message, Service service)
         {
-            logs.Info("1");
+            
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new NebulaEntities())
             {
-                logs.Info("2");
+                
                 var content = message.Content;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                logs.Info("3");
+                
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -43,10 +43,10 @@ namespace NebulaLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                logs.Info("4");
+                
                 var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-                logs.Info("5");
+                
                 //UNCOMMENT BELOW LINE!!!!
                 //if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
                 //{
@@ -60,19 +60,19 @@ namespace NebulaLibrary
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
-                logs.Info("6");
+                
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
-                    if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                    {
-                        var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                        if (user != null && user.DeactivationDate == null)
-                        {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                            MessageHandler.InsertMessageToQueue(message);
-                            return;
-                        }
-                    }
+                    //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                    //{
+                    //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                    //    if (user != null && user.DeactivationDate == null)
+                    //    {
+                    //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                    //        MessageHandler.InsertMessageToQueue(message);
+                    //        return;
+                    //    }
+                    //}
                     if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                     {
                         bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
@@ -179,16 +179,16 @@ namespace NebulaLibrary
                 isUserSendsSubscriptionKeyword = true;
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
             {
-                if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                {
-                    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                    if (user != null && user.DeactivationDate == null)
-                    {
-                        message.Content = content;
-                        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
-                        return singlecharge;
-                    }
-                }
+                //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                //{
+                //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                //    if (user != null && user.DeactivationDate == null)
+                //    {
+                //        message.Content = content;
+                //        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
+                //        return singlecharge;
+                //    }
+                //}
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {

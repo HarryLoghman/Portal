@@ -34,8 +34,8 @@ namespace SharedLibrary
             }
             if (subscriber == null)
                 serviceStatusForSubscriberState = AddNewSubscriberToService(message, service, serviceInfo);
-            else if (subscriber.DeactivationDate == null)
-                serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenSubscribed;
+            //else if (subscriber.DeactivationDate == null)
+            //    serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenSubscribed;
             else
                 serviceStatusForSubscriberState = ActivateServiceForSubscriber(message, subscriber, message.Content, service, serviceInfo);
             return serviceStatusForSubscriberState;

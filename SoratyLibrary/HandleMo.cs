@@ -117,16 +117,16 @@ namespace SoratyLibrary
 
                     if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                     {
-                        if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                        {
-                            var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                            if (user != null && user.DeactivationDate == null)
-                            {
-                                message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                                MessageHandler.InsertMessageToQueue(message);
-                                return;
-                            }
-                        }
+                        //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                        //{
+                        //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                        //    if (user != null && user.DeactivationDate == null)
+                        //    {
+                        //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        //        MessageHandler.InsertMessageToQueue(message);
+                        //        return;
+                        //    }
+                        //}
                         if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                         {
                             string subscriberdUsedKeyword = SoratyLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
