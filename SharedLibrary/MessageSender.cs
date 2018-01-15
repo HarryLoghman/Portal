@@ -1684,7 +1684,7 @@ namespace SharedLibrary
                     var messagesCount = messages.Count;
                     if (messagesCount == 0)
                         return;
-
+                    Random rnd = new Random();
                     foreach (var message in messages)
                     {
                         if (message.RetryCount != null && message.RetryCount > retryCountMax)
@@ -1710,12 +1710,12 @@ namespace SharedLibrary
                     smsList.password = serviceAdditionalInfo["password"];
                     smsList.shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     smsList.servicekey = serviceAdditionalInfo["aggregatorServiceId"];
-                    Random rnd = new Random();
+                    
                     for (int index = 0; index < messagesCount; index++)
                     {
                         smsList.number[index] = "98" + messages[index].MobileNumber.TrimStart('0');
                         smsList.message[index] = messages[index].Content;
-                        if (messages[index].ImiChargeKey == "FREE")
+                        if (messages[index].Price == 0)
                             smsList.chargecode[index] = "";
                         else
                             smsList.chargecode[index] = messages[index].ImiChargeKey;
@@ -1726,19 +1726,6 @@ namespace SharedLibrary
 
                         var messageId = rnd.Next(1000000, 9999999).ToString();
                         smsList.requestId[index] = messageId.ToString();
-                    }
-                    logs.Info(smsList.username);
-                    logs.Info(smsList.password);
-                    logs.Info(smsList.shortcode);
-                    logs.Info(smsList.servicekey);
-                    logs.Info(smsList.type);
-                    for (int i = 0; i < smsList.number.Count(); i++)
-                    {
-                        logs.Info(smsList.number[i]);
-                        logs.Info(smsList.message[i]);
-                        logs.Info(smsList.chargecode[i]);
-                        logs.Info(smsList.amount[i]);
-                        logs.Info(smsList.requestId[i]);
                     }
                     var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient();
                     var result = mobineOneClient.sendSms(smsList);
@@ -1808,16 +1795,22 @@ namespace SharedLibrary
             {
                 var shortCode = "98" + serviceAdditionalInfo["shortCode"];
                 var mobile = "98" + message.MobileNumber.TrimStart('0');
+                var stringedPrice = (message.Price * 10).ToString();
+                if (message.Price == 0)
+                    stringedPrice = "";
+                var rnd = new Random();
+                var requestId = rnd.Next(1000000, 9999999).ToString();
+
                 var client = new MobinOneServiceReference.tpsPortTypeClient();
-                var result = client.charge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, message.Price.ToString(), Guid.NewGuid().ToString());
+                var result = client.inAppCharge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
                 var splitedResult = result.Split('-');
 
                 if (splitedResult[0] == "Success")
                     singlecharge.Description = "SUCCESS-Pending Confirmation";
                 else
-                    singlecharge.Description = splitedResult[1];
+                    singlecharge.Description = splitedResult[0] + "-" + splitedResult[1];
 
-                singlecharge.ReferenceId = splitedResult[3];
+                singlecharge.ReferenceId = splitedResult[2] + "_" + splitedResult[3];
             }
             catch (Exception e)
             {
@@ -1854,19 +1847,21 @@ namespace SharedLibrary
                 var password = serviceAdditionalInfo["password"];
                 string otpIds = singlecharge.ReferenceId;
                 var optIdsSplitted = otpIds.Split('_');
-                var transactionId = optIdsSplitted[1];
+                var transactionId = optIdsSplitted[0];
+                var txCode = optIdsSplitted[1];
                 var client = new MobinOneServiceReference.tpsPortTypeClient();
-                var result = client.chargeStatus(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], transactionId);
+                var result = client.inAppChargeConfirm(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], transactionId, txCode, confirmationCode);
                 var splitedResult = result.Split('-');
 
-                singlecharge.Description = splitedResult[3] + "-code:" + confirmationCode;
-                if (splitedResult[3] == "ACCEPTED")
+                if (splitedResult[1] == "ACCEPTED")
                 {
                     singlecharge.IsSucceeded = true;
                     singlecharge.Description = "SUCCESS";
-                    entity.Entry(singlecharge).State = EntityState.Modified;
-                    entity.SaveChanges();
                 }
+                else
+                    singlecharge.Description = result;
+                entity.Entry(singlecharge).State = EntityState.Modified;
+                entity.SaveChanges();
             }
             catch (Exception e)
             {
