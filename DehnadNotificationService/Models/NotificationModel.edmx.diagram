@@ -5,9 +5,10 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="d8e18749c7824d6b83001191d5bdb629" Name="Diagram1">
-        <EntityTypeShape EntityType="NotificationModel.UserMessage" Width="1.5" PointX="3" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="NotificationModel.User" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
-        <AssociationConnector Association="NotificationModel.FK_UserMessages_Users" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="NotificationModel.UserMessage" Width="1.5" PointX="3" PointY="0.75" />
+        <AssociationConnector Association="NotificationModel.FK_UserMessages_Users" />
+        <EntityTypeShape EntityType="NotificationModel.SentMessage" Width="1.5" PointX="4" PointY="3.875" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

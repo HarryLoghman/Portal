@@ -100,12 +100,12 @@ namespace ShenoYad500Library
                     {
                         var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("ShenoYad");
                         var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
-                        if (oldServiceSubscriber.DeactivationDate == null)
+                        if (oldServiceSubscriber != null)
                         {
-                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(oldService.ServiceCode, "Telepromo");
-                            message.Price = -1;
-                            var singleCharge = new Singlecharge();
-                            await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, message, serviceAdditionalInfo);
+                            if (oldServiceSubscriber.DeactivationDate == null)
+                            {
+                                await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(oldService.ServiceCode, message.MobileNumber, "-1");
+                            }
                         }
                     }
                     //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)

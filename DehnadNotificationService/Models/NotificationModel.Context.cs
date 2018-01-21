@@ -25,7 +25,8 @@ namespace DehnadNotificationService.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<UserMessage> UserMessages { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserMessage> UserMessages { get; set; }
+        public virtual DbSet<SentMessage> SentMessages { get; set; }
     }
 }

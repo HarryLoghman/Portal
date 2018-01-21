@@ -4,16 +4,31 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="NotificationModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="NotificationModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="SentMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChatId" Type="bigint" />
+          <Property Name="MobileNumber" Type="varchar" MaxLength="15" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="PersianDateCreated" Type="varchar" MaxLength="20" />
+          <Property Name="UserType" Type="nvarchar" MaxLength="50" />
+          <Property Name="Channel" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="UserMessages">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ChatId" Type="bigint" Nullable="false" />
+          <Property Name="ChatId" Type="bigint" />
+          <Property Name="MobileNumber" Type="varchar" MaxLength="15" />
           <Property Name="Message" Type="nvarchar(max)" />
           <Property Name="DateReceived" Type="datetime" Nullable="false" />
           <Property Name="PersianDateReceived" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Channel" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -33,7 +48,7 @@
           <Property Name="UserId" Type="bigint" />
         </EntityType>
         <Association Name="FK_UserMessages_Users">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="UserMessages" Type="Self.UserMessages" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
@@ -45,6 +60,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="NotificationModelStoreContainer">
+          <EntitySet Name="SentMessages" EntityType="Self.SentMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMessages" EntityType="Self.UserMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_UserMessages_Users" Association="Self.FK_UserMessages_Users">
@@ -52,22 +68,10 @@
             <End Role="UserMessages" EntitySet="UserMessages" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="NotificationModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="UserMessage">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChatId" Type="Int64" Nullable="false" />
-          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateReceived" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateReceived" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="User" Relationship="Self.FK_UserMessages_Users" FromRole="UserMessages" ToRole="Users" />
-        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="ChatId" />
@@ -84,45 +88,61 @@
           <Property Name="LastStep" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="UserId" Type="Int64" />
-          <NavigationProperty Name="UserMessages" Relationship="Self.FK_UserMessages_Users" FromRole="Users" ToRole="UserMessages" />
+          <NavigationProperty Name="UserMessages" Relationship="NotificationModel.FK_UserMessages_Users" FromRole="User" ToRole="UserMessage" />
+        </EntityType>
+        <EntityContainer Name="NotificationEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="UserMessages" EntityType="NotificationModel.UserMessage" />
+          <AssociationSet Name="FK_UserMessages_Users" Association="NotificationModel.FK_UserMessages_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserMessage" EntitySet="UserMessages" />
+          </AssociationSet>
+          <EntitySet Name="SentMessages" EntityType="NotificationModel.SentMessage" />
+        </EntityContainer>
+        <EntityType Name="UserMessage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChatId" Type="Int64" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateReceived" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateReceived" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="NotificationModel.FK_UserMessages_Users" FromRole="UserMessage" ToRole="User" />
         </EntityType>
         <Association Name="FK_UserMessages_Users">
-          <End Role="Users" Type="Self.User" Multiplicity="1" />
-          <End Role="UserMessages" Type="Self.UserMessage" Multiplicity="*" />
+          <End Type="NotificationModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="NotificationModel.UserMessage" Role="UserMessage" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Users">
+            <Principal Role="User">
               <PropertyRef Name="ChatId" />
             </Principal>
-            <Dependent Role="UserMessages">
+            <Dependent Role="UserMessage">
               <PropertyRef Name="ChatId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="NotificationEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="UserMessages" EntityType="Self.UserMessage" />
-          <EntitySet Name="Users" EntityType="Self.User" />
-          <AssociationSet Name="FK_UserMessages_Users" Association="Self.FK_UserMessages_Users">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="UserMessages" EntitySet="UserMessages" />
-          </AssociationSet>
-        </EntityContainer>
+        <EntityType Name="SentMessage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChatId" Type="Int64" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="UserType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="NotificationModelStoreContainer" CdmEntityContainer="NotificationEntities">
-          <EntitySetMapping Name="UserMessages">
-            <EntityTypeMapping TypeName="NotificationModel.UserMessage">
-              <MappingFragment StoreEntitySet="UserMessages">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
-                <ScalarProperty Name="Message" ColumnName="Message" />
-                <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
-                <ScalarProperty Name="PersianDateReceived" ColumnName="PersianDateReceived" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="NotificationModel.User">
               <MappingFragment StoreEntitySet="Users">
@@ -138,6 +158,33 @@
                 <ScalarProperty Name="LastStep" ColumnName="LastStep" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMessages">
+            <EntityTypeMapping TypeName="NotificationModel.UserMessage">
+              <MappingFragment StoreEntitySet="UserMessages">
+                <ScalarProperty Name="Channel" ColumnName="Channel" />
+                <ScalarProperty Name="PersianDateReceived" ColumnName="PersianDateReceived" />
+                <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SentMessages">
+            <EntityTypeMapping TypeName="NotificationModel.SentMessage">
+              <MappingFragment StoreEntitySet="SentMessages">
+                <ScalarProperty Name="Channel" ColumnName="Channel" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

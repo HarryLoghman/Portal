@@ -189,13 +189,12 @@ namespace SharedLibrary
                 var password = serviceAdditionalInfo["password"];
                 var from = "98" + serviceAdditionalInfo["shortCode"];
                 var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                Random rnd = new Random();
                 using (var client = new HttpClient())
                 {
                     var to = "98" + message.MobileNumber.TrimStart('0');
                     var messageContent = "InAppPurchase";
-                    Random random = new Random();
-                    var contentId = random.Next(00001, 99999).ToString();
-                    Random rnd = new Random();
+                    var contentId = rnd.Next(00001, 99999).ToString();
                     var messageId = rnd.Next(1000000, 9999999).ToString();
                     var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}&contentId={8}&chargingCode={9}"
                                                             , sc, username, password, from, serviceId, to, messageContent, messageId, contentId, message.ImiChargeKey);
@@ -289,6 +288,12 @@ namespace SharedLibrary
             result["transactionId"] = "";
             try
             {
+                //HttpMethod method = HttpMethod.Head;
+                //var httpRequest = new HttpRequestMessage() { RequestUri = new Uri(url), Method = method };
+                //using (var response = client.SendAsync(httpRequest).Result)
+                //{
+
+                //}
                 using (var response = client.GetAsync(new Uri(url)).Result)
                 {
                     if (response.IsSuccessStatusCode)
@@ -297,8 +302,6 @@ namespace SharedLibrary
                         XDocument xmlResult = XDocument.Parse(httpResult);
                         result["status"] = xmlResult.Root.Descendants("status").Select(e => e.Value).FirstOrDefault();
                         result["message"] = xmlResult.Root.Descendants("message").Select(e => e.Value).FirstOrDefault();
-                        if (xmlResult.Root.Descendants("transactionId") != null)
-                            result["transactionId"] = xmlResult.Root.Descendants("transactionId").Select(e => e.Value).FirstOrDefault();
                     }
                 }
             }
@@ -1710,7 +1713,7 @@ namespace SharedLibrary
                     smsList.password = serviceAdditionalInfo["password"];
                     smsList.shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     smsList.servicekey = serviceAdditionalInfo["aggregatorServiceId"];
-                    
+
                     for (int index = 0; index < messagesCount; index++)
                     {
                         smsList.number[index] = "98" + messages[index].MobileNumber.TrimStart('0');

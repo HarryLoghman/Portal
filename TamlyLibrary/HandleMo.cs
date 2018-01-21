@@ -3,6 +3,8 @@ using TamlyLibrary.Models;
 using System;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace TamlyLibrary
 {
@@ -17,6 +19,7 @@ namespace TamlyLibrary
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             using (var entity = new TamlyEntities())
             {
+                List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -68,11 +71,11 @@ namespace TamlyLibrary
                 var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
-                if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
-                {
-                    SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-                    return;
-                }
+                //if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
+                //{
+                //    SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+                //    return;
+                //}
 
                 if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                     return;
@@ -83,6 +86,19 @@ namespace TamlyLibrary
 
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
+                    if (isUserSendsSubscriptionKeyword == true)
+                    {
+                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly500");
+                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                        if (oldServiceSubscriber != null)
+                        {
+                            if (oldServiceSubscriber.DeactivationDate == null)
+                            {
+                                await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "-1");
+                                return;
+                            }
+                        }
+                    }
                     //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
                     //{
                     //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
@@ -157,19 +173,53 @@ namespace TamlyLibrary
 
                 if (subscriber == null)
                 {
-                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                    var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly500");
+                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
+                    if (sub != null)
+                    {
+                        if (sub.DeactivationDate == null)
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                            else
+                                message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                            MessageHandler.InsertMessageToQueue(message);
+                            return;
+                        }
+                    }
+                    if (message.Content == null || message.Content == "" || message.Content == " ")
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                    else
+                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
                 message.SubscriberId = subscriber.Id;
                 if (subscriber.DeactivationDate != null)
                 {
-                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                    var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly500");
+                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
+                    if (sub != null)
+                    {
+                        if (sub.DeactivationDate == null)
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                            else
+                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                            MessageHandler.InsertMessageToQueue(message);
+                            return;
+                        }
+                    }
+                    if (message.Content == null || message.Content == "" || message.Content == " ")
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                    else
+                        message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
                 message.Content = content;
-                ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+                ContentManager.HandleContent(message, service, subscriber, messagesTemplate, imiChargeCodes);
             }
         }
 

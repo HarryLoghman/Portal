@@ -114,7 +114,7 @@ namespace Tamly500Library
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                     {
-                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }

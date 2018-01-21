@@ -10,13 +10,15 @@ namespace DehnadNotificationService
     public class BotManager
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static async Task<TelegramBotResponse> NewlyStartedUser(Type entityType, User user, TelegramBotResponse responseObject)
+        public static Dictionary<string, string> userParams = new Dictionary<string, string>();
+        public static async Task<TelegramBotResponse> NewlyStartedUser(User user, TelegramBotResponse responseObject)
         {
             if (user.MobileNumber != null)
             {
                 if (responseObject.Message.Text == "IWantToBeAdmin!!")
                 {
-                    TelegramBotHelper.SaveLastStep(entityType, user, "Admin");
+                    userParams = new Dictionary<string, string>() { { "lastStep", "Admin" }, { "chatId", responseObject.Message.Chat.Id.ToString() } };
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("SaveLastStep", userParams);
                     var outputItem = new TelegramBotOutput();
                     var keyboardButtonsList = new List<string>();
                     keyboardButtonsList.Add("Normal-");
@@ -26,7 +28,8 @@ namespace DehnadNotificationService
                 }
                 else if (responseObject.Message.Text == "SignMeToDehnadNotification")
                 {
-                    TelegramBotHelper.SaveLastStep(entityType, user, "Member");
+                    userParams = new Dictionary<string, string>() { { "lastStep", "Member" }, { "chatId", responseObject.Message.Chat.Id.ToString() } };
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("SaveLastStep", userParams);
                     var outputItem = new TelegramBotOutput();
                     var keyboardButtonsList = new List<string>();
                     keyboardButtonsList.Add("Normal-");
@@ -39,20 +42,22 @@ namespace DehnadNotificationService
             {
                 if (responseObject.Message.Text == "IWantToBeAdmin!!")
                 {
-                    TelegramBotHelper.SaveLastStep(entityType, user, "Admin-MobileConfirmation");
+                    userParams = new Dictionary<string, string>() { { "lastStep", "Admin-MobileConfirmation" }, { "chatId", responseObject.Message.Chat.Id.ToString() } };
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("SaveLastStep", userParams);
                     var outputItem = new TelegramBotOutput();
                     var keyboardButtonsList = new List<string>();
-                    keyboardButtonsList.Add("Contact-ثبت شماره موبایل");
+                    keyboardButtonsList.Add("Contact-ارسال شماره موبایل");
                     outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(1, 1, keyboardButtonsList);
                     outputItem.Text = @"لطفا با استفاده از دکمه دریافت شماره، شماره خود را ثبت کنید.";
                     responseObject.OutPut.Add(outputItem);
                 }
                 else if (responseObject.Message.Text == "SignMeToDehnadNotification")
                 {
-                    TelegramBotHelper.SaveLastStep(entityType, user, "Member-MobileConfirmation");
+                    userParams = new Dictionary<string, string>() { { "lastStep", "Member-MobileConfirmation" }, { "chatId", responseObject.Message.Chat.Id.ToString() } };
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("SaveLastStep", userParams);
                     var outputItem = new TelegramBotOutput();
                     var keyboardButtonsList = new List<string>();
-                    keyboardButtonsList.Add("Contact-ثبت شماره موبایل");
+                    keyboardButtonsList.Add("Contact-ارسال شماره موبایل");
                     outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(1, 1, keyboardButtonsList);
                     outputItem.Text = @"شما عضو سیستم نوتیفیکیشن دهناد شدید.";
                     responseObject.OutPut.Add(outputItem);

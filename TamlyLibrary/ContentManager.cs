@@ -105,13 +105,19 @@ namespace TamlyLibrary
             }
         }
 
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate, List<ImiChargeCode> imiChargeCodes)
         {
             try
             {
                 using (var entity = new TamlyEntities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    if (message.Content == null || message.Content == "" || message.Content == " ")
+                    {
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
                     if (message.Content == "77" || message.Content.ToLower() == "m")
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();

@@ -12,16 +12,15 @@ namespace DehnadNotificationService.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class UserMessage
+    public partial class SentMessage
     {
         public long Id { get; set; }
         public Nullable<long> ChatId { get; set; }
         public string MobileNumber { get; set; }
-        public string Message { get; set; }
-        public System.DateTime DateReceived { get; set; }
-        public string PersianDateReceived { get; set; }
+        public string Content { get; set; }
+        public Nullable<System.DateTime> DateCreated { get; set; }
+        public string PersianDateCreated { get; set; }
+        public string UserType { get; set; }
         public string Channel { get; set; }
-    
-        public virtual User User { get; set; }
     }
 }

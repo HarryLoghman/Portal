@@ -1,4 +1,5 @@
 ﻿using DehnadNotificationService.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,31 +16,36 @@ namespace DehnadNotificationService
     public class TelegramBot
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static readonly TelegramBotClient Bot = new TelegramBotClient(Properties.Settings.Default.BotId);
+        public static TelegramBotClient Bot;
         public static Telegram.Bot.Types.User botInfo;
         public static bool StartBot()
         {
             bool isBotRunning = false;
+            
+            Bot = new TelegramBotClient(Properties.Settings.Default.BotId);
             while (true)
             {
-                try
+                if (isBotRunning == false)
                 {
-                    Bot.OnCallbackQuery += BotOnCallbackQueryReceived;
-                    Bot.OnMessage += BotOnMessageReceived;
-                    Bot.OnMessageEdited += BotOnMessageReceived;
-                    //Bot.OnInlineQuery += BotOnInlineQueryReceived;
-                    Bot.OnInlineResultChosen += BotOnChosenInlineResultReceived;
-                    Bot.OnReceiveError += BotOnReceiveError;
-                    botInfo = Bot.GetMeAsync().Result;
-                    logs.Info(botInfo.Username + " started");
-                    Bot.StartReceiving();
-                    isBotRunning = true;
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception In Starting Notification Telegram Bot:", e);
-                    isBotRunning = false;
-                    Thread.Sleep(60 * 1000);
+                    try
+                    {
+                        Bot.OnCallbackQuery += BotOnCallbackQueryReceived;
+                        Bot.OnMessage += BotOnMessageReceived;
+                        Bot.OnMessageEdited += BotOnMessageReceived;
+                        //Bot.OnInlineQuery += BotOnInlineQueryReceived;
+                        Bot.OnInlineResultChosen += BotOnChosenInlineResultReceived;
+                        Bot.OnReceiveError += BotOnReceiveError;
+                        botInfo = Bot.GetMeAsync().Result;
+                        logs.Info(botInfo.Username + " started");
+                        Bot.StartReceiving();
+                        isBotRunning = true;
+                    }
+                    catch (Exception e)
+                    {
+                        logs.Error("Exception In Starting Notification Telegram Bot:", e);
+                        isBotRunning = false;
+                        Thread.Sleep(60 * 1000);
+                    }
                 }
             }
         }
@@ -64,59 +70,57 @@ namespace DehnadNotificationService
         {
             try
             {
-                Type entityType = typeof(NotificationEntities);
-                Type userType = typeof(User);
-                Type userMessageType = typeof(UserMessage);
-                var responseObject = new TelegramBotResponse();
-                responseObject.OutPut = new List<TelegramBotOutput>();
+                var userParams = new Dictionary<string, string>();
+                var responseObject = new Models.TelegramBotResponse();
+                responseObject.OutPut = new List<Models.TelegramBotOutput>();
                 responseObject.Message = messageEventArgs.Message;
-                if (responseObject.Message == null) return;
+                responseObject.Message.Text = SharedLibrary.MessageHandler.NormalizeContent(messageEventArgs.Message.Text);
+                var serializedresponseObject = JsonConvert.SerializeObject(responseObject);
 
                 User user;
-                using (var entity = new NotificationEntities())
-                {
-                    user = entity.Users.FirstOrDefault(o => o.ChatId == responseObject.Message.Chat.Id);
-                }
+                userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() } };
+                user = await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("GetUserWebService", userParams);
                 if (user == null)
                 {
-                    TelegramBotHelper.CreateNewUser(entityType, userType, responseObject.Message);
-                    using (var entity = new NotificationEntities())
-                    {
-                        user = entity.Users.FirstOrDefault(o => o.ChatId == responseObject.Message.Chat.Id);
-                    }
+                    userParams = new Dictionary<string, string>() { { "stringedTelegramBotResponse", serializedresponseObject } };
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("CreateNewUserWebService", userParams);
+
+                    userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() } };
+                    user = await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("GetUserWebService", userParams);
                 }
                 if (responseObject.Message.Type == MessageType.TextMessage)
                 {
-                    TelegramBotHelper.SaveMessage(entityType, userMessageType, user, responseObject.Message.Text);
+                    userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() }, { "text", responseObject.Message.Text } };
+                    SharedLibrary.UsefulWebApis.NotificationBotApi<User>("SaveMessageWebService", userParams);
                 }
                 if (user.LastStep == "Started")
                 {
-                    responseObject = await BotManager.NewlyStartedUser(entityType, user, responseObject);
+                    responseObject = await BotManager.NewlyStartedUser(user, responseObject);
                 }
-                else if (responseObject.Message.Text.Contains("MobileConfirmation") && responseObject.Message.Type == MessageType.ContactMessage)
-                {
-                    responseObject = await BotManager.ContactReceived(entityType, user, responseObject);
-                }
-                else if (responseObject.Message.Text.ToLower().Contains("help"))
-                {
-                    if (user.LastStep.Contains("Admin"))
-                        responseObject = await BotManager.AdminHelp(entityType, user, responseObject);
-                    else if (user.LastStep.Contains("Member"))
-                        responseObject = await BotManager.MemberHelp(entityType, user, responseObject);
-                }
-                else if (user.LastStep == "Admin-Registered")
-                {
-                    responseObject = await BotManager.AdminHelp(entityType, user, responseObject);
-                }
-                else if (user.LastStep == "Member-Registered")
-                {
-                    responseObject = await BotManager.MemberHelp(entityType, user, responseObject);
-                }
+                //else if (responseObject.Message.Text.Contains("MobileConfirmation") && responseObject.Message.Type == MessageType.ContactMessage)
+                //{
+                //    responseObject = await BotManager.ContactReceived(entityType, user, responseObject);
+                //}
+                //else if (responseObject.Message.Text.ToLower().Contains("help"))
+                //{
+                //    if (user.LastStep.Contains("Admin"))
+                //        responseObject = await BotManager.AdminHelp(entityType, user, responseObject);
+                //    else if (user.LastStep.Contains("Member"))
+                //        responseObject = await BotManager.MemberHelp(entityType, user, responseObject);
+                //}
+                //else if (user.LastStep == "Admin-Registered")
+                //{
+                //    responseObject = await BotManager.AdminHelp(entityType, user, responseObject);
+                //}
+                //else if (user.LastStep == "Member-Registered")
+                //{
+                //    responseObject = await BotManager.MemberHelp(entityType, user, responseObject);
+                //}
                 else
                 {
                     if (responseObject.Message.Text == "IWantToBeAdmin!!" || responseObject.Message.Text == "SignMeToDehnadNotification")
                     {
-                        responseObject = await BotManager.NewlyStartedUser(entityType, user, responseObject);
+                        responseObject = await BotManager.NewlyStartedUser( user, responseObject);
                     }
                 }
                 foreach (var response in responseObject.OutPut)
@@ -135,5 +139,49 @@ namespace DehnadNotificationService
                 logs.Error("error: " + e);
             }
         }
+
+        public static async void TelegramSendMessage(TelegramBotResponse message, UserType userType)
+        {
+            try
+            {
+                using (var entity = new NotificationEntities())
+                {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    List<long> chatIds = new List<long>();
+                    if (userType == UserType.AdminOnly)
+                        chatIds = entity.Users.Where(o => o.LastStep.Contains("Admin")).Select(o => o.ChatId).ToList();
+                    else if (userType == UserType.MemberOnly)
+                        chatIds = entity.Users.Where(o => o.LastStep.Contains("Member")).Select(o => o.ChatId).ToList();
+                    else
+                        chatIds = entity.Users.Where(o => o.LastStep.Contains("Admin") || o.LastStep.Contains("Member")).Select(o => o.ChatId).ToList();
+                    foreach (var chatId in chatIds)
+                    {
+                        foreach (var response in message.OutPut)
+                        {
+                            if (response.Text != null && response.Text != "")
+                            {
+                                if (response.keyboard != null)
+                                    await Bot.SendTextMessageAsync(chatId, response.Text, replyMarkup: response.keyboard);
+                                else
+                                    await Bot.SendTextMessageAsync(chatId, response.Text, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
+                            }
+                            Service.SaveSendedMessageToDB(response.Text, "telegram", userType.ToString(), chatId, null);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelegramSendMessage: " + e);
+            }
+        }
+
+    }
+
+    public enum UserType
+    {
+        AdminOnly = 1,
+        MemberOnly = 2,
+        All = 3,
     }
 }

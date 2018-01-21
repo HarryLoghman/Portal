@@ -93,6 +93,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NotificationModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\SentMessage.cs">
+      <DependentUpon>NotificationModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\TelegramBotResponse.cs" />
     <Compile Include="Models\User.cs">
       <DependentUpon>NotificationModel.tt</DependentUpon>

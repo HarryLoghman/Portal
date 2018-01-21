@@ -25,7 +25,7 @@ namespace DehnadNotificationService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("222")]
+        [global::System.Configuration.DefaultSettingValueAttribute("485632543:AAFKbpDUoyql2oZVjOukkLRYclF8aIXFm3c")]
         public string BotId {
             get {
                 return ((string)(this["BotId"]));

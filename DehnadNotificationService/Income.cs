@@ -43,6 +43,8 @@ namespace DehnadNotificationService
                 if (incomePercentageDifference <= -10)
                 {
                     logs.Info("MusicYad incomePercentageDifference:" + incomePercentageDifference);
+                    var message = "MusicYad income dropped by %" + incomePercentageDifference;
+                    DehnadNotificationService.Service.Alert(message, UserType.All);
                 }
             }
             catch (Exception e)
@@ -53,22 +55,25 @@ namespace DehnadNotificationService
 
         public static void CalculateTahchinIncomeDifferenceByHour()
         {
-            try { 
-            var tahchinYesterdayIncome = TahChinGetIncomeByHour(DateTime.Now.AddDays(-1));
-            var tahchinToadyIncome = TahChinGetIncomeByHour(DateTime.Now);
-            var pastHour = DateTime.Now.AddHours(-1).Hour;
-            var yesterdayPastHourIncome = 0;
-            var todayPastHourIncome = 0;
-            if (tahchinYesterdayIncome.ContainsKey(pastHour))
-                yesterdayPastHourIncome = tahchinYesterdayIncome[pastHour];
-            if (tahchinToadyIncome.ContainsKey(pastHour))
-                todayPastHourIncome = tahchinToadyIncome[pastHour];
-
-            var incomePercentageDifference = CaluculatePercentageDifference(yesterdayPastHourIncome, todayPastHourIncome);
-            if (incomePercentageDifference <= -10)
+            try
             {
-                //Alret();
-            }
+                var tahchinYesterdayIncome = TahChinGetIncomeByHour(DateTime.Now.AddDays(-1));
+                var tahchinToadyIncome = TahChinGetIncomeByHour(DateTime.Now);
+                var pastHour = DateTime.Now.AddHours(-1).Hour;
+                var yesterdayPastHourIncome = 0;
+                var todayPastHourIncome = 0;
+                if (tahchinYesterdayIncome.ContainsKey(pastHour))
+                    yesterdayPastHourIncome = tahchinYesterdayIncome[pastHour];
+                if (tahchinToadyIncome.ContainsKey(pastHour))
+                    todayPastHourIncome = tahchinToadyIncome[pastHour];
+
+                var incomePercentageDifference = CaluculatePercentageDifference(yesterdayPastHourIncome, todayPastHourIncome);
+                if (incomePercentageDifference <= -10)
+                {
+                    logs.Info("Tahchin incomePercentageDifference:" + incomePercentageDifference);
+                    var message = "Tahchin income dropped by %" + incomePercentageDifference;
+                    DehnadNotificationService.Service.Alert(message, UserType.All);
+                }
             }
             catch (Exception e)
             {
@@ -89,7 +94,7 @@ namespace DehnadNotificationService
             {
                 using (var entity = new TahChinLibrary.Models.TahChinEntities())
                 {
-                    var income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && o.DateCreated.Date == date.Date)
+                    var income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(date))
                         .GroupBy(o => o.DateCreated.Hour)
                         .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
                         .AsNoTracking().ToDictionary(o => o.Hour, o => o.Amount);
@@ -108,7 +113,7 @@ namespace DehnadNotificationService
             {
                 using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
                 {
-                    var income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && o.DateCreated.Date == date.Date)
+                    var income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated.Date) == DbFunctions.TruncateTime(date))
                         .GroupBy(o => o.DateCreated.Hour)
                         .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
                         .AsNoTracking().ToDictionary(o => o.Hour, o => o.Amount);

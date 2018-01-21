@@ -96,6 +96,19 @@ namespace ShenoYadLibrary
 
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
+                    if (isUserSendsSubscriptionKeyword == true)
+                    {
+                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("ShenoYad500");
+                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                        if (oldServiceSubscriber != null)
+                        {
+                            if (oldServiceSubscriber.DeactivationDate == null)
+                            {
+                                await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "-1");
+                                return;
+                            }
+                        }
+                    }
                     //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
                     //{
                     //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
@@ -171,6 +184,20 @@ namespace ShenoYadLibrary
 
                 if (subscriber == null)
                 {
+                    var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("ShenoYad500");
+                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
+                    if (sub != null)
+                    {
+                        if (sub.DeactivationDate == null)
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                            else
+                                message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                            MessageHandler.InsertMessageToQueue(message);
+                            return;
+                        }
+                    }
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                         message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
@@ -181,6 +208,20 @@ namespace ShenoYadLibrary
                 message.SubscriberId = subscriber.Id;
                 if (subscriber.DeactivationDate != null)
                 {
+                    var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("ShenoYad500");
+                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
+                    if (sub != null)
+                    {
+                        if (sub.DeactivationDate == null)
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                            else
+                                message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                            MessageHandler.InsertMessageToQueue(message);
+                            return;
+                        }
+                    }
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                         message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else

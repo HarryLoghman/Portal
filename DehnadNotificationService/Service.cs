@@ -61,8 +61,48 @@ namespace DehnadNotificationService
         {
             while (!shutdownEvent.WaitOne(0))
             {
-                Income.IncomeDiffrenceByHour();
+                //Income.IncomeDiffrenceByHour();
                 Thread.Sleep(60 * 1000);
+            }
+        }
+
+        public static void Alert(string message, UserType userType)
+        {
+            try
+            {
+                var telegramMessage = new DehnadNotificationService.Models.TelegramBotResponse();
+                var telegramOutput = new DehnadNotificationService.Models.TelegramBotOutput();
+                telegramOutput.Text = message;
+                telegramMessage.OutPut.Add(telegramOutput);
+                TelegramBot.TelegramSendMessage(telegramMessage, userType);
+                SendMessage.SendMessageBySms(message, userType);
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in Alert: " + e);
+            }
+        }
+
+        public static void SaveSendedMessageToDB(string content, string channel, string userType, long? chatId, string mobileNumber)
+        {
+            try
+            {
+                using(var entity = new Models.NotificationEntities())
+                {
+                    var message = new Models.SentMessage();
+                    message.Channel = channel;
+                    message.ChatId = chatId;
+                    message.UserType = userType;
+                    message.MobileNumber = mobileNumber;
+                    message.DateCreated = DateTime.Now;
+                    message.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
+                    entity.SentMessages.Add(message);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in SaveSendedMessageToDB: " + e);
             }
         }
     }

@@ -115,6 +115,7 @@ namespace DehnadNotificationService
                 userMessage.DateReceived = DateTime.Now;
                 userMessage.PersianDateReceived = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 userMessage.Message = text;
+                userMessage.Channel = "Telegram";
                 entity.UserMessages.Add(userMessage);
                 entity.SaveChanges();
             }

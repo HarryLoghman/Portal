@@ -73,7 +73,7 @@ namespace SharedLibrary
             return message;
         }
 
-        private static string NormalizeContent(string content)
+        public static string NormalizeContent(string content)
         {
             if (content == null)
                 content = "";

@@ -112,6 +112,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="Telegram.Bot, Version=13.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Telegram.Bot.13.4.0\lib\net45\Telegram.Bot.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -1117,6 +1120,10 @@
     <ProjectReference Include="..\DefendIranLibrary\DefendIranLibrary.csproj">
       <Project>{d124b1f6-3bf5-2124-537f-1bc43b41256d}</Project>
       <Name>DefendIranLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DehnadNotificationService\DehnadNotificationService.csproj">
+      <Project>{1df14122-4d21-8222-4d51-34141b3539c1}</Project>
+      <Name>DehnadNotificationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\DezhbanLibrary\DezhbanLibrary.csproj">
       <Project>{211d214a-3b15-2126-337d-3bcb3b5424fa}</Project>

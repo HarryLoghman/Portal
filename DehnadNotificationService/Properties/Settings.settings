@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="BotId" Type="System.String" Scope="User">
-      <Value Profile="(Default)">222</Value>
+      <Value Profile="(Default)">485632543:AAFKbpDUoyql2oZVjOukkLRYclF8aIXFm3c</Value>
     </Setting>
   </Settings>
 </SettingsFile>
