@@ -19,21 +19,28 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
-                var mo = new ReceievedMessage()
+                try
                 {
-                    MobileNumber = message.MobileNumber,
-                    ShortCode = message.ShortCode,
-                    ReceivedTime = DateTime.Now,
-                    PersianReceivedTime = Date.GetPersianDateTime(DateTime.Now),
-                    MessageId = message.MessageId,
-                    Content = (message.Content == null) ? "" : message.Content,
-                    IsProcessed = false,
-                    IsReceivedFromIntegratedPanel = (message.IsReceivedFromIntegratedPanel == null) ? false : message.IsReceivedFromIntegratedPanel,
-                    IsReceivedFromWeb = (message.IsReceivedFromWeb == null) ? false : message.IsReceivedFromWeb,
-                    ReceivedFrom = message.ReceivedFrom
-                };
-                entity.ReceievedMessages.Add(mo);
-                entity.SaveChanges();
+                    var mo = new ReceievedMessage()
+                    {
+                        MobileNumber = message.MobileNumber,
+                        ShortCode = message.ShortCode,
+                        ReceivedTime = DateTime.Now,
+                        PersianReceivedTime = Date.GetPersianDateTime(DateTime.Now),
+                        MessageId = message.MessageId,
+                        Content = (message.Content == null) ? "" : message.Content,
+                        IsProcessed = false,
+                        IsReceivedFromIntegratedPanel = (message.IsReceivedFromIntegratedPanel == null) ? false : message.IsReceivedFromIntegratedPanel,
+                        IsReceivedFromWeb = (message.IsReceivedFromWeb == null) ? false : message.IsReceivedFromWeb,
+                        ReceivedFrom = message.ReceivedFrom
+                    };
+                    entity.ReceievedMessages.Add(mo);
+                    entity.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SaveReceivedMessage: " + e);
+                }
             }
         }
 
@@ -390,7 +397,7 @@ namespace SharedLibrary
             var today = DateTime.Now.Date;
             var maxRetryCount = SharedLibrary.MessageSender.retryCountMax;
             var retryPauseBeforeSendByMinute = SharedLibrary.MessageSender.retryPauseBeforeSendByMinute;
-            var retryTimeOut = DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute); 
+            var retryTimeOut = DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute);
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;

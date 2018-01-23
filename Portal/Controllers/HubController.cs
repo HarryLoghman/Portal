@@ -30,70 +30,73 @@ namespace Portal.Controllers
             messageObj.ShortCode = to;
             if (messageObj.Content.Contains("Renewal"))
             {
-                if (messageObj.ShortCode == "405505")
+                if (DateTime.Now.Hour < 14)
                 {
-                    using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                    if (messageObj.ShortCode == "405505")
                     {
-                        var singlecharge = new ShahreKalamehLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 500;
-                        if (messageObj.Content == "Renewal")
-                            singlecharge.IsSucceeded = true;
-                        else
-                            singlecharge.IsSucceeded = false;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
+                        using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                        {
+                            var singlecharge = new ShahreKalamehLibrary.Models.Singlecharge();
+                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                            singlecharge.DateCreated = DateTime.Now;
+                            singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            singlecharge.Price = 500;
+                            if (messageObj.Content == "Renewal")
+                                singlecharge.IsSucceeded = true;
+                            else
+                                singlecharge.IsSucceeded = false;
+                            singlecharge.IsApplicationInformed = false;
+                            singlecharge.IsCalledFromInAppPurchase = false;
+                            var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                            if (installment != null)
+                                singlecharge.InstallmentId = installment.Id;
+                            entity.Singlecharges.Add(singlecharge);
+                            entity.SaveChanges();
+                        }
                     }
-                }
-                else if (messageObj.ShortCode == "405519")
-                {
-                    using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                    else if (messageObj.ShortCode == "405519")
                     {
-                        var singlecharge = new SoratyLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        if (messageObj.Content == "Renewal")
-                            singlecharge.IsSucceeded = true;
-                        else
-                            singlecharge.IsSucceeded = false;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
+                        using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                        {
+                            var singlecharge = new SoratyLibrary.Models.Singlecharge();
+                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                            singlecharge.DateCreated = DateTime.Now;
+                            singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            singlecharge.Price = 400;
+                            if (messageObj.Content == "Renewal")
+                                singlecharge.IsSucceeded = true;
+                            else
+                                singlecharge.IsSucceeded = false;
+                            singlecharge.IsApplicationInformed = false;
+                            singlecharge.IsCalledFromInAppPurchase = false;
+                            var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                            if (installment != null)
+                                singlecharge.InstallmentId = installment.Id;
+                            entity.Singlecharges.Add(singlecharge);
+                            entity.SaveChanges();
+                        }
                     }
-                }
-                else if (messageObj.ShortCode == "405522")
-                {
-                    using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                    else if (messageObj.ShortCode == "405522")
                     {
-                        var singlecharge = new DefendIranLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        if (messageObj.Content == "Renewal")
-                            singlecharge.IsSucceeded = true;
-                        else
-                            singlecharge.IsSucceeded = false;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
+                        using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                        {
+                            var singlecharge = new DefendIranLibrary.Models.Singlecharge();
+                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                            singlecharge.DateCreated = DateTime.Now;
+                            singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            singlecharge.Price = 400;
+                            if (messageObj.Content == "Renewal")
+                                singlecharge.IsSucceeded = true;
+                            else
+                                singlecharge.IsSucceeded = false;
+                            singlecharge.IsApplicationInformed = false;
+                            singlecharge.IsCalledFromInAppPurchase = false;
+                            var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                            if (installment != null)
+                                singlecharge.InstallmentId = installment.Id;
+                            entity.Singlecharges.Add(singlecharge);
+                            entity.SaveChanges();
+                        }
                     }
                 }
                 result = "1";
@@ -115,13 +118,18 @@ namespace Portal.Controllers
                 messageObj.MessageId = smsId;
 
                 messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                
+
                 if (messageObj.MobileNumber == "Invalid Mobile Number")
                     result = "-1";
                 else
                 {
                     messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                    if (messageObj.Content == "Subscription")
+                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Register" : null;
+                    else if (messageObj.Content == "Unsubscription")
+                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Unsubscription" : null;
+                    else
+                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                     SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                     result = "1";
                 }
@@ -133,7 +141,7 @@ namespace Portal.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage Notification (string text, string keyword, string channel, string from, string to, string NotificationId, string userId)
+        public HttpResponseMessage Notification(string text, string keyword, string channel, string from, string to, string NotificationId, string userId)
         {
             string result = "";
             text = (text == null) ? "" : text;
@@ -143,6 +151,7 @@ namespace Portal.Controllers
             messageObj.MobileNumber = from;
             messageObj.Content = text;
             messageObj.ShortCode = to;
+
             if (messageObj.Content.Contains("Renewal"))
             {
                 if (messageObj.ShortCode == "405505")
@@ -228,7 +237,6 @@ namespace Portal.Controllers
                     messageObj.ShortCode = to;
 
                 messageObj.MessageId = NotificationId;
-
                 messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
 
                 if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -248,7 +256,6 @@ namespace Portal.Controllers
                     }
                     else
                         messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-
                     SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                     result = "1";
                 }

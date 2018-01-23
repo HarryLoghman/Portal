@@ -68,26 +68,18 @@ namespace Portal.Controllers
         public HttpResponseMessage Notification()
         {
             var result = "1";
-            ServiceInfo serviceInfo = null;
-            Service service = null;
             var message = new MessageObject();
             var queryString = this.Request.GetQueryNameValuePairs();
             var sid = queryString.FirstOrDefault(o => o.Key == "sid").Value;
             var msisdn = queryString.FirstOrDefault(o => o.Key == "msisdn").Value;
             var keyword = queryString.FirstOrDefault(o => o.Key == "keyword").Value;
             var eventType = queryString.FirstOrDefault(o => o.Key == "event-type").Value;
+            //var shortcode = queryString.FirstOrDefault(o => o.Key == "shortcode").Value;
 
-            if (mobinOneMciServiceIds.ContainsKey(sid))
+            message.ShortCode = SharedLibrary.ServiceHandler.GetShortCodeFromOperatorServiceId(sid);
+            if (message.ShortCode != null)
             {
-                service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(mobinOneMciServiceIds[sid]);
-                serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-            }
-
-            if (eventType == "1.2")
-            {
-                if (serviceInfo == null)
-                    result = "-999";
-                else
+                if (eventType == "1.2")
                 {
                     message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                     if (message.MobileNumber == "Invalid Mobile Number")
@@ -97,19 +89,14 @@ namespace Portal.Controllers
                         var recievedMessage = new MessageObject();
                         recievedMessage.Content = keyword;
                         recievedMessage.MobileNumber = message.MobileNumber;
-                        recievedMessage.ShortCode = serviceInfo.ShortCode;
+                        recievedMessage.ShortCode = message.ShortCode;
                         recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
                         recievedMessage.IsReceivedFromIntegratedPanel = false;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
                         result = "1";
                     }
                 }
-            }
-            else if (eventType == "1.1")
-            {
-                if (serviceInfo == null)
-                    result = "-999";
-                else
+                else if (eventType == "1.1")
                 {
                     message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                     if (message.MobileNumber == "Invalid Mobile Number")
@@ -118,11 +105,33 @@ namespace Portal.Controllers
                     {
                         var recievedMessage = new MessageObject();
                         recievedMessage.Content = keyword;
-                        recievedMessage.ShortCode = serviceInfo.ShortCode;
                         recievedMessage.MobileNumber = message.MobileNumber;
+                        recievedMessage.ShortCode = message.ShortCode;
                         recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
                         result = "1";
+                    }
+                }
+                else if (eventType == "1.5")
+                {
+                    if (message.ShortCode == "307382")
+                    {
+                        using (var entity = new NebulaLibrary.Models.NebulaEntities())
+                        {
+                            var singlecharge = new NebulaLibrary.Models.Singlecharge();
+                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
+                            singlecharge.DateCreated = DateTime.Now;
+                            singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            singlecharge.Price = 300;
+                            singlecharge.IsSucceeded = true;
+                            singlecharge.IsApplicationInformed = false;
+                            singlecharge.IsCalledFromInAppPurchase = false;
+                            var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                            if (installment != null)
+                                singlecharge.InstallmentId = installment.Id;
+                            entity.Singlecharges.Add(singlecharge);
+                            entity.SaveChanges();
+                        }
                     }
                 }
             }

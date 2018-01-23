@@ -137,6 +137,8 @@ namespace SharedLibrary
                 {
                     if (data.eventType == "1.5")
                     {
+                        if (data.status != 0)
+                            continue;
                         var message = new MessageObject();
                         message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
                         message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);

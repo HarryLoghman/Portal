@@ -170,180 +170,180 @@ namespace Portal.Controllers
             message.IsReceivedFromIntegratedPanel = false;
             message.Content = keyword;
             message.ServiceId = serviceInfo.ServiceId;
-            if (type == "RENEWAL")
+            if (type == "RENEWAL" || type == "RENEW")
             {
-                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                if (service.ServiceCode == "JabehAbzar")
-                {
-                    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
-                    {
-                        var singlecharge = new JabehAbzarLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "Tamly")
-                {
-                    using (var entity = new TamlyLibrary.Models.TamlyEntities())
-                    {
-                        var singlecharge = new TamlyLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "Soltan")
-                {
-                    using (var entity = new SoltanLibrary.Models.SoltanEntities())
-                    {
-                        var singlecharge = new SoltanLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "DonyayeAsatir")
-                {
-                    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
-                    {
-                        var singlecharge = new DonyayeAsatirLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "ShenoYad")
-                {
-                    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
-                    {
-                        var singlecharge = new ShenoYadLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "FitShow")
-                {
-                    using (var entity = new FitShowLibrary.Models.FitShowEntities())
-                    {
-                        var singlecharge = new FitShowLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "Takavar")
-                {
-                    using (var entity = new TakavarLibrary.Models.TakavarEntities())
-                    {
-                        var singlecharge = new TakavarLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "AvvalPod")
-                {
-                    using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
-                    {
-                        var singlecharge = new AvvalPodLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
-                else if (service.ServiceCode == "AvvalYad")
-                {
-                    using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
-                    {
-                        var singlecharge = new AvvalYadLibrary.Models.Singlecharge();
-                        singlecharge.MobileNumber = message.MobileNumber;
-                        singlecharge.DateCreated = DateTime.Now;
-                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                        singlecharge.Price = 400;
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.IsApplicationInformed = false;
-                        singlecharge.IsCalledFromInAppPurchase = false;
-                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                        if (installment != null)
-                            singlecharge.InstallmentId = installment.Id;
-                        entity.Singlecharges.Add(singlecharge);
-                        entity.SaveChanges();
-                    }
-                }
+                //var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+                //if (service.ServiceCode == "JabehAbzar")
+                //{
+                //    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                //    {
+                //        var singlecharge = new JabehAbzarLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "Tamly")
+                //{
+                //    using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                //    {
+                //        var singlecharge = new TamlyLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "Soltan")
+                //{
+                //    using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                //    {
+                //        var singlecharge = new SoltanLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "DonyayeAsatir")
+                //{
+                //    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                //    {
+                //        var singlecharge = new DonyayeAsatirLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "ShenoYad")
+                //{
+                //    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                //    {
+                //        var singlecharge = new ShenoYadLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "FitShow")
+                //{
+                //    using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                //    {
+                //        var singlecharge = new FitShowLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "Takavar")
+                //{
+                //    using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                //    {
+                //        var singlecharge = new TakavarLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "AvvalPod")
+                //{
+                //    using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
+                //    {
+                //        var singlecharge = new AvvalPodLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "AvvalYad")
+                //{
+                //    using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
+                //    {
+                //        var singlecharge = new AvvalYadLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
             }
             else
             {
@@ -353,6 +353,7 @@ namespace Portal.Controllers
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI-Register" : null;
                     else
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
+                    SharedLibrary.MessageHandler.SaveReceivedMessage(message);
                 }
                 else if (type == "UNSUBSCRIBE")
                 {
@@ -365,6 +366,7 @@ namespace Portal.Controllers
                         message.IsReceivedFromIntegratedPanel = true;
                         message.Content = "Off";
                     }
+                    SharedLibrary.MessageHandler.SaveReceivedMessage(message);
                 }
                 else
                 {
@@ -372,8 +374,8 @@ namespace Portal.Controllers
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI" : null;
                     else
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
+                    SharedLibrary.MessageHandler.SaveReceivedMessage(message);
                 }
-                SharedLibrary.MessageHandler.SaveReceivedMessage(message);
             }
 
             responseJson.status = 0;

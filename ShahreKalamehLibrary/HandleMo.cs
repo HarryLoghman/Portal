@@ -20,8 +20,6 @@ namespace ShahreKalamehLibrary
                     message.ServiceId = service.Id;
                     var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
                     var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
-                    if ((content == "9" || isUserWantsToUnsubscribe == true || isUserSendsSubscriptionKeyword == true) && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
-                        return;
 
                     var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                     if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
@@ -75,13 +73,13 @@ namespace ShahreKalamehLibrary
                         return;
                     }
 
-                    if (content == "Subscription".ToLower())
+                    if (message.ReceivedFrom.Contains("Notify-Register"))
                         isUserSendsSubscriptionKeyword = true;
-                    else if (content == "Unsubscription".ToLower() || message.IsReceivedFromIntegratedPanel == true)
+                    else if (message.ReceivedFrom.Contains("Notify-Unsubscription") || message.IsReceivedFromIntegratedPanel == true)
                         isUserWantsToUnsubscribe = true;
 
-                    if (isUserWantsToUnsubscribe == true)
-                        SharedLibrary.HandleSubscription.UnsubscribeUserFromHubService(service.Id, message.MobileNumber);
+                    //if (isUserWantsToUnsubscribe == true)
+                    //    SharedLibrary.HandleSubscription.UnsubscribeUserFromHubService(service.Id, message.MobileNumber);
 
                     if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                     {

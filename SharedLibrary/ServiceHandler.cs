@@ -148,6 +148,14 @@ namespace SharedLibrary
             }
         }
 
+        public static string GetShortCodeFromOperatorServiceId(string operatorServiceId)
+        {
+            using (var portalEntity = new PortalEntities())
+            {
+                return portalEntity.ServiceInfoes.Where(o => o.OperatorServiceId == operatorServiceId).FirstOrDefault().ShortCode;
+            }
+        }
+
         public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
         {
             var result = false;
