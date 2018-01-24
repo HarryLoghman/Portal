@@ -1185,8 +1185,8 @@ namespace Portal.Controllers
                                 Random random = new Random();
                                 var verficationId = random.Next(1000, 9999).ToString();
                                 messageObj.Content = "SendVerification-" + verficationId;
-                                if(messageObj.ServiceCode == "Tamly500" || messageObj.ServiceCode == "ShenoYad500" || messageObj.ServiceCode == "AvvalPod500" || messageObj.ServiceCode == "BehAmooz500" )
-                                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-AppVerification" : null;
+                                if (messageObj.ServiceCode == "Tamly500" || messageObj.ServiceCode == "ShenoYad500" || messageObj.ServiceCode == "AvvalPod500" || messageObj.ServiceCode == "BehAmooz500")
+                                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-AppVerification" : null;
                                 else
                                     messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-AppVerification" : null;
                                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
@@ -1762,6 +1762,144 @@ namespace Portal.Controllers
             {
                 logs.Error("Exception in SubscriberStatus:" + e);
                 result.Status = "General error occurred";
+            }
+            var json = JsonConvert.SerializeObject(result);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage GetIrancellOtpUrl([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            try
+            {
+                var hash = SharedLibrary.Security.GetSha256Hash("GetIrancellOtpUrl" + messageObj.ServiceCode);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else
+                {
+                    if (messageObj.ServiceCode != null && (messageObj.ServiceCode == "TahChin" || messageObj.ServiceCode == "MusicYad"))
+                    {
+                        string timestampParam = DateTime.Now.ToString("yyyyMMddhhmmss");
+                        string requestIdParam = Guid.NewGuid().ToString();
+                        var callBackParam = messageObj.Address;
+                        var price = "3000";
+                        var modeParam = "1"; //Web
+                        var pageNo = 0;
+                        var authKey = "393830313130303036333739";
+                        var sign = "";
+                        var cpId = "980110006379";
+                        if (messageObj.ServiceCode == "TahChin")
+                        {
+                            var serviceId = SharedLibrary.ServiceHandler.GetServiceId(messageObj.ServiceCode).Value;
+                            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
+                            pageNo = 146;
+                            sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
+                        }
+
+                        var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"
+                                                , timestampParam, requestIdParam, pageNo, callBackParam, sign, modeParam);
+                        result.Status = "Success";
+                        result.Description = url;
+                    }
+                    else if (messageObj.From != null)
+                    {
+                        result.Status = "Invalid Service Code";
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetIrancellOtpUrl:" + e);
+                result.Status = "Error";
+                result.Description = "General error occurred";
+            }
+            var json = JsonConvert.SerializeObject(result);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage DecryptIrancellMessage([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            try
+            {
+                result.Status = "Error";
+                result.Description = "General error occurred";
+                var authKey = "393830313130303036333739";
+                var message = SharedLibrary.HelpfulFunctions.IrancellEncryptedResponse(messageObj.Content, authKey);
+                var splitedMessage = message.Split('&');
+                foreach (var item in splitedMessage)
+                {
+                    if (item.Contains("msisdn"))
+                        result.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(item.Remove(0, 7));
+                    else if (item.Contains("status"))
+                    {
+                        var status = item.Remove(0, 7);
+                        if (status == "00000000")
+                        {
+                            result.Status = "Success";
+                            result.Description = "Successful Subscription";
+                        }
+                        else if (status == "22007201" || status == "22007238")
+                        {
+                            result.Status = "Error";
+                            result.Description = "Already Subscribed";
+                        }
+                        else if (status == "10001211")
+                        {
+                            result.Status = "Error";
+                            result.Description = "ServiceID + IP not whitelisted or used only 3G services service ID";
+                        }
+                        else if (status == "22007306")
+                        {
+                            result.Status = "Error";
+                            result.Description = "MSISDN Blacklist";
+                        }
+                        else if (status == "22007230")
+                        {
+                            result.Status = "Error";
+                            result.Description = "cannot be subscribed to by a third party";
+                        }
+                        else if (status == "22007330")
+                        {
+                            result.Status = "Error";
+                            result.Description = "The account balance is Insufficient.";
+                        }
+                        else if (status == "22007306")
+                        {
+                            result.Status = "Error";
+                            result.Description = "The user is blacklisted and cannot Subscribe to the product.";
+                        }
+                        else if (status == "99999999")
+                        {
+                            result.Status = "Error";
+                            result.Description = "Subscription attempt failed. Please try again.";
+                        }
+                        else if (status == "88888888")
+                        {
+                            result.Status = "Error";
+                            result.Description = "Cancel Button Clicked";
+                        }
+                        else
+                        {
+                            result.Status = "Error";
+                            result.Description = "Unknown status code: " + status;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in DecryptIrancellMessage:" + e);
+                result.Status = "Error";
+                result.Description = "General error occurred";
             }
             var json = JsonConvert.SerializeObject(result);
             var response = Request.CreateResponse(HttpStatusCode.OK);

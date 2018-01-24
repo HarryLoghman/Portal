@@ -74,6 +74,7 @@ namespace Portal.Controllers
             var msisdn = queryString.FirstOrDefault(o => o.Key == "msisdn").Value;
             var keyword = queryString.FirstOrDefault(o => o.Key == "keyword").Value;
             var eventType = queryString.FirstOrDefault(o => o.Key == "event-type").Value;
+            var status = queryString.FirstOrDefault(o => o.Key == "status").Value;
             //var shortcode = queryString.FirstOrDefault(o => o.Key == "shortcode").Value;
 
             message.ShortCode = SharedLibrary.ServiceHandler.GetShortCodeFromOperatorServiceId(sid);
@@ -114,23 +115,26 @@ namespace Portal.Controllers
                 }
                 else if (eventType == "1.5")
                 {
-                    if (message.ShortCode == "307382")
+                    if (status == "0")
                     {
-                        using (var entity = new NebulaLibrary.Models.NebulaEntities())
+                        if (message.ShortCode == "307382")
                         {
-                            var singlecharge = new NebulaLibrary.Models.Singlecharge();
-                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
-                            singlecharge.DateCreated = DateTime.Now;
-                            singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                            singlecharge.Price = 300;
-                            singlecharge.IsSucceeded = true;
-                            singlecharge.IsApplicationInformed = false;
-                            singlecharge.IsCalledFromInAppPurchase = false;
-                            var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                            if (installment != null)
-                                singlecharge.InstallmentId = installment.Id;
-                            entity.Singlecharges.Add(singlecharge);
-                            entity.SaveChanges();
+                            using (var entity = new NebulaLibrary.Models.NebulaEntities())
+                            {
+                                var singlecharge = new NebulaLibrary.Models.Singlecharge();
+                                singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
+                                singlecharge.DateCreated = DateTime.Now;
+                                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                singlecharge.Price = 300;
+                                singlecharge.IsSucceeded = true;
+                                singlecharge.IsApplicationInformed = false;
+                                singlecharge.IsCalledFromInAppPurchase = false;
+                                var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                if (installment != null)
+                                    singlecharge.InstallmentId = installment.Id;
+                                entity.Singlecharges.Add(singlecharge);
+                                entity.SaveChanges();
+                            }
                         }
                     }
                 }

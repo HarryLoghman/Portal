@@ -4,9 +4,11 @@ using SharedLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -142,13 +144,13 @@ namespace SharedLibrary
                         var message = new MessageObject();
                         message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
                         message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);
-                        if(message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
+                        if (message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
                             result["postpaidCharges"] += data.billedPricePoint.Value;
                         else
                             result["prepaidCharges"] += data.billedPricePoint.Value;
                         result["sumOfCharges"] += data.billedPricePoint.Value;
                     }
-                    else if(data.eventType == "1.2")
+                    else if (data.eventType == "1.2")
                     {
                         var message = new MessageObject();
                         message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
@@ -197,5 +199,81 @@ namespace SharedLibrary
 
             return dynamicObject.GetType().GetProperty(propertyName) != null;
         }
+
+        public static string IrancellSignatureGenerator(string authorizationKey, string cpId, string serviceId, string price, string timestamp, string requestId)
+        {
+            string result = "";
+            try
+            {
+                System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+                var key = cpId + serviceId + price + timestamp + requestId;
+                logs.Info(key);
+                key = key.ToLower();
+                HMACSHA1 hmac = new HMACSHA1(ConvertHexStringToByteArray(authorizationKey));
+                hmac.Initialize();
+                byte[] buffer1 = encoding.GetBytes(key.ToLower());
+                result = BitConverter.ToString(hmac.ComputeHash(buffer1)).Replace("-", "").ToLower();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in IrancellSignatureGenerator: ", e);
+            }
+            return result;
+        }
+
+        public static string IrancellEncryptedResponse(string encryptedText, string authorizationKey)
+        {
+            string cryptTxt = "";
+            try
+            {
+                cryptTxt = encryptedText.Replace(" ", "+");
+                byte[] bytesBuff = Convert.FromBase64String(cryptTxt);
+
+                string key = authorizationKey;
+
+                using (Aes aes = Aes.Create())
+                {
+                    Rfc2898DeriveBytes crypto = new Rfc2898DeriveBytes(key, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                    aes.Key = crypto.GetBytes(32); aes.IV = crypto.GetBytes(16);
+                    using (MemoryStream mStream = new MemoryStream())
+                    {
+                        using (CryptoStream cStream = new CryptoStream(mStream, aes.CreateDecryptor(), CryptoStreamMode.Write))
+                        {
+                            cStream.Write(bytesBuff, 0, bytesBuff.Length); cStream.Close();
+                        }
+                        cryptTxt = Encoding.Unicode.GetString(mStream.ToArray());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in IrancellEncryptedResponse: ", e);
+            }
+            return cryptTxt;
+        }
+
+        public static byte[] ConvertHexStringToByteArray(string hexString)
+        {
+            byte[] HexAsBytes = null;
+            try
+            {
+                if (hexString.Length % 2 != 0)
+                {
+                    throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "The binary key cannot have an odd number of digits: {0}", hexString));
+                }
+                HexAsBytes = new byte[hexString.Length / 2];
+                for (int index = 0; index < HexAsBytes.Length; index++)
+                {
+                    string byteValue = hexString.Substring(index * 2, 2);
+                    HexAsBytes[index] = byte.Parse(byteValue, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ConvertHexStringToByteArray: ", e);
+            }
+            return HexAsBytes;
+        }
+
     }
 }
