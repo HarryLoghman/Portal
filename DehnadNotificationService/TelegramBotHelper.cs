@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -10,7 +11,7 @@ namespace DehnadNotificationService
 {
     public class TelegramBotHelper
     {
-        public static ReplyKeyboardMarkup GenerateKeybaord(int rows, int columns, List<string> buttons)
+        public static ReplyKeyboardMarkup GenerateKeybaord(int rows, int columns, List<string> buttons, bool resizeKeyboard, bool oneTimeKeywboard)
         {
             var keyboardButtons = new List<List<KeyboardButton>>();
             var i = 0;
@@ -46,19 +47,19 @@ namespace DehnadNotificationService
                     i++;
                 }
                 keyboardButtons.Add(rowButton);
-            }
+                }
 
             var buttonsArray = keyboardButtons.Select(row => row.ToArray()).ToArray();
             var keyboard = new ReplyKeyboardMarkup(buttonsArray);
-            keyboard.ResizeKeyboard = true;
-            keyboard.OneTimeKeyboard = true;
+            keyboard.ResizeKeyboard = resizeKeyboard;
+            keyboard.OneTimeKeyboard = oneTimeKeywboard;
             return keyboard;
 
-            //var categories = new[] { "skills", "about me" };
-            //var buttons = categories.Select(category => new[] { new KeyboardButton(category) })
-            //    .ToArray();
-            //var replyMarkup = new ReplyKeyboardMarkup(buttons);
-        }
+                //var categories = new[] { "skills", "about me" };
+                //var buttons = categories.Select(category => new[] { new KeyboardButton(category) })
+                //    .ToArray();
+                //var replyMarkup = new ReplyKeyboardMarkup(buttons);
+            }
 
         public static void SaveLastStep(Type entityType, dynamic user, string text)
         {
@@ -142,6 +143,46 @@ namespace DehnadNotificationService
                 entity.Users.Add(newUser);
                 entity.SaveChanges();
             }
+        }
+
+        public static string NormalizeContent(string content)
+        {
+            if (content == null)
+                content = "";
+            else
+            {
+                content = content.Trim();
+                content = Regex.Replace(content, @"\s+", " ");
+                content = content.Replace('ك', 'ک');
+                content = content.Replace('ي', 'ی');
+                content = content.Replace("‏۱", "1");
+                content = content.Replace('۱', '1');
+                content = content.Replace('١', '1');
+                content = content.Replace('٢', '2');
+                content = content.Replace('۲', '2');
+                content = content.Replace('۳', '3');
+                content = content.Replace('٣', '3');
+                content = content.Replace("‏۳", "3");
+                content = content.Replace("‏‏٣", "3");
+                content = content.Replace("‏۴", "4");
+                content = content.Replace('۴', '4');
+                content = content.Replace('٤', '4');
+                content = content.Replace("‏۵", "5");
+                content = content.Replace('۵', '5');
+                content = content.Replace('٥', '5');
+                content = content.Replace('۶', '6');
+                content = content.Replace("‏۶", "6");
+                content = content.Replace('٦', '6');
+                content = content.Replace('٧', '7');
+                content = content.Replace('۷', '7');
+                content = content.Replace('٨', '8');
+                content = content.Replace('۸', '8');
+                content = content.Replace('۹', '9');
+                content = content.Replace('٩', '9');
+                content = content.Replace('٠', '0');
+                content = content.Replace('۰', '0');
+            }
+            return content;
         }
     }
 }

@@ -60,7 +60,7 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public HttpResponseMessage CreateNewUserWebService()
+        public async Task<HttpResponseMessage> CreateNewUser()
         {
             try
             {
@@ -115,6 +115,31 @@ namespace Portal.Controllers
                 entity.UserMessages.Add(userMessage);
                 entity.SaveChanges();
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> SaveContact()
+        {
+            string mobileNumber = HttpContext.Current.Request.Form["mobileNumber"];
+            string firstName = HttpContext.Current.Request.Form["firstName"];
+            string lastName = HttpContext.Current.Request.Form["lastName"];
+            long chatId = Convert.ToInt64(HttpContext.Current.Request.Form["chatId"]);
+            long userId = Convert.ToInt64(HttpContext.Current.Request.Form["userId"]);
+            using (var entity = new DehnadNotificationService.Models.NotificationEntities())
+            {
+                var user = entity.Users.FirstOrDefault(o => o.ChatId == chatId);
+                user.MobileNumber = mobileNumber;
+                if (firstName != "")
+                    user.Firstname = firstName;
+                if (lastName != "")
+                    user.Lastname = lastName;
+                user.UserId = userId;
+                entity.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                entity.SaveChanges();
+            }
+            var responseCode = new HttpResponseMessage(HttpStatusCode.OK);
+            return responseCode;
         }
 
         [HttpPost]

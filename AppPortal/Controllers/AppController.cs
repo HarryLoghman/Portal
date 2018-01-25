@@ -1776,39 +1776,33 @@ namespace Portal.Controllers
             dynamic result = new ExpandoObject();
             try
             {
-                var hash = SharedLibrary.Security.GetSha256Hash("GetIrancellOtpUrl" + messageObj.ServiceCode);
-                if (messageObj.AccessKey != hash)
-                    result.Status = "You do not have permission";
-                else
+                if (messageObj.ServiceCode != null && (messageObj.ServiceCode == "TahChin" || messageObj.ServiceCode == "MusicYad"))
                 {
-                    if (messageObj.ServiceCode != null && (messageObj.ServiceCode == "TahChin" || messageObj.ServiceCode == "MusicYad"))
+                    string timestampParam = DateTime.Now.ToString("yyyyMMddhhmmss");
+                    string requestIdParam = Guid.NewGuid().ToString();
+                    var callBackParam = messageObj.Address;
+                    var price = "3000";
+                    var modeParam = "1"; //Web
+                    var pageNo = 0;
+                    var authKey = "393830313130303036333739";
+                    var sign = "";
+                    var cpId = "980110006379";
+                    if (messageObj.ServiceCode == "TahChin")
                     {
-                        string timestampParam = DateTime.Now.ToString("yyyyMMddhhmmss");
-                        string requestIdParam = Guid.NewGuid().ToString();
-                        var callBackParam = messageObj.Address;
-                        var price = "3000";
-                        var modeParam = "1"; //Web
-                        var pageNo = 0;
-                        var authKey = "393830313130303036333739";
-                        var sign = "";
-                        var cpId = "980110006379";
-                        if (messageObj.ServiceCode == "TahChin")
-                        {
-                            var serviceId = SharedLibrary.ServiceHandler.GetServiceId(messageObj.ServiceCode).Value;
-                            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
-                            pageNo = 146;
-                            sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
-                        }
+                        var serviceId = SharedLibrary.ServiceHandler.GetServiceId(messageObj.ServiceCode).Value;
+                        var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
+                        pageNo = 146;
+                        sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
+                    }
 
-                        var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"
-                                                , timestampParam, requestIdParam, pageNo, callBackParam, sign, modeParam);
-                        result.Status = "Success";
-                        result.Description = url;
-                    }
-                    else if (messageObj.From != null)
-                    {
-                        result.Status = "Invalid Service Code";
-                    }
+                    var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"
+                                            , timestampParam, requestIdParam, pageNo, callBackParam, sign, modeParam);
+                    result.Status = "Success";
+                    result.Description = url;
+                }
+                else if (messageObj.From != null)
+                {
+                    result.Status = "Invalid Service Code";
                 }
             }
             catch (Exception e)

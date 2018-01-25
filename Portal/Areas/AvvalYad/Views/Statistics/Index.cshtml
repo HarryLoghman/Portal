@@ -212,11 +212,14 @@ else
 {
     <script>
     var gridElement = $("#grid");
+
     $("#grid").kendoGrid({
 
         columns: [
             { field: "PersianDate", title: "تاریخ", width: 100 },
-            { field: "SumOfSinglechargeSuccessfulCharge", title: "مجموع درآمد", width: 100 },
+            { field: "TotalSubscribers", title: "تعداد اعضای کل", width: 100 },
+            { field: "NumberOfSubscriptions", title: "تعداد کل عضویت", width: 100 },
+            { field: "NumberOfUnsubscriptions", title: "تعداد کل لغو عضویت", width: 100 },
         ],
         toolbar: ["excel"],
         dataSource: {
@@ -276,7 +279,6 @@ else
             }
         }
     });
-
     </script>
 }
 

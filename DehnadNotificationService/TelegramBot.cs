@@ -71,11 +71,13 @@ namespace DehnadNotificationService
             try
             {
                 var userParams = new Dictionary<string, string>();
-                var responseObject = new Models.TelegramBotResponse();
-                responseObject.OutPut = new List<Models.TelegramBotOutput>();
+                var responseObject = new DehnadNotificationService.Models.TelegramBotResponse();
+                responseObject.OutPut = new List<DehnadNotificationService.Models.TelegramBotOutput>();
                 responseObject.Message = messageEventArgs.Message;
-                responseObject.Message.Text = SharedLibrary.MessageHandler.NormalizeContent(messageEventArgs.Message.Text);
+                responseObject.Message.Text = TelegramBotHelper.NormalizeContent(messageEventArgs.Message.Text);
                 var serializedresponseObject = JsonConvert.SerializeObject(responseObject);
+
+                if (responseObject.Message == null) return;
 
                 User user;
                 userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() } };
@@ -83,7 +85,7 @@ namespace DehnadNotificationService
                 if (user == null)
                 {
                     userParams = new Dictionary<string, string>() { { "stringedTelegramBotResponse", serializedresponseObject } };
-                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("CreateNewUserWebService", userParams);
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("CreateNewUser", userParams);
 
                     userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() } };
                     user = await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("GetUserWebService", userParams);
@@ -97,25 +99,25 @@ namespace DehnadNotificationService
                 {
                     responseObject = await BotManager.NewlyStartedUser(user, responseObject);
                 }
-                //else if (responseObject.Message.Text.Contains("MobileConfirmation") && responseObject.Message.Type == MessageType.ContactMessage)
-                //{
-                //    responseObject = await BotManager.ContactReceived(entityType, user, responseObject);
-                //}
-                //else if (responseObject.Message.Text.ToLower().Contains("help"))
-                //{
-                //    if (user.LastStep.Contains("Admin"))
-                //        responseObject = await BotManager.AdminHelp(entityType, user, responseObject);
-                //    else if (user.LastStep.Contains("Member"))
-                //        responseObject = await BotManager.MemberHelp(entityType, user, responseObject);
-                //}
-                //else if (user.LastStep == "Admin-Registered")
-                //{
-                //    responseObject = await BotManager.AdminHelp(entityType, user, responseObject);
-                //}
-                //else if (user.LastStep == "Member-Registered")
-                //{
-                //    responseObject = await BotManager.MemberHelp(entityType, user, responseObject);
-                //}
+                else if (user.LastStep.Contains("MobileConfirmation") && responseObject.Message.Type == MessageType.ContactMessage)
+                {
+                    responseObject = await BotManager.ContactReceived(user, responseObject);
+                }
+                else if (responseObject.Message.Text.ToLower().Contains("help"))
+                {
+                    if (user.LastStep.Contains("Admin"))
+                        responseObject = await BotManager.AdminHelp(user, responseObject);
+                    else if (user.LastStep.Contains("Member"))
+                        responseObject = await BotManager.MemberHelp(user, responseObject);
+                }
+                else if (user.LastStep == "Admin-Registered")
+                {
+                    responseObject = await BotManager.AdminHelp(user, responseObject);
+                }
+                else if (user.LastStep == "Member-Registered")
+                {
+                    responseObject = await BotManager.MemberHelp(user, responseObject);
+                }
                 else
                 {
                     if (responseObject.Message.Text == "IWantToBeAdmin!!" || responseObject.Message.Text == "SignMeToDehnadNotification")
@@ -123,10 +125,13 @@ namespace DehnadNotificationService
                         responseObject = await BotManager.NewlyStartedUser( user, responseObject);
                     }
                 }
+                logs.Info("9");
                 foreach (var response in responseObject.OutPut)
                 {
+                    logs.Info("10");
                     if (response.Text != null && response.Text != "")
                     {
+                        logs.Info("11");
                         if (response.keyboard != null)
                             await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: response.keyboard);
                         else

@@ -207,7 +207,6 @@ namespace SharedLibrary
             {
                 System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
                 var key = cpId + serviceId + price + timestamp + requestId;
-                logs.Info(key);
                 key = key.ToLower();
                 HMACSHA1 hmac = new HMACSHA1(ConvertHexStringToByteArray(authorizationKey));
                 hmac.Initialize();

@@ -84,7 +84,7 @@ namespace SharedLibrary
                 using (var client = new HttpClient())
                 {
                     var content = new FormUrlEncodedContent(parameters);
-                    var url = "http://79.175.164.51/api/Notifications/" + methodName;
+                    var url = "http://79.175.164.51:8093/api/Bot/" + methodName;
                     var response = await client.PostAsync(url, content);
                     if (!response.IsSuccessStatusCode)
                         return null;

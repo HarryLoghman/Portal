@@ -44,7 +44,7 @@ namespace NebulaLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else if (message.Content.ToLower().Contains("abc")) //Otp Help
+                else if (message.Content.ToLower().Contains("abc") || message.Content.ToLower().Contains("def")) //Otp Help
                 {
                     var mobile = message.MobileNumber;
                     var singleCharge = new Singlecharge();
