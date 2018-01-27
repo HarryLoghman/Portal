@@ -5,5 +5,14 @@
     <Setting Name="BotId" Type="System.String" Scope="User">
       <Value Profile="(Default)">485632543:AAFKbpDUoyql2oZVjOukkLRYclF8aIXFm3c</Value>
     </Setting>
+    <Setting Name="IsBotServer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SendTelegramMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SendSmsMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

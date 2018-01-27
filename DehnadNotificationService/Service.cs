@@ -17,13 +17,18 @@ namespace DehnadNotificationService
 
         protected override void OnStart(string[] args)
         {
-            telegramBotThread = new Thread(TelegramBotWorkerThread);
-            telegramBotThread.IsBackground = true;
-            telegramBotThread.Start();
-
-            incomeThread = new Thread(IncomeWorkerThread);
-            incomeThread.IsBackground = true;
-            incomeThread.Start();
+            if (Properties.Settings.Default.IsBotServer)
+            {
+                telegramBotThread = new Thread(TelegramBotWorkerThread);
+                telegramBotThread.IsBackground = true;
+                telegramBotThread.Start();
+            }
+            else
+            {
+                incomeThread = new Thread(IncomeWorkerThread);
+                incomeThread.IsBackground = true;
+                incomeThread.Start();
+            }
 
         }
 
@@ -32,13 +37,19 @@ namespace DehnadNotificationService
             try
             {
                 shutdownEvent.Set();
-                if (!telegramBotThread.Join(3000))
+                if (Properties.Settings.Default.IsBotServer)
                 {
-                    telegramBotThread.Abort();
+                    if (!telegramBotThread.Join(3000))
+                    {
+                        telegramBotThread.Abort();
+                    }
                 }
-                if (!incomeThread.Join(3000))
+                else
                 {
-                    incomeThread.Abort();
+                    if (!incomeThread.Join(3000))
+                    {
+                        incomeThread.Abort();
+                    }
                 }
             }
             catch (Exception exp)
@@ -61,8 +72,31 @@ namespace DehnadNotificationService
         {
             while (!shutdownEvent.WaitOne(0))
             {
-                //Income.IncomeDiffrenceByHour();
-                Thread.Sleep(60 * 1000);
+                Income.IncomeDiffrenceByHour();
+                Thread.Sleep(60 * 60 * 1000);
+            }
+        }
+
+        public static void SaveMessageToSendQueue(string message, UserType userType)
+        {
+            try
+            {
+                if (Properties.Settings.Default.SendTelegramMessages)
+                {
+                    var telegramMessage = new DehnadNotificationService.Models.TelegramBotResponse();
+                    var telegramOutput = new DehnadNotificationService.Models.TelegramBotOutput();
+                    telegramOutput.Text = message;
+                    telegramMessage.OutPut.Add(telegramOutput);
+                    TelegramBot.TelegramSendMessage(telegramMessage, userType);
+                }
+                if (Properties.Settings.Default.SendSmsMessages)
+                {
+                    SendMessage.SendMessageBySms(message, userType);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in Alert: " + e);
             }
         }
 
@@ -70,12 +104,18 @@ namespace DehnadNotificationService
         {
             try
             {
-                var telegramMessage = new DehnadNotificationService.Models.TelegramBotResponse();
-                var telegramOutput = new DehnadNotificationService.Models.TelegramBotOutput();
-                telegramOutput.Text = message;
-                telegramMessage.OutPut.Add(telegramOutput);
-                TelegramBot.TelegramSendMessage(telegramMessage, userType);
-                SendMessage.SendMessageBySms(message, userType);
+                if (Properties.Settings.Default.SendTelegramMessages)
+                {
+                    var telegramMessage = new DehnadNotificationService.Models.TelegramBotResponse();
+                    var telegramOutput = new DehnadNotificationService.Models.TelegramBotOutput();
+                    telegramOutput.Text = message;
+                    telegramMessage.OutPut.Add(telegramOutput);
+                    TelegramBot.TelegramSendMessage(telegramMessage, userType);
+                }
+                if (Properties.Settings.Default.SendSmsMessages)
+                {
+                    SendMessage.SendMessageBySms(message, userType);
+                }
             }
             catch (Exception e)
             {
@@ -87,7 +127,7 @@ namespace DehnadNotificationService
         {
             try
             {
-                using(var entity = new Models.NotificationEntities())
+                using (var entity = new Models.NotificationEntities())
                 {
                     var message = new Models.SentMessage();
                     message.Channel = channel;

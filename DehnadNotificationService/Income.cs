@@ -44,7 +44,7 @@ namespace DehnadNotificationService
                 {
                     logs.Info("MusicYad incomePercentageDifference:" + incomePercentageDifference);
                     var message = "MusicYad income dropped by %" + incomePercentageDifference;
-                    DehnadNotificationService.Service.Alert(message, UserType.All);
+                    DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.All);
                 }
             }
             catch (Exception e)
@@ -72,7 +72,7 @@ namespace DehnadNotificationService
                 {
                     logs.Info("Tahchin incomePercentageDifference:" + incomePercentageDifference);
                     var message = "Tahchin income dropped by %" + incomePercentageDifference;
-                    DehnadNotificationService.Service.Alert(message, UserType.All);
+                    DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.All);
                 }
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace DehnadNotificationService
         private static int CaluculatePercentageDifference(int yesterdayPastHourIncome, int todayPastHourIncome)
         {
             var yesterdayPastHourIncomeDivide = yesterdayPastHourIncome == 0 ? 1 : yesterdayPastHourIncome;
-            var percent = ((todayPastHourIncome - yesterdayPastHourIncome) / yesterdayPastHourIncome) * 100;
+            var percent = ((todayPastHourIncome - yesterdayPastHourIncome) / yesterdayPastHourIncomeDivide) * 100;
             return percent;
         }
 
@@ -94,10 +94,21 @@ namespace DehnadNotificationService
             {
                 using (var entity = new TahChinLibrary.Models.TahChinEntities())
                 {
-                    var income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(date))
-                        .GroupBy(o => o.DateCreated.Hour)
-                        .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
-                        .AsNoTracking().ToDictionary(o => o.Hour, o => o.Amount);
+                    var income = new Dictionary<int, int>();
+                    if (date.Date != DateTime.Now.Date)
+                    {
+                        income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(date))
+                            .GroupBy(o => o.DateCreated.Hour)
+                            .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
+                            .AsNoTracking().ToDictionary(o => o.Hour, o => o.Amount);
+                    }
+                    else
+                    {
+                        income = entity.Singlecharges.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(date))
+                              .GroupBy(o => o.DateCreated.Hour)
+                              .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
+                              .AsNoTracking().ToDictionary(o => o.Hour, o => o.Amount);
+                    }
                     return income;
                 }
             }
@@ -113,10 +124,21 @@ namespace DehnadNotificationService
             {
                 using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
                 {
-                    var income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated.Date) == DbFunctions.TruncateTime(date))
+                    var income = new Dictionary<int, int>();
+                    if (date.Date != DateTime.Now.Date)
+                    {
+                        income = entity.SinglechargeArchives.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(date))
                         .GroupBy(o => o.DateCreated.Hour)
                         .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
                         .AsNoTracking().ToDictionary(o => o.Hour, o => o.Amount);
+                    }
+                    else
+                    {
+                        income = entity.Singlecharges.Where(o => o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(date))
+                        .GroupBy(o => o.DateCreated.Hour)
+                        .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
+                        .AsNoTracking().ToDictionary(o => o.Hour, o => o.Amount);
+                    }
                     return income;
                 }
             }

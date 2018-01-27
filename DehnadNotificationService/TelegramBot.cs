@@ -125,13 +125,10 @@ namespace DehnadNotificationService
                         responseObject = await BotManager.NewlyStartedUser( user, responseObject);
                     }
                 }
-                logs.Info("9");
                 foreach (var response in responseObject.OutPut)
                 {
-                    logs.Info("10");
                     if (response.Text != null && response.Text != "")
                     {
-                        logs.Info("11");
                         if (response.keyboard != null)
                             await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: response.keyboard);
                         else

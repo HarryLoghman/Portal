@@ -1769,27 +1769,26 @@ namespace Portal.Controllers
             return response;
         }
 
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage GetIrancellOtpUrl([FromBody]MessageObject messageObj)
+        public HttpResponseMessage GetIrancellOtpUrl(string serviceCode, string callBackParam)
         {
             dynamic result = new ExpandoObject();
             try
             {
-                if (messageObj.ServiceCode != null && (messageObj.ServiceCode == "TahChin" || messageObj.ServiceCode == "MusicYad"))
+                if (serviceCode != null && (serviceCode == "TahChin" || serviceCode == "MusicYad"))
                 {
                     string timestampParam = DateTime.Now.ToString("yyyyMMddhhmmss");
                     string requestIdParam = Guid.NewGuid().ToString();
-                    var callBackParam = messageObj.Address;
                     var price = "3000";
                     var modeParam = "1"; //Web
                     var pageNo = 0;
                     var authKey = "393830313130303036333739";
                     var sign = "";
                     var cpId = "980110006379";
-                    if (messageObj.ServiceCode == "TahChin")
+                    if (serviceCode == "TahChin")
                     {
-                        var serviceId = SharedLibrary.ServiceHandler.GetServiceId(messageObj.ServiceCode).Value;
+                        var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode).Value;
                         var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
                         pageNo = 146;
                         sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
@@ -1800,7 +1799,7 @@ namespace Portal.Controllers
                     result.Status = "Success";
                     result.Description = url;
                 }
-                else if (messageObj.From != null)
+                else
                 {
                     result.Status = "Invalid Service Code";
                 }
@@ -1817,9 +1816,9 @@ namespace Portal.Controllers
             return response;
         }
 
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage DecryptIrancellMessage([FromBody]MessageObject messageObj)
+        public HttpResponseMessage DecryptIrancellMessage(string data)
         {
             dynamic result = new ExpandoObject();
             try
@@ -1827,7 +1826,7 @@ namespace Portal.Controllers
                 result.Status = "Error";
                 result.Description = "General error occurred";
                 var authKey = "393830313130303036333739";
-                var message = SharedLibrary.HelpfulFunctions.IrancellEncryptedResponse(messageObj.Content, authKey);
+                var message = SharedLibrary.HelpfulFunctions.IrancellEncryptedResponse(data, authKey);
                 var splitedMessage = message.Split('&');
                 foreach (var item in splitedMessage)
                 {

@@ -34,5 +34,41 @@ namespace DehnadNotificationService.Properties {
                 this["BotId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsBotServer {
+            get {
+                return ((bool)(this["IsBotServer"]));
+            }
+            set {
+                this["IsBotServer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SendTelegramMessages {
+            get {
+                return ((bool)(this["SendTelegramMessages"]));
+            }
+            set {
+                this["SendTelegramMessages"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SendSmsMessages {
+            get {
+                return ((bool)(this["SendSmsMessages"]));
+            }
+            set {
+                this["SendSmsMessages"] = value;
+            }
+        }
     }
 }
