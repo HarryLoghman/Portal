@@ -21,7 +21,7 @@ namespace DehnadNotificationService
         public static bool StartBot()
         {
             bool isBotRunning = false;
-            
+
             Bot = new TelegramBotClient(Properties.Settings.Default.BotId);
             while (true)
             {
@@ -122,7 +122,7 @@ namespace DehnadNotificationService
                 {
                     if (responseObject.Message.Text == "IWantToBeAdmin!!" || responseObject.Message.Text == "SignMeToDehnadNotification")
                     {
-                        responseObject = await BotManager.NewlyStartedUser( user, responseObject);
+                        responseObject = await BotManager.NewlyStartedUser(user, responseObject);
                     }
                 }
                 foreach (var response in responseObject.OutPut)
@@ -142,7 +142,7 @@ namespace DehnadNotificationService
             }
         }
 
-        public static async void TelegramSendMessage(TelegramBotResponse message, UserType userType)
+        public static void SaveTelegramMessageToQueue(string message, UserType userType)
         {
             try
             {
@@ -158,26 +158,70 @@ namespace DehnadNotificationService
                         chatIds = entity.Users.Where(o => o.LastStep.Contains("Admin") || o.LastStep.Contains("Member")).Select(o => o.ChatId).ToList();
                     foreach (var chatId in chatIds)
                     {
-                        foreach (var response in message.OutPut)
-                        {
-                            if (response.Text != null && response.Text != "")
-                            {
-                                if (response.keyboard != null)
-                                    await Bot.SendTextMessageAsync(chatId, response.Text, replyMarkup: response.keyboard);
-                                else
-                                    await Bot.SendTextMessageAsync(chatId, response.Text, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
-                            }
-                            Service.SaveSendedMessageToDB(response.Text, "telegram", userType.ToString(), chatId, null);
-                        }
+                        var tMessage = new SentMessage();
+                        tMessage.Channel = "telegram";
+                        tMessage.TelegramKeyboardData = null;
+                        tMessage.Content = message;
+                        tMessage.DateCreated = DateTime.Now;
+                        tMessage.IsSent = false;
+                        tMessage.ChatId = chatId;
+                        tMessage.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
+                        tMessage.UserType = userType.ToString();
+                        entity.SentMessages.Add(tMessage);
                     }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SaveTelegramMessageToQueue: " + e);
+            }
+        }
+
+        public static async void TelegramSendMessage()
+        {
+            List<long> messageIdsThatSended = new List<long>();
+            List<SentMessage> messagesToSend = new List<SentMessage>();
+            try
+            {
+                if (Properties.Settings.Default.IsBotServer == false)
+                {
+                    using (var entity = new NotificationEntities())
+                    {
+                        entity.Configuration.AutoDetectChangesEnabled = false;
+                        messagesToSend = entity.SentMessages.Where(o => o.IsSent == false && o.Channel == "telegram").ToList();
+                    }
+                }
+                else
+                {
+                    var userParams = new Dictionary<string, string>() { { "channel", "telegram" } };
+                    var messagesIds = await SharedLibrary.UsefulWebApis.NotificationBotApi<List<long>>("GetUnsendMessagesId", userParams);
+                    using (var entity = new NotificationEntities())
+                    {
+                        entity.Configuration.AutoDetectChangesEnabled = false;
+                        messagesToSend = entity.SentMessages.Where(o => messagesIds.Contains(o.Id)).ToList();
+                    }
+                }
+                foreach (var message in messagesToSend)
+                {
+                    if (message.Content != null && message.Content != "")
+                    {
+                        if (message.TelegramKeyboardData != null)
+                        {
+                            //await Bot.SendTextMessageAsync(message.ChatId, message.Content, replyMarkup: response.keyboard);
+                        }
+                        else
+                            await Bot.SendTextMessageAsync(message.ChatId, message.Content, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
+                    }
+                    messageIdsThatSended.Add(message.Id);
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Exception in TelegramSendMessage: " + e);
             }
+            Service.ChangeMessageStatusToSended(messageIdsThatSended);
         }
-
     }
 
     public enum UserType

@@ -119,6 +119,29 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public async Task<HttpResponseMessage> GetUnsendMessagesId()
+        {
+            string channel = HttpContext.Current.Request.Form["channel"];
+            string json = null;
+            try
+            {
+                using (var entity = new DehnadNotificationService.Models.NotificationEntities())
+                {
+                    var messageIds = entity.SentMessages.Where(o => o.IsSent == false && o.Channel == channel).ToList();
+                    json = JsonConvert.SerializeObject(messageIds, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetUnsendMessagesId: ", e);
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<HttpResponseMessage> SaveContact()
         {
             string mobileNumber = HttpContext.Current.Request.Form["mobileNumber"];

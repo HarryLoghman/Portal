@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
 
@@ -9,6 +11,7 @@ namespace DehnadNotificationService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Thread telegramBotThread;
         private Thread incomeThread;
+        private Thread sendMessageThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -30,6 +33,10 @@ namespace DehnadNotificationService
                 incomeThread.Start();
             }
 
+            sendMessageThread = new Thread(SendMessagesThread);
+            sendMessageThread.IsBackground = true;
+            sendMessageThread.Start();
+
         }
 
         protected override void OnStop()
@@ -50,6 +57,10 @@ namespace DehnadNotificationService
                     {
                         incomeThread.Abort();
                     }
+                }
+                if (!sendMessageThread.Join(3000))
+                {
+                    sendMessageThread.Abort();
                 }
             }
             catch (Exception exp)
@@ -81,68 +92,57 @@ namespace DehnadNotificationService
         {
             try
             {
-                if (Properties.Settings.Default.SendTelegramMessages)
-                {
-                    var telegramMessage = new DehnadNotificationService.Models.TelegramBotResponse();
-                    var telegramOutput = new DehnadNotificationService.Models.TelegramBotOutput();
-                    telegramOutput.Text = message;
-                    telegramMessage.OutPut.Add(telegramOutput);
-                    TelegramBot.TelegramSendMessage(telegramMessage, userType);
-                }
-                if (Properties.Settings.Default.SendSmsMessages)
-                {
-                    SendMessage.SendMessageBySms(message, userType);
-                }
+                TelegramBot.SaveTelegramMessageToQueue(message, userType);
+                SendMessage.SaveSmsMessageToQueue(message, userType);
             }
             catch (Exception e)
             {
-                logs.Error(" Exception in Alert: " + e);
+                logs.Error(" Exception in SaveMessageToSendQueue: " + e);
             }
         }
 
-        public static void Alert(string message, UserType userType)
+        public static void ChangeMessageStatusToSended(List<long> messageIds)
         {
             try
             {
-                if (Properties.Settings.Default.SendTelegramMessages)
+                using (var entity = new DehnadNotificationService.Models.NotificationEntities())
                 {
-                    var telegramMessage = new DehnadNotificationService.Models.TelegramBotResponse();
-                    var telegramOutput = new DehnadNotificationService.Models.TelegramBotOutput();
-                    telegramOutput.Text = message;
-                    telegramMessage.OutPut.Add(telegramOutput);
-                    TelegramBot.TelegramSendMessage(telegramMessage, userType);
-                }
-                if (Properties.Settings.Default.SendSmsMessages)
-                {
-                    SendMessage.SendMessageBySms(message, userType);
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error(" Exception in Alert: " + e);
-            }
-        }
-
-        public static void SaveSendedMessageToDB(string content, string channel, string userType, long? chatId, string mobileNumber)
-        {
-            try
-            {
-                using (var entity = new Models.NotificationEntities())
-                {
-                    var message = new Models.SentMessage();
-                    message.Channel = channel;
-                    message.ChatId = chatId;
-                    message.UserType = userType;
-                    message.MobileNumber = mobileNumber;
-                    message.DateCreated = DateTime.Now;
-                    message.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime();
-                    entity.SentMessages.Add(message);
+                    var messages = entity.SentMessages.Where(o => messageIds.Contains(o.Id)).ToList();
+                    foreach (var message in messages)
+                    {
+                        message.IsSent = true;
+                        message.DateSent = DateTime.Now;
+                        entity.Entry(message).State = System.Data.Entity.EntityState.Modified;
+                    }
                     entity.SaveChanges();
                 }
             }
             catch (Exception e)
             {
-                logs.Error(" Exception in SaveSendedMessageToDB: " + e);
+                logs.Error(" Exception in ChangeMessageStatusToSended: " + e);
+            }
+        }
+
+        public void SendMessagesThread()
+        {
+            while (!shutdownEvent.WaitOne(0))
+            {
+                try
+                {
+                    if (Properties.Settings.Default.SendTelegramMessages)
+                    {
+                        TelegramBot.TelegramSendMessage();
+                    }
+                    if (Properties.Settings.Default.SendSmsMessages)
+                    {
+                        SendMessage.SendMessageBySms();
+                    }
+                }
+                catch (Exception e)
+                {
+                    logs.Error(" Exception in SendMessagesThread: " + e);
+                }
+                Thread.Sleep(60 * 1000);
             }
         }
     }

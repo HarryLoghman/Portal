@@ -22,5 +22,8 @@ namespace DehnadNotificationService.Models
         public string PersianDateCreated { get; set; }
         public string UserType { get; set; }
         public string Channel { get; set; }
+        public Nullable<bool> IsSent { get; set; }
+        public Nullable<System.DateTime> DateSent { get; set; }
+        public string TelegramKeyboardData { get; set; }
     }
 }

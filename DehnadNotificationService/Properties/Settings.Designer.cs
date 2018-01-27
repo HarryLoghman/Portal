@@ -37,7 +37,7 @@ namespace DehnadNotificationService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsBotServer {
             get {
                 return ((bool)(this["IsBotServer"]));
@@ -49,7 +49,7 @@ namespace DehnadNotificationService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool SendTelegramMessages {
             get {
                 return ((bool)(this["SendTelegramMessages"]));
@@ -61,7 +61,7 @@ namespace DehnadNotificationService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool SendSmsMessages {
             get {
                 return ((bool)(this["SendSmsMessages"]));

@@ -17,6 +17,9 @@
           <Property Name="PersianDateCreated" Type="varchar" MaxLength="20" />
           <Property Name="UserType" Type="nvarchar" MaxLength="50" />
           <Property Name="Channel" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsSent" Type="bit" />
+          <Property Name="DateSent" Type="datetime" />
+          <Property Name="TelegramKeyboardData" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="UserMessages">
           <Key>
@@ -136,6 +139,9 @@
           <Property Name="PersianDateCreated" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="UserType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsSent" Type="Boolean" />
+          <Property Name="DateSent" Type="DateTime" Precision="3" />
+          <Property Name="TelegramKeyboardData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -177,6 +183,9 @@
           <EntitySetMapping Name="SentMessages">
             <EntityTypeMapping TypeName="NotificationModel.SentMessage">
               <MappingFragment StoreEntitySet="SentMessages">
+                <ScalarProperty Name="TelegramKeyboardData" ColumnName="TelegramKeyboardData" />
+                <ScalarProperty Name="DateSent" ColumnName="DateSent" />
+                <ScalarProperty Name="IsSent" ColumnName="IsSent" />
                 <ScalarProperty Name="Channel" ColumnName="Channel" />
                 <ScalarProperty Name="UserType" ColumnName="UserType" />
                 <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
