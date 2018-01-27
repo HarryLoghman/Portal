@@ -119,7 +119,7 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<HttpResponseMessage> GetUnsendMessagesId()
+        public async Task<HttpResponseMessage> GetUnsendMessages()
         {
             string channel = HttpContext.Current.Request.Form["channel"];
             string json = null;
@@ -127,8 +127,8 @@ namespace Portal.Controllers
             {
                 using (var entity = new DehnadNotificationService.Models.NotificationEntities())
                 {
-                    var messageIds = entity.SentMessages.Where(o => o.IsSent == false && o.Channel == channel).ToList();
-                    json = JsonConvert.SerializeObject(messageIds, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+                    var messages = entity.SentMessages.Where(o => o.IsSent == false && o.Channel == channel).ToList();
+                    json = JsonConvert.SerializeObject(messages, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
                 }
             }
             catch (Exception e)

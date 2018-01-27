@@ -28,12 +28,7 @@ namespace DehnadNotificationService
                 else
                 {
                     var userParams = new Dictionary<string, string>() { { "channel", "sms" } };
-                    var messagesIds = await SharedLibrary.UsefulWebApis.NotificationBotApi<List<long>>("GetUnsendMessagesId", userParams);
-                    using (var entity = new NotificationEntities())
-                    {
-                        entity.Configuration.AutoDetectChangesEnabled = false;
-                        smsToSend = entity.SentMessages.Where(o => messagesIds.Contains(o.Id)).ToList();
-                    }
+                    smsToSend = await SharedLibrary.UsefulWebApis.NotificationBotApi<List<SentMessage>>("GetUnsendMessages", userParams);
                 }
                 foreach (var sms in smsToSend)
                 {
