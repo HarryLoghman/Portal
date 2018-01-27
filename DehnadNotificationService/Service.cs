@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
@@ -101,20 +102,29 @@ namespace DehnadNotificationService
             }
         }
 
-        public static void ChangeMessageStatusToSended(List<long> messageIds)
+        public static async void ChangeMessageStatusToSended(List<long> messageIds)
         {
             try
             {
-                using (var entity = new DehnadNotificationService.Models.NotificationEntities())
+                if (Properties.Settings.Default.IsBotServer == false)
                 {
-                    var messages = entity.SentMessages.Where(o => messageIds.Contains(o.Id)).ToList();
-                    foreach (var message in messages)
+                    using (var entity = new DehnadNotificationService.Models.NotificationEntities())
                     {
-                        message.IsSent = true;
-                        message.DateSent = DateTime.Now;
-                        entity.Entry(message).State = System.Data.Entity.EntityState.Modified;
+                        var messages = entity.SentMessages.Where(o => messageIds.Contains(o.Id)).ToList();
+                        foreach (var message in messages)
+                        {
+                            message.IsSent = true;
+                            message.DateSent = DateTime.Now;
+                            entity.Entry(message).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        entity.SaveChanges();
                     }
-                    entity.SaveChanges();
+                }
+                else
+                {
+                    var serializeMessageIds = JsonConvert.SerializeObject(messageIds);
+                    var userParams = new Dictionary<string, string>() { { "messageIds", serializeMessageIds } };
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("ChangeMessageStatusToSended", userParams);
                 }
             }
             catch (Exception e)

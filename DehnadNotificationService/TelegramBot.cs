@@ -215,7 +215,8 @@ namespace DehnadNotificationService
             {
                 logs.Error("Exception in TelegramSendMessage: " + e);
             }
-            Service.ChangeMessageStatusToSended(messageIdsThatSended);
+            if (messageIdsThatSended.Count > 0)
+                Service.ChangeMessageStatusToSended(messageIdsThatSended);
         }
     }
 

@@ -142,6 +142,33 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public async Task<HttpResponseMessage> ChangeMessageStatusToSended()
+        {
+            try
+            {
+                var messageIds = JsonConvert.DeserializeObject<List<long>>(HttpContext.Current.Request.Form["messageIds"]);
+                using (var entity = new DehnadNotificationService.Models.NotificationEntities())
+                {
+                    var messages = entity.SentMessages.Where(o => messageIds.Contains(o.Id)).ToList();
+                    foreach (var message in messages)
+                    {
+                        message.IsSent = true;
+                        message.DateSent = DateTime.Now;
+                        entity.Entry(message).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch(Exception e)
+            {
+                logs.Error("Exception in ChangeMessageStatusToSended: ", e);
+            }
+            var responseCode = new HttpResponseMessage(HttpStatusCode.OK);
+            return responseCode;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<HttpResponseMessage> SaveContact()
         {
             string mobileNumber = HttpContext.Current.Request.Form["mobileNumber"];

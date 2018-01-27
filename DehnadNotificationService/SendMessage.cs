@@ -56,7 +56,8 @@ namespace DehnadNotificationService
             {
                 logs.Error("Exception in SendMessageBySms: " + e);
             }
-            Service.ChangeMessageStatusToSended(messageIdsThatSended);
+            if (messageIdsThatSended.Count > 0)
+                Service.ChangeMessageStatusToSended(messageIdsThatSended);
         }
 
         public static void SaveSmsMessageToQueue(string message, UserType userType)
