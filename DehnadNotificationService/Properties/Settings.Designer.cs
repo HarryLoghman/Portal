@@ -70,5 +70,17 @@ namespace DehnadNotificationService.Properties {
                 this["SendSmsMessages"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseWebServiceForDbOperations {
+            get {
+                return ((bool)(this["UseWebServiceForDbOperations"]));
+            }
+            set {
+                this["UseWebServiceForDbOperations"] = value;
+            }
+        }
     }
 }

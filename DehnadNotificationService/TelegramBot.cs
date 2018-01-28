@@ -68,6 +68,7 @@ namespace DehnadNotificationService
 
         private static async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
+            string receivedmessageId = "";
             try
             {
                 var userParams = new Dictionary<string, string>();
@@ -76,7 +77,6 @@ namespace DehnadNotificationService
                 responseObject.Message = messageEventArgs.Message;
                 responseObject.Message.Text = TelegramBotHelper.NormalizeContent(messageEventArgs.Message.Text);
                 var serializedresponseObject = JsonConvert.SerializeObject(responseObject);
-
                 if (responseObject.Message == null) return;
 
                 User user;
@@ -92,8 +92,8 @@ namespace DehnadNotificationService
                 }
                 if (responseObject.Message.Type == MessageType.TextMessage)
                 {
-                    userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() }, { "text", responseObject.Message.Text } };
-                    SharedLibrary.UsefulWebApis.NotificationBotApi<User>("SaveMessageWebService", userParams);
+                    userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() }, { "text", responseObject.Message.Text }, { "channel", "telegram" } };
+                    receivedmessageId =  await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("SaveMessageWebService", userParams);
                 }
                 if (user.LastStep == "Started")
                 {
@@ -140,6 +140,11 @@ namespace DehnadNotificationService
             {
                 logs.Error("error: " + e);
             }
+            if (receivedmessageId != "")
+            {
+                var userParams = new Dictionary<string, string>() { { "messageId", receivedmessageId } };
+                await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("ChangeReceivedMessageStatusToProcessed", userParams);
+            }
         }
 
         public static void SaveTelegramMessageToQueue(string message, UserType userType)
@@ -184,7 +189,7 @@ namespace DehnadNotificationService
             List<SentMessage> messagesToSend = new List<SentMessage>();
             try
             {
-                if (Properties.Settings.Default.IsBotServer == false)
+                if (Properties.Settings.Default.UseWebServiceForDbOperations == false)
                 {
                     using (var entity = new NotificationEntities())
                     {

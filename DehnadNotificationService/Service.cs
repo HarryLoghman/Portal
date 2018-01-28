@@ -106,7 +106,7 @@ namespace DehnadNotificationService
         {
             try
             {
-                if (Properties.Settings.Default.IsBotServer == false)
+                if (Properties.Settings.Default.UseWebServiceForDbOperations == false)
                 {
                     using (var entity = new DehnadNotificationService.Models.NotificationEntities())
                     {

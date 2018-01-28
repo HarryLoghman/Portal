@@ -17,7 +17,7 @@ namespace DehnadNotificationService
             List<SentMessage> smsToSend = new List<SentMessage>();
             try
             {
-                if (Properties.Settings.Default.IsBotServer == false)
+                if (Properties.Settings.Default.UseWebServiceForDbOperations == false)
                 {
                     using (var entity = new NotificationEntities())
                     {

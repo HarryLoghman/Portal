@@ -32,6 +32,8 @@
           <Property Name="DateReceived" Type="datetime" Nullable="false" />
           <Property Name="PersianDateReceived" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="Channel" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsProcessed" Type="bit" />
+          <Property Name="DateProcessed" Type="datetime" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -114,6 +116,8 @@
           <Property Name="PersianDateReceived" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="User" Relationship="NotificationModel.FK_UserMessages_Users" FromRole="UserMessage" ToRole="User" />
+          <Property Name="IsProcessed" Type="Boolean" />
+          <Property Name="DateProcessed" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_UserMessages_Users">
           <End Type="NotificationModel.User" Role="User" Multiplicity="0..1" />
@@ -170,6 +174,8 @@
           <EntitySetMapping Name="UserMessages">
             <EntityTypeMapping TypeName="NotificationModel.UserMessage">
               <MappingFragment StoreEntitySet="UserMessages">
+                <ScalarProperty Name="DateProcessed" ColumnName="DateProcessed" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
                 <ScalarProperty Name="Channel" ColumnName="Channel" />
                 <ScalarProperty Name="PersianDateReceived" ColumnName="PersianDateReceived" />
                 <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />

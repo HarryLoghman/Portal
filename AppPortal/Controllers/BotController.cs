@@ -100,10 +100,12 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async void SaveMessageWebService()
+        public async Task<HttpResponseMessage> SaveMessageWebService()
         {
             long chatId = Convert.ToInt64(HttpContext.Current.Request.Form["chatId"]);
             string text = HttpContext.Current.Request.Form["text"];
+            string channel = HttpContext.Current.Request.Form["channel"];
+            string json = "";
             using (var entity = new DehnadNotificationService.Models.NotificationEntities())
             {
                 var userMessage = new DehnadNotificationService.Models.UserMessage();
@@ -111,10 +113,15 @@ namespace Portal.Controllers
                 userMessage.DateReceived = DateTime.Now;
                 userMessage.PersianDateReceived = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 userMessage.Message = text;
-                userMessage.Channel = "telegram";
+                userMessage.Channel = channel;
+                userMessage.IsProcessed = false;
                 entity.UserMessages.Add(userMessage);
                 entity.SaveChanges();
+                json = JsonConvert.SerializeObject(userMessage.Id, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
             }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
         }
 
         [HttpPost]
@@ -159,9 +166,36 @@ namespace Portal.Controllers
                     entity.SaveChanges();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logs.Error("Exception in ChangeMessageStatusToSended: ", e);
+            }
+            var responseCode = new HttpResponseMessage(HttpStatusCode.OK);
+            return responseCode;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> ChangeReceivedMessageStatusToProcessed()
+        {
+            try
+            {
+                var messageId = JsonConvert.DeserializeObject<long>(HttpContext.Current.Request.Form["messageId"]);
+                using (var entity = new DehnadNotificationService.Models.NotificationEntities())
+                {
+                    var message = entity.UserMessages.Where(o => o.Id == messageId).FirstOrDefault();
+                    if (message != null)
+                    {
+                        message.IsProcessed = true;
+                        message.DateProcessed = DateTime.Now;
+                        entity.Entry(message).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ChangeReceivedMessageStatusToProcessed: ", e);
             }
             var responseCode = new HttpResponseMessage(HttpStatusCode.OK);
             return responseCode;

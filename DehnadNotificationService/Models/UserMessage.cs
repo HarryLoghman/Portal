@@ -21,6 +21,8 @@ namespace DehnadNotificationService.Models
         public System.DateTime DateReceived { get; set; }
         public string PersianDateReceived { get; set; }
         public string Channel { get; set; }
+        public Nullable<bool> IsProcessed { get; set; }
+        public Nullable<System.DateTime> DateProcessed { get; set; }
     
         public virtual User User { get; set; }
     }
