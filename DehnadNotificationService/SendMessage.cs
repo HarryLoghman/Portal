@@ -22,7 +22,7 @@ namespace DehnadNotificationService
                     using (var entity = new NotificationEntities())
                     {
                         entity.Configuration.AutoDetectChangesEnabled = false;
-                        smsToSend = entity.SentMessages.Where(o => o.IsSent == false && o.Channel == "telegram").ToList();
+                        smsToSend = entity.SentMessages.Where(o => o.IsSent == false && o.Channel == "sms").ToList();
                     }
                 }
                 else

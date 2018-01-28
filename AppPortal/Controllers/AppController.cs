@@ -1786,14 +1786,15 @@ namespace Portal.Controllers
                     var authKey = "393830313130303036333739";
                     var sign = "";
                     var cpId = "980110006379";
-                    if (serviceCode == "TahChin")
-                    {
-                        var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode).Value;
-                        var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
-                        pageNo = 146;
-                        sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
-                    }
 
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode).Value;
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
+                    if (serviceCode == "TahChin")
+                        pageNo = 146;
+                    else if (serviceCode == "MusicYad")
+                        pageNo = 146;
+
+                    sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
                     var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"
                                             , timestampParam, requestIdParam, pageNo, callBackParam, sign, modeParam);
                     result.Status = "Success";

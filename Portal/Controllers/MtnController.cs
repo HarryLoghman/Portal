@@ -46,7 +46,10 @@ namespace Portal.Controllers
                     break;
                 }
             }
-            
+            if(message.ShortCode == null || message.ShortCode == "")
+            {
+                message.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceIdNode.InnerText.Trim()).ShortCode;
+            }
             message.MobileNumber = mobileNumberNode.InnerText.Trim();
             if (mobileNumberTypeNode.InnerText.Trim() == "0")
                 message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
