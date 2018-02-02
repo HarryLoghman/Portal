@@ -94,6 +94,27 @@ namespace SharedLibrary
             }
         }
 
+        public static bool CheckIfUserSendsSubscriptionKeyword(string content, Service service)
+        {
+            var serviceKeywords = service.OnKeywords.Split(',');
+            foreach (var keyword in serviceKeywords)
+            {
+                if (content == keyword || content == keyword)
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool CheckIfUserWantsToUnsubscribe(string content)
+        {
+            foreach (var offKeyword in ServiceOffKeywords())
+            {
+                if (content.ToLower().Contains(offKeyword.ToLower()))
+                    return true;
+            }
+            return false;
+        }
+
         public static Service GetServiceFromServiceCode(string serviceCode)
         {
             using (var entity = new PortalEntities())
@@ -316,18 +337,7 @@ namespace SharedLibrary
             var offContents = new string[]
             {
                 "Off",
-                "off",
-                "of",
-                "cancel",
-                "stop",
-                "laghv",
-                "lagv",
-                "khamoosh",
                 "خاموش",
-                "لغو",
-                "کنسل",
-                "توقف",
-                "پایان"
             };
             return offContents;
         }
