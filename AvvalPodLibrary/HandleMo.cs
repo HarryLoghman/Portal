@@ -97,19 +97,6 @@ namespace AvvalPodLibrary
 
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
-                    if (isUserSendsSubscriptionKeyword == true)
-                    {
-                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("AvvalPod500");
-                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
-                        if (oldServiceSubscriber != null)
-                        {
-                            if (oldServiceSubscriber.DeactivationDate == null)
-                            {
-                                await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "-1");
-                                return;
-                            }
-                        }
-                    }
                     //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
                     //{
                     //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
@@ -132,6 +119,19 @@ namespace AvvalPodLibrary
                         }
                     }
                     var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
+                    if (isUserSendsSubscriptionKeyword == true)
+                    {
+                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("AvvalPod500");
+                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                        if (oldServiceSubscriber != null)
+                        {
+                            if (oldServiceSubscriber.DeactivationDate == null)
+                            {
+                                await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "-1");
+                                return;
+                            }
+                        }
+                    }
                     if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
                         if (message.IsReceivedFromIntegratedPanel)

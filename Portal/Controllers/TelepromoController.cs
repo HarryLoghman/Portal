@@ -38,6 +38,8 @@ namespace Portal.Controllers
             {
                 messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                if(messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326")
+                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                 result = "";
             }

@@ -86,19 +86,6 @@ namespace TamlyLibrary
 
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
-                    if (isUserSendsSubscriptionKeyword == true)
-                    {
-                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly500");
-                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
-                        if (oldServiceSubscriber != null)
-                        {
-                            if (oldServiceSubscriber.DeactivationDate == null)
-                            {
-                                await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "-1");
-                                return;
-                            }
-                        }
-                    }
                     //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
                     //{
                     //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
@@ -121,6 +108,19 @@ namespace TamlyLibrary
                         }
                     }
                     var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
+                    if (isUserSendsSubscriptionKeyword == true)
+                    {
+                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly500");
+                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                        if (oldServiceSubscriber != null)
+                        {
+                            if (oldServiceSubscriber.DeactivationDate == null)
+                            {
+                                await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "-1");
+                                return;
+                            }
+                        }
+                    }
                     if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
                         if (message.IsReceivedFromIntegratedPanel)
@@ -161,7 +161,8 @@ namespace TamlyLibrary
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
-                    MessageHandler.InsertMessageToQueue(message);
+                    if (isUserWantsToUnsubscribe != true)
+                        MessageHandler.InsertMessageToQueue(message);
                     //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     //{
                     //    message.Content = content;

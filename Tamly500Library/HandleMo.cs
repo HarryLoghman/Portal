@@ -95,7 +95,6 @@ namespace Tamly500Library
                             if (oldServiceSubscriber.DeactivationDate == null)
                             {
                                 await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(oldService.ServiceCode, message.MobileNumber, "-1");
-                                return;
                             }
                         }
                     }

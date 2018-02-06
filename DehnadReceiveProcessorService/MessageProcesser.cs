@@ -78,7 +78,8 @@ namespace DehnadReceiveProcessorService
                     message = SharedLibrary.MessageHandler.ValidateMessage(message);
 
                     var isUserSendedGeneralUnsubscribeKeyword = SharedLibrary.ServiceHandler.CheckIfUserSendedUnsubscribeContentToShortCode(message.Content);
-                    if (isUserSendedGeneralUnsubscribeKeyword == true && message.IsReceivedFromIntegratedPanel == false && serviceShortCodes.Count() > 1)
+                    bool isTelepromo = serviceShortCodes.FirstOrDefault().AggregatorId == 5 ? true : false;
+                    if (isUserSendedGeneralUnsubscribeKeyword == true && message.IsReceivedFromIntegratedPanel == false && serviceShortCodes.Count() > 1 && isTelepromo == false)
                     {
                         UnsubscribeUserOnAllServicesForShortCode(message);
                         //var servicesThatUserSubscribedOnShortCode = SharedLibrary.ServiceHandler.GetServicesThatUserSubscribedOnShortCode(message.MobileNumber, message.ShortCode);
@@ -96,7 +97,7 @@ namespace DehnadReceiveProcessorService
                         //SendMessageUsingServiceCode(serviceCode, message);
                         return;
                     }
-                    else if (message.IsReceivedFromIntegratedPanel == true)
+                    else if (message.IsReceivedFromIntegratedPanel == true && isTelepromo == false)
                     {
                         var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.AggregatorServiceId == message.Content);
                         if (serviceInfo == null)
@@ -113,13 +114,13 @@ namespace DehnadReceiveProcessorService
                             var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromShortCode(message.ShortCode);
                             if (serviceInfo.AggregatorId == 5)
                             {
+                                var telepromoServices = SharedLibrary.ServiceHandler.GetAllServicesByAggregatorId(5);
                                 if (message.ReceivedFrom.Contains("-New500-"))
                                 {
-                                    var telepromoServices = SharedLibrary.ServiceHandler.GetAllServicesByAggregatorId(5);
                                     serviceId = telepromoServices.Where(o => o.ShortCode == message.ShortCode).OrderByDescending(o => o.ServiceId).Select(o => o.ServiceId).FirstOrDefault();
                                 }
                                 else
-                                    serviceId = serviceInfo.ServiceId;
+                                    serviceId = telepromoServices.Where(o => o.ShortCode == message.ShortCode).OrderBy(o => o.ServiceId).Select(o => o.ServiceId).FirstOrDefault();
                             }
                             else
                                 serviceId = SharedLibrary.MessageHandler.GetServiceIdFromUserMessage(message.Content, message.ShortCode);

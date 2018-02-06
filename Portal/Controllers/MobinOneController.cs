@@ -120,7 +120,7 @@ namespace Portal.Controllers
                         using (var entity = new NebulaLibrary.Models.NebulaEntities())
                         {
                             var singlecharge = new NebulaLibrary.Models.Singlecharge();
-                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
+                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                             singlecharge.DateCreated = DateTime.Now;
                             singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                             singlecharge.Price = 300;
