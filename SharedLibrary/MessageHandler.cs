@@ -219,6 +219,21 @@ namespace SharedLibrary
             return mobileNumber;
         }
 
+        public static string ValidateLandLineNumber(string number)
+        {
+            if (number == null)
+                number = "Invalid Number";
+            if (number.StartsWith("+"))
+                number = number.TrimStart('+');
+            if (number.StartsWith("98"))
+                number = number.Remove(0, 2);
+            if (!number.StartsWith("0"))
+                number = "0" + number;
+            if (number.StartsWith("09") || number.Length > 11)
+                number = "Invalid Number";
+
+            return number;
+        }
         public static MessageObject GetSubscriberOperatorInfo(MessageObject message)
         {
             using (var entities = new PortalEntities())
@@ -538,7 +553,8 @@ namespace SharedLibrary
         {
             Mci = 1,
             Irancell = 2,
-            Rightel = 3
+            Rightel = 3,
+            TCT = 4
         }
 
         public enum OperatorPlan

@@ -1280,6 +1280,83 @@ namespace SharedLibrary
             }
         }
 
+        public static async Task<dynamic> SamssonTciSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, bool fromWeb, long installmentId = 0)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
+                singlecharge.MobileNumber = message.MobileNumber;
+                try
+                {
+                    var splitedToken = message.Token.Split(';');
+                    singlecharge.UserToken = splitedToken[0];
+                    var packageName = splitedToken[1];
+                    var sku = splitedToken[2];
+                    using (var client = new HttpClient())
+                    {
+                        var values = new Dictionary<string, string>
+                        {
+                        };
+
+                        var content = new FormUrlEncodedContent(values);
+                        var url = "";
+                        if (message.Price >= 0)
+                        {
+                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}/{4}", message.Token, packageName, sku, message.Price, fromWeb);
+                            singlecharge.ReferenceId = "Charging";
+                        }
+                        else
+                        {
+                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/cancel/{0}/{1}/{2}/", message.Token, packageName, sku);
+                            singlecharge.ReferenceId = "Unsubscribe";
+                            message.Price = 0;
+                        }
+                        var response = await client.PostAsync(url, content);
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                        if (jsonResponse.error == null)
+                        {
+                            var valueJson = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonResponse.value);
+                            if (valueJson.canceled == true)
+                                singlecharge.IsSucceeded = true;
+                            else
+                                singlecharge.IsSucceeded = false;
+                            singlecharge.Description = jsonResponse.value;
+                        }
+                        else
+                        {
+                            singlecharge.Description = jsonResponse.error + "-" + jsonResponse.value;
+                            singlecharge.IsSucceeded = false;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SamssonTciSinglecharge: " + e);
+                    singlecharge.Description = "Exception";
+                }
+                try
+                {
+
+                    singlecharge.DateCreated = DateTime.Now;
+                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    singlecharge.Price = message.Price.GetValueOrDefault();
+                    singlecharge.IsApplicationInformed = false;
+                    singlecharge.IsCalledFromInAppPurchase = false;
+                    if (installmentId != 0)
+                        singlecharge.InstallmentId = installmentId;
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SamssonTciSinglecharge on saving values to db: " + e);
+                }
+                return singlecharge;
+            }
+        }
+
         public static async Task SendMesssagesToPardisImi(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
@@ -1869,6 +1946,100 @@ namespace SharedLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in MobinOneOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> SamssonTciOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var values = new Dictionary<string, string>
+                    {
+                    };
+
+                    var content = new FormUrlEncodedContent(values);
+                    var url = "https://www.tci.ir/api/v1/GuestMode/AddPhone/" + message.MobileNumber;
+                    var response = await client.PostAsync(url, content);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    if (jsonResponse.error == null)
+                    {
+                        singlecharge.Description = "SUCCESS-Pending Confirmation";
+                        singlecharge.ReferenceId = jsonResponse.value;
+                    }
+                    else
+                    {
+                        singlecharge.Description = jsonResponse.error + "-" + jsonResponse.value;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SamssonTciOTPRequest: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SamssonTciOTPRequest on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> SamssonTciOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var values = new Dictionary<string, string>
+                    {
+                    };
+
+                    var content = new FormUrlEncodedContent(values);
+                    var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
+                    var response = await client.PostAsync(url, content);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    if (jsonResponse.error == null && jsonResponse.value == true)
+                    {
+                        singlecharge.Description = "SUCCESS";
+                        singlecharge.ReferenceId = "Register";
+                        singlecharge.Price = 0;
+                        singlecharge.IsSucceeded = true;
+                    }
+                    else
+                    {
+                        singlecharge.Description = jsonResponse.error + "-" + jsonResponse.value;
+                    }
+                }
+
+                entity.Entry(singlecharge).State = EntityState.Modified;
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SamssonTciOTPConfirm: " + e);
                 singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
             }
             return singlecharge;

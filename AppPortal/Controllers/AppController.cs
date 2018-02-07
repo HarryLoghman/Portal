@@ -31,6 +31,8 @@ namespace Portal.Controllers
             dynamic result = new ExpandoObject();
             try
             {
+                if (messageObj.Number != null)
+                    messageObj.MobileNumber = messageObj.Number;
                 result.MobileNumber = messageObj.MobileNumber;
                 var hash = SharedLibrary.Security.GetSha256Hash("OtpCharge" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
@@ -41,9 +43,14 @@ namespace Portal.Controllers
                     result.Status = "This ServiceCode does not have permission for OTP operation";
                 else
                 {
-                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.Number != null)
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                    else
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
+                    else if(messageObj.MobileNumber == "Invalid Number")
+                        result.Status = "Invalid Number";
                     else
                     {
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
@@ -616,6 +623,34 @@ namespace Portal.Controllers
                                     }
                                 }
                             }
+                            else if (service.ServiceCode == "Darchin")
+                            {
+                                using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                                {
+                                    if (messageObj.Price.Value == 7000)
+                                    {
+                                        messageObj.Content = ";ir.darchin.app;Darchin123";
+                                    }
+                                    else if (messageObj.Price.Value == -7000)
+                                    {
+                                        messageObj.Token = messageObj.Token + ";ir.darchin.app;Darchin123";
+                                    }
+                                    if (messageObj.Price == null)
+                                        result.Status = "Invalid Price";
+                                    else
+                                    {
+                                        var singleCharge = new DarchinLibrary.Models.Singlecharge();
+                                        string aggregatorName = "SamssonTci";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        if(messageObj.Price >= 0)
+                                        singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPRequest(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                        else
+                                            singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
+                                        result.Status = singleCharge.Description;
+                                        result.Token = singleCharge.ReferenceId;
+                                    }
+                                }
+                            }
                             else
                                 result.Status = "Service does not defined";
                         }
@@ -639,6 +674,8 @@ namespace Portal.Controllers
             dynamic result = new ExpandoObject();
             try
             {
+                if (messageObj.Token != null)
+                    messageObj.MobileNumber = messageObj.Token;
                 result.MobileNumber = messageObj.MobileNumber;
                 var hash = SharedLibrary.Security.GetSha256Hash("OtpConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
@@ -648,11 +685,10 @@ namespace Portal.Controllers
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                    if (messageObj.MobileNumber == "Invalid Mobile Number")
+                    if (messageObj.MobileNumber == "Invalid Mobile Number" && messageObj.Token == null)
                         result.Status = "Invalid Mobile Number";
                     else
                     {
-
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                             result.Status = "Invalid serviceId";
@@ -1033,6 +1069,33 @@ namespace Portal.Controllers
                                     }
                                 }
                             }
+                            else if (service.ServiceCode == "Darchin")
+                            {
+                                using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                                {
+                                    if (messageObj.Token != null)
+                                        messageObj.MobileNumber = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId.Contains(messageObj.Token)).MobileNumber;
+                                    var singleCharge = new DarchinLibrary.Models.Singlecharge();
+                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        messageObj.Price = singleCharge.Price;
+                                        string aggregatorName = "SamssonTci";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPConfirm(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        if(singleCharge.Description == "SUCCESS")
+                                        {
+                                            messageObj.Content = "Register";
+                                            
+                                            DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
+                                        }
+                                        result.Status = singleCharge.Description;
+                                        result.Token = messageObj.Token;
+                                    }
+                                }
+                            }
                             else
                                 result.Status = "Service does not defined";
                         }
@@ -1042,6 +1105,114 @@ namespace Portal.Controllers
             catch (Exception e)
             {
                 logs.Error("Excepiton in OtpConfirm method: ", e);
+            }
+            var json = JsonConvert.SerializeObject(result);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> Register([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            result.Token = messageObj.Token;
+            result.Status = "";
+            try
+            {
+                var hash = SharedLibrary.Security.GetSha256Hash("Register" + messageObj.ServiceCode + messageObj.Number);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else
+                {
+                    var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                    if (service == null)
+                        result.Status = "Invalid serviceCode";
+                    else
+                    {
+                        if (service.ServiceCode == "Darchin")
+                        {
+                            using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                            {
+                                if (messageObj.Price.Value == 7000)
+                                {
+                                    messageObj.Content = "ir.darchin.app;Darchin123";
+                                }
+                                if (messageObj.Price != 7000)
+                                    result.Status = "Invalid Price";
+                                else
+                                {
+                                    var singleCharge = new DarchinLibrary.Models.Singlecharge();
+                                    string aggregatorName = "SamssonTci";
+                                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                    singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPRequest(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                    result.Status = singleCharge.Description;
+                                    result.Token = singleCharge.ReferenceId;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in Deregister:" + e);
+                result.Status = "General error occurred";
+            }
+            var json = JsonConvert.SerializeObject(result);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> Deregister([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            result.Token = messageObj.Token;
+            result.Status = "";
+            try
+            {
+                var hash = SharedLibrary.Security.GetSha256Hash("Deregister" + messageObj.ServiceCode + messageObj.Token);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else
+                {
+                    var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                    if (service == null)
+                        result.Status = "Invalid serviceCode";
+                    else
+                    {
+                        if (service.ServiceCode == "Darchin")
+                        {
+                            using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                            {
+                                if (messageObj.Price.Value == -7000)
+                                {
+                                    messageObj.Content = "ir.darchin.app;Darchin123";
+                                }
+                                else
+                                    result.Status = "Invalid Price";
+                                if (result.Status != "Invalid Price")
+                                {
+                                    var singleCharge = new DarchinLibrary.Models.Singlecharge();
+                                    string aggregatorName = "SamssonTci";
+                                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+
+                                    singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
+                                    result.Status = singleCharge.IsSucceeded;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in Deregister:" + e);
+                result.Status = "General error occurred";
             }
             var json = JsonConvert.SerializeObject(result);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -1121,6 +1292,14 @@ namespace Portal.Controllers
                         result.Status = "This ServiceCode does not have permission";
                     else
                     {
+                        if (messageObj.ServiceCode == "Tamly")
+                            messageObj.ServiceCode = "Tamly500";
+                        //else if (messageObj.ServiceCode == "ShenoYad")
+                        //    messageObj.ServiceCode = "ShenoYad500";
+                        //else  if (messageObj.ServiceCode == "AvvalPod")
+                        //    messageObj.ServiceCode = "AvvalPod500";
+                        //else if (messageObj.ServiceCode == "AvvalYad")
+                        //    messageObj.ServiceCode = "BehAmooz500";
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                         {
@@ -1170,6 +1349,8 @@ namespace Portal.Controllers
                         result.Status = "This ServiceCode does not have permission";
                     else
                     {
+                        if (messageObj.ServiceCode == "Tamly")
+                            messageObj.ServiceCode = "Tamly500";
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                         {
@@ -1271,6 +1452,8 @@ namespace Portal.Controllers
                         result.Status = "This ServiceCode does not have permission";
                     else
                     {
+                        if (messageObj.ServiceCode == "Tamly")
+                            messageObj.ServiceCode = "Tamly500";
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                         {

@@ -48,6 +48,37 @@ namespace SharedLibrary
             logs.Info("InstallmentJob ended!");
         }
 
+        public static void SamssonTciInstallmentJob(Type entityType, int maxChargeLimit, int installmentCycleNumber, string serviceCode, dynamic installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, Type singlechargeType)
+        {
+            try
+            {
+                if (installmentList.Count == 0)
+                {
+                    logs.Info("InstallmentJob is empty!");
+                    return;
+                }
+                logs.Info("installmentList count:" + installmentList.Count);
+
+                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
+                var take = threadsNo["take"];
+                var skip = threadsNo["skip"];
+
+                List<Task> TaskList = new List<Task>();
+                for (int i = 0; i < take.Length; i++)
+                {
+                    var chunkedInstallmentList = ((IEnumerable)installmentList).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
+                    TaskList.Add(SamssonTciProcessInstallmentChunk(entityType, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, i, installmentCycleNumber, singlechargeType));
+                }
+                Task.WaitAll(TaskList.ToArray());
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SinglechargeInstallment SamssonTciInstallmentJob: ", e);
+            }
+            logs.Info("installmentCycleNumber:" + installmentCycleNumber + " ended");
+            logs.Info("InstallmentJob ended!");
+        }
+
         private static async Task MapfaProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
@@ -84,6 +115,65 @@ namespace SharedLibrary
                         if (message.Price == 0)
                             continue;
                         var response = MessageSender.MapfaStaticPriceSinglecharge(entityType, singlechargeType, message, serviceAdditionalInfo, installment.Id).Result;
+                        if (response.IsSucceeded == true)
+                        {
+                            installment.PricePayed += message.Price.GetValueOrDefault();
+                            installment.PriceTodayCharged += message.Price.GetValueOrDefault();
+                            if (installment.PriceTodayCharged >= maxChargeLimit)
+                                installment.IsExceededDailyChargeLimit = true;
+                            if (installment.PricePayed >= installment.TotalPrice)
+                                installment.IsFullyPaid = true;
+                            entity.Entry(installment).State = EntityState.Modified;
+                        }
+                        batchSaveCounter++;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in InstallmentJob Chunk task " + taskId + ":", e);
+            }
+
+            logs.Info("InstallmentJob Chunk task " + taskId + " ended");
+        }
+
+        private static async Task SamssonTciProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, int taskId, int installmentCycleNumber, Type singlechargeType)
+        {
+            logs.Info("InstallmentJob Chunk started: task: " + taskId);
+            var today = DateTime.Now.Date;
+            int batchSaveCounter = 0;
+            dynamic singlecharge = Activator.CreateInstance(singlechargeType);
+            dynamic reserverdSingleCharge = Activator.CreateInstance(singlechargeType);
+            await Task.Delay(10); // for making it async
+            try
+            {
+                using (dynamic entity = Activator.CreateInstance(entityType))
+                {
+                    foreach (var installment in chunkedSingleChargeInstallment)
+                    {
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15))
+                            break;
+                        if (batchSaveCounter >= 500)
+                        {
+                            entity.SaveChanges();
+                            batchSaveCounter = 0;
+                        }
+                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.IsApplicationInformed == false && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        if (priceUserChargedToday >= maxChargeLimit)
+                        {
+                            installment.IsExceededDailyChargeLimit = true;
+                            entity.Entry(installment).State = EntityState.Modified;
+                            batchSaveCounter += 1;
+                            continue;
+                        }
+                        var message = new SharedLibrary.Models.MessageObject();
+                        message.MobileNumber = installment.MobileNumber;
+                        message.Token = installment.UserToken;
+                        message.Price = installment.TotalPrice;
+                        if (message.Price == 0)
+                            continue;
+                        var response = MessageSender.SamssonTciSinglecharge(entityType, singlechargeType, message, serviceAdditionalInfo, true, installment.Id).Result;
                         if (response.IsSucceeded == true)
                         {
                             installment.PricePayed += message.Price.GetValueOrDefault();

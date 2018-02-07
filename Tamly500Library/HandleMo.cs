@@ -172,17 +172,17 @@ namespace Tamly500Library
 
                 if (subscriber == null)
                 {
-                    var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
-                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
-                    if (sub != null)
-                    {
-                        if (sub.DeactivationDate == null)
-                        {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                            MessageHandler.InsertMessageToQueue(message);
-                            return;
-                        }
-                    }
+                    //var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
+                    //var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
+                    //if (sub != null)
+                    //{
+                    //    if (sub.DeactivationDate == null)
+                    //    {
+                    //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                    //        MessageHandler.InsertMessageToQueue(message);
+                    //        return;
+                    //    }
+                    //}
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                         message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
@@ -193,17 +193,17 @@ namespace Tamly500Library
                 message.SubscriberId = subscriber.Id;
                 if (subscriber.DeactivationDate != null)
                 {
-                    var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
-                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
-                    if (sub != null)
-                    {
-                        if (sub.DeactivationDate == null)
-                        {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                            MessageHandler.InsertMessageToQueue(message);
-                            return;
-                        }
-                    }
+                    //var ser = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
+                    //var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, ser.Id);
+                    //if (sub != null)
+                    //{
+                    //    if (sub.DeactivationDate == null)
+                    //    {
+                    //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                    //        MessageHandler.InsertMessageToQueue(message);
+                    //        return;
+                    //    }
+                    //}
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                         message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else

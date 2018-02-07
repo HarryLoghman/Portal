@@ -1,0 +1,39 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadDarchinService.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AggregatorName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SamssonTci</Value>
+    </Setting>
+    <Setting Name="InsertAutochargeMessageInQueueTime" Type="System.String" Scope="User">
+      <Value Profile="(Default)">03:15:00</Value>
+    </Setting>
+    <Setting Name="InsertAutochargeMessageInQueueEndTime" Type="System.String" Scope="User">
+      <Value Profile="(Default)">03:15:15</Value>
+    </Setting>
+    <Setting Name="NumberOfAutochargeMessagesPerDay" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ReadSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="Take" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="ServiceCode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Darchin</Value>
+    </Setting>
+    <Setting Name="RetryNotDeliveredMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="FirstSingleChargeTakeSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3000</Value>
+    </Setting>
+    <Setting Name="SecondSingleChargeTakeSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5000</Value>
+    </Setting>
+    <Setting Name="DefaultSingleChargeTakeSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">7000</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
