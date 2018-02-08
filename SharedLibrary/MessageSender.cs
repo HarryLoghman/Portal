@@ -1293,6 +1293,7 @@ namespace SharedLibrary
                     singlecharge.UserToken = splitedToken[0];
                     var packageName = splitedToken[1];
                     var sku = splitedToken[2];
+                    bool isCancel = false;
                     using (var client = new HttpClient())
                     {
                         var values = new Dictionary<string, string>
@@ -1303,30 +1304,54 @@ namespace SharedLibrary
                         var url = "";
                         if (message.Price >= 0)
                         {
-                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}/{4}", message.Token, packageName, sku, message.Price, fromWeb);
+                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}", singlecharge.UserToken, packageName, sku, message.Price);
                             singlecharge.ReferenceId = "Charging";
                         }
                         else
                         {
-                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/cancel/{0}/{1}/{2}/", message.Token, packageName, sku);
+                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/cancel/{0}/{1}/{2}/", singlecharge.UserToken, packageName, sku);
                             singlecharge.ReferenceId = "Unsubscribe";
                             message.Price = 0;
+                            isCancel = true;
                         }
+                        logs.Info("samssonsinglecharge url: " + url);
                         var response = await client.PostAsync(url, content);
                         var responseString = await response.Content.ReadAsStringAsync();
+                        logs.Info(responseString);
                         dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
                         if (jsonResponse.error == null)
                         {
-                            var valueJson = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonResponse.value);
-                            if (valueJson.canceled == true)
-                                singlecharge.IsSucceeded = true;
+                            string value = jsonResponse.value.ToString();
+                            value = value.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
+                            dynamic valueObj = Newtonsoft.Json.JsonConvert.DeserializeObject(value);
+                            if (isCancel == true)
+                            {
+                                if (valueObj.canceled == true)
+                                {
+                                    singlecharge.IsSucceeded = true;
+                                    singlecharge.Description = "User Successfuly Canceled";
+                                }
+                                else
+                                {
+                                    singlecharge.IsSucceeded = false;
+                                    singlecharge.Description = "User Does Not Canceled";
+                                }
+                            }
                             else
-                                singlecharge.IsSucceeded = false;
-                            singlecharge.Description = jsonResponse.value;
+                            {
+                                if (valueObj.status == true)
+                                    singlecharge.IsSucceeded = true;
+                                else
+                                    singlecharge.IsSucceeded = false;
+                                singlecharge.Description = value;
+                            }
                         }
                         else
                         {
-                            singlecharge.Description = jsonResponse.error + "-" + jsonResponse.value;
+                            string e = jsonResponse.error.ToString();
+                            e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
+                            dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
+                            singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
                             singlecharge.IsSucceeded = false;
                         }
                     }
@@ -1781,6 +1806,9 @@ namespace SharedLibrary
                     smsList.amount = new string[messagesCount];
                     smsList.requestId = new string[messagesCount];
 
+                    if (messages.number[0].MessageType == 2)
+                        isBulk = true;
+
                     if (isBulk)
                         smsList.type = "bulk";
                     else
@@ -1951,96 +1979,118 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> SamssonTciOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<dynamic> SamssonTciOTPRequest(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
-            entity.Configuration.AutoDetectChangesEnabled = false;
-            singlecharge.MobileNumber = message.MobileNumber;
-            try
+            using (dynamic entity = Activator.CreateInstance(entityType))
             {
-                using (var client = new HttpClient())
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                singlecharge.MobileNumber = message.MobileNumber;
+                try
                 {
-                    var values = new Dictionary<string, string>
+                    using (var client = new HttpClient())
                     {
-                    };
+                        var values = new Dictionary<string, string>
+                        {
+                        };
 
-                    var content = new FormUrlEncodedContent(values);
-                    var url = "https://www.tci.ir/api/v1/GuestMode/AddPhone/" + message.MobileNumber;
-                    var response = await client.PostAsync(url, content);
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                    if (jsonResponse.error == null)
-                    {
-                        singlecharge.Description = "SUCCESS-Pending Confirmation";
-                        singlecharge.ReferenceId = jsonResponse.value;
-                    }
-                    else
-                    {
-                        singlecharge.Description = jsonResponse.error + "-" + jsonResponse.value;
+                        var content = new FormUrlEncodedContent(values);
+                        var url = string.Format("https://www.tci.ir/api/v1/GuestMode/AddPhone/{0}", message.MobileNumber);
+                        var response = await client.PostAsync(url, content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var responseString = await response.Content.ReadAsStringAsync();
+                            logs.Info(responseString);
+                            dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                            if (jsonResponse.error == null)
+                            {
+                                singlecharge.Description = "SUCCESS-Pending Confirmation";
+                                singlecharge.ReferenceId = jsonResponse.value.ToString();
+                            }
+                            else
+                            {
+                                string e = jsonResponse.error.ToString();
+                                e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
+                                dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
+                                singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
+                            }
+                        }
+                        else
+                            singlecharge.Description = response.StatusCode;
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in SamssonTciOTPRequest: " + e);
-                singlecharge.Description = "Exception";
-            }
-            try
-            {
-                singlecharge.IsSucceeded = false;
-                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
-                    singlecharge.ReferenceId = "Exception occurred!";
-                singlecharge.DateCreated = DateTime.Now;
-                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                singlecharge.Price = message.Price.GetValueOrDefault();
-                singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SamssonTciOTPRequest: " + e);
+                    singlecharge.Description = "Exception";
+                }
+                try
+                {
+                    singlecharge.IsSucceeded = false;
+                    if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                        singlecharge.ReferenceId = "Exception occurred!";
+                    singlecharge.DateCreated = DateTime.Now;
+                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    singlecharge.Price = message.Price.GetValueOrDefault();
+                    singlecharge.IsApplicationInformed = false;
+                    singlecharge.IsCalledFromInAppPurchase = true;
 
-                entity.Singlecharges.Add(singlecharge);
-                entity.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in SamssonTciOTPRequest on saving values to db: " + e);
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SamssonTciOTPRequest on saving values to db: " + e);
+                }
             }
             return singlecharge;
         }
 
-        public static async Task<dynamic> SamssonTciOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<dynamic> SamssonTciOTPConfirm(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
-            entity.Configuration.AutoDetectChangesEnabled = false;
-            try
+            using (dynamic entity = Activator.CreateInstance(entityType))
             {
-                using (var client = new HttpClient())
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                try
                 {
-                    var values = new Dictionary<string, string>
+                    using (var client = new HttpClient())
                     {
-                    };
+                        var values = new Dictionary<string, string>
+                        {
+                        };
 
-                    var content = new FormUrlEncodedContent(values);
-                    var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
-                    var response = await client.PostAsync(url, content);
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                    if (jsonResponse.error == null && jsonResponse.value == true)
-                    {
-                        singlecharge.Description = "SUCCESS";
-                        singlecharge.ReferenceId = "Register";
-                        singlecharge.Price = 0;
-                        singlecharge.IsSucceeded = true;
+                        var content = new FormUrlEncodedContent(values);
+                        var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
+                        var response = await client.PostAsync(url, content);
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        logs.Info(responseString);
+                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                        if (jsonResponse.error == null)
+                        {
+                            if (jsonResponse.value == true)
+                            {
+                                singlecharge.Description = "SUCCESS";
+                                singlecharge.ReferenceId = "Register";
+                                singlecharge.Price = 0;
+                                singlecharge.IsSucceeded = true;
+                                singlecharge.UserToken = message.Token;
+                            }
+                        }
+                        else
+                        {
+                            string e = jsonResponse.error.ToString();
+                            e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
+                            dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
+                            singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
+                        }
                     }
-                    else
-                    {
-                        singlecharge.Description = jsonResponse.error + "-" + jsonResponse.value;
-                    }
+                    entity.Entry(singlecharge).State = EntityState.Modified;
+                    entity.SaveChanges();
                 }
-
-                entity.Entry(singlecharge).State = EntityState.Modified;
-                entity.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in SamssonTciOTPConfirm: " + e);
-                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SamssonTciOTPConfirm: " + e);
+                    singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+                }
             }
             return singlecharge;
         }

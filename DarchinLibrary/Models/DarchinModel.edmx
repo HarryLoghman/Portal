@@ -397,7 +397,7 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
-          <Property Name="UserToken" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserToken" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -414,7 +414,7 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
-          <Property Name="UserToken" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserToken" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -435,7 +435,7 @@
           <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
           <Property Name="IsRenewalMessageSent" Type="bit" />
           <Property Name="IsRenewd" Type="bit" />
-          <Property Name="UserToken" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserToken" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SinglechargeInstallmentArchive">
           <Key>
@@ -456,7 +456,7 @@
           <Property Name="PersianCancelationDate" Type="nvarchar" MaxLength="50" />
           <Property Name="IsRenewalMessageSent" Type="bit" />
           <Property Name="IsRenewd" Type="bit" />
-          <Property Name="UserToken" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserToken" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SinglechargeLiveStatus">
           <Key>
@@ -478,7 +478,7 @@
           <Property Name="DateAdded" Type="datetime" Nullable="false" />
           <Property Name="PersianDateAdded" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsLastDayWarningSent" Type="bit" Nullable="false" />
-          <Property Name="UserToken" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserToken" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
@@ -1114,14 +1114,34 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(String)">
           <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="SinglechargeLiveStatus" EntityType="DarchinModel.SinglechargeLiveStatu" />
+          <EntitySet Name="SubscribersAdditionalInfoes" EntityType="DarchinModel.SubscribersAdditionalInfo" />
           <EntitySet Name="Singlecharges" EntityType="DarchinModel.Singlecharge" />
           <EntitySet Name="SinglechargeArchives" EntityType="DarchinModel.SinglechargeArchive" />
           <EntitySet Name="SinglechargeInstallments" EntityType="DarchinModel.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeInstallmentArchives" EntityType="DarchinModel.SinglechargeInstallmentArchive" />
-          <EntitySet Name="SinglechargeLiveStatus" EntityType="DarchinModel.SinglechargeLiveStatu" />
           <EntitySet Name="SinglechargeWaitings" EntityType="DarchinModel.SinglechargeWaiting" />
-          <EntitySet Name="SubscribersAdditionalInfoes" EntityType="DarchinModel.SubscribersAdditionalInfo" />
         </EntityContainer>
+        <EntityType Name="SinglechargeLiveStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SinglechargeStatuses" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NumberOfSinglechargesTried" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="Boolean" />
+          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="Boolean" />
+          <Property Name="IsSubscriberSendedOffReason" Type="Boolean" />
+        </EntityType>
         <EntityType Name="Singlecharge">
           <Key>
             <PropertyRef Name="Id" />
@@ -1137,7 +1157,7 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
           <Property Name="InstallmentId" Type="Int64" />
           <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-          <Property Name="UserToken" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -1154,7 +1174,7 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
           <Property Name="InstallmentId" Type="Int64" />
           <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-          <Property Name="UserToken" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -1175,7 +1195,7 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsRenewalMessageSent" Type="Boolean" />
           <Property Name="IsRenewd" Type="Boolean" />
-          <Property Name="UserToken" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SinglechargeInstallmentArchive">
           <Key>
@@ -1196,17 +1216,7 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsRenewalMessageSent" Type="Boolean" />
           <Property Name="IsRenewd" Type="Boolean" />
-          <Property Name="UserToken" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="SinglechargeLiveStatu">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SinglechargeStatuses" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="NumberOfSinglechargesTried" Type="Int32" Nullable="false" />
+          <Property Name="UserToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
@@ -1218,17 +1228,7 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
-          <Property Name="UserToken" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="SubscribersAdditionalInfo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
-          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="Boolean" />
-          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="Boolean" />
-          <Property Name="IsSubscriberSendedOffReason" Type="Boolean" />
+          <Property Name="UserToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1694,6 +1694,28 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="DarchinModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="DarchinModel.Store.RetryUndeliveredMessages" />
           <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="DarchinModel.Store.SinglechargeLiveStatuses" />
+          <EntitySetMapping Name="SinglechargeLiveStatus">
+            <EntityTypeMapping TypeName="DarchinModel.SinglechargeLiveStatu">
+              <MappingFragment StoreEntitySet="SinglechargeLiveStatus">
+                <ScalarProperty Name="NumberOfSinglechargesTried" ColumnName="NumberOfSinglechargesTried" />
+                <ScalarProperty Name="SinglechargeStatuses" ColumnName="SinglechargeStatuses" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersAdditionalInfoes">
+            <EntityTypeMapping TypeName="DarchinModel.SubscribersAdditionalInfo">
+              <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
+                <ScalarProperty Name="IsSubscriberSendedOffReason" ColumnName="IsSubscriberSendedOffReason" />
+                <ScalarProperty Name="IsSubscriberReceivedOffReasonPoint" ColumnName="IsSubscriberReceivedOffReasonPoint" />
+                <ScalarProperty Name="IsSubscriberReceivedSubscriptionPoint" ColumnName="IsSubscriberReceivedSubscriptionPoint" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Singlecharges">
             <EntityTypeMapping TypeName="DarchinModel.Singlecharge">
               <MappingFragment StoreEntitySet="Singlecharge">
@@ -1774,17 +1796,6 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="SinglechargeLiveStatus">
-            <EntityTypeMapping TypeName="DarchinModel.SinglechargeLiveStatu">
-              <MappingFragment StoreEntitySet="SinglechargeLiveStatus">
-                <ScalarProperty Name="NumberOfSinglechargesTried" ColumnName="NumberOfSinglechargesTried" />
-                <ScalarProperty Name="SinglechargeStatuses" ColumnName="SinglechargeStatuses" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="SinglechargeWaitings">
             <EntityTypeMapping TypeName="DarchinModel.SinglechargeWaiting">
               <MappingFragment StoreEntitySet="SinglechargeWaiting">
@@ -1794,17 +1805,6 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
                 <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SubscribersAdditionalInfoes">
-            <EntityTypeMapping TypeName="DarchinModel.SubscribersAdditionalInfo">
-              <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
-                <ScalarProperty Name="IsSubscriberSendedOffReason" ColumnName="IsSubscriberSendedOffReason" />
-                <ScalarProperty Name="IsSubscriberReceivedOffReasonPoint" ColumnName="IsSubscriberReceivedOffReasonPoint" />
-                <ScalarProperty Name="IsSubscriberReceivedSubscriptionPoint" ColumnName="IsSubscriberReceivedSubscriptionPoint" />
-                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

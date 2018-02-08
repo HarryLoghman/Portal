@@ -43,8 +43,10 @@ namespace DarchinLibrary
         {
             try
             {
+                logs.Info("A1");
                 using (var entity = new DarchinEntities())
                 {
+                    logs.Info("A2");
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
                     singlechargeQueueItem.Price = 7000;
@@ -52,8 +54,10 @@ namespace DarchinLibrary
                     singlechargeQueueItem.UserToken = token;
                     singlechargeQueueItem.PersianDateAdded = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlechargeQueueItem.IsLastDayWarningSent = false;
+                    logs.Info("A3");
                     entity.SinglechargeWaitings.Add(singlechargeQueueItem);
                     entity.SaveChanges();
+                    logs.Info("A4");
                     return true;
                 }
             }

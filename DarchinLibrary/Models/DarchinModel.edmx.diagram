@@ -23,13 +23,13 @@
         <EntityTypeShape EntityType="DarchinModel.ServicesRealtimeStatistic" Width="1.5" PointX="10.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DarchinModel.TimedTempMessagesBuffer" Width="1.5" PointX="4.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DarchinModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DarchinModel.SinglechargeLiveStatu" Width="1.5" PointX="9.375" PointY="14.75" />
+        <EntityTypeShape EntityType="DarchinModel.SubscribersAdditionalInfo" Width="1.5" PointX="15.375" PointY="13.75" />
         <EntityTypeShape EntityType="DarchinModel.Singlecharge" Width="1.5" PointX="11.375" PointY="9.75" />
         <EntityTypeShape EntityType="DarchinModel.SinglechargeArchive" Width="1.5" PointX="13.375" PointY="0.75" />
-        <EntityTypeShape EntityType="DarchinModel.SinglechargeInstallment" Width="1.5" PointX="13.375" PointY="13.75" />
-        <EntityTypeShape EntityType="DarchinModel.SinglechargeInstallmentArchive" Width="1.5" PointX="7.375" PointY="14.75" />
-        <EntityTypeShape EntityType="DarchinModel.SinglechargeLiveStatu" Width="1.5" PointX="9.375" PointY="14.75" />
-        <EntityTypeShape EntityType="DarchinModel.SinglechargeWaiting" Width="1.5" PointX="15.375" PointY="0.75" />
-        <EntityTypeShape EntityType="DarchinModel.SubscribersAdditionalInfo" Width="1.5" PointX="15.375" PointY="13.75" />
+        <EntityTypeShape EntityType="DarchinModel.SinglechargeInstallment" Width="1.5" PointX="11.375" PointY="14.75" />
+        <EntityTypeShape EntityType="DarchinModel.SinglechargeInstallmentArchive" Width="1.5" PointX="15.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DarchinModel.SinglechargeWaiting" Width="1.5" PointX="13.375" PointY="16.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

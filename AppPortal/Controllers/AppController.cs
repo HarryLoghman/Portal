@@ -18,11 +18,11 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500" };
-        private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500" };
+        private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin" };
+        private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
 
         [HttpPost]
         [AllowAnonymous]
@@ -32,8 +32,12 @@ namespace Portal.Controllers
             try
             {
                 if (messageObj.Number != null)
+                {
                     messageObj.MobileNumber = messageObj.Number;
-                result.MobileNumber = messageObj.MobileNumber;
+                    result.Number = messageObj.MobileNumber;
+                }
+                else
+                    result.MobileNumber = messageObj.MobileNumber;
                 var hash = SharedLibrary.Security.GetSha256Hash("OtpCharge" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
@@ -49,7 +53,7 @@ namespace Portal.Controllers
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
-                    else if(messageObj.MobileNumber == "Invalid Number")
+                    else if (messageObj.MobileNumber == "Invalid Number")
                         result.Status = "Invalid Number";
                     else
                     {
@@ -627,13 +631,9 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new DarchinLibrary.Models.DarchinEntities())
                                 {
-                                    if (messageObj.Price.Value == 7000)
+                                    if (messageObj.Price.Value < 0)
                                     {
-                                        messageObj.Content = ";ir.darchin.app;Darchin123";
-                                    }
-                                    else if (messageObj.Price.Value == -7000)
-                                    {
-                                        messageObj.Token = messageObj.Token + ";ir.darchin.app;Darchin123";
+                                        messageObj.Content = "Unsubscribe";
                                     }
                                     if (messageObj.Price == null)
                                         result.Status = "Invalid Price";
@@ -642,10 +642,20 @@ namespace Portal.Controllers
                                         var singleCharge = new DarchinLibrary.Models.Singlecharge();
                                         string aggregatorName = "SamssonTci";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        if(messageObj.Price >= 0)
-                                        singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPRequest(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                        if (messageObj.Price >= 0)
+                                            singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPRequest(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
                                         else
-                                            singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
+                                        {
+                                            var activeTokens = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                            if (activeTokens != null)
+                                            {
+                                                messageObj.Token = activeTokens.UserToken;
+                                                singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
+                                            }
+                                            else
+                                                singleCharge.Description = "User Not Exists";
+                                            DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
+                                        }
                                         result.Status = singleCharge.Description;
                                         result.Token = singleCharge.ReferenceId;
                                     }
@@ -674,9 +684,13 @@ namespace Portal.Controllers
             dynamic result = new ExpandoObject();
             try
             {
-                if (messageObj.Token != null)
-                    messageObj.MobileNumber = messageObj.Token;
-                result.MobileNumber = messageObj.MobileNumber;
+                if (messageObj.Number != null)
+                {
+                    messageObj.MobileNumber = messageObj.Number;
+                    result.Number = messageObj.MobileNumber;
+                }
+                else
+                    result.MobileNumber = messageObj.MobileNumber;
                 var hash = SharedLibrary.Security.GetSha256Hash("OtpConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
@@ -684,9 +698,14 @@ namespace Portal.Controllers
                 {
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
-                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                    if (messageObj.MobileNumber == "Invalid Mobile Number" && messageObj.Token == null)
+                    if (messageObj.Number != null)
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                    else
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
+                    else if (messageObj.MobileNumber == "Invalid Number")
+                        result.Status = "Invalid Number";
                     else
                     {
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
@@ -1073,8 +1092,6 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new DarchinLibrary.Models.DarchinEntities())
                                 {
-                                    if (messageObj.Token != null)
-                                        messageObj.MobileNumber = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId.Contains(messageObj.Token)).MobileNumber;
                                     var singleCharge = new DarchinLibrary.Models.Singlecharge();
                                     singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
@@ -1082,17 +1099,18 @@ namespace Portal.Controllers
                                     else
                                     {
                                         messageObj.Price = singleCharge.Price;
+                                        messageObj.Token = singleCharge.ReferenceId;
+                                        var token = singleCharge.ReferenceId;
                                         string aggregatorName = "SamssonTci";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPConfirm(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                        if(singleCharge.Description == "SUCCESS")
+                                        if (singleCharge.Description == "SUCCESS")
                                         {
                                             messageObj.Content = "Register";
-                                            
                                             DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
                                         }
                                         result.Status = singleCharge.Description;
-                                        result.Token = messageObj.Token;
+                                        result.Token = token;
                                     }
                                 }
                             }
@@ -1275,7 +1293,13 @@ namespace Portal.Controllers
         public HttpResponseMessage IsUserSubscribed([FromBody]MessageObject messageObj)
         {
             dynamic result = new ExpandoObject();
-            result.MobileNumber = messageObj.MobileNumber;
+            if (messageObj.Number != null)
+            {
+                messageObj.MobileNumber = messageObj.Number;
+                result.Number = messageObj.MobileNumber;
+            }
+            else
+                result.MobileNumber = messageObj.MobileNumber;
             try
             {
                 var hash = SharedLibrary.Security.GetSha256Hash("IsUserSubscribed" + messageObj.ServiceCode + messageObj.MobileNumber);
@@ -1285,9 +1309,14 @@ namespace Portal.Controllers
                 {
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
-                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.Number != null)
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                    else
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
+                    else if (messageObj.MobileNumber == "Invalid Number")
+                        result.Status = "Invalid Number";
                     else if (!VerificactionAllowedServiceCode.Contains(messageObj.ServiceCode))
                         result.Status = "This ServiceCode does not have permission";
                     else
