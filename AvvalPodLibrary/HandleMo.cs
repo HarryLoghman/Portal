@@ -112,9 +112,9 @@ namespace AvvalPodLibrary
                         bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
                         if (isSubscriberdVerified == false)
                         {
-                            message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                            message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
-                            MessageHandler.InsertMessageToQueue(message);
+                            //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                            //message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
+                            //MessageHandler.InsertMessageToQueue(message);
                             return;
                         }
                     }

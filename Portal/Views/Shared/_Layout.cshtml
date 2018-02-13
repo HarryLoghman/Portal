@@ -1007,6 +1007,28 @@
                                     </ul>
                                 </li>
                             }
+                            if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TCTGroup"))
+                            {
+                                <li>
+                                    مخابرات
+                                    <ul>
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                        {
+                                            <li>
+                                                دارچین
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("DarchinUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Darchin" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
                             if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TelepromoUser"))
                             {
                                 <li>

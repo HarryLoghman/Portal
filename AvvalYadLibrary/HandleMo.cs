@@ -199,7 +199,7 @@ namespace AvvalYadLibrary
                         }
                     }
                     if (message.Content == null || message.Content == "" || message.Content == " ")
-                        message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
@@ -223,7 +223,7 @@ namespace AvvalYadLibrary
                         }
                     }
                     if (message.Content == null || message.Content == "" || message.Content == " ")
-                        message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);

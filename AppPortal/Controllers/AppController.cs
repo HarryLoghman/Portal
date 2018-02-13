@@ -653,7 +653,7 @@ namespace Portal.Controllers
                                                 singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
                                             }
                                             else
-                                                singleCharge.Description = "User Not Exists";
+                                                singleCharge.Description = "User Does Not Exists";
                                             DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
                                         }
                                         result.Status = singleCharge.Description;
@@ -710,7 +710,7 @@ namespace Portal.Controllers
                     {
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
-                            result.Status = "Invalid serviceId";
+                            result.Status = "Invalid Service Code";
                         else
                         {
                             var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
@@ -1307,8 +1307,6 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
-                    if (messageObj.ServiceCode == "NabardGah")
-                        messageObj.ServiceCode = "Soltan";
                     if (messageObj.Number != null)
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
                     else
@@ -1321,14 +1319,6 @@ namespace Portal.Controllers
                         result.Status = "This ServiceCode does not have permission";
                     else
                     {
-                        if (messageObj.ServiceCode == "Tamly")
-                            messageObj.ServiceCode = "Tamly500";
-                        //else if (messageObj.ServiceCode == "ShenoYad")
-                        //    messageObj.ServiceCode = "ShenoYad500";
-                        //else  if (messageObj.ServiceCode == "AvvalPod")
-                        //    messageObj.ServiceCode = "AvvalPod500";
-                        //else if (messageObj.ServiceCode == "AvvalYad")
-                        //    messageObj.ServiceCode = "BehAmooz500";
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                         {
@@ -1336,7 +1326,7 @@ namespace Portal.Controllers
                         }
                         else
                         {
-                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
+                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, service.Id);
                             if (subscriber != null && subscriber.DeactivationDate == null)
                                 result.Status = "Subscribed";
                             else
@@ -1380,6 +1370,10 @@ namespace Portal.Controllers
                     {
                         if (messageObj.ServiceCode == "Tamly")
                             messageObj.ServiceCode = "Tamly500";
+                        else if (messageObj.ServiceCode == "AvvalPod")
+                            messageObj.ServiceCode = "AvvalPod500";
+                        else if (messageObj.ServiceCode == "AvvalYad")
+                            messageObj.ServiceCode = "BehAmooz500";
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                         {
@@ -2004,7 +1998,7 @@ namespace Portal.Controllers
                     if (serviceCode == "TahChin")
                         pageNo = 146;
                     else if (serviceCode == "MusicYad")
-                        pageNo = 146;
+                        pageNo = 206;
 
                     sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
                     var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"

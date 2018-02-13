@@ -207,7 +207,7 @@ namespace TamlyLibrary
                             if (message.Content == null || message.Content == "" || message.Content == " ")
                                 message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                             else
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                                message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
                             return;
                         }

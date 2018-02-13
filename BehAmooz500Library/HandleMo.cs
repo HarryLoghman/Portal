@@ -184,7 +184,7 @@ namespace BehAmooz500Library
                 if (subscriber == null)
                 {
                     if (message.Content == null || message.Content == "" || message.Content == " ")
-                        message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
@@ -194,7 +194,7 @@ namespace BehAmooz500Library
                 if (subscriber.DeactivationDate != null)
                 {
                     if (message.Content == null || message.Content == "" || message.Content == " ")
-                        message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);

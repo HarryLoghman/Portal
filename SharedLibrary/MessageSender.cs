@@ -1806,7 +1806,7 @@ namespace SharedLibrary
                     smsList.amount = new string[messagesCount];
                     smsList.requestId = new string[messagesCount];
 
-                    if (messages.number[0].MessageType == 2)
+                    if (messages[0].MessageType == 2)
                         isBulk = true;
 
                     if (isBulk)
