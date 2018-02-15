@@ -66,8 +66,10 @@ namespace DehnadNotificationService
                     yesterdayPastHourIncome = tahchinYesterdayIncome[pastHour];
                 if (tahchinToadyIncome.ContainsKey(pastHour))
                     todayPastHourIncome = tahchinToadyIncome[pastHour];
-
+                logs.Info("yesterdayPastHourIncome:" + yesterdayPastHourIncome);
+                logs.Info("todayPastHourIncome:" + todayPastHourIncome);
                 var incomePercentageDifference = CaluculatePercentageDifference(yesterdayPastHourIncome, todayPastHourIncome);
+                logs.Info("incomePercentageDifference:" + incomePercentageDifference);
                 if (incomePercentageDifference <= -10)
                 {
                     logs.Info("Tahchin incomePercentageDifference:" + incomePercentageDifference);
@@ -84,8 +86,8 @@ namespace DehnadNotificationService
         private static int CaluculatePercentageDifference(int yesterdayPastHourIncome, int todayPastHourIncome)
         {
             var yesterdayPastHourIncomeDivide = yesterdayPastHourIncome == 0 ? 1 : yesterdayPastHourIncome;
-            var percent = ((todayPastHourIncome - yesterdayPastHourIncome) / yesterdayPastHourIncomeDivide) * 100;
-            return percent;
+            var percent = (((decimal)todayPastHourIncome - (decimal)yesterdayPastHourIncome) / (decimal)yesterdayPastHourIncomeDivide) * (decimal)100;
+            return Convert.ToInt32(percent);
         }
 
         public static Dictionary<int, int> TahChinGetIncomeByHour(DateTime date)

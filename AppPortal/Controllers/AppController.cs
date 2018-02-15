@@ -41,628 +41,633 @@ namespace Portal.Controllers
                 var hash = SharedLibrary.Security.GetSha256Hash("OtpCharge" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
-                if (messageObj.ServiceCode == "NabardGah")
-                    messageObj.ServiceCode = "Soltan";
-                else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 7) // Hub use price 5 and 6 for sub and unsub
-                    result.Status = "This ServiceCode does not have permission for OTP operation";
                 else
                 {
-                    if (messageObj.Number != null)
-                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
-                    else
-                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                    if (messageObj.MobileNumber == "Invalid Mobile Number")
-                        result.Status = "Invalid Mobile Number";
-                    else if (messageObj.MobileNumber == "Invalid Number")
-                        result.Status = "Invalid Number";
+                    if (messageObj.ServiceCode == "NabardGah")
+                        messageObj.ServiceCode = "Soltan";
+                    else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 7) // Hub use price 5 and 6 for sub and unsub
+                        result.Status = "This ServiceCode does not have permission for OTP operation";
                     else
                     {
-                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
-                        if (service == null)
-                            result.Status = "Invalid serviceCode";
+                        if (messageObj.Number != null)
+                            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                        else
+                            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                        if (messageObj.MobileNumber == "Invalid Mobile Number")
+                            result.Status = "Invalid Mobile Number";
+                        else if (messageObj.MobileNumber == "Invalid Number")
+                            result.Status = "Invalid Number";
                         else
                         {
-                            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-                            if (service.ServiceCode == "Soltan")
+                            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                            if (service == null)
+                                result.Status = "Invalid serviceCode";
+                            else
                             {
-                                using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+                                if (service.ServiceCode == "Soltan")
                                 {
-                                    var imiChargeCode = new SoltanLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
+                                    using (var entity = new SoltanLibrary.Models.SoltanEntities())
                                     {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new SoltanLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "MenchBaz")
-                            {
-                                using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
-                                {
-                                    var imiChargeCode = new MenchBazLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new MenchBazLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "DonyayeAsatir")
-                            {
-                                using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
-                                {
-                                    var imiChargeCode = new DonyayeAsatirLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "AvvalPod")
-                            {
-                                using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
-                                {
-                                    var imiChargeCode = new AvvalPodLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new AvvalPodLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "AvvalPod500")
-                            {
-                                using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
-                                {
-                                    var imiChargeCode = new AvvalPod500Library.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new AvvalPod500Library.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "AvvalYad")
-                            {
-                                using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
-                                {
-                                    var imiChargeCode = new AvvalPodLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new AvvalYadLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "BehAmooz500")
-                            {
-                                using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
-                                {
-                                    var imiChargeCode = new BehAmooz500Library.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new BehAmooz500Library.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "FitShow")
-                            {
-                                using (var entity = new FitShowLibrary.Models.FitShowEntities())
-                                {
-                                    var imiChargeCode = new FitShowLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new FitShowLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "JabehAbzar")
-                            {
-                                using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
-                                {
-                                    var imiChargeCode = new JabehAbzarLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "ShenoYad")
-                            {
-                                using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
-                                {
-                                    var imiChargeCode = new ShenoYadLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "ShenoYad500")
-                            {
-                                using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
-                                {
-                                    var imiChargeCode = new ShenoYad500Library.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new ShenoYad500Library.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Takavar")
-                            {
-                                using (var entity = new TakavarLibrary.Models.TakavarEntities())
-                                {
-                                    var imiChargeCode = new TakavarLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new TakavarLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Tamly")
-                            {
-                                using (var entity = new TamlyLibrary.Models.TamlyEntities())
-                                {
-                                    var imiChargeCode = new TamlyLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new TamlyLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Tamly500")
-                            {
-                                using (var entity = new Tamly500Library.Models.Tamly500Entities())
-                                {
-                                    var imiChargeCode = new Tamly500Library.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new Tamly500Library.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Dezhban")
-                            {
-                                using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
-                                {
-                                    var imiChargeCode = new DezhbanLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new TamlyLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Telepromo";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "ShahreKalameh")
-                            {
-                                using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
-                                {
-                                    var imiChargeCode = new ShahreKalamehLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj.Price = 5; //5 is Sub for hub
-                                    else if (messageObj.Price.Value == -1)
-                                        messageObj.Price = 6; //6 is Unsub for hub
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Hub";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Soraty")
-                            {
-                                using (var entity = new SoratyLibrary.Models.SoratyEntities())
-                                {
-                                    var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj.Price = 5; //5 is Sub for hub
-                                    else if (messageObj.Price.Value == -1)
-                                        messageObj.Price = 6; //6 is Unsub for hub
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new SoratyLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Hub";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "DefendIran")
-                            {
-                                using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
-                                {
-                                    var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj.Price = 5; //5 is Sub for hub
-                                    else if (messageObj.Price.Value == -1)
-                                        messageObj.Price = 6; //6 is Unsub for hub
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new SoratyLibrary.Models.Singlecharge();
-                                        string aggregatorName = "Hub";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "SepidRood")
-                            {
-                                using (var entity = new SepidRoodLibrary.Models.SepidRoodEntities())
-                                {
-                                    var imiChargeCode = new SepidRoodLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new SoratyLibrary.Models.Singlecharge();
-                                        string aggregatorName = "PardisImi";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.PardisImiOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Nebula")
-                            {
-                                using (var entity = new NebulaLibrary.Models.NebulaEntities())
-                                {
-                                    var imiChargeCode = new NebulaLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new NebulaLibrary.Models.Singlecharge();
-                                        string aggregatorName = "MobinOne";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MobinOneOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Phantom")
-                            {
-                                Type entityType = typeof(PhantomLibrary.Models.PhantomEntities);
-                                using (var entity = new PhantomLibrary.Models.PhantomEntities())
-                                {
-                                    var imiChargeCode = new PhantomLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new PhantomLibrary.Models.Singlecharge();
-                                        string aggregatorName = "MobinOneMapfa";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entityType, singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Medio")
-                            {
-                                using (var entity = new MedioLibrary.Models.MedioEntities())
-                                {
-                                    var imiChargeCode = new MedioLibrary.Models.ImiChargeCode();
-                                    if (messageObj.Price.Value == 0)
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                    else if (messageObj.Price.Value == -1)
-                                    {
-                                        messageObj.Price = 0;
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                    }
-                                    else
-                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new MedioLibrary.Models.Singlecharge();
-                                        string aggregatorName = "MobinOneMapfa";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(typeof(MedioLibrary.Models.MedioEntities), singleCharge, messageObj, serviceAdditionalInfo);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
-                            else if (service.ServiceCode == "Darchin")
-                            {
-                                using (var entity = new DarchinLibrary.Models.DarchinEntities())
-                                {
-                                    if (messageObj.Price.Value < 0)
-                                    {
-                                        messageObj.Content = "Unsubscribe";
-                                    }
-                                    if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
-                                    else
-                                    {
-                                        var singleCharge = new DarchinLibrary.Models.Singlecharge();
-                                        string aggregatorName = "SamssonTci";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        if (messageObj.Price >= 0)
-                                            singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPRequest(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                        var imiChargeCode = new SoltanLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
                                         else
                                         {
-                                            var activeTokens = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                                            if (activeTokens != null)
-                                            {
-                                                messageObj.Token = activeTokens.UserToken;
-                                                singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
-                                            }
-                                            else
-                                                singleCharge.Description = "User Does Not Exists";
-                                            DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
+                                            var singleCharge = new SoltanLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
                                         }
-                                        result.Status = singleCharge.Description;
-                                        result.Token = singleCharge.ReferenceId;
                                     }
                                 }
+                                else if (service.ServiceCode == "MenchBaz")
+                                {
+                                    using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                                    {
+                                        var imiChargeCode = new MenchBazLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new MenchBazLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "DonyayeAsatir")
+                                {
+                                    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                                    {
+                                        var imiChargeCode = new DonyayeAsatirLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "AvvalPod")
+                                {
+                                    using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
+                                    {
+                                        var imiChargeCode = new AvvalPodLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new AvvalPodLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "AvvalPod500")
+                                {
+                                    using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
+                                    {
+                                        var imiChargeCode = new AvvalPod500Library.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new AvvalPod500Library.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "AvvalYad")
+                                {
+                                    using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
+                                    {
+                                        var imiChargeCode = new AvvalPodLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new AvvalYadLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "BehAmooz500")
+                                {
+                                    using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
+                                    {
+                                        var imiChargeCode = new BehAmooz500Library.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new BehAmooz500Library.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "FitShow")
+                                {
+                                    using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                                    {
+                                        var imiChargeCode = new FitShowLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new FitShowLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "JabehAbzar")
+                                {
+                                    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                                    {
+                                        var imiChargeCode = new JabehAbzarLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "ShenoYad")
+                                {
+                                    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                                    {
+                                        var imiChargeCode = new ShenoYadLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "ShenoYad500")
+                                {
+                                    using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
+                                    {
+                                        var imiChargeCode = new ShenoYad500Library.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new ShenoYad500Library.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Takavar")
+                                {
+                                    using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                                    {
+                                        var imiChargeCode = new TakavarLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new TakavarLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Tamly")
+                                {
+                                    using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                                    {
+                                        var imiChargeCode = new TamlyLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Tamly500")
+                                {
+                                    using (var entity = new Tamly500Library.Models.Tamly500Entities())
+                                    {
+                                        var imiChargeCode = new Tamly500Library.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new Tamly500Library.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Dezhban")
+                                {
+                                    using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
+                                    {
+                                        var imiChargeCode = new DezhbanLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Telepromo";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "ShahreKalameh")
+                                {
+                                    using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                                    {
+                                        var imiChargeCode = new ShahreKalamehLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj.Price = 5; //5 is Sub for hub
+                                        else if (messageObj.Price.Value == -1)
+                                            messageObj.Price = 6; //6 is Unsub for hub
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Hub";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Soraty")
+                                {
+                                    using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                                    {
+                                        var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj.Price = 5; //5 is Sub for hub
+                                        else if (messageObj.Price.Value == -1)
+                                            messageObj.Price = 6; //6 is Unsub for hub
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Hub";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "DefendIran")
+                                {
+                                    using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                                    {
+                                        var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj.Price = 5; //5 is Sub for hub
+                                        else if (messageObj.Price.Value == -1)
+                                            messageObj.Price = 6; //6 is Unsub for hub
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                            string aggregatorName = "Hub";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "SepidRood")
+                                {
+                                    using (var entity = new SepidRoodLibrary.Models.SepidRoodEntities())
+                                    {
+                                        var imiChargeCode = new SepidRoodLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                            string aggregatorName = "PardisImi";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.PardisImiOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Nebula")
+                                {
+                                    using (var entity = new NebulaLibrary.Models.NebulaEntities())
+                                    {
+                                        var imiChargeCode = new NebulaLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new NebulaLibrary.Models.Singlecharge();
+                                            string aggregatorName = "MobinOne";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.MobinOneOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Phantom")
+                                {
+                                    Type entityType = typeof(PhantomLibrary.Models.PhantomEntities);
+                                    using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                                    {
+                                        var imiChargeCode = new PhantomLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new PhantomLibrary.Models.Singlecharge();
+                                            string aggregatorName = "MobinOneMapfa";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entityType, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Medio")
+                                {
+                                    using (var entity = new MedioLibrary.Models.MedioEntities())
+                                    {
+                                        var imiChargeCode = new MedioLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new MedioLibrary.Models.Singlecharge();
+                                            string aggregatorName = "MobinOneMapfa";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(typeof(MedioLibrary.Models.MedioEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Darchin")
+                                {
+                                    using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                                    {
+                                        if (messageObj.Price.Value < 0)
+                                        {
+                                            messageObj.Content = "Unsubscribe";
+                                        }
+                                        else if (messageObj.Price != 7000)
+                                            messageObj.Price = null;
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new DarchinLibrary.Models.Singlecharge();
+                                            string aggregatorName = "SamssonTci";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            if (messageObj.Price >= 0)
+                                                singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPRequest(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                            else
+                                            {
+                                                var activeTokens = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                                if (activeTokens != null)
+                                                {
+                                                    messageObj.Token = activeTokens.UserToken;
+                                                    singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
+                                                }
+                                                else
+                                                    singleCharge.Description = "User Does Not Exists";
+                                                DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
+                                            }
+                                            result.Status = singleCharge.Description;
+                                            result.Token = singleCharge.ReferenceId;
+                                        }
+                                    }
+                                }
+                                else
+                                    result.Status = "Service does not defined";
                             }
-                            else
-                                result.Status = "Service does not defined";
                         }
                     }
                 }
