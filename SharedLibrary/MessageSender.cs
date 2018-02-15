@@ -1294,6 +1294,8 @@ namespace SharedLibrary
                     var packageName = splitedToken[1];
                     var sku = splitedToken[2];
                     bool isCancel = false;
+                    ServicePointManager.ServerCertificateValidationCallback +=
+    (sender, cert, chain, sslPolicyErrors) => true;
                     using (var client = new HttpClient())
                     {
                         var values = new Dictionary<string, string>
@@ -1302,10 +1304,13 @@ namespace SharedLibrary
 
                         var content = new FormUrlEncodedContent(values);
                         var url = "";
+                        HttpResponseMessage response = null;
                         if (message.Price >= 0)
                         {
                             url = string.Format("https://samssonsdp.com/api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}", singlecharge.UserToken, packageName, sku, message.Price);
                             singlecharge.ReferenceId = "Charging";
+                            logs.Info("samssonsinglecharge url: " + url);
+                            response = await client.PostAsync(url, content);
                         }
                         else
                         {
@@ -1313,9 +1318,10 @@ namespace SharedLibrary
                             singlecharge.ReferenceId = "Unsubscribe";
                             message.Price = 0;
                             isCancel = true;
+                            logs.Info("samssonsinglecharge url: " + url);
+                            response = await client.GetAsync(url);
                         }
-                        logs.Info("samssonsinglecharge url: " + url);
-                        var response = await client.PostAsync(url, content);
+                        
                         var responseString = await response.Content.ReadAsStringAsync();
                         logs.Info(responseString);
                         dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);

@@ -2004,6 +2004,7 @@ namespace Portal.Controllers
                     var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"
                                             , timestampParam, requestIdParam, pageNo, callBackParam, sign, modeParam);
                     result.Status = "Success";
+                    result.uuid = requestIdParam;
                     result.Description = url;
                 }
                 else
@@ -2032,6 +2033,7 @@ namespace Portal.Controllers
             {
                 result.Status = "Error";
                 result.Description = "General error occurred";
+                result.uuid = "";
                 var authKey = "393830313130303036333739";
                 var message = SharedLibrary.HelpfulFunctions.IrancellEncryptedResponse(data, authKey);
                 var splitedMessage = message.Split('&');
@@ -2039,6 +2041,8 @@ namespace Portal.Controllers
                 {
                     if (item.Contains("msisdn"))
                         result.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(item.Remove(0, 7));
+                    else if (item.ToLower().Contains("requestid"))
+                        result.uuid = item.Remove(0,10);
                     else if (item.Contains("status"))
                     {
                         var status = item.Remove(0, 7);
