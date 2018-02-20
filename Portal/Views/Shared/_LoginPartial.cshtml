@@ -4,16 +4,17 @@
 @User.Identity.GetUserName()
 <ul>
     <li>
-        @Html.ActionLink("تغییر رمز عبور", "ChangePassword", "Manage")
+        @Html.ActionLink("تغییر رمز عبور", "ChangePassword", "Manage", new { area = "" }, new { })
+        
     </li>
     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
     {
         <li>
-            @Html.ActionLink("ایجاد کاربر جدید", "Register", "Account")
+            @Html.ActionLink("ایجاد کاربر جدید", "Register", "Account", new { area = "" }, new { })
         </li>
     }
     <li>
-        @Html.ActionLink("خروج", "LogOff", new { area = "", controller = "Account" })
+        @Html.ActionLink("خروج", "LogOff", "Account", new { area = "" }, new { })
     </li>
 </ul>
 @*using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))

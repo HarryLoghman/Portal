@@ -84,8 +84,18 @@ namespace DehnadNotificationService
         {
             while (!shutdownEvent.WaitOne(0))
             {
-                Income.IncomeDiffrenceByHour();
-                Thread.Sleep(60 * 60 * 1000);
+                if (DateTime.Now.Hour == 0)
+                    Thread.Sleep(1 * 60 * 60);
+                else
+                {
+                    if (DateTime.Now.Minute == 0)
+                        Thread.Sleep(1 * 60 * 60);
+                    else
+                    {
+                        Income.IncomeDiffrenceByHour();
+                        Thread.Sleep(60 * 60 * 1000);
+                    }
+                }
             }
         }
 

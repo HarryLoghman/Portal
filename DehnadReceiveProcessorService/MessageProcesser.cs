@@ -243,6 +243,10 @@ namespace DehnadReceiveProcessorService
                     PhantomLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Medio")
                     MedioLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Dambel")
+                    DambelLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Aseman")
+                    AsemanLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -314,6 +318,10 @@ namespace DehnadReceiveProcessorService
                     PhantomLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "Medio")
                     MedioLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Dambel")
+                    DambelLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Aseman")
+                    AsemanLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

@@ -1,0 +1,80 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "لیست پیغام های دریافتی";
+}
+
+<div class="k-rtl" id="grid"></div>
+
+<script>
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف" },
+            { field: "MobileNumber", title: "شماره", editor: textAreaEditor },
+            { field: "PersianReceivedTime", title: "زمان دریافت", format: "{0:HH:mm yyyy-MM-dd}" },
+            { field: "Content", title: "محتوی" },
+            { field: "ReceivedFrom", title: "آدرس دریافت" },
+            { field: "IsReceivedFromIntegratedPanel", title: "آیا از پنل تجمیعی دریافت شده؟", template: "#= IsReceivedFromIntegratedPanel ? 'بله' : 'خیر' #" },
+        ],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Receive/Receive_Read",
+                    type: "POST"
+                },
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+        dataBound: function (e) {
+            e.sender.dataItems().forEach(function (entry) {
+                if (entry.IsAddedToSendQueue == true)
+                    disableGridButtons(entry.uid);
+            });
+        }
+    });
+
+    function disableGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
+    }
+</script>

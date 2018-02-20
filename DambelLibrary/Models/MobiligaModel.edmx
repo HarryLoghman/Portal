@@ -1,0 +1,1160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DambelModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AutochargeContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsAddedToSendQueue" Type="bit" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SendDate" Type="datetime" />
+          <Property Name="PersianSendDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="MobileId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AutochargeContentsSendedToUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="bigint" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="MobileId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AutochargeHeaderFooter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Header" Type="nvarchar(max)" />
+          <Property Name="Footer" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AutochargeMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Tag" Type="int" Nullable="false" />
+          <Property Name="SendTime" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DailyStatistics">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="PersianDate" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="NumberOfSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="TotalSubscribers" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="int" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="bit" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="ImiChargeCodes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChargeCode" Type="int" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="ChargeKey" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="MessagesArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="MessagesMonitoring">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="TotalMessages" Type="int" Nullable="false" />
+          <Property Name="TotalSuccessfulySended" Type="int" Nullable="false" />
+          <Property Name="TotalFailed" Type="int" Nullable="false" />
+          <Property Name="TotalWithoutCharge" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PersianTitle" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="MobilesList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Number" Type="int" Nullable="false" />
+          <Property Name="MobileName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OnDemandMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="PointsTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Point" Type="int" Nullable="false" />
+          <Property Name="PersianTitle" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceOffReason">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="Reason" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubscriberId" Type="bigint" Nullable="false" />
+          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="bit" />
+          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="bit" />
+          <Property Name="IsSubscriberSendedOffReason" Type="bit" />
+        </EntityType>
+        <EntityType Name="SubscribersMobile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileId" Type="bigint" Nullable="false" />
+          <Property Name="Subscriberid" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TimedTempMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Dambel.dbo.vw_SentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_SentMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ProcessStatus" />
+            <PropertyRef Name="DateAddedToQueue" />
+            <PropertyRef Name="PersianDateAddedToQueue" />
+            <PropertyRef Name="MessageType" />
+            <PropertyRef Name="AggregatorId" />
+            <PropertyRef Name="ServiceId" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="ProcessStatus" Type="int" Nullable="false" />
+          <Property Name="SentDate" Type="datetime" />
+          <Property Name="PersianSentDate" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAddedToQueue" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateAddedToQueue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageType" Type="int" Nullable="false" />
+          <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContentId" Type="bigint" />
+          <Property Name="MessagePoint" Type="int" />
+          <Property Name="ImiChargeCode" Type="int" />
+          <Property Name="ImiMessageType" Type="int" />
+          <Property Name="SubscriberId" Type="bigint" />
+          <Property Name="ImiChargeKey" Type="nvarchar" MaxLength="50" />
+          <Property Name="SubUnSubMoMssage" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubUnSubType" Type="tinyint" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
+        <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MiladiDate" Type="date" Mode="In" />
+          <Parameter Name="ServiceId" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="ArchiveMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MessageType" Type="int" Mode="In" />
+          <Parameter Name="ContentId" Type="bigint" Mode="In" />
+          <Parameter Name="Tag" Type="int" Mode="In" />
+          <Parameter Name="PersianDate" Type="nvarchar" Mode="In" />
+          <Parameter Name="CurrentStatus" Type="int" Mode="In" />
+          <Parameter Name="DesiredProcessStatus" Type="int" Mode="In" />
+          <Parameter Name="MonitoringId" Type="bigint" Mode="In" />
+        </Function>
+        <EntityContainer Name="DambelModelStoreContainer">
+          <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeHeaderFooter" EntityType="Self.AutochargeHeaderFooter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeMessagesBuffer" EntityType="Self.AutochargeMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutochargeTimeTable" EntityType="Self.AutochargeTimeTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistics" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventbaseMessagesBuffer" EntityType="Self.EventbaseMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesArchive" EntityType="Self.MessagesArchive" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesMonitoring" EntityType="Self.MessagesMonitoring" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MobilesList" EntityType="Self.MobilesList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OnDemandMessagesBuffer" EntityType="Self.OnDemandMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubscribersMobile" EntityType="Self.SubscribersMobile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_SentMessages].[Id] AS [Id], 
+    [vw_SentMessages].[MobileNumber] AS [MobileNumber], 
+    [vw_SentMessages].[Content] AS [Content], 
+    [vw_SentMessages].[ProcessStatus] AS [ProcessStatus], 
+    [vw_SentMessages].[SentDate] AS [SentDate], 
+    [vw_SentMessages].[PersianSentDate] AS [PersianSentDate], 
+    [vw_SentMessages].[DateAddedToQueue] AS [DateAddedToQueue], 
+    [vw_SentMessages].[PersianDateAddedToQueue] AS [PersianDateAddedToQueue], 
+    [vw_SentMessages].[MessageType] AS [MessageType], 
+    [vw_SentMessages].[AggregatorId] AS [AggregatorId], 
+    [vw_SentMessages].[ServiceId] AS [ServiceId], 
+    [vw_SentMessages].[ReferenceId] AS [ReferenceId], 
+    [vw_SentMessages].[ContentId] AS [ContentId], 
+    [vw_SentMessages].[MessagePoint] AS [MessagePoint], 
+    [vw_SentMessages].[ImiChargeCode] AS [ImiChargeCode], 
+    [vw_SentMessages].[ImiMessageType] AS [ImiMessageType], 
+    [vw_SentMessages].[SubscriberId] AS [SubscriberId], 
+    [vw_SentMessages].[ImiChargeKey] AS [ImiChargeKey], 
+    [vw_SentMessages].[SubUnSubMoMssage] AS [SubUnSubMoMssage], 
+    [vw_SentMessages].[SubUnSubType] AS [SubUnSubType], 
+    [vw_SentMessages].[Tag] AS [Tag]
+    FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DambelModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AutochargeContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsAddedToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SendDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSendDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AutochargeContentsSendedToUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="AutochargeContentId" Type="Int64" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MobileId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AutochargeHeaderFooter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Header" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Footer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutochargeMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AutochargeTimeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tag" Type="Int32" Nullable="false" />
+          <Property Name="SendTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DailyStatistic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PersianDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="TotalSubscribers" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="SubscriberNotSendedMoInDays" Type="Int32" Nullable="false" />
+          <Property Name="IsAddingMessagesToSendQueue" Type="Boolean" Nullable="false" />
+          <Property Name="IsAddedToSendQueueFinished" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventbaseMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ImiChargeCode">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChargeCode" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="ChargeKey" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="MessagesArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MessagesMonitoring">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="TotalMessages" Type="Int32" Nullable="false" />
+          <Property Name="TotalSuccessfulySended" Type="Int32" Nullable="false" />
+          <Property Name="TotalFailed" Type="Int32" Nullable="false" />
+          <Property Name="TotalWithoutCharge" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PersianTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="MobilesList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Number" Type="Int32" Nullable="false" />
+          <Property Name="MobileName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OnDemandMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="PointsTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="PersianTitle" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceOffReason">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="Reason" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubscribersAdditionalInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubscriberId" Type="Int64" Nullable="false" />
+          <Property Name="IsSubscriberReceivedSubscriptionPoint" Type="Boolean" />
+          <Property Name="IsSubscriberReceivedOffReasonPoint" Type="Boolean" />
+          <Property Name="IsSubscriberSendedOffReason" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SubscribersMobile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileId" Type="Int64" Nullable="false" />
+          <Property Name="Subscriberid" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vw_SentMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ProcessStatus" />
+            <PropertyRef Name="DateAddedToQueue" />
+            <PropertyRef Name="PersianDateAddedToQueue" />
+            <PropertyRef Name="MessageType" />
+            <PropertyRef Name="AggregatorId" />
+            <PropertyRef Name="ServiceId" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="DambelEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContent" />
+          <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUser" />
+          <EntitySet Name="AutochargeHeaderFooters" EntityType="Self.AutochargeHeaderFooter" />
+          <EntitySet Name="AutochargeMessagesBuffers" EntityType="Self.AutochargeMessagesBuffer" />
+          <EntitySet Name="AutochargeTimeTables" EntityType="Self.AutochargeTimeTable" />
+          <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistic" />
+          <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContent" />
+          <EntitySet Name="EventbaseMessagesBuffers" EntityType="Self.EventbaseMessagesBuffer" />
+          <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCode" />
+          <EntitySet Name="MessagesArchives" EntityType="Self.MessagesArchive" />
+          <EntitySet Name="MessagesMonitorings" EntityType="Self.MessagesMonitoring" />
+          <EntitySet Name="MessagesTemplates" EntityType="Self.MessagesTemplate" />
+          <EntitySet Name="MobilesLists" EntityType="Self.MobilesList" />
+          <EntitySet Name="OnDemandMessagesBuffers" EntityType="Self.OnDemandMessagesBuffer" />
+          <EntitySet Name="PointsTables" EntityType="Self.PointsTable" />
+          <EntitySet Name="ServiceOffReasons" EntityType="Self.ServiceOffReason" />
+          <EntitySet Name="SubscribersAdditionalInfoes" EntityType="Self.SubscribersAdditionalInfo" />
+          <EntitySet Name="SubscribersMobiles" EntityType="Self.SubscribersMobile" />
+          <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" />
+          <FunctionImport Name="AggregateDailyStatistics">
+            <Parameter Name="MiladiDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ServiceId" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="ArchiveMessages" />
+          <FunctionImport Name="ChangeMessageStatus">
+            <Parameter Name="MessageType" Mode="In" Type="Int32" />
+            <Parameter Name="ContentId" Mode="In" Type="Int64" />
+            <Parameter Name="Tag" Mode="In" Type="Int32" />
+            <Parameter Name="PersianDate" Mode="In" Type="String" />
+            <Parameter Name="CurrentStatus" Mode="In" Type="Int32" />
+            <Parameter Name="DesiredProcessStatus" Mode="In" Type="Int32" />
+            <Parameter Name="MonitoringId" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <EntitySet Name="TimedTempMessagesBuffers" EntityType="DambelModel.TimedTempMessagesBuffer" />
+        </EntityContainer>
+        <EntityType Name="TimedTempMessagesBuffer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
+          <Property Name="SentDate" Type="DateTime" Precision="3" />
+          <Property Name="PersianSentDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAddedToQueue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAddedToQueue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MessageType" Type="Int32" Nullable="false" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContentId" Type="Int64" />
+          <Property Name="MessagePoint" Type="Int32" />
+          <Property Name="ImiChargeCode" Type="Int32" />
+          <Property Name="ImiMessageType" Type="Int32" />
+          <Property Name="SubscriberId" Type="Int64" />
+          <Property Name="ImiChargeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubMoMssage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubUnSubType" Type="Byte" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DambelModelStoreContainer" CdmEntityContainer="DambelEntities">
+          <EntitySetMapping Name="AutochargeContents">
+            <EntityTypeMapping TypeName="DambelModel.AutochargeContent">
+              <MappingFragment StoreEntitySet="AutochargeContents">
+                <ScalarProperty Name="MobileId" ColumnName="MobileId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsAddedToSendQueue" ColumnName="IsAddedToSendQueue" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="SendDate" ColumnName="SendDate" />
+                <ScalarProperty Name="PersianSendDate" ColumnName="PersianSendDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeContentsSendedToUsers">
+            <EntityTypeMapping TypeName="DambelModel.AutochargeContentsSendedToUser">
+              <MappingFragment StoreEntitySet="AutochargeContentsSendedToUsers">
+                <ScalarProperty Name="MobileId" ColumnName="MobileId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="AutochargeContentId" ColumnName="AutochargeContentId" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeHeaderFooters">
+            <EntityTypeMapping TypeName="DambelModel.AutochargeHeaderFooter">
+              <MappingFragment StoreEntitySet="AutochargeHeaderFooter">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="Footer" ColumnName="Footer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeMessagesBuffers">
+            <EntityTypeMapping TypeName="DambelModel.AutochargeMessagesBuffer">
+              <MappingFragment StoreEntitySet="AutochargeMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutochargeTimeTables">
+            <EntityTypeMapping TypeName="DambelModel.AutochargeTimeTable">
+              <MappingFragment StoreEntitySet="AutochargeTimeTable">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DailyStatistics">
+            <EntityTypeMapping TypeName="DambelModel.DailyStatistic">
+              <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="NumberOfSubscriptions" ColumnName="NumberOfSubscriptions" />
+                <ScalarProperty Name="NumberOfUnsubscriptions" ColumnName="NumberOfUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidSubscriptions" ColumnName="NumberOfPostpaidSubscriptions" />
+                <ScalarProperty Name="NumberOfPrepaidSubscriptions" ColumnName="NumberOfPrepaidSubscriptions" />
+                <ScalarProperty Name="NumberOfMessagesSent" ColumnName="NumberOfMessagesSent" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesSent" ColumnName="NumberOfPostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesSent" ColumnName="NumberOfPrepaidMessagesSent" />
+                <ScalarProperty Name="TotalSubscribers" ColumnName="TotalSubscribers" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesSent" ColumnName="NumberOfOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesSent" ColumnName="NumberOfOnDemandPostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesSent" ColumnName="NumberOfOnDemandPrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesSent" ColumnName="NumberOfAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesSent" ColumnName="NumberOfAutochargePostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesSent" ColumnName="NumberOfAutochargePrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesSent" ColumnName="NumberOfEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesSent" ColumnName="NumberOfEventbasePostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesSent" ColumnName="NumberOfEventbasePrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPostpaidUnsubscriptions" ColumnName="NumberOfPostpaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPrepaidUnsubscriptions" ColumnName="NumberOfPrepaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfMessagesFailed" ColumnName="NumberOfMessagesFailed" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesFailed" ColumnName="NumberOfPostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesFailed" ColumnName="NumberOfPrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesFailed" ColumnName="NumberOfOnDemandMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesFailed" ColumnName="NumberOfOnDemandPostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesFailed" ColumnName="NumberOfOnDemandPrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesFailed" ColumnName="NumberOfAutochargeMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesFailed" ColumnName="NumberOfAutochargePostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesFailed" ColumnName="NumberOfAutochargePrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesFailed" ColumnName="NumberOfEventbaseMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesFailed" ColumnName="NumberOfEventbasePostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesFailed" ColumnName="NumberOfEventbasePrepaidMessagesFailed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseContents">
+            <EntityTypeMapping TypeName="DambelModel.EventbaseContent">
+              <MappingFragment StoreEntitySet="EventbaseContents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="SubscriberNotSendedMoInDays" ColumnName="SubscriberNotSendedMoInDays" />
+                <ScalarProperty Name="IsAddingMessagesToSendQueue" ColumnName="IsAddingMessagesToSendQueue" />
+                <ScalarProperty Name="IsAddedToSendQueueFinished" ColumnName="IsAddedToSendQueueFinished" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventbaseMessagesBuffers">
+            <EntityTypeMapping TypeName="DambelModel.EventbaseMessagesBuffer">
+              <MappingFragment StoreEntitySet="EventbaseMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ImiChargeCodes">
+            <EntityTypeMapping TypeName="DambelModel.ImiChargeCode">
+              <MappingFragment StoreEntitySet="ImiChargeCodes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ChargeCode" ColumnName="ChargeCode" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ChargeKey" ColumnName="ChargeKey" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesArchives">
+            <EntityTypeMapping TypeName="DambelModel.MessagesArchive">
+              <MappingFragment StoreEntitySet="MessagesArchive">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesMonitorings">
+            <EntityTypeMapping TypeName="DambelModel.MessagesMonitoring">
+              <MappingFragment StoreEntitySet="MessagesMonitoring">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="TotalMessages" ColumnName="TotalMessages" />
+                <ScalarProperty Name="TotalSuccessfulySended" ColumnName="TotalSuccessfulySended" />
+                <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
+                <ScalarProperty Name="TotalWithoutCharge" ColumnName="TotalWithoutCharge" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesTemplates">
+            <EntityTypeMapping TypeName="DambelModel.MessagesTemplate">
+              <MappingFragment StoreEntitySet="MessagesTemplate">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MobilesLists">
+            <EntityTypeMapping TypeName="DambelModel.MobilesList">
+              <MappingFragment StoreEntitySet="MobilesList">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
+                <ScalarProperty Name="MobileName" ColumnName="MobileName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OnDemandMessagesBuffers">
+            <EntityTypeMapping TypeName="DambelModel.OnDemandMessagesBuffer">
+              <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PointsTables">
+            <EntityTypeMapping TypeName="DambelModel.PointsTable">
+              <MappingFragment StoreEntitySet="PointsTable">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceOffReasons">
+            <EntityTypeMapping TypeName="DambelModel.ServiceOffReason">
+              <MappingFragment StoreEntitySet="ServiceOffReason">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersAdditionalInfoes">
+            <EntityTypeMapping TypeName="DambelModel.SubscribersAdditionalInfo">
+              <MappingFragment StoreEntitySet="SubscribersAdditionalInfo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="IsSubscriberReceivedSubscriptionPoint" ColumnName="IsSubscriberReceivedSubscriptionPoint" />
+                <ScalarProperty Name="IsSubscriberReceivedOffReasonPoint" ColumnName="IsSubscriberReceivedOffReasonPoint" />
+                <ScalarProperty Name="IsSubscriberSendedOffReason" ColumnName="IsSubscriberSendedOffReason" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersMobiles">
+            <EntityTypeMapping TypeName="DambelModel.SubscribersMobile">
+              <MappingFragment StoreEntitySet="SubscribersMobile">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileId" ColumnName="MobileId" />
+                <ScalarProperty Name="Subscriberid" ColumnName="Subscriberid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_SentMessages">
+            <EntityTypeMapping TypeName="DambelModel.vw_SentMessages">
+              <MappingFragment StoreEntitySet="vw_SentMessages">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="DambelModel.Store.AggregateDailyStatistics" />
+          <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="DambelModel.Store.ArchiveMessages" />
+          <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="DambelModel.Store.ChangeMessageStatus" />
+          <EntitySetMapping Name="TimedTempMessagesBuffers">
+            <EntityTypeMapping TypeName="DambelModel.TimedTempMessagesBuffer">
+              <MappingFragment StoreEntitySet="TimedTempMessagesBuffer">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
+                <ScalarProperty Name="SubUnSubMoMssage" ColumnName="SubUnSubMoMssage" />
+                <ScalarProperty Name="ImiChargeKey" ColumnName="ImiChargeKey" />
+                <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="ImiMessageType" ColumnName="ImiMessageType" />
+                <ScalarProperty Name="ImiChargeCode" ColumnName="ImiChargeCode" />
+                <ScalarProperty Name="MessagePoint" ColumnName="MessagePoint" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="PersianDateAddedToQueue" ColumnName="PersianDateAddedToQueue" />
+                <ScalarProperty Name="DateAddedToQueue" ColumnName="DateAddedToQueue" />
+                <ScalarProperty Name="PersianSentDate" ColumnName="PersianSentDate" />
+                <ScalarProperty Name="SentDate" ColumnName="SentDate" />
+                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

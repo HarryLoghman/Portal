@@ -697,7 +697,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("BehAmooz500"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("BehAmooz500User"))
                                         {
                                             <li>
                                                 به آموز 500
@@ -719,6 +719,32 @@
                                                     }
                                                     <li>
                                                         @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "BehAmooz500" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AsemanUser"))
+                                        {
+                                            <li>
+                                                آسمان
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Aseman" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Aseman" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Aseman" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Aseman" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Aseman" }, null)
                                                     </li>
                                                 </ul>
                                             </li>
@@ -999,6 +1025,33 @@
                                                     {
                                                         <li>
                                                             @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "MusicYad" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("DambelUser"))
+                                        {
+                                            <li>
+                                                دمبل
+                                                <ul>
+
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Dambel" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Dambel" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Dambel" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Dambel" }, null)
+                                                    </li>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("DambelUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Dambel" }, null)
                                                         </li>
                                                     }
                                                 </ul>

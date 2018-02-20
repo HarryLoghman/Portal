@@ -250,6 +250,14 @@
     <Compile Include="Areas\Medio\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Medio\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Medio\MedioAreaRegistration.cs" />
+    <Compile Include="Areas\Dambel\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Dambel\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Dambel\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Dambel\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Dambel\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Dambel\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Dambel\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Dambel\DambelAreaRegistration.cs" />
     <Compile Include="Areas\Phantom\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Phantom\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Phantom\Controllers\MonitoringController.cs" />
@@ -290,6 +298,14 @@
     <Compile Include="Areas\ShenoYad500\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\ShenoYad500\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\ShenoYad500\ShenoYad500AreaRegistration.cs" />
+    <Compile Include="Areas\Aseman\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Aseman\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Aseman\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Aseman\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Aseman\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Aseman\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Aseman\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Aseman\AsemanAreaRegistration.cs" />
     <Compile Include="Areas\Tamly500\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Tamly500\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Tamly500\Controllers\MonitoringController.cs" />
@@ -1404,6 +1420,26 @@
     <Content Include="Areas\Darchin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Darchin\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Darchin\Views\web.config" />
+    <Content Include="Areas\Dambel\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Dambel\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Dambel\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Dambel\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Dambel\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Dambel\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Dambel\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Dambel\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Dambel\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Dambel\Views\web.config" />
+    <Content Include="Areas\Aseman\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Aseman\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Aseman\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Aseman\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Aseman\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Aseman\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Aseman\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Aseman\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Aseman\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Aseman\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1754,6 +1790,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Aseman\Models\" />
     <Folder Include="Areas\AvvalPod500\Models\" />
     <Folder Include="Areas\AvvalPod\Models\" />
     <Folder Include="Areas\AvvalYad\Models\" />
@@ -1761,6 +1798,7 @@
     <Folder Include="Areas\BimeIran\Models\" />
     <Folder Include="Areas\BimeKarbala\Models\" />
     <Folder Include="Areas\Boating\Models\" />
+    <Folder Include="Areas\Dambel\Models\" />
     <Folder Include="Areas\Danestaneh\Models\" />
     <Folder Include="Areas\Darchin\Models\" />
     <Folder Include="Areas\DefendIran\Models\" />
@@ -1822,6 +1860,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AsemanLibrary\AsemanLibrary.csproj">
+      <Project>{14344114-121b-1513-431d-4b42fb131141}</Project>
+      <Name>AsemanLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvvalPod500Library\AvvalPod500Library.csproj">
       <Project>{11f5a255-33f1-3544-2c12-48224341251b}</Project>
       <Name>AvvalPod500Library</Name>
@@ -1849,6 +1891,10 @@
     <ProjectReference Include="..\BoatingLibrary\BoatingLibrary.csproj">
       <Project>{11bd1312-2d38-42ff-944d-02b5ce3457c1}</Project>
       <Name>BoatingLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DambelLibrary\DambelLibrary.csproj">
+      <Project>{1434b114-121b-1513-431d-4bc287131142}</Project>
+      <Name>DambelLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>

@@ -104,6 +104,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AsemanLibrary\AsemanLibrary.csproj">
+      <Project>{14344114-121b-1513-431d-4b42fb131141}</Project>
+      <Name>AsemanLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvvalPod500Library\AvvalPod500Library.csproj">
       <Project>{11f5a255-33f1-3544-2c12-48224341251b}</Project>
       <Name>AvvalPod500Library</Name>
@@ -131,6 +135,10 @@
     <ProjectReference Include="..\BoatingLibrary\BoatingLibrary.csproj">
       <Project>{11bd1312-2d38-42ff-944d-02b5ce3457c1}</Project>
       <Name>BoatingLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DambelLibrary\DambelLibrary.csproj">
+      <Project>{1434b114-121b-1513-431d-4bc287131142}</Project>
+      <Name>DambelLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
       <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
