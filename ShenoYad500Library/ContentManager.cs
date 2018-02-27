@@ -126,7 +126,7 @@ namespace ShenoYad500Library
                     }
                     if (!service.OnKeywords.Contains(message.Content))
                     {
-                        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }

@@ -195,6 +195,8 @@ namespace DehnadTahChinService
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             while (!shutdownEvent.WaitOne(0))
             {
+                var entityType = typeof(TahChinLibrary.Models.TahChinEntities);
+                var cycleType = typeof(TahChinLibrary.Models.InstallmentCycle);
                 if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10))
                 {
                     installmentCycleNumber = 1;
@@ -205,15 +207,19 @@ namespace DehnadTahChinService
                     var startTime = DateTime.Now;
                     if (installmentCycleNumber == 1)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
                     else if (installmentCycleNumber == 2)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
                     else if (installmentCycleNumber == 3 && DateTime.Now.Hour < 16)
                     {
@@ -221,9 +227,11 @@ namespace DehnadTahChinService
                         timeDiffs = hour - startTime.TimeOfDay;
                         if (timeDiffs.TotalSeconds >= 5)
                             Thread.Sleep((int)timeDiffs.TotalMilliseconds);
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
                     else if (installmentCycleNumber == 4 && DateTime.Now.Hour > 16 && DateTime.Now.Hour < 21)
                     {
@@ -231,10 +239,12 @@ namespace DehnadTahChinService
                         timeDiffs = hour - startTime.TimeOfDay;
                         if (timeDiffs.TotalSeconds >= 5)
                             Thread.Sleep((int)timeDiffs.TotalMilliseconds);
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
-                        
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
+
                     }
                     else if (installmentCycleNumber == 5 && DateTime.Now.Hour > 21 && (DateTime.Now.Hour <= 22 && DateTime.Now.Minute < 30))
                     {
@@ -242,10 +252,11 @@ namespace DehnadTahChinService
                         timeDiffs = hour - startTime.TimeOfDay;
                         if(timeDiffs.TotalSeconds >= 5)
                             Thread.Sleep((int)timeDiffs.TotalMilliseconds);
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
-                        
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
                     else
                         Thread.Sleep(1000);

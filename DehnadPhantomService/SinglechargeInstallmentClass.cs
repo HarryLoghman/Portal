@@ -14,7 +14,7 @@ namespace DehnadPhantomService
     public class SinglechargeInstallmentClass
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private static int maxChargeLimit = 500;
+        public static int maxChargeLimit = 500;
         public void ProcessInstallment(int installmentCycleNumber)
         {
             try

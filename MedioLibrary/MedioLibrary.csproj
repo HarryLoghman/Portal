@@ -83,6 +83,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>MedioModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>MedioModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MedioModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -83,6 +83,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>PhantomModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>PhantomModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>PhantomModel.tt</DependentUpon>
     </Compile>

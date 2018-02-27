@@ -98,6 +98,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>DambelModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>

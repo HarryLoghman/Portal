@@ -20,8 +20,9 @@ namespace DehnadDambelService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static int maxChargeLimit = 300;
-        public void ProcessInstallment(int installmentCycleNumber)
+        public int ProcessInstallment(int installmentCycleNumber)
         {
+            var income = 0;
             try
             {
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
@@ -41,7 +42,7 @@ namespace DehnadDambelService
                         installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
                         int installmentListCount = installmentList.Count;
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        SharedLibrary.InstallmentHandler.MtnInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        income = SharedLibrary.InstallmentHandler.MtnInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType, income);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
@@ -50,6 +51,7 @@ namespace DehnadDambelService
             {
                 logs.Error("Exception in ProcessInstallment:", e);
             }
+            return income;
         }
     }
 }

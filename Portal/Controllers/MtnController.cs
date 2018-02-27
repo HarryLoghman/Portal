@@ -23,6 +23,7 @@ namespace Portal.Controllers
         public HttpResponseMessage SubUnsubNotify()
         {
             var notify = Request.Content.ReadAsStringAsync().Result;
+            logs.Info(notify);
             XmlDocument xml = new XmlDocument();
             xml.LoadXml(notify);
             XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);

@@ -197,14 +197,14 @@ namespace SharedLibrary
             logs.Info("InstallmentJob Chunk task " + taskId + " ended");
         }
 
-        public static void MtnInstallmentJob(Type entityType, int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, dynamic installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, Type singlechargeType)
+        public static int MtnInstallmentJob(Type entityType, int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, dynamic installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, Type singlechargeType, int income)
         {
             try
             {
                 if (installmentList.Count == 0)
                 {
                     logs.Info("InstallmentJob is empty!");
-                    return;
+                    return 0;
                 }
                 logs.Info("installmentList count:" + installmentList.Count);
 
@@ -212,13 +212,14 @@ namespace SharedLibrary
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
 
-                List<Task> TaskList = new List<Task>();
+                var TaskList = new List<Task<int>>();
                 for (int i = 0; i < take.Length; i++)
                 {
                     var chunkedInstallmentList = ((IEnumerable)installmentList).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
                     TaskList.Add(MtnProcessInstallmentChunk(entityType, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlechargeType));
                 }
                 Task.WaitAll(TaskList.ToArray());
+                income = TaskList.Select(o => o.Result).Sum();
             }
             catch (Exception e)
             {
@@ -226,13 +227,15 @@ namespace SharedLibrary
             }
             logs.Info("installmentCycleNumber:" + installmentCycleNumber + " ended");
             logs.Info("InstallmentJob ended!");
+            return income;
         }
 
-        private static async Task MtnProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType)
+        private static async Task<int> MtnProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
             int batchSaveCounter = 0;
+            int income = 0;
             dynamic singlecharge = Activator.CreateInstance(singlechargeType);
             dynamic reserverdSingleCharge = Activator.CreateInstance(singlechargeType);
             await Task.Delay(10); // for making it async
@@ -269,6 +272,7 @@ namespace SharedLibrary
                         var response = MessageSender.ChargeMtnSubscriber(entityType, singlechargeType, message, false, false, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == true)
                         {
+                            income += message.Price.GetValueOrDefault();
                             installment.PricePayed += message.Price.GetValueOrDefault();
                             installment.PriceTodayCharged += message.Price.GetValueOrDefault();
                             if (installment.PricePayed >= installment.TotalPrice)
@@ -284,8 +288,8 @@ namespace SharedLibrary
             {
                 logs.Error("Exception in InstallmentJob Chunk task " + taskId + ":", e);
             }
-
             logs.Info("InstallmentJob Chunk task " + taskId + " ended");
+            return income;
         }
 
         public static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
@@ -320,6 +324,27 @@ namespace SharedLibrary
             message.Price = chargecode.Price;
             message.ImiChargeKey = chargecode.ChargeKey;
             return message;
+        }
+
+        public static void InstallmentCycleToDb(Type entityType, Type installmentCycleType, int cycleNumber, long duration, int income)
+        {
+            try
+            {
+                using (dynamic entity = Activator.CreateInstance(entityType))
+                {
+                    dynamic installmentCycle = Activator.CreateInstance(installmentCycleType);
+                    installmentCycle.CycleNumber = cycleNumber;
+                    installmentCycle.DateCreated = DateTime.Now;
+                    installmentCycle.Duration = duration;
+                    installmentCycle.Income = income;
+                    entity.InstallmentCycles.Add(installmentCycle);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in InstallmentCycleToDb: ", e);
+            }
         }
     }
 }

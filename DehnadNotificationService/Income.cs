@@ -16,7 +16,8 @@ namespace DehnadNotificationService
         {
             try
             {
-                CalculateTahchinIncomeDifferenceByHour();
+                CalculateTahchinIncomeDifferenceByCycle();
+                //CalculateTahchinIncomeDifferenceByHour();
                 CalculateMusicYadIncomeDifferenceByHour();
             }
             catch (Exception e)
@@ -80,6 +81,36 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in CalculateTahchinIncomeDifferenceByHour: ", e);
+            }
+        }
+
+        public static void CalculateTahchinIncomeDifferenceByCycle()
+        {
+            try
+            {
+                var tahchinYesterdayIncome = TahChinGetIncomeByHour(DateTime.Now.AddDays(-1));
+                var tahchinToadyIncome = TahChinGetIncomeByHour(DateTime.Now);
+                var pastHour = DateTime.Now.AddHours(-1).Hour;
+                var yesterdayPastHourIncome = 0;
+                var todayPastHourIncome = 0;
+                if (tahchinYesterdayIncome.ContainsKey(pastHour))
+                    yesterdayPastHourIncome = tahchinYesterdayIncome[pastHour];
+                if (tahchinToadyIncome.ContainsKey(pastHour))
+                    todayPastHourIncome = tahchinToadyIncome[pastHour];
+                logs.Info("yesterdayPastHourIncome:" + yesterdayPastHourIncome);
+                logs.Info("todayPastHourIncome:" + todayPastHourIncome);
+                var incomePercentageDifference = CaluculatePercentageDifference(yesterdayPastHourIncome, todayPastHourIncome);
+                logs.Info("incomePercentageDifference:" + incomePercentageDifference);
+                if (incomePercentageDifference <= -10 || incomePercentageDifference >= 20)
+                {
+                    logs.Info("Tahchin incomePercentageDifference:" + incomePercentageDifference);
+                    var message = "Tahchin income dropped by %" + incomePercentageDifference;
+                    DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.All);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in CalculateTahchinIncomeDifferenceByCycle: ", e);
             }
         }
 

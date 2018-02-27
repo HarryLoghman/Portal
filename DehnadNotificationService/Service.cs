@@ -104,7 +104,7 @@ namespace DehnadNotificationService
             try
             {
                 TelegramBot.SaveTelegramMessageToQueue(message, userType);
-                SendMessage.SaveSmsMessageToQueue(message, userType);
+                //SendMessage.SaveSmsMessageToQueue(message, userType);
             }
             catch (Exception e)
             {

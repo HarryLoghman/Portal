@@ -83,6 +83,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>MusicYadModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>MusicYadModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>MusicYadModel.tt</DependentUpon>
     </Compile>

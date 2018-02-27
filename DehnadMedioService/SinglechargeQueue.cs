@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MedioLibrary.Models;
 using MedioLibrary;
 using System.Data.Entity;
+using System.Collections;
 
 namespace DehnadMedioService
 {
@@ -188,6 +189,8 @@ namespace DehnadMedioService
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
                     var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
+                    if (QueueList.Count == 0)
+                        return;
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Medio");
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
@@ -196,6 +199,7 @@ namespace DehnadMedioService
                         return;
                     }
                     var shortCode = serviceInfo.ShortCode;
+                    var mobileNumbers = QueueList.Select(o => o.MobileNumber).ToList();
                     foreach (var item in QueueList)
                     {
                         if (batchSaveCounter >= 500)
@@ -230,6 +234,17 @@ namespace DehnadMedioService
                         batchSaveCounter += 1;
                     }
                     entity.SaveChanges();
+
+                    var installmentList = entity.SinglechargeInstallments.Where(o => mobileNumbers.Contains(o.MobileNumber) && o.PricePayed == 0 && o.IsUserCanceledTheInstallment != true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today)).OrderByDescending(o => o.DateCreated).ToList();
+                    Type entityType = typeof(MedioEntities);
+                    var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
+                    string aggregatorName = Properties.Settings.Default.AggregatorName;
+                    var serviceCode = Properties.Settings.Default.ServiceCode;
+                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                    Type singleChargeType = typeof(Singlecharge);
+                    int installmentListCount = installmentList.Count;
+                    var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                    SharedLibrary.InstallmentHandler.MapfaInstallmentJob(entityType, maxChargeLimit, 0, 0, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
                 }
             }
             catch (Exception e)

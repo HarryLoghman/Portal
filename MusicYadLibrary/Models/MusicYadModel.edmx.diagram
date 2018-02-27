@@ -29,6 +29,7 @@
         <EntityTypeShape EntityType="MusicYadModel.SubscribersAdditionalInfo" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MusicYadModel.TimedTempMessagesBuffer" Width="1.5" PointX="14.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MusicYadModel.vw_SentMessages" Width="1.5" PointX="4.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicYadModel.InstallmentCycle" Width="1.5" PointX="7.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

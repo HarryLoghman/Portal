@@ -20,8 +20,9 @@ namespace DehnadTahChinService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static int maxChargeLimit = 300;
-        public void ProcessInstallment(int installmentCycleNumber)
+        public int ProcessInstallment(int installmentCycleNumber)
         {
+            var income = 0;
             try
             {
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
@@ -39,7 +40,7 @@ namespace DehnadTahChinService
                         installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
                         int installmentListCount = installmentList.Count;
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singlecharge);
+                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singlecharge);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
@@ -48,16 +49,18 @@ namespace DehnadTahChinService
             {
                 logs.Error("Exception in ProcessInstallment:", e);
             }
+            return income;
         }
 
-        public static void InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<SinglechargeInstallment> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
+        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<SinglechargeInstallment> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
         {
+            var income = 0;
             try
             {
                 if (installmentList.Count == 0)
                 {
                     logs.Info("InstallmentJob is empty!");
-                    return;
+                    return income;
                 }
                 logs.Info("installmentList count:" + installmentList.Count);
 
@@ -65,13 +68,14 @@ namespace DehnadTahChinService
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
 
-                List<Task> TaskList = new List<Task>();
+                var TaskList = new List<Task<int>>();
                 for (int i = 0; i < take.Length; i++)
                 {
                     var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
                     TaskList.Add(ProcessMtnInstallmentChunk(maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlecharge));
                 }
                 Task.WaitAll(TaskList.ToArray());
+                income = TaskList.Select(o => o.Result).ToList().Sum();
             }
             catch (Exception e)
             {
@@ -79,13 +83,15 @@ namespace DehnadTahChinService
             }
             logs.Info("installmentCycleNumber:" + installmentCycleNumber + " ended");
             logs.Info("InstallmentJob ended!");
+            return income;
         }
 
-        private static async Task ProcessMtnInstallmentChunk(int maxChargeLimit, List<SinglechargeInstallment> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
+        private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<SinglechargeInstallment> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
             int batchSaveCounter = 0;
+            int income = 0;
             //dynamic reserverdSingleCharge = singlecharge;
             await Task.Delay(10); // for making it async
             try
@@ -126,6 +132,7 @@ namespace DehnadTahChinService
                         //}
                         if (response.IsSucceeded == true)
                         {
+                            income += message.Price.GetValueOrDefault();
                             installment.PricePayed += message.Price.GetValueOrDefault();
                             installment.PriceTodayCharged += message.Price.GetValueOrDefault();
                             if (installment.PricePayed >= installment.TotalPrice)
@@ -143,6 +150,7 @@ namespace DehnadTahChinService
             }
 
             logs.Info("InstallmentJob Chunk task " + taskId + " ended");
+            return income;
         }
 
         public static async Task<Singlecharge> ChargeMtnSubscriber(TahChinEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
@@ -208,6 +216,7 @@ namespace DehnadTahChinService
             }
             catch (Exception e)
             {
+                logs.Info(payload);
                 logs.Error("Exception in ChargeMtnSubscriber: " + e);
             }
             try
