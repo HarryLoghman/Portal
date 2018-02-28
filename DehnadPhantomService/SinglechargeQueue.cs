@@ -187,7 +187,7 @@ namespace DehnadPhantomService
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
+                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now).ToList();
                     if (QueueList.Count == 0)
                         return;
                     var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Phantom");
