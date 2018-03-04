@@ -77,6 +77,42 @@ namespace SharedLibrary
             return result;
         }
 
+        public static async Task<dynamic> DanoopReferral(string ipAndMethodName, string parameters)
+        {
+            dynamic result = new ExpandoObject();
+            result.status = "Error";
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(20);
+                    var url = string.Format("{0}?{1}", ipAndMethodName, parameters);
+                    logs.Info("danoop request:" + url);
+                    var response = client.GetAsync(new Uri(url)).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        logs.Info("danoop response:" + responseString);
+                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                        result = jsonResponse;
+                    }
+                    else
+                    {
+                        result.stauts = "Error";
+                        result.description = "exception";
+                        logs.Error("DanoopReferral returned status: " + response.StatusCode);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.stauts = "Error";
+                result.description = "exception";
+                logs.Error("Exception in DanoopReferral: ", e);
+            }
+            return result;
+        }
+
         public static async Task<T> NotificationBotApi<T>(string methodName, Dictionary<string, string> parameters) where T : class
         {
             try

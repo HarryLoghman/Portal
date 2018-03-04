@@ -151,6 +151,9 @@
     <Compile Include="Models\ReceivedMessagesArchive.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Referral.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Service.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -170,6 +173,9 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SubscribersPoint.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TempReferralData.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VerifySubscriber.cs">

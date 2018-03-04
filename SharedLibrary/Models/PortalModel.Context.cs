@@ -53,6 +53,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<BulkList> BulkLists { get; set; }
         public virtual DbSet<RealtimeStatisticsFor3GServices> RealtimeStatisticsFor3GServices { get; set; }
         public virtual DbSet<RealtimeStatisticsFor2GServices> RealtimeStatisticsFor2GServices { get; set; }
+        public virtual DbSet<Referral> Referrals { get; set; }
+        public virtual DbSet<TempReferralData> TempReferralDatas { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

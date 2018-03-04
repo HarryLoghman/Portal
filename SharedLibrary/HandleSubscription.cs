@@ -72,6 +72,7 @@ namespace SharedLibrary
                 subscriber.DeactivationDate = null;
                 subscriber.PersianDeactivationDate = null;
                 subscriber.OnKeyword = onKeyword;
+                subscriber.SpecialUniqueId = AssignSpecialUniqueId(subscriber.MobileNumber);
                 if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                     subscriber.OnMethod = "keyword";
                 else if (message.IsReceivedFromIntegratedPanel == true)
@@ -83,6 +84,27 @@ namespace SharedLibrary
             }
             AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             return ServiceStatusForSubscriberState.Renewal;
+        }
+
+        public static void AddToTempReferral(string mobileNumber, long serviceId, string inviterUniqueId)
+        {
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+                    var temp = new TempReferralData();
+                    temp.InviteeMobileNumber = mobileNumber;
+                    temp.InviterUniqueId = inviterUniqueId;
+                    temp.ServiceId = serviceId;
+                    temp.DateCreated = DateTime.Now;
+                    entity.TempReferralDatas.Add(temp);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in AddToTempReferral: ", e);
+            }
         }
 
         private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, Service service, ServiceInfo serviceInfo)
@@ -104,6 +126,7 @@ namespace SharedLibrary
                 newSubscriber.MobileOperator = message.MobileOperator;
                 newSubscriber.OperatorPlan = message.OperatorPlan;
                 newSubscriber.SubscriberUniqueId = AssignUniqueId(newSubscriber.MobileNumber);
+                newSubscriber.SpecialUniqueId = AssignSpecialUniqueId(newSubscriber.MobileNumber);
                 entity.Subscribers.Add(newSubscriber);
                 entity.SaveChanges();
 
@@ -127,6 +150,32 @@ namespace SharedLibrary
                     uniqueId = subscriber.SubscriberUniqueId;
                 return uniqueId;
             }
+        }
+
+        public static string AssignSpecialUniqueId(string mobileNumber)
+        {
+            using (var entity = new PortalEntities())
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                var subscriber = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber);
+                string uniqueId = "";
+                uniqueId = CreateUniqueId();
+                return uniqueId;
+            }
+        }
+
+        public static string CreateSpecialUniqueId()
+        {
+            Random random = new Random();
+            var unqiueId = random.Next(10000000, 99999999).ToString();
+            using (var entity = new PortalEntities())
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                var subsriber = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId);
+                if (subsriber != null)
+                    unqiueId = CreateUniqueId();
+            }
+            return unqiueId;
         }
 
         public static string CreateUniqueId()
@@ -193,6 +242,60 @@ namespace SharedLibrary
                 entity.SubscribersHistories.Add(subscriberHistory);
                 entity.SaveChanges();
             }
+        }
+
+        public static void AddReferral(string inviterUniqueId, string inviteeUniqueId)
+        {
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+                    var otherWayAroundExits = entity.Referrals.FirstOrDefault(o => o.InviterUniqueId == inviteeUniqueId && o.InviteeUniqueId == o.InviterUniqueId);
+                    if (otherWayAroundExits != null)
+                    {
+                        entity.Referrals.Remove(otherWayAroundExits);
+                        entity.SaveChanges();
+                    }
+                    var isReferralExists = entity.Referrals.FirstOrDefault(o => o.InviterUniqueId == inviterUniqueId && o.InviteeUniqueId == inviteeUniqueId);
+                    if (isReferralExists == null)
+                    {
+                        var referral = new Referral();
+                        referral.InviterUniqueId = inviterUniqueId;
+                        referral.InviteeUniqueId = inviteeUniqueId;
+                        referral.DateInvited = DateTime.Now;
+                        referral.PersianDateInvited = SharedLibrary.Date.GetPersianDateTime();
+                        entity.Referrals.Add(referral);
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in AddReferral: " + e);
+            }
+        }
+
+        public static string IsSubscriberInvited(string mobileNumber, long serviceId)
+        {
+            string result = "";
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+                    var temp = entity.TempReferralDatas.Where(o => o.InviteeMobileNumber == mobileNumber && o.ServiceId == serviceId).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                    if (temp != null)
+                    {
+                        result = temp.InviterUniqueId;
+                        entity.TempReferralDatas.Remove(temp);
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in IsSubscriberInvited: ", e);
+            }
+            return result;
         }
 
         public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, Service service, ServiceInfo serviceInfo)
@@ -284,7 +387,7 @@ namespace SharedLibrary
             //try
             //{
             //    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Hub");
-                
+
             //    XmlDocument doc = new XmlDocument();
             //    XmlElement root = doc.CreateElement("xmsrequest");
             //    XmlElement userid = doc.CreateElement("userid");
@@ -307,7 +410,7 @@ namespace SharedLibrary
             //    userid.InnerText = serviceAdditionalInfo["username"];
             //    password.InnerText = serviceAdditionalInfo["password"];
             //    action.InnerText = "crm";
-                
+
             //    doc.AppendChild(root);
             //    root.AppendChild(userid);
             //    root.AppendChild(password);

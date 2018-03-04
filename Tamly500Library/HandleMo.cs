@@ -35,6 +35,13 @@ namespace Tamly500Library
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
+                else if(message.ReceivedFrom.Contains("Verification") && message.Content == "sendservicesubscriptionhelp")
+                {
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+                    message.Content = messagesTemplate.Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
+                    MessageHandler.InsertMessageToQueue(message);
+                    return;
+                }
                 else if (message.Content.ToLower().Contains("abc")) //Otp Help
                 {
                     var mobile = message.MobileNumber;

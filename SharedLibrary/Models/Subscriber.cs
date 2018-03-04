@@ -28,6 +28,7 @@ namespace SharedLibrary.Models
         public long MobileOperator { get; set; }
         public long OperatorPlan { get; set; }
         public string SubscriberUniqueId { get; set; }
+        public string SpecialUniqueId { get; set; }
     
         public virtual Service Service { get; set; }
     }

@@ -173,7 +173,9 @@ namespace Portal.Areas.Nebula.Controllers
                 {
                     Id = dailyStatistics.Id,
                     PersianDate = dailyStatistics.PersianDate,
-                    SumOfSinglechargeSuccessfulCharge = dailyStatistics.SumOfSinglechargeSuccessfulCharge,
+                    TotalSubscribers = dailyStatistics.TotalSubscribers,
+                    NumberOfSubscriptions = dailyStatistics.NumberOfSubscriptions,
+                    NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions,
                 });
             }
             else

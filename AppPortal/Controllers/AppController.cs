@@ -531,7 +531,7 @@ namespace Portal.Controllers
                                 {
                                     using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
                                     {
-                                        var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
+                                        var imiChargeCode = new DefendIranLibrary.Models.ImiChargeCode(); 
                                         if (messageObj.Price.Value == 0)
                                             messageObj.Price = 5; //5 is Sub for hub
                                         else if (messageObj.Price.Value == -1)
@@ -542,7 +542,7 @@ namespace Portal.Controllers
                                             result.Status = "Invalid Price";
                                         else
                                         {
-                                            var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                            var singleCharge = new DefendIranLibrary.Models.Singlecharge();
                                             string aggregatorName = "Hub";
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                             singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
@@ -1057,6 +1057,7 @@ namespace Portal.Controllers
                                 {
                                     var singleCharge = new DefendIranLibrary.Models.Singlecharge();
                                     singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else

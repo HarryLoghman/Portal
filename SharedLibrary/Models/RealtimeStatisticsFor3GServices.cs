@@ -29,5 +29,6 @@ namespace SharedLibrary.Models
         public Nullable<int> GeniueActivationRateByHour { get; set; }
         public Nullable<System.DateTime> LastUpdateTime { get; set; }
         public string ServiceName { get; set; }
+        public Nullable<int> TotalUnsubcribriptions { get; set; }
     }
 }

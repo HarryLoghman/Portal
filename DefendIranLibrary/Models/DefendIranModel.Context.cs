@@ -49,6 +49,7 @@ namespace DefendIranLibrary.Models
         public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
+        public virtual DbSet<Setting> Settings { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

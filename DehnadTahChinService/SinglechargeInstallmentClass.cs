@@ -124,7 +124,11 @@ namespace DehnadTahChinService
                             continue;
                         else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
                             message.Price = 100;
+                        //var start = DateTime.Now.TimeOfDay;
                         var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
+                        //var end = DateTime.Now.TimeOfDay;
+                        //var diff = end - start;
+                        
                         //if (response.IsSucceeded == false && message.Price == 300)
                         //{
                         //    message.Price = 100;
@@ -174,6 +178,7 @@ namespace DehnadTahChinService
             {
                 using (var client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(15);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var response = await client.SendAsync(request))

@@ -171,6 +171,7 @@
           <Property Name="GeniueActivationRateByHour" Type="int" />
           <Property Name="LastUpdateTime" Type="datetime" />
           <Property Name="ServiceName" Type="nvarchar" MaxLength="30" />
+          <Property Name="TotalUnsubcribriptions" Type="int" />
         </EntityType>
         <EntityType Name="ReceievedMessages">
           <Key>
@@ -203,6 +204,16 @@
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
           <Property Name="IsReceivedFromWeb" Type="bit" />
+        </EntityType>
+        <EntityType Name="Referral">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InviterUniqueId" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="InviteeUniqueId" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="DateInvited" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateInvited" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="ServiceInfo">
           <Key>
@@ -266,6 +277,7 @@
           <Property Name="MobileOperator" Type="bigint" Nullable="false" />
           <Property Name="OperatorPlan" Type="bigint" Nullable="false" />
           <Property Name="SubscriberUniqueId" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SpecialUniqueId" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -299,6 +311,16 @@
           <Property Name="Point" Type="int" Nullable="false" />
           <Property Name="BundledServiceId" Type="bigint" />
           <Property Name="WeeklyPoint" Type="int" />
+        </EntityType>
+        <EntityType Name="TempReferralData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InviterUniqueId" Type="varchar" MaxLength="50" />
+          <Property Name="InviteeMobileNumber" Type="varchar" MaxLength="15" />
+          <Property Name="ServiceId" Type="bigint" />
+          <Property Name="DateCreated" Type="datetime" />
         </EntityType>
         <EntityType Name="VerifySubscribers">
           <Key>
@@ -493,6 +515,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Referral" EntityType="Self.Referral" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceInfo" EntityType="Self.ServiceInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceKeywords" EntityType="Self.ServiceKeywords" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Services" EntityType="Self.Services" Schema="dbo" store:Type="Tables" />
@@ -500,6 +523,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="Subscribers" EntityType="Self.Subscribers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersHistory" EntityType="Self.SubscribersHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoints" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TempReferralData" EntityType="Self.TempReferralData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VerifySubscribers" EntityType="Self.VerifySubscribers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vw_DehnadAllSentMessages" EntityType="Self.vw_DehnadAllSentMessages" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -741,6 +765,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="OperatorPlan" Type="Int64" Nullable="false" />
           <Property Name="SubscriberUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Service" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Subscriber" ToRole="Service" />
+          <Property Name="SpecialUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -916,6 +941,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="BulkLists" EntityType="PortalModel.BulkList" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="PortalModel.RealtimeStatisticsFor3GServices" />
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="PortalModel.RealtimeStatisticsFor2GServices" />
+          <EntitySet Name="Referrals" EntityType="PortalModel.Referral" />
+          <EntitySet Name="TempReferralDatas" EntityType="PortalModel.TempReferralData" />
         </EntityContainer>
         <EntityType Name="Delivery">
           <Key>
@@ -1068,6 +1095,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="GeniueActivationRateByHour" Type="Int32" />
           <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
           <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="TotalUnsubcribriptions" Type="Int32" />
         </EntityType>
         <EntityType Name="RealtimeStatisticsFor2GServices">
           <Key>
@@ -1083,6 +1111,26 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="PostPaidSubscriptions" Type="Int32" />
           <Property Name="PrepaidUnsubscriptions" Type="Int32" />
           <Property Name="PostPaidUnsubscriptions" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Referral">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InviterUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="InviteeUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="DateInvited" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateInvited" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TempReferralData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InviterUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InviteeMobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1245,6 +1293,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="Subscribers">
             <EntityTypeMapping TypeName="PortalModel.Subscriber">
               <MappingFragment StoreEntitySet="Subscribers">
+                <ScalarProperty Name="SpecialUniqueId" ColumnName="SpecialUniqueId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
@@ -1426,6 +1475,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="RealtimeStatisticsFor3GServices">
             <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor3GServices">
               <MappingFragment StoreEntitySet="RealtimeStatisticsFor3GServices">
+                <ScalarProperty Name="TotalUnsubcribriptions" ColumnName="TotalUnsubcribriptions" />
                 <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
                 <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
                 <ScalarProperty Name="GeniueActivationRateByHour" ColumnName="GeniueActivationRateByHour" />
@@ -1456,6 +1506,28 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Referrals">
+            <EntityTypeMapping TypeName="PortalModel.Referral">
+              <MappingFragment StoreEntitySet="Referral">
+                <ScalarProperty Name="PersianDateInvited" ColumnName="PersianDateInvited" />
+                <ScalarProperty Name="DateInvited" ColumnName="DateInvited" />
+                <ScalarProperty Name="InviteeUniqueId" ColumnName="InviteeUniqueId" />
+                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TempReferralDatas">
+            <EntityTypeMapping TypeName="PortalModel.TempReferralData">
+              <MappingFragment StoreEntitySet="TempReferralData">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="InviteeMobileNumber" ColumnName="InviteeMobileNumber" />
+                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

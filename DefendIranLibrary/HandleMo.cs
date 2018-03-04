@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace DefendIranLibrary
 {
@@ -17,11 +18,18 @@ namespace DefendIranLibrary
             {
                 using (var entity = new DefendIranEntities())
                 {
+                    bool isCampaignActive = false;
+                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                    if (campaign != null)
+                        isCampaignActive = campaign.Value == "0" ? false : true;
                     var content = message.Content;
+                    Type entityType = typeof(DefendIranEntities);
+                    Type ondemandType = typeof(OnDemandMessagesBuffer);
                     message.ServiceCode = service.ServiceCode;
                     message.ServiceId = service.Id;
                     var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                     List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
 
                     var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
                     var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
@@ -45,6 +53,23 @@ namespace DefendIranLibrary
                     {
                         message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    else if (message.Content.Length == 8 && message.Content.All(char.IsDigit))
+                    {
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Hub");
+                        var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
+                        if (result.Status != "SUCCESS-Pending Confirmation")
+                        {
+                            message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
+                            SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                        }
+                        else
+                        {
+                            SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                            SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                        }
                         return;
                     }
                     else if (message.Content.ToLower().Contains("abc")) //Otp Help
@@ -73,13 +98,14 @@ namespace DefendIranLibrary
                     }
                     else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                     {
-                        var singleCharge = new Singlecharge();
-                        singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
-                        if (singleCharge != null)
+                        var confirmCode = message.Content;
+                        if (isCampaignActive == true)
                         {
-                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Hub");
-                            singleCharge = await SharedLibrary.MessageSender.HubOTPConfirm(entity, singleCharge, message, serviceAdditionalInfo, message.Content);
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpConfirm").Select(o => o.Content).FirstOrDefault();
+                            MessageHandler.InsertMessageToQueue(message);
                         }
+                        var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
+                        logs.Info(result.Status);
                         return;
                     }
 
@@ -88,8 +114,8 @@ namespace DefendIranLibrary
                     else if (message.ReceivedFrom.Contains("Notify-Unsubscription") || message.IsReceivedFromIntegratedPanel == true)
                         isUserWantsToUnsubscribe = true;
 
-                    if (isUserWantsToUnsubscribe == true)
-                        SharedLibrary.HandleSubscription.UnsubscribeUserFromHubService(service.Id, message.MobileNumber);
+                    //if (isUserWantsToUnsubscribe == true)
+                    //    SharedLibrary.HandleSubscription.UnsubscribeUserFromHubService(service.Id, message.MobileNumber);
 
                     if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                     {
@@ -143,7 +169,41 @@ namespace DefendIranLibrary
                         else
                             message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
-                        message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                        if (isCampaignActive == true && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
+                        {
+                            string parentId = "1";
+                            var subscriberInviterCode = SharedLibrary.HandleSubscription.IsSubscriberInvited(message.MobileNumber, service.Id);
+                            if (subscriberInviterCode != "")
+                            {
+                                parentId = subscriberInviterCode;
+                                SharedLibrary.HandleSubscription.AddReferral(subscriberInviterCode, subsciber.SpecialUniqueId);
+                            }
+                            var subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null)
+                                subId = sub.SpecialUniqueId;
+                            var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
+                        }
+                        else if (isCampaignActive == true && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                        {
+                            var subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null)
+                                subId = sub.SpecialUniqueId;
+                            var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                        }
+
+                        message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                        if (message.Content.Contains("{REFERRALCODE}"))
+                        {
+                            var subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null)
+                                subId = sub.SpecialUniqueId;
+                            message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                        }
                         MessageHandler.InsertMessageToQueue(message);
                         //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                         //{

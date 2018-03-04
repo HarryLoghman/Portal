@@ -1223,12 +1223,11 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaDynamicPriceSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<dynamic> MapfaDynamicPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
-                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
@@ -1321,7 +1320,7 @@ namespace SharedLibrary
                             logs.Info("samssonsinglecharge url: " + url);
                             response = await client.GetAsync(url);
                         }
-                        
+
                         var responseString = await response.Content.ReadAsStringAsync();
                         logs.Info(responseString);
                         dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
@@ -1714,11 +1713,13 @@ namespace SharedLibrary
                     {
                         var request = new HttpRequestMessage(HttpMethod.Post, url);
                         request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
+                        logs.Info("request: " + payload);
                         using (var response = await client.SendAsync(request))
                         {
                             if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
                             {
                                 string httpResult = response.Content.ReadAsStringAsync().Result;
+                                logs.Info("response: " + httpResult);
                                 XmlDocument xml = new XmlDocument();
                                 xml.LoadXml(httpResult);
                                 XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);

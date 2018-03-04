@@ -29,7 +29,7 @@
 <BR>
 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
 {
-    <div id="singlechargeLiveStatusesContainer" style="height: 400px;direction:ltr !important;"></div>
+    <!--<div id="singlechargeLiveStatusesContainer" style="height: 400px;direction:ltr !important;"></div> -->
     <BR>
 }
 <div class="k-rtl" id="grid"></div>
@@ -41,7 +41,7 @@
     var singlechargeLiveStatus;
     var date = [];
 
-    $.ajax(
+   /* $.ajax(
     {
         type: 'POST',
         url: 'Statistics/SinglechargeLive_Read',
@@ -50,7 +50,7 @@
         success: function (result) {
             singlechargeLiveStatus = result;
         }
-    });
+    }); */
 
     $.ajax(
     {
@@ -404,7 +404,7 @@ else
     <!--Singlecharge Live Statuses Chart-->
     <script type="text/javascript">
     $(function () {
-        $('#singlechargeLiveStatusesContainer').highcharts({
+        /* $('#singlechargeLiveStatusesContainer').highcharts({
             chart: {
                 type: 'pie',
                 options3d: {
@@ -454,7 +454,7 @@ else
                 type: 'pie',
                 data: singlechargeLiveStatus.Data
             }]
-        });
+        }); */
     });
     </script>
 }

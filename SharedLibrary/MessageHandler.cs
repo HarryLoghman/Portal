@@ -121,6 +121,79 @@ namespace SharedLibrary
             return content;
         }
 
+        public static void InsertMessageToQueue(Type entityType, MessageObject message, Type autocharge, Type eventBase, Type onDemand)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
+                if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
+                {
+                    var messageBuffer = Convert.ChangeType(CreateMessageBuffer(autocharge, message), autocharge);
+                    entity.AutochargeMessagesBuffers.Add(messageBuffer);
+                }
+                else if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase)
+                {
+                    var messageBuffer = Convert.ChangeType(CreateMessageBuffer(eventBase, message), eventBase);
+                    entity.EventbaseMessagesBuffers.Add(messageBuffer);
+                }
+                else
+                {
+                    var messageBuffer = Convert.ChangeType(CreateMessageBuffer(onDemand, message), onDemand);
+                    entity.OnDemandMessagesBuffers.Add(messageBuffer);
+                }
+                entity.SaveChanges();
+            }
+        }
+
+        public static dynamic CreateMessageBuffer(Type messageType, MessageObject message)
+        {
+            if (message.AggregatorId == 0)
+                message.AggregatorId = SharedLibrary.MessageHandler.GetAggregatorId(message);
+
+            dynamic messageBuffer = Activator.CreateInstance(messageType);
+            messageBuffer.Content = message.Content;
+            messageBuffer.ContentId = message.ContentId;
+            messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
+            messageBuffer.ImiMessageType = message.ImiMessageType;
+            messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
+            messageBuffer.MessageType = message.MessageType;
+            messageBuffer.ProcessStatus = message.ProcessStatus;
+            messageBuffer.ServiceId = message.ServiceId;
+            messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
+            messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
+            return messageBuffer;
+        }
+
+        public static string HandleSpecialStrings(string content, int point, string mobileNumber, long serviceId)
+        {
+            using (var entity = new PortalEntities())
+            {
+                if (content == null || content == "")
+                    return content;
+                if (content.Contains("{SPOINT}"))
+                {
+                    var subscriberPoint = SharedLibrary.MessageHandler.GetSubscriberPoint(mobileNumber, serviceId);
+                    subscriberPoint += point;
+                    content = content.Replace("{SPOINT}", subscriberPoint.ToString());
+                }
+                if (content.Contains("{TPOINT}"))
+                {
+                    var subscriberPoint = SharedLibrary.MessageHandler.GetSubscriberPoint(mobileNumber, null);
+                    subscriberPoint += point;
+                    content = content.Replace("{TPOINT}", subscriberPoint.ToString());
+                }
+            }
+            return content;
+        }
+
         public static string PrepareGeneralOffMessage(MessageObject message, List<Service> servicesThatUserSubscribedOnShortCode)
         {
             if (servicesThatUserSubscribedOnShortCode.Count == 0)

@@ -39,6 +39,8 @@
         <EntityTypeShape EntityType="PortalModel.BulkList" Width="1.5" PointX="15.375" PointY="0.75" />
         <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor3GServices" Width="1.5" PointX="0.75" PointY="15.75" />
         <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor2GServices" Width="1.5" PointX="10.375" PointY="15.75" />
+        <EntityTypeShape EntityType="PortalModel.Referral" Width="1.5" PointX="12.375" PointY="15.75" />
+        <EntityTypeShape EntityType="PortalModel.TempReferralData" Width="1.5" PointX="14.375" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
