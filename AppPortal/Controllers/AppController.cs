@@ -1423,6 +1423,8 @@ namespace Portal.Controllers
                             messageObj.ServiceCode = "AvvalPod500";
                         else if (messageObj.ServiceCode == "AvvalYad")
                             messageObj.ServiceCode = "BehAmooz500";
+                        else if (messageObj.ServiceCode == "ShenoYad")
+                            messageObj.ServiceCode = "ShenoYad500";
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                         {
@@ -1526,6 +1528,10 @@ namespace Portal.Controllers
                     {
                         if (messageObj.ServiceCode == "Tamly")
                             messageObj.ServiceCode = "Tamly500";
+                        else if (messageObj.ServiceCode == "AvvalYad")
+                            messageObj.ServiceCode = "BehAmooz500";
+                        else if (messageObj.ServiceCode == "ShenoYad")
+                            messageObj.ServiceCode = "ShenoYad500";
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                         if (service == null)
                         {

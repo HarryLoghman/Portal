@@ -55,7 +55,7 @@ namespace DefendIranLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    else if (message.Content.Length == 8 && message.Content.All(char.IsDigit))
+                    else if ((message.Content.Length == 8 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit))
                     {
                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Hub");
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
@@ -99,13 +99,7 @@ namespace DefendIranLibrary
                     else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                     {
                         var confirmCode = message.Content;
-                        if (isCampaignActive == true)
-                        {
-                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpConfirm").Select(o => o.Content).FirstOrDefault();
-                            MessageHandler.InsertMessageToQueue(message);
-                        }
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
-                        logs.Info(result.Status);
                         return;
                     }
 
@@ -184,6 +178,29 @@ namespace DefendIranLibrary
                                 subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
                             var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
+                            if (result.description == "success")
+                            {
+                                if (parentId != "1")
+                                {
+                                    var parentSubscriber = SharedLibrary.HandleSubscription.GetSubscriberBySpecialUniqueId(parentId);
+                                    if (parentSubscriber != null)
+                                    {
+                                        var oldMobileNumber = message.MobileNumber;
+                                        var oldSubId = message.SubscriberId;
+                                        var newMessage = message;
+                                        newMessage.MobileNumber = parentSubscriber.MobileNumber;
+                                        newMessage = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                                        newMessage.Content = messagesTemplate.Where(o => o.Title == "CampaignNotifyParentForNewReferral").Select(o => o.Content).FirstOrDefault();
+                                        if (newMessage.Content.Contains("{REFERRALCODE}"))
+                                        {
+                                            newMessage.Content = message.Content.Replace("{REFERRALCODE}", parentSubscriber.SpecialUniqueId);
+                                        }
+                                        MessageHandler.InsertMessageToQueue(newMessage);
+                                        message.MobileNumber = oldMobileNumber;
+                                        message.SubscriberId = oldSubId;
+                                    }
+                                }
+                            }
                         }
                         else if (isCampaignActive == true && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                         {
@@ -216,20 +233,40 @@ namespace DefendIranLibrary
 
                     if (subscriber == null)
                     {
-                        if (message.Content == null || message.Content == "" || message.Content == " ")
-                            message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                        if (isCampaignActive == true)
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignEmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+                            else
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignInvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+                        }
                         else
-                            message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                            else
+                                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        }
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
                     message.SubscriberId = subscriber.Id;
                     if (subscriber.DeactivationDate != null)
                     {
-                        if (message.Content == null || message.Content == "" || message.Content == " ")
-                            message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                        if (isCampaignActive == true)
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignEmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+                            else
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignInvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+                        }
                         else
-                            message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        {
+                            if (message.Content == null || message.Content == "" || message.Content == " ")
+                                message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                            else
+                                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                        }
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }

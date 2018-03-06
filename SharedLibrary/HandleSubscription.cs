@@ -275,6 +275,27 @@ namespace SharedLibrary
             }
         }
 
+        public static Subscriber GetSubscriberBySpecialUniqueId(string specialUniqueId)
+        {
+            string result = "";
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+                    var subscriber = entity.Subscribers.Where(o => o.SpecialUniqueId == specialUniqueId).FirstOrDefault();
+                    if (subscriber != null)
+                    {
+                        return subscriber;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetSubscriberBySpecialUniqueId: ", e);
+            }
+            return null;
+        }
+
         public static string IsSubscriberInvited(string mobileNumber, long serviceId)
         {
             string result = "";

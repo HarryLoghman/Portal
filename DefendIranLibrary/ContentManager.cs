@@ -79,7 +79,19 @@ namespace DefendIranLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                     {
-                        message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                        if (isCampaignActive == true)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignEmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message = SharedLibrary.MessageHandler.EmptyContentWhenSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "h")
+                    {
+                        if (isCampaignActive == true)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignHContent").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message.Content = messagesTemplate.Where(o => o.Title == "HContent").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
@@ -161,7 +173,10 @@ namespace DefendIranLibrary
                     }
                     if (!service.OnKeywords.Contains(message.Content))
                     {
-                        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        if (isCampaignActive == true)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignInvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message = MessageHandler.InvalidContentWhenSubscribed(message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
