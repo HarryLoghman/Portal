@@ -51,7 +51,7 @@ namespace PhantomLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    else if ((message.Content.Length == 8 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit))
+                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content == "دریافت 25000 تومان شارژ رایگان")
                     {
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
                         if (result.Status != "SUCCESS-Pending Confirmation")
@@ -190,7 +190,7 @@ namespace PhantomLibrary
                             if (sub != null)
                                 subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
                             if(result.description == "success")
                             {
                                 if(parentId != "1")
@@ -223,7 +223,7 @@ namespace PhantomLibrary
                             if (sub != null)
                                 subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                         }
 
                         message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);

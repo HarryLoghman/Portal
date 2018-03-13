@@ -156,6 +156,11 @@ namespace DefendIranLibrary
                     subscriberPoint += point;
                     content = content.Replace("{TPOINT}", subscriberPoint.ToString());
                 }
+                if (content.Contains("{REFERRALCODE}"))
+                {
+                    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, serviceId);
+                    content = content.Replace("{REFERRALCODE}", subscriber.SpecialUniqueId);
+                }
             }
             return content;
         }

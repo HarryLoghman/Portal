@@ -25,7 +25,7 @@ namespace Portal.Areas.Phantom.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Settings_Read([DataSourceRequest]DataSourceRequest request)
         {
-            DataSourceResult result = db.Settings.ToDataSourceResult(request, settings => new
+            DataSourceResult result = db.Settings.Where(o => o.Name == "campaign").ToDataSourceResult(request, settings => new
             {
                 Id = settings.Id,
                 Name = settings.Name,

@@ -145,6 +145,39 @@ namespace SharedLibrary
             }
         }
 
+        public static void InsertBulkMessagesToQueue(Type entityType, List<MessageObject> messages, Type autocharge, Type eventBase, Type onDemand)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                int counter = 0;
+                foreach (var message in messages)
+                {
+                    if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
+                    {
+                        var messageBuffer = Convert.ChangeType(CreateMessageBuffer(autocharge, message), autocharge);
+                        entity.AutochargeMessagesBuffers.Add(messageBuffer);
+                    }
+                    else if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase)
+                    {
+                        var messageBuffer = Convert.ChangeType(CreateMessageBuffer(eventBase, message), eventBase);
+                        entity.EventbaseMessagesBuffers.Add(messageBuffer);
+                    }
+                    else
+                    {
+                        var messageBuffer = Convert.ChangeType(CreateMessageBuffer(onDemand, message), onDemand);
+                        entity.OnDemandMessagesBuffers.Add(messageBuffer);
+                    }
+                    if (counter > 1000)
+                    {
+                        counter = 0;
+                        entity.SaveChanges();
+                    }
+                    counter++;
+                }
+                entity.SaveChanges();
+            }
+        }
+
         public static dynamic CreateMessageBuffer(Type messageType, MessageObject message)
         {
             if (message.AggregatorId == 0)
@@ -542,6 +575,30 @@ namespace SharedLibrary
             }
             int[] take = new int[(readSize / takeSize) + 1];
             int[] skip = new int[(readSize / takeSize) + 1];
+            skip[0] = 0;
+            take[0] = takeSize;
+            for (int i = 1; i < take.Length; i++)
+            {
+                take[i] = takeSize;
+                skip[i] = skip[i - 1] + takeSize;
+            }
+            return new Dictionary<string, int[]>() { { "take", take }, { "skip", skip } };
+        }
+
+        public static Dictionary<string, int[]> CalculateServiceSendMessageThreadNumbersByTps(int readSize, int threadNumbers)
+        {
+            if (readSize <= 50)
+            {
+                int[] takes = new int[1];
+                int[] skips = new int[1];
+                skips[0] = 0;
+                takes[0] = 50;
+                return new Dictionary<string, int[]>() { { "take", takes }, { "skip", skips } };
+            }
+            var takeSize = readSize / threadNumbers;
+
+            int[] take = new int[threadNumbers + 1];
+            int[] skip = new int[threadNumbers + 1];
             skip[0] = 0;
             take[0] = takeSize;
             for (int i = 1; i < take.Length; i++)

@@ -67,21 +67,39 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
-                subscriber.OffKeyword = null;
-                subscriber.OffMethod = null;
-                subscriber.DeactivationDate = null;
-                subscriber.PersianDeactivationDate = null;
-                subscriber.OnKeyword = onKeyword;
-                subscriber.SpecialUniqueId = AssignSpecialUniqueId(subscriber.MobileNumber);
-                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
-                    subscriber.OnMethod = "keyword";
-                else if (message.IsReceivedFromIntegratedPanel == true)
-                    subscriber.OnMethod = "Integrated Panel";
-                else
-                    subscriber.OnMethod = "Web";
-                entity.Entry(subscriber).State = EntityState.Modified;
-                entity.SaveChanges();
+                using (DbContextTransaction scope = entity.Database.BeginTransaction())
+                {
+                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
+                    subscriber.OffKeyword = null;
+                    subscriber.OffMethod = null;
+                    subscriber.DeactivationDate = null;
+                    subscriber.PersianDeactivationDate = null;
+                    subscriber.OnKeyword = onKeyword;
+                    Random random = new Random();
+                    bool isUniqueIdAssigned = false;
+                    var specialUniqeId = "";
+                    while (isUniqueIdAssigned == false)
+                    {
+                        var unqiueId = random.Next(10000000, 99999999).ToString();
+                        var isExists = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId);
+                        if (isExists == null)
+                        {
+                            specialUniqeId = unqiueId;
+                            isUniqueIdAssigned = true;
+                        }
+                    }
+                    subscriber.SpecialUniqueId = specialUniqeId;
+                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                        subscriber.OnMethod = "keyword";
+                    else if (message.IsReceivedFromIntegratedPanel == true)
+                        subscriber.OnMethod = "Integrated Panel";
+                    else
+                        subscriber.OnMethod = "Web";
+                    entity.Entry(subscriber).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    scope.Commit();
             }
+        }
             AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             return ServiceStatusForSubscriberState.Renewal;
         }
@@ -109,31 +127,59 @@ namespace SharedLibrary
 
         private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, Service service, ServiceInfo serviceInfo)
         {
+            var newSubscriber = new Subscriber();
             using (var entity = new PortalEntities())
             {
-                var newSubscriber = new Subscriber();
-                newSubscriber.MobileNumber = message.MobileNumber;
-                newSubscriber.OnKeyword = message.Content;
-                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
-                    newSubscriber.OnMethod = "keyword";
-                else if (message.IsReceivedFromIntegratedPanel == true)
-                    newSubscriber.OnMethod = "Integrated Panel";
-                else
-                    newSubscriber.OnMethod = "Web";
-                newSubscriber.ServiceId = service.Id;
-                newSubscriber.ActivationDate = DateTime.Now;
-                newSubscriber.PersianActivationDate = Date.GetPersianDate();
-                newSubscriber.MobileOperator = message.MobileOperator;
-                newSubscriber.OperatorPlan = message.OperatorPlan;
-                newSubscriber.SubscriberUniqueId = AssignUniqueId(newSubscriber.MobileNumber);
-                newSubscriber.SpecialUniqueId = AssignSpecialUniqueId(newSubscriber.MobileNumber);
-                entity.Subscribers.Add(newSubscriber);
-                entity.SaveChanges();
-
-                AddSubscriberToSubscriberPointsTable(newSubscriber, service);
-
-                AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
+                using (DbContextTransaction scope = entity.Database.BeginTransaction())
+                {
+                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
+                    newSubscriber.MobileNumber = message.MobileNumber;
+                    newSubscriber.OnKeyword = message.Content;
+                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                        newSubscriber.OnMethod = "keyword";
+                    else if (message.IsReceivedFromIntegratedPanel == true)
+                        newSubscriber.OnMethod = "Integrated Panel";
+                    else
+                        newSubscriber.OnMethod = "Web";
+                    newSubscriber.ServiceId = service.Id;
+                    newSubscriber.ActivationDate = DateTime.Now;
+                    newSubscriber.PersianActivationDate = Date.GetPersianDate();
+                    newSubscriber.MobileOperator = message.MobileOperator;
+                    newSubscriber.OperatorPlan = message.OperatorPlan;
+                    Random random = new Random();
+                    var sunUniqueId = "";
+                    bool isUniqueIdAssigned = false;
+                    while (isUniqueIdAssigned == false)
+                    {
+                        var uId = random.Next(10000000, 99999999).ToString();
+                        var subscriber = entity.Subscribers.FirstOrDefault(o => o.SubscriberUniqueId == uId);
+                        if (subscriber == null)
+                        {
+                            sunUniqueId = uId;
+                            isUniqueIdAssigned = true;
+                        }
+                    }
+                    newSubscriber.SubscriberUniqueId = sunUniqueId;
+                    var specialUniqeId = "";
+                    isUniqueIdAssigned = false;
+                    while (isUniqueIdAssigned == false)
+                    {
+                        var unqiueId = random.Next(10000000, 99999999).ToString();
+                        var subscriber = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId);
+                        if (subscriber == null)
+                        {
+                            specialUniqeId = unqiueId;
+                            isUniqueIdAssigned = true;
+                        }
+                    }
+                    newSubscriber.SpecialUniqueId = specialUniqeId;
+                    entity.Subscribers.Add(newSubscriber);
+                    entity.SaveChanges();
+                    scope.Commit();
+                }
             }
+            AddSubscriberToSubscriberPointsTable(newSubscriber, service);
+            AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             return ServiceStatusForSubscriberState.Activated;
         }
 
@@ -159,7 +205,7 @@ namespace SharedLibrary
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 var subscriber = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber);
                 string uniqueId = "";
-                uniqueId = CreateUniqueId();
+                uniqueId = CreateSpecialUniqueId();
                 return uniqueId;
             }
         }
@@ -173,7 +219,7 @@ namespace SharedLibrary
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 var subsriber = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId);
                 if (subsriber != null)
-                    unqiueId = CreateUniqueId();
+                    unqiueId = CreateSpecialUniqueId();
             }
             return unqiueId;
         }

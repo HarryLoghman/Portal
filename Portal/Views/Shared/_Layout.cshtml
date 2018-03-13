@@ -314,7 +314,7 @@
                                 <li>
                                     سرویس های تله پرومو
                                     <ul>
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("SoltanUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("NabardGahUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 نبردگاه
@@ -344,7 +344,7 @@
                                             </li>
                                         }
 
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("DonyayeAsatirUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("DonyayeAsatirUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 دنیای اساطیر
@@ -373,7 +373,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TamlyUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TamlyUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 تاملی
@@ -402,7 +402,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JabehAbzarUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JabehAbzarUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 جعبه ابزار
@@ -431,7 +431,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShenoYadUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShenoYadUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 شنویاد
@@ -460,7 +460,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FitShowUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("FitShowUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 فیت شو
@@ -489,7 +489,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TakavarUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("TakavarUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 تکاور
@@ -515,7 +515,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MenchBazUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("MenchBazUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 منچ باز
@@ -541,7 +541,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AvvalPodUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AvvalPodUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 اول پاد
@@ -567,7 +567,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AvvalYadUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AvvalYadUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 اول یاد
@@ -593,7 +593,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Dezhban"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Dezhban") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 دژبان
@@ -619,7 +619,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Tamly500"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Tamly500") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 تاملی 500
@@ -645,7 +645,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShenoYad500"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("ShenoYad500") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 شنویاد 500
@@ -671,7 +671,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AvvalPod500"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AvvalPod500") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 اول پاد 500
@@ -697,7 +697,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("BehAmooz500User"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("BehAmooz500User") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 به آموز 500
@@ -723,7 +723,7 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AsemanUser"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("AsemanUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
                                                 آسمان

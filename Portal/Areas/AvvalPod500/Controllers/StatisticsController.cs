@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.AvvalPod500.Controllers
 {
-    [Authorize(Roles = "Admin, AvvalPod500User")]
+    [Authorize(Roles = "Admin, AvvalPod500User, Spectator")]
     public class StatisticsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -165,6 +165,17 @@ namespace Portal.Areas.AvvalPod500.Controllers
                     NumberOfSinglechargeInAppPurchasesFailed = dailyStatistics.NumberOfSinglechargeInAppPurchasesFailed,
                     NumberOfSinglechargeInAppPurchasesSucceeded = dailyStatistics.NumberOfSinglechargeInAppPurchasesSucceeded,
                     SumOfSinglechargeInAppPurchases = dailyStatistics.SumOfSinglechargeInAppPurchases
+                });
+            }
+            else if (User.IsInRole("Spectator"))
+            {
+                result = db.DailyStatistics.ToDataSourceResult(request, dailyStatistics => new
+                {
+                    Id = dailyStatistics.Id,
+                    PersianDate = dailyStatistics.PersianDate,
+                    NumberOfSubscriptions = dailyStatistics.NumberOfSubscriptions,
+                    TotalSubscribers = dailyStatistics.TotalSubscribers,
+                    NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions,
                 });
             }
             else if (User.IsInRole("AvvalPod500User"))

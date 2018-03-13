@@ -26,6 +26,13 @@ namespace SharedLibrary
                     logs.Info("InstallmentJob is empty!");
                     return;
                 }
+                bool isCampaignActive = false;
+                using (dynamic entity = Activator.CreateInstance(entityType))
+                {
+                    var campaign = ((IEnumerable)entity.Settings).Cast<dynamic>().FirstOrDefault(o => o.Name == "campaign");
+                    if (campaign != null)
+                        isCampaignActive = campaign.Value == "0" ? false : true;
+                }
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
@@ -36,7 +43,7 @@ namespace SharedLibrary
                 for (int i = 0; i < take.Length; i++)
                 {
                     var chunkedInstallmentList = ((IEnumerable)installmentList).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
-                    TaskList.Add(MapfaProcessInstallmentChunk(entityType, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlechargeType));
+                    TaskList.Add(MapfaProcessInstallmentChunk(entityType, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlechargeType, isCampaignActive));
                 }
                 Task.WaitAll(TaskList.ToArray());
             }
@@ -79,7 +86,7 @@ namespace SharedLibrary
             logs.Info("InstallmentJob ended!");
         }
 
-        private static async Task MapfaProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType)
+        private static async Task MapfaProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType, bool isCampaignActive)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -123,6 +130,31 @@ namespace SharedLibrary
                             if (installment.PricePayed >= installment.TotalPrice)
                                 installment.IsFullyPaid = true;
                             entity.Entry(installment).State = EntityState.Modified;
+                        }
+                        if (isCampaignActive == true)
+                        {
+                            try
+                            {
+                                var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, Convert.ToInt64(serviceAdditionalInfo["serviceId"]));
+                                if (sub != null)
+                                {
+                                    if (sub.SpecialUniqueId != null)
+                                    {
+                                        var sha = SharedLibrary.Security.GetSha256Hash(sub.SpecialUniqueId + message.MobileNumber);
+                                        var price = 0;
+                                        if (response.IsSucceeded == true)
+                                            price = message.Price.Value;
+                                        if (serviceAdditionalInfo["serviceCode"] == "Phantom")
+                                            await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                        else if (serviceAdditionalInfo["serviceCode"] == "Medio")
+                                            await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/medio/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                logs.Error("Exception in calling danoop charge service: " + e);
+                            }
                         }
                         batchSaveCounter++;
                     }
@@ -242,9 +274,6 @@ namespace SharedLibrary
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        logs.Info("-" + taskId + "-" + "-start-");
-                        logs.Info("-" + taskId + "-" + "installment Id: "+ installment.Id);
-                        logs.Info("-" + taskId + "-" + "installment MobileNumber: " + installment.MobileNumber);
                         if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
@@ -252,18 +281,14 @@ namespace SharedLibrary
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        //singlecharge = reserverdSingleCharge;
                         int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.IsApplicationInformed == false && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
-                        logs.Info("-" + taskId + "-" + "priceUserChargedToday: " + priceUserChargedToday);
                         if (priceUserChargedToday >= maxChargeLimit)
                         {
-                            logs.Info("-" + taskId + "-" + "stepped in max charge limit");
                             installment.IsExceededDailyChargeLimit = true;
                             entity.Entry(installment).State = EntityState.Modified;
                             batchSaveCounter += 1;
                             continue;
                         }
-                        logs.Info("-" + taskId + "-" + "installment MobileNumber: " + installment.MobileNumber);
                         var message = new SharedLibrary.Models.MessageObject();
                         message.MobileNumber = installment.MobileNumber;
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
@@ -272,13 +297,10 @@ namespace SharedLibrary
                             continue;
                         else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
                             message.Price = 100;
-                        logs.Info("-" + taskId + "-" + "message.Price: " + message.Price + " - installment MobileNumber: " + installment.MobileNumber);
+                        
                         var response = MessageSender.ChargeMtnSubscriber(entityType, singlechargeType, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                        logs.Info("-" + taskId + "-" + "after response:" + "installment MobileNumber: " + installment.MobileNumber);
-                        logs.Info("-" + taskId + "-" + "after response suceed stat: response.IsSucceeded: " + response.IsSucceeded + " - "  + "installment MobileNumber: " + installment.MobileNumber);
                         if (response.IsSucceeded == true)
                         {
-                            logs.Info("-" + taskId + "-" + "response was succeed:" + "installment MobileNumber: " + installment.MobileNumber);
                             income += message.Price.GetValueOrDefault();
                             installment.PricePayed += message.Price.GetValueOrDefault();
                             installment.PriceTodayCharged += message.Price.GetValueOrDefault();
@@ -287,7 +309,6 @@ namespace SharedLibrary
                             entity.Entry(installment).State = EntityState.Modified;
                         }
                         batchSaveCounter++;
-                        logs.Info("-" + taskId + "-" + "-end-" + "installment MobileNumber: " + installment.MobileNumber);
                     }
                     entity.SaveChanges();
                 }

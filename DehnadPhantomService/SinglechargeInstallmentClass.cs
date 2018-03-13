@@ -24,7 +24,7 @@ namespace DehnadPhantomService
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<SinglechargeInstallment> installmentList;
                 Type entityType = typeof(PhantomEntities);
-                dynamic singleCharge = new Singlecharge();
+                Type singleChargeType = typeof(Singlecharge);
 
                 using (var entity = new PhantomEntities())
                 {
@@ -36,7 +36,7 @@ namespace DehnadPhantomService
                         installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
                         int installmentListCount = installmentList.Count;
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        SharedLibrary.InstallmentHandler.MapfaInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleCharge);
+                        SharedLibrary.InstallmentHandler.MapfaInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }

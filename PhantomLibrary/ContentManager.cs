@@ -139,7 +139,7 @@ namespace PhantomLibrary
                             if (sub != null)
                                 subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                             string n = result.n.ToString();
                             string m = result.m.ToString();
                             message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberStatus").Select(o => o.Content).FirstOrDefault();
@@ -167,7 +167,7 @@ namespace PhantomLibrary
                             if (sub != null)
                                 subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                             var chargesList = new List<string>();
                             foreach (var item in result.charges)
                             {

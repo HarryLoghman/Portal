@@ -64,7 +64,8 @@ namespace DehnadTahChinService
                 }
                 logs.Info("installmentList count:" + installmentList.Count);
 
-                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
+                //var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
+                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, 50);
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
 
@@ -88,11 +89,11 @@ namespace DehnadTahChinService
 
         private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<SinglechargeInstallment> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
         {
-            logs.Info("InstallmentJob Chunk started: task: " + taskId);
+            logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
             var today = DateTime.Now.Date;
             int batchSaveCounter = 0;
             int income = 0;
-            //dynamic reserverdSingleCharge = singlecharge;
+            var previousStart = DateTime.Now.TimeOfDay;
             await Task.Delay(10); // for making it async
             try
             {
@@ -124,11 +125,12 @@ namespace DehnadTahChinService
                             continue;
                         else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
                             message.Price = 100;
-                        //var start = DateTime.Now.TimeOfDay;
+                        var start = DateTime.Now.TimeOfDay;
+                        var diff = start - previousStart;
+                        if (diff.Milliseconds < 1000)
+                            Thread.Sleep(1000 - diff.Milliseconds);
+                        previousStart = start;
                         var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
-                        //var end = DateTime.Now.TimeOfDay;
-                        //var diff = end - start;
-                        
                         //if (response.IsSucceeded == false && message.Price == 300)
                         //{
                         //    message.Price = 100;

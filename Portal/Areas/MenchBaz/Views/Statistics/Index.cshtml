@@ -93,9 +93,10 @@
 </script>
 
 <!--Grid-->
-<script>
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <script>
     var gridElement = $("#grid");
-
     $("#grid").kendoGrid({
 
         columns: [
@@ -185,7 +186,152 @@
         }
     });
 
-</script>
+    </script>
+}
+else if (ViewContext.HttpContext.User.IsInRole("Spectator"))
+{
+    <script>
+    var gridElement = $("#grid");
+
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            { field: "TotalSubscribers", title: "تعداد اعضای کل", width: 100 },
+            { field: "NumberOfSubscriptions", title: "تعداد کل عضویت", width: 100 },
+            { field: "NumberOfUnsubscriptions", title: "تعداد کل لغو عضویت", width: 100 },
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_GridRead",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "PersianDate", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+    </script>
+}
+else
+{
+    <script>
+    var gridElement = $("#grid");
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_GridRead",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "PersianDate", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+
+    </script>
+}
 
 <!--Subscribers-->
 <script type="text/javascript">

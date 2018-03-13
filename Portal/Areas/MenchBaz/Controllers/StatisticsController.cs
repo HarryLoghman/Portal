@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.MenchBaz.Controllers
 {
-    [Authorize(Roles = "Admin, MenchBazUser")]
+    [Authorize(Roles = "Admin, MenchBazUser, Spectator")]
     public class StatisticsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -165,6 +165,17 @@ namespace Portal.Areas.MenchBaz.Controllers
                     NumberOfSinglechargeInAppPurchasesFailed = dailyStatistics.NumberOfSinglechargeInAppPurchasesFailed,
                     NumberOfSinglechargeInAppPurchasesSucceeded = dailyStatistics.NumberOfSinglechargeInAppPurchasesSucceeded,
                     SumOfSinglechargeInAppPurchases = dailyStatistics.SumOfSinglechargeInAppPurchases
+                });
+            }
+            else if (User.IsInRole("Spectator"))
+            {
+                result = db.DailyStatistics.ToDataSourceResult(request, dailyStatistics => new
+                {
+                    Id = dailyStatistics.Id,
+                    PersianDate = dailyStatistics.PersianDate,
+                    NumberOfSubscriptions = dailyStatistics.NumberOfSubscriptions,
+                    TotalSubscribers = dailyStatistics.TotalSubscribers,
+                    NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions,
                 });
             }
             else if (User.IsInRole("MenchBazUser"))
