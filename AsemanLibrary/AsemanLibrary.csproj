@@ -122,6 +122,9 @@
     <Compile Include="Models\ServicesRealtimeStatistic.cs">
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Setting.cs">
+      <DependentUpon>AsemanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>

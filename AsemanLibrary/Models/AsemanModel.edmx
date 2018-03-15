@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="AsemanModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="AsemanModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -382,6 +382,15 @@
           <Property Name="Date" Type="datetime" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
+        <EntityType Name="Settings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="Value" Type="nvarchar" MaxLength="255" />
+          <Property Name="PersianName" Type="nvarchar" MaxLength="255" />
+        </EntityType>
         <EntityType Name="Singlecharge">
           <Key>
             <PropertyRef Name="Id" />
@@ -587,6 +596,7 @@ warning 6002: The table/view 'Aseman.dbo.vw_SentMessages' does not have a primar
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistics" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Settings" EntityType="Self.Settings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
@@ -626,8 +636,7 @@ warning 6002: The table/view 'Aseman.dbo.vw_SentMessages' does not have a primar
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AsemanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1218,9 +1227,19 @@ warning 6002: The table/view 'Aseman.dbo.vw_SentMessages' does not have a primar
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
           <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(String)">
-            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Settings" EntityType="AsemanModel.Setting" />
         </EntityContainer>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PersianName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1795,6 +1814,16 @@ warning 6002: The table/view 'Aseman.dbo.vw_SentMessages' does not have a primar
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="AsemanModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="AsemanModel.Store.RetryUndeliveredMessages" />
           <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="AsemanModel.Store.SinglechargeLiveStatuses" />
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="AsemanModel.Setting">
+              <MappingFragment StoreEntitySet="Settings">
+                <ScalarProperty Name="PersianName" ColumnName="PersianName" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

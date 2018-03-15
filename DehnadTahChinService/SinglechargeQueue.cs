@@ -122,6 +122,8 @@ namespace DehnadTahChinService
         {
             try
             {
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10)
+                    return;
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
                 using (var entity = new TahChinEntities())

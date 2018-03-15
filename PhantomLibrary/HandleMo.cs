@@ -21,10 +21,10 @@ namespace PhantomLibrary
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 using (var entity = new PhantomEntities())
                 {
-                    bool isCampaignActive = false;
+                    int isCampaignActive = 0;
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
-                        isCampaignActive = campaign.Value == "0" ? false : true;
+                        isCampaignActive = Convert.ToInt32(campaign.Value);
                     Type entityType = typeof(PhantomEntities);
                     Type ondemandType = typeof(OnDemandMessagesBuffer);
                     List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
@@ -61,9 +61,12 @@ namespace PhantomLibrary
                         }
                         else
                         {
-                            SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
-                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
-                            SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                            if (isCampaignActive == (int)CampaignStatus.Active)
+                            {
+                                SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                                SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                            }
                         }
                         return;
                     }
@@ -176,8 +179,10 @@ namespace PhantomLibrary
                         else
                             message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
-                        if (isCampaignActive == true && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
+                        if (isCampaignActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
                         {
+                            SharedLibrary.HandleSubscription.CampaignUniqueId(message.MobileNumber, service.Id);
+                            subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                             string parentId = "1";
                             var subscriberInviterCode = SharedLibrary.HandleSubscription.IsSubscriberInvited(message.MobileNumber, service.Id);
                             if (subscriberInviterCode != "")
@@ -191,12 +196,12 @@ namespace PhantomLibrary
                                 subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
                             var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
-                            if(result.description == "success")
+                            if (result.description == "success")
                             {
-                                if(parentId != "1")
+                                if (parentId != "1")
                                 {
                                     var parentSubscriber = SharedLibrary.HandleSubscription.GetSubscriberBySpecialUniqueId(parentId);
-                                    if(parentSubscriber != null)
+                                    if (parentSubscriber != null)
                                     {
                                         var oldMobileNumber = message.MobileNumber;
                                         var oldSubId = message.SubscriberId;
@@ -216,14 +221,16 @@ namespace PhantomLibrary
                                 }
                             }
                         }
-                        else if (isCampaignActive == true && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                        else if ((isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend) && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                         {
                             var subId = "1";
                             var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
-                            if (sub != null)
+                            if (sub != null && sub.SpecialUniqueId != null)
+                            {
                                 subId = sub.SpecialUniqueId;
-                            var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            }
                         }
 
                         message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
@@ -231,7 +238,7 @@ namespace PhantomLibrary
                         {
                             var subId = "1";
                             var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
-                            if (sub != null)
+                            if (sub != null && sub.SpecialUniqueId != null)
                                 subId = sub.SpecialUniqueId;
                             message.Content = message.Content.Replace("{REFERRALCODE}", subId);
                         }
@@ -248,7 +255,7 @@ namespace PhantomLibrary
 
                     if (subscriber == null)
                     {
-                        if (isCampaignActive == true)
+                        if (isCampaignActive == (int)CampaignStatus.Active)
                         {
                             if (message.Content == null || message.Content == "" || message.Content == " ")
                                 message.Content = messagesTemplate.Where(o => o.Title == "CampaignEmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
@@ -268,7 +275,7 @@ namespace PhantomLibrary
                     message.SubscriberId = subscriber.Id;
                     if (subscriber.DeactivationDate != null)
                     {
-                        if (isCampaignActive == true)
+                        if (isCampaignActive == (int)CampaignStatus.Active)
                         {
                             if (message.Content == null || message.Content == "" || message.Content == " ")
                                 message.Content = messagesTemplate.Where(o => o.Title == "CampaignEmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
@@ -390,5 +397,11 @@ namespace PhantomLibrary
             singlecharge = ContentManager.HandleSinglechargeContent(message, service, subscriber, messagesTemplate);
             return singlecharge;
         }
+    }
+    public enum CampaignStatus
+    {
+        Deactive = 0,
+        Active = 1,
+        Suspend = 2
     }
 }

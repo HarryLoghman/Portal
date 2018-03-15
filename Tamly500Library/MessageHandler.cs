@@ -1025,25 +1025,25 @@ namespace Tamly500Library
             logs.Info(" Send function ended ");
         }
 
-        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, bool isCampaignActive)
+        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, int isCampaignActive)
         {
             string content = null;
             switch (serviceStatusForSubscriberState)
             {
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated:
-                    if (isCampaignActive == false)
+                    if (isCampaignActive == (int)CampaignStatus.Suspend && isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "OffMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignOffMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated:
-                    if (isCampaignActive == false)
+                    if (isCampaignActive == (int)CampaignStatus.Suspend && isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignWelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal:
-                    if (isCampaignActive == false)
+                    if (isCampaignActive == (int)CampaignStatus.Suspend && isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignWelcomeMessage").Select(o => o.Content).FirstOrDefault();

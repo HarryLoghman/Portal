@@ -12,6 +12,7 @@
 var campaignData = [
                         { "Id": 0, "Value": "غیر فعال" },
                         { "Id": 1, "Value": "فعال" },
+                        { "Id": 2, "Value": "تعلیق" },
 
                     ];
     function campaignDropDownEditor(container, options) {
@@ -28,7 +29,7 @@ $("#settingsGrid").kendoGrid({
 
         columns: [
             { field: "PersianName", title: "عنوان"},
-            { field: "Value", title: ",وضعیت", editor: campaignDropDownEditor, template: "#= Value == '0' ? 'غیر فعال' : 'فعال' #" },
+            { field: "Value", title: "وضعیت", editor: campaignDropDownEditor, template: function(dataItem) { if (dataItem.Value == 0) return "غیر فعال"; if (dataItem.Value == 1) return "فعال"; if (dataItem.Value == 2) return "تعلیق"; }},
             { command: ["edit"], width: 180 }
         ],
         dataSource: {

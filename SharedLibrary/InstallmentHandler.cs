@@ -26,13 +26,13 @@ namespace SharedLibrary
                     logs.Info("InstallmentJob is empty!");
                     return;
                 }
-                bool isCampaignActive = false;
+                int isCampaignActive = 0;
                 using (dynamic entity = Activator.CreateInstance(entityType))
                 {
                     var campaign = ((IEnumerable)entity.Settings).Cast<dynamic>().FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
-                        isCampaignActive = campaign.Value == "0" ? false : true;
-                }
+                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                }   
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
@@ -86,7 +86,7 @@ namespace SharedLibrary
             logs.Info("InstallmentJob ended!");
         }
 
-        private static async Task MapfaProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType, bool isCampaignActive)
+        private static async Task MapfaProcessInstallmentChunk(Type entityType, int maxChargeLimit, dynamic chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, Type singlechargeType, int isCampaignActive)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -131,7 +131,7 @@ namespace SharedLibrary
                                 installment.IsFullyPaid = true;
                             entity.Entry(installment).State = EntityState.Modified;
                         }
-                        if (isCampaignActive == true)
+                        if (isCampaignActive == 1 || isCampaignActive == 2)
                         {
                             try
                             {
