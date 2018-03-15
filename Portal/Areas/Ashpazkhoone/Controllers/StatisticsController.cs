@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace Portal.Areas.Tamly500.Controllers
+namespace Portal.Areas.Ashpazkhoone.Controllers
 {
     [Authorize(Roles = "Admin, Tamly500User, Spectator")]
     public class StatisticsController : Controller
@@ -19,7 +19,7 @@ namespace Portal.Areas.Tamly500.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "تاملی 500";
+            ViewBag.ServiceName = "آشپزخونه";
             return View();
         }
 

@@ -1986,6 +1986,58 @@ namespace SharedLibrary
             return singlecharge;
         }
 
+        public static async Task<dynamic> MobinOneCharge(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var shortCode = "98" + serviceAdditionalInfo["shortCode"];
+                var mobile = "98" + message.MobileNumber.TrimStart('0');
+                var stringedPrice = ""; // (message.Price * 10).ToString();
+                if (message.Price == 0)
+                    stringedPrice = "";
+                var rnd = new Random();
+                var requestId = rnd.Next(1000000, 9999999).ToString();
+
+                var client = new MobinOneServiceReference.tpsPortTypeClient();
+                var result = client.charge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
+                var splitedResult = result.Split('-');
+
+                if (splitedResult[0] == "Success")
+                    singlecharge.IsSucceeded = true;
+                else
+                    singlecharge.IsSucceeded = false;
+
+                singlecharge.Description = splitedResult[1] + "-" + splitedResult[2];
+                singlecharge.ReferenceId = splitedResult[3];
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MobinOneCharge: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MobinOneCharge on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
         public static async Task<dynamic> SamssonTciOTPRequest(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))

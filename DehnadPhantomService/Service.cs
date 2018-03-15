@@ -203,25 +203,31 @@ namespace DehnadPhantomService
                 else
                 {
                     var startTime = DateTime.Now;
-                    if (installmentCycleNumber == 1)
+                    if (installmentCycleNumber == 1 && DateTime.Now.Hour < 10)
                     {
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
                     }
-                    else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 13)
+                    else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 10 && DateTime.Now.Hour < 13)
                     {
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
                     }
-                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 16)
+                    else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
                     {
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;
                         var endTime = DateTime.Now;
                     }
-                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 19)
+                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
+                    {
+                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        installmentCycleNumber++;
+                        var endTime = DateTime.Now;
+                    }
+                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
                     {
                         singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         installmentCycleNumber++;

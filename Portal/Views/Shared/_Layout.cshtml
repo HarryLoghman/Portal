@@ -619,28 +619,28 @@
                                                 </ul>
                                             </li>
                                         }
-                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Tamly500") || ViewContext.HttpContext.User.IsInRole("Spectator"))
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Tamly500User") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
-                                                تاملی 500
+                                                آشپزخونه
                                                 <ul>
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
                                                         <li>
-                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Tamly500" }, null)
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Ashpazkhoone" }, null)
                                                         </li>
                                                         <li>
-                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Tamly500" }, null)
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Ashpazkhoone" }, null)
                                                         </li>
                                                         <li>
-                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Tamly500" }, null)
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Ashpazkhoone" }, null)
                                                         </li>
                                                         <li>
-                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Tamly500" }, null)
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Ashpazkhoone" }, null)
                                                         </li>
                                                     }
                                                     <li>
-                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Tamly500" }, null)
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Ashpazkhoone" }, null)
                                                     </li>
                                                 </ul>
                                             </li>

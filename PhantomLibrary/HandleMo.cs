@@ -51,7 +51,7 @@ namespace PhantomLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content == "دریافت 25000 تومان شارژ رایگان")
+                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000"))
                     {
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
                         if (result.Status != "SUCCESS-Pending Confirmation")

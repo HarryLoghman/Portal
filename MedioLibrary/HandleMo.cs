@@ -28,6 +28,7 @@ namespace MedioLibrary
                     if (campaign != null)
                         isCampaignActive = campaign.Value == "0" ? false : true;
                     List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                     {
                         message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -49,7 +50,7 @@ namespace MedioLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    else if ((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit))
+                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000"))
                     {
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
                         if (result.Status != "SUCCESS-Pending Confirmation")

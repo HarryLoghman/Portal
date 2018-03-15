@@ -7,7 +7,7 @@ using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;
 
-namespace Portal.Areas.Tamly500.Controllers
+namespace Portal.Areas.Ashpazkhoone.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class SentMessagesController : Controller
@@ -18,7 +18,7 @@ namespace Portal.Areas.Tamly500.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "تاملی 500";
+            ViewBag.ServiceName = "آشپزخونه";
             return View();
         }
 

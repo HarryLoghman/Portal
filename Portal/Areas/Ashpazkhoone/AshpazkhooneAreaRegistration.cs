@@ -1,22 +1,22 @@
 ﻿using System.Web.Mvc;
 
-namespace Portal.Areas.Tamly500
+namespace Portal.Areas.Ashpazkhoone
 {
-    public class Tamly500AreaRegistration : AreaRegistration 
+    public class AshpazkhooneAreaRegistration : AreaRegistration 
     {
         public override string AreaName 
         {
             get 
             {
-                return "Tamly500";
+                return "Ashpazkhoone";
             }
         }
 
         public override void RegisterArea(AreaRegistrationContext context) 
         {
             context.MapRoute(
-                "Tamly500_default",
-                "Tamly500/{controller}/{action}/{id}",
+                "Ashpazkhoone_default",
+                "Ashpazkhoone/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
         }
