@@ -236,7 +236,7 @@ namespace Tamly500Library
                         {
                             subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                         }
                     }
 
