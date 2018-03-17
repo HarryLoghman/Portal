@@ -25,6 +25,9 @@ namespace PhantomLibrary
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
+                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
+                    if (isInBlackList == true)
+                        isCampaignActive = (int)CampaignStatus.Deactive;
                     Type entityType = typeof(PhantomEntities);
                     Type ondemandType = typeof(OnDemandMessagesBuffer);
                     List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
@@ -53,6 +56,8 @@ namespace PhantomLibrary
                     }
                     else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000"))
                     {
+                        if (message.Content.Contains("25000"))
+                            message.Content = "25000";
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
                         if (result.Status != "SUCCESS-Pending Confirmation")
                         {

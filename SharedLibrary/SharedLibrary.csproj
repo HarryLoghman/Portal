@@ -96,6 +96,9 @@
     <Compile Include="Models\AspNetUserLogin.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\BlackList.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\BulkList.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

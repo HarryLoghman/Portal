@@ -135,19 +135,24 @@ namespace SharedLibrary
                         {
                             try
                             {
-                                var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, Convert.ToInt64(serviceAdditionalInfo["serviceId"]));
-                                if (sub != null)
+                                var serviceId = Convert.ToInt64(serviceAdditionalInfo["serviceId"]);
+                                var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, serviceId);
+                                if (isInBlackList != true)
                                 {
-                                    if (sub.SpecialUniqueId != null)
+                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, Convert.ToInt64(serviceAdditionalInfo["serviceId"]));
+                                    if (sub != null)
                                     {
-                                        var sha = SharedLibrary.Security.GetSha256Hash(sub.SpecialUniqueId + message.MobileNumber);
-                                        var price = 0;
-                                        if (response.IsSucceeded == true)
-                                            price = message.Price.Value;
-                                        if (serviceAdditionalInfo["serviceCode"] == "Phantom")
-                                            await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
-                                        else if (serviceAdditionalInfo["serviceCode"] == "Medio")
-                                            await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/medio/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                        if (sub.SpecialUniqueId != null)
+                                        {
+                                            var sha = SharedLibrary.Security.GetSha256Hash(sub.SpecialUniqueId + message.MobileNumber);
+                                            var price = 0;
+                                            if (response.IsSucceeded == true)
+                                                price = message.Price.Value;
+                                            if (serviceAdditionalInfo["serviceCode"] == "Phantom")
+                                                await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                            else if (serviceAdditionalInfo["serviceCode"] == "Medio")
+                                                await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/medio/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                        }
                                     }
                                 }
                             }

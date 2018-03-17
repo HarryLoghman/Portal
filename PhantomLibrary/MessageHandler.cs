@@ -1048,19 +1048,19 @@ namespace PhantomLibrary
             switch (serviceStatusForSubscriberState)
             {
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated:
-                    if (isCampaignActive == (int)CampaignStatus.Suspend && isCampaignActive == (int)CampaignStatus.Deactive)
+                    if (isCampaignActive == (int)CampaignStatus.Suspend || isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "OffMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignOffMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated:
-                    if (isCampaignActive == (int)CampaignStatus.Suspend && isCampaignActive == (int)CampaignStatus.Deactive)
+                    if (isCampaignActive == (int)CampaignStatus.Suspend || isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignWelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     break;
                 case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal:
-                    if (isCampaignActive == (int)CampaignStatus.Suspend && isCampaignActive == (int)CampaignStatus.Deactive)
+                    if (isCampaignActive == (int)CampaignStatus.Suspend || isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignWelcomeMessage").Select(o => o.Content).FirstOrDefault();

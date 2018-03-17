@@ -111,6 +111,9 @@ namespace MedioLibrary
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
+                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
+                    if (isInBlackList == true)
+                        isCampaignActive = (int)CampaignStatus.Deactive;
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                     {

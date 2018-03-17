@@ -227,6 +227,25 @@ namespace SharedLibrary
             return content;
         }
 
+        public static bool IsInBlackList(string mobileNumber, long serviceId)
+        {
+            bool result = false;
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+                    var mobile = entity.BlackLists.Where(o => o.MobileNumber == mobileNumber).ToList();
+                    if (mobile.FirstOrDefault(o => o.ServiceId == 0 || o.ServiceId == serviceId) != null)
+                        result = true;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in IsInBlackList: ", e);
+            }
+            return result;
+        }
+
         public static string PrepareGeneralOffMessage(MessageObject message, List<Service> servicesThatUserSubscribedOnShortCode)
         {
             if (servicesThatUserSubscribedOnShortCode.Count == 0)

@@ -55,6 +55,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<RealtimeStatisticsFor2GServices> RealtimeStatisticsFor2GServices { get; set; }
         public virtual DbSet<Referral> Referrals { get; set; }
         public virtual DbSet<TempReferralData> TempReferralDatas { get; set; }
+        public virtual DbSet<BlackList> BlackLists { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {
