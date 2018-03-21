@@ -155,6 +155,9 @@
     <Compile Include="Models\vw_SentMessages.cs">
       <DependentUpon>MedioModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
+      <DependentUpon>MedioModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceHandler.cs" />
     <Compile Include="Subscribers.cs" />

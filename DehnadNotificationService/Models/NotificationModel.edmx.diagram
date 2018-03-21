@@ -9,6 +9,7 @@
         <EntityTypeShape EntityType="NotificationModel.UserMessage" Width="1.5" PointX="3" PointY="0.75" />
         <AssociationConnector Association="NotificationModel.FK_UserMessages_Users" />
         <EntityTypeShape EntityType="NotificationModel.SentMessage" Width="1.5" PointX="4" PointY="3.875" />
+        <EntityTypeShape EntityType="NotificationModel.UserSetting" Width="1.5" PointX="5.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

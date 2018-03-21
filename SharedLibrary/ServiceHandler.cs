@@ -170,6 +170,24 @@ namespace SharedLibrary
             }
         }
 
+        public static List<string> GetServiceActiveMobileNumbersFromServiceCode(string serviceCode)
+        {
+            List<string> mobileNumbersList = new List<string>();
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    var serviceId = entity.Services.AsNoTracking().FirstOrDefault(o => o.ServiceCode == serviceCode).Id;
+                    mobileNumbersList = entity.Subscribers.AsNoTracking().Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).Select(o=> o.MobileNumber).ToList();
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in GetServiceActiveMobileNumbersFromServiceCode: " + e);
+                }
+                return mobileNumbersList;
+            }
+        }
+
         public static string GetShortCodeFromOperatorServiceId(string operatorServiceId)
         {
             using (var portalEntity = new PortalEntities())

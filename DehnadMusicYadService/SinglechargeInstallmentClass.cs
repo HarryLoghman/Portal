@@ -19,7 +19,7 @@ namespace DehnadMusicYadService
     public class SinglechargeInstallmentClass
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private static int maxChargeLimit = 300;
+        public static int maxChargeLimit = 300;
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
@@ -28,7 +28,7 @@ namespace DehnadMusicYadService
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
-                List<SinglechargeInstallment> installmentList;
+                List<string> installmentList;
                 Type entityType = typeof(MusicYadEntities);
                 Type singleChargeType = typeof(Singlecharge);
 
@@ -39,10 +39,20 @@ namespace DehnadMusicYadService
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 2; installmentInnerCycleNumber++)
                     {
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
-                        installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
+                        //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
+
+                        installmentList = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        var today = DateTime.Now;
+                        var delayDateBetweenCharges = today.AddDays(0);
+                        var chargeCompleted = entity.vw_Singlecharge.AsNoTracking()
+                            .Where(o => DbFunctions.TruncateTime(o.DateCreated) >= DbFunctions.TruncateTime(delayDateBetweenCharges) && DbFunctions.TruncateTime(o.DateCreated) <= DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
+                            .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
+                        var waitingList = entity.SinglechargeWaitings.AsNoTracking().Select(o => o.MobileNumber).ToList();
+                        installmentList.RemoveAll(o => chargeCompleted.Contains(o));
+                        installmentList.RemoveAll(o => waitingList.Contains(o));
                         int installmentListCount = installmentList.Count;
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        SharedLibrary.InstallmentHandler.MtnInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        income += SharedLibrary.InstallmentHandler.MtnInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }

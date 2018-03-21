@@ -83,33 +83,33 @@ namespace Portal.Controllers
             var postData = "secret=" + secretKey + "&response=" + gRecaptchaResponse;
 
             // send post data
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlToPost);
-            request.Method = "POST";
-            request.ContentLength = postData.Length;
-            request.ContentType = "application/x-www-form-urlencoded";
+            ////////HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlToPost);
+            ////////request.Method = "POST";
+            ////////request.ContentLength = postData.Length;
+            ////////request.ContentType = "application/x-www-form-urlencoded";
 
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                streamWriter.Write(postData);
-            }
+            ////////using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            ////////{
+            ////////    streamWriter.Write(postData);
+            ////////}
 
-            // receive the response now
-            string captchaResult = string.Empty;
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            {
-                using (var reader = new StreamReader(response.GetResponseStream()))
-                {
-                    captchaResult = reader.ReadToEnd();
-                }
-            }
+            ////////// receive the response now
+            ////////string captchaResult = string.Empty;
+            ////////using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            ////////{
+            ////////    using (var reader = new StreamReader(response.GetResponseStream()))
+            ////////    {
+            ////////        captchaResult = reader.ReadToEnd();
+            ////////    }
+            ////////}
 
-            // validate the response from Google reCaptcha
-            var captChaesponse = JsonConvert.DeserializeObject<reCaptchaResponse>(captchaResult);
-            if (!captChaesponse.Success)
-            {
-                ModelState.AddModelError("", "کپچا اشتباه است.");
-                return View(model);
-            }
+            ////////// validate the response from Google reCaptcha
+            ////////var captChaesponse = JsonConvert.DeserializeObject<reCaptchaResponse>(captchaResult);
+            ////////if (!captChaesponse.Success)
+            ////////{
+            ////////    ModelState.AddModelError("", "کپچا اشتباه است.");
+            ////////    return View(model);
+            ////////}
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true

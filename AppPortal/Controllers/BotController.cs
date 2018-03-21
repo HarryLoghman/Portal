@@ -87,6 +87,11 @@ namespace Portal.Controllers
                     newUser.Title = message.Chat.Title == null ? null : message.Chat.Title;
                     newUser.LastStep = "Started";
                     entity.Users.Add(newUser);
+                    var setting = new DehnadNotificationService.Models.UserSetting();
+                    setting.ChatId = message.Chat.Id;
+                    setting.Name = "EnableSMS";
+                    setting.Value = "0";
+                    entity.UserSettings.Add(setting);
                     entity.SaveChanges();
                 }
             }

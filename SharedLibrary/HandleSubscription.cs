@@ -154,6 +154,27 @@ namespace SharedLibrary
             return ServiceStatusForSubscriberState.Activated;
         }
 
+        public static bool IsSubscriberActive(string mobileNumber, string serviceIdString)
+        {
+            bool result = false;
+            try
+            {
+                long serviceId = Convert.ToInt64(serviceIdString);
+                using (var entity = new PortalEntities())
+                {
+                    var sub = entity.Subscribers.AsNoTracking().FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId && o.DeactivationDate == null);
+                    if (sub == null)
+                        result = false;
+                    else
+                        result = true;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in IsSubscriberActive:", e);
+            }
+            return result;
+        }
 
         public static void CampaignUniqueId(string mobileNumber, long serviceId)
         {

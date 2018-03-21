@@ -191,8 +191,22 @@ namespace DehnadPhantomService
         private void SinglechargeInstallmentWorkerThread()
         {
             var singlechargeInstallment = new SinglechargeInstallmentClass();
+            var entityType = typeof(PhantomLibrary.Models.PhantomEntities);
+            var cycleType = typeof(PhantomLibrary.Models.InstallmentCycle);
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
+            if (DateTime.Now.Hour >= 10 && DateTime.Now.Hour < 13)
+                installmentCycleNumber = 2;
+            else if (DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
+                installmentCycleNumber = 3;
+            else if (DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
+                installmentCycleNumber = 4;
+            else if (DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
+                installmentCycleNumber = 5;
+            else if (DateTime.Now.Hour >= 22 && installmentCycleNumber != 6)
+                installmentCycleNumber = 6;
+            else
+                installmentCycleNumber = 1;
             while (!shutdownEvent.WaitOne(0))
             {
                 if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 59) || (DateTime.Now.Hour < 8 ))
@@ -205,40 +219,51 @@ namespace DehnadPhantomService
                     var startTime = DateTime.Now;
                     if (installmentCycleNumber == 1 && DateTime.Now.Hour < 10)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
                     else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 10 && DateTime.Now.Hour < 13)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
-                    else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
+                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
-                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
+                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
-                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
+                    else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
-
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
-                    else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 22)
+                    else if (installmentCycleNumber == 6 && DateTime.Now.Hour >= 22)
                     {
-                        singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                        installmentCycleNumber++;
+                        var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
+                        var duration = endTime - startTime;
+                        SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        installmentCycleNumber++;
                     }
                     else
                         Thread.Sleep(1000);

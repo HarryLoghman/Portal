@@ -104,6 +104,9 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Setting.cs">
+      <DependentUpon>SoratyModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>
@@ -138,6 +141,9 @@
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>SoratyModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

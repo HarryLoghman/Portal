@@ -125,6 +125,9 @@
     <Compile Include="Models\ServicesRealtimeStatistic.cs">
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Setting.cs">
+      <DependentUpon>DambelModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>
@@ -147,6 +150,9 @@
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>DambelModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -52,6 +52,15 @@
           <Property Name="Title" Type="nvarchar(max)" />
           <Property Name="UserId" Type="bigint" />
         </EntityType>
+        <EntityType Name="UserSettings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChatId" Type="bigint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Value" Type="varchar" MaxLength="255" Nullable="false" />
+        </EntityType>
         <Association Name="FK_UserMessages_Users">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="UserMessages" Type="Self.UserMessages" Multiplicity="*" />
@@ -68,6 +77,7 @@
           <EntitySet Name="SentMessages" EntityType="Self.SentMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMessages" EntityType="Self.UserMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserSettings" EntityType="Self.UserSettings" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_UserMessages_Users" Association="Self.FK_UserMessages_Users">
             <End Role="Users" EntitySet="Users" />
             <End Role="UserMessages" EntitySet="UserMessages" />
@@ -103,6 +113,7 @@
             <End Role="UserMessage" EntitySet="UserMessages" />
           </AssociationSet>
           <EntitySet Name="SentMessages" EntityType="NotificationModel.SentMessage" />
+          <EntitySet Name="UserSettings" EntityType="NotificationModel.UserSetting" />
         </EntityContainer>
         <EntityType Name="UserMessage">
           <Key>
@@ -146,6 +157,15 @@
           <Property Name="IsSent" Type="Boolean" />
           <Property Name="DateSent" Type="DateTime" Precision="3" />
           <Property Name="TelegramKeyboardData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="UserSetting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChatId" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -198,6 +218,16 @@
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Content" ColumnName="Content" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserSettings">
+            <EntityTypeMapping TypeName="NotificationModel.UserSetting">
+              <MappingFragment StoreEntitySet="UserSettings">
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ChatId" ColumnName="ChatId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

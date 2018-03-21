@@ -27,6 +27,8 @@
         <EntityTypeShape EntityType="SoratyModel.SubscribersAdditionalInfo" Width="1.5" PointX="12.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SoratyModel.TimedTempMessagesBuffer" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SoratyModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SoratyModel.Setting" Width="1.5" PointX="3.375" PointY="14.75" />
+        <EntityTypeShape EntityType="SoratyModel.vw_Singlecharge" Width="1.5" PointX="5.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

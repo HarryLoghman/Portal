@@ -1711,6 +1711,7 @@ namespace SharedLibrary
                 {
                     using (var client = new HttpClient())
                     {
+                        client.Timeout = TimeSpan.FromSeconds(15);
                         var request = new HttpRequestMessage(HttpMethod.Post, url);
                         request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                         logs.Info("request: " + payload);

@@ -28,5 +28,6 @@ namespace DehnadNotificationService.Models
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserMessage> UserMessages { get; set; }
         public virtual DbSet<SentMessage> SentMessages { get; set; }
+        public virtual DbSet<UserSetting> UserSettings { get; set; }
     }
 }

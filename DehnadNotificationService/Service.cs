@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
@@ -13,6 +14,7 @@ namespace DehnadNotificationService
         private Thread telegramBotThread;
         private Thread incomeThread;
         private Thread sendMessageThread;
+        private Thread serviceCheckThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -32,6 +34,10 @@ namespace DehnadNotificationService
                 incomeThread = new Thread(IncomeWorkerThread);
                 incomeThread.IsBackground = true;
                 incomeThread.Start();
+
+                serviceCheckThread = new Thread(ServiceCheckWorkerThread);
+                serviceCheckThread.IsBackground = true;
+                serviceCheckThread.Start();
             }
 
             sendMessageThread = new Thread(SendMessagesThread);
@@ -80,6 +86,22 @@ namespace DehnadNotificationService
             }
         }
 
+        private void ServiceCheckWorkerThread()
+        {
+            while (!shutdownEvent.WaitOne(0))
+            {
+                try
+                {
+                    ServiceChecker.Job();
+                    Thread.Sleep(1000);
+                }
+                catch (Exception e)
+                {
+                    logs.Error(" Exception in ServiceCheckWorkerThread: " + e);
+                }
+            }
+        }
+
         private void IncomeWorkerThread()
         {
             while (!shutdownEvent.WaitOne(0))
@@ -104,7 +126,7 @@ namespace DehnadNotificationService
             try
             {
                 TelegramBot.SaveTelegramMessageToQueue(message, userType);
-                //SendMessage.SaveSmsMessageToQueue(message, userType);
+                SendMessage.SaveSmsMessageToQueue(message, userType);
             }
             catch (Exception e)
             {

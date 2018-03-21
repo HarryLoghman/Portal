@@ -110,6 +110,9 @@
     <Compile Include="Models\ServicesRealtimeStatistic.cs">
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Setting.cs">
+      <DependentUpon>TahChinModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Singlecharge.cs">
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
@@ -147,6 +150,9 @@
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>TahChinModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

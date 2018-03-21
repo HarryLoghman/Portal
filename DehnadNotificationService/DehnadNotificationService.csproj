@@ -103,6 +103,9 @@
     <Compile Include="Models\UserMessage.cs">
       <DependentUpon>NotificationModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\UserSetting.cs">
+      <DependentUpon>NotificationModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -123,6 +126,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceChecker.cs" />
     <Compile Include="TelegramBot.cs" />
     <Compile Include="TelegramBotHelper.cs" />
   </ItemGroup>

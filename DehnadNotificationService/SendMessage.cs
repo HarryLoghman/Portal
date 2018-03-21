@@ -76,6 +76,14 @@ namespace DehnadNotificationService
 
                     foreach (var mobile in mobileNumbers)
                     {
+                        var chatId = entity.Users.Where(o => o.MobileNumber == mobile).FirstOrDefault();
+                        if (chatId == null)
+                            continue;
+                        var isSmsEnabled = entity.UserSettings.FirstOrDefault(o => o.ChatId == chatId.ChatId && o.Name == "EnableSMS");
+                        if (isSmsEnabled == null)
+                            continue;
+                        if (isSmsEnabled.Value != "1")
+                            continue;
                         var sms = new SentMessage();
                         sms.Channel = "sms";
                         sms.Content = message;
