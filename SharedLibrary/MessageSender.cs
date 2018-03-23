@@ -1757,6 +1757,10 @@ namespace SharedLibrary
                 catch (Exception e)
                 {
                     logs.Error("Exception in ChargeMtnSubscriber: " + e);
+                    if (e.Message.Contains("TaskCanceledException"))
+                        logs.Info("timeout");
+                    else
+                        singlecharge.Description = "Exception in ChargeMtnSubscriber";
                 }
                 try
                 {

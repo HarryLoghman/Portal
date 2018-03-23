@@ -156,6 +156,14 @@ namespace SoratyLibrary
                     subscriberPoint += point;
                     content = content.Replace("{TPOINT}", subscriberPoint.ToString());
                 }
+                if (content.Contains("{REFERRALCODE}"))
+                {
+                    var subId = "1";
+                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, serviceId);
+                    if (sub != null)
+                        subId = sub.SpecialUniqueId;
+                    content = content.Replace("{REFERRALCODE}", subId);
+                }
             }
             return content;
         }

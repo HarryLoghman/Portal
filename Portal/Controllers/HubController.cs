@@ -256,6 +256,7 @@ namespace Portal.Controllers
                     }
                     else
                         messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                    messageObj.Content = keyword;
                     SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                     result = "1";
                 }

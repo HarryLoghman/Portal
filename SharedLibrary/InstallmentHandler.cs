@@ -109,7 +109,7 @@ namespace SharedLibrary
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.IsApplicationInformed == false && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment && o.IsSucceeded == true  && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
@@ -189,7 +189,7 @@ namespace SharedLibrary
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.IsApplicationInformed == false && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         if (priceUserChargedToday >= maxChargeLimit)
                         {
                             installment.IsExceededDailyChargeLimit = true;
@@ -241,7 +241,7 @@ namespace SharedLibrary
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 //var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
-                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, 50);
+                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, installmentListTakeSize);
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
 
@@ -274,6 +274,7 @@ namespace SharedLibrary
             {
                 using (dynamic entity = Activator.CreateInstance(entityType))
                 {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
                         if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
@@ -283,7 +284,7 @@ namespace SharedLibrary
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.IsApplicationInformed == false && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {

@@ -30,6 +30,7 @@ namespace DehnadPhantomService
                 using (var entity = new PhantomEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
+                    entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {

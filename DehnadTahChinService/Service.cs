@@ -24,9 +24,9 @@ namespace DehnadTahChinService
 
         protected override void OnStart(string[] args)
         {
-            prepareAutochargeThread = new Thread(AutochargeWorkerThread);
-            prepareAutochargeThread.IsBackground = true;
-            prepareAutochargeThread.Start();
+            //prepareAutochargeThread = new Thread(AutochargeWorkerThread);
+            //prepareAutochargeThread.IsBackground = true;
+            //prepareAutochargeThread.Start();
 
             prepareEventbaseThread = new Thread(EventbaseWorkerThread);
             prepareEventbaseThread.IsBackground = true;
@@ -44,9 +44,9 @@ namespace DehnadTahChinService
             timedThread.IsBackground = true;
             timedThread.Start();
 
-            informApplicationThread = new Thread(InformApplicationWorkerThread);
-            informApplicationThread.IsBackground = true;
-            informApplicationThread.Start();
+            //informApplicationThread = new Thread(InformApplicationWorkerThread);
+            //informApplicationThread.IsBackground = true;
+            //informApplicationThread.Start();
 
             singlechargeInstallmentThread = new Thread(SinglechargeInstallmentWorkerThread);
             singlechargeInstallmentThread.IsBackground = true;
@@ -66,42 +66,37 @@ namespace DehnadTahChinService
             try
             {
                 shutdownEvent.Set();
-                if (!prepareAutochargeThread.Join(3000))
-                {
-                    prepareAutochargeThread.Abort();
-                }
 
-                shutdownEvent.Set();
+                //if (!prepareAutochargeThread.Join(3000))
+                //{
+                //    prepareAutochargeThread.Abort();
+                //}
+
                 if (!prepareEventbaseThread.Join(3000))
                 {
                     prepareEventbaseThread.Abort();
                 }
 
-                shutdownEvent.Set();
                 if (!sendMessageThread.Join(3000))
                 {
                     sendMessageThread.Abort();
                 }
 
-                shutdownEvent.Set();
                 if (!statisticsThread.Join(3000))
                 {
                     statisticsThread.Abort();
                 }
 
-                shutdownEvent.Set();
                 if (!timedThread.Join(3000))
                 {
                     timedThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!informApplicationThread.Join(3000))
-                {
-                    informApplicationThread.Abort();
-                }
+                //if (!informApplicationThread.Join(3000))
+                //{
+                //    informApplicationThread.Abort();
+                //}
 
-                shutdownEvent.Set();
                 if (!singlechargeInstallmentThread.Join(3000))
                 {
                     singlechargeInstallmentThread.Abort();
@@ -113,7 +108,6 @@ namespace DehnadTahChinService
                 //    singlechargeInstallmentBalancerThread.Abort();
                 //}
 
-                shutdownEvent.Set();
                 if (!singlechargeQueueThread.Join(3000))
                 {
                     singlechargeQueueThread.Abort();

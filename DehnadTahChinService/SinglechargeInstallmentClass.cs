@@ -35,6 +35,7 @@ namespace DehnadTahChinService
                 using (var entity = new TahChinEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
+                    entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 2; installmentInnerCycleNumber++)
                     {
@@ -52,7 +53,7 @@ namespace DehnadTahChinService
                         installmentList.RemoveAll(o => waitingList.Contains(o));
                         int installmentListCount = installmentList.Count;
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += SharedLibrary.InstallmentHandler.MtnInstallmentJob(entityType, maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
@@ -64,7 +65,7 @@ namespace DehnadTahChinService
             return income;
         }
 
-        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<SinglechargeInstallment> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
+        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
         {
             var income = 0;
             try
@@ -77,7 +78,7 @@ namespace DehnadTahChinService
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 //var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
-                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, 50);
+                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, installmentListTakeSize);
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
 
@@ -99,7 +100,7 @@ namespace DehnadTahChinService
             return income;
         }
 
-        private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<SinglechargeInstallment> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
+        private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<string> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
             var today = DateTime.Now.Date;
@@ -111,6 +112,7 @@ namespace DehnadTahChinService
             {
                 using (var entity = new TahChinEntities())
                 {
+                    entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
                         if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
@@ -121,16 +123,14 @@ namespace DehnadTahChinService
                             batchSaveCounter = 0;
                         }
                         //singlecharge = reserverdSingleCharge;
-                        int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.IsApplicationInformed == false && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
-                        if (priceUserChargedToday >= maxChargeLimit)
+                        int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
+                        bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
+                        if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
-                            installment.IsExceededDailyChargeLimit = true;
-                            entity.Entry(installment).State = EntityState.Modified;
-                            batchSaveCounter += 1;
                             continue;
                         }
                         var message = new SharedLibrary.Models.MessageObject();
-                        message.MobileNumber = installment.MobileNumber;
+                        message.MobileNumber = installment;
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
                         message = SharedLibrary.InstallmentHandler.ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
                         if (installmentInnerCycleNumber == 1 && message.Price != 300)
@@ -142,7 +142,7 @@ namespace DehnadTahChinService
                         if (diff.Milliseconds < 1000)
                             Thread.Sleep(1000 - diff.Milliseconds);
                         previousStart = start;
-                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installment.Id).Result;
+                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo).Result;
                         //if (response.IsSucceeded == false && message.Price == 300)
                         //{
                         //    message.Price = 100;
@@ -151,11 +151,6 @@ namespace DehnadTahChinService
                         if (response.IsSucceeded == true)
                         {
                             income += message.Price.GetValueOrDefault();
-                            installment.PricePayed += message.Price.GetValueOrDefault();
-                            installment.PriceTodayCharged += message.Price.GetValueOrDefault();
-                            if (installment.PricePayed >= installment.TotalPrice)
-                                installment.IsFullyPaid = true;
-                            entity.Entry(installment).State = EntityState.Modified;
                         }
                         batchSaveCounter++;
                     }
