@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
@@ -15,6 +16,7 @@ namespace DehnadNotificationService
         private Thread incomeThread;
         private Thread sendMessageThread;
         private Thread serviceCheckThread;
+        private Thread overChargeThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public Service()
         {
@@ -38,6 +40,10 @@ namespace DehnadNotificationService
                 serviceCheckThread = new Thread(ServiceCheckWorkerThread);
                 serviceCheckThread.IsBackground = true;
                 serviceCheckThread.Start();
+
+                overChargeThread = new Thread(OverChargeWorkerThread);
+                overChargeThread.IsBackground = true;
+                overChargeThread.Start();
             }
 
             sendMessageThread = new Thread(SendMessagesThread);
@@ -64,6 +70,11 @@ namespace DehnadNotificationService
                     {
                         incomeThread.Abort();
                     }
+
+                    if (!overChargeThread.Join(3000))
+                    {
+                        overChargeThread.Abort();
+                    }
                 }
                 if (!sendMessageThread.Join(3000))
                 {
@@ -83,6 +94,22 @@ namespace DehnadNotificationService
             {
                 TelegramBot.StartBot();
                 Thread.Sleep(1000);
+            }
+        }
+
+        private void OverChargeWorkerThread()
+        {
+            while (!shutdownEvent.WaitOne(0))
+            {
+                try
+                {
+                    Income.OverChargeChecker();
+                    Thread.Sleep(60 * 1000);
+                }
+                catch (Exception e)
+                {
+                    logs.Error(" Exception in OverChargeWorkerThread: " + e);
+                }
             }
         }
 
@@ -132,6 +159,26 @@ namespace DehnadNotificationService
             {
                 logs.Error(" Exception in SaveMessageToSendQueue: " + e);
             }
+        }
+
+        public static bool CheckMessagesAlreadySent(string message)
+        {
+            bool result = false;
+            try
+            {
+                using (var entity = new Models.NotificationEntities())
+                {
+                    var today = DateTime.Now;
+                    var isExists = entity.SentMessages.FirstOrDefault(o => DbFunctions.TruncateTime(o.DateCreated) == today && o.Content == message);
+                    if (isExists != null)
+                        result = true;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in CheckMessagesAlreadySent: " + e);
+            }
+            return result;
         }
 
         public static async void ChangeMessageStatusToSended(List<long> messageIds)
