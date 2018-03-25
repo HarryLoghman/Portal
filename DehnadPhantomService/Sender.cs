@@ -32,25 +32,25 @@ namespace DehnadPhantomService
 
                 Type entityType = typeof(PhantomEntities);
 
-                autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
-                eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
-                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
+                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, takeSize)).OfType<OnDemandMessagesBuffer>().ToList();
 
-                if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
-                {
-                    TimeSpan retryEndTime = new TimeSpan(23, 30, 0);
-                    var now = DateTime.Now.TimeOfDay;
-                    if (now < retryEndTime)
-                    {
-                        using (var entity = new PhantomEntities())
-                        {
-                            entity.RetryUndeliveredMessages();
-                        }
-                    }
-                }
+                //if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
+                //{
+                //    TimeSpan retryEndTime = new TimeSpan(23, 30, 0);
+                //    var now = DateTime.Now.TimeOfDay;
+                //    if (now < retryEndTime)
+                //    {
+                //        using (var entity = new PhantomEntities())
+                //        {
+                //            entity.RetryUndeliveredMessages();
+                //        }
+                //    }
+                //}
 
                 if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
                 {
+                    autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, takeSize)).OfType<AutochargeMessagesBuffer>().ToList();
+                    eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, takeSize)).OfType<EventbaseMessagesBuffer>().ToList();
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 }

@@ -39,10 +39,20 @@ namespace DehnadPhantomService
 
                         installmentList = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
                         var today = DateTime.Now;
+                        List<string> chargeCompleted;
                         var delayDateBetweenCharges = today.AddDays(0);
-                        var chargeCompleted = entity.vw_Singlecharge.AsNoTracking()
-                            .Where(o => DbFunctions.TruncateTime(o.DateCreated) >= DbFunctions.TruncateTime(delayDateBetweenCharges) && DbFunctions.TruncateTime(o.DateCreated) <= DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
-                            .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
+                        if (delayDateBetweenCharges.Date != today.Date)
+                        {
+                            chargeCompleted = entity.vw_Singlecharge.AsNoTracking()
+                                .Where(o => DbFunctions.TruncateTime(o.DateCreated) >= DbFunctions.TruncateTime(delayDateBetweenCharges) && DbFunctions.TruncateTime(o.DateCreated) <= DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
+                                .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
+                        }
+                        else
+                        {
+                            chargeCompleted = entity.Singlecharges.AsNoTracking()
+                                .Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
+                                .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
+                        }
                         var waitingList = entity.SinglechargeWaitings.AsNoTracking().Select(o => o.MobileNumber).ToList();
                         installmentList.RemoveAll(o => chargeCompleted.Contains(o));
                         installmentList.RemoveAll(o => waitingList.Contains(o));

@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace DehnadNotificationService
@@ -47,7 +48,7 @@ namespace DehnadNotificationService
                     i++;
                 }
                 keyboardButtons.Add(rowButton);
-                }
+            }
 
             var buttonsArray = keyboardButtons.Select(row => row.ToArray()).ToArray();
             var keyboard = new ReplyKeyboardMarkup(buttonsArray);
@@ -55,11 +56,25 @@ namespace DehnadNotificationService
             keyboard.OneTimeKeyboard = oneTimeKeywboard;
             return keyboard;
 
-                //var categories = new[] { "skills", "about me" };
-                //var buttons = categories.Select(category => new[] { new KeyboardButton(category) })
-                //    .ToArray();
-                //var replyMarkup = new ReplyKeyboardMarkup(buttons);
+            //var categories = new[] { "skills", "about me" };
+            //var buttons = categories.Select(category => new[] { new KeyboardButton(category) })
+            //    .ToArray();
+            //var replyMarkup = new ReplyKeyboardMarkup(buttons);
+        }
+
+        public static InlineKeyboardMarkup GenerateInlineKeybaord(Dictionary<string,string> buttons)
+        {
+            var buttonsArray = new InlineKeyboardCallbackButton[buttons.Keys.Count];
+            int i = 0;
+            foreach (var item in buttons.Keys)
+            {
+                buttonsArray[i] = new InlineKeyboardCallbackButton(item, buttons[item]);
+                i++;
             }
+            InlineKeyboardMarkup menu = new InlineKeyboardMarkup(buttonsArray);
+            return menu;
+        }
+
 
         public static void SaveLastStep(Type entityType, dynamic user, string text)
         {

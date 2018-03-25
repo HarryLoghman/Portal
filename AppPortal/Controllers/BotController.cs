@@ -60,6 +60,25 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public async Task<HttpResponseMessage> ServicesStatus()
+        {
+            string json = null;
+            try
+            {
+                var list = DehnadNotificationService.ServiceChecker.GetDehnadServicesStatus();
+                json = JsonConvert.SerializeObject(list);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ServicesStatus: ", e);
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<HttpResponseMessage> CreateNewUser()
         {
             try

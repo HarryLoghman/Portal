@@ -67,7 +67,7 @@ namespace DehnadNotificationService
             return responseObject;
         }
 
-        public static async Task<TelegramBotResponse> ContactReceived( User user, TelegramBotResponse responseObject)
+        public static async Task<TelegramBotResponse> ContactReceived(User user, TelegramBotResponse responseObject)
         {
             var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(responseObject.Message.Contact.PhoneNumber.Replace(" ", ""));
             string firstName = ""; string lastName = "";
@@ -92,12 +92,46 @@ namespace DehnadNotificationService
             return responseObject;
         }
 
+        public static async Task<TelegramBotResponse> SerivcesStatus(User user, TelegramBotResponse responseObject)
+        {
+            var outputItem = new TelegramBotOutput();
+            var message = @"شما به عنوان مدیر عضو سیستم نوتیفیکیشن دهناد هستید.";
+            try
+            {
+                userParams = new Dictionary<string, string>() { };
+                var services = await SharedLibrary.UsefulWebApis.NotificationBotApi<List<string>>("ServicesStatus", userParams);
+                message = "";
+                int i = 1;
+                foreach (var service in services)
+                {
+                    if (!service.Contains("Running"))
+                        message += "<b>" + i + "." + service + "</b>" + Environment.NewLine;
+                    else
+                        message += i + "." + service.ToLower() + Environment.NewLine;
+                    i++;
+                }
+            }
+            catch (Exception e)
+            {
+                message = "خطا ذر دریافت وضعیت ویندوز سرویس ها";
+                logs.Error("Exception in SerivcesStatus: ", e);
+            }
+            var keyboardButtonsList = new List<string>();
+            keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
+            keyboardButtonsList.Add("Normal-راهنما");
+            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
+            outputItem.Text = message;
+            responseObject.OutPut.Add(outputItem);
+            return responseObject;
+        }
+
         public static async Task<TelegramBotResponse> AdminHelp(User user, TelegramBotResponse responseObject)
         {
             var outputItem = new TelegramBotOutput();
             var keyboardButtonsList = new List<string>();
+            keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
             keyboardButtonsList.Add("Normal-راهنما");
-            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(1, 1, keyboardButtonsList, true, true);
+            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
             outputItem.Text = @"شما به عنوان مدیر عضو سیستم نوتیفیکیشن دهناد هستید.";
             responseObject.OutPut.Add(outputItem);
             return responseObject;

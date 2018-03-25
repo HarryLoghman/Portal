@@ -103,6 +103,10 @@ namespace DehnadNotificationService
                 {
                     responseObject = await BotManager.ContactReceived(user, responseObject);
                 }
+                else if (user.LastStep.Contains("Admin") && responseObject.Message.Text == "وضعیت ویندوز سرویس ها")
+                {
+                    responseObject = await BotManager.SerivcesStatus(user, responseObject);
+                }
                 else if (responseObject.Message.Text.ToLower().Contains("help"))
                 {
                     if (user.LastStep.Contains("Admin"))
@@ -130,9 +134,9 @@ namespace DehnadNotificationService
                     if (response.Text != null && response.Text != "")
                     {
                         if (response.keyboard != null)
-                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: response.keyboard);
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: response.keyboard);
                         else
-                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
                     }
                 }
             }
@@ -211,7 +215,7 @@ namespace DehnadNotificationService
                             //await Bot.SendTextMessageAsync(message.ChatId, message.Content, replyMarkup: response.keyboard);
                         }
                         else
-                            await Bot.SendTextMessageAsync(message.ChatId, message.Content, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
+                            await Bot.SendTextMessageAsync(message.ChatId, message.Content, Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
                     }
                     messageIdsThatSended.Add(message.Id);
                 }

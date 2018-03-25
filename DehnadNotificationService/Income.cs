@@ -22,6 +22,7 @@ namespace DehnadNotificationService
                 CalculateDambelIncomeDifferenceByHour();
                 CalculatePhantomIncomeDifferenceByHour();
                 CalculateMedioIncomeDifferenceByHour();
+                //CalculateDarchinIncomeDifferenceByHour();
             }
             catch (Exception e)
             {
@@ -38,6 +39,7 @@ namespace DehnadNotificationService
                 TahchinOverChargeCheck();
                 PhantomOverChargeCheck();
                 MedioOverChargeCheck();
+                DarchinOverChargeCheck();
             }
             catch (Exception e)
             {
@@ -59,7 +61,7 @@ namespace DehnadNotificationService
                             .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) > maxChargeLimit).Select(o => o.Key).ToList();
                     if (overcharged.Count > 0)
                     {
-                        var message = "Overcharge in MusicYad Service";
+                        var message = "<b>Overcharge in MusicYad Service</b>";
                         if (!Service.CheckMessagesAlreadySent(message))
                             DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
                     }
@@ -69,7 +71,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in MusicYadOverChargeCheck: " + e);
-                var message = "Exception in MusicYad Service for Overcharge Checking";
+                var message = "<b>Exception in MusicYad Service for Overcharge Checking</b>";
                 DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
             }
 
@@ -120,7 +122,7 @@ namespace DehnadNotificationService
                             .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) > maxChargeLimit).Select(o => o.Key).ToList();
                     if (overcharged.Count > 0)
                     {
-                        var message = "Overcharge in TahChin Service";
+                        var message = "<b>Overcharge in TahChin Service</b>";
                         if (!Service.CheckMessagesAlreadySent(message))
                             DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
                     }
@@ -130,7 +132,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in TahChinOverChargeCheck: " + e);
-                var message = "Exception in Tahchin Service for Overcharge Checking";
+                var message = "<b>Exception in Tahchin Service for Overcharge Checking</b>";
                 DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
             }
 
@@ -211,7 +213,7 @@ namespace DehnadNotificationService
                             .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) > maxChargeLimit).Select(o => o.Key).ToList();
                     if (overcharged.Count > 0)
                     {
-                        var message = "Overcharge in Dambel Service";
+                        var message = "<b>Overcharge in Dambel Service</b>";
                         if (!Service.CheckMessagesAlreadySent(message))
                             DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
                     }
@@ -221,7 +223,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in DambelOverChargeCheck: " + e);
-                var message = "Exception in Dambel Service for Overcharge Checking";
+                var message = "<b>Exception in Dambel Service for Overcharge Checking</b>";
                 DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
             }
 
@@ -365,7 +367,7 @@ namespace DehnadNotificationService
                             .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) > maxChargeLimit).Select(o => o.Key).ToList();
                     if (overcharged.Count > 0)
                     {
-                        var message = "Overcharge in Medio Service";
+                        var message = "<b>Overcharge in Medio Service</b>";
                         if (!Service.CheckMessagesAlreadySent(message))
                             DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
                     }
@@ -375,7 +377,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in MedioOverChargeCheck: " + e);
-                var message = "Exception in Medio Service for Overcharge Checking";
+                var message = "<b>Exception in Medio Service for Overcharge Checking</b>";
                 DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
             }
 
@@ -457,7 +459,7 @@ namespace DehnadNotificationService
                             .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) > maxChargeLimit).Select(o => o.Key).ToList();
                     if (overcharged.Count > 0)
                     {
-                        var message = "Overcharge in Phantom Service";
+                        var message = "<b>Overcharge in Phantom Service</b>";
                         if (!Service.CheckMessagesAlreadySent(message))
                             DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
                     }
@@ -467,7 +469,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in PhantomOverChargeCheck: " + e);
-                var message = "Exception in Phantom Service for Overcharge Checking";
+                var message = "<b>Exception in Phantom Service for Overcharge Checking</b>";
                 DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
             }
 
@@ -534,6 +536,35 @@ namespace DehnadNotificationService
                 logs.Error("Exception in PhantomGetIncomeByHour: ", e);
             }
             return null;
+        }
+
+        public static void DarchinOverChargeCheck()
+        {
+            try
+            {
+                var maxChargeLimit = 7000;
+                var today = DateTime.Now;
+                using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                {
+                    var overcharged = entity.Singlecharges.AsNoTracking()
+                            .Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
+                            .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) > maxChargeLimit).Select(o => o.Key).ToList();
+                    if (overcharged.Count > 0)
+                    {
+                        var message = "<b>Overcharge in Darchin Service</b>";
+                        if (!Service.CheckMessagesAlreadySent(message))
+                            DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in DarchinOverChargeCheck: " + e);
+                var message = "<b>Exception in Darchin Service for Overcharge Checking</b>";
+                DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
+            }
+
         }
 
         private static int CaluculatePercentageDifference(int yesterdayPastHourIncome, int todayPastHourIncome)

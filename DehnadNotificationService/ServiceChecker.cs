@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DehnadNotificationService
 {
-    class ServiceChecker
+    public class ServiceChecker
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static void Job()
