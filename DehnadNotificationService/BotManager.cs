@@ -113,7 +113,7 @@ namespace DehnadNotificationService
             }
             catch (Exception e)
             {
-                message = "خطا ذر دریافت وضعیت ویندوز سرویس ها";
+                message = "خطا در دریافت وضعیت ویندوز سرویس ها";
                 logs.Error("Exception in SerivcesStatus: ", e);
             }
             var keyboardButtonsList = new List<string>();
@@ -125,6 +125,98 @@ namespace DehnadNotificationService
             return responseObject;
         }
 
+        public static async Task<TelegramBotResponse> StartService(User user, TelegramBotResponse responseObject)
+        {
+            try
+            {
+                var splittedText = responseObject.Message.Text.Split(' ');
+                var serviceName = splittedText[2];
+                userParams = new Dictionary<string, string>() { { "serviceName", serviceName } };
+                await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("StartService", userParams);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in StartService: ", e);
+            }
+            var outputItem = new TelegramBotOutput();
+            var keyboardButtonsList = new List<string>();
+            keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
+            keyboardButtonsList.Add("Normal-راهنما");
+            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
+            outputItem.Text = @"دستور استارت سرویس به سرور ارسال شد.";
+            responseObject.OutPut.Add(outputItem);
+            return responseObject;
+        }
+
+        public static async Task<TelegramBotResponse> StopService(User user, TelegramBotResponse responseObject)
+        {
+            try
+            {
+                var splittedText = responseObject.Message.Text.Split(' ');
+                var serviceName = splittedText[2];
+                userParams = new Dictionary<string, string>() { { "serviceName", serviceName } };
+                await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("StopService", userParams);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in StopService: ", e);
+            }
+            var outputItem = new TelegramBotOutput();
+            var keyboardButtonsList = new List<string>();
+            keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
+            keyboardButtonsList.Add("Normal-راهنما");
+            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
+            outputItem.Text = @"دستور توفق سرویس به سرور ارسال شد.";
+            responseObject.OutPut.Add(outputItem);
+            return responseObject;
+        }
+
+        public static async Task<TelegramBotResponse> RestartService(User user, TelegramBotResponse responseObject)
+        {
+            try
+            {
+                var splittedText = responseObject.Message.Text.Split(' ');
+                var serviceName = splittedText[2];
+                userParams = new Dictionary<string, string>() { { "serviceName", serviceName } };
+                await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("RestartService", userParams);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in RestartService: ", e);
+            }
+            var outputItem = new TelegramBotOutput();
+            var keyboardButtonsList = new List<string>();
+            keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
+            keyboardButtonsList.Add("Normal-راهنما");
+            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
+            outputItem.Text = @"دستور ریستارت سرویس به سرور ارسال شد.";
+            responseObject.OutPut.Add(outputItem);
+            return responseObject;
+        }
+
+        public static async Task<TelegramBotResponse> KillProcess(User user, TelegramBotResponse responseObject)
+        {
+            try
+            {
+                var splittedText = responseObject.Message.Text.Split(' ');
+                var processName = splittedText[2];
+                userParams = new Dictionary<string, string>() { { "processName", processName } };
+                await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("KillProcess", userParams);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in KillProcess: ", e);
+            }
+            var outputItem = new TelegramBotOutput();
+            var keyboardButtonsList = new List<string>();
+            keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
+            keyboardButtonsList.Add("Normal-راهنما");
+            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
+            outputItem.Text = @"دستور توقف پروسس به سرور ارسال شد.";
+            responseObject.OutPut.Add(outputItem);
+            return responseObject;
+        }
+
         public static async Task<TelegramBotResponse> AdminHelp(User user, TelegramBotResponse responseObject)
         {
             var outputItem = new TelegramBotOutput();
@@ -132,7 +224,12 @@ namespace DehnadNotificationService
             keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
             keyboardButtonsList.Add("Normal-راهنما");
             outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
-            outputItem.Text = @"شما به عنوان مدیر عضو سیستم نوتیفیکیشن دهناد هستید.";
+            outputItem.Text = @"شما به عنوان مدیر عضو سیستم نوتیفیکیشن دهناد هستید.
+            برای استارت یا استاپ یا ریستارت و یا توقف یک پروسس به صورت زیر عمل کنید
+            start service servicename
+            stop service servicename
+            restart service servicename
+            kill process processname";
             responseObject.OutPut.Add(outputItem);
             return responseObject;
         }

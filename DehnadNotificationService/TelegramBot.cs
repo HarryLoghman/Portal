@@ -107,6 +107,22 @@ namespace DehnadNotificationService
                 {
                     responseObject = await BotManager.SerivcesStatus(user, responseObject);
                 }
+                else if (user.LastStep.Contains("Admin") && responseObject.Message.Text.ToLower().Contains("start service"))
+                {
+                    responseObject = await BotManager.StartService(user, responseObject);
+                }
+                else if (user.LastStep.Contains("Admin") && responseObject.Message.Text.ToLower().Contains("stop service"))
+                {
+                    responseObject = await BotManager.StopService(user, responseObject);
+                }
+                else if (user.LastStep.Contains("Admin") && responseObject.Message.Text.ToLower().Contains("restart service"))
+                {
+                    responseObject = await BotManager.RestartService(user, responseObject);
+                }
+                else if (user.LastStep.Contains("Admin") && responseObject.Message.Text.ToLower().Contains("kill process"))
+                {
+                    responseObject = await BotManager.KillProcess(user, responseObject);
+                }
                 else if (responseObject.Message.Text.ToLower().Contains("help"))
                 {
                     if (user.LastStep.Contains("Admin"))
