@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -18,7 +19,7 @@ namespace DehnadNotificationService
             {
                 var services = GetDehnadServicesStatus();
                 var stoppedServices = services.Where(o => !o.Contains("Running")).ToList();
-                if(stoppedServices.Count > 0)
+                if (stoppedServices.Count > 0)
                 {
                     Thread.Sleep(5 * 60 * 1000);
                     var serv = GetDehnadServicesStatus();
@@ -89,6 +90,99 @@ namespace DehnadNotificationService
                 logs.Error(" Exception in GetDehnadServicesStatus: " + e);
             }
             return result;
+        }
+
+        public static void KillProcess(string processName)
+        {
+            try
+            {
+                if (processName.ToLower() == "mssqlserver")
+                    processName = "sqlservr";
+                else if (processName.ToLower() == "sqlserveragent")
+                    processName = "sqlagent";
+
+                foreach (Process proc in Process.GetProcessesByName(processName))
+                {
+                    proc.Kill();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in KillProcess " + processName + ": " + e);
+            }
+        }
+
+        public static void StopService(string serviceName)
+        {
+            try
+            {
+                var theController = new System.ServiceProcess.ServiceController(serviceName);
+                if (!theController.Status.Equals(ServiceControllerStatus.Stopped))
+                {
+                    theController.Stop();
+                    theController.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
+                    if (!theController.Status.Equals(ServiceControllerStatus.Stopped))
+                    {
+                        var processName = serviceName;
+                        if (serviceName.ToLower() == "mssqlserver")
+                            processName = "sqlservr";
+                        else if (serviceName.ToLower() == "sqlserveragent")
+                            processName = "sqlagent";
+
+                        KillProcess(processName);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in StopService " + serviceName + ": " + e);
+            }
+        }
+        public static void StartService(string serviceName)
+        {
+            try
+            {
+                var theController = new System.ServiceProcess.ServiceController(serviceName);
+                if (!theController.Status.Equals(ServiceControllerStatus.Running))
+                {
+                    theController.Start();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in StartService " + serviceName + ": " + e);
+            }
+        }
+
+        public static void RestartService(string serviceName)
+        {
+            try
+            {
+                var theController = new System.ServiceProcess.ServiceController(serviceName);
+                if (!theController.Status.Equals(ServiceControllerStatus.Stopped))
+                {
+                    theController.Stop();
+                    theController.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
+                    if (!theController.Status.Equals(ServiceControllerStatus.Stopped))
+                    {
+                        var processName = serviceName;
+                        if (serviceName.ToLower() == "mssqlserver")
+                            processName = "sqlservr";
+                        else if (serviceName.ToLower() == "sqlserveragent")
+                            processName = "sqlagent";
+
+                        KillProcess(processName);
+                    }
+                }
+                if (!theController.Status.Equals(ServiceControllerStatus.Running))
+                {
+                    theController.Start();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in RestartService " + serviceName + ": " + e);
+            }
         }
     }
 }

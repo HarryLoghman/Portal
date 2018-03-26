@@ -79,6 +79,82 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public async Task<HttpResponseMessage> StartService()
+        {
+            string serviceName = HttpContext.Current.Request.Form["serviceName"];
+            string json = null;
+            try
+            {
+                DehnadNotificationService.ServiceChecker.StartService(serviceName);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in StartService: ", e);
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> StopService()
+        {
+            string serviceName = HttpContext.Current.Request.Form["serviceName"];
+            string json = null;
+            try
+            {
+                DehnadNotificationService.ServiceChecker.StopService(serviceName);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in StopService: ", e);
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> RestartService()
+        {
+            string serviceName = HttpContext.Current.Request.Form["serviceName"];
+            string json = null;
+            try
+            {
+                DehnadNotificationService.ServiceChecker.RestartService(serviceName);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in RestartService: ", e);
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> KillProcess()
+        {
+            string processName = HttpContext.Current.Request.Form["processName"];
+            string json = null;
+            try
+            {
+                DehnadNotificationService.ServiceChecker.KillProcess(processName);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in KillProcess: ", e);
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<HttpResponseMessage> CreateNewUser()
         {
             try
