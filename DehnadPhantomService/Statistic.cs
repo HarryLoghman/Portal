@@ -14,7 +14,7 @@ namespace DehnadPhantomService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)

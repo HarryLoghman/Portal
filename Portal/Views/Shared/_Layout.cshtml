@@ -627,6 +627,9 @@
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
                                                         <li>
+                                                            @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Ashpazkhoone" }, null)
+                                                        </li>
+                                                        <li>
                                                             @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Ashpazkhoone" }, null)
                                                         </li>
                                                         <li>
@@ -924,6 +927,9 @@
                                                     @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                                     {
                                                         <li>
+                                                            @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Phantom" }, null)
+                                                        </li>
+                                                        <li>
                                                             @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Phantom" }, null)
                                                         </li>
                                                         <li>
@@ -1190,5 +1196,4 @@
     .last-item > .k-animation-container {
         left: 0px !important;
     }
-
 </style>
