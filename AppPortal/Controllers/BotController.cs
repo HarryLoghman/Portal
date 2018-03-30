@@ -155,6 +155,26 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public async Task<HttpResponseMessage> ServiceInfo()
+        {
+            string serviceCode = HttpContext.Current.Request.Form["serviceCode"];
+            string json = null;
+            try
+            {
+                var income = DehnadNotificationService.Income.GetServiceIncome(serviceCode);
+                json = JsonConvert.SerializeObject(income);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ServiceInfo: ", e);
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<HttpResponseMessage> CreateNewUser()
         {
             try

@@ -274,5 +274,11 @@ namespace SharedLibrary
             return HexAsBytes;
         }
 
+        public static int CaluculatePercentageDifference(int value1, int value2)
+        {
+            value1 = value1 == 0 ? 1 : value1;
+            var percent = (((decimal)value2 - (decimal)value1) / (decimal)value1) * (decimal)100;
+            return Convert.ToInt32(percent);
+        }
     }
 }

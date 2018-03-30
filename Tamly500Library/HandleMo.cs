@@ -45,7 +45,7 @@ namespace Tamly500Library
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else if(message.ReceivedFrom.Contains("Verification") && message.Content == "sendservicesubscriptionhelp")
+                else if (message.ReceivedFrom.Contains("Verification") && message.Content == "sendservicesubscriptionhelp")
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     message.Content = messagesTemplate.Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
@@ -116,10 +116,30 @@ namespace Tamly500Library
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
-
+                
+                if (isUserSendsSubscriptionKeyword == true && message.Content == "7")
+                {
+                    isCampaignActive = (int)CampaignStatus.Deactive;
+                    try
+                    {
+                        using (var portalEntity = new PortalEntities())
+                        {
+                            var black = new SharedLibrary.Models.BlackList();
+                            black.DateAdded = DateTime.Now;
+                            black.MobileNumber = message.MobileNumber;
+                            black.ServiceId = 0;
+                            portalEntity.BlackLists.Add(black);
+                            portalEntity.SaveChanges();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        logs.Error("", e);
+                    }
+                }
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
-                    if(isUserSendsSubscriptionKeyword == true)
+                    if (isUserSendsSubscriptionKeyword == true)
                     {
                         var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
                         var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);

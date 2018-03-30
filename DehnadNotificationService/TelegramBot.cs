@@ -123,6 +123,10 @@ namespace DehnadNotificationService
                 {
                     responseObject = await BotManager.KillProcess(user, responseObject);
                 }
+                else if (user.LastStep.Contains("Admin") && responseObject.Message.Text.ToLower().Contains(" info"))
+                {
+                    responseObject = await BotManager.ServiceInfo(user, responseObject);
+                }
                 else if (responseObject.Message.Text.ToLower().Contains("help"))
                 {
                     if (user.LastStep.Contains("Admin"))

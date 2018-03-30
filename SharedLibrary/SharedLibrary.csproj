@@ -190,6 +190,7 @@
     <Compile Include="Models\vw_ReceivedMessages.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Notify.cs" />
     <Compile Include="PortalException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security.cs" />

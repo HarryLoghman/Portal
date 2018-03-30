@@ -201,7 +201,7 @@ namespace DehnadTahChinService
 
             while (!shutdownEvent.WaitOne(0))
             {
-                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10))
+                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15))
                 {
                     installmentCycleNumber = 1;
                     Thread.Sleep(/*50 * 60 * */1000);
@@ -209,7 +209,7 @@ namespace DehnadTahChinService
                 else
                 {
                     var startTime = DateTime.Now;
-                    if (installmentCycleNumber == 1 && DateTime.Now.Hour < 16)
+                    if (installmentCycleNumber == 1 && DateTime.Now.Hour < 11)
                     {
                         var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
@@ -217,7 +217,7 @@ namespace DehnadTahChinService
                         SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                         installmentCycleNumber++;
                     }
-                    else if (installmentCycleNumber == 2 && DateTime.Now.Hour < 16)
+                    else if (installmentCycleNumber == 2 && DateTime.Now.Hour < 11)
                     {
                         var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                         var endTime = DateTime.Now;
@@ -225,9 +225,9 @@ namespace DehnadTahChinService
                         SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                         installmentCycleNumber++;
                     }
-                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 21)
+                    else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 16)
                     {
-                        TimeSpan hour = TimeSpan.Parse("16:00:00");
+                        TimeSpan hour = TimeSpan.Parse("11:00:00");
                         timeDiffs = hour - startTime.TimeOfDay;
                         if (timeDiffs.TotalSeconds >= 5)
                             Thread.Sleep((int)timeDiffs.TotalMilliseconds);
@@ -237,9 +237,9 @@ namespace DehnadTahChinService
                         SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                         installmentCycleNumber++;
                     }
-                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 21 && (DateTime.Now.Hour <= 22 && DateTime.Now.Minute < 30))
+                    else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 22)
                     {
-                        TimeSpan hour = TimeSpan.Parse("21:00:00");
+                        TimeSpan hour = TimeSpan.Parse("16:00:00");
                         timeDiffs = hour - startTime.TimeOfDay;
                         if (timeDiffs.TotalSeconds >= 5)
                             Thread.Sleep((int)timeDiffs.TotalMilliseconds);
@@ -252,7 +252,7 @@ namespace DehnadTahChinService
                     }
                     else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 22)
                     {
-                        TimeSpan hour = TimeSpan.Parse("22:30:00");
+                        TimeSpan hour = TimeSpan.Parse("22:00:00");
                         timeDiffs = hour - startTime.TimeOfDay;
                         if(timeDiffs.TotalSeconds >= 5)
                             Thread.Sleep((int)timeDiffs.TotalMilliseconds);

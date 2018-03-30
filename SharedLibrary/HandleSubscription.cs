@@ -67,21 +67,25 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
-                entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
-                subscriber.OffKeyword = null;
-                subscriber.OffMethod = null;
-                subscriber.DeactivationDate = null;
-                subscriber.PersianDeactivationDate = null;
-                subscriber.OnKeyword = onKeyword;
-                subscriber.SpecialUniqueId = null;
-                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
-                    subscriber.OnMethod = "keyword";
-                else if (message.IsReceivedFromIntegratedPanel == true)
-                    subscriber.OnMethod = "Integrated Panel";
-                else
-                    subscriber.OnMethod = "Web";
-                entity.Entry(subscriber).State = EntityState.Modified;
-                entity.SaveChanges();
+                using (DbContextTransaction scope = entity.Database.BeginTransaction())
+                {
+                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
+                    subscriber.OffKeyword = null;
+                    subscriber.OffMethod = null;
+                    subscriber.DeactivationDate = null;
+                    subscriber.PersianDeactivationDate = null;
+                    subscriber.OnKeyword = onKeyword;
+                    subscriber.SpecialUniqueId = null;
+                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                        subscriber.OnMethod = "keyword";
+                    else if (message.IsReceivedFromIntegratedPanel == true)
+                        subscriber.OnMethod = "Integrated Panel";
+                    else
+                        subscriber.OnMethod = "Web";
+                    entity.Entry(subscriber).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    scope.Commit();
+                }
             }
             AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             return ServiceStatusForSubscriberState.Renewal;

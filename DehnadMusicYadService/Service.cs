@@ -207,7 +207,7 @@ namespace DehnadMusicYadService
 
             while (!shutdownEvent.WaitOne(0))
             {
-                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 10))
+                if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 17))
                 {
                     installmentCycleNumber = 1;
                     Thread.Sleep(/*50 * 60 * */1000);

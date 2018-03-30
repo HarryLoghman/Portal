@@ -217,6 +217,33 @@ namespace DehnadNotificationService
             return responseObject;
         }
 
+        public static async Task<TelegramBotResponse> ServiceInfo(User user, TelegramBotResponse responseObject)
+        {
+            string income = "-2";
+            var outputItem = new TelegramBotOutput();
+            var keyboardButtonsList = new List<string>();
+            keyboardButtonsList.Add("Normal-وضعیت ویندوز سرویس ها");
+            keyboardButtonsList.Add("Normal-راهنما");
+            outputItem.keyboard = TelegramBotHelper.GenerateKeybaord(2, 1, keyboardButtonsList, true, true);
+            outputItem.Text = @"";
+            try
+            {
+                var splittedText = responseObject.Message.Text.Split(' ');
+                var serviceCode = splittedText[0];
+                userParams = new Dictionary<string, string>() { { "serviceCode", serviceCode } };
+                income = await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("ServiceInfo", userParams);
+                outputItem.Text = "درآمد امروز سرویس " + serviceCode + " " + income + " تومان می باشد.";
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ServiceInfo: ", e);
+            }
+            if(outputItem.Text == "")
+                outputItem.Text = @"خطا در دریفات اطلاعات سرویس";
+            responseObject.OutPut.Add(outputItem);
+            return responseObject;
+        }
+
         public static async Task<TelegramBotResponse> AdminHelp(User user, TelegramBotResponse responseObject)
         {
             var outputItem = new TelegramBotOutput();
@@ -229,7 +256,9 @@ namespace DehnadNotificationService
             start service servicename
             stop service servicename
             restart service servicename
-            kill process processname";
+            kill process processname
+            برای دریافت اطلاعات سرویس سرویس کد سرویس و info
+            TahChin info";
             responseObject.OutPut.Add(outputItem);
             return responseObject;
         }
