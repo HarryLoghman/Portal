@@ -197,7 +197,7 @@ namespace DehnadMusicYadService
             {
                 using (var client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromSeconds(15);
+                    //client.Timeout = TimeSpan.FromSeconds(15);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var response = await client.SendAsync(request))

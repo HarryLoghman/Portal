@@ -43,6 +43,7 @@ namespace DehnadTahChinService
                         //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
 
                         installmentList = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        logs.Info("installmentList all users count:" + installmentList.Count);
                         var today = DateTime.Now;
                         List<string> chargeCompleted;
                         var delayDateBetweenCharges = today.AddDays(0);
@@ -59,9 +60,12 @@ namespace DehnadTahChinService
                                 .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
                         }
                         var waitingList = entity.SinglechargeWaitings.AsNoTracking().Select(o => o.MobileNumber).ToList();
+                        logs.Info("installmentList compeleted charge users count:" + chargeCompleted.Count);
+                        logs.Info("installmentList users in waiting list count:" + waitingList.Count);
                         installmentList.RemoveAll(o => chargeCompleted.Contains(o));
                         installmentList.RemoveAll(o => waitingList.Contains(o));
                         int installmentListCount = installmentList.Count;
+                        logs.Info("installmentList final list count:" + installmentListCount);
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
                         income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
@@ -197,7 +201,7 @@ namespace DehnadTahChinService
             {
                 using (var client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromSeconds(15);
+                    //client.Timeout = TimeSpan.FromSeconds(15);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var response = await client.SendAsync(request))
