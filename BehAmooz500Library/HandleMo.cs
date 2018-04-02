@@ -43,7 +43,7 @@ namespace BehAmooz500Library
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else if (message.Content.ToLower().Contains("abc")) //Otp Help
+                else if (message.Content.ToLower().Contains("abc") || message.Content == "10") //Otp Help
                 {
                     var mobile = message.MobileNumber;
                     var singleCharge = new Singlecharge();

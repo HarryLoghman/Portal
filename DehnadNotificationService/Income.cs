@@ -25,6 +25,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in IncomeDiffrenceByHour: ", e);
+                DehnadNotificationService.Service.SaveMessageToSendQueue("Exception in IncomeDiffrenceByHour", UserType.AdminOnly);
             }
         }
 
@@ -42,6 +43,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in OverChargeChecker: " + e);
+                DehnadNotificationService.Service.SaveMessageToSendQueue("Exception in OverChargeChecker", UserType.AdminOnly);
             }
 
         }
@@ -67,6 +69,7 @@ namespace DehnadNotificationService
             catch (Exception e)
             {
                 logs.Error("Exception in GetServiceIncome: ", e);
+                DehnadNotificationService.Service.SaveMessageToSendQueue("Exception in GetServiceIncome", UserType.AdminOnly);
             }
             return result;
         }

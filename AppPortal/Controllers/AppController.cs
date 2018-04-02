@@ -161,7 +161,7 @@ namespace Portal.Controllers
                                             result.Status = "Invalid Price";
                                         else
                                         {
-                                            var singleCharge = new AvvalPodLibrary.Models.Singlecharge();
+                                            var singleCharge = new AsemanLibrary.Models.Singlecharge();
                                             string aggregatorName = "Telepromo";
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                             singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);

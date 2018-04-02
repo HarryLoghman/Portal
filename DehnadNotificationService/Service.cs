@@ -109,6 +109,7 @@ namespace DehnadNotificationService
                 catch (Exception e)
                 {
                     logs.Error(" Exception in OverChargeWorkerThread: " + e);
+                    DehnadNotificationService.Service.SaveMessageToSendQueue("Exception in OverChargeWorkerThread", UserType.AdminOnly);
                 }
             }
         }
@@ -125,6 +126,7 @@ namespace DehnadNotificationService
                 catch (Exception e)
                 {
                     logs.Error(" Exception in ServiceCheckWorkerThread: " + e);
+                    DehnadNotificationService.Service.SaveMessageToSendQueue("Exception in ServiceCheckWorkerThread", UserType.AdminOnly);
                 }
             }
         }
@@ -133,17 +135,25 @@ namespace DehnadNotificationService
         {
             while (!shutdownEvent.WaitOne(0))
             {
-                if (DateTime.Now.Hour == 0)
-                    Thread.Sleep(1 * 60 * 60);
-                else
+                try
                 {
-                    if (DateTime.Now.Minute == 0)
+                    if (DateTime.Now.Hour == 0)
                         Thread.Sleep(1 * 60 * 60);
                     else
                     {
-                        Income.IncomeDiffrenceByHour();
-                        Thread.Sleep(60 * 60 * 1000);
+                        if (DateTime.Now.Minute == 0)
+                            Thread.Sleep(1 * 60 * 60);
+                        else
+                        {
+                            Income.IncomeDiffrenceByHour();
+                            Thread.Sleep(60 * 60 * 1000);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    logs.Info("Exception in IncomeWorkerThread:", e);
+                    DehnadNotificationService.Service.SaveMessageToSendQueue("Exception in IncomeWorkerThread", UserType.AdminOnly);
                 }
             }
         }

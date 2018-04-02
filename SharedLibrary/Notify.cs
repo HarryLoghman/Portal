@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,16 +16,20 @@ namespace SharedLibrary
             bool? isOverCharged = null;
             try
             {
-                var today = DateTime.Now;
                 using (dynamic entity = Activator.CreateInstance(entityType))
                 {
-                    var overcharged = ((IEnumerable)entity.Singlecharges).Cast<dynamic>()
-                            .Where(o => o.DateCreated.Date == today.Date && o.IsSucceeded == true && o.Price > 0)
-                            .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) > maxChargeLimit).Select(o => o.Key).ToList();
-                    if (overcharged.Count > 0)
+                    var dbName = entity.Database.Connection.Database;
+                    var overcharged = RawSql.DynamicSqlQuery(entity.Database, @"SELECT MobileNumber, SUM(Price) as Price
+  FROM " + dbName + @".[dbo].Singlecharge with (nolock) WHERE CONVERT(date,DateCreated) = CONVERT(date,@TODAY) AND Price > 0 AND IsSucceeded = 1
+  GROUP BY MobileNumber
+  HAVING SUM(price) > @MAXCHARGE
+  ORDER BY SUM(Price) desc", new SqlParameter("@MAXCHARGE", maxChargeLimit), new SqlParameter("@TODAY", DateTime.Now));
+
+                    foreach (var item in overcharged)
+                    {
                         isOverCharged = true;
-                    else
-                        isOverCharged = false;
+                        break;
+                    }
                 }
 
             }
@@ -42,15 +47,29 @@ namespace SharedLibrary
             {
                 using (dynamic entity = Activator.CreateInstance(entityType))
                 {
+                    var dbName = entity.Database.Connection.Database;
                     if (date.Date != DateTime.Now.Date)
                     {
-                        charge = ((IEnumerable)entity.Singlecharges).Cast<dynamic>()
-                            .Where(o => o.DateCreated.Date >= date.Date && o.IsSucceeded == true && o.Price > 0).ToList().Sum(o => o.Price);
+                        var chargeFromDb = RawSql.DynamicSqlQuery(entity.Database, @"SELECT SUM(Price) as Price
+  FROM " + dbName + @".[dbo].vw_Singlecharge with (nolock) WHERE CONVERT(date,DateCreated) >= CONVERT(date,@date) AND Price > 0 AND IsSucceeded = 1", new SqlParameter("@date", date));
+
+                        foreach (var item in chargeFromDb)
+                        {
+                            charge = item.Price;
+                            break;
+                        }
                     }
                     else
                     {
-                        charge = ((IEnumerable)entity.Singlecharges).Cast<dynamic>()
-                            .Where(o => o.DateCreated.Date == date.Date && o.IsSucceeded == true && o.Price > 0).ToList().Sum(o => o.Price);
+                        
+                        var chargeFromDb = RawSql.DynamicSqlQuery(entity.Database, @"SELECT SUM(Price) as Price
+  FROM " + dbName + @".[dbo].Singlecharge with (nolock) WHERE CONVERT(date,DateCreated) = CONVERT(date,@TODAY) AND Price > 0 AND IsSucceeded = 1", new SqlParameter("@TODAY", date));
+
+                        foreach (var item in chargeFromDb)
+                        {
+                            charge = item.Price;
+                            break;
+                        }
                     }
                 }
             }
@@ -113,9 +132,11 @@ namespace SharedLibrary
         {
             try
             {
+                var income = new Dictionary<int, int>();
                 using (dynamic entity = Activator.CreateInstance(entityType))
                 {
-                    var income = new Dictionary<int, int>();
+                    entity.Database.ExecuteSqlCommand("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;");
+
                     if (date.Date != DateTime.Now.Date)
                     {
                         income = ((IEnumerable)entity.SinglechargeArchives).Cast<dynamic>().Where(o => o.IsSucceeded == true && o.DateCreated.Date == date.Date)
@@ -130,8 +151,9 @@ namespace SharedLibrary
                         .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
                         .ToDictionary(o => (int)o.Hour, o => o.Amount);
                     }
-                    return income;
+                    entity.Dispose();
                 }
+                return income;
             }
             catch (Exception e)
             {

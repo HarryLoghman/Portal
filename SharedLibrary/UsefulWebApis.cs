@@ -21,6 +21,7 @@ namespace SharedLibrary
                 var accessKey = Security.GetSha256Hash("OtpCharge" + serviceCode + mobileNumber);
                 using (var client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(20);
                     var values = new Dictionary<string, string>
                 {
                    { "AccessKey", accessKey },
@@ -53,6 +54,7 @@ namespace SharedLibrary
                 var accessKey = Security.GetSha256Hash("OtpConfirm" + serviceCode + mobileNumber);
                 using (var client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(20);
                     var values = new Dictionary<string, string>
                 {
                    { "AccessKey", accessKey },
