@@ -152,7 +152,7 @@ namespace DehnadNotificationService
                 }
                 catch (Exception e)
                 {
-                    logs.Info("Exception in IncomeWorkerThread:", e);
+                    logs.Error("Exception in IncomeWorkerThread:", e);
                     DehnadNotificationService.Service.SaveMessageToSendQueue("Exception in IncomeWorkerThread", UserType.AdminOnly);
                 }
             }

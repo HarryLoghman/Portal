@@ -33,12 +33,18 @@ namespace DehnadNotificationService
         {
             try
             {
-                OverChargeNotify("TahChin", typeof(TahChinLibrary.Models.TahChinEntities), 300);
-                OverChargeNotify("MusicYad", typeof(MusicYadLibrary.Models.MusicYadEntities), 300);
-                OverChargeNotify("Dambel", typeof(DambelLibrary.Models.DambelEntities), 300);
-                OverChargeNotify("Phantom", typeof(PhantomLibrary.Models.PhantomEntities), 500);
-                OverChargeNotify("Medio", typeof(MedioLibrary.Models.MedioEntities), 400);
-                OverChargeNotify("Darchin", typeof(DarchinLibrary.Models.DarchinEntities), 7000);
+                using (var entity = new TahChinLibrary.Models.TahChinEntities())
+                    OverChargeNotify("TahChin", entity, 300);
+                using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
+                    OverChargeNotify("MusicYad", entity, 300);
+                using (var entity = new DambelLibrary.Models.DambelEntities())
+                    OverChargeNotify("Dambel", entity, 300);
+                using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                    OverChargeNotify("Phantom", entity, 500);
+                using (var entity = new MedioLibrary.Models.MedioEntities())
+                    OverChargeNotify("Medio", entity, 400);
+                using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                    OverChargeNotify("Darchin", entity, 7000);
             }
             catch (Exception e)
             {
@@ -53,18 +59,36 @@ namespace DehnadNotificationService
             var result = -1;
             try
             {
-                if(serviceCode.ToLower() == "tahchin")
-                result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(typeof(TahChinLibrary.Models.TahChinEntities), DateTime.Now);
+                if (serviceCode.ToLower() == "tahchin")
+                {
+                    using (var entity = new TahChinLibrary.Models.TahChinEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
                 else if (serviceCode.ToLower() == "musicyad")
-                    result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(typeof(MusicYadLibrary.Models.MusicYadEntities), DateTime.Now);
+                {
+                    using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
                 else if (serviceCode.ToLower() == "dambel")
-                    result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(typeof(DambelLibrary.Models.DambelEntities), DateTime.Now);
+                {
+                    using (var entity = new DambelLibrary.Models.DambelEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
                 else if (serviceCode.ToLower() == "phantom")
-                    result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(typeof(PhantomLibrary.Models.PhantomEntities), DateTime.Now);
+                {
+                    using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
                 else if (serviceCode.ToLower() == "medio")
-                    result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(typeof(MedioLibrary.Models.MedioEntities), DateTime.Now);
+                {
+                    using (var entity = new MedioLibrary.Models.MedioEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
                 else if (serviceCode.ToLower() == "darchin")
-                    result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(typeof(DarchinLibrary.Models.DarchinEntities), DateTime.Now);
+                {
+                    using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
             }
             catch (Exception e)
             {
@@ -106,12 +130,12 @@ namespace DehnadNotificationService
             }
         }
 
-        public static void OverChargeNotify(string serviceCode, Type entityTpe, int maxChargeLimit)
+        public static void OverChargeNotify(string serviceCode, dynamic entity, int maxChargeLimit)
         {
             try
             {
                 var message = "";
-                var isOvercharge = SharedLibrary.Notify.OverChargeCheck(entityTpe, maxChargeLimit);
+                var isOvercharge = SharedLibrary.Notify.OverChargeCheck(entity, maxChargeLimit);
                 if (isOvercharge == null)
                 {
                     message = "<b>Exception in OverChargeNotify for " + serviceCode + " service</b>";

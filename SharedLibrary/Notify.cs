@@ -11,27 +11,25 @@ namespace SharedLibrary
     public class Notify
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static bool? OverChargeCheck(Type entityType, int maxChargeLimit)
+        public static bool? OverChargeCheck(dynamic entity, int maxChargeLimit)
         {
             bool? isOverCharged = null;
             try
             {
-                using (dynamic entity = Activator.CreateInstance(entityType))
-                {
-                    var dbName = entity.Database.Connection.Database;
-                    var overcharged = RawSql.DynamicSqlQuery(entity.Database, @"SELECT MobileNumber, SUM(Price) as Price
+                var dbName = entity.Database.Connection.Database;
+                var overcharged = RawSql.DynamicSqlQuery(entity.Database, @"SELECT MobileNumber, SUM(Price) as Price
   FROM " + dbName + @".[dbo].Singlecharge with (nolock) WHERE CONVERT(date,DateCreated) = CONVERT(date,@TODAY) AND Price > 0 AND IsSucceeded = 1
   GROUP BY MobileNumber
   HAVING SUM(price) > @MAXCHARGE
   ORDER BY SUM(Price) desc", new SqlParameter("@MAXCHARGE", maxChargeLimit), new SqlParameter("@TODAY", DateTime.Now));
 
-                    foreach (var item in overcharged)
-                    {
-                        isOverCharged = true;
-                        break;
-                    }
+                foreach (var item in overcharged)
+                {
+                    isOverCharged = true;
+                    break;
                 }
-
+                if (isOverCharged == null)
+                    isOverCharged = false;
             }
             catch (Exception e)
             {
@@ -40,36 +38,33 @@ namespace SharedLibrary
             return isOverCharged;
         }
 
-        public static int GetSuccessfulIncomeByDate(Type entityType, DateTime date)
+        public static int GetSuccessfulIncomeByDate(dynamic entity, DateTime date)
         {
             int charge = 0;
             try
             {
-                using (dynamic entity = Activator.CreateInstance(entityType))
+                var dbName = entity.Database.Connection.Database;
+                if (date.Date != DateTime.Now.Date)
                 {
-                    var dbName = entity.Database.Connection.Database;
-                    if (date.Date != DateTime.Now.Date)
-                    {
-                        var chargeFromDb = RawSql.DynamicSqlQuery(entity.Database, @"SELECT SUM(Price) as Price
+                    var chargeFromDb = RawSql.DynamicSqlQuery(entity.Database, @"SELECT SUM(Price) as Price
   FROM " + dbName + @".[dbo].vw_Singlecharge with (nolock) WHERE CONVERT(date,DateCreated) >= CONVERT(date,@date) AND Price > 0 AND IsSucceeded = 1", new SqlParameter("@date", date));
 
-                        foreach (var item in chargeFromDb)
-                        {
-                            charge = item.Price;
-                            break;
-                        }
-                    }
-                    else
+                    foreach (var item in chargeFromDb)
                     {
-                        
-                        var chargeFromDb = RawSql.DynamicSqlQuery(entity.Database, @"SELECT SUM(Price) as Price
+                        charge = item.Price;
+                        break;
+                    }
+                }
+                else
+                {
+
+                    var chargeFromDb = RawSql.DynamicSqlQuery(entity.Database, @"SELECT SUM(Price) as Price
   FROM " + dbName + @".[dbo].Singlecharge with (nolock) WHERE CONVERT(date,DateCreated) = CONVERT(date,@TODAY) AND Price > 0 AND IsSucceeded = 1", new SqlParameter("@TODAY", date));
 
-                        foreach (var item in chargeFromDb)
-                        {
-                            charge = item.Price;
-                            break;
-                        }
+                    foreach (var item in chargeFromDb)
+                    {
+                        charge = item.Price;
+                        break;
                     }
                 }
             }
