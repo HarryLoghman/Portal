@@ -51,12 +51,8 @@ namespace DehnadNotificationService
                 {
                     try
                     {
-                        ServiceControllerStatus status;
-
                         service.Refresh();
-                        status = service.Status;
-
-                        switch (status)
+                        switch (service.Status)
                         {
                             case ServiceControllerStatus.Running:
                                 result.Add(service.ServiceName + "=" + "Running");
@@ -82,7 +78,9 @@ namespace DehnadNotificationService
                     {
                         logs.Error("Exception in  ServiceChecker Job : ", e);
                     }
-                    service.Dispose();
+                    service.Close();
+                    if (service != null)
+                        service.Dispose();
                 }
             }
             catch (Exception e)

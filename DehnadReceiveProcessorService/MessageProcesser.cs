@@ -18,7 +18,7 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false).OrderByDescending(o => o.ShortCode).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -34,6 +34,209 @@ namespace DehnadReceiveProcessorService
             catch (Exception e)
             {
                 logs.Error("Exeption in RecieveProcessor: " + e);
+            }
+        }
+
+        public void PardisPlatformProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("PardisPlatform");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in PardisPlatformProcess: " + e);
+            }
+        }
+
+        public void TelepromoProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("Telepromo");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in TelepromoProcess: " + e);
+            }
+        }
+
+        public void HubProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("Hub");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in HubProcess: " + e);
+            }
+        }
+
+        public void IrancellProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("MTN");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in IrancellProcess: " + e);
+            }
+        }
+
+        public void MobinOneProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("MobinOne");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in MobinOneProcess: " + e);
+            }
+        }
+
+        public void MobinOneMapfaProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("MobinOneMapfa");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in MobinOneMapfaProcess: " + e);
+            }
+        }
+
+        public void SamssonTciProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("SamssonTci");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in SamssonTciProcess: " + e);
             }
         }
 

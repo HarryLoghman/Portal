@@ -145,7 +145,7 @@ namespace DehnadTahChinService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
         public int DefaultSingleChargeTakeSize {
             get {
                 return ((int)(this["DefaultSingleChargeTakeSize"]));

@@ -29,6 +29,9 @@
         <EntityTypeShape EntityType="SoltanModel.SinglechargeArchive" Width="1.5" PointX="13.375" PointY="12.75" />
         <EntityTypeShape EntityType="SoltanModel.ServicesRealtimeStatistic" Width="1.5" PointX="15.375" PointY="0.75" />
         <EntityTypeShape EntityType="SoltanModel.SinglechargeInstallmentArchive" Width="1.5" PointX="15.375" PointY="3.75" />
+        <EntityTypeShape EntityType="SoltanModel.Setting" Width="1.5" PointX="15.375" PointY="8.75" />
+        <EntityTypeShape EntityType="SoltanModel.vw_Singlecharge" Width="1.5" PointX="15.375" PointY="11.75" />
+        <EntityTypeShape EntityType="SoltanModel.InstallmentCycle" Width="1.5" PointX="15.375" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

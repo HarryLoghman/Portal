@@ -197,7 +197,7 @@ namespace DehnadPhantomService
             var cycleType = typeof(PhantomLibrary.Models.InstallmentCycle);
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
-            if (DateTime.Now.Hour >= 10 && DateTime.Now.Hour < 13)
+            if (DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 13)
                 installmentCycleNumber = 2;
             else if (DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
                 installmentCycleNumber = 3;
@@ -228,7 +228,7 @@ namespace DehnadPhantomService
                     else
                     {
                         var startTime = DateTime.Now;
-                        if (installmentCycleNumber == 1 && DateTime.Now.Hour < 10)
+                        if (installmentCycleNumber == 1 && DateTime.Now.Hour < 11)
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
@@ -236,7 +236,7 @@ namespace DehnadPhantomService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 10 && DateTime.Now.Hour < 13)
+                        else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 13)
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;

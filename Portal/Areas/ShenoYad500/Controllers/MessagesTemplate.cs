@@ -23,6 +23,61 @@ namespace Portal.Areas.ShenoYad500.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult Settings_Read([DataSourceRequest]DataSourceRequest request)
+        {
+            DataSourceResult result = db.Settings.Where(o => o.Name == "campaign").ToDataSourceResult(request, settings => new
+            {
+                Id = settings.Id,
+                Name = settings.Name,
+                PersianName = settings.PersianName,
+                Value = settings.Value
+            });
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult Settings_Update([DataSourceRequest]DataSourceRequest request, [Bind(Exclude = "Name,PersianName")] Setting messagesTemplate)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var entity = new Setting
+                    {
+                        Id = messagesTemplate.Id,
+                        Name = "not allowed for editing",
+                        PersianName = "not allowed for editing",
+                        Value = messagesTemplate.Value
+                    };
+
+                    db.Settings.Attach(entity);
+                    db.Entry(entity).State = EntityState.Modified;
+                    db.Entry(entity).Property(x => x.Name).IsModified = false;
+                    db.Entry(entity).Property(x => x.PersianName).IsModified = false;
+                    db.SaveChanges();
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+                {
+                    // Retrieve the error messages as a list of strings.
+                    var errorMessages = ex.EntityValidationErrors
+                            .SelectMany(x => x.ValidationErrors)
+                            .Select(x => x.ErrorMessage);
+
+                    // Join the list to a single string.
+                    var fullErrorMessage = string.Join("; ", errorMessages);
+
+                    // Combine the original exception message with the new one.
+                    var exceptionMessage = string.Concat(ex.Message, " The validation errors are: ", fullErrorMessage);
+
+                    // Throw a new DbEntityValidationException with the improved exception message.
+                    throw new System.Data.Entity.Validation.DbEntityValidationException(exceptionMessage, ex.EntityValidationErrors);
+                }
+
+            }
+            return Json(new[] { messagesTemplate }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult MessagesTemplate_Read([DataSourceRequest]DataSourceRequest request)
         {
             DataSourceResult result = db.MessagesTemplates.ToDataSourceResult(request, messagesTemplate => new

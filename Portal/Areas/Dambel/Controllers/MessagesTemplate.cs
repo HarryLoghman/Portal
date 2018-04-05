@@ -18,7 +18,7 @@ namespace Portal.Areas.Dambel.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.ServiceName = "موزیک یاد";
+            ViewBag.ServiceName = "دمبل";
             return View();
         }
 

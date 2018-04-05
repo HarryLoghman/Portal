@@ -105,17 +105,121 @@ namespace BehAmooz500Library
             }
         }
 
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static async void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
         {
             try
             {
                 using (var entity = new BehAmooz500Entities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    int isCampaignActive = 0;
+                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                    if (campaign != null)
+                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
+                    if (isInBlackList == true)
+                        isCampaignActive = (int)CampaignStatus.Deactive;
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                     {
-                        message = MessageHandler.EmptyContentWhenSubscribed(message, messagesTemplate);
+                        if (isCampaignActive == (int)CampaignStatus.Active)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignEmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message.Content = messagesTemplate.Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "h")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.Active)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignHContent").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message.Content = messagesTemplate.Where(o => o.Title == "HContent").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "s")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend)
+                        {
+                            string subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null && sub.SpecialUniqueId != null)
+                            {
+                                subId = sub.SpecialUniqueId;
+                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/behamooz500/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                string n = result.n.ToString();
+                                string m = result.m.ToString();
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                message.Content = message.Content.Replace("{m}", m);
+                                message.Content = message.Content.Replace("{n}", n);
+                                if (message.Content.Contains("{REFERRALCODE}"))
+                                {
+                                    message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                }
+                            }
+                            else
+                            {
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                MessageHandler.InsertMessageToQueue(message);
+                            }
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                        else
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "g")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend)
+                        {
+                            string subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null && sub.SpecialUniqueId != null)
+                            {
+                                subId = sub.SpecialUniqueId;
+                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/behamooz500/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                var chargesList = new List<string>();
+                                foreach (var item in result.charges)
+                                {
+                                    chargesList.Add(item.ToString());
+                                }
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberCharges").Select(o => o.Content).FirstOrDefault();
+                                message.Content = message.Content.Replace("{count}", chargesList.Count.ToString());
+                                if (chargesList.Count > 0)
+                                {
+                                    var text = "";
+                                    foreach (var item in chargesList)
+                                    {
+                                        text = text + item + Environment.NewLine;
+                                    }
+                                    message.Content = message.Content.Replace("{charges}", text);
+                                }
+                                else
+                                    message.Content = message.Content.Replace("{charges}", "");
+
+                                if (message.Content.Contains("{REFERRALCODE}"))
+                                {
+                                    message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                }
+                            }
+                            else
+                            {
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                MessageHandler.InsertMessageToQueue(message);
+                            }
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                        else
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberCharges").Select(o => o.Content).FirstOrDefault();
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
                         return;
                     }
                     else if (message.Content == "77" || message.Content.ToLower() == "m")
@@ -126,7 +230,10 @@ namespace BehAmooz500Library
                     }
                     if (!service.OnKeywords.Contains(message.Content))
                     {
-                        message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                        if (isCampaignActive == (int)CampaignStatus.Active)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignInvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message = MessageHandler.InvalidContentWhenSubscribed(message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }

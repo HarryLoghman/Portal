@@ -91,8 +91,8 @@ namespace DehnadTahChinService
                 }
                 logs.Info("installmentList count:" + installmentList.Count);
 
-                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
-                //var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, installmentListTakeSize);
+                //var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
+                var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, installmentListTakeSize);
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
 

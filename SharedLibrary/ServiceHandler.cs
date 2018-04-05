@@ -196,6 +196,14 @@ namespace SharedLibrary
             }
         }
 
+        public static List<string> GetShortCodesFromAggregatorId(long aggregatorId)
+        {
+            using (var portalEntity = new PortalEntities())
+            {
+                return portalEntity.ServiceInfoes.Where(o => o.AggregatorId == aggregatorId).Select(o => o.ShortCode).ToList();
+            }
+        }
+
         public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
         {
             var result = false;

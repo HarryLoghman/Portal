@@ -2,10 +2,97 @@
 @{
     ViewBag.Title = ViewBag.ServiceName + " : " + "پیغام های کاربر";
 }
-
+تنظیمات
+<div class="k-rtl" id="settingsGrid"></div>
+<br>
+پیغام های کاربری
 <div class="k-rtl" id="grid"></div>
 
 <script>
+var campaignData = [
+                        { "Id": 0, "Value": "غیر فعال" },
+                        { "Id": 1, "Value": "فعال" },
+                        { "Id": 2, "Value": "تعلیق" },
+
+                    ];
+    function campaignDropDownEditor(container, options) {
+        $('<input data-text-field="Value" data-value-field="Id" data-bind="value:' + options.field + '"/>')
+            .appendTo(container)
+           .kendoDropDownList({
+               dataSource: campaignData,
+               dataTextField: "Value",
+               dataValueField: "Id"
+           });
+    }
+
+$("#settingsGrid").kendoGrid({
+
+        columns: [
+            { field: "PersianName", title: "عنوان"},
+            { field: "Value", title: "وضعیت", editor: campaignDropDownEditor, template: function(dataItem) { if (dataItem.Value == 0) return "غیر فعال"; if (dataItem.Value == 1) return "فعال"; if (dataItem.Value == 2) return "تعلیق"; }},
+            { command: ["edit"], width: 180 }
+        ],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "MessagesTemplate/Settings_Read",
+                    type: "POST"
+                },
+                update: {
+                    url: "MessagesTemplate/Settings_Update",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#settingsGrid").data("kendoGrid").dataSource.read();
+                    }
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                        PersianName: { type: "string", editable: false },
+                        Value: { type: "string", validation: { required: true }, nullable: false },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "asc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+    });
+
     $("#grid").kendoGrid({
 
         columns: [

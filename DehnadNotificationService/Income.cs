@@ -16,11 +16,11 @@ namespace DehnadNotificationService
         {
             try
             {
-                IncomeDiffrenceNotify("TahChin", typeof(TahChinLibrary.Models.TahChinEntities));
-                IncomeDiffrenceNotify("MusicYad", typeof(MusicYadLibrary.Models.MusicYadEntities));
-                IncomeDiffrenceNotify("Dambel", typeof(DambelLibrary.Models.DambelEntities));
-                IncomeDiffrenceNotify("Phantom", typeof(PhantomLibrary.Models.PhantomEntities));
-                IncomeDiffrenceNotify("Medio", typeof(MedioLibrary.Models.MedioEntities));
+                //IncomeDiffrenceNotify("TahChin", typeof(TahChinLibrary.Models.TahChinEntities));
+                //IncomeDiffrenceNotify("MusicYad", typeof(MusicYadLibrary.Models.MusicYadEntities));
+                //IncomeDiffrenceNotify("Dambel", typeof(DambelLibrary.Models.DambelEntities));
+                //IncomeDiffrenceNotify("Phantom", typeof(PhantomLibrary.Models.PhantomEntities));
+                //IncomeDiffrenceNotify("Medio", typeof(MedioLibrary.Models.MedioEntities));
             }
             catch (Exception e)
             {
