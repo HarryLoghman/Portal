@@ -38,6 +38,30 @@ namespace SharedLibrary
             return isOverCharged;
         }
 
+        public static bool? MoQueueCheck(dynamic entity)
+        {
+            bool? isOverQueued = null;
+            try
+            {
+                var dbName = entity.Database.Connection.Database;
+                var queueSize = RawSql.DynamicSqlQuery(entity.Database, @"SELECT COUNT(*) as c
+  FROM " + dbName + @".[dbo].[ReceievedMessages] with (nolock) WHERE IsProcessed = 0 HAVING COUNT(*) > 400");
+
+                foreach (var item in queueSize)
+                {
+                    isOverQueued = true;
+                    break;
+                }
+                if (isOverQueued == null)
+                    isOverQueued = false;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MoQueueCheck: " + e);
+            }
+            return isOverQueued;
+        }
+
         public static int GetSuccessfulIncomeByDate(dynamic entity, DateTime date)
         {
             int charge = 0;

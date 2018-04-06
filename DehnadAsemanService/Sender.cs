@@ -48,13 +48,13 @@ namespace DehnadAsemanService
                         }
                     }
                 }
-
-                if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
+                SharedLibrary.MessageHandler.SendSelectedMessages(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                if (DateTime.Now.Hour < 20 && DateTime.Now.Hour > 7)
                 {
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 }
-                SharedLibrary.MessageHandler.SendSelectedMessages(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                
             }
             catch (Exception e)
             {

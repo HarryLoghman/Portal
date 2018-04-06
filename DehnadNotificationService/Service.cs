@@ -121,7 +121,8 @@ namespace DehnadNotificationService
                 try
                 {
                     ServiceChecker.Job();
-                    Thread.Sleep(1000);
+                    ServiceChecker.MoQueueCheck();
+                    Thread.Sleep(5 * 60 * 1000);
                 }
                 catch (Exception e)
                 {

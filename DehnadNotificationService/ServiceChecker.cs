@@ -110,6 +110,37 @@ namespace DehnadNotificationService
             }
         }
 
+        public static void MoQueueCheck()
+        {
+            try
+            {
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    var message = "";
+                    bool? isOverQueued = SharedLibrary.Notify.MoQueueCheck(entity);
+                    if (isOverQueued == null)
+                    {
+                        message = "<b>Exception in MoQueueCheck</b>";
+                        DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
+                    }
+                    else
+                    {
+                        if (isOverQueued == true)
+                        {
+                            message = "<b>OverQueue Mo</b>";
+                            DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(" Exception in MoQueueCheck in notification:", e);
+                var message = "<b>Exception in MoQueueCheck</b>";
+                DehnadNotificationService.Service.SaveMessageToSendQueue(message, UserType.AdminOnly);
+            }
+        }
+
         public static void StopService(string serviceName)
         {
             try
