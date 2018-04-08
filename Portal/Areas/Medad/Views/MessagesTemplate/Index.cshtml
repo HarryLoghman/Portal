@@ -1,0 +1,77 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "پیغام های کاربر";
+}
+
+<div class="k-rtl" id="grid"></div>
+
+<script>
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف" },
+            { field: "PersianTitle", title: "عنوان"},
+            { field: "Content", title: "پیغام", editor: textAreaEditor },
+            { command: ["edit", "destroy"], width: 180 }
+        ],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "MessagesTemplate/MessagesTemplate_Read",
+                    type: "POST"
+                },
+                update: {
+                    url: "MessagesTemplate/MessagesTemplate_Update",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "number", editable: false },
+                        PersianTitle: { type: "string", editable: false },
+                        Content: { type: "string", validation: { required: true }, nullable: false },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "asc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+    });
+</script>

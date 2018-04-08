@@ -176,6 +176,10 @@
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
       <Name>MashinBazhaLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MedadLibrary\MedadLibrary.csproj">
+      <Project>{14344213-121b-1513-433d-4142db121245}</Project>
+      <Name>MedadLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MedioLibrary\MedioLibrary.csproj">
       <Project>{1232d11f-151b-a5b5-1311-4bc28b33144f}</Project>
       <Name>MedioLibrary</Name>

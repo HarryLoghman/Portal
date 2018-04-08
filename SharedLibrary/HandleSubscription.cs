@@ -139,7 +139,7 @@ namespace SharedLibrary
                     while (isUniqueIdAssigned == false)
                     {
                         var uId = random.Next(10000000, 99999999).ToString();
-                        var subscriber = entity.Subscribers.FirstOrDefault(o => o.SubscriberUniqueId == uId);
+                        var subscriber = entity.Subscribers.Where(o => o.SubscriberUniqueId == uId).Select(o => o.MobileNumber).FirstOrDefault();
                         if (subscriber == null)
                         {
                             subUniqueId = uId;
@@ -186,6 +186,7 @@ namespace SharedLibrary
             {
                 using (DbContextTransaction scope = entity.Database.BeginTransaction())
                 {
+                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
                     var sub = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
                     if (sub == null)
                         return;

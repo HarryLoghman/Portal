@@ -127,7 +127,7 @@ namespace Tamly500Library
                             var black = new SharedLibrary.Models.BlackList();
                             black.DateAdded = DateTime.Now;
                             black.MobileNumber = message.MobileNumber;
-                            black.ServiceId = 0;
+                            black.ServiceId = service.Id;
                             portalEntity.BlackLists.Add(black);
                             portalEntity.SaveChanges();
                         }

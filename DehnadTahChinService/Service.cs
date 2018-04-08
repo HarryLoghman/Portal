@@ -137,7 +137,7 @@ namespace DehnadTahChinService
             var eventbase = new Eventbase();
             while (!shutdownEvent.WaitOne(0))
             {
-                eventbase.InsertEventbaseMessagesToQueue();
+                //eventbase.InsertEventbaseMessagesToQueue();
                 Thread.Sleep(1000);
             }
         }

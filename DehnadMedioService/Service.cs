@@ -25,9 +25,9 @@ namespace DehnadMedioService
 
         protected override void OnStart(string[] args)
         {
-            prepareAutochargeThread = new Thread(AutochargeWorkerThread);
-            prepareAutochargeThread.IsBackground = true;
-            prepareAutochargeThread.Start();
+            //prepareAutochargeThread = new Thread(AutochargeWorkerThread);
+            //prepareAutochargeThread.IsBackground = true;
+            //prepareAutochargeThread.Start();
 
             prepareEventbaseThread = new Thread(EventbaseWorkerThread);
             prepareEventbaseThread.IsBackground = true;
@@ -45,9 +45,9 @@ namespace DehnadMedioService
             timedThread.IsBackground = true;
             timedThread.Start();
 
-            informApplicationThread = new Thread(InformApplicationWorkerThread);
-            informApplicationThread.IsBackground = true;
-            informApplicationThread.Start();
+            //informApplicationThread = new Thread(InformApplicationWorkerThread);
+            //informApplicationThread.IsBackground = true;
+            //informApplicationThread.Start();
 
             singlechargeInstallmentThread = new Thread(SinglechargeInstallmentWorkerThread);
             singlechargeInstallmentThread.IsBackground = true;
@@ -66,11 +66,11 @@ namespace DehnadMedioService
         {
             try
             {
-                shutdownEvent.Set();
-                if (!prepareAutochargeThread.Join(3000))
-                {
-                    prepareAutochargeThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!prepareAutochargeThread.Join(3000))
+                //{
+                //    prepareAutochargeThread.Abort();
+                //}
 
                 shutdownEvent.Set();
                 if (!prepareEventbaseThread.Join(3000))
@@ -96,11 +96,11 @@ namespace DehnadMedioService
                     timedThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!informApplicationThread.Join(3000))
-                {
-                    informApplicationThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!informApplicationThread.Join(3000))
+                //{
+                //    informApplicationThread.Abort();
+                //}
 
                 shutdownEvent.Set();
                 if (!singlechargeInstallmentThread.Join(3000))
@@ -143,7 +143,7 @@ namespace DehnadMedioService
             var eventbase = new Eventbase();
             while (!shutdownEvent.WaitOne(0))
             {
-                eventbase.InsertEventbaseMessagesToQueue();
+                //eventbase.InsertEventbaseMessagesToQueue();
                 Thread.Sleep(1000);
             }
         }

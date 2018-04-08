@@ -25,9 +25,9 @@ namespace DehnadDambelService
 
         protected override void OnStart(string[] args)
         {
-            prepareAutochargeThread = new Thread(AutochargeWorkerThread);
-            prepareAutochargeThread.IsBackground = true;
-            prepareAutochargeThread.Start();
+            //prepareAutochargeThread = new Thread(AutochargeWorkerThread);
+            //prepareAutochargeThread.IsBackground = true;
+            //prepareAutochargeThread.Start();
 
             prepareEventbaseThread = new Thread(EventbaseWorkerThread);
             prepareEventbaseThread.IsBackground = true;
@@ -66,11 +66,11 @@ namespace DehnadDambelService
         {
             try
             {
-                shutdownEvent.Set();
-                if (!prepareAutochargeThread.Join(3000))
-                {
-                    prepareAutochargeThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!prepareAutochargeThread.Join(3000))
+                //{
+                //    prepareAutochargeThread.Abort();
+                //}
 
                 shutdownEvent.Set();
                 if (!prepareEventbaseThread.Join(3000))
@@ -143,7 +143,7 @@ namespace DehnadDambelService
             var eventbase = new Eventbase();
             while (!shutdownEvent.WaitOne(0))
             {
-                eventbase.InsertEventbaseMessagesToQueue();
+                //eventbase.InsertEventbaseMessagesToQueue();
                 Thread.Sleep(1000);
             }
         }

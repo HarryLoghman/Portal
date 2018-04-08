@@ -450,6 +450,8 @@ namespace DehnadReceiveProcessorService
                     DambelLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Aseman")
                     AsemanLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "Medad")
+                    MedadLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {

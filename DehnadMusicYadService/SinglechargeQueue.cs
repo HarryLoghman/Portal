@@ -28,7 +28,7 @@ namespace DehnadMusicYadService
             }
         }
 
-        private void RemoveUsersFromSinglechargeWaitingList()
+        private async void RemoveUsersFromSinglechargeWaitingList()
         {
             try
             {
@@ -55,15 +55,13 @@ namespace DehnadMusicYadService
                     }
                     entity.SaveChanges();
 
-                    Type entityType = typeof(MusicYadEntities);
                     var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
                     string aggregatorName = Properties.Settings.Default.AggregatorName;
                     var serviceCode = Properties.Settings.Default.ServiceCode;
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
-                    Type singleChargeType = typeof(Singlecharge);
                     int installmentListCount = mobileNumbers.Count;
                     var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                    SharedLibrary.InstallmentHandler.MtnInstallmentJob(entityType, maxChargeLimit, 0, 0, serviceCode, chargeCodes, mobileNumbers, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                    await SinglechargeInstallmentClass.ProcessMtnInstallmentChunk(maxChargeLimit, mobileNumbers, serviceAdditionalInfo, chargeCodes, 0, 0, 1);
                 }
             }
             catch (Exception e)
