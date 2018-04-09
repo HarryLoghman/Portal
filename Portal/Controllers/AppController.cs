@@ -43,7 +43,8 @@ namespace Portal.Controllers
                     }
                     else
                     {
-                        message = SharedLibrary.MessageHandler.ValidateMessage(message);
+                        message.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(message.ShortCode);
+                        message.Content = SharedLibrary.MessageHandler.NormalizeContent(message.Content);
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                         message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
                         message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;

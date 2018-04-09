@@ -41,9 +41,9 @@ namespace DehnadDambelService
             statisticsThread.IsBackground = true;
             statisticsThread.Start();
 
-            timedThread = new Thread(TiemdWorkerThread);
-            timedThread.IsBackground = true;
-            timedThread.Start();
+            //timedThread = new Thread(TiemdWorkerThread);
+            //timedThread.IsBackground = true;
+            //timedThread.Start();
 
             //informApplicationThread = new Thread(InformApplicationWorkerThread);
             //informApplicationThread.IsBackground = true;
@@ -90,11 +90,11 @@ namespace DehnadDambelService
                     statisticsThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!timedThread.Join(3000))
-                {
-                    timedThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!timedThread.Join(3000))
+                //{
+                //    timedThread.Abort();
+                //}
 
                 //shutdownEvent.Set();
                 //if (!informApplicationThread.Join(3000))

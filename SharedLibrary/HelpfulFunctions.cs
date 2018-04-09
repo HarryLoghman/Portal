@@ -123,7 +123,7 @@ namespace SharedLibrary
             return imiDataList;
         }
 
-        public static Dictionary<string, int> GetIncomeAndSubscriptionsFromImiDataFile(List<ImiData> imiDatas)
+        public static Dictionary<string, int> GetIncomeAndSubscriptionsFromImiDataFile(List<ImiData> imiDatas, List<SharedLibrary.Models.OperatorsPrefix> operatorPrefixes)
         {
             Dictionary<string, int> result = new Dictionary<string, int>();
             result["prepaidSubscriptions"] = 0;
@@ -143,7 +143,7 @@ namespace SharedLibrary
                             continue;
                         var message = new MessageObject();
                         message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);
+                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message, operatorPrefixes);
                         if (message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
                             result["postpaidCharges"] += data.billedPricePoint.Value;
                         else
@@ -154,7 +154,7 @@ namespace SharedLibrary
                     {
                         var message = new MessageObject();
                         message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);
+                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message, operatorPrefixes);
                         if (message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
                             result["postpaidUnsubscriptions"] += 1;
                         else
@@ -164,7 +164,7 @@ namespace SharedLibrary
                     {
                         var message = new MessageObject();
                         message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message);
+                        message = SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(message, operatorPrefixes);
                         if (message.OperatorPlan == (int)MessageHandler.OperatorPlan.Postpaid)
                             result["postpaidSubscriptions"] += 1;
                         else

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
 
@@ -18,6 +20,7 @@ namespace DehnadReceiveProcessorService
         private Thread getIrancellsMoThread;
         private Thread getFtpThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
+        public static List<SharedLibrary.Models.OperatorsPrefix> prefix;
         public Service()
         {
             InitializeComponent();
@@ -122,81 +125,169 @@ namespace DehnadReceiveProcessorService
 
         private void MessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.Process();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.Process();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 
         private void TelepromoMessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.TelepromoProcess();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.TelepromoProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 
         private void HubMessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.HubProcess();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.HubProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 
         private void IrancellMessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.IrancellProcess();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.IrancellProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 
         private void MobinOneMessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.MobinOneProcess();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.MobinOneProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 
         private void MobinOneMapfaMessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.MobinOneMapfaProcess();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.MobinOneMapfaProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 
         private void SamssonTciMessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.SamssonTciProcess();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.SamssonTciProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 
         private void PardisPLatformMessageProcessorWorkerThread()
         {
-            var messageProcessor = new MessageProcesser();
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                messageProcessor.PardisPlatformProcess();
-                Thread.Sleep(1000);
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.PardisPlatformProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
             }
         }
 

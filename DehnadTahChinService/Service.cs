@@ -41,9 +41,9 @@ namespace DehnadTahChinService
             statisticsThread.IsBackground = true;
             statisticsThread.Start();
 
-            timedThread = new Thread(TiemdWorkerThread);
-            timedThread.IsBackground = true;
-            timedThread.Start();
+            //timedThread = new Thread(TiemdWorkerThread);
+            //timedThread.IsBackground = true;
+            //timedThread.Start();
 
             //informApplicationThread = new Thread(InformApplicationWorkerThread);
             //informApplicationThread.IsBackground = true;
@@ -88,10 +88,10 @@ namespace DehnadTahChinService
                     statisticsThread.Abort();
                 }
 
-                if (!timedThread.Join(3000))
-                {
-                    timedThread.Abort();
-                }
+                //if (!timedThread.Join(3000))
+                //{
+                //    timedThread.Abort();
+                //}
 
                 //if (!informApplicationThread.Join(3000))
                 //{

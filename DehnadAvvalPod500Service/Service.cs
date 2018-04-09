@@ -40,9 +40,9 @@ namespace DehnadAvvalPod500Service
             statisticsThread.IsBackground = true;
             statisticsThread.Start();
 
-            timedThread = new Thread(TiemdWorkerThread);
-            timedThread.IsBackground = true;
-            timedThread.Start();
+            //timedThread = new Thread(TiemdWorkerThread);
+            //timedThread.IsBackground = true;
+            //timedThread.Start();
 
             //informApplicationThread = new Thread(InformApplicationWorkerThread);
             //informApplicationThread.IsBackground = true;
@@ -89,11 +89,11 @@ namespace DehnadAvvalPod500Service
                     statisticsThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!timedThread.Join(3000))
-                {
-                    timedThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!timedThread.Join(3000))
+                //{
+                //    timedThread.Abort();
+                //}
 
                 //shutdownEvent.Set();
                 //if (!informApplicationThread.Join(3000))
@@ -227,12 +227,12 @@ namespace DehnadAvvalPod500Service
 
         private void SinglechargeQueueWorkerThread()
         {
-            var singlechargeQueue = new SinglechargeQueue();
-            while (!shutdownEvent.WaitOne(0))
-            {
-                singlechargeQueue.ProcessQueue();
-                Thread.Sleep(1000);
-            }
+            //var singlechargeQueue = new SinglechargeQueue();
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    singlechargeQueue.ProcessQueue();
+            //    Thread.Sleep(1000);
+            //}
         }
     }
 }

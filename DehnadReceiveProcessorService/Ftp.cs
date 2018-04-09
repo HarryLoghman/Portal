@@ -77,7 +77,7 @@ namespace DehnadReceiveProcessorService
                         }
                         SharedLibrary.HelpfulFunctions.DecompressFromBZ2File(imiBz2FileUri);
                         var imiDataList = SharedLibrary.HelpfulFunctions.ReadImiDataFile(decompressedFileName);
-                        var result = SharedLibrary.HelpfulFunctions.GetIncomeAndSubscriptionsFromImiDataFile(imiDataList);
+                        var result = SharedLibrary.HelpfulFunctions.GetIncomeAndSubscriptionsFromImiDataFile(imiDataList, Service.prefix);
                         report.SumOfSinglechargeSuccessfulCharge = result["sumOfCharges"];
                         report.SumOfSinglechargeSuccessfulPostpaidCharge = result["postpaidCharges"];
                         report.SumOfSinglechargeSuccessfulPrepaidCharge = result["prepaidCharges"];

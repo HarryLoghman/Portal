@@ -133,20 +133,20 @@ namespace SharedLibrary
                     newSubscriber.PersianActivationDate = Date.GetPersianDate();
                     newSubscriber.MobileOperator = message.MobileOperator;
                     newSubscriber.OperatorPlan = message.OperatorPlan;
-                    Random random = new Random();
-                    var subUniqueId = "";
-                    bool isUniqueIdAssigned = false;
-                    while (isUniqueIdAssigned == false)
-                    {
-                        var uId = random.Next(10000000, 99999999).ToString();
-                        var subscriber = entity.Subscribers.Where(o => o.SubscriberUniqueId == uId).Select(o => o.MobileNumber).FirstOrDefault();
-                        if (subscriber == null)
-                        {
-                            subUniqueId = uId;
-                            isUniqueIdAssigned = true;
-                        }
-                    }
-                    newSubscriber.SubscriberUniqueId = subUniqueId;
+                    //Random random = new Random();
+                    //var subUniqueId = "";
+                    //bool isUniqueIdAssigned = false;
+                    //while (isUniqueIdAssigned == false)
+                    //{
+                    //    var uId = random.Next(10000000, 99999999).ToString();
+                    //    var subscriber = entity.Subscribers.Where(o => o.SubscriberUniqueId == uId).Select(o => o.MobileNumber).FirstOrDefault();
+                    //    if (subscriber == null)
+                    //    {
+                    //        subUniqueId = uId;
+                    //        isUniqueIdAssigned = true;
+                    //    }
+                    //}
+                    newSubscriber.SubscriberUniqueId = "";
                     newSubscriber.SpecialUniqueId = null;
                     entity.Subscribers.Add(newSubscriber);
                     entity.SaveChanges();

@@ -40,9 +40,9 @@ namespace DehnadMenchBazService
             statisticsThread.IsBackground = true;
             statisticsThread.Start();
 
-            timedThread = new Thread(TiemdWorkerThread);
-            timedThread.IsBackground = true;
-            timedThread.Start();
+            //timedThread = new Thread(TiemdWorkerThread);
+            //timedThread.IsBackground = true;
+            //timedThread.Start();
 
             //informApplicationThread = new Thread(InformApplicationWorkerThread);
             //informApplicationThread.IsBackground = true;
@@ -89,11 +89,11 @@ namespace DehnadMenchBazService
                     statisticsThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!timedThread.Join(3000))
-                {
-                    timedThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!timedThread.Join(3000))
+                //{
+                //    timedThread.Abort();
+                //}
 
                 //shutdownEvent.Set();
                 //if (!informApplicationThread.Join(3000))
@@ -190,11 +190,11 @@ namespace DehnadMenchBazService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            while (!shutdownEvent.WaitOne(0))
-            {
-                SinglechargeInstallmentClass.FakeInstallmentJob();
-                Thread.Sleep(7200000);
-            }
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    SinglechargeInstallmentClass.FakeInstallmentJob();
+            //    Thread.Sleep(7200000);
+            //}
         }
 
         private void SinglechargeInstallmentBalancerWorkerThread()
@@ -214,12 +214,12 @@ namespace DehnadMenchBazService
 
         private void SinglechargeQueueWorkerThread()
         {
-            var singlechargeQueue = new SinglechargeQueue();
-            while (!shutdownEvent.WaitOne(0))
-            {
-                singlechargeQueue.ProcessQueue();
-                Thread.Sleep(1000);
-            }
+            //var singlechargeQueue = new SinglechargeQueue();
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    singlechargeQueue.ProcessQueue();
+            //    Thread.Sleep(1000);
+            //}
         }
     }
 }

@@ -36,9 +36,9 @@ namespace DehnadMyLeagueService
             statisticsThread.IsBackground = true;
             statisticsThread.Start();
 
-            timedThread = new Thread(TiemdWorkerThread);
-            timedThread.IsBackground = true;
-            timedThread.Start();
+            //timedThread = new Thread(TiemdWorkerThread);
+            //timedThread.IsBackground = true;
+            //timedThread.Start();
         }
 
         protected override void OnStop()
@@ -69,11 +69,11 @@ namespace DehnadMyLeagueService
                     statisticsThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!timedThread.Join(3000))
-                {
-                    timedThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!timedThread.Join(3000))
+                //{
+                //    timedThread.Abort();
+                //}
             }
             catch (Exception exp)
             {

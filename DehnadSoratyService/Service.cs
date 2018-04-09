@@ -40,9 +40,9 @@ namespace DehnadSoratyService
             statisticsThread.IsBackground = true;
             statisticsThread.Start();
 
-            timedThread = new Thread(TiemdWorkerThread);
-            timedThread.IsBackground = true;
-            timedThread.Start();
+            //timedThread = new Thread(TiemdWorkerThread);
+            //timedThread.IsBackground = true;
+            //timedThread.Start();
 
             //informApplicationThread = new Thread(InformApplicationWorkerThread);
             //informApplicationThread.IsBackground = true;
@@ -89,11 +89,11 @@ namespace DehnadSoratyService
                     statisticsThread.Abort();
                 }
 
-                shutdownEvent.Set();
-                if (!timedThread.Join(3000))
-                {
-                    timedThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!timedThread.Join(3000))
+                //{
+                //    timedThread.Abort();
+                //}
 
                 //shutdownEvent.Set();
                 //if (!informApplicationThread.Join(3000))
@@ -190,15 +190,15 @@ namespace DehnadSoratyService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            var singlechargeInstallment = new SinglechargeInstallmentClass();
-            while (!shutdownEvent.WaitOne(0))
-            {
-                if (DateTime.Now.Hour > 2 && DateTime.Now.Hour < 3)
-                {
-                    singlechargeInstallment.ProcessInstallment();
-                    Thread.Sleep(2 * 60 * 60 * 1000);
-                }
-            }
+            //var singlechargeInstallment = new SinglechargeInstallmentClass();
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    if (DateTime.Now.Hour > 2 && DateTime.Now.Hour < 3)
+            //    {
+            //        singlechargeInstallment.ProcessInstallment();
+            //        Thread.Sleep(2 * 60 * 60 * 1000);
+            //    }
+            //}
         }
 
         private void SinglechargeInstallmentBalancerWorkerThread()
@@ -218,12 +218,12 @@ namespace DehnadSoratyService
 
         private void SinglechargeQueueWorkerThread()
         {
-            var singlechargeQueue = new SinglechargeQueue();
-            while (!shutdownEvent.WaitOne(0))
-            {
-                singlechargeQueue.ProcessQueue();
-                Thread.Sleep(1000);
-            }
+            //var singlechargeQueue = new SinglechargeQueue();
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    singlechargeQueue.ProcessQueue();
+            //    Thread.Sleep(1000);
+            //}
         }
     }
 }

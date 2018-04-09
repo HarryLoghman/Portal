@@ -510,7 +510,7 @@ namespace Portal.Controllers
                     newSubscriber.PersianActivationDate = SharedLibrary.Date.GetPersianDate();
                     newSubscriber.MobileOperator = 1;
                     newSubscriber.OperatorPlan = 2;
-                    newSubscriber.SubscriberUniqueId = SharedLibrary.HandleSubscription.CreateUniqueId();
+                    newSubscriber.SubscriberUniqueId = "";// SharedLibrary.HandleSubscription.CreateUniqueId();
                     entity.Subscribers.Add(newSubscriber);
                     entity.SaveChanges();
                     var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);

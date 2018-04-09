@@ -72,11 +72,11 @@ namespace SharedLibrary
             }
         }
 
-        public static MessageObject ValidateMessage(MessageObject message)
+        public static MessageObject ValidateMessage(MessageObject message, List<SharedLibrary.Models.OperatorsPrefix> prefixs)
         {
             message.ShortCode = ValidateShortCode(message.ShortCode);
             message.Content = NormalizeContent(message.Content);
-            message = GetSubscriberOperatorInfo(message);
+            message = GetSubscriberOperatorInfo(message, prefixs);
             return message;
         }
 
@@ -359,25 +359,20 @@ namespace SharedLibrary
 
             return number;
         }
-        public static MessageObject GetSubscriberOperatorInfo(MessageObject message)
+        public static MessageObject GetSubscriberOperatorInfo(MessageObject message, List<SharedLibrary.Models.OperatorsPrefix> operatorPrefixes)
         {
-            using (var entities = new PortalEntities())
+            foreach (var operatorPrefixe in operatorPrefixes)
             {
-                entities.Configuration.AutoDetectChangesEnabled = false;
-                var operatorPrefixes = entities.OperatorsPrefixs.OrderByDescending(o => o.Prefix.Length).ToList();
-                foreach (var operatorPrefixe in operatorPrefixes)
+                if (message.MobileNumber.StartsWith(operatorPrefixe.Prefix))
                 {
-                    if (message.MobileNumber.StartsWith(operatorPrefixe.Prefix))
-                    {
-                        message.MobileOperator = operatorPrefixe.OperatorId;
-                        message.OperatorPlan = operatorPrefixe.OperatorPlan;
-                        break;
-                    }
-                    else
-                    {
-                        message.MobileOperator = (int)MobileOperators.Mci;
-                        message.OperatorPlan = (int)OperatorPlan.Prepaid;
-                    }
+                    message.MobileOperator = operatorPrefixe.OperatorId;
+                    message.OperatorPlan = operatorPrefixe.OperatorPlan;
+                    break;
+                }
+                else
+                {
+                    message.MobileOperator = (int)MobileOperators.Mci;
+                    message.OperatorPlan = (int)OperatorPlan.Prepaid;
                 }
             }
             return message;

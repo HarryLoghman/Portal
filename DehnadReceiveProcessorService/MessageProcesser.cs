@@ -278,7 +278,7 @@ namespace DehnadReceiveProcessorService
                 using (var entity = new PortalEntities())
                 {
                     long serviceId = 0;
-                    message = SharedLibrary.MessageHandler.ValidateMessage(message);
+                    message = SharedLibrary.MessageHandler.ValidateMessage(message, Service.prefix);
 
                     var isUserSendedGeneralUnsubscribeKeyword = SharedLibrary.ServiceHandler.CheckIfUserSendedUnsubscribeContentToShortCode(message.Content);
                     bool isTelepromo = serviceShortCodes.FirstOrDefault().AggregatorId == 5 ? true : false;
