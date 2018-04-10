@@ -64,10 +64,11 @@ namespace DehnadTahChinService
                         logs.Info("installmentList users in waiting list count:" + waitingList.Count);
                         installmentList.RemoveAll(o => chargeCompleted.Contains(o));
                         installmentList.RemoveAll(o => waitingList.Contains(o));
+                        var randomList = installmentList.OrderBy(o => Guid.NewGuid()).ToList();
                         int installmentListCount = installmentList.Count;
                         logs.Info("installmentList final list count:" + installmentListCount);
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
