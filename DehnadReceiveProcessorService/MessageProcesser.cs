@@ -37,6 +37,35 @@ namespace DehnadReceiveProcessorService
             }
         }
 
+        public void PardisImiProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("PardisImi");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    {
+                        HandleReceivedMessage(receivedMessage);
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in PardisImiProcess: " + e);
+            }
+        }
+
         public void PardisPlatformProcess()
         {
             try
@@ -209,6 +238,8 @@ namespace DehnadReceiveProcessorService
             {
                 logs.Error("Exeption in MobinOneMapfaProcess: " + e);
             }
+            //GC.Collect();
+            //GC.WaitForPendingFinalizers();
         }
 
         public void SamssonTciProcess()
@@ -254,12 +285,12 @@ namespace DehnadReceiveProcessorService
 
             using (var entity = new PortalEntities())
             {
-                if (message.ShortCode.StartsWith("2"))
-                {
-                    var pardisShortCode = entity.ParidsShortCodes.FirstOrDefault(o => o.ShortCode == message.ShortCode);
-                    if (pardisShortCode != null)
-                        message.ShortCode = entity.ServiceInfoes.FirstOrDefault(o => o.ServiceId == pardisShortCode.ServiceId).ShortCode;
-                }
+                //if (message.ShortCode.StartsWith("2"))
+                //{
+                //    var pardisShortCode = entity.ParidsShortCodes.FirstOrDefault(o => o.ShortCode == message.ShortCode);
+                //    if (pardisShortCode != null)
+                //        message.ShortCode = entity.ServiceInfoes.FirstOrDefault(o => o.ServiceId == pardisShortCode.ServiceId).ShortCode;
+                //}
                 var serviceShortCodes = entity.ServiceInfoes.Where(o => o.ShortCode == message.ShortCode);
                 if (serviceShortCodes != null)
                 {

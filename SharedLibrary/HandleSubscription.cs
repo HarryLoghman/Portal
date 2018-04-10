@@ -67,25 +67,20 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
-                using (DbContextTransaction scope = entity.Database.BeginTransaction())
-                {
-                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
-                    subscriber.OffKeyword = null;
-                    subscriber.OffMethod = null;
-                    subscriber.DeactivationDate = null;
-                    subscriber.PersianDeactivationDate = null;
-                    subscriber.OnKeyword = onKeyword;
-                    subscriber.SpecialUniqueId = null;
-                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
-                        subscriber.OnMethod = "keyword";
-                    else if (message.IsReceivedFromIntegratedPanel == true)
-                        subscriber.OnMethod = "Integrated Panel";
-                    else
-                        subscriber.OnMethod = "Web";
-                    entity.Entry(subscriber).State = EntityState.Modified;
-                    entity.SaveChanges();
-                    scope.Commit();
-                }
+                subscriber.OffKeyword = null;
+                subscriber.OffMethod = null;
+                subscriber.DeactivationDate = null;
+                subscriber.PersianDeactivationDate = null;
+                subscriber.OnKeyword = onKeyword;
+                subscriber.SpecialUniqueId = null;
+                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                    subscriber.OnMethod = "keyword";
+                else if (message.IsReceivedFromIntegratedPanel == true)
+                    subscriber.OnMethod = "Integrated Panel";
+                else
+                    subscriber.OnMethod = "Web";
+                entity.Entry(subscriber).State = EntityState.Modified;
+                entity.SaveChanges();
             }
             AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
             return ServiceStatusForSubscriberState.Renewal;
@@ -117,41 +112,36 @@ namespace SharedLibrary
             var newSubscriber = new Subscriber();
             using (var entity = new PortalEntities())
             {
-                using (DbContextTransaction scope = entity.Database.BeginTransaction())
-                {
-                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
-                    newSubscriber.MobileNumber = message.MobileNumber;
-                    newSubscriber.OnKeyword = message.Content;
-                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
-                        newSubscriber.OnMethod = "keyword";
-                    else if (message.IsReceivedFromIntegratedPanel == true)
-                        newSubscriber.OnMethod = "Integrated Panel";
-                    else
-                        newSubscriber.OnMethod = "Web";
-                    newSubscriber.ServiceId = service.Id;
-                    newSubscriber.ActivationDate = DateTime.Now;
-                    newSubscriber.PersianActivationDate = Date.GetPersianDate();
-                    newSubscriber.MobileOperator = message.MobileOperator;
-                    newSubscriber.OperatorPlan = message.OperatorPlan;
-                    //Random random = new Random();
-                    //var subUniqueId = "";
-                    //bool isUniqueIdAssigned = false;
-                    //while (isUniqueIdAssigned == false)
-                    //{
-                    //    var uId = random.Next(10000000, 99999999).ToString();
-                    //    var subscriber = entity.Subscribers.Where(o => o.SubscriberUniqueId == uId).Select(o => o.MobileNumber).FirstOrDefault();
-                    //    if (subscriber == null)
-                    //    {
-                    //        subUniqueId = uId;
-                    //        isUniqueIdAssigned = true;
-                    //    }
-                    //}
-                    newSubscriber.SubscriberUniqueId = "";
-                    newSubscriber.SpecialUniqueId = null;
-                    entity.Subscribers.Add(newSubscriber);
-                    entity.SaveChanges();
-                    scope.Commit();
-                }
+                newSubscriber.MobileNumber = message.MobileNumber;
+                newSubscriber.OnKeyword = message.Content;
+                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                    newSubscriber.OnMethod = "keyword";
+                else if (message.IsReceivedFromIntegratedPanel == true)
+                    newSubscriber.OnMethod = "Integrated Panel";
+                else
+                    newSubscriber.OnMethod = "Web";
+                newSubscriber.ServiceId = service.Id;
+                newSubscriber.ActivationDate = DateTime.Now;
+                newSubscriber.PersianActivationDate = Date.GetPersianDate();
+                newSubscriber.MobileOperator = message.MobileOperator;
+                newSubscriber.OperatorPlan = message.OperatorPlan;
+                //Random random = new Random();
+                //var subUniqueId = "";
+                //bool isUniqueIdAssigned = false;
+                //while (isUniqueIdAssigned == false)
+                //{
+                //    var uId = random.Next(10000000, 99999999).ToString();
+                //    var subscriber = entity.Subscribers.Where(o => o.SubscriberUniqueId == uId).Select(o => o.MobileNumber).FirstOrDefault();
+                //    if (subscriber == null)
+                //    {
+                //        subUniqueId = uId;
+                //        isUniqueIdAssigned = true;
+                //    }
+                //}
+                newSubscriber.SubscriberUniqueId = "";
+                newSubscriber.SpecialUniqueId = null;
+                entity.Subscribers.Add(newSubscriber);
+                entity.SaveChanges();
             }
             AddSubscriberToSubscriberPointsTable(newSubscriber, service);
             AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
@@ -184,9 +174,9 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
-                using (DbContextTransaction scope = entity.Database.BeginTransaction())
-                {
-                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
+                //using (DbContextTransaction scope = entity.Database.BeginTransaction())
+                //{
+                //    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
                     var sub = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
                     if (sub == null)
                         return;
@@ -196,7 +186,7 @@ namespace SharedLibrary
                     while (isUniqueIdAssigned == false)
                     {
                         var unqiueId = random.Next(10000000, 99999999).ToString();
-                        var subscriber = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId);
+                        var subscriber = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId && o.ServiceId == serviceId);
                         if (subscriber == null)
                         {
                             specialUniqeId = unqiueId;
@@ -206,8 +196,8 @@ namespace SharedLibrary
                     sub.SpecialUniqueId = specialUniqeId;
                     entity.Entry(sub).State = EntityState.Modified;
                     entity.SaveChanges();
-                    scope.Commit();
-                }
+                //    scope.Commit();
+                //}
             }
         }
         public static string AssignUniqueId(string mobileNumber)

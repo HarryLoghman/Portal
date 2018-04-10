@@ -282,6 +282,7 @@ namespace DehnadReceiveProcessorService
                 while (!shutdownEvent.WaitOne(0))
                 {
                     messageProcessor.PardisPlatformProcess();
+                    messageProcessor.PardisImiProcess();
                     Thread.Sleep(1000);
                 }
             }
