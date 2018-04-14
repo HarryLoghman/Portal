@@ -309,7 +309,7 @@ namespace SharedLibrary
         {
             try
             {
-                return ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().ToList();
+                return ((IEnumerable<dynamic>)entity.ImiChargeCodes).ToList();
             }
             catch (System.Exception e)
             {

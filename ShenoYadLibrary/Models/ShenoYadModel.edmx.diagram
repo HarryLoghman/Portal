@@ -30,6 +30,9 @@
         <EntityTypeShape EntityType="ShenoYadModel.SubscribersAdditionalInfo" Width="1.5" PointX="14.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShenoYadModel.TimedTempMessagesBuffer" Width="1.5" PointX="4.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShenoYadModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShenoYadModel.InstallmentCycle" Width="1.5" PointX="7.375" PointY="14.75" />
+        <EntityTypeShape EntityType="ShenoYadModel.Setting" Width="1.5" PointX="9.375" PointY="14.75" />
+        <EntityTypeShape EntityType="ShenoYadModel.vw_Singlecharge" Width="1.5" PointX="11.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

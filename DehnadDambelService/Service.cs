@@ -205,10 +205,9 @@ namespace DehnadDambelService
 
             var entityType = typeof(DambelLibrary.Models.DambelEntities);
             var cycleType = typeof(DambelLibrary.Models.InstallmentCycle);
-
+            bool isInMaintenanceTime = false;
             while (!shutdownEvent.WaitOne(0))
             {
-                bool isInMaintenanceTime = false;
                 try
                 {
                     using (var entity = new DambelLibrary.Models.DambelEntities())

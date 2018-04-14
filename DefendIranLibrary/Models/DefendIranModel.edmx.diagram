@@ -28,6 +28,8 @@
         <EntityTypeShape EntityType="DefendIranModel.TimedTempMessagesBuffer" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DefendIranModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DefendIranModel.Setting" Width="1.5" PointX="3.375" PointY="14.75" />
+        <EntityTypeShape EntityType="DefendIranModel.InstallmentCycle" Width="1.5" PointX="5.375" PointY="14.75" />
+        <EntityTypeShape EntityType="DefendIranModel.vw_Singlecharge" Width="1.5" PointX="7.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

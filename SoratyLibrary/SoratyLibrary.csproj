@@ -86,6 +86,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>SoratyModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>

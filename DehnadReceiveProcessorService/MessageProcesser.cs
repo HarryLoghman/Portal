@@ -22,6 +22,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -51,6 +62,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -80,6 +102,16 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -109,6 +141,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -138,6 +181,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -167,6 +221,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -196,6 +261,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -225,6 +301,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -238,8 +325,6 @@ namespace DehnadReceiveProcessorService
             {
                 logs.Error("Exeption in MobinOneMapfaProcess: " + e);
             }
-            //GC.Collect();
-            //GC.WaitForPendingFinalizers();
         }
 
         public void SamssonTciProcess()
@@ -256,6 +341,17 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
+
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    List<Task> TaskList = new List<Task>();
+                //    foreach (var message in receivedChunk)
+                //    {
+                //        TaskList.Add(HandleReceivedMessage(message));
+                //    }
+                //    Task.WaitAll(TaskList.ToArray());
+                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
@@ -271,8 +367,9 @@ namespace DehnadReceiveProcessorService
             }
         }
 
-        public static void HandleReceivedMessage(ReceievedMessage receivedMessage)
+        public static async Task HandleReceivedMessage(ReceievedMessage receivedMessage)
         {
+            await Task.Delay(10).ConfigureAwait(false);
             var message = new MessageObject();
             message.MobileNumber = receivedMessage.MobileNumber;
             message.ShortCode = receivedMessage.ShortCode;

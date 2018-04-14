@@ -270,6 +270,16 @@
           <Property Name="ChargeKey" Type="nvarchar" MaxLength="100" />
           <Property Name="Description" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="InstallmentCycles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="CycleNumber" Type="int" />
+          <Property Name="Income" Type="int" />
+          <Property Name="Duration" Type="bigint" />
+        </EntityType>
         <EntityType Name="MessagesArchive">
           <Key>
             <PropertyRef Name="Id" />
@@ -574,6 +584,7 @@ warning 6002: The table/view 'Soraty.dbo.vw_Singlecharge' does not have a primar
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseMessagesBuffer" EntityType="Self.EventbaseMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InstallmentCycles" EntityType="Self.InstallmentCycles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesArchive" EntityType="Self.MessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesMonitoring" EntityType="Self.MessagesMonitoring" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
@@ -1185,6 +1196,7 @@ warning 6002: The table/view 'Soraty.dbo.vw_Singlecharge' does not have a primar
           <FunctionImport Name="RetryUndeliveredMessages" />
           <EntitySet Name="Settings" EntityType="SoratyModel.Setting" />
           <EntitySet Name="vw_Singlecharge" EntityType="SoratyModel.vw_Singlecharge" />
+          <EntitySet Name="InstallmentCycles" EntityType="SoratyModel.InstallmentCycle" />
         </EntityContainer>
         <EntityType Name="Setting">
           <Key>
@@ -1217,6 +1229,16 @@ warning 6002: The table/view 'Soraty.dbo.vw_Singlecharge' does not have a primar
           <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
           <Property Name="InstallmentId" Type="Int64" />
           <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="InstallmentCycle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="Income" Type="Int32" />
+          <Property Name="Duration" Type="Int64" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1774,6 +1796,17 @@ warning 6002: The table/view 'Soraty.dbo.vw_Singlecharge' does not have a primar
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InstallmentCycles">
+            <EntityTypeMapping TypeName="SoratyModel.InstallmentCycle">
+              <MappingFragment StoreEntitySet="InstallmentCycles">
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="Income" ColumnName="Income" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

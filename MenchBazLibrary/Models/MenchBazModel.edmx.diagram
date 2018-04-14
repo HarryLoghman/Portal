@@ -27,6 +27,9 @@
         <EntityTypeShape EntityType="MenchBazModel.SubscribersAdditionalInfo" Width="1.5" PointX="12.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MenchBazModel.TimedTempMessagesBuffer" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MenchBazModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MenchBazModel.InstallmentCycle" Width="1.5" PointX="3.375" PointY="14.75" />
+        <EntityTypeShape EntityType="MenchBazModel.Setting" Width="1.5" PointX="5.375" PointY="14.75" />
+        <EntityTypeShape EntityType="MenchBazModel.vw_Singlecharge" Width="1.5" PointX="7.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

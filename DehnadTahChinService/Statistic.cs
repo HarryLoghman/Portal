@@ -14,7 +14,7 @@ namespace DehnadTahChinService
         {
             try
             {
-                AutochargeStatistic();
+                //AutochargeStatistic();
                 EventbaseStatistic();
             }
             catch (Exception e)

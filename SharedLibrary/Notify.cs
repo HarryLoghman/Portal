@@ -158,14 +158,14 @@ namespace SharedLibrary
 
                     if (date.Date != DateTime.Now.Date)
                     {
-                        income = ((IEnumerable)entity.SinglechargeArchives).Cast<dynamic>().Where(o => o.IsSucceeded == true && o.DateCreated.Date == date.Date)
+                        income = ((IEnumerable<dynamic>)entity.SinglechargeArchives).Where(o => o.IsSucceeded == true && o.DateCreated.Date == date.Date)
                         .GroupBy(o => o.DateCreated.Hour)
                         .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
                         .ToDictionary(o => (int)o.Hour, o => o.Amount);
                     }
                     else
                     {
-                        income = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.IsSucceeded == true && o.DateCreated.Date == date.Date)
+                        income = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.IsSucceeded == true && o.DateCreated.Date == date.Date)
                         .GroupBy(o => o.DateCreated.Hour)
                         .Select(o => new { Hour = o.Key, Amount = o.Sum(x => x.Price) })
                         .ToDictionary(o => (int)o.Hour, o => o.Amount);

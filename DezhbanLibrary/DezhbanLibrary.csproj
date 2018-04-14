@@ -101,6 +101,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>DezhbanModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>DezhbanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>DezhbanModel.tt</DependentUpon>
     </Compile>
@@ -120,6 +123,9 @@
       <DependentUpon>DezhbanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>DezhbanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Setting.cs">
       <DependentUpon>DezhbanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Singlecharge.cs">
@@ -147,6 +153,9 @@
       <DependentUpon>DezhbanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>DezhbanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>DezhbanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

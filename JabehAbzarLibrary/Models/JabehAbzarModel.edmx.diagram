@@ -29,6 +29,9 @@
         <EntityTypeShape EntityType="JabehAbzarModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="JabehAbzarModel.ServicesRealtimeStatistic" Width="1.5" PointX="3.375" PointY="14.75" />
         <EntityTypeShape EntityType="JabehAbzarModel.SinglechargeInstallmentArchive" Width="1.5" PointX="5.375" PointY="14.75" />
+        <EntityTypeShape EntityType="JabehAbzarModel.InstallmentCycle" Width="1.5" PointX="7.375" PointY="14.75" />
+        <EntityTypeShape EntityType="JabehAbzarModel.Setting" Width="1.5" PointX="9.375" PointY="14.75" />
+        <EntityTypeShape EntityType="JabehAbzarModel.vw_Singlecharge" Width="1.5" PointX="15.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

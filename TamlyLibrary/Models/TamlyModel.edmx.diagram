@@ -30,6 +30,9 @@
         <EntityTypeShape EntityType="TamlyModel.SinglechargeLiveStatu" Width="1.5" PointX="3.375" PointY="14.75" />
         <EntityTypeShape EntityType="TamlyModel.ServicesRealtimeStatistic" Width="1.5" PointX="5.375" PointY="14.75" />
         <EntityTypeShape EntityType="TamlyModel.SinglechargeInstallmentArchive" Width="1.5" PointX="7.375" PointY="14.75" />
+        <EntityTypeShape EntityType="TamlyModel.InstallmentCycle" Width="1.5" PointX="9.375" PointY="14.75" />
+        <EntityTypeShape EntityType="TamlyModel.Setting" Width="1.5" PointX="15.375" PointY="7.75" />
+        <EntityTypeShape EntityType="TamlyModel.vw_Singlecharge" Width="1.5" PointX="15.375" PointY="10.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -30,6 +30,9 @@
         <EntityTypeShape EntityType="DarchinModel.SinglechargeInstallment" Width="1.5" PointX="11.375" PointY="14.75" />
         <EntityTypeShape EntityType="DarchinModel.SinglechargeInstallmentArchive" Width="1.5" PointX="15.375" PointY="0.75" />
         <EntityTypeShape EntityType="DarchinModel.SinglechargeWaiting" Width="1.5" PointX="13.375" PointY="16.75" />
+        <EntityTypeShape EntityType="DarchinModel.InstallmentCycle" Width="1.5" PointX="15.375" PointY="16.75" />
+        <EntityTypeShape EntityType="DarchinModel.Setting" Width="1.5" PointX="17.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DarchinModel.vw_Singlecharge" Width="1.5" PointX="17.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

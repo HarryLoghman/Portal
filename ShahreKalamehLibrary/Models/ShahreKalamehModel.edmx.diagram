@@ -29,6 +29,9 @@
         <EntityTypeShape EntityType="ShahreKalamehModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShahreKalamehModel.ServicesRealtimeStatistic" Width="1.5" PointX="3.375" PointY="14.75" />
         <EntityTypeShape EntityType="ShahreKalamehModel.SinglechargeInstallmentArchive" Width="1.5" PointX="5.375" PointY="14.75" />
+        <EntityTypeShape EntityType="ShahreKalamehModel.InstallmentCycle" Width="1.5" PointX="7.375" PointY="14.75" />
+        <EntityTypeShape EntityType="ShahreKalamehModel.Setting" Width="1.5" PointX="9.375" PointY="14.75" />
+        <EntityTypeShape EntityType="ShahreKalamehModel.vw_Singlecharge" Width="1.5" PointX="15.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

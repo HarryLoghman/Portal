@@ -29,12 +29,11 @@ namespace SharedLibrary
                    { "Price", price },
                    { "ServiceCode", serviceCode }
                 };
-                    logs.Error("mobilenumber:" + mobileNumber + " - " + "A1");
+
                     var content = new FormUrlEncodedContent(values);
                     var url = "http://79.175.164.51:8093/api/App/OtpCharge";
                     var response = await client.PostAsync(url, content);
                     var responseString = await response.Content.ReadAsStringAsync();
-                    logs.Error("mobilenumber:" + mobileNumber + " - " + "A2");
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
                     result = jsonResponse;
                 }
@@ -52,7 +51,6 @@ namespace SharedLibrary
             result.Status = "Error";
             try
             {
-                logs.Error("mobilenumber:" + mobileNumber + " - " + "B1");
                 var accessKey = Security.GetSha256Hash("OtpConfirm" + serviceCode + mobileNumber);
                 using (var client = new HttpClient())
                 {
@@ -69,7 +67,6 @@ namespace SharedLibrary
                     var url = "http://79.175.164.51:8093/api/App/OtpConfirm";
                     var response = await client.PostAsync(url, content);
                     var responseString = await response.Content.ReadAsStringAsync();
-                    logs.Error("mobilenumber:" + mobileNumber + " - " + "B2");
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
                     result = jsonResponse;
                 }

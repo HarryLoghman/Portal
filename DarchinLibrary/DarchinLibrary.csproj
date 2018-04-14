@@ -101,6 +101,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>DarchinModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>DarchinModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>DarchinModel.tt</DependentUpon>
     </Compile>
@@ -120,6 +123,9 @@
       <DependentUpon>DarchinModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>DarchinModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Setting.cs">
       <DependentUpon>DarchinModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Singlecharge.cs">
@@ -147,6 +153,9 @@
       <DependentUpon>DarchinModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>DarchinModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>DarchinModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

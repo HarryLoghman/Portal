@@ -86,6 +86,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
@@ -105,6 +108,9 @@
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Setting.cs">
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ShahreKalamehModel.Context.cs">
@@ -147,6 +153,9 @@
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>ShahreKalamehModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

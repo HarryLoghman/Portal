@@ -14,7 +14,7 @@ namespace SharedLibrary
 
         public static dynamic GetInstallmentList(dynamic entity)
         {
-            return ((IEnumerable)entity.SinglechargeInstallments).Cast<dynamic>().Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false && o.IsRenewd != true).ToList();
+            return ((IEnumerable<dynamic>)entity.SinglechargeInstallments).Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false && o.IsRenewd != true).ToList();
         }
 
         public static int MapfaInstallmentJob(Type entityType, int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, Type singlechargeType)
@@ -30,7 +30,7 @@ namespace SharedLibrary
                 int isCampaignActive = 0;
                 using (dynamic entity = Activator.CreateInstance(entityType))
                 {
-                    var campaign = ((IEnumerable)entity.Settings).Cast<dynamic>().FirstOrDefault(o => o.Name == "campaign");
+                    var campaign = ((IEnumerable<dynamic>)entity.Settings).FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }   
@@ -76,7 +76,7 @@ namespace SharedLibrary
                 List<Task> TaskList = new List<Task>();
                 for (int i = 0; i < take.Length; i++)
                 {
-                    var chunkedInstallmentList = ((IEnumerable)installmentList).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
+                    var chunkedInstallmentList = ((IEnumerable<dynamic>)installmentList).Skip(skip[i]).Take(take[i]).ToList();
                     TaskList.Add(SamssonTciProcessInstallmentChunk(entityType, maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, i, installmentCycleNumber, singlechargeType));
                 }
                 Task.WaitAll(TaskList.ToArray());
@@ -102,14 +102,14 @@ namespace SharedLibrary
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15))
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
                         {
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment && o.IsSucceeded == true  && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == installment && o.IsSucceeded == true  && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
@@ -182,14 +182,14 @@ namespace SharedLibrary
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15))
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
                         {
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == installment.MobileNumber && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         if (priceUserChargedToday >= maxChargeLimit)
                         {
                             installment.IsExceededDailyChargeLimit = true;
@@ -277,14 +277,14 @@ namespace SharedLibrary
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
                         {
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
@@ -345,7 +345,7 @@ namespace SharedLibrary
 
         public static SharedLibrary.Models.MessageObject SetMessagePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int price)
         {
-            var chargecode = ((IEnumerable)chargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price);
+            var chargecode = ((IEnumerable<dynamic>)chargeCodes).FirstOrDefault(o => o.Price == price);
             message.Price = chargecode.Price;
             message.ImiChargeKey = chargecode.ChargeKey;
             return message;

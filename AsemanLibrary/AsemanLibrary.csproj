@@ -101,6 +101,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>AsemanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>
@@ -150,6 +153,9 @@
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>AsemanModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

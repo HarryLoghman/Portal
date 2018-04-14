@@ -52,6 +52,9 @@ namespace TamlyLibrary.Models
         public virtual DbSet<SinglechargeLiveStatu> SinglechargeLiveStatus { get; set; }
         public virtual DbSet<ServicesRealtimeStatistic> ServicesRealtimeStatistics { get; set; }
         public virtual DbSet<SinglechargeInstallmentArchive> SinglechargeInstallmentArchives { get; set; }
+        public virtual DbSet<InstallmentCycle> InstallmentCycles { get; set; }
+        public virtual DbSet<Setting> Settings { get; set; }
+        public virtual DbSet<vw_Singlecharge> vw_Singlecharge { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

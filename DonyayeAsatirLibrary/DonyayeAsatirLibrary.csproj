@@ -101,6 +101,9 @@
     <Compile Include="Models\ImiChargeCode.cs">
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MessagesArchive.cs">
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
@@ -117,6 +120,9 @@
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServiceOffReason.cs">
+      <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Setting.cs">
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Singlecharge.cs">
@@ -138,6 +144,9 @@
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

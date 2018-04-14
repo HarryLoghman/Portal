@@ -64,6 +64,8 @@ namespace DehnadTahChinService
                         logs.Info("installmentList users in waiting list count:" + waitingList.Count);
                         installmentList.RemoveAll(o => chargeCompleted.Contains(o));
                         installmentList.RemoveAll(o => waitingList.Contains(o));
+                        var yesterday = DateTime.Now.AddDays(-1);
+                        //var sucessfulyChargedYesterday = entity.SinglechargeArchives.AsNoTracking().Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(yesterday) && o.IsSucceeded == true && o.Price > 0).GroupBy(o => o.MobileNumber).Select(o => o.Key).ToList();
                         var randomList = installmentList.OrderBy(o => Guid.NewGuid()).ToList();
                         int installmentListCount = installmentList.Count;
                         logs.Info("installmentList final list count:" + installmentListCount);
@@ -130,7 +132,7 @@ namespace DehnadTahChinService
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
                         {

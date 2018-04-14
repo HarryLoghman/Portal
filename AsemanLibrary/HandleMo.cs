@@ -79,7 +79,7 @@ namespace AsemanLibrary
                 //    var mobile = message.MobileNumber;
                 //    var singleCharge = new Singlecharge();
                 //    var imiChargeCode = new ImiChargeCode();
-                //    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
+                    //singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
                 //    if (singleCharge != null && singleCharge.DateCreated.AddMinutes(5) > DateTime.Now)
                 //    {
                 //        message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);

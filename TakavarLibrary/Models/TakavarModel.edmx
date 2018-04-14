@@ -569,6 +569,31 @@ warning 6002: The table/view 'Takavar.dbo.vw_SentMessages' does not have a prima
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Takavar.dbo.vw_Singlecharge' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="PersianDateCreated" />
+            <PropertyRef Name="Price" />
+            <PropertyRef Name="IsSucceeded" />
+            <PropertyRef Name="IsApplicationInformed" />
+            <PropertyRef Name="IsCalledFromInAppPurchase" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsSucceeded" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
+          <Property Name="InstallmentId" Type="bigint" />
+          <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+        </EntityType>
         <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MiladiDate" Type="date" Mode="In" />
           <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
@@ -641,6 +666,21 @@ warning 6002: The table/view 'Takavar.dbo.vw_SentMessages' does not have a prima
     [vw_SentMessages].[DeliveryStatus] AS [DeliveryStatus], 
     [vw_SentMessages].[DeliveryDescription] AS [DeliveryDescription]
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_Singlecharge" EntityType="Self.vw_Singlecharge" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_Singlecharge].[Id] AS [Id], 
+    [vw_Singlecharge].[MobileNumber] AS [MobileNumber], 
+    [vw_Singlecharge].[ReferenceId] AS [ReferenceId], 
+    [vw_Singlecharge].[DateCreated] AS [DateCreated], 
+    [vw_Singlecharge].[PersianDateCreated] AS [PersianDateCreated], 
+    [vw_Singlecharge].[Price] AS [Price], 
+    [vw_Singlecharge].[IsSucceeded] AS [IsSucceeded], 
+    [vw_Singlecharge].[Description] AS [Description], 
+    [vw_Singlecharge].[IsApplicationInformed] AS [IsApplicationInformed], 
+    [vw_Singlecharge].[InstallmentId] AS [InstallmentId], 
+    [vw_Singlecharge].[IsCalledFromInAppPurchase] AS [IsCalledFromInAppPurchase]
+    FROM [dbo].[vw_Singlecharge] AS [vw_Singlecharge]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -1236,6 +1276,7 @@ warning 6002: The table/view 'Takavar.dbo.vw_SentMessages' does not have a prima
           </FunctionImport>
           <EntitySet Name="InstallmentCycles" EntityType="TakavarModel.InstallmentCycle" />
           <EntitySet Name="Settings" EntityType="TakavarModel.Setting" />
+          <EntitySet Name="vw_Singlecharge" EntityType="TakavarModel.vw_Singlecharge" />
         </EntityContainer>
         <EntityType Name="InstallmentCycle">
           <Key>
@@ -1255,6 +1296,29 @@ warning 6002: The table/view 'Takavar.dbo.vw_SentMessages' does not have a prima
           <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="PersianName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="PersianDateCreated" />
+            <PropertyRef Name="Price" />
+            <PropertyRef Name="IsSucceeded" />
+            <PropertyRef Name="IsApplicationInformed" />
+            <PropertyRef Name="IsCalledFromInAppPurchase" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1845,6 +1909,23 @@ warning 6002: The table/view 'Takavar.dbo.vw_SentMessages' does not have a prima
                 <ScalarProperty Name="PersianName" ColumnName="PersianName" />
                 <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_Singlecharge">
+            <EntityTypeMapping TypeName="TakavarModel.vw_Singlecharge">
+              <MappingFragment StoreEntitySet="vw_Singlecharge">
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -456,7 +456,7 @@ namespace SharedLibrary
         {
             try
             {
-                var singlecharge = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == message.MobileNumber && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                var singlecharge = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == message.MobileNumber && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
                 if (singlecharge != null)
                     return singlecharge;
                 else
@@ -472,15 +472,15 @@ namespace SharedLibrary
         public static MessageObject SetImiChargeInfo(dynamic entity, dynamic imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
         {
             if (subscriberState == null && price > 0)
-                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price);
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price);
             else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
-                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "Register");
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Register");
             else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
-                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
             else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
             else
-                imiChargeCode = ((IEnumerable)entity.ImiChargeCodes).Cast<dynamic>().FirstOrDefault(o => o.Price == price && o.Description == "Free");
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Free");
 
             if (imiChargeCode != null)
             {
@@ -495,35 +495,35 @@ namespace SharedLibrary
         public static MessageObject SendServiceSubscriptionHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
+            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static MessageObject SendServiceOTPHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceOTPHelp").Select(o => o.Content).FirstOrDefault();
+            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "SendServiceOTPHelp").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static MessageObject SendServiceOTPRequestExists(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "SendServiceOTPRequestExists").Select(o => o.Content).FirstOrDefault();
+            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "SendServiceOTPRequestExists").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static MessageObject EmptyContentWhenNotSubscribed(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
-            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "EmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "EmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static MessageObject EmptyContentWhenSubscribed(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
         {
             message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
-            message.Content = ((IEnumerable)messagesTemplate).Cast<dynamic>().Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
@@ -538,11 +538,11 @@ namespace SharedLibrary
                 entity.Configuration.AutoDetectChangesEnabled = false;
 
                 if (messageType == MessageType.AutoCharge)
-                    return ((IEnumerable)entity.AutochargeMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
+                    return ((IEnumerable<dynamic>)entity.AutochargeMessagesBuffers).Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
                 else if (messageType == MessageType.EventBase)
-                    return ((IEnumerable)entity.EventbaseMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
+                    return ((IEnumerable<dynamic>)entity.EventbaseMessagesBuffers).Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
                 else if (messageType == MessageType.OnDemand)
-                    return ((IEnumerable)entity.OnDemandMessagesBuffers).Cast<dynamic>().Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
+                    return ((IEnumerable<dynamic>)entity.OnDemandMessagesBuffers).Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
                 else
                     return new List<dynamic>();
             }
@@ -550,13 +550,13 @@ namespace SharedLibrary
 
         public static void SendSelectedMessages(Type entityType, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
         {
-            if (((IEnumerable)messages).Cast<dynamic>().Count() == 0)
+            if (((IEnumerable<dynamic>)messages).Count() == 0)
                 return;
 
             List<Task> TaskList = new List<Task>();
             for (int i = 0; i < take.Length; i++)
             {
-                var chunkedMessages = ((IEnumerable)messages).Cast<dynamic>().Skip(skip[i]).Take(take[i]).ToList();
+                var chunkedMessages = ((IEnumerable<dynamic>)messages).Skip(skip[i]).Take(take[i]).ToList();
                 if (aggregatorName == "Hamrahvas")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisImi")

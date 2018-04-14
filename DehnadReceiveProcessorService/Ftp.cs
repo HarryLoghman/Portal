@@ -49,7 +49,7 @@ namespace DehnadReceiveProcessorService
                 {
                     var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-                    var reports = ((IEnumerable)entity.DailyStatistics).Cast<dynamic>().Where(o => o.Date >= startDate && (o.SumOfSinglechargeSuccessfulCharge == null || o.SumOfSinglechargeSuccessfulCharge == 0)).ToList();
+                    var reports = ((IEnumerable<dynamic>)entity.DailyStatistics).Where(o => o.Date >= startDate && (o.SumOfSinglechargeSuccessfulCharge == null || o.SumOfSinglechargeSuccessfulCharge == 0)).ToList();
                     foreach (var report in reports)
                     {
                         var date = report.Date.ToString("yyyyMMdd");

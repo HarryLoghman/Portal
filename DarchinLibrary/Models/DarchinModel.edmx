@@ -270,6 +270,16 @@
           <Property Name="ChargeKey" Type="nvarchar" MaxLength="100" />
           <Property Name="Description" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="InstallmentCycles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="CycleNumber" Type="int" />
+          <Property Name="Income" Type="int" />
+          <Property Name="Duration" Type="bigint" />
+        </EntityType>
         <EntityType Name="MessagesArchive">
           <Key>
             <PropertyRef Name="Id" />
@@ -381,6 +391,15 @@
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Date" Type="datetime" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Settings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="Value" Type="nvarchar" MaxLength="255" />
+          <Property Name="PersianName" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Singlecharge">
           <Key>
@@ -557,6 +576,32 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <Property Name="DateLastTried" Type="datetime" />
           <Property Name="RetryCount" Type="int" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Darchin.dbo.vw_Singlecharge' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="PersianDateCreated" />
+            <PropertyRef Name="Price" />
+            <PropertyRef Name="IsSucceeded" />
+            <PropertyRef Name="IsApplicationInformed" />
+            <PropertyRef Name="IsCalledFromInAppPurchase" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IsSucceeded" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
+          <Property Name="InstallmentId" Type="bigint" />
+          <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+          <Property Name="UserToken" Type="nvarchar" MaxLength="100" />
+        </EntityType>
         <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MiladiDate" Type="date" Mode="In" />
           <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
@@ -585,6 +630,7 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventbaseMessagesBuffer" EntityType="Self.EventbaseMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InstallmentCycles" EntityType="Self.InstallmentCycles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesArchive" EntityType="Self.MessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesMonitoring" EntityType="Self.MessagesMonitoring" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
@@ -592,6 +638,7 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistics" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Settings" EntityType="Self.Settings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
@@ -629,6 +676,22 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
     [vw_SentMessages].[DateLastTried] AS [DateLastTried], 
     [vw_SentMessages].[RetryCount] AS [RetryCount]
     FROM [dbo].[vw_SentMessages] AS [vw_SentMessages]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_Singlecharge" EntityType="Self.vw_Singlecharge" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_Singlecharge].[Id] AS [Id], 
+    [vw_Singlecharge].[MobileNumber] AS [MobileNumber], 
+    [vw_Singlecharge].[ReferenceId] AS [ReferenceId], 
+    [vw_Singlecharge].[DateCreated] AS [DateCreated], 
+    [vw_Singlecharge].[PersianDateCreated] AS [PersianDateCreated], 
+    [vw_Singlecharge].[Price] AS [Price], 
+    [vw_Singlecharge].[IsSucceeded] AS [IsSucceeded], 
+    [vw_Singlecharge].[Description] AS [Description], 
+    [vw_Singlecharge].[IsApplicationInformed] AS [IsApplicationInformed], 
+    [vw_Singlecharge].[InstallmentId] AS [InstallmentId], 
+    [vw_Singlecharge].[IsCalledFromInAppPurchase] AS [IsCalledFromInAppPurchase], 
+    [vw_Singlecharge].[UserToken] AS [UserToken]
+    FROM [dbo].[vw_Singlecharge] AS [vw_Singlecharge]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -1121,6 +1184,9 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <EntitySet Name="SinglechargeInstallments" EntityType="DarchinModel.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeInstallmentArchives" EntityType="DarchinModel.SinglechargeInstallmentArchive" />
           <EntitySet Name="SinglechargeWaitings" EntityType="DarchinModel.SinglechargeWaiting" />
+          <EntitySet Name="InstallmentCycles" EntityType="DarchinModel.InstallmentCycle" />
+          <EntitySet Name="Settings" EntityType="DarchinModel.Setting" />
+          <EntitySet Name="vw_Singlecharge" EntityType="DarchinModel.vw_Singlecharge" />
         </EntityContainer>
         <EntityType Name="SinglechargeLiveStatu">
           <Key>
@@ -1228,6 +1294,49 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsLastDayWarningSent" Type="Boolean" Nullable="false" />
+          <Property Name="UserToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="InstallmentCycle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="Income" Type="Int32" />
+          <Property Name="Duration" Type="Int64" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PersianName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="PersianDateCreated" />
+            <PropertyRef Name="Price" />
+            <PropertyRef Name="IsSucceeded" />
+            <PropertyRef Name="IsApplicationInformed" />
+            <PropertyRef Name="IsCalledFromInAppPurchase" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
           <Property Name="UserToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
@@ -1804,6 +1913,45 @@ warning 6002: The table/view 'Darchin.dbo.vw_SentMessages' does not have a prima
                 <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
                 <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InstallmentCycles">
+            <EntityTypeMapping TypeName="DarchinModel.InstallmentCycle">
+              <MappingFragment StoreEntitySet="InstallmentCycles">
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="Income" ColumnName="Income" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="DarchinModel.Setting">
+              <MappingFragment StoreEntitySet="Settings">
+                <ScalarProperty Name="PersianName" ColumnName="PersianName" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_Singlecharge">
+            <EntityTypeMapping TypeName="DarchinModel.vw_Singlecharge">
+              <MappingFragment StoreEntitySet="vw_Singlecharge">
+                <ScalarProperty Name="UserToken" ColumnName="UserToken" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

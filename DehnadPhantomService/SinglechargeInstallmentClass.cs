@@ -82,7 +82,7 @@ namespace DehnadPhantomService
                 int isCampaignActive = 0;
                 using (var entity = new PhantomEntities())
                 {
-                    var campaign = ((IEnumerable)entity.Settings).Cast<dynamic>().FirstOrDefault(o => o.Name == "campaign");
+                    var campaign = ((IEnumerable<dynamic>)entity.Settings).FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
@@ -123,14 +123,14 @@ namespace DehnadPhantomService
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) && (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 15))
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
                         {
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable)entity.Singlecharges).Cast<dynamic>().Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {

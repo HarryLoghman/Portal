@@ -32,6 +32,7 @@
         <EntityTypeShape EntityType="TakavarModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="TakavarModel.InstallmentCycle" Width="1.5" PointX="7.375" PointY="14.75" />
         <EntityTypeShape EntityType="TakavarModel.Setting" Width="1.5" PointX="9.375" PointY="14.75" />
+        <EntityTypeShape EntityType="TakavarModel.vw_Singlecharge" Width="1.5" PointX="11.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
