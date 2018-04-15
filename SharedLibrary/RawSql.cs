@@ -22,7 +22,7 @@ namespace SharedLibrary
                 {
                     database.Connection.Open();
                     command.CommandText = sql;
-                    command.CommandTimeout = command.Connection.ConnectionTimeout;
+                    command.CommandTimeout = 2000; // command.Connection.ConnectionTimeout;
 
                     if (parameters != null)
                     {

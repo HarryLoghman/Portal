@@ -130,7 +130,7 @@ namespace DehnadPhantomService
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today)).Select(o=> o.Price).ToList().Sum(o => o);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {

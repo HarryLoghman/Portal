@@ -358,7 +358,7 @@ namespace SharedLibrary
                 var today = DateTime.Now;
                 using (dynamic entity = Activator.CreateInstance(entityType))
                 {
-                    var cycle = ((IEnumerable)entity.InstallmentCycles).Cast<dynamic>().FirstOrDefault(o => o.DateCreated.Date == today.Date && o.CycleNumber == cycleNumber);
+                    var cycle = ((IEnumerable<dynamic>)entity.InstallmentCycles).FirstOrDefault(o => o.DateCreated.Date == today.Date && o.CycleNumber == cycleNumber);
                     if (cycle != null)
                     {
                         cycle.Income += income;
