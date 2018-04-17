@@ -55,7 +55,7 @@ namespace DefendIranLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    else if ((message.Content.Length == 8 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit))
+                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit)) || message.Content.ToLower().Contains("abc"))
                     {
                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Hub");
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
@@ -70,30 +70,6 @@ namespace DefendIranLibrary
                             message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
                             SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
                         }
-                        return;
-                    }
-                    else if (message.Content.ToLower().Contains("abc")) //Otp Help
-                    {
-                        var mobile = message.MobileNumber;
-                        var singleCharge = new Singlecharge();
-                        var imiChargeCode = new ImiChargeCode();
-                        singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
-                        if (singleCharge != null && singleCharge.DateCreated.AddMinutes(5) > DateTime.Now)
-                        {
-                            message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
-                            message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                            //message = SharedLibrary.MessageHandler.SendServiceOTPRequestExists(entity, imiChargeCodes, message, messagesTemplate);
-                            MessageHandler.InsertMessageToQueue(message);
-                            return;
-                        }
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Hub");
-                        message = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                        //message = SharedLibrary.MessageHandler.SendServiceOTPHelp(entity, imiChargeCodes, message, messagesTemplate);
-                        //MessageHandler.InsertMessageToQueue(message);
-                        message.Price = 5; //Hub Subscription is 5
-                        message.MobileNumber = mobile;
-                        singleCharge = new Singlecharge();
-                        await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, message, serviceAdditionalInfo);
                         return;
                     }
                     else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))

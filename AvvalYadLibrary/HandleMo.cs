@@ -16,6 +16,8 @@ namespace AvvalYadLibrary
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new AvvalYadEntities())
             {
+                Type entityType = typeof(AvvalYadEntities);
+                Type ondemandType = typeof(OnDemandMessagesBuffer);
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
@@ -43,39 +45,20 @@ namespace AvvalYadLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else if (message.Content.ToLower().Contains("abc")) //Otp Help
+                else if (message.Content == "00" || message.Content.ToLower().Contains("abc"))
                 {
-                    var mobile = message.MobileNumber;
-                    var singleCharge = new Singlecharge();
-                    var imiChargeCode = new ImiChargeCode();
-                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
-                    if (singleCharge != null && singleCharge.DateCreated.AddMinutes(5) > DateTime.Now)
+                    var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
+                    if (result.Status != "SUCCESS-Pending Confirmation")
                     {
-                        message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                         message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        //message = SharedLibrary.MessageHandler.SendServiceOTPRequestExists(entity, imiChargeCodes, message, messagesTemplate);
-                        MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
                     }
-                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Telepromo");
-                    message = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                    //message = SharedLibrary.MessageHandler.SendServiceOTPHelp(entity, imiChargeCodes, message, messagesTemplate);
-                    //MessageHandler.InsertMessageToQueue(message);
-                    message.Price = 0;
-                    message.MobileNumber = mobile;
-                    singleCharge = new Singlecharge();
-                    await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, message, serviceAdditionalInfo);
                     return;
                 }
                 else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                 {
-                    var singleCharge = new Singlecharge();
-                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
-                    if (singleCharge != null)
-                    {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Telepromo");
-                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, message, serviceAdditionalInfo, message.Content);
-                    }
+                    var confirmCode = message.Content;
+                    var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                     return;
                 }
 

@@ -17,6 +17,8 @@ namespace NebulaLibrary
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new NebulaEntities())
             {
+                Type entityType = typeof(NebulaEntities);
+                Type ondemandType = typeof(OnDemandMessagesBuffer);
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
@@ -44,36 +46,20 @@ namespace NebulaLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return;
                 }
-                else if (message.Content.ToLower().Contains("abc") || message.Content.ToLower().Contains("def")) //Otp Help
+                else if (message.Content == "00" || message.Content.ToLower().Contains("def") || message.Content.ToLower().Contains("abc"))
                 {
-                    var mobile = message.MobileNumber;
-                    var singleCharge = new Singlecharge();
-                    var imiChargeCode = new ImiChargeCode();
-                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
-                    if (singleCharge != null && singleCharge.DateCreated.AddMinutes(5) > DateTime.Now)
+                    var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
+                    if (result.Status != "SUCCESS-Pending Confirmation")
                     {
-                        message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                         message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
                     }
-                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "MobinOne");
-                    message = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                    message.Price = 0;
-                    message.MobileNumber = mobile;
-                    singleCharge = new Singlecharge();
-                    await SharedLibrary.MessageSender.MobinOneOTPRequest(entity, singleCharge, message, serviceAdditionalInfo);
                     return;
                 }
                 else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                 {
-                    var singleCharge = new Singlecharge();
-                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
-                    if (singleCharge != null)
-                    {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "MobinOne");
-                        singleCharge = await SharedLibrary.MessageSender.MobinOneOTPConfirm(entity, singleCharge, message, serviceAdditionalInfo, message.Content);
-                    }
+                    var confirmCode = message.Content;
+                    var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                     return;
                 }
 
