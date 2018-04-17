@@ -218,6 +218,7 @@ namespace DehnadDambelService
                     }
                     if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 05) || isInMaintenanceTime == true)
                     {
+                        logs.Info("isInMaintenanceTime:" + isInMaintenanceTime);
                         installmentCycleNumber = 1;
                         Thread.Sleep(/*50 * 60 * */1000);
                     }

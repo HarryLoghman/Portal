@@ -23,24 +23,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -63,24 +63,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -102,24 +102,24 @@ namespace DehnadReceiveProcessorService
                 }
                 if (receivedMessages.Count == 0)
                     return;
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -142,24 +142,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -182,24 +182,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -222,24 +222,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -262,24 +262,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -302,24 +302,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -342,24 +342,24 @@ namespace DehnadReceiveProcessorService
                 if (receivedMessages.Count == 0)
                     return;
 
-                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
-                //{
-                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                //    List<Task> TaskList = new List<Task>();
-                //    foreach (var message in receivedChunk)
-                //    {
-                //        TaskList.Add(HandleReceivedMessage(message));
-                //    }
-                //    Task.WaitAll(TaskList.ToArray());
-                //}
                 for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
                 {
                     var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
-                    Parallel.ForEach(receivedChunk, receivedMessage =>
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
                     {
-                        HandleReceivedMessage(receivedMessage);
-                    });
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
                 }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
             }
             catch (Exception e)
             {
