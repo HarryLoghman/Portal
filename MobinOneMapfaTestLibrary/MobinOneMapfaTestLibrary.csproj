@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{92445215-121B-1513-431D-4142DB424246}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MobinOneMapfaTestLibrary</RootNamespace>
+    <AssemblyName>MobinOneMapfaTestLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ContentManager.cs" />
+    <Compile Include="HandleMo.cs" />
+    <Compile Include="MessageHandler.cs" />
+    <Compile Include="Models\AutochargeContent.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AutochargeContentsSendedToUser.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AutochargeHeaderFooter.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AutochargeMessagesBuffer.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AutochargeTimeTable.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DailyStatistic.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventbaseContent.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventbaseMessagesBuffer.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ImiChargeCode.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\InstallmentCycle.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MessagesArchive.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MessagesMonitoring.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MessagesTemplate.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MobinOneMapfaTestModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MobinOneMapfaTestModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MobinOneMapfaTestModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MobinOneMapfaTestModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MobinOneMapfaTestModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OnDemandMessagesBuffer.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PointsTable.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceOffReason.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Setting.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Singlecharge.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeArchive.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeInstallment.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeInstallmentArchive.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeLiveStatu.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeWaiting.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SubscribersAdditionalInfo.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TimedTempMessagesBuffer.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_SentMessages.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_Singlecharge.cs">
+      <DependentUpon>MobinOneMapfaTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceHandler.cs" />
+    <Compile Include="Subscribers.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EntityDeploy Include="Models\MobinOneMapfaTestModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>MobinOneMapfaTestModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Models\MobinOneMapfaTestModel.edmx.diagram">
+      <DependentUpon>MobinOneMapfaTestModel.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
+      <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
+      <Name>SharedLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Models\MobinOneMapfaTestModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MobinOneMapfaTestModel.edmx</DependentUpon>
+      <LastGenOutput>MobinOneMapfaTestModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\MobinOneMapfaTestModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MobinOneMapfaTestModel.edmx</DependentUpon>
+      <LastGenOutput>MobinOneMapfaTestModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

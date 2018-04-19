@@ -67,6 +67,8 @@ namespace SharedLibrary
         {
             using (var entity = new PortalEntities())
             {
+                subscriber.ActivationDate = DateTime.Now;
+                subscriber.PersianActivationDate = SharedLibrary.Date.GetPersianDate(DateTime.Now);
                 subscriber.OffKeyword = null;
                 subscriber.OffMethod = null;
                 subscriber.DeactivationDate = null;

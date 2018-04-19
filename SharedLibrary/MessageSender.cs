@@ -963,6 +963,7 @@ namespace SharedLibrary
 
         public static async Task SendMesssagesToPardisPlatform(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
+            await Task.Delay(10);
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
@@ -1072,98 +1073,96 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaOTPRequest(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<dynamic> MapfaOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
-            using (dynamic entity = Activator.CreateInstance(entityType))
+
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
             {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                singlecharge.MobileNumber = message.MobileNumber;
-                try
-                {
-                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
-                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
-                    var aggregatorServiceId = paridsShortCodes.OrderByDescending(o => o.Price).FirstOrDefault().PardisServiceId;
-                    var username = serviceAdditionalInfo["username"];
-                    var password = serviceAdditionalInfo["password"];
-                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
-                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
-                    var domain = "";
-                    if (aggregatorId == "3")
-                        domain = "pardis1";
-                    else
-                        domain = "alladmin";
-                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
-                    var result = client.sendVerificationCode(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
-
-                    if (result == 0)
-                        singlecharge.Description = "SUCCESS-Pending Confirmation";
-                    else
-                        singlecharge.Description = result.ToString();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaOTPRequest: " + e);
-                    singlecharge.Description = "Exception";
-                }
-                try
-                {
-                    singlecharge.IsSucceeded = false;
-                    singlecharge.DateCreated = DateTime.Now;
-                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                    singlecharge.IsApplicationInformed = false;
-                    singlecharge.IsCalledFromInAppPurchase = true;
-
-                    entity.Singlecharges.Add(singlecharge);
-                    entity.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaOTPRequest on saving values to db: " + e);
-                }
-                return singlecharge;
+                var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                var aggregatorServiceId = paridsShortCodes.OrderByDescending(o => o.Price).FirstOrDefault().PardisServiceId;
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                var channelType = (int)MessageHandler.MapfaChannels.SMS;
+                var domain = "";
+                if (aggregatorId == "3")
+                    domain = "pardis1";
+                else
+                    domain = "alladmin";
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
+                logs.Info("Mapfa OtpCharge: " + mobileNumber);
+                var result = client.sendVerificationCode(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
+                logs.Info("Mapfa OtpCharge: " + mobileNumber);
+                if (result == 0)
+                    singlecharge.Description = "SUCCESS-Pending Confirmation";
+                else
+                    singlecharge.Description = result.ToString();
             }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MapfaOTPRequest: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MapfaOTPRequest on saving values to db: " + e);
+            }
+            return singlecharge;
         }
 
-        public static async Task<dynamic> MapfaOTPConfirm(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<dynamic> MapfaOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
-            using (dynamic entity = Activator.CreateInstance(entityType))
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            try
             {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                try
+                var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                var aggregatorServiceId = paridsShortCodes.OrderByDescending(o => o.Price).FirstOrDefault().PardisServiceId;
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                var channelType = (int)MessageHandler.MapfaChannels.SMS;
+                var domain = "";
+                if (aggregatorId == "3")
+                    domain = "pardis1";
+                else
+                    domain = "alladmin";
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
+                logs.Error("Mapfa OtpConfirm: " + mobileNumber);
+                var result = client.verifySubscriber(username, password, domain, channelType, mobileNumber, aggregatorServiceId, confirmationCode);
+                logs.Error("Mapfa OtpConfirm: " + mobileNumber);
+                singlecharge.Description = result.ToString();
+                if (result == 0)
                 {
-                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
-                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
-                    var aggregatorServiceId = paridsShortCodes.OrderByDescending(o => o.Price).FirstOrDefault().PardisServiceId;
-                    var username = serviceAdditionalInfo["username"];
-                    var password = serviceAdditionalInfo["password"];
-                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
-                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
-                    var domain = "";
-                    if (aggregatorId == "3")
-                        domain = "pardis1";
-                    else
-                        domain = "alladmin";
-                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
-                    var result = client.verifySubscriber(username, password, domain, channelType, mobileNumber, aggregatorServiceId, confirmationCode);
-                    singlecharge.Description = result.ToString();
-                    if (result == 0)
-                    {
-                        singlecharge.IsSucceeded = true;
-                        singlecharge.Description = "SUCCESS";
-                    }
-                    entity.Entry(singlecharge).State = EntityState.Modified;
-                    entity.SaveChanges();
+                    singlecharge.IsSucceeded = true;
+                    singlecharge.Description = "SUCCESS";
                 }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaOTPConfirm: " + e);
-                    singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
-                }
-                return singlecharge;
+                entity.Entry(singlecharge).State = EntityState.Modified;
+                entity.SaveChanges();
             }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MapfaOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+            return singlecharge;
         }
 
         public static async Task<dynamic> MapfaStaticPriceSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)

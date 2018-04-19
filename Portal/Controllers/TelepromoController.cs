@@ -53,11 +53,11 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delivery(string refId, string deliveryStatus)
         {
-            var delivery = new DeliveryObject();
-            delivery.ReferenceId = refId;
-            delivery.Status = deliveryStatus;
-            delivery.AggregatorId = 5;
-            SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+            //var delivery = new DeliveryObject();
+            //delivery.ReferenceId = refId;
+            //delivery.Status = deliveryStatus;
+            //delivery.AggregatorId = 5;
+            //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
             var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
@@ -164,14 +164,6 @@ namespace Portal.Controllers
         {
             dynamic responseJson = new ExpandoObject();
 
-            var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
-            var message = new SharedLibrary.Models.MessageObject();
-            message.MobileNumber = mobileNumber;
-            message.ShortCode = serviceInfo.ShortCode;
-            message.IsReceivedFromIntegratedPanel = false;
-            message.Content = keyword;
-            message.ServiceId = serviceInfo.ServiceId;
             if (type == "RENEWAL" || type == "RENEW")
             {
                 //var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
@@ -349,6 +341,14 @@ namespace Portal.Controllers
             }
             else
             {
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
+                var message = new SharedLibrary.Models.MessageObject();
+                message.MobileNumber = mobileNumber;
+                message.ShortCode = serviceInfo.ShortCode;
+                message.IsReceivedFromIntegratedPanel = false;
+                message.Content = keyword;
+                message.ServiceId = serviceInfo.ServiceId;
                 if (type == "SUBSCRIBE")
                 {
                     if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c")

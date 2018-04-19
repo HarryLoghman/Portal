@@ -3,7 +3,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
 
-namespace DehnadDambelService
+namespace DehnadMobinOneMapfaTestService
 {
     public partial class Service : ServiceBase
     {
@@ -144,6 +144,7 @@ namespace DehnadDambelService
             while (!shutdownEvent.WaitOne(0))
             {
                 //eventbase.InsertEventbaseMessagesToQueue();
+                eventbase.InsertBulkMessagesToEventBaseQueue();
                 Thread.Sleep(1000);
             }
         }
@@ -192,37 +193,35 @@ namespace DehnadDambelService
         private void SinglechargeInstallmentWorkerThread()
         {
             var singlechargeInstallment = new SinglechargeInstallmentClass();
+            var entityType = typeof(MobinOneMapfaTestLibrary.Models.MobinOneMapfaTestEntities);
+            var cycleType = typeof(MobinOneMapfaTestLibrary.Models.InstallmentCycle);
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
-            if (DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 14)
+            if (DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 13)
                 installmentCycleNumber = 2;
-            else if (DateTime.Now.Hour >= 14 && DateTime.Now.Hour < 17)
+            else if (DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
                 installmentCycleNumber = 3;
-            else if (DateTime.Now.Hour >= 17 && DateTime.Now.Hour < 20)
+            else if (DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
                 installmentCycleNumber = 4;
-            else if (DateTime.Now.Hour >= 20 && DateTime.Now.Hour < 22)
+            else if (DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
                 installmentCycleNumber = 5;
-            else if (DateTime.Now.Hour >= 22)
+            else if (DateTime.Now.Hour >= 22 && installmentCycleNumber != 6)
                 installmentCycleNumber = 6;
             else
                 installmentCycleNumber = 1;
-
-            var entityType = typeof(DambelLibrary.Models.DambelEntities);
-            var cycleType = typeof(DambelLibrary.Models.InstallmentCycle);
-            bool isInMaintenanceTime = false;
             while (!shutdownEvent.WaitOne(0))
             {
+                bool isInMaintenanceTime = false;
                 try
                 {
-                    using (var entity = new DambelLibrary.Models.DambelEntities())
+                    using (var entity = new MobinOneMapfaTestLibrary.Models.MobinOneMapfaTestEntities())
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
                         if (isInMaintenace != null)
                             isInMaintenanceTime = isInMaintenace.Value == "True" ? true : false;
                     }
-                    if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 05) || isInMaintenanceTime == true)
+                    if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || DateTime.Now.Hour < 8 || isInMaintenanceTime == true)
                     {
-                        logs.Info("isInMaintenanceTime:" + isInMaintenanceTime);
                         installmentCycleNumber = 1;
                         Thread.Sleep(/*50 * 60 * */1000);
                     }
@@ -237,7 +236,7 @@ namespace DehnadDambelService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 14)
+                        else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 13)
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
@@ -245,36 +244,24 @@ namespace DehnadDambelService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 14 && DateTime.Now.Hour < 17)
+                        else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
                         {
-                            //TimeSpan hour = TimeSpan.Parse("16:00:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 17 && DateTime.Now.Hour < 20)
+                        else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
                         {
-                            //TimeSpan hour = TimeSpan.Parse("21:00:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 20 && DateTime.Now.Hour < 22)
+                        else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
                         {
-                            //TimeSpan hour = TimeSpan.Parse("22:30:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
@@ -283,10 +270,6 @@ namespace DehnadDambelService
                         }
                         else if (installmentCycleNumber == 6 && DateTime.Now.Hour >= 22)
                         {
-                            //TimeSpan hour = TimeSpan.Parse("22:30:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;

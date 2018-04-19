@@ -89,6 +89,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadAsemanService", "Dehn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMedadService", "DehnadMedadService\DehnadMedadService.csproj", "{41B14514-1C11-14B3-8151-3414412CB428}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMobinOneMapfaTestService", "DehnadMobinOneMapfaTestService\DehnadMobinOneMapfaTestService.csproj", "{45B14214-1C11-14B3-8151-3414412CBB21}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -172,6 +174,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsemanLibrary", "AsemanLibrary\AsemanLibrary.csproj", "{14344114-121B-1513-431D-4B42FB131141}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedadLibrary", "MedadLibrary\MedadLibrary.csproj", "{14344213-121B-1513-433D-4142DB121245}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobinOneMapfaTestLibrary", "MobinOneMapfaTestLibrary\MobinOneMapfaTestLibrary.csproj", "{92445215-121B-1513-431D-4142DB424246}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -351,6 +355,10 @@ Global
 		{41B14514-1C11-14B3-8151-3414412CB428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41B14514-1C11-14B3-8151-3414412CB428}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41B14514-1C11-14B3-8151-3414412CB428}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45B14214-1C11-14B3-8151-3414412CBB21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45B14214-1C11-14B3-8151-3414412CBB21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45B14214-1C11-14B3-8151-3414412CBB21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45B14214-1C11-14B3-8151-3414412CBB21}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -519,6 +527,10 @@ Global
 		{14344213-121B-1513-433D-4142DB121245}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14344213-121B-1513-433D-4142DB121245}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14344213-121B-1513-433D-4142DB121245}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92445215-121B-1513-431D-4142DB424246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92445215-121B-1513-431D-4142DB424246}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92445215-121B-1513-431D-4142DB424246}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92445215-121B-1513-431D-4142DB424246}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

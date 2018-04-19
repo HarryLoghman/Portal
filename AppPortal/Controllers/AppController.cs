@@ -65,7 +65,33 @@ namespace Portal.Controllers
                             else
                             {
                                 var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-                                if (service.ServiceCode == "Soltan")
+                                if (service.ServiceCode == "Phantom")
+                                {
+                                    using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                                    {
+                                        var imiChargeCode = new PhantomLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var singleCharge = new PhantomLibrary.Models.Singlecharge();
+                                            string aggregatorName = "MobinOneMapfa";
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Soltan")
                                 {
                                     using (var entity = new SoltanLibrary.Models.SoltanEntities())
                                     {
@@ -531,7 +557,7 @@ namespace Portal.Controllers
                                 {
                                     using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
                                     {
-                                        var imiChargeCode = new DefendIranLibrary.Models.ImiChargeCode(); 
+                                        var imiChargeCode = new DefendIranLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
                                             messageObj.Price = 5; //5 is Sub for hub
                                         else if (messageObj.Price.Value == -1)
@@ -602,33 +628,6 @@ namespace Portal.Controllers
                                         }
                                     }
                                 }
-                                else if (service.ServiceCode == "Phantom")
-                                {
-                                    Type entityType = typeof(PhantomLibrary.Models.PhantomEntities);
-                                    using (var entity = new PhantomLibrary.Models.PhantomEntities())
-                                    {
-                                        var imiChargeCode = new PhantomLibrary.Models.ImiChargeCode();
-                                        if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                        else if (messageObj.Price.Value == -1)
-                                        {
-                                            messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                        }
-                                        else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                        if (messageObj.Price == null)
-                                            result.Status = "Invalid Price";
-                                        else
-                                        {
-                                            var singleCharge = new PhantomLibrary.Models.Singlecharge();
-                                            string aggregatorName = "MobinOneMapfa";
-                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                            singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entityType, singleCharge, messageObj, serviceAdditionalInfo);
-                                            result.Status = singleCharge.Description;
-                                        }
-                                    }
-                                }
                                 else if (service.ServiceCode == "Medio")
                                 {
                                     using (var entity = new MedioLibrary.Models.MedioEntities())
@@ -650,7 +649,7 @@ namespace Portal.Controllers
                                             var singleCharge = new MedioLibrary.Models.Singlecharge();
                                             string aggregatorName = "MobinOneMapfa";
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                            singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(typeof(MedioLibrary.Models.MedioEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                            singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                             result.Status = singleCharge.Description;
                                         }
                                     }
@@ -745,7 +744,24 @@ namespace Portal.Controllers
                         else
                         {
                             var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-                            if (service.ServiceCode == "Soltan")
+                            if (service.ServiceCode == "Phantom")
+                            {
+                                using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                                {
+                                    var singleCharge = new PhantomLibrary.Models.Singlecharge();
+                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        string aggregatorName = "MobinOneMapfa";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                }
+                            }
+                            else if (service.ServiceCode == "Soltan")
                             {
                                 using (var entity = new SoltanLibrary.Models.SoltanEntities())
                                 {
@@ -1057,7 +1073,7 @@ namespace Portal.Controllers
                                 {
                                     var singleCharge = new DefendIranLibrary.Models.Singlecharge();
                                     singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
-                                    
+
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1103,23 +1119,6 @@ namespace Portal.Controllers
                                     }
                                 }
                             }
-                            else if (service.ServiceCode == "Phantom")
-                            {
-                                using (var entity = new PhantomLibrary.Models.PhantomEntities())
-                                {
-                                    var singleCharge = new PhantomLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
-                                    if (singleCharge == null)
-                                        result.Status = "No Otp Request Found";
-                                    else
-                                    {
-                                        string aggregatorName = "MobinOneMapfa";
-                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(typeof(PhantomLibrary.Models.PhantomEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                        result.Status = singleCharge.Description;
-                                    }
-                                }
-                            }
                             else if (service.ServiceCode == "Medio")
                             {
                                 using (var entity = new MedioLibrary.Models.MedioEntities())
@@ -1132,7 +1131,7 @@ namespace Portal.Controllers
                                     {
                                         string aggregatorName = "MobinOneMapfa";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(typeof(MedioLibrary.Models.MedioEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -2155,7 +2154,7 @@ namespace Portal.Controllers
                     if (item.Contains("msisdn"))
                         result.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(item.Remove(0, 7));
                     else if (item.ToLower().Contains("requestid"))
-                        result.uuid = item.Remove(0,10);
+                        result.uuid = item.Remove(0, 10);
                     else if (item.Contains("status"))
                     {
                         var status = item.Remove(0, 7);
