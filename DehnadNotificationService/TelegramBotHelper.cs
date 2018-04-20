@@ -62,16 +62,28 @@ namespace DehnadNotificationService
             //var replyMarkup = new ReplyKeyboardMarkup(buttons);
         }
 
-        public static InlineKeyboardMarkup GenerateInlineKeybaord(Dictionary<string,string> buttons)
+        public static InlineKeyboardMarkup GenerateInlineKeybaord(Dictionary<string, string> buttons, int columnsCount)
         {
-            var buttonsArray = new InlineKeyboardCallbackButton[buttons.Keys.Count];
+            var keyboardInline = new List<InlineKeyboardButton[]>();
+            List<InlineKeyboardButton> list = new List<InlineKeyboardButton>();
             int i = 0;
             foreach (var item in buttons.Keys)
             {
-                buttonsArray[i] = new InlineKeyboardCallbackButton(item, buttons[item]);
+                list.Add(new InlineKeyboardCallbackButton(item, buttons[item]));
                 i++;
+                if (i >= columnsCount)
+                {
+                    i = 0;
+                    keyboardInline.Add(list.ToArray());
+                    list.Clear();
+                }
+                else if (buttons.Keys.Last() == item)
+                {
+                    keyboardInline.Add(list.ToArray());
+                    list.Clear();
+                }
             }
-            InlineKeyboardMarkup menu = new InlineKeyboardMarkup(buttonsArray);
+            InlineKeyboardMarkup menu = new InlineKeyboardMarkup(keyboardInline.ToArray());
             return menu;
         }
 
