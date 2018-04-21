@@ -64,7 +64,9 @@ namespace SoratyLibrary
                     {
                         if (message.Content.Contains("25000"))
                             message.Content = "25000";
+                        var logId = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
+                        MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                         if (result.Status != "SUCCESS-Pending Confirmation")
                         {
                             message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
@@ -84,7 +86,9 @@ namespace SoratyLibrary
                     else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                     {
                         var confirmCode = message.Content;
+                        var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
+                        MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                         return isSucceeded;
                     }
 

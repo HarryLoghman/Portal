@@ -367,6 +367,17 @@
           <Property Name="DateLastTried" Type="datetime" />
           <Property Name="RetryCount" Type="int" />
         </EntityType>
+        <EntityType Name="Otp">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="varchar" MaxLength="15" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="ReturnValue" Type="nvarchar" MaxLength="255" />
+          <Property Name="UserMessage" Type="nvarchar" MaxLength="255" />
+        </EntityType>
         <EntityType Name="PointsTable">
           <Key>
             <PropertyRef Name="Id" />
@@ -631,6 +642,7 @@ warning 6002: The table/view 'BehAmooz500.dbo.vw_Singlecharge' does not have a p
           <EntitySet Name="MessagesMonitoring" EntityType="Self.MessagesMonitoring" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OnDemandMessagesBuffer" EntityType="Self.OnDemandMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Otp" EntityType="Self.Otp" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistics" Schema="dbo" store:Type="Tables" />
@@ -1287,6 +1299,7 @@ warning 6002: The table/view 'BehAmooz500.dbo.vw_Singlecharge' does not have a p
           <EntitySet Name="Settings" EntityType="BehAmooz500Model.Setting" />
           <EntitySet Name="vw_Singlecharge" EntityType="BehAmooz500Model.vw_Singlecharge" />
           <EntitySet Name="InstallmentCycles" EntityType="BehAmooz500Model.InstallmentCycle" />
+          <EntitySet Name="Otps" EntityType="BehAmooz500Model.Otp" />
         </EntityContainer>
         <EntityType Name="Setting">
           <Key>
@@ -1329,6 +1342,17 @@ warning 6002: The table/view 'BehAmooz500.dbo.vw_Singlecharge' does not have a p
           <Property Name="CycleNumber" Type="Int32" />
           <Property Name="Income" Type="Int32" />
           <Property Name="Duration" Type="Int64" />
+        </EntityType>
+        <EntityType Name="Otp">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReturnValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessage" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1940,6 +1964,18 @@ warning 6002: The table/view 'BehAmooz500.dbo.vw_Singlecharge' does not have a p
                 <ScalarProperty Name="Income" ColumnName="Income" />
                 <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Otps">
+            <EntityTypeMapping TypeName="BehAmooz500Model.Otp">
+              <MappingFragment StoreEntitySet="Otp">
+                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
+                <ScalarProperty Name="ReturnValue" ColumnName="ReturnValue" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

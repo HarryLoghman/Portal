@@ -101,6 +101,9 @@
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Otp.cs">
+      <DependentUpon>SoratyModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PointsTable.cs">
       <DependentUpon>SoratyModel.tt</DependentUpon>
     </Compile>

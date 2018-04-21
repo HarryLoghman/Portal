@@ -101,6 +101,9 @@
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
       <DependentUpon>PhantomModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Otp.cs">
+      <DependentUpon>PhantomModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PhantomModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

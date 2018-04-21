@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="MedadModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="MedadModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -367,6 +367,17 @@
           <Property Name="DateLastTried" Type="datetime" />
           <Property Name="RetryCount" Type="int" />
         </EntityType>
+        <EntityType Name="Otp">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="varchar" MaxLength="15" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="ReturnValue" Type="nvarchar" MaxLength="255" />
+          <Property Name="UserMessage" Type="nvarchar" MaxLength="255" />
+        </EntityType>
         <EntityType Name="PointsTable">
           <Key>
             <PropertyRef Name="Id" />
@@ -619,6 +630,7 @@ warning 6002: The table/view 'Medad.dbo.vw_Singlecharge' does not have a primary
           <EntitySet Name="MessagesMonitoring" EntityType="Self.MessagesMonitoring" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MessagesTemplate" EntityType="Self.MessagesTemplate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OnDemandMessagesBuffer" EntityType="Self.OnDemandMessagesBuffer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Otp" EntityType="Self.Otp" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistics" Schema="dbo" store:Type="Tables" />
@@ -676,8 +688,7 @@ warning 6002: The table/view 'Medad.dbo.vw_Singlecharge' does not have a primary
     FROM [dbo].[vw_Singlecharge] AS [vw_Singlecharge]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MedadModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1302,9 +1313,21 @@ warning 6002: The table/view 'Medad.dbo.vw_Singlecharge' does not have a primary
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
           <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(String)">
-            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Otps" EntityType="MedadModel.Otp" />
         </EntityContainer>
+        <EntityType Name="Otp">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReturnValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessage" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1906,6 +1929,18 @@ warning 6002: The table/view 'Medad.dbo.vw_Singlecharge' does not have a primary
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="MedadModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="MedadModel.Store.RetryUndeliveredMessages" />
           <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="MedadModel.Store.SinglechargeLiveStatuses" />
+          <EntitySetMapping Name="Otps">
+            <EntityTypeMapping TypeName="MedadModel.Otp">
+              <MappingFragment StoreEntitySet="Otp">
+                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
+                <ScalarProperty Name="ReturnValue" ColumnName="ReturnValue" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

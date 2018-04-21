@@ -116,6 +116,9 @@
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Otp.cs">
+      <DependentUpon>DambelModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PointsTable.cs">
       <DependentUpon>DambelModel.tt</DependentUpon>
     </Compile>

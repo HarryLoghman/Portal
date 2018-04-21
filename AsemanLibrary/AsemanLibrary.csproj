@@ -116,6 +116,9 @@
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Otp.cs">
+      <DependentUpon>AsemanModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PointsTable.cs">
       <DependentUpon>AsemanModel.tt</DependentUpon>
     </Compile>

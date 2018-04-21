@@ -101,6 +101,9 @@
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Otp.cs">
+      <DependentUpon>TahChinModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PointsTable.cs">
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>

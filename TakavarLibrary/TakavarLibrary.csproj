@@ -101,6 +101,9 @@
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
       <DependentUpon>TakavarModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Otp.cs">
+      <DependentUpon>TakavarModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PointsTable.cs">
       <DependentUpon>TakavarModel.tt</DependentUpon>
     </Compile>

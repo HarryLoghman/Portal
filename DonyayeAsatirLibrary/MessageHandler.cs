@@ -15,6 +15,51 @@ namespace DonyayeAsatirLibrary
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public static long OtpLog(string mobileNumber, string otpType, string userMessage)
+        {
+            try
+            {
+                using (var entity = new DonyayeAsatirEntities())
+                {
+                    var otpLog = new Otp()
+                    {
+                        MobileNumber = mobileNumber,
+                        UserMessage = userMessage,
+                        Type = otpType,
+                        DateCreated = DateTime.Now,
+                    };
+                    entity.Otps.Add(otpLog);
+                    entity.SaveChanges();
+                    return otpLog.Id;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in OtpLog: ", e);
+            }
+            return 0;
+        }
+        public static void OtpLogUpdate(long otpId, string returnValue)
+        {
+            try
+            {
+                using (var entity = new DonyayeAsatirEntities())
+                {
+                    var otp = entity.Otps.FirstOrDefault(o => o.Id == otpId);
+                    if (otp != null)
+                    {
+                        otp.ReturnValue = returnValue;
+                        entity.Entry(otp).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in OtpLogUpdate: ", e);
+            }
+        }
+
         public static MessageObject InvalidContentWhenSubscribed(MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
             message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);

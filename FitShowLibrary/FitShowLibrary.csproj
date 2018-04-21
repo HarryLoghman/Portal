@@ -116,6 +116,9 @@
     <Compile Include="Models\OnDemandMessagesBuffer.cs">
       <DependentUpon>FitShowModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Otp.cs">
+      <DependentUpon>FitShowModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PointsTable.cs">
       <DependentUpon>FitShowModel.tt</DependentUpon>
     </Compile>

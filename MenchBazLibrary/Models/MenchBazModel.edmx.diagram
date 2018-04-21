@@ -30,6 +30,7 @@
         <EntityTypeShape EntityType="MenchBazModel.InstallmentCycle" Width="1.5" PointX="3.375" PointY="14.75" />
         <EntityTypeShape EntityType="MenchBazModel.Setting" Width="1.5" PointX="5.375" PointY="14.75" />
         <EntityTypeShape EntityType="MenchBazModel.vw_Singlecharge" Width="1.5" PointX="7.375" PointY="14.75" />
+        <EntityTypeShape EntityType="MenchBazModel.Otp" Width="1.5" PointX="9.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

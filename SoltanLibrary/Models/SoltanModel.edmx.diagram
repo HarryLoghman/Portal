@@ -32,6 +32,7 @@
         <EntityTypeShape EntityType="SoltanModel.Setting" Width="1.5" PointX="15.375" PointY="8.75" />
         <EntityTypeShape EntityType="SoltanModel.vw_Singlecharge" Width="1.5" PointX="15.375" PointY="11.75" />
         <EntityTypeShape EntityType="SoltanModel.InstallmentCycle" Width="1.5" PointX="15.375" PointY="15.75" />
+        <EntityTypeShape EntityType="SoltanModel.Otp" Width="1.5" PointX="3.375" PointY="16.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

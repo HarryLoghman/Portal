@@ -33,6 +33,7 @@
         <EntityTypeShape EntityType="DarchinModel.InstallmentCycle" Width="1.5" PointX="15.375" PointY="16.75" />
         <EntityTypeShape EntityType="DarchinModel.Setting" Width="1.5" PointX="17.375" PointY="0.75" />
         <EntityTypeShape EntityType="DarchinModel.vw_Singlecharge" Width="1.5" PointX="17.375" PointY="3.75" />
+        <EntityTypeShape EntityType="DarchinModel.Otp" Width="1.5" PointX="7.375" PointY="17.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
