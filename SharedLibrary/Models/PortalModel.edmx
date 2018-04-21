@@ -197,6 +197,8 @@
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
           <Property Name="IsReceivedFromWeb" Type="bit" />
+          <Property Name="RetryCount" Type="int" />
+          <Property Name="LastRetryDate" Type="datetime" />
         </EntityType>
         <EntityType Name="ReceivedMessagesArchive">
           <Key>
@@ -213,6 +215,8 @@
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
           <Property Name="IsReceivedFromWeb" Type="bit" />
+          <Property Name="RetryCount" Type="int" />
+          <Property Name="LastRetryDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Referral">
           <Key>
@@ -717,6 +721,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsReceivedFromWeb" Type="Boolean" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="ReceivedMessagesArchive">
           <Key>
@@ -733,6 +739,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsReceivedFromWeb" Type="Boolean" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="ServiceInfo">
           <Key>
@@ -1257,6 +1265,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="ReceievedMessages">
             <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
               <MappingFragment StoreEntitySet="ReceievedMessages">
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
                 <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -1274,6 +1284,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="ReceivedMessagesArchives">
             <EntityTypeMapping TypeName="PortalModel.ReceivedMessagesArchive">
               <MappingFragment StoreEntitySet="ReceivedMessagesArchive">
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
                 <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />

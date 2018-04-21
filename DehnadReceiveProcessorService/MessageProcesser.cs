@@ -10,6 +10,8 @@ namespace DehnadReceiveProcessorService
     public class MessageProcesser
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public static int MaxRetryCount = 5;
+        public static int RetryWaitTimeInSeconds = 50;
         public void Process()
         {
             try
@@ -18,7 +20,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -58,7 +61,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -98,7 +102,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -137,7 +142,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -177,7 +183,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -217,7 +224,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -257,7 +265,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -297,7 +306,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -337,7 +347,8 @@ namespace DehnadReceiveProcessorService
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
                 {
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -382,6 +393,7 @@ namespace DehnadReceiveProcessorService
 
             using (var entity = new PortalEntities())
             {
+                bool isSucceeded = true;
                 //if (message.ShortCode.StartsWith("2"))
                 //{
                 //    var pardisShortCode = entity.ParidsShortCodes.FirstOrDefault(o => o.ShortCode == message.ShortCode);
@@ -391,16 +403,30 @@ namespace DehnadReceiveProcessorService
                 var serviceShortCodes = entity.ServiceInfoes.Where(o => o.ShortCode == message.ShortCode);
                 if (serviceShortCodes != null)
                 {
-                    RouteUserToDesiredService(message, serviceShortCodes);
+                    isSucceeded = RouteUserToDesiredService(message, serviceShortCodes);
                 }
-                receivedMessage.IsProcessed = true;
+                
+                if (isSucceeded != true)
+                {
+                    receivedMessage.IsProcessed = false;
+                    receivedMessage.LastRetryDate = DateTime.Now;
+                    if (receivedMessage.RetryCount == null)
+                        receivedMessage.RetryCount = 1;
+                    else
+                        receivedMessage.RetryCount += 1;
+                    if (receivedMessage.RetryCount > MaxRetryCount)
+                        receivedMessage.IsProcessed = true;
+                }
+                else
+                    receivedMessage.IsProcessed = true;
                 entity.Entry(receivedMessage).State = System.Data.Entity.EntityState.Modified;
                 entity.SaveChanges();
             }
         }
 
-        private static void RouteUserToDesiredService(MessageObject message, IQueryable<ServiceInfo> serviceShortCodes)
+        private static bool RouteUserToDesiredService(MessageObject message, IQueryable<ServiceInfo> serviceShortCodes)
         {
+            bool isSucceeded = true;
             try
             {
                 using (var entity = new PortalEntities())
@@ -426,13 +452,13 @@ namespace DehnadReceiveProcessorService
                         //serviceId = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == message.ShortCode).ServiceId;
                         //var serviceCode = entity.Services.FirstOrDefault(o => o.Id == serviceId).ServiceCode;
                         //SendMessageUsingServiceCode(serviceCode, message);
-                        return;
+                        return isSucceeded;
                     }
                     else if (message.IsReceivedFromIntegratedPanel == true && isTelepromo == false)
                     {
                         var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.AggregatorServiceId == message.Content);
                         if (serviceInfo == null)
-                            return;
+                            return isSucceeded;
                         message.Content = "off";
                         serviceId = serviceInfo.ServiceId;
                     }
@@ -463,7 +489,7 @@ namespace DehnadReceiveProcessorService
                     if (service != null)
                     {
                         message.ServiceId = service.Id;
-                        ChooseService(message, service);
+                        isSucceeded = ChooseService(message, service);
                     }
                 }
             }
@@ -471,6 +497,7 @@ namespace DehnadReceiveProcessorService
             {
                 logs.Error("Exception in RouteUserToDesiredService: " + e);
             }
+            return isSucceeded;
         }
 
         private static void UnsubscribeUserOnAllServicesForShortCode(MessageObject message)
@@ -502,89 +529,91 @@ namespace DehnadReceiveProcessorService
             }
         }
 
-        private static void ChooseService(MessageObject message, SharedLibrary.Models.Service service)
+        private static bool ChooseService(MessageObject message, SharedLibrary.Models.Service service)
         {
+            bool isSucceeded = true;
             try
             {
                 if (service.ServiceCode == "MyLeague")
-                    MyLeagueLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = MyLeagueLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Danestaneh")
-                    DanestanehLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = DanestanehLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Mobiliga")
-                    MobiligaLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = MobiligaLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "MashinBazha")
-                    MashinBazhaLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = MashinBazhaLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Soltan")
-                    SoltanLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = SoltanLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Tabriz2018")
-                    Tabriz2018Library.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = Tabriz2018Library.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "SepidRood")
-                    SepidRoodLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = SepidRoodLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Tirandazi")
-                    TirandaziLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = TirandaziLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "BimeKarbala")
-                    BimeKarbalaLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = BimeKarbalaLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Boating")
-                    BoatingLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = BoatingLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "DonyayeAsatir")
-                    DonyayeAsatirLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = DonyayeAsatirLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "ShahreKalameh")
-                    ShahreKalamehLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = ShahreKalamehLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "BimeIran")
-                    BimeIranLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = BimeIranLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "JabehAbzar")
-                    JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Tamly")
-                    TamlyLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = TamlyLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Tamly500")
-                    Tamly500Library.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = Tamly500Library.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "ShenoYad")
-                    ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = ShenoYadLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "ShenoYad500")
-                    ShenoYad500Library.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = ShenoYad500Library.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "FitShow")
-                    FitShowLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = FitShowLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Takavar")
-                    TakavarLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = TakavarLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "MenchBaz")
-                    MenchBazLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = MenchBazLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "AvvalPod")
-                    AvvalPodLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = AvvalPodLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "AvvalPod500")
-                    AvvalPod500Library.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = AvvalPod500Library.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "AvvalYad")
-                    AvvalYadLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = AvvalYadLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "BehAmooz500")
-                    BehAmooz500Library.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = BehAmooz500Library.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "IrancellTest")
-                    IrancellTestLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = IrancellTestLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Soraty")
-                    SoratyLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = SoratyLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "DefendIran")
-                    DefendIranLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = DefendIranLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "TahChin")
-                    TahChinLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = TahChinLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Nebula")
-                    NebulaLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = NebulaLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Dezhban")
-                    DezhbanLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = DezhbanLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "MusicYad")
-                    MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Phantom")
-                    PhantomLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = PhantomLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Medio")
-                    MedioLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = MedioLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Dambel")
-                    DambelLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = DambelLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Aseman")
-                    AsemanLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = AsemanLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Medad")
-                    MedadLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = MedadLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
                 logs.Error("Exception in ChooseService: " + e);
             }
+            return isSucceeded;
         }
 
         private static void SendMessageUsingServiceCode(string serviceCode, MessageObject message)

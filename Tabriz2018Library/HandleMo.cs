@@ -9,8 +9,9 @@ namespace Tabriz2018Library
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
@@ -36,7 +37,7 @@ namespace Tabriz2018Library
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                         message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                 }
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
@@ -76,7 +77,7 @@ namespace Tabriz2018Library
                 MessageHandler.InsertMessageToQueue(message);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                     ServiceHandler.InfromMapfaIntegratedPanel(serviceStatusForSubscriberState, message, service, content);
-                return;
+                return isSucceeded;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -94,7 +95,7 @@ namespace Tabriz2018Library
                 else
                     message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
@@ -121,9 +122,10 @@ namespace Tabriz2018Library
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                 }
-                return;
+                return isSucceeded;
             }
             ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+            return isSucceeded;
         }
     }
 }

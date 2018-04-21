@@ -2,12 +2,14 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -79,16 +81,16 @@ namespace DehnadNotificationService
                 var serializedresponseObject = JsonConvert.SerializeObject(responseObject);
                 if (responseObject.Message == null) return;
 
-                User user;
+                Models.User user;
                 userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() } };
-                user = await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("GetUserWebService", userParams);
+                user = await SharedLibrary.UsefulWebApis.NotificationBotApi<Models.User>("GetUserWebService", userParams);
                 if (user == null)
                 {
                     userParams = new Dictionary<string, string>() { { "stringedTelegramBotResponse", serializedresponseObject } };
-                    await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("CreateNewUser", userParams);
+                    await SharedLibrary.UsefulWebApis.NotificationBotApi<Models.User>("CreateNewUser", userParams);
 
                     userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() } };
-                    user = await SharedLibrary.UsefulWebApis.NotificationBotApi<User>("GetUserWebService", userParams);
+                    user = await SharedLibrary.UsefulWebApis.NotificationBotApi<Models.User>("GetUserWebService", userParams);
                 }
                 if (responseObject.Message.Type == MessageType.TextMessage)
                 {
@@ -153,10 +155,27 @@ namespace DehnadNotificationService
                 {
                     if (response.Text != null && response.Text != "")
                     {
-                        if (response.keyboard != null)
-                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: response.keyboard);
+                        if (response.photoName != null)
+                        {
+                            using (Stream stream = new MemoryStream(response.photo))
+                            {
+                                var file = new FileToSend();
+                                file.Content = stream;
+                                file.Filename = response.photoName;
+                                await Bot.SendPhotoAsync(responseObject.Message.Chat.Id, file, file.Filename);
+                            }
+                        }
+                        if (response.keyboard != null && response.keyboard != null)
+                        {
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: response.keyboard);
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, "در صورت نیاز به برگشت به منوی قبل از دکمه پایین صفحه استفاده نمایید.", replyMarkup: response.inlineKeyboard);
+                        }
+                        else if (response.keyboard != null)
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: response.keyboard);
+                        else if (response.inlineKeyboard != null)
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: response.inlineKeyboard);
                         else
-                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
                     }
                 }
             }

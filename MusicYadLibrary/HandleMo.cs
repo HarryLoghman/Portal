@@ -11,8 +11,9 @@ namespace MusicYadLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             using (var entity = new MusicYadEntities())
             {
                 var content = message.Content;
@@ -22,7 +23,7 @@ namespace MusicYadLibrary
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
                 {
@@ -31,20 +32,20 @@ namespace MusicYadLibrary
                     message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                 {
                     message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
 
                 var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
                 if (!message.ReceivedFrom.Contains("Notify") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                    return;
+                    return isSucceeded;
                 if (message.ReceivedFrom.Contains("Notify") && message.Content.ToLower() == "subscription")
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Notify") && message.Content.ToLower() == "unsubscription")
@@ -59,7 +60,7 @@ namespace MusicYadLibrary
                         {
                             message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
-                            return;
+                            return isSucceeded;
                         }
                     }
 
@@ -91,7 +92,7 @@ namespace MusicYadLibrary
                         ServiceHandler.CancelUserInstallments(message.MobileNumber);
                         var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                        return;
+                        return isSucceeded;
                     }
                     else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
@@ -105,7 +106,7 @@ namespace MusicYadLibrary
 
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -113,18 +114,19 @@ namespace MusicYadLibrary
                 {
                     //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     //MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 message.SubscriberId = subscriber.Id;
                 if (subscriber.DeactivationDate != null)
                 {
                     //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     //MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 message.Content = content;
                 ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
             }
+            return isSucceeded;
         }
     }
 }

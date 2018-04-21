@@ -16,5 +16,8 @@ namespace DehnadNotificationService.Models
     {
         public string Text { get; set; }
         public Telegram.Bot.Types.ReplyMarkups.ReplyKeyboardMarkup keyboard { get; set; }
+        public Telegram.Bot.Types.ReplyMarkups.InlineKeyboardMarkup inlineKeyboard { get; set; }
+        public byte[] photo { get; set; }
+        public string photoName { get; set; }
     }
 }

@@ -5,14 +5,16 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace PhantomLibrary
 {
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static void ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             try
             {
                 logs.Error("mobilenumber:" + message.MobileNumber + " - " + "1");
@@ -41,7 +43,7 @@ namespace PhantomLibrary
                     {
                         message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
                     {
@@ -50,13 +52,13 @@ namespace PhantomLibrary
                         message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
                         message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                     {
                         message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000") || message.Content.ToLower().Contains("abc"))
                     {
@@ -83,7 +85,7 @@ namespace PhantomLibrary
                             logs.Error("mobilenumber:" + message.MobileNumber + " - " + "9");
                         }
                         logs.Error("mobilenumber:" + message.MobileNumber + " - " + "10");
-                        return;
+                        return isSucceeded;
                     }
                     //else if (message.Content.ToLower().Contains("abc")) //Otp Help
                     //{
@@ -120,7 +122,7 @@ namespace PhantomLibrary
                         var confirmCode = message.Content;
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                         logs.Error("mobilenumber:" + message.MobileNumber + " - " + "20");
-                        return;
+                        return isSucceeded;
                     }
                     logs.Error("mobilenumber:" + message.MobileNumber + " - " + "21");
                     var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
@@ -134,7 +136,7 @@ namespace PhantomLibrary
                     //}
 
                     if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                        return;
+                        return isSucceeded;
 
                     if (message.ReceivedFrom.Contains("Register"))
                         isUserSendsSubscriptionKeyword = true;
@@ -163,7 +165,7 @@ namespace PhantomLibrary
                                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                                 message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                                 MessageHandler.InsertMessageToQueue(message);
-                                return;
+                                return isSucceeded;
                             }
                         }
 
@@ -298,7 +300,7 @@ namespace PhantomLibrary
                         //    message.Content = content;
                         //    ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
                         //}
-                        return;
+                        return isSucceeded;
                     }
                     var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -319,7 +321,7 @@ namespace PhantomLibrary
                                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                         }
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     message.SubscriberId = subscriber.Id;
                     if (subscriber.DeactivationDate != null)
@@ -339,7 +341,7 @@ namespace PhantomLibrary
                                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                         }
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     message.Content = content;
                     ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
@@ -349,6 +351,7 @@ namespace PhantomLibrary
             {
                 logs.Error("Exception in ReceivedMessage: ", e);
             }
+            return isSucceeded;
         }
 
         public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)

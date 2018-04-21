@@ -5,14 +5,16 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace ShenoYadLibrary
 {
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static void ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             using (var entity = new ShenoYadEntities())
             {
                 Type entityType = typeof(ShenoYadEntities);
@@ -27,7 +29,7 @@ namespace ShenoYadLibrary
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
                 {
@@ -36,13 +38,13 @@ namespace ShenoYadLibrary
                     message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                 {
                     message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 else if (message.Content == "00" || message.Content.ToLower().Contains("abc"))
                 {
@@ -52,13 +54,13 @@ namespace ShenoYadLibrary
                         message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
                         SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
                     }
-                    return;
+                    return isSucceeded;
                 }
                 else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                 {
                     var confirmCode = message.Content;
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
-                    return;
+                    return isSucceeded;
                 }
 
                 var isUserSendsSubscriptionKeyword = SharedLibrary.ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
@@ -67,11 +69,11 @@ namespace ShenoYadLibrary
                 if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
                 {
                     SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-                    return;
+                    return isSucceeded;
                 }
 
                 if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                    return;
+                    return isSucceeded;
                 if (message.ReceivedFrom.Contains("Register"))
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
@@ -98,7 +100,7 @@ namespace ShenoYadLibrary
                             //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                             //message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                             //MessageHandler.InsertMessageToQueue(message);
-                            return;
+                            return isSucceeded;
                         }
                     }
                     var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
@@ -111,7 +113,7 @@ namespace ShenoYadLibrary
                             if (oldServiceSubscriber.DeactivationDate == null)
                             {
                                 await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "-1");
-                                return;
+                                return isSucceeded;
                             }
                         }
                     }
@@ -142,7 +144,7 @@ namespace ShenoYadLibrary
                         ServiceHandler.CancelUserInstallments(message.MobileNumber);
                         //var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                         //message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                        return;
+                        return isSucceeded;
                     }
                     else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
@@ -162,7 +164,7 @@ namespace ShenoYadLibrary
                     //    message.Content = content;
                     //    ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
                     //}
-                    return;
+                    return isSucceeded;
                 }
                 var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -179,7 +181,7 @@ namespace ShenoYadLibrary
                             else
                                 message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
-                            return;
+                            return isSucceeded;
                         }
                     }
                     if (message.Content == null || message.Content == "" || message.Content == " ")
@@ -187,7 +189,7 @@ namespace ShenoYadLibrary
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 message.SubscriberId = subscriber.Id;
                 if (subscriber.DeactivationDate != null)
@@ -203,7 +205,7 @@ namespace ShenoYadLibrary
                             else
                                 message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
-                            return;
+                            return isSucceeded;
                         }
                     }
                     if (message.Content == null || message.Content == "" || message.Content == " ")
@@ -211,11 +213,12 @@ namespace ShenoYadLibrary
                     else
                         message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 message.Content = content;
                 ContentManager.HandleContent(message, service, subscriber, messagesTemplate, imiChargeCodes);
             }
+            return isSucceeded;
         }
 
         public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)

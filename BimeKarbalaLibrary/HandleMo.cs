@@ -8,8 +8,9 @@ namespace BimeKarbalaLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
@@ -60,7 +61,7 @@ namespace BimeKarbalaLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 else
                 {
@@ -75,7 +76,7 @@ namespace BimeKarbalaLibrary
                     message.Content = content;
                     ContentManager.HandleContent(message, service, subsciber, messagesTemplate);
                 }
-                return;
+                return isSucceeded;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -83,17 +84,18 @@ namespace BimeKarbalaLibrary
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.Content = content;
             ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+            return isSucceeded;
         }
     }
 }

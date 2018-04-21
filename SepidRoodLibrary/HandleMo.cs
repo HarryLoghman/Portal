@@ -7,16 +7,17 @@ namespace SepidRoodLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
             if (message.Content == "9" || (isUserSendsSubscriptionKeyword == true && !message.ReceivedFrom.Contains("Notify")))
-                return;
+                return isSucceeded;
             if (!message.ReceivedFrom.Contains("Notify") && message.IsReceivedFromIntegratedPanel != true && isUserWantsToUnsubscribe == true)
-                return;
+                return isSucceeded;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             
             if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
@@ -32,7 +33,7 @@ namespace SepidRoodLibrary
                         if (message.Content == "22" || message.Content == "55")
                         {
                             ContentManager.HandleContent(message, service, user, messagesTemplate);
-                            return;
+                            return isSucceeded;
                         }
                         else if (message.Content == "2" || message.Content == "5")
                         {
@@ -45,19 +46,19 @@ namespace SepidRoodLibrary
                             {
                                 message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
                                 MessageHandler.InsertMessageToQueue(message);
-                                return;
+                                return isSucceeded;
                             }
                             else
                             {
                                 ContentManager.HandleContent(message, service, user, messagesTemplate);
-                                return;
+                                return isSucceeded;
                             }
                         }
                         else
                         {
                             message = MessageHandler.SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
-                            return;
+                            return isSucceeded;
                         }
                     }
                 }
@@ -93,7 +94,7 @@ namespace SepidRoodLibrary
                     else if (message.Content == "22" || message.Content == "55")
                     {
                         ContentManager.HandleContent(message, service, subscriberData, messagesTemplate);
-                        return;
+                        return isSucceeded;
                     }
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 }
@@ -120,13 +121,13 @@ namespace SepidRoodLibrary
                     else if (message.Content == "22" || message.Content == "55")
                     {
                         ContentManager.HandleContent(message, service, subscriberData, messagesTemplate);
-                        return;
+                        return isSucceeded;
                     }
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 }
                 message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, message);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -134,7 +135,7 @@ namespace SepidRoodLibrary
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
@@ -151,9 +152,10 @@ namespace SepidRoodLibrary
                     message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                 }
-                return;
+                return isSucceeded;
             }
             ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+            return isSucceeded;
         }
     }
 }

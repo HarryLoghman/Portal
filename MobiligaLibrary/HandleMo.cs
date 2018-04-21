@@ -8,8 +8,9 @@ namespace MobiligaLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
@@ -61,7 +62,7 @@ namespace MobiligaLibrary
                 }
                 message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -69,7 +70,7 @@ namespace MobiligaLibrary
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
@@ -86,9 +87,10 @@ namespace MobiligaLibrary
                     message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                 }
-                return;
+                return isSucceeded;
             }
             ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+            return isSucceeded;
         }
     }
 }

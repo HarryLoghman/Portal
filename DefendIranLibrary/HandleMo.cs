@@ -6,14 +6,16 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace DefendIranLibrary
 {
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static void ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             try
             {
                 using (var entity = new DefendIranEntities())
@@ -38,7 +40,7 @@ namespace DefendIranLibrary
                     {
                         message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
                     {
@@ -47,13 +49,13 @@ namespace DefendIranLibrary
                         message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
                         message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                     {
                         message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     else if (((message.Content.Length == 8 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit)) || message.Content.ToLower().Contains("abc"))
                     {
@@ -70,13 +72,13 @@ namespace DefendIranLibrary
                             message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
                             SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
                         }
-                        return;
+                        return isSucceeded;
                     }
                     else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                     {
                         var confirmCode = message.Content;
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
-                        return;
+                        return isSucceeded;
                     }
 
                     if (message.ReceivedFrom.Contains("Notify-Register"))
@@ -203,7 +205,7 @@ namespace DefendIranLibrary
                         //    message.Content = content;
                         //    ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
                         //}
-                        return;
+                        return isSucceeded;
                     }
                     var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -224,7 +226,7 @@ namespace DefendIranLibrary
                                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                         }
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     message.SubscriberId = subscriber.Id;
                     if (subscriber.DeactivationDate != null)
@@ -244,7 +246,7 @@ namespace DefendIranLibrary
                                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                         }
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                     message.Content = content;
                     ContentManager.HandleContent(message, service, subscriber, messagesTemplate, imiChargeCodes);
@@ -254,6 +256,7 @@ namespace DefendIranLibrary
             {
                 logs.Error("Exception in DefendIran ReceivedMessage:", e);
             }
+            return isSucceeded;
         }
     }
 }

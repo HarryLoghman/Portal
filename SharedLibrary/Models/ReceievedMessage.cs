@@ -25,5 +25,7 @@ namespace SharedLibrary.Models
         public string PersianReceivedTime { get; set; }
         public string ReceivedFrom { get; set; }
         public Nullable<bool> IsReceivedFromWeb { get; set; }
+        public Nullable<int> RetryCount { get; set; }
+        public Nullable<System.DateTime> LastRetryDate { get; set; }
     }
 }

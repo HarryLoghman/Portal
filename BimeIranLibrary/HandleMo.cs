@@ -8,8 +8,9 @@ namespace BimeIranLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();
             var content = message.Content;
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
@@ -19,11 +20,11 @@ namespace BimeIranLibrary
             if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
             {
                 SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-                return;
+                return isSucceeded;
             }
 
             if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                return;
+                return isSucceeded;
             if (message.ReceivedFrom.Contains("Register"))
                 isUserSendsSubscriptionKeyword = true;
             else if (message.ReceivedFrom.Contains("Unsubscribe"))
@@ -75,7 +76,7 @@ namespace BimeIranLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
@@ -90,7 +91,7 @@ namespace BimeIranLibrary
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                     MessageHandler.InsertMessageToQueue(message);
-                    return;
+                    return isSucceeded;
                 }
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                 {
@@ -101,7 +102,7 @@ namespace BimeIranLibrary
                     message.Content = content;
                     ContentManager.HandleContent(message, service, subsciber, messagesTemplate);
                 }
-                return;
+                return isSucceeded;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -109,17 +110,18 @@ namespace BimeIranLibrary
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.Content = content;
             ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+            return isSucceeded;
         }
     }
 }

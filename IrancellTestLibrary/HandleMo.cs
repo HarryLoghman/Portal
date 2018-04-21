@@ -9,21 +9,22 @@ namespace IrancellTestLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static void ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, Service service)
         {
+            bool isSucceeded = true;
             var content = message.Content;
 
             message.Content = "شما محتوای " + message.Content + " را به ما ارسال کرده اید.";
             message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             MessageHandler.InsertMessageToQueue(message);
-            return;
+            return isSucceeded;
 
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
             if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
             {
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             else if (message.ReceivedFrom.Contains("AppVerification") && message.Content.Contains("sendverification"))
             {
@@ -32,7 +33,7 @@ namespace IrancellTestLibrary
                 message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
@@ -41,12 +42,12 @@ namespace IrancellTestLibrary
                 SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
 
             if (message.ReceivedFrom.Contains("IMI"))
-                return;
+                return isSucceeded;
 
             if (message.Content != "9" && isUserSendsSubscriptionKeyword != true && isUserWantsToUnsubscribe != true && message.IsReceivedFromIntegratedPanel != true && !message.ReceivedFrom.Contains("Portal"))
             {
                 if (!message.ReceivedFrom.Contains("IMI") && !message.ReceivedFrom.Contains("Verification") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
-                    return;
+                    return isSucceeded;
                 if (message.ReceivedFrom.Contains("Register"))
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
@@ -62,7 +63,7 @@ namespace IrancellTestLibrary
                     {
                         message = MessageHandler.SendServiceHelp(message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                 }
                 if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
@@ -73,7 +74,7 @@ namespace IrancellTestLibrary
                         //message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                         //message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                         //MessageHandler.InsertMessageToQueue(message);
-                        return;
+                        return isSucceeded;
                     }
                 }
                 var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
@@ -104,7 +105,7 @@ namespace IrancellTestLibrary
                     ServiceHandler.CancelUserInstallments(message.MobileNumber);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                    return;
+                    return isSucceeded;
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
@@ -123,7 +124,7 @@ namespace IrancellTestLibrary
                 //    message.Content = content;
                 //    ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
                 //}
-                return;
+                return isSucceeded;
             }
             var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
@@ -131,18 +132,18 @@ namespace IrancellTestLibrary
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
             {
                 message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
                 MessageHandler.InsertMessageToQueue(message);
-                return;
+                return isSucceeded;
             }
             message.Content = content;
             ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
-
+            return isSucceeded;
         }
 
         public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)
