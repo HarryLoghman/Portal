@@ -187,5 +187,22 @@ namespace MedioLibrary
             };
             return offContents;
         }
+
+        public static Singlecharge GetOTPRequestId(MedioEntities entity, MessageObject message)
+        {
+            try
+            {
+                var singlecharge = entity.Singlecharges.Where(o => o.MobileNumber == message.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                if (singlecharge != null)
+                    return singlecharge;
+                else
+                    return null;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetOTPRequestId: ", e);
+            }
+            return null;
+        }
     }
 }

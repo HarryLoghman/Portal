@@ -450,6 +450,29 @@ namespace NebulaLibrary
             return message;
         }
 
+        public static MessageObject SetImiChargeInfo(NebulaEntities entity, ImiChargeCode imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
+        {
+            if (subscriberState == null && price > 0)
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price);
+            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Register");
+            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
+            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
+            else
+                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Free");
+
+            if (imiChargeCode != null)
+            {
+                message.ImiChargeCode = imiChargeCode.ChargeCode;
+                message.ImiChargeKey = imiChargeCode.ChargeKey;
+                message.ImiMessageType = messageType;
+                message.Price = price;
+            }
+            return message;
+        }
+
         public static async Task SendMesssagesToPardisImi(NebulaEntities entity, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             try

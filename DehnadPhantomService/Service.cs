@@ -228,47 +228,55 @@ namespace DehnadPhantomService
                     else
                     {
                         var startTime = DateTime.Now;
-                        if (installmentCycleNumber == 1 && DateTime.Now.Hour < 11)
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 13)
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 6 && DateTime.Now.Hour >= 22)
+                        //if (installmentCycleNumber == 1 && DateTime.Now.Hour >= 8 && DateTime.Now.Hour < 11)
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 13)
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 13 && DateTime.Now.Hour < 16)
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 22)
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 6 && DateTime.Now.Hour >= 22)
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        if (DateTime.Now.Hour >= 7 && (DateTime.Now.Hour <= 23 && DateTime.Now.Minute < 45))
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;

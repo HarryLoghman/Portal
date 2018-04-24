@@ -15,8 +15,6 @@ namespace FitShowLibrary
             bool isSucceeded = true;
             using (var entity = new FitShowEntities())
             {
-                Type entityType = typeof(FitShowEntities);
-                Type ondemandType = typeof(OnDemandMessagesBuffer);
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
@@ -43,8 +41,13 @@ namespace FitShowLibrary
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                     if (result.Status != "SUCCESS-Pending Confirmation")
                     {
-                        message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                        if (result.Status == "Error" || result.Status == "Exception")
+                            isSucceeded = false;
+                        else
+                        {
+                            message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
                     }
                     return isSucceeded;
                 }
@@ -54,6 +57,8 @@ namespace FitShowLibrary
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                    if (result.Status == "Error" || result.Status == "Exception")
+                        isSucceeded = false;
                     return isSucceeded;
                 }
 

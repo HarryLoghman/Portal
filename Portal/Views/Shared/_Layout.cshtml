@@ -1093,6 +1093,33 @@
                                                 </ul>
                                             </li>
                                         }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("PorShetabUser"))
+                                        {
+                                            <li>
+                                                پرشتاب
+                                                <ul>
+
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "PorShetab" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "PorShetab" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "PorShetab" }, null)
+                                                    </li>
+                                                    <li>
+                                                        @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "PorShetab" }, null)
+                                                    </li>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("PorShetabUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "PorShetab" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }

@@ -32,6 +32,23 @@ namespace ShahreKalamehLibrary
             return autochargeContent;
         }
 
+        public static Singlecharge GetOTPRequestId(ShahreKalamehEntities entity, MessageObject message)
+        {
+            try
+            {
+                var singlecharge = entity.Singlecharges.Where(o => o.MobileNumber == message.MobileNumber && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                if (singlecharge != null)
+                    return singlecharge;
+                else
+                    return null;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetOTPRequestId: ", e);
+            }
+            return null;
+        }
+
         public static string IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
         {
             var result = "";

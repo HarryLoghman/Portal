@@ -19,9 +19,9 @@ namespace Portal.Controllers
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab" };
         private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
 
         [HttpPost]
@@ -71,14 +71,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new PhantomLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -97,14 +97,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new SoltanLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = SoltanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = SoltanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = SoltanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -123,14 +123,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new MenchBazLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = MenchBazLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = MenchBazLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = MenchBazLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -149,14 +149,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new DonyayeAsatirLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = DonyayeAsatirLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = DonyayeAsatirLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = DonyayeAsatirLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -175,14 +175,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new AsemanLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = AsemanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = AsemanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = AsemanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -201,14 +201,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new AvvalPodLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = AvvalPodLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = AvvalPodLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = AvvalPodLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -227,14 +227,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new AvvalPod500Library.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = AvvalPod500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = AvvalPod500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = AvvalPod500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -251,16 +251,16 @@ namespace Portal.Controllers
                                 {
                                     using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
                                     {
-                                        var imiChargeCode = new AvvalPodLibrary.Models.ImiChargeCode();
+                                        var imiChargeCode = new AvvalYadLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = AvvalYadLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = AvvalYadLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = AvvalYadLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -279,14 +279,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new BehAmooz500Library.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = BehAmooz500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = BehAmooz500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = BehAmooz500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -305,14 +305,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new FitShowLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = FitShowLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = FitShowLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = FitShowLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -331,14 +331,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new JabehAbzarLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = JabehAbzarLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = JabehAbzarLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = JabehAbzarLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -357,14 +357,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new ShenoYadLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = ShenoYadLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = ShenoYadLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = ShenoYadLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -383,14 +383,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new ShenoYad500Library.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = ShenoYad500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = ShenoYad500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = ShenoYad500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -409,14 +409,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new TakavarLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = TakavarLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = TakavarLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = TakavarLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -435,14 +435,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new TamlyLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = TamlyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = TamlyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = TamlyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -461,14 +461,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new Tamly500Library.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = Tamly500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = Tamly500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = Tamly500Library.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -487,19 +487,19 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new DezhbanLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = DezhbanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = DezhbanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = DezhbanLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
                                         {
-                                            var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                            var singleCharge = new DezhbanLibrary.Models.Singlecharge();
                                             string aggregatorName = "Telepromo";
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                             singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
@@ -517,7 +517,7 @@ namespace Portal.Controllers
                                         else if (messageObj.Price.Value == -1)
                                             messageObj.Price = 6; //6 is Unsub for hub
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = ShahreKalamehLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -540,7 +540,7 @@ namespace Portal.Controllers
                                         else if (messageObj.Price.Value == -1)
                                             messageObj.Price = 6; //6 is Unsub for hub
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = SoratyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -563,7 +563,7 @@ namespace Portal.Controllers
                                         else if (messageObj.Price.Value == -1)
                                             messageObj.Price = 6; //6 is Unsub for hub
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = DefendIranLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -594,7 +594,7 @@ namespace Portal.Controllers
                                             result.Status = "Invalid Price";
                                         else
                                         {
-                                            var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                            var singleCharge = new SepidRoodLibrary.Models.Singlecharge();
                                             string aggregatorName = "PardisImi";
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                             singleCharge = await SharedLibrary.MessageSender.PardisImiOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
@@ -608,14 +608,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new NebulaLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = NebulaLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = NebulaLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = NebulaLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -634,14 +634,14 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new MedioLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                            messageObj = MedioLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
                                         {
                                             messageObj.Price = 0;
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                            messageObj = MedioLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                                         }
                                         else
-                                            messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                            messageObj = MedioLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
                                             result.Status = "Invalid Price";
                                         else
@@ -748,8 +748,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new PhantomLibrary.Models.PhantomEntities())
                                 {
-                                    var singleCharge = new PhantomLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = PhantomLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -765,8 +764,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new SoltanLibrary.Models.SoltanEntities())
                                 {
-                                    var singleCharge = new SoltanLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = SoltanLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -782,8 +780,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
                                 {
-                                    var singleCharge = new MenchBazLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = MenchBazLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -799,8 +796,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new AsemanLibrary.Models.AsemanEntities())
                                 {
-                                    var singleCharge = new AsemanLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = AsemanLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -816,8 +812,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
                                 {
-                                    var singleCharge = new AvvalPodLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = AvvalPodLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -833,8 +828,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
                                 {
-                                    var singleCharge = new AvvalPod500Library.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = AvvalPod500Library.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -850,8 +844,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
                                 {
-                                    var singleCharge = new AvvalYadLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = AvvalYadLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -867,8 +860,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
                                 {
-                                    var singleCharge = new BehAmooz500Library.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = BehAmooz500Library.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -884,8 +876,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
                                 {
-                                    var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = DonyayeAsatirLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -901,8 +892,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new FitShowLibrary.Models.FitShowEntities())
                                 {
-                                    var singleCharge = new FitShowLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = FitShowLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -918,8 +908,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
                                 {
-                                    var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = JabehAbzarLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -935,8 +924,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
                                 {
-                                    var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = ShenoYadLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -952,8 +940,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
                                 {
-                                    var singleCharge = new ShenoYad500Library.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = ShenoYad500Library.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -969,8 +956,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new TakavarLibrary.Models.TakavarEntities())
                                 {
-                                    var singleCharge = new TakavarLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = TakavarLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -986,8 +972,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new TamlyLibrary.Models.TamlyEntities())
                                 {
-                                    var singleCharge = new TamlyLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = TamlyLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1003,8 +988,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new Tamly500Library.Models.Tamly500Entities())
                                 {
-                                    var singleCharge = new Tamly500Library.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = Tamly500Library.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1020,8 +1004,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
                                 {
-                                    var singleCharge = new DezhbanLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = DezhbanLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1037,8 +1020,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
                                 {
-                                    var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = ShahreKalamehLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1054,8 +1036,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new SoratyLibrary.Models.SoratyEntities())
                                 {
-                                    var singleCharge = new SoratyLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = SoratyLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1071,9 +1052,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
                                 {
-                                    var singleCharge = new DefendIranLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
-
+                                    var singleCharge = DefendIranLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1106,8 +1085,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new NebulaLibrary.Models.NebulaEntities())
                                 {
-                                    var singleCharge = new NebulaLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = NebulaLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1123,8 +1101,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new MedioLibrary.Models.MedioEntities())
                                 {
-                                    var singleCharge = new MedioLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = MedioLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1140,8 +1117,7 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new DarchinLibrary.Models.DarchinEntities())
                                 {
-                                    var singleCharge = new DarchinLibrary.Models.Singlecharge();
-                                    singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                                    var singleCharge = DarchinLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
@@ -1828,6 +1804,24 @@ namespace Portal.Controllers
                                         daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
                                 }
                             }
+                            else if (messageObj.ServiceCode == "PorShetab")
+                            {
+                                using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                    {
+                                        var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
+                                        if (installmentQueue != null)
+                                            daysLeft = 30;
+                                        else
+                                            daysLeft = 0;
+                                    }
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
                             else if (messageObj.ServiceCode == "JabehAbzar")
                             {
                                 using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
@@ -2090,7 +2084,7 @@ namespace Portal.Controllers
             dynamic result = new ExpandoObject();
             try
             {
-                if (serviceCode != null && (serviceCode == "TahChin" || serviceCode == "MusicYad" || serviceCode == "Dambel" || serviceCode == "Medad"))
+                if (serviceCode != null && (serviceCode == "TahChin" || serviceCode == "MusicYad" || serviceCode == "Dambel" || serviceCode == "Medad" || serviceCode == "PorShetab"))
                 {
                     string timestampParam = DateTime.Now.ToString("yyyyMMddhhmmss");
                     string requestIdParam = Guid.NewGuid().ToString();
@@ -2110,6 +2104,8 @@ namespace Portal.Controllers
                     else if (serviceCode == "Dambel")
                         pageNo = 0;
                     else if (serviceCode == "Medad")
+                        pageNo = 0;
+                    else if (serviceCode == "PorShetab")
                         pageNo = 0;
 
                     sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);

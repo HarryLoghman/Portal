@@ -17,8 +17,6 @@ namespace ShenoYadLibrary
             bool isSucceeded = true;
             using (var entity = new ShenoYadEntities())
             {
-                Type entityType = typeof(ShenoYadEntities);
-                Type ondemandType = typeof(OnDemandMessagesBuffer);
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
@@ -54,7 +52,7 @@ namespace ShenoYadLibrary
                     if (result.Status != "SUCCESS-Pending Confirmation")
                     {
                         message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                        MessageHandler.InsertMessageToQueue(message);
                     }
                     return isSucceeded;
                 }

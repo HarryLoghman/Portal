@@ -10,8 +10,8 @@ namespace DehnadReceiveProcessorService
     public class MessageProcesser
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static int MaxRetryCount = 5;
-        public static int RetryWaitTimeInSeconds = 50;
+        public static int MaxRetryCount = 4;
+        public static int RetryWaitTimeInSeconds = -50;
         public void Process()
         {
             try
@@ -608,6 +608,8 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = AsemanLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Medad")
                     isSucceeded = MedadLibrary.HandleMo.ReceivedMessage(message, service);
+                else if (service.ServiceCode == "PorShetab")
+                    isSucceeded = PorShetabLibrary.HandleMo.ReceivedMessage(message, service);
             }
             catch (Exception e)
             {
@@ -684,6 +686,10 @@ namespace DehnadReceiveProcessorService
                     DambelLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "Aseman")
                     AsemanLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "Medad")
+                    MedadLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "PorShetab")
+                    PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

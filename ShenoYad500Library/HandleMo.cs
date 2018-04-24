@@ -17,8 +17,6 @@ namespace ShenoYad500Library
             bool isSucceeded = true;
             using (var entity = new ShenoYad500Entities())
             {
-                Type entityType = typeof(ShenoYad500Entities);
-                Type ondemandType = typeof(OnDemandMessagesBuffer);
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
@@ -63,8 +61,13 @@ namespace ShenoYad500Library
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                     if (result.Status != "SUCCESS-Pending Confirmation")
                     {
-                        message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                        if (result.Status == "Error" || result.Status == "Exception")
+                            isSucceeded = false;
+                        else
+                        {
+                            message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
                     }
                     else
                     {
@@ -72,7 +75,7 @@ namespace ShenoYad500Library
                         {
                             SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
                             message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
-                            SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                            MessageHandler.InsertMessageToQueue(message);
                         }
                     }
                     return isSucceeded;
@@ -107,6 +110,8 @@ namespace ShenoYad500Library
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                    if (result.Status == "Error" || result.Status == "Exception")
+                        isSucceeded = false;
                     return isSucceeded;
                 }
 

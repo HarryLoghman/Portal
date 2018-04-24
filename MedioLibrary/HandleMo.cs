@@ -23,8 +23,6 @@ namespace MedioLibrary
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 using (var entity = new MedioEntities())
                 {
-                    Type entityType = typeof(MedioEntities);
-                    Type ondemandType = typeof(OnDemandMessagesBuffer);
                     int isCampaignActive = 0;
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -64,8 +62,13 @@ namespace MedioLibrary
                         MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                         if (result.Status != "SUCCESS-Pending Confirmation")
                         {
-                            message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                            SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                            if (result.Status == "Error" || result.Status == "Exception")
+                                isSucceeded = false;
+                            else
+                            {
+                                message.Content = "لطفا دوباره تلاش کنید.";
+                                MessageHandler.InsertMessageToQueue(message);
+                            }
                         }
                         else
                         {
@@ -73,7 +76,7 @@ namespace MedioLibrary
                             {
                                 SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
                                 message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
-                                SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                                MessageHandler.InsertMessageToQueue(message);
                             }
                         }
                         return isSucceeded;
@@ -105,6 +108,8 @@ namespace MedioLibrary
                         var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                         MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                        if (result.Status == "Error" || result.Status == "Exception")
+                            isSucceeded = false;
                         return isSucceeded;
                     }
 

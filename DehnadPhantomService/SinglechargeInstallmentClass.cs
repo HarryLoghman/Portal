@@ -82,7 +82,7 @@ namespace DehnadPhantomService
                 int isCampaignActive = 0;
                 using (var entity = new PhantomEntities())
                 {
-                    var campaign = ((IEnumerable<dynamic>)entity.Settings).FirstOrDefault(o => o.Name == "campaign");
+                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }

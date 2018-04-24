@@ -27,6 +27,8 @@ namespace Portal.Controllers
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
                 result = "-1";
+            else if (messageObj.MobileNumber == "09105246145" || messageObj.MobileNumber == "09174565469")
+                result = "-1";
             else
             {
                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
@@ -41,7 +43,7 @@ namespace Portal.Controllers
                     messageObj.Content = HttpContext.Current.Request.Headers["actor"];
                 }
                 messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                
+
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                 result = "1";
             }

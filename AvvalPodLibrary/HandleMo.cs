@@ -18,8 +18,6 @@ namespace AvvalPodLibrary
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new AvvalPodEntities())
             {
-                Type entityType = typeof(AvvalPodEntities);
-                Type ondemandType = typeof(OnDemandMessagesBuffer);
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
@@ -53,7 +51,7 @@ namespace AvvalPodLibrary
                     if (result.Status != "SUCCESS-Pending Confirmation")
                     {
                         message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                        MessageHandler.InsertMessageToQueue(message);
                     }
                     return isSucceeded;
                 }

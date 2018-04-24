@@ -32,6 +32,31 @@ namespace PhantomLibrary
             return autochargeContent;
         }
 
+        public static Singlecharge GetOTPRequestId(PhantomEntities entity, MessageObject message)
+        {
+            try
+            {
+                var singlecharge = entity.Singlecharges.Where(o => o.MobileNumber == message.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                if (singlecharge != null)
+                    return singlecharge;
+                else
+                {
+                    return null;
+                    //var newSinglecahrge = new Singlecharge();
+                    //newSinglecahrge.DateCreated = DateTime.Now;
+                    //newSinglecahrge.MobileNumber = message.MobileNumber;
+                    //newSinglecahrge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    //newSinglecahrge.Price = 0;
+                    //newSinglecahrge.IsSucceeded = false;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetOTPRequestId: ", e);
+            }
+            return null;
+        }
+
         public static void AddToAutochargeContentSendedToUserTable(long subscriberId, long autochargeId)
         {
             try

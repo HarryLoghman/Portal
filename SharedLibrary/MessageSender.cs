@@ -1080,6 +1080,15 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
+                singlecharge.IsSucceeded = false;
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+
                 var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
                 var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
                 var aggregatorServiceId = paridsShortCodes.OrderByDescending(o => o.Price).FirstOrDefault().PardisServiceId;
@@ -1101,27 +1110,14 @@ namespace SharedLibrary
                     singlecharge.Description = "SUCCESS-Pending Confirmation";
                 else
                     singlecharge.Description = result.ToString();
+
+                entity.Entry(singlecharge).State = EntityState.Modified;
+                entity.SaveChanges();
             }
             catch (Exception e)
             {
                 logs.Error("Exception in MapfaOTPRequest: " + e);
                 singlecharge.Description = "Exception";
-            }
-            try
-            {
-                singlecharge.IsSucceeded = false;
-                singlecharge.DateCreated = DateTime.Now;
-                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                singlecharge.Price = message.Price.GetValueOrDefault();
-                singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
-
-                entity.Singlecharges.Add(singlecharge);
-                entity.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in MapfaOTPRequest on saving values to db: " + e);
             }
             return singlecharge;
         }
@@ -1153,9 +1149,9 @@ namespace SharedLibrary
                 {
                     singlecharge.IsSucceeded = true;
                     singlecharge.Description = "SUCCESS";
+                    entity.Entry(singlecharge).State = EntityState.Modified;
+                    entity.SaveChanges();
                 }
-                entity.Entry(singlecharge).State = EntityState.Modified;
-                entity.SaveChanges();
             }
             catch (Exception e)
             {

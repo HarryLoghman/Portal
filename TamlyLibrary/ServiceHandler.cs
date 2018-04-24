@@ -32,6 +32,23 @@ namespace TamlyLibrary
             return autochargeContent;
         }
 
+        public static Singlecharge GetOTPRequestId(TamlyEntities entity, MessageObject message)
+        {
+            try
+            {
+                var singlecharge = entity.Singlecharges.Where(o => o.MobileNumber == message.MobileNumber && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                if (singlecharge != null)
+                    return singlecharge;
+                else
+                    return null;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetOTPRequestId: ", e);
+            }
+            return null;
+        }
+
         public static void AddToAutochargeContentSendedToUserTable(long subscriberId, long autochargeId)
         {
             try

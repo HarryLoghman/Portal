@@ -217,6 +217,14 @@
     <Compile Include="Areas\BimeIran\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\BimeIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\PorShetab\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\PorShetab\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\PorShetab\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\PorShetab\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\PorShetab\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\PorShetab\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\PorShetab\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\PorShetab\PorShetabAreaRegistration.cs" />
     <Compile Include="Areas\Medad\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Medad\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Medad\Controllers\MonitoringController.cs" />
@@ -1458,6 +1466,16 @@
     <Content Include="Areas\Medad\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Medad\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Medad\Views\web.config" />
+    <Content Include="Areas\PorShetab\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\PorShetab\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\PorShetab\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\PorShetab\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\PorShetab\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\PorShetab\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\PorShetab\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\PorShetab\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\PorShetab\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\PorShetab\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1835,6 +1853,7 @@
     <Folder Include="Areas\NabardGah\Models\" />
     <Folder Include="Areas\Nebula\Models\" />
     <Folder Include="Areas\Phantom\Models\" />
+    <Folder Include="Areas\PorShetab\Models\" />
     <Folder Include="Areas\SepidRood\Models\" />
     <Folder Include="Areas\ShahreKalameh\Models\" />
     <Folder Include="Areas\ShenoYad500\Models\" />
@@ -1982,6 +2001,10 @@
     <ProjectReference Include="..\PhantomLibrary\PhantomLibrary.csproj">
       <Project>{b232d11f-151b-a5b6-131d-4bc28b1314c8}</Project>
       <Name>PhantomLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PorShetabLibrary\PorShetabLibrary.csproj">
+      <Project>{25344214-1b11-1513-4331-4842db123241}</Project>
+      <Name>PorShetabLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
       <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>

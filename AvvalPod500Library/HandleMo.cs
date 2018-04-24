@@ -18,8 +18,6 @@ namespace AvvalPod500Library
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new AvvalPod500Entities())
             {
-                Type entityType = typeof(AvvalPod500Entities);
-                Type ondemandType = typeof(OnDemandMessagesBuffer);
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
@@ -54,8 +52,13 @@ namespace AvvalPod500Library
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                     if (result.Status != "SUCCESS-Pending Confirmation")
                     {
-                        message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                        SharedLibrary.MessageHandler.InsertMessageToQueue(entityType, message, null, null, ondemandType);
+                        if (result.Status == "Error" || result.Status == "Exception")
+                            isSucceeded = false;
+                        else
+                        {
+                            message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
                     }
                     return isSucceeded;
                 }
@@ -65,6 +68,8 @@ namespace AvvalPod500Library
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                    if (result.Status == "Error" || result.Status == "Exception")
+                        isSucceeded = false;
                     return isSucceeded;
                 }
 

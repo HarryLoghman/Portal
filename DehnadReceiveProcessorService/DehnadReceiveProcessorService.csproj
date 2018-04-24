@@ -208,6 +208,10 @@
       <Project>{b232d11f-151b-a5b6-131d-4bc28b1314c8}</Project>
       <Name>PhantomLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PorShetabLibrary\PorShetabLibrary.csproj">
+      <Project>{25344214-1b11-1513-4331-4842db123241}</Project>
+      <Name>PorShetabLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
       <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
       <Name>SepidRoodLibrary</Name>
