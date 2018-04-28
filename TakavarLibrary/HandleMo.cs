@@ -113,6 +113,19 @@ namespace TakavarLibrary
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                     if (result.Status == "Error" || result.Status == "Exception")
                         isSucceeded = false;
+                    else if (result.Status.ToString().Contains("NOT FOUND IN LAST 5MINS") || result.Status == "No Otp Request Found")
+                    {
+                        var logId2 = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
+                        var result2 = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
+                        MessageHandler.OtpLogUpdate(logId2, result2.Status.ToString());
+                        message.Content = messagesTemplate.Where(o => o.Title == "WrongOtpConfirm").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                    }
+                    else if (result.Status.ToString().Contains("PIN DOES NOT MATCH"))
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "WrongOtpConfirm").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                    }
                     return isSucceeded;
                 }
 

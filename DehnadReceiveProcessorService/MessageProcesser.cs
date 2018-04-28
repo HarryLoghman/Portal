@@ -143,7 +143,7 @@ namespace DehnadReceiveProcessorService
                 using (var db = new PortalEntities())
                 {
                     var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
-                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut) && o.Content.Length != 4).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
                 }
                 if (receivedMessages.Count == 0)
                     return;
@@ -170,6 +170,47 @@ namespace DehnadReceiveProcessorService
             catch (Exception e)
             {
                 logs.Error("Exeption in TelepromoProcess: " + e);
+            }
+        }
+
+        public void TelepromoOtpConfirmProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("Telepromo");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut) && o.Content.Length == 4).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
+                    {
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
+                }
+                //for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                //{
+                //    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                //    Parallel.ForEach(receivedChunk, receivedMessage =>
+                //    {
+                //        HandleReceivedMessage(receivedMessage);
+                //    });
+                //}
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in TelepromoOtpConfirmProcess: " + e);
             }
         }
 

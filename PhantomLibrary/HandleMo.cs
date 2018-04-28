@@ -122,6 +122,14 @@ namespace PhantomLibrary
                             //for(int i =)
                             isSucceeded = false;
                         }
+                        else if (result.Status.ToString().Contains("1015") || result.Status == "No Otp Request Found")
+                        {
+                            var logId2 = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
+                            var result2 = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
+                            MessageHandler.OtpLogUpdate(logId2, result2.Status.ToString());
+                            message.Content = messagesTemplate.Where(o => o.Title == "WrongOtpConfirm").Select(o => o.Content).FirstOrDefault();
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
                         return isSucceeded;
                     }
                     var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);

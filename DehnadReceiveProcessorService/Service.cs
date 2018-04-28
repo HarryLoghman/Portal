@@ -11,6 +11,7 @@ namespace DehnadReceiveProcessorService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Thread processThread;
         private Thread telepromoProcessThread;
+        private Thread telepromoOtpConfirmProcessThread; 
         private Thread hubProcessThread;
         private Thread irancellProcessThread;
         private Thread mobinoneProcessThread;
@@ -39,6 +40,10 @@ namespace DehnadReceiveProcessorService
             telepromoProcessThread = new Thread(TelepromoMessageProcessorWorkerThread);
             telepromoProcessThread.IsBackground = true;
             telepromoProcessThread.Start();
+
+            telepromoOtpConfirmProcessThread = new Thread(TelepromoOtpConfirmProcessorWorkerThread);
+            telepromoOtpConfirmProcessThread.IsBackground = true;
+            telepromoOtpConfirmProcessThread.Start();
 
             hubProcessThread = new Thread(HubMessageProcessorWorkerThread);
             hubProcessThread.IsBackground = true;
@@ -114,6 +119,10 @@ namespace DehnadReceiveProcessorService
                 {
                     getFtpThread.Abort();
                 }
+                if (!telepromoOtpConfirmProcessThread.Join(3000))
+                {
+                    telepromoOtpConfirmProcessThread.Abort();
+                }
             }
             catch (Exception exp)
             {
@@ -156,6 +165,27 @@ namespace DehnadReceiveProcessorService
                 while (!shutdownEvent.WaitOne(0))
                 {
                     messageProcessor.TelepromoProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
+            }
+        }
+
+        private void TelepromoOtpConfirmProcessorWorkerThread()
+        {
+            try
+            {
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.TelepromoOtpConfirmProcess();
                     Thread.Sleep(1000);
                 }
             }

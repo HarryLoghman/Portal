@@ -45,6 +45,8 @@ namespace Portal.Controllers
                 {
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
+                    else if (messageObj.ServiceCode == "ShenoYad")
+                        messageObj.ServiceCode = "ShenoYad500";
                     else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 7) // Hub use price 5 and 6 for sub and unsub
                         result.Status = "This ServiceCode does not have permission for OTP operation";
                     else
@@ -728,6 +730,8 @@ namespace Portal.Controllers
                 {
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
+                    else if (messageObj.ServiceCode == "ShenoYad")
+                        messageObj.ServiceCode = "ShenoYad500";
                     if (messageObj.Number != null)
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
                     else
@@ -1277,6 +1281,8 @@ namespace Portal.Controllers
                 {
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
+                    else if (messageObj.ServiceCode == "ShenoYad")
+                        messageObj.ServiceCode = "ShenoYad500";
                     if (messageObj.Address != null)
                     {
                         messageObj.MobileNumber = messageObj.Address;
