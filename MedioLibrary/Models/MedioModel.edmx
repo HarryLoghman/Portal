@@ -427,6 +427,7 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -443,6 +444,7 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -1095,6 +1097,7 @@ warning 6002: The table/view 'Medio.dbo.vw_Singlecharge' does not have a primary
           <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
           <Property Name="InstallmentId" Type="Int64" />
           <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -1111,6 +1114,7 @@ warning 6002: The table/view 'Medio.dbo.vw_Singlecharge' does not have a primary
           <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
           <Property Name="InstallmentId" Type="Int64" />
           <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -1752,6 +1756,7 @@ warning 6002: The table/view 'Medio.dbo.vw_Singlecharge' does not have a primary
           <EntitySetMapping Name="Singlecharges">
             <EntityTypeMapping TypeName="MedioModel.Singlecharge">
               <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
@@ -1769,6 +1774,7 @@ warning 6002: The table/view 'Medio.dbo.vw_Singlecharge' does not have a primary
           <EntitySetMapping Name="SinglechargeArchives">
             <EntityTypeMapping TypeName="MedioModel.SinglechargeArchive">
               <MappingFragment StoreEntitySet="SinglechargeArchive">
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />

@@ -25,5 +25,6 @@ namespace MedioLibrary.Models
         public bool IsApplicationInformed { get; set; }
         public Nullable<long> InstallmentId { get; set; }
         public bool IsCalledFromInAppPurchase { get; set; }
+        public Nullable<int> ProcessTimeInMilliSecond { get; set; }
     }
 }

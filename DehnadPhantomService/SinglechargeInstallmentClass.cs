@@ -192,6 +192,7 @@ namespace DehnadPhantomService
         }
         public static async Task<dynamic> MapfaStaticPriceSinglecharge(MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
+            var startTime = DateTime.Now;
             using (var entity = new PhantomEntities())
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
@@ -236,6 +237,9 @@ namespace DehnadPhantomService
                     singlecharge.IsCalledFromInAppPurchase = false;
                     if (installmentId != 0)
                         singlecharge.InstallmentId = installmentId;
+                    var endTime = DateTime.Now;
+                    var duration = endTime - startTime;
+                    singlecharge.ProcessTimeInMilliSecond = (int)duration.TotalMilliseconds;
                     entity.Singlecharges.Add(singlecharge);
                     entity.SaveChanges();
                 }
