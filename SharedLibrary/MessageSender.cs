@@ -113,6 +113,112 @@ namespace SharedLibrary
             }
         }
 
+        public static async Task SendBulkMesssagesToTelepromo(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                try
+                {
+                    var messagesCount = messages.Count;
+                    if (messagesCount == 0)
+                        return;
+
+                    var url = telepromoIp + "/samsson-sdp/jtransfer/qsend?";
+                    var sc = "Dehnad";
+                    var username = serviceAdditionalInfo["username"];
+                    var password = serviceAdditionalInfo["password"];
+                    var from = "98" + serviceAdditionalInfo["shortCode"];
+                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    Random rnd = new Random();
+                    var contentList = new List<TelepromoBulkMessage>();
+                    bool isExceptionOccured = false;
+                    var responseString = "";
+                    try
+                    {
+                        List<string> refrenceIds = new List<string>();
+                        foreach (var item in messages)
+                        {
+                            var message = new TelepromoBulkMessage();
+                            message.to = "98" + item.MobileNumber.TrimStart('0');
+                            message.message = item.Content;
+                            message.messageId = rnd.Next(1000000, 9999999).ToString();
+                            refrenceIds.Add(message.messageId);
+                            contentList.Add(message);
+                        }
+                        var contents = JsonConvert.SerializeObject(contentList);
+                        var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}", sc, username, password, from, serviceId);
+                        if (messages[0].Price > 0)
+                            urlWithParameters += String.Format("&chargingCode={0}", messages[0].ImiChargeKey);
+
+                        using (var client = new HttpClient())
+                        {
+                            var content = new StringContent(contents, Encoding.UTF8, "application/json");
+                            var response = await client.PostAsync(urlWithParameters, content);
+                            responseString = await response.Content.ReadAsStringAsync();
+                        }
+                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                        int index = 0;
+                        foreach (var item in jsonResponse)
+                        {
+                            if (item.ToString() == "0")
+                            {
+                                messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                messages[index].ReferenceId = refrenceIds[index];
+                                messages[index].SentDate = DateTime.Now;
+                                messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                if (messages[index].MessagePoint > 0)
+                                    SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
+                                entity.Entry(messages[index]).State = EntityState.Modified;
+                            }
+                            else
+                            {
+                                logs.Info("SendBulkMesssagesToTelepromo Message was not sended with status of: " + item.ToString());
+                                if (messages[index].RetryCount > retryCountMax)
+                                    messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                messages[index].DateLastTried = DateTime.Now;
+                                messages[index].RetryCount = messages[index].RetryCount == null ? 1 : messages[index].RetryCount + 1;
+                                entity.Entry(messages[index]).State = EntityState.Modified;
+                            }
+                            index++;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        isExceptionOccured = true;
+                        logs.Error("Exception in SendBulkMesssagesToTelepromo: " + e);
+                    }
+
+                    if (isExceptionOccured == true || responseString == "")
+                    {
+                        foreach (var message in messages)
+                        {
+                            if (message.RetryCount > retryCountMax)
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            message.DateLastTried = DateTime.Now;
+                            message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                            entity.Entry(message).State = EntityState.Modified;
+                        }
+                        entity.SaveChanges();
+                    }
+                    entity.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SendBulkMessagesToTelepromo: " + e);
+                    foreach (var message in messages)
+                    {
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+        }
+
         public static async Task<dynamic> SendSinglechargeMesssageToTelepromo(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))
@@ -2152,6 +2258,179 @@ namespace SharedLibrary
                 }
             }
             return singlecharge;
+        }
+
+        public static async Task SendMesssagesToMci(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                var waitingForRetryMobileNumbers = new List<string>();
+                try
+                {
+                    await Task.Delay(10); // for making it async
+                    var messagesCount = messages.Count;
+                    if (messagesCount == 0)
+                        return;
+                    var aggregatorUsername = serviceAdditionalInfo["username"];
+                    var aggregatorPassword = serviceAdditionalInfo["password"];
+                    var from = "98" + serviceAdditionalInfo["shortCode"];
+                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    var subUnsubXmlStringList = new List<string>();
+
+                    XmlDocument doc = new XmlDocument();
+                    XmlNamespaceManager manager = new XmlNamespaceManager(doc.NameTable);
+                    manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                    XmlElement root = doc.CreateElement("soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:loc=\"http://www.csapi.org/schema/parlayx/sms/send/v4_0/local\"");
+                    XmlElement header = doc.CreateElement("soapenv:Header");
+                    root.AppendChild(header);
+                    XmlElement body = doc.CreateElement("soapenv:Body");
+                    XmlElement sendSms = doc.CreateElement("loc:sendSms");
+
+                    foreach (var message in messages)
+                    {
+                        if (message.RetryCount != null && message.RetryCount >= retryCountMax)
+                        {
+                            waitingForRetryMobileNumbers.Add(message.MobileNumber);
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                            entity.Entry(message).State = EntityState.Modified;
+                            continue;
+                        }
+                        XmlElement sendMessage = doc.CreateElement("loc:sendMessage");
+
+                        XmlElement addresses = doc.CreateElement("loc:addresses");
+                        addresses.InnerText = "98" + message.MobileNumber.TrimStart('0');
+                        sendMessage.AppendChild(addresses);
+                        XmlElement senderName = doc.CreateElement("loc:senderName");
+                        senderName.InnerText = from;
+                        sendMessage.AppendChild(senderName);
+
+                        if (message.Price > 0)
+                        {
+                            XmlElement charging = doc.CreateElement("loc:charging");
+
+                            XmlElement description = doc.CreateElement("description");
+                            charging.AppendChild(description);
+
+                            XmlElement currency = doc.CreateElement("currency");
+                            currency.InnerText = "RLS";
+                            charging.AppendChild(currency);
+
+                            XmlElement amount = doc.CreateElement("amount");
+                            amount.InnerText = messages[0].Price;
+                            charging.AppendChild(amount);
+
+                            XmlElement code = doc.CreateElement("code");
+                            code.InnerText = messages[0].ImiChargeKey;
+                            charging.AppendChild(code);
+
+                            sendMessage.AppendChild(charging);
+                        }
+
+                        XmlElement messageContent = doc.CreateElement("loc:message");
+                        messageContent.InnerText = message.Content;
+                        sendMessage.AppendChild(messageContent);
+                        XmlElement receiptRequest = doc.CreateElement("loc:receiptRequest");
+
+                        XmlElement endpoint = doc.CreateElement("endpoint");
+                        endpoint.InnerText = "http://live.mci.ir/PushGW/DeliveryNotify.aspx";
+                        receiptRequest.AppendChild(endpoint);
+
+                        XmlElement interfaceName = doc.CreateElement("interfaceName");
+                        interfaceName.InnerText = serviceAdditionalInfo["serviceCode"];
+                        receiptRequest.AppendChild(interfaceName);
+
+                        XmlElement correlator = doc.CreateElement("correlator");
+                        correlator.InnerText = Guid.NewGuid().ToString();
+                        receiptRequest.AppendChild(correlator);
+
+                        sendMessage.AppendChild(receiptRequest);
+                        sendSms.AppendChild(sendMessage);
+                    }
+
+                    body.AppendChild(sendSms);
+                    root.AppendChild(body);
+
+                    string stringedXml = doc.OuterXml;
+                    logs.Info(stringedXml);
+                    SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                    string response = hubClient.XmsRequest(stringedXml).ToString();
+                    logs.Info(response);
+                    //XmlDocument xml = new XmlDocument();
+                    //xml.LoadXml(response);
+                    //XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                    //foreach (XmlNode error in OK)
+                    //{
+                    //    if (error.InnerText != "" && error.InnerText != "ok")
+                    //    {
+                    //        logs.Error("Error in sending message to Hub");
+                    //        foreach (var message in messages)
+                    //        {
+                    //            if (waitingForRetryMobileNumbers.Contains(message.MobileNumber))
+                    //                continue;
+                    //            if (message.RetryCount > retryCountMax)
+                    //                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                    //            message.DateLastTried = DateTime.Now;
+                    //            message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                    //            entity.Entry(message).State = EntityState.Modified;
+                    //        }
+                    //        entity.SaveChanges();
+                    //    }
+                    //    else
+                    //    {
+                    //        var i = 0;
+                    //        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                    //        foreach (XmlNode xn in xnList)
+                    //        {
+                    //            string responseCode = (xn.Attributes["status"].Value).ToString();
+                    //            if (responseCode == "40")
+                    //            {
+                    //                messages[i].ReferenceId = xn.InnerText;
+                    //                messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                    //                if (messages[i].MessagePoint > 0)
+                    //                    SharedLibrary.MessageHandler.SetSubscriberPoint(messages[i].MobileNumber, messages[i].ServiceId, messages[i].MessagePoint);
+                    //            }
+                    //            else
+                    //            {
+                    //                messages[i].ReferenceId = "failed:" + responseCode;
+                    //                if (messages[i].RetryCount == null)
+                    //                {
+                    //                    messages[i].RetryCount = 1;
+                    //                    messages[i].DateLastTried = DateTime.Now;
+                    //                }
+                    //                else
+                    //                {
+                    //                    if (messages[i].RetryCount > retryCountMax)
+                    //                        messages[i].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                    //                    messages[i].RetryCount += 1;
+                    //                    messages[i].DateLastTried = DateTime.Now;
+                    //                }
+                    //            }
+                    //            messages[i].SentDate = DateTime.Now;
+                    //            messages[i].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    //            entity.Entry(messages[i]).State = EntityState.Modified;
+                    //            i++;
+                    //        }
+                    //        entity.SaveChanges();
+                    //    }
+                    //}
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SendMessagesToHub: " + e);
+                    foreach (var message in messages)
+                    {
+                        if (waitingForRetryMobileNumbers.Contains(message.MobileNumber))
+                            continue;
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                }
+            }
         }
     }
 }

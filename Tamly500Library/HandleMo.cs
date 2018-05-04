@@ -142,26 +142,26 @@ namespace Tamly500Library
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
                 
-                if (isUserSendsSubscriptionKeyword == true && message.Content == "7")
-                {
-                    isCampaignActive = (int)CampaignStatus.Deactive;
-                    try
-                    {
-                        using (var portalEntity = new PortalEntities())
-                        {
-                            var black = new SharedLibrary.Models.BlackList();
-                            black.DateAdded = DateTime.Now;
-                            black.MobileNumber = message.MobileNumber;
-                            black.ServiceId = service.Id;
-                            portalEntity.BlackLists.Add(black);
-                            portalEntity.SaveChanges();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        logs.Error("", e);
-                    }
-                }
+                //if (isUserSendsSubscriptionKeyword == true && message.Content == "7")
+                //{
+                //    isCampaignActive = (int)CampaignStatus.Deactive;
+                //    try
+                //    {
+                //        using (var portalEntity = new PortalEntities())
+                //        {
+                //            var black = new SharedLibrary.Models.BlackList();
+                //            black.DateAdded = DateTime.Now;
+                //            black.MobileNumber = message.MobileNumber;
+                //            black.ServiceId = service.Id;
+                //            portalEntity.BlackLists.Add(black);
+                //            portalEntity.SaveChanges();
+                //        }
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        logs.Error("", e);
+                //    }
+                //}
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
                     if (isUserSendsSubscriptionKeyword == true)

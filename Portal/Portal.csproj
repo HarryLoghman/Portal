@@ -531,6 +531,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\AppController.cs" />
+    <Compile Include="Controllers\MciController.cs" />
     <Compile Include="Controllers\MobinOneController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\HubController.cs" />

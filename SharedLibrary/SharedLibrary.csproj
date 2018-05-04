@@ -178,6 +178,7 @@
     <Compile Include="Models\SubscribersPoint.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\TelepromoBulkMessage.cs" />
     <Compile Include="Models\TempReferralData.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
