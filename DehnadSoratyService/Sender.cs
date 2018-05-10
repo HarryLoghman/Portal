@@ -32,25 +32,26 @@ namespace DehnadSoratyService
 
                 Type entityType = typeof(SoratyEntities);
 
-                autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, readSize)).OfType<AutochargeMessagesBuffer>().ToList();
-                eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, readSize)).OfType<EventbaseMessagesBuffer>().ToList();
                 onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, readSize)).OfType<OnDemandMessagesBuffer>().ToList();
 
-                if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
-                {
-                    TimeSpan retryEndTime = new TimeSpan(23, 30, 0);
-                    var now = DateTime.Now.TimeOfDay;
-                    if (now < retryEndTime)
-                    {
-                        using (var entity = new SoratyEntities())
-                        {
-                            entity.RetryUndeliveredMessages();
-                        }
-                    }
-                }
+                //if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
+                //{
+                //    TimeSpan retryEndTime = new TimeSpan(23, 30, 0);
+                //    var now = DateTime.Now.TimeOfDay;
+                //    if (now < retryEndTime)
+                //    {
+                //        using (var entity = new SoratyEntities())
+                //        {
+                //            entity.RetryUndeliveredMessages();
+                //        }
+                //    }
+                //}
 
                 if (DateTime.Now.Hour > 7 && DateTime.Now.Hour < 20)
                 {
+                    autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, readSize)).OfType<AutochargeMessagesBuffer>().ToList();
+                    eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, readSize)).OfType<EventbaseMessagesBuffer>().ToList();
+                    eventbaseMessages.RemoveAll(o => o.MobileNumber == "09122137327");
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 }

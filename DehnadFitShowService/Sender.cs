@@ -51,12 +51,10 @@ namespace DehnadFitShowService
                 if (DateTime.Now.Hour >= 8 && DateTime.Now.Hour < 20)
                 {
                     autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, readSize)).OfType<AutochargeMessagesBuffer>().ToList();
-                    logs.Info("A2:start of reading eventbasemessages");
                     eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, readSize)).OfType<EventbaseMessagesBuffer>().ToList();
-                    logs.Info("A3:end of reading eventbasemessages");
+                    eventbaseMessages.RemoveAll(o => o.MobileNumber == "09122137327");
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                     SharedLibrary.MessageHandler.SendSelectedMessages(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                    logs.Info("A4:end of sending eventbasemessages");
                 }
             }
             catch (Exception e)

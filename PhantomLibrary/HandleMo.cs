@@ -57,7 +57,7 @@ namespace PhantomLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return isSucceeded;
                     }
-                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000") || message.Content.ToLower().Contains("abc"))
+                    else if (((message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000") || message.Content.ToLower().Contains("abc"))
                     {
                         if (message.Content.Contains("25000"))
                             message.Content = "25000";
