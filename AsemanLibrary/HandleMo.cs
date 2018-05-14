@@ -105,7 +105,7 @@ namespace AsemanLibrary
                 else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
                 {
                     var confirmCode = message.Content;
-                    var logId = MessageHandler.OtpLog(message.MobileNumber, "request", confirmCode);
+                    var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                     if (result.Status == "Error" || result.Status == "Exception")
