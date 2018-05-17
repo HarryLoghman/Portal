@@ -61,7 +61,7 @@ namespace SharedLibrary
             using (var entity = new PortalEntities())
             {
                 var delivery = new Delivery();
-                delivery.ReferenceId = deliveryObj.PardisID;
+                delivery.ReferenceId = deliveryObj.ReferenceId;
                 delivery.Status = deliveryObj.Status;
                 delivery.Description = deliveryObj.ErrorMessage;
                 delivery.DeliveryTime = DateTime.Now;

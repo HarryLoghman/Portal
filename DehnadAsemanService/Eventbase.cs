@@ -54,6 +54,8 @@ namespace DehnadAsemanService
                                 mobileNumbers = item.MobileNumbersList.Split(',').ToList();
                             else
                                 mobileNumbers = item.MobileNumbersList.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            var activeUsers = SharedLibrary.ServiceHandler.GetServiceActiveSubscribersFromServiceCode(service.ServiceCode).Select(o => o.MobileNumber).ToList();
+                            mobileNumbers.RemoveAll(o => activeUsers.Contains(o));
                             //var existingSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null).Select(o => o.MobileNumber).ToList();
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
                             var imiChargeObject = AsemanLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);

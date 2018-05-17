@@ -5,18 +5,31 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace PorShetabLibrary
 {
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static bool ReceivedMessage(MessageObject message, Service service)
+        public static async Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
             bool isSucceeded = true;
             using (var entity = new PorShetabEntities())
             {
                 var content = message.Content;
+                int isCampaignActive = 0;
+                int isMatchActive = 0;
+                var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                var match = entity.Settings.FirstOrDefault(o => o.Name == "match");
+                if (campaign != null)
+                    isCampaignActive = Convert.ToInt32(campaign.Value);
+                if (match != null)
+                    isMatchActive = Convert.ToInt32(match.Value);
+                var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
+                if (isInBlackList == true)
+                    isCampaignActive = (int)CampaignStatus.MatchAndReferalDeactive;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
@@ -38,6 +51,21 @@ namespace PorShetabLibrary
                 {
                     message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
+                    return isSucceeded;
+                }
+                else if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive && message.Content.Length == 8 && message.Content.All(char.IsDigit))
+                {
+                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                    var sha = SharedLibrary.Security.GetSha256Hash("parent" + message.MobileNumber);
+                    dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+                    message.Content = "";
+                    if (result.status.ToString() == "ok")
+                        message.Content = messagesTemplate.Where(o => o.Title == "ParentReferralCodeExists").Select(o => o.Content).FirstOrDefault();
+                    else
+                        message.Content = messagesTemplate.Where(o => o.Title == "ParentReferralCodeNotExists").Select(o => o.Content).FirstOrDefault();
+                    if (message.Content != "")
+                        MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
 
@@ -92,7 +120,6 @@ namespace PorShetabLibrary
                         ServiceHandler.CancelUserInstallments(message.MobileNumber);
                         var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                        return isSucceeded;
                     }
                     else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
@@ -104,7 +131,47 @@ namespace PorShetabLibrary
                     else
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
-                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                    if ((isCampaignActive == (int)CampaignStatus.MatchActiveAndReferalDeactive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive) && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive)
+                        {
+                            var specialUniqueId = SharedLibrary.HandleSubscription.CampaignUniqueId(message.MobileNumber, service.Id);
+                            var subId = specialUniqueId;
+                            var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            if (result.description == "success")
+                            {
+                            }
+                        }
+                        else if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend || isCampaignActive == (int)CampaignStatus.MatchActiveAndReferalDeactive)
+                        {
+                            var sha = SharedLibrary.Security.GetSha256Hash("match" + message.MobileNumber);
+
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
+                            if (result.description == "success")
+                            {
+                            }
+                        }
+                    }
+                    else if ((isCampaignActive == (int)CampaignStatus.MatchActiveAndReferalDeactive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend) && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                    {
+                        var sha = SharedLibrary.Security.GetSha256Hash("match" + message.MobileNumber);
+                        var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/unsub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
+                        if (result.description == "success")
+                        {
+                        }
+                    }
+
+                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                    if (message.Content.Contains("{REFERRALCODE}"))
+                    {
+                        var subId = "1";
+                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                        if (sub != null && sub.SpecialUniqueId != null)
+                            subId = sub.SpecialUniqueId;
+                        message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                    }
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
@@ -128,5 +195,12 @@ namespace PorShetabLibrary
             }
             return isSucceeded;
         }
+    }
+    public enum CampaignStatus
+    {
+        MatchAndReferalDeactive = 0,
+        MatchActiveAndReferalDeactive = 1,
+        MatchActiveReferralActive = 2,
+        MatchActiveReferralSuspend = 3
     }
 }

@@ -67,13 +67,195 @@ namespace PorShetabLibrary
             }
         }
 
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static async void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
         {
             try
             {
                 using (var entity = new PorShetabEntities())
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    int isCampaignActive = 0;
+                    int isMatchActive = 0;
+                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                    var match = entity.Settings.FirstOrDefault(o => o.Name == "match");
+                    if (campaign != null)
+                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                    if (match != null)
+                        isMatchActive = Convert.ToInt32(match.Value);
+                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
+                    if (isInBlackList == true)
+                        isCampaignActive = (int)CampaignStatus.MatchAndReferalDeactive;
+                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    if (message.Content == null || message.Content.Trim() == "")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignEmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message.Content = messagesTemplate.Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
+                        string subId = "1";
+                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                        if (sub != null && sub.SpecialUniqueId != null)
+                            subId = sub.SpecialUniqueId;
+                        if (message.Content.Contains("{REFERRALCODE}"))
+                        {
+                            message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                        }
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "h")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive)
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignHContent").Select(o => o.Content).FirstOrDefault();
+                        else
+                            message.Content = messagesTemplate.Where(o => o.Title == "HContent").Select(o => o.Content).FirstOrDefault();
+
+                        string subId = "1";
+                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                        if (sub != null && sub.SpecialUniqueId != null)
+                            subId = sub.SpecialUniqueId;
+                        if (message.Content.Contains("{REFERRALCODE}"))
+                        {
+                            message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                        }
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "r")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
+                        {
+                            string subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null && sub.SpecialUniqueId != null)
+                            {
+                                subId = sub.SpecialUniqueId;
+                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                string n = result.n.ToString();
+                                string m = result.m.ToString();
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                message.Content = message.Content.Replace("{m}", m);
+                                message.Content = message.Content.Replace("{n}", n);
+                                if (message.Content.Contains("{REFERRALCODE}"))
+                                {
+                                    message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                }
+                            }
+                            else
+                            {
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                MessageHandler.InsertMessageToQueue(message);
+                            }
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                        else
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "s")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveAndReferalDeactive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
+                        {
+                            string subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null)
+                            {
+                                var sha = SharedLibrary.Security.GetSha256Hash("score" + message.MobileNumber);
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/score.php", string.Format("number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                if (result.status.ToString() == "ok")
+                                {
+                                    message.Content = messagesTemplate.Where(o => o.Title == "SubscriberScore").Select(o => o.Content).FirstOrDefault();
+                                    message.Content = message.Content.Replace("{SCORE}", result.description.ToString());
+                                    if (message.Content.Contains("{REFERRALCODE}"))
+                                    {
+                                        message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                    }
+                                    MessageHandler.InsertMessageToQueue(message);
+                                }
+                            }
+                        }
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "q")
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "QContent").Select(o => o.Content).FirstOrDefault();
+                        string subId = "1";
+                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                        if (sub != null)
+                        {
+                            var sha = SharedLibrary.Security.GetSha256Hash("score" + message.MobileNumber);
+                            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/score.php", string.Format("number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            if (result.status.ToString() == "ok")
+                            {
+                                message.Content = message.Content.Replace("{SCORE}", result.description.ToString());
+                                if (message.Content.Contains("{REFERRALCODE}"))
+                                {
+                                    message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                }
+                            }
+                        }
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
+                    else if (message.Content.ToLower() == "g")
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
+                        {
+                            string subId = "1";
+                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                            if (sub != null && sub.SpecialUniqueId != null)
+                            {
+                                subId = sub.SpecialUniqueId;
+                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                var chargesList = new List<string>();
+                                foreach (var item in result.charges)
+                                {
+                                    chargesList.Add(item.ToString());
+                                }
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberCharges").Select(o => o.Content).FirstOrDefault();
+                                message.Content = message.Content.Replace("{count}", chargesList.Count.ToString());
+                                if (chargesList.Count > 0)
+                                {
+                                    var text = "";
+                                    foreach (var item in chargesList)
+                                    {
+                                        text = text + item + Environment.NewLine;
+                                    }
+                                    message.Content = message.Content.Replace("{charges}", text);
+                                }
+                                else
+                                    message.Content = message.Content.Replace("{charges}", "");
+
+                                if (message.Content.Contains("{REFERRALCODE}"))
+                                {
+                                    message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                }
+                            }
+                            else
+                            {
+                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                MessageHandler.InsertMessageToQueue(message);
+                            }
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                        else
+                        {
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberCharges").Select(o => o.Content).FirstOrDefault();
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                        return;
+                    }
+                    else if (message.Content == "77" || message.Content.ToLower() == "m")
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                        return;
+                    }
                     if (message.Content == "77" || message.Content.ToLower() == "m")
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();
@@ -89,7 +271,7 @@ namespace PorShetabLibrary
                         //}
                         return;
                     }
-                   
+
                     var isUserAlreadyInSinglechargeQueue = IsUserAlreadyInSinglechargeQueue(message.MobileNumber);
                     if (isUserAlreadyInSinglechargeQueue == true)
                     {

@@ -188,7 +188,7 @@ namespace DehnadTahChinService
             var singlechargeInstallment = new SinglechargeInstallmentClass();
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
-            if (DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 14)
+            if ((DateTime.Now.Hour >= 10 && DateTime.Now.Minute >= 30) && DateTime.Now.Hour < 14)
                 installmentCycleNumber = 2;
             else if (DateTime.Now.Hour >= 14 && DateTime.Now.Hour < 17)
                 installmentCycleNumber = 3;
@@ -232,7 +232,7 @@ namespace DehnadTahChinService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 14)
+                        else if (installmentCycleNumber == 2 && (DateTime.Now.Hour >= 10 && DateTime.Now.Minute >= 30) && DateTime.Now.Hour < 14)
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;

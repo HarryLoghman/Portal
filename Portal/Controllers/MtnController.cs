@@ -23,7 +23,6 @@ namespace Portal.Controllers
         public HttpResponseMessage SubUnsubNotify()
         {
             var notify = Request.Content.ReadAsStringAsync().Result;
-            logs.Info(notify);
             XmlDocument xml = new XmlDocument();
             xml.LoadXml(notify);
             XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
@@ -47,7 +46,7 @@ namespace Portal.Controllers
                     break;
                 }
             }
-            if(message.ShortCode == null || message.ShortCode == "")
+            if (message.ShortCode == null || message.ShortCode == "")
             {
                 message.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceIdNode.InnerText.Trim()).ShortCode;
             }
@@ -56,7 +55,7 @@ namespace Portal.Controllers
                 message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(message.MobileNumber);
             if (subscriptionTypeNode.InnerText.Trim() == "1" || subscriptionTypeNode.InnerText.Trim() == "6")
                 message.Content = "Subscription";
-            else if(subscriptionTypeNode.InnerText.Trim() == "2")
+            else if (subscriptionTypeNode.InnerText.Trim() == "2")
                 message.Content = "Unsubscription";
 
             message.MobileOperator = 2;
@@ -76,24 +75,47 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delivery()
         {
-            var deliveryData = Request.Content.ReadAsStringAsync().Result;
-            XmlDocument xml = new XmlDocument();
-            xml.LoadXml(deliveryData);
-            XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
-            manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
-            manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            manager.AddNamespace("ns1", "http://www.huawei.com.cn/schema/common/v2_1");
-            manager.AddNamespace("ns2", "http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local");
-            XmlNode transactionId = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Header/ns1:NotifySOAPHeader/ns1:traceUniqueID", manager);
-            XmlNode delvieryStatusNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/deliveryStatus", manager);
+            try
+            {
+                var deliveryData = Request.Content.ReadAsStringAsync().Result;
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(deliveryData);
+                XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                manager.AddNamespace("ns1", "http://www.huawei.com.cn/schema/common/v2_1");
+                manager.AddNamespace("ns2", "http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local");
 
+                XmlNode transactionId = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Header/ns1:NotifySOAPHeader/ns1:traceUniqueID", manager);
+                XmlNode delvieryStatusNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/deliveryStatus", manager);
+                XmlNode delvieryMobileNumberNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/address", manager);
+                XmlNode delvieryErrorCodeNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/ErrorCode", manager);
+                XmlNode delvieryErrorSourceNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/ErrorSource", manager);
+                XmlNode delvieryServiceIdNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:correlator", manager);
 
-            var delivery = new DeliveryObject();
-            delivery.ReferenceId = transactionId.InnerText.Trim();
-            delivery.Status = delvieryStatusNode.InnerText.Trim();
-            delivery.AggregatorId = 7;
-            SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
-
+                var serviceId = "null";
+                var mobileNumber = "null";
+                var errorCode = "null";
+                var errorSource = "null";
+                if (delvieryServiceIdNode != null)
+                    serviceId = delvieryServiceIdNode.InnerText.Trim().ToString();
+                if(delvieryMobileNumberNode != null)
+                    mobileNumber = delvieryMobileNumberNode.InnerText.Trim().ToString();
+                if(delvieryErrorCodeNode != null)
+                    errorCode = delvieryErrorCodeNode.InnerText.Trim().ToString();
+                if (delvieryErrorSourceNode != null)
+                    errorSource = delvieryErrorSourceNode.InnerText.Trim().ToString();
+                var delivery = new DeliveryObject();
+                delivery.ReferenceId = transactionId.InnerText.Trim();
+                delivery.Status = delvieryStatusNode.InnerText.Trim();
+                delivery.ErrorMessage = "ServiceId=" + serviceId + ";MobileNumber=" + mobileNumber + ";ErrorCode=" + errorCode + ";ErrorSource=" + errorSource;
+                delivery.AggregatorId = 7;
+                SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in Mtn Delivery:", e);
+            }
             string result = @"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local"">    
             <soapenv:Header/>    
@@ -261,7 +283,7 @@ namespace Portal.Controllers
                     //message.MobileNumber = mobileNumber;
                     //message.Price = price;
                     //singleCharge = await SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singleCharge, message, isRefund, isInAppPurchase, );
-                    
+
                     //result = "isSuccessed: " + singleCharge.IsSucceeded + Environment.NewLine;
                     //result += "Description: " + singleCharge.Description + Environment.NewLine;
                     //result += "ReferenceId: " + singleCharge.ReferenceId + Environment.NewLine; 

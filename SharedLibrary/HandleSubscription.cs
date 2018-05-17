@@ -172,16 +172,17 @@ namespace SharedLibrary
             return result;
         }
 
-        public static void CampaignUniqueId(string mobileNumber, long serviceId)
+        public static string CampaignUniqueId(string mobileNumber, long serviceId)
         {
+            var result = "1";
             using (var entity = new PortalEntities())
             {
-                //using (DbContextTransaction scope = entity.Database.BeginTransaction())
-                //{
-                //    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
+                using (DbContextTransaction scope = entity.Database.BeginTransaction())
+                {
+                    entity.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM Portal.dbo.Subscribers WITH (TABLOCKX)");
                     var sub = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId);
                     if (sub == null)
-                        return;
+                        return result;
                     var specialUniqeId = "";
                     Random random = new Random();
                     bool isUniqueIdAssigned = false;
@@ -195,12 +196,14 @@ namespace SharedLibrary
                             isUniqueIdAssigned = true;
                         }
                     }
+                    result = specialUniqeId;
                     sub.SpecialUniqueId = specialUniqeId;
                     entity.Entry(sub).State = EntityState.Modified;
                     entity.SaveChanges();
-                //    scope.Commit();
-                //}
+                    scope.Commit();
+                }
             }
+            return result;
         }
         public static string AssignUniqueId(string mobileNumber)
         {

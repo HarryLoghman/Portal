@@ -43,6 +43,8 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
+                    if (messageObj.Price == null)
+                        messageObj.Price = 0;
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
                     else if (messageObj.ServiceCode == "ShenoYad")

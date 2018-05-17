@@ -650,7 +650,7 @@ namespace DehnadReceiveProcessorService
                 else if (service.ServiceCode == "Medad")
                     isSucceeded = MedadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "PorShetab")
-                    isSucceeded = PorShetabLibrary.HandleMo.ReceivedMessage(message, service);
+                    isSucceeded = PorShetabLibrary.HandleMo.ReceivedMessage(message, service).Result;
             }
             catch (Exception e)
             {

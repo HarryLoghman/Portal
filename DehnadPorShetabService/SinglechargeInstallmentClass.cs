@@ -19,7 +19,7 @@ namespace DehnadPorShetabService
     public class SinglechargeInstallmentClass
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static int maxChargeLimit = 300;
+        public static int maxChargeLimit = 500;
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
@@ -29,20 +29,18 @@ namespace DehnadPorShetabService
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
-                Type entityType = typeof(PorShetabEntities);
-                Type singleChargeType = typeof(Singlecharge);
-
                 using (var entity = new PorShetabEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                    for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 2; installmentInnerCycleNumber++)
+                    for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                         //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
 
                         installmentList = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        logs.Info("installmentList all users count:" + installmentList.Count);
                         var today = DateTime.Now;
                         List<string> chargeCompleted;
                         var delayDateBetweenCharges = today.AddDays(0);
@@ -59,11 +57,17 @@ namespace DehnadPorShetabService
                                 .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
                         }
                         var waitingList = entity.SinglechargeWaitings.AsNoTracking().Select(o => o.MobileNumber).ToList();
+                        logs.Info("installmentList compeleted charge users count:" + chargeCompleted.Count);
+                        logs.Info("installmentList users in waiting list count:" + waitingList.Count);
                         installmentList.RemoveAll(o => chargeCompleted.Contains(o));
                         installmentList.RemoveAll(o => waitingList.Contains(o));
+                        var yesterday = DateTime.Now.AddDays(-1);
+                        //var sucessfulyChargedYesterday = entity.SinglechargeArchives.AsNoTracking().Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(yesterday) && o.IsSucceeded == true && o.Price > 0).GroupBy(o => o.MobileNumber).Select(o => o.Key).ToList();
+                        var randomList = installmentList.OrderBy(o => Guid.NewGuid()).ToList();
                         int installmentListCount = installmentList.Count;
+                        logs.Info("installmentList final list count:" + installmentListCount);
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, installmentList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
@@ -75,7 +79,7 @@ namespace DehnadPorShetabService
             return income;
         }
 
-        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
+        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo)
         {
             var income = 0;
             try
@@ -87,6 +91,14 @@ namespace DehnadPorShetabService
                 }
                 logs.Info("installmentList count:" + installmentList.Count);
 
+                int isCampaignActive = 0;
+                using (var entity = new PorShetabEntities())
+                {
+                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                    if (campaign != null)
+                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                }
+
                 //var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbersByTps(installmentListCount, installmentListTakeSize);
                 var take = threadsNo["take"];
@@ -96,7 +108,7 @@ namespace DehnadPorShetabService
                 for (int i = 0; i < take.Length; i++)
                 {
                     var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
-                    TaskList.Add(ProcessMtnInstallmentChunk(maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlecharge));
+                    TaskList.Add(ProcessMtnInstallmentChunk(maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, isCampaignActive));
                 }
                 Task.WaitAll(TaskList.ToArray());
                 income = TaskList.Select(o => o.Result).ToList().Sum();
@@ -110,7 +122,7 @@ namespace DehnadPorShetabService
             return income;
         }
 
-        private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<string> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
+        private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<string> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, int isCampaignActive)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
             var today = DateTime.Now.Date;
@@ -161,6 +173,33 @@ namespace DehnadPorShetabService
                         if (response.IsSucceeded == true)
                         {
                             income += message.Price.GetValueOrDefault();
+                        }
+                        if (isCampaignActive == 2 || isCampaignActive == 3)
+                        {
+                            try
+                            {
+                                var serviceId = Convert.ToInt64(serviceAdditionalInfo["serviceId"]);
+                                var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, serviceId);
+                                if (isInBlackList != true)
+                                {
+                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, Convert.ToInt64(serviceAdditionalInfo["serviceId"]));
+                                    if (sub != null)
+                                    {
+                                        if (sub.SpecialUniqueId != null)
+                                        {
+                                            var sha = SharedLibrary.Security.GetSha256Hash(sub.SpecialUniqueId + message.MobileNumber);
+                                            var price = 0;
+                                            if (response.IsSucceeded == true)
+                                                price = message.Price.Value;
+                                            await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                logs.Error("Exception in calling danoop charge service: " + e);
+                            }
                         }
                         batchSaveCounter++;
                     }

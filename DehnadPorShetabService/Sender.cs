@@ -25,7 +25,7 @@ namespace DehnadPorShetabService
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 string serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
-
+                serviceAdditionalInfo["aggregatorServiceId"] = "98012000021509";
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(readSize, takeSize);
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
