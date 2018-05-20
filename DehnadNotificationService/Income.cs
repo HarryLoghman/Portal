@@ -45,6 +45,10 @@ namespace DehnadNotificationService
                     OverChargeNotify("Medio", entity, 400);
                 using (var entity = new DarchinLibrary.Models.DarchinEntities())
                     OverChargeNotify("Darchin", entity, 7000);
+                using (var entity = new MedadLibrary.Models.MedadEntities())
+                    OverChargeNotify("Medad", entity, 300);
+                using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+                    OverChargeNotify("PorShetab", entity, 500);
             }
             catch (Exception e)
             {
@@ -87,6 +91,16 @@ namespace DehnadNotificationService
                 else if (serviceCode.ToLower() == "darchin")
                 {
                     using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
+                else if (serviceCode.ToLower() == "medad")
+                {
+                    using (var entity = new MedadLibrary.Models.MedadEntities())
+                        result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
+                }
+                else if (serviceCode.ToLower() == "porshetab")
+                {
+                    using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
                         result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
                 }
             }

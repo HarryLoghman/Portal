@@ -248,6 +248,10 @@
       <Project>{b12311f6-3bf5-2126-337f-3bc43b41256f}</Project>
       <Name>TahChinLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TajoTakhtLibrary\TajoTakhtLibrary.csproj">
+      <Project>{25344215-1b21-1513-4331-4844db1b344f}</Project>
+      <Name>TajoTakhtLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TakavarLibrary\TakavarLibrary.csproj">
       <Project>{52c36255-330f-25b1-abf2-4dd22ab523a1}</Project>
       <Name>TakavarLibrary</Name>

@@ -172,7 +172,8 @@ namespace PorShetabLibrary
                             subId = sub.SpecialUniqueId;
                         message.Content = message.Content.Replace("{REFERRALCODE}", subId);
                     }
-                    MessageHandler.InsertMessageToQueue(message);
+                    if (serviceStatusForSubscriberState != SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                        MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
                 var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);

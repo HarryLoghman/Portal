@@ -155,7 +155,7 @@ namespace DehnadPorShetabService
                         message.MobileNumber = installment;
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
                         message = SharedLibrary.InstallmentHandler.ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
-                        if (installmentInnerCycleNumber == 1 && message.Price != 300)
+                        if (installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
                             continue;
                         else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
                             message.Price = 100;
@@ -174,15 +174,15 @@ namespace DehnadPorShetabService
                         {
                             income += message.Price.GetValueOrDefault();
                         }
-                        if (isCampaignActive == 2 || isCampaignActive == 3)
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
                         {
                             try
                             {
                                 var serviceId = Convert.ToInt64(serviceAdditionalInfo["serviceId"]);
-                                var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, serviceId);
-                                if (isInBlackList != true)
-                                {
-                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, Convert.ToInt64(serviceAdditionalInfo["serviceId"]));
+                                //var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, serviceId);
+                                //if (isInBlackList != true)
+                                //{
+                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, serviceId);
                                     if (sub != null)
                                     {
                                         if (sub.SpecialUniqueId != null)
@@ -194,7 +194,7 @@ namespace DehnadPorShetabService
                                             await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
                                         }
                                     }
-                                }
+                                //}
                             }
                             catch (Exception e)
                             {
