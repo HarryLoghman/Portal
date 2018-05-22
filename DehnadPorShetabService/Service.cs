@@ -221,7 +221,7 @@ namespace DehnadPorShetabService
                         if (isInMaintenace != null)
                             isInMaintenanceTime = isInMaintenace.Value == "True" ? true : false;
                     }
-                    if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 05) || isInMaintenanceTime == true)
+                    if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 55) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 05) || isInMaintenanceTime == true)
                     {
                         logs.Info("isInMaintenanceTime:" + isInMaintenanceTime);
                         installmentCycleNumber = 1;

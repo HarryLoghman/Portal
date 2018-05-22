@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:parlayx_ussd_xsd="http://www.csapi.org/schema/parlayx/ussd/v4_0" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://www.csapi.org/schema/parlayx/ussd/v4_0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="Status">
+    <xsd:sequence>
+      <xsd:element name="code" type="xsd:string" />
+      <xsd:element name="description" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Reason">
+    <xsd:sequence>
+      <xsd:element name="code">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0" />
+            <xsd:maxLength value="100" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="description">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0" />
+            <xsd:maxLength value="1024" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Continue">
+    <xsd:sequence>
+      <xsd:element name="msisdn" type="xsd:anyURI" />
+      <xsd:element name="DCS" type="xsd:int" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="End">
+    <xsd:sequence>
+      <xsd:element name="msisdn" type="xsd:anyURI" />
+      <xsd:element name="DCS" type="xsd:int" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Action">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Continue" type="parlayx_ussd_xsd:Continue" />
+      <xsd:element minOccurs="0" name="End" type="parlayx_ussd_xsd:End" />
+      <xsd:element minOccurs="0" name="AbortReason" type="parlayx_ussd_xsd:Reason" />
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

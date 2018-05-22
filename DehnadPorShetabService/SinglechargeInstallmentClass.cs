@@ -154,11 +154,13 @@ namespace DehnadPorShetabService
                         var message = new SharedLibrary.Models.MessageObject();
                         message.MobileNumber = installment;
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
-                        message = SharedLibrary.InstallmentHandler.ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
-                        if (installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
+                        message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
+                        if (installmentCycleNumber == 1 && installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
                             continue;
-                        else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
-                            message.Price = 100;
+                        else if (installmentCycleNumber > 1)
+                            message.Price = 250;
+                        if (priceUserChargedToday + message.Price > maxChargeLimit)
+                            continue;
                         var start = DateTime.Now.TimeOfDay;
                         var diff = start - previousStart;
                         if (diff.Milliseconds < 1000)
@@ -308,6 +310,21 @@ namespace DehnadPorShetabService
                 logs.Error("Exception in ChargeMtnSubscriber on saving values to db: " + e);
             }
             return singlecharge;
+        }
+
+        public static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
+        {
+            if (priceUserChargedToday == 0)
+            {
+                message.Price = maxChargeLimit;
+            }
+            else if (priceUserChargedToday <= 250)
+            {
+                message.Price = 250;
+            }
+            else
+                message.Price = 0;
+            return message;
         }
     }
 }

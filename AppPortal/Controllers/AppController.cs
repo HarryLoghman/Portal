@@ -1314,10 +1314,12 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage AppMessage([FromBody]MessageObject messageObj)
         {
+            logs.Info("1");
             dynamic result = new ExpandoObject();
-            result.MobileNumber = messageObj.MobileNumber;
             try
             {
+                result.Status = "error";
+
                 var hash = SharedLibrary.Security.GetSha256Hash("AppMessage" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
@@ -1325,18 +1327,10 @@ namespace Portal.Controllers
                 {
                     if (messageObj.ServiceCode == "NabardGah")
                         messageObj.ServiceCode = "Soltan";
-                    else if (messageObj.ServiceCode == "ShenoYad")
-                        messageObj.ServiceCode = "ShenoYad500";
-                    if (messageObj.Address != null)
-                    {
-                        messageObj.MobileNumber = messageObj.Address;
-                        messageObj.Content = messageObj.Message;
-                    }
-                    else if (messageObj.From != null)
-                    {
-                        messageObj.MobileNumber = messageObj.From;
-                        messageObj.ShortCode = messageObj.To;
-                    }
+
+                    var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+                    messageObj.ShortCode = serviceInfo.ShortCode;
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
@@ -1344,7 +1338,6 @@ namespace Portal.Controllers
                         result.Status = "This ServiceCode does not have permission";
                     else
                     {
-                        messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
                         messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromApp" : null;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                         result.Status = "Success";

@@ -28,7 +28,7 @@ namespace SharedLibrary
                         ReceivedTime = DateTime.Now,
                         PersianReceivedTime = Date.GetPersianDateTime(DateTime.Now),
                         MessageId = message.MessageId,
-                        Content = (message.Content == null) ? "" : message.Content,
+                        Content = (message.Content == null) ? " " : message.Content,
                         IsProcessed = false,
                         IsReceivedFromIntegratedPanel = (message.IsReceivedFromIntegratedPanel == null) ? false : message.IsReceivedFromIntegratedPanel,
                         IsReceivedFromWeb = (message.IsReceivedFromWeb == null) ? false : message.IsReceivedFromWeb,
@@ -601,12 +601,12 @@ namespace SharedLibrary
 
         public static Dictionary<string, int[]> CalculateServiceSendMessageThreadNumbersByTps(int readSize, int threadNumbers)
         {
-            if (readSize <= 50)
+            if (readSize <= threadNumbers)
             {
                 int[] takes = new int[1];
                 int[] skips = new int[1];
                 skips[0] = 0;
-                takes[0] = 50;
+                takes[0] = threadNumbers;
                 return new Dictionary<string, int[]>() { { "take", takes }, { "skip", skips } };
             }
             var takeSize = readSize / threadNumbers;
