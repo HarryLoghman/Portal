@@ -98,6 +98,8 @@ namespace DehnadReceiveProcessorService
             {
                 var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("PardisPlatform");
                 var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                shortCodes.Add("2018");
+                shortCodes.Add("20185");
                 var receivedMessages = new List<ReceievedMessage>();
                 var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
                 using (var db = new PortalEntities())
