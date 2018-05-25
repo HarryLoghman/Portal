@@ -2277,16 +2277,47 @@ namespace SharedLibrary
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
                     var mobileNumbers = new string[messagesCount];
-                    for(int i = 0; i < messagesCount; i++)
-                    {
-                        mobileNumbers[i] = "98" + messages[i].MobileNumber.TrimStart('0');
-                    }
-                    var sms = new SharedLibrary.MciSendSmsServiceBulkServiceReference.SendSmsClient();
-                    
+                    var messageContent = new string[messagesCount];
+                    var price = new string[messagesCount];
+                    var chargeKey = new string[messagesCount];
                     var client = new SharedLibrary.MciSendSmsServiceServiceReference.SendSms1Client();
-                    //var response = client.sendSms(sms);
-                    //logs.Info(response);
-                    
+                    foreach (var message in messages)
+                    {
+                        var sms = new SharedLibrary.MciSendSmsServiceServiceReference.sendSms();
+                        sms.addresses = "98" + message.MobileNumber.TrimStart('0');
+                        sms.message = message.Content;
+                        if(message.Price != "0")
+                        {
+                            var charging = new SharedLibrary.MciSendSmsServiceServiceReference.ChargingInformation();
+                            charging.amount = Convert.ToDecimal(message.Price) * 10;
+                            charging.currency = "RLS";
+                            sms.charging = charging;
+                        }
+                        sms.senderName = shortcode;
+                        sms.receiptRequest = new MciSendSmsServiceServiceReference.SimpleReference() { correlator = serviceAdditionalInfo["serviceId"], interfaceName = "SMS", endpoint = "http://79.175.164.51:200/api/Mci/Delivery" };
+                        var response = client.sendSms(sms);
+                        logs.Info(response.result);
+                        //if (result["status"] == "0")
+                        //{
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                            message.ReferenceId = ""; //CHANGE!!!!!!!!
+                            message.SentDate = DateTime.Now;
+                            message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            if (message.MessagePoint > 0)
+                                SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+                            entity.Entry(message).State = EntityState.Modified;
+                        //}
+                        //else
+                        //{
+                        //    logs.Info("SendMesssagesToTelepromo Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                        //    if (message.RetryCount > retryCountMax)
+                        //        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        //    message.DateLastTried = DateTime.Now;
+                        //    message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                        //    entity.Entry(message).State = EntityState.Modified;
+                        //}
+                    }
+                    entity.SaveChanges();
                 }
                 catch (Exception e)
                 {
