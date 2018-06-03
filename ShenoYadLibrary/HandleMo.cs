@@ -56,7 +56,7 @@ namespace ShenoYadLibrary
                     }
                     return isSucceeded;
                 }
-                else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
+                else if (message.Content.Length == 4 && message.Content.All(char.IsDigit) && !message.ReceivedFrom.Contains("Register"))
                 {
                     var confirmCode = message.Content;
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);

@@ -56,6 +56,8 @@ namespace DehnadPhantomService
                                 mobileNumbers = item.MobileNumbersList.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                             //var existingSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null).Select(o => o.MobileNumber).ToList();
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
+                            //mobileNumbers = finalMobileNumbers;
+                            //finalMobileNumbers.RemoveAll(o => o.Contains("09122137327"));
                             var imiChargeObject = PhantomLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
                             var aggregatorName = Properties.Settings.Default.AggregatorName;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);

@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -22,6 +24,7 @@ namespace SharedLibrary
         public static int retryPauseBeforeSendByMinute = -1;
         public static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
         public static string irancellIp = "http://92.42.55.180:8310";
+        public static string mciIp = "http://172.17.251.18:8090";
 
         public static async Task SendMesssagesToTelepromo(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
@@ -2275,47 +2278,98 @@ namespace SharedLibrary
                     var aggregatorUsername = serviceAdditionalInfo["username"];
                     var aggregatorPassword = serviceAdditionalInfo["password"];
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
-                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-                    var mobileNumbers = new string[messagesCount];
-                    var messageContent = new string[messagesCount];
-                    var price = new string[messagesCount];
-                    var chargeKey = new string[messagesCount];
-                    var client = new SharedLibrary.MciSendSmsServiceServiceReference.SendSms1Client();
+                    var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    var serviceId = serviceAdditionalInfo["serviceId"];
+
+                    var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
+
                     foreach (var message in messages)
                     {
-                        var sms = new SharedLibrary.MciSendSmsServiceServiceReference.sendSms();
-                        sms.addresses = "98" + message.MobileNumber.TrimStart('0');
-                        sms.message = message.Content;
-                        if(message.Price != "0")
+                        var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                        
+                        string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v4_0/local"">
+                           <soapenv:Header/>
+                           <soapenv:Body>
+                              <loc:sendSms>
+                        <loc:addresses>{0}</loc:addresses>
+                                 <loc:senderName>{1}</loc:senderName>", mobileNumber, shortcode);
+                        if (message.Price != "0")
                         {
-                            var charging = new SharedLibrary.MciSendSmsServiceServiceReference.ChargingInformation();
-                            charging.amount = Convert.ToDecimal(message.Price) * 10;
-                            charging.currency = "RLS";
-                            sms.charging = charging;
+                            payload += string.Format(@"
+                            <loc:charging>
+                                <description>?</description>
+                                <currency>RLS</currency>
+                                <amount>{0}</amount>
+                                <code>{1}</code>
+                             </loc:charging>", message.Price + "0", message.ImiChargeKey);
                         }
-                        sms.senderName = shortcode;
-                        sms.receiptRequest = new MciSendSmsServiceServiceReference.SimpleReference() { correlator = serviceAdditionalInfo["serviceId"], interfaceName = "SMS", endpoint = "http://79.175.164.51:200/api/Mci/Delivery" };
-                        var response = client.sendSms(sms);
-                        logs.Info(response.result);
-                        //if (result["status"] == "0")
-                        //{
-                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                            message.ReferenceId = ""; //CHANGE!!!!!!!!
-                            message.SentDate = DateTime.Now;
-                            message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                            if (message.MessagePoint > 0)
-                                SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
-                            entity.Entry(message).State = EntityState.Modified;
-                        //}
-                        //else
-                        //{
-                        //    logs.Info("SendMesssagesToTelepromo Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
-                        //    if (message.RetryCount > retryCountMax)
-                        //        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                        //    message.DateLastTried = DateTime.Now;
-                        //    message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
-                        //    entity.Entry(message).State = EntityState.Modified;
-                        //}
+                        payload += string.Format(@"
+                        <loc:message> {0} </loc:message>
+                            <loc:receiptRequest>
+                                         <endpoint> http://79.175.164.51:200/api/Mci/Delivery</endpoint>
+                                    <interfaceName> SMS </interfaceName>
+                                    <correlator>{1}</correlator>
+                                    </loc:receiptRequest>
+                                  </loc:sendSms>
+                                </soapenv:Body>
+                              </soapenv:Envelope>", message.Content, serviceId);
+                        using (var client = new HttpClient())
+                        {
+                            client.DefaultRequestHeaders.Add("serviceKey", aggregatorServiceId);
+                            var request = new HttpRequestMessage(HttpMethod.Post, url);
+                            request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
+                            using (var response = await client.SendAsync(request))
+                            {
+                                if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
+                                {
+                                    string httpResult = response.Content.ReadAsStringAsync().Result;
+                                    XmlDocument xml = new XmlDocument();
+                                    xml.LoadXml(httpResult);
+                                    XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                                    manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                                    manager.AddNamespace("ns2", "http://www.csapi.org/schema/parlayx/sms/send/v4_0/local");
+                                    XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:sendSmsResponse/ns2:result", manager);
+                                    if (successNode != null)
+                                    {
+                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                        message.ReferenceId = successNode.InnerText;
+                                        message.SentDate = DateTime.Now;
+                                        message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                        if (message.MessagePoint > 0)
+                                            SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+                                        entity.Entry(message).State = EntityState.Modified;
+                                    }
+                                    else
+                                    {
+                                        XmlNode faultCode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode", manager);
+                                        XmlNode faultString = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/soapenv:Fault/faultstring", manager);
+                                        XmlNode faultDetail = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/soapenv:Fault/detail", manager);
+                                        var error = "";
+                                        if (faultCode != null)
+                                            error += "faultCode=" + faultCode.InnerText;
+                                        if (faultString != null)
+                                            error += "faultString=" + faultString.InnerText;
+                                        if (faultDetail != null)
+                                            error += "faultDetail=" + faultDetail.InnerText;
+                                        logs.Info("SendMesssagesToMci Message was not sended with error: " + error);
+                                        if (message.RetryCount > retryCountMax)
+                                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                        message.DateLastTried = DateTime.Now;
+                                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                                        entity.Entry(message).State = EntityState.Modified;
+                                    }
+                                }
+                                else
+                                {
+                                    logs.Info("SendMesssagesToMci Message was not sended with status of: " + response.StatusCode);
+                                    if (message.RetryCount > retryCountMax)
+                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    message.DateLastTried = DateTime.Now;
+                                    message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                                    entity.Entry(message).State = EntityState.Modified;
+                                }
+                            }
+                        }
                     }
                     entity.SaveChanges();
                 }
@@ -2334,6 +2388,59 @@ namespace SharedLibrary
                     }
                     entity.SaveChanges();
                 }
+            }
+        }
+
+        public static async Task<dynamic> MciDirectSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
+                singlecharge.MobileNumber = message.MobileNumber;
+                try
+                {
+                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
+                    var username = serviceAdditionalInfo["username"];
+                    var password = serviceAdditionalInfo["password"];
+                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
+                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                    //var chargeInfo = new MciAmountChargingServiceServiceReference.chargeAmount();
+                    //chargeInfo.charge = new MciAmountChargingServiceServiceReference.ChargingInformation() { amount = Convert.ToDecimal(message.Price) * 10, currency = "RLS", code = message.ImiChargeKey };
+                    //var client = new MciAmountChargingServiceServiceReference.AmountChargingClient();
+                    //var result = client.chargeAmount(chargeInfo);
+                    //if (result)
+                    singlecharge.IsSucceeded = true;
+                    //else
+                    //singlecharge.IsSucceeded = false;
+
+                    //singlecharge.Description = result.ToString();
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in MciDirectSinglecharge: " + e);
+                    singlecharge.Description = "Exception";
+                }
+                try
+                {
+
+                    singlecharge.DateCreated = DateTime.Now;
+                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                    singlecharge.Price = message.Price.GetValueOrDefault();
+                    singlecharge.IsApplicationInformed = false;
+                    singlecharge.IsCalledFromInAppPurchase = false;
+                    if (installmentId != 0)
+                        singlecharge.InstallmentId = installmentId;
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in MapfaStaticPriceSinglecharge on saving values to db: " + e);
+                }
+                return singlecharge;
             }
         }
     }

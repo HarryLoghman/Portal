@@ -30,5 +30,10 @@ namespace SharedLibrary.Models
         public Nullable<System.DateTime> LastUpdateTime { get; set; }
         public string ServiceName { get; set; }
         public Nullable<int> TotalUnsubcribriptions { get; set; }
+        public Nullable<int> AllDeactivedSubscribers { get; set; }
+        public Nullable<int> ActiveSubscribersFromHistory { get; set; }
+        public Nullable<int> ActiveSubscribersFromHistoryUnique { get; set; }
+        public Nullable<int> DeactivedSubscribersFromHistory { get; set; }
+        public Nullable<int> DeactivedSubscribersFromHistoryUnqiue { get; set; }
     }
 }

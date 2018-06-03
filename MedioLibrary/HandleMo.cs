@@ -53,7 +53,7 @@ namespace MedioLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return isSucceeded;
                     }
-                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000") || message.Content.ToLower().Contains("abc"))
+                    else if (((message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000") || message.Content.ToLower().Contains("abc"))
                     {
                         if (message.Content.Contains("25000"))
                             message.Content = "25000";
@@ -102,7 +102,7 @@ namespace MedioLibrary
                     //    await SharedLibrary.MessageSender.MapfaOTPRequest(typeof(MedioEntities), singleCharge, message, serviceAdditionalInfo);
                     //    return;
                     //}
-                    else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
+                    else if (message.Content.Length == 4 && message.Content.All(char.IsDigit) && !message.ReceivedFrom.Contains("Register"))
                     {
                         var confirmCode = message.Content;
                         var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);

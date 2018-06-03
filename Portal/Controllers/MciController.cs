@@ -10,6 +10,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System;
 using System.Xml;
+using System.Threading.Tasks;
 
 namespace Portal.Controllers
 {
@@ -17,13 +18,15 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        [HttpGet]
+        [HttpPost]
         [AllowAnonymous]
-        public HttpResponseMessage Mo(string message)
+        public async Task<HttpResponseMessage> Mo()
         {
+            string recievedPayload = await Request.Content.ReadAsStringAsync();
+            logs.Info("mci Mo:" + recievedPayload);
             var messageObj = new SharedLibrary.Models.MessageObject();
             XmlDocument xml = new XmlDocument();
-            xml.LoadXml(message);
+            //xml.LoadXml(message);
             XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
             manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
             manager.AddNamespace("loc", "http://www.csapi.org/schema/parlayx/sms/send/v4_0/local");
@@ -43,11 +46,13 @@ namespace Portal.Controllers
             return response;
         }
 
-        public HttpResponseMessage BatchMo(string message)
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage BatchMo()
         {
 
             XmlDocument xml = new XmlDocument();
-            xml.LoadXml(message);
+            //xml.LoadXml(message);
             XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
             manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
             manager.AddNamespace("loc", "http://www.csapi.org/schema/parlayx/sms/send/v4_0/local");
@@ -128,6 +133,56 @@ namespace Portal.Controllers
             var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> Notify()
+        {
+            string result = "";
+            string recievedPayload = await Request.Content.ReadAsStringAsync();
+            logs.Info("mci Notify:" + recievedPayload);
+            try
+            {
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(recievedPayload);
+                XmlNodeList nodes = xml.SelectNodes("/notification");
+                foreach (XmlNode node in nodes)
+                {
+                    var msisdn = node.SelectSingleNode("msisdn").InnerText;
+                    var sid = node.SelectSingleNode("sid").InnerText;
+                    var shortcode = node.SelectSingleNode("shortcode").InnerText;
+                    var keyword = node.SelectSingleNode("keyword").InnerText;
+                    var event_type = node.SelectSingleNode("event-type").InnerText;
+                    if (event_type == "1.1" || event_type == "1.2")
+                    {
+                        var messageObj = new SharedLibrary.Models.MessageObject();
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                        if (shortcode == null || shortcode == "null")
+                        {
+                            messageObj.ShortCode = SharedLibrary.ServiceHandler.GetShortCodeFromOperatorServiceId(sid);
+                        }
+                        else
+                            messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(shortcode);
+                        messageObj.Content = keyword;
+                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : "";
+                        if (event_type == "1.1")
+                            messageObj.ReceivedFrom += "-Notify-Register";
+                        else
+                            messageObj.ReceivedFrom += "-Notify-Unsubscription";
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                    }
+                }
+                //result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 200, "Success");
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in stopSmsNotificationRequest: " + e);
+                //result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 400, "Error");
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/xml");
             return response;
         }
     }

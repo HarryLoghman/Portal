@@ -28,7 +28,7 @@ namespace Portal.Areas.Statistics.Controllers
                 using (var entity = new SharedLibrary.Models.PortalEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    DataSourceResult result = entity.RealtimeStatisticsFor3GServices.AsNoTracking().ToDataSourceResult(request, realtimeStatisticsFor3GServices => new
+                    DataSourceResult result = entity.RealtimeStatisticsFor3GServices.AsNoTracking().OrderByDescending(o => o.PersianDate).Take(1000).ToDataSourceResult(request, realtimeStatisticsFor3GServices => new
                     {
                         Id = realtimeStatisticsFor3GServices.Id,
                         ServiceName = realtimeStatisticsFor3GServices.ServiceName,
@@ -42,8 +42,15 @@ namespace Portal.Areas.Statistics.Controllers
                         DeactivationRateByHour = realtimeStatisticsFor3GServices.DeactivationRateByHour,
                         GeniuneActivationRateByMinute = realtimeStatisticsFor3GServices.GeniuneActivationRateByMinute,
                         GeniueActivationRateByHour = realtimeStatisticsFor3GServices.GeniueActivationRateByHour,
+                        AllDeactivedSubscribers = realtimeStatisticsFor3GServices.AllDeactivedSubscribers,
+                        ActiveSubscribersFromHistory = realtimeStatisticsFor3GServices.ActiveSubscribersFromHistory,
+                        ActiveSubscribersFromHistoryUnique = realtimeStatisticsFor3GServices.ActiveSubscribersFromHistoryUnique,
+                        DeactivedSubscribersFromHistory = realtimeStatisticsFor3GServices.DeactivedSubscribersFromHistory,
+                        DeactivedSubscribersFromHistoryUnqiue = realtimeStatisticsFor3GServices.DeactivedSubscribersFromHistoryUnqiue,
                     });
-                    return Json(result, JsonRequestBehavior.AllowGet);
+                    var jsonResult = Json(result, JsonRequestBehavior.AllowGet);
+                    jsonResult.MaxJsonLength = Int32.MaxValue;
+                    return jsonResult;
                 }
             }
             catch (Exception e)

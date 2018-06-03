@@ -55,7 +55,7 @@ namespace DefendIranLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return isSucceeded;
                     }
-                    else if (((message.Content.Length == 8 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit)) || message.Content.ToLower().Contains("abc"))
+                    else if (((message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit)) || message.Content.ToLower().Contains("abc"))
                     {
                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Hub");
                         var logId = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
@@ -79,7 +79,7 @@ namespace DefendIranLibrary
                         }
                         return isSucceeded;
                     }
-                    else if (message.Content.Length == 4 && message.Content.All(char.IsDigit))
+                    else if (message.Content.Length == 4 && message.Content.All(char.IsDigit) && !message.ReceivedFrom.Contains("Register"))
                     {
                         var confirmCode = message.Content;
                         var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);

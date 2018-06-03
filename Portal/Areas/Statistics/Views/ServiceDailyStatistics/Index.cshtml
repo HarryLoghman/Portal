@@ -10,6 +10,7 @@
 
 
 <script>
+
     var realTimeStatisticsFor3GServicesGridElement = $("#realTimeStatisticsFor3GServicesGrid");
     var realTimeStatisticsFor2GServicesGridElement = $("#realTimeStatisticsFor2GServicesGrid");
 
@@ -18,9 +19,14 @@
         columns: [
             { field: "PersianDate", title: "تاریخ", width: 150 },
             { field: "ServiceName", title: "سرویس", width: 150 },
-            { field: "TotalSubscriptions", title: "ورود کل یوزرها", width: 150 },
-            { field: "TotalUnsubscriptions", title: "لغو عضویت کل", width: 150 },
+            { field: "TotalSubscriptions", title: "ورود یوزرها", width: 150 },
+            { field: "TotalUnsubscriptions", title: "لغو عضویت عضویت های امروز", width: 150 },
             { field: "TodayGenuineSubscriptions", title: "ورودی خالص امروز", width: 170 },
+            { field: "AllDeactivedSubscribers", title: "لغو عضویت کل روز", width: 190 },
+            { field: "ActiveSubscribersFromHistory", title: "ورود کل یوزرها", width: 170 },
+            { field: "ActiveSubscribersFromHistoryUnique", title: "ورود کل یوزرها یونیک", width: 190 },
+            { field: "DeactivedSubscribersFromHistory", title: "لغو عضویت کل یوزرها", width: 190 },
+            { field: "DeactivedSubscribersFromHistoryUnqiue", title: "لغو عضویت کل یوزرها یونیک", width: 190 },
             { field: "ActivationRateByMinute", title: "عضویت بر دقیقه", width: 150 },
             { field: "ActivationRateByHour", title: "عضویت بر ساعت", width: 150 },
             { field: "DeactivationRateByMinute", title: "لغو عضویت بر دقیقه", width: 175 },
@@ -29,22 +35,22 @@
             { field: "GeniueActivationRateByHour", title: "عضویت خالص بر ساعت", width: 190 },
         ],
         toolbar: ["excel"],
-                excel: {
-                    allPages: true
-                },
-                excel: {
-                    fileName:"3G Services Statistics.xlsx",
-                    allPages: true,
-                    filterable: true
-                },
+        excel: {
+            allPages: true
+        },
+        excel: {
+            fileName: "3G Services Statistics.xlsx",
+            allPages: true,
+            filterable: true
+        },
         dataSource: {
             type: "aspnetmvc-ajax",
             transport: {
                 read: {
                     url: "ServiceDailyStatistics/RealTimeStatisticsFor3GServices_Read",
                     type: "POST"
-					},
                 },
+            },
             schema: {
                 data: "Data",
                 total: "Total",
@@ -56,7 +62,9 @@
             pageSize: 5,
             serverPaging: false,
             sort: [
-                { field: "PersianDate", dir: "desc" }
+                { field: "PersianDate", dir: "desc" },
+                { field: "TotalUnsubscriptions", dir: "desc" },
+                { field: "TotalSubscriptions", dir: "desc" }
             ]
         },
         columnMenu: true,
@@ -95,22 +103,22 @@
             { field: "PostPaidUnsubscriptions", title: "تعداد لغو عضویت دائمی", width: 200 },
         ],
         toolbar: ["excel"],
-                excel: {
-                    allPages: true
-                },
-                excel: {
-                    fileName:"2G Services Statistics.xlsx",
-                    allPages: true,
-                    filterable: true
-                },
+        excel: {
+            allPages: true
+        },
+        excel: {
+            fileName: "2G Services Statistics.xlsx",
+            allPages: true,
+            filterable: true
+        },
         dataSource: {
             type: "aspnetmvc-ajax",
             transport: {
                 read: {
                     url: "ServiceDailyStatistics/RealTimeStatisticsFor2GServices_Read",
                     type: "POST"
-					},
                 },
+            },
             schema: {
                 data: "Data",
                 total: "Total",
@@ -150,16 +158,15 @@
         scrollable: true,
     });
 
-    $(document).ready(function()
-    {
-		$("#realTimeStatisticsFor3GServicesGrid .k-grid-toolbar").prepend("<div class='gridTitle'><h3>سرویس های 3G</h3></div>");
-		$("#realTimeStatisticsFor2GServicesGrid .k-grid-toolbar").prepend("<div class='gridTitle'><h3>سرویس های 2G</h3></div>");
+    $(document).ready(function () {
+        $("#realTimeStatisticsFor3GServicesGrid .k-grid-toolbar").prepend("<div class='gridTitle'><h3>سرویس های 3G</h3></div>");
+        $("#realTimeStatisticsFor2GServicesGrid .k-grid-toolbar").prepend("<div class='gridTitle'><h3>سرویس های 2G</h3></div>");
 
         var refreshInterval = 60000;
 
-		setInterval(function () {
-			$('#realTimeStatisticsFor3GServicesGrid').data('kendoGrid').dataSource.read();
-			$('#realTimeStatisticsFor2GServicesGrid').data('kendoGrid').dataSource.read();
-		}, refreshInterval);
+        setInterval(function () {
+            $('#realTimeStatisticsFor3GServicesGrid').data('kendoGrid').dataSource.read();
+            $('#realTimeStatisticsFor2GServicesGrid').data('kendoGrid').dataSource.read();
+        }, refreshInterval);
     });
 </script>

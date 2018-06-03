@@ -181,6 +181,11 @@
           <Property Name="LastUpdateTime" Type="datetime" />
           <Property Name="ServiceName" Type="nvarchar" MaxLength="30" />
           <Property Name="TotalUnsubcribriptions" Type="int" />
+          <Property Name="AllDeactivedSubscribers" Type="int" />
+          <Property Name="ActiveSubscribersFromHistory" Type="int" />
+          <Property Name="ActiveSubscribersFromHistoryUnique" Type="int" />
+          <Property Name="DeactivedSubscribersFromHistory" Type="int" />
+          <Property Name="DeactivedSubscribersFromHistoryUnqiue" Type="int" />
         </EntityType>
         <EntityType Name="ReceievedMessages">
           <Key>
@@ -385,6 +390,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
           <Property Name="IsReceivedFromWeb" Type="bit" />
+          <Property Name="RetryCount" Type="int" />
+          <Property Name="LastRetryDate" Type="datetime" />
         </EntityType>
         <Association Name="FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operators" Multiplicity="1" />
@@ -563,7 +570,9 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
     [vw_ReceivedMessages].[IsReceivedFromIntegratedPanel] AS [IsReceivedFromIntegratedPanel], 
     [vw_ReceivedMessages].[PersianReceivedTime] AS [PersianReceivedTime], 
     [vw_ReceivedMessages].[ReceivedFrom] AS [ReceivedFrom], 
-    [vw_ReceivedMessages].[IsReceivedFromWeb] AS [IsReceivedFromWeb]
+    [vw_ReceivedMessages].[IsReceivedFromWeb] AS [IsReceivedFromWeb], 
+    [vw_ReceivedMessages].[RetryCount] AS [RetryCount], 
+    [vw_ReceivedMessages].[LastRetryDate] AS [LastRetryDate]
     FROM [dbo].[vw_ReceivedMessages] AS [vw_ReceivedMessages]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
@@ -839,6 +848,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsReceivedFromWeb" Type="Boolean" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operator" Multiplicity="1" />
@@ -1115,6 +1126,11 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
           <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="TotalUnsubcribriptions" Type="Int32" />
+          <Property Name="AllDeactivedSubscribers" Type="Int32" />
+          <Property Name="ActiveSubscribersFromHistory" Type="Int32" />
+          <Property Name="ActiveSubscribersFromHistoryUnique" Type="Int32" />
+          <Property Name="DeactivedSubscribersFromHistory" Type="Int32" />
+          <Property Name="DeactivedSubscribersFromHistoryUnqiue" Type="Int32" />
         </EntityType>
         <EntityType Name="RealtimeStatisticsFor2GServices">
           <Key>
@@ -1381,6 +1397,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="vw_ReceivedMessages">
             <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
               <MappingFragment StoreEntitySet="vw_ReceivedMessages">
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
                 <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -1507,6 +1525,11 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="RealtimeStatisticsFor3GServices">
             <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor3GServices">
               <MappingFragment StoreEntitySet="RealtimeStatisticsFor3GServices">
+                <ScalarProperty Name="DeactivedSubscribersFromHistoryUnqiue" ColumnName="DeactivedSubscribersFromHistoryUnqiue" />
+                <ScalarProperty Name="DeactivedSubscribersFromHistory" ColumnName="DeactivedSubscribersFromHistory" />
+                <ScalarProperty Name="ActiveSubscribersFromHistoryUnique" ColumnName="ActiveSubscribersFromHistoryUnique" />
+                <ScalarProperty Name="ActiveSubscribersFromHistory" ColumnName="ActiveSubscribersFromHistory" />
+                <ScalarProperty Name="AllDeactivedSubscribers" ColumnName="AllDeactivedSubscribers" />
                 <ScalarProperty Name="TotalUnsubcribriptions" ColumnName="TotalUnsubcribriptions" />
                 <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
                 <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
