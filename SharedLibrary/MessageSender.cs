@@ -2286,7 +2286,7 @@ namespace SharedLibrary
                     foreach (var message in messages)
                     {
                         var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                        
+
                         string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v4_0/local"">
                            <soapenv:Header/>
                            <soapenv:Body>
@@ -2391,57 +2391,125 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MciDirectSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<dynamic> MciDirectOtpCharge(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
-            using (dynamic entity = Activator.CreateInstance(entityType))
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
             {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
-                singlecharge.MobileNumber = message.MobileNumber;
-                try
+                var shortcode = "98" + serviceAdditionalInfo["shortCode"];
+                var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
+                var serviceId = serviceAdditionalInfo["serviceId"];
+                var url = mciIp + "/apigw/charging/pushotp";
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var rnd = new Random();
+                var refrenceCode = rnd.Next(100000000, 999999999).ToString();
+                var json = string.Format(@"{
+                            ""accesInfo"": {
+                                ""servicekey"": ""{0}"",
+                                ""msisdn"": ""{1}"",
+                                ""serviceName"": ""{5}"",
+                                ""referenceCode"": ""{2}"",
+                                ""shortCode"": ""{3}"",
+                                ""contentId"":""1""
+                            } ,
+                        ""charge"": {
+                                        ""code"": ""{4}"",
+                                ""amount"":0,
+                                ""description"": ""otp""
+                            }
+                    }", aggregatorServiceId, mobileNumber, refrenceCode, shortcode, message.ImiChargeKey, serviceAdditionalInfo["serviceName"]);
+                using (var client = new HttpClient())
                 {
-                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
-                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
-                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
-                    var username = serviceAdditionalInfo["username"];
-                    var password = serviceAdditionalInfo["password"];
-                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
-                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    //var chargeInfo = new MciAmountChargingServiceServiceReference.chargeAmount();
-                    //chargeInfo.charge = new MciAmountChargingServiceServiceReference.ChargingInformation() { amount = Convert.ToDecimal(message.Price) * 10, currency = "RLS", code = message.ImiChargeKey };
-                    //var client = new MciAmountChargingServiceServiceReference.AmountChargingClient();
-                    //var result = client.chargeAmount(chargeInfo);
-                    //if (result)
-                    singlecharge.IsSucceeded = true;
-                    //else
-                    //singlecharge.IsSucceeded = false;
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var result = await client.PostAsync(url, content);
+                    var responseString = await result.Content.ReadAsStringAsync();
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    if (jsonResponse.statusInfo.statusCode.ToString() == "200")
+                    {
+                        singlecharge.Description = "SUCCESS-Pending Confirmation";
+                        singlecharge.ReferenceId = refrenceCode + "_" + jsonResponse.statusInfo.OTPTransactionId.ToString();
+                    }
+                    else
+                    {
+                        singlecharge.Description = jsonResponse.statusInfo.errorInfo.errorCode.ToString() + " : " + jsonResponse.statusInfo.errorInfo.errorDescription.ToString();
+                        singlecharge.ReferenceId = refrenceCode + "_";
+                    }
+                }
 
-                    //singlecharge.Description = result.ToString();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MciDirectSinglecharge: " + e);
-                    singlecharge.Description = "Exception";
-                }
-                try
-                {
-
-                    singlecharge.DateCreated = DateTime.Now;
-                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                    singlecharge.IsApplicationInformed = false;
-                    singlecharge.IsCalledFromInAppPurchase = false;
-                    if (installmentId != 0)
-                        singlecharge.InstallmentId = installmentId;
-                    entity.Singlecharges.Add(singlecharge);
-                    entity.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaStaticPriceSinglecharge on saving values to db: " + e);
-                }
-                return singlecharge;
             }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MciDirectOtpCharge: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MciDirectOtpCharge on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> MciDirectOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            try
+            {
+                var shortcode = "98" + serviceAdditionalInfo["shortCode"];
+                var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
+                var serviceId = serviceAdditionalInfo["serviceId"];
+                var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                string otpIds = singlecharge.ReferenceId;
+                var optIdsSplitted = otpIds.Split('_');
+                var referenceCode = optIdsSplitted[0];
+                var otpTransactionId = optIdsSplitted[1];
+                var json = string.Format(@"{
+                       ""accesInfo"":{  
+                          ""servicekey"":""{0}"",
+                          ""msisdn"":""{1}"",
+                          ""otpTransactionId"":""{2}"",
+                          ""transactionPIN"":""{3}"",
+                          ""referenceCode"":""{4}"",
+                       ""contentId"":""1"",
+                       ""shortCode"": ""{5}""
+                       }
+                    }", aggregatorServiceId, mobileNumber, otpTransactionId, confirmationCode, referenceCode, shortcode);
+                using (var client = new HttpClient())
+                {
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var result = await client.PostAsync(url, content);
+                    var responseString = await result.Content.ReadAsStringAsync();
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    if (jsonResponse.statusInfo.statusCode.ToString() == "200")
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = "SUCCESS";
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MciDirectOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+
+            return singlecharge;
         }
     }
 }
