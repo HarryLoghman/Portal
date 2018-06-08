@@ -573,6 +573,8 @@ namespace SharedLibrary
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMtn(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "MobinOne")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMobinOne(entityType, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "MciDirect")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMci(entityType, chunkedMessages, serviceAdditionalInfo));
             }
             Task.WaitAll(TaskList.ToArray());
         }

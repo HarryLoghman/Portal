@@ -2275,8 +2275,6 @@ namespace SharedLibrary
                     var messagesCount = messages.Count;
                     if (messagesCount == 0)
                         return;
-                    var aggregatorUsername = serviceAdditionalInfo["username"];
-                    var aggregatorPassword = serviceAdditionalInfo["password"];
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                     var serviceId = serviceAdditionalInfo["serviceId"];
@@ -2293,11 +2291,11 @@ namespace SharedLibrary
                               <loc:sendSms>
                         <loc:addresses>{0}</loc:addresses>
                                  <loc:senderName>{1}</loc:senderName>", mobileNumber, shortcode);
-                        if (message.Price != "0")
+                        if (message.Price != 0)
                         {
                             payload += string.Format(@"
                             <loc:charging>
-                                <description>?</description>
+                                <description></description>
                                 <currency>RLS</currency>
                                 <amount>{0}</amount>
                                 <code>{1}</code>
@@ -2306,8 +2304,8 @@ namespace SharedLibrary
                         payload += string.Format(@"
                         <loc:message> {0} </loc:message>
                             <loc:receiptRequest>
-                                         <endpoint> http://79.175.164.51:200/api/Mci/Delivery</endpoint>
-                                    <interfaceName> SMS </interfaceName>
+                                         <endpoint>http://79.175.164.51:200/api/Mci/Delivery</endpoint>
+                                    <interfaceName>SMS</interfaceName>
                                     <correlator>{1}</correlator>
                                     </loc:receiptRequest>
                                   </loc:sendSms>
@@ -2403,21 +2401,21 @@ namespace SharedLibrary
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var rnd = new Random();
                 var refrenceCode = rnd.Next(100000000, 999999999).ToString();
-                var json = string.Format(@"{
-                            ""accesInfo"": {
+                var json = string.Format(@"{{
+                            ""accesInfo"": {{
                                 ""servicekey"": ""{0}"",
                                 ""msisdn"": ""{1}"",
                                 ""serviceName"": ""{5}"",
                                 ""referenceCode"": ""{2}"",
                                 ""shortCode"": ""{3}"",
                                 ""contentId"":""1""
-                            } ,
-                        ""charge"": {
-                                        ""code"": ""{4}"",
+                            }} ,
+                        ""charge"": {{
+                                ""code"": ""{4}"",
                                 ""amount"":0,
                                 ""description"": ""otp""
-                            }
-                    }", aggregatorServiceId, mobileNumber, refrenceCode, shortcode, message.ImiChargeKey, serviceAdditionalInfo["serviceName"]);
+                            }}
+                    }}", aggregatorServiceId, mobileNumber, refrenceCode, shortcode, message.ImiChargeKey, serviceAdditionalInfo["serviceName"]);
                 using (var client = new HttpClient())
                 {
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -2471,14 +2469,14 @@ namespace SharedLibrary
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
-                var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
+                var url = mciIp + "/apigw/charging/chargeotp";
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 string otpIds = singlecharge.ReferenceId;
                 var optIdsSplitted = otpIds.Split('_');
                 var referenceCode = optIdsSplitted[0];
                 var otpTransactionId = optIdsSplitted[1];
-                var json = string.Format(@"{
-                       ""accesInfo"":{  
+                var json = string.Format(@"{{
+                       ""accesInfo"":{{  
                           ""servicekey"":""{0}"",
                           ""msisdn"":""{1}"",
                           ""otpTransactionId"":""{2}"",
@@ -2486,8 +2484,8 @@ namespace SharedLibrary
                           ""referenceCode"":""{4}"",
                        ""contentId"":""1"",
                        ""shortCode"": ""{5}""
-                       }
-                    }", aggregatorServiceId, mobileNumber, otpTransactionId, confirmationCode, referenceCode, shortcode);
+                       }}
+                    }}", aggregatorServiceId, mobileNumber, otpTransactionId, confirmationCode, referenceCode, shortcode);
                 using (var client = new HttpClient())
                 {
                     var content = new StringContent(json, Encoding.UTF8, "application/json");

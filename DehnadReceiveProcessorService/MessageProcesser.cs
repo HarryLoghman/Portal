@@ -257,6 +257,39 @@ namespace DehnadReceiveProcessorService
             }
         }
 
+        public void MciDirectProcess()
+        {
+            try
+            {
+                var aggeragatorId = SharedLibrary.ServiceHandler.GetAggregatorIdFromAggregatorName("MciDirect");
+                var shortCodes = SharedLibrary.ServiceHandler.GetShortCodesFromAggregatorId(aggeragatorId);
+                var receivedMessages = new List<ReceievedMessage>();
+                var NumberOfConcurrentMessagesToProcess = Convert.ToInt32(Properties.Settings.Default.NumberOfConcurrentMessagesToProcess);
+                using (var db = new PortalEntities())
+                {
+                    var retryTimeOut = DateTime.Now.AddSeconds(RetryWaitTimeInSeconds);
+                    receivedMessages = db.ReceievedMessages.Where(o => o.IsProcessed == false && shortCodes.Contains(o.ShortCode) && (o.RetryCount == null || o.RetryCount <= MaxRetryCount) && (o.LastRetryDate == null || o.LastRetryDate < retryTimeOut)).OrderBy(o => o.ReceivedTime).GroupBy(o => o.MobileNumber).Select(o => o.FirstOrDefault()).ToList();
+                }
+                if (receivedMessages.Count == 0)
+                    return;
+
+                for (int i = 0; i < receivedMessages.Count; i += NumberOfConcurrentMessagesToProcess)
+                {
+                    var receivedChunk = receivedMessages.Skip(i).Take(NumberOfConcurrentMessagesToProcess).ToList();
+                    List<Task> TaskList = new List<Task>();
+                    foreach (var message in receivedChunk)
+                    {
+                        TaskList.Add(HandleReceivedMessage(message));
+                    }
+                    Task.WaitAll(TaskList.ToArray());
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exeption in MciDirectProcess: " + e);
+            }
+        }
+
         public void IrancellProcess()
         {
             try
@@ -448,7 +481,7 @@ namespace DehnadReceiveProcessorService
                 {
                     isSucceeded = RouteUserToDesiredService(message, serviceShortCodes);
                 }
-                
+
                 if (isSucceeded != true)
                 {
                     receivedMessage.IsProcessed = false;

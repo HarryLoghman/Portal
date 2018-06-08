@@ -18,6 +18,7 @@ namespace DehnadReceiveProcessorService
         private Thread mobinOneMapfaProcessThread;
         private Thread samssonTciProcessThread;
         private Thread pardisPlatformProcessThread;
+        private Thread mciDirectProcessThread;
         private Thread getIrancellsMoThread;
         private Thread getFtpThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
@@ -65,6 +66,10 @@ namespace DehnadReceiveProcessorService
             samssonTciProcessThread.IsBackground = true;
             samssonTciProcessThread.Start();
 
+            mciDirectProcessThread = new Thread(MciDirectMessageProcessorWorkerThread);
+            mciDirectProcessThread.IsBackground = true;
+            mciDirectProcessThread.Start();
+
             getIrancellsMoThread = new Thread(IrancellMoWorkerThread);
             getIrancellsMoThread.IsBackground = true;
             getIrancellsMoThread.Start();
@@ -110,6 +115,10 @@ namespace DehnadReceiveProcessorService
                 if (!pardisPlatformProcessThread.Join(3000))
                 {
                     pardisPlatformProcessThread.Abort();
+                }
+                if (!mciDirectProcessThread.Join(3000))
+                {
+                    mciDirectProcessThread.Abort();
                 }
                 if (!getIrancellsMoThread.Join(3000))
                 {
@@ -207,6 +216,27 @@ namespace DehnadReceiveProcessorService
                 while (!shutdownEvent.WaitOne(0))
                 {
                     messageProcessor.HubProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MessageProcessorWorkerThread:", e);
+            }
+        }
+
+        private void MciDirectMessageProcessorWorkerThread()
+        {
+            try
+            {
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.MciDirectProcess();
                     Thread.Sleep(1000);
                 }
             }

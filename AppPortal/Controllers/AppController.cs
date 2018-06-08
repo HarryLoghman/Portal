@@ -530,9 +530,9 @@ namespace Portal.Controllers
                                         else
                                         {
                                             var singleCharge = new DezhbanLibrary.Models.Singlecharge();
-                                            string aggregatorName = "Telepromo";
+                                            string aggregatorName = "MciDirect";
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                            singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                            singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                             result.Status = singleCharge.Description;
                                         }
                                     }
@@ -1057,9 +1057,9 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        string aggregatorName = "MciDirect";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
