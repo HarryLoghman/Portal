@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="AggregatorName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Telepromo</Value>
+      <Value Profile="(Default)">TelepromoMapfa</Value>
     </Setting>
     <Setting Name="InsertAutochargeMessageInQueueTime" Type="System.String" Scope="User">
       <Value Profile="(Default)">03:15:00</Value>
