@@ -38,7 +38,7 @@ namespace Portal.Controllers
             {
                 messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                if(messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326")
+                if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326")
                     messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                 result = "";
@@ -644,6 +644,42 @@ namespace Portal.Controllers
             var json = JsonConvert.SerializeObject(responseJson);
             var response = Request.CreateResponse(HttpStatusCode.OK);
             response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage MapfaMo([FromBody]dynamic input)
+        {
+            var messageObj = new MessageObject();
+            messageObj.MobileNumber = input.msisdn;
+            messageObj.ShortCode = input.shortcode;
+            messageObj.Content = input.message;
+
+            if (input.action != "none")
+            {
+                if (input.action == "subscribe")
+                    messageObj.ReceivedFrom += "-FromImi-Register";
+                else if (input.action == "unsubscribe")
+                    messageObj.ReceivedFrom += "-FromImi-Unsubscribe";
+
+                messageObj.Content = input.action;
+            }
+            else
+                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            string result = "";
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                result = "-1";
+            else
+            {
+                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                result = "";
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
         }
     }

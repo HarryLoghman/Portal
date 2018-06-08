@@ -2492,6 +2492,7 @@ namespace SharedLibrary
                     var result = await client.PostAsync(url, content);
                     var responseString = await result.Content.ReadAsStringAsync();
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    singlecharge.Description = jsonResponse.data.ToString();
                     if (jsonResponse.statusInfo.statusCode.ToString() == "200")
                     {
                         singlecharge.IsSucceeded = true;
@@ -2499,11 +2500,207 @@ namespace SharedLibrary
                         entity.Entry(singlecharge).State = EntityState.Modified;
                         entity.SaveChanges();
                     }
+                    else
+                        singlecharge.Description = jsonResponse.statusInfo.errorInfo.errorCode.ToString() + " : " + jsonResponse.statusInfo.errorInfo.errorDescription.ToString();
                 }
             }
             catch (Exception e)
             {
                 logs.Error("Exception in MciDirectOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+
+            return singlecharge;
+        }
+
+        public static async Task SendMesssagesToTelepromoMapfa(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                try
+                {
+                    var messagesCount = messages.Count;
+                    if (messagesCount == 0)
+                        return;
+
+                    var url = telepromoIp + "/samsson-gateway/sendmessagepardis";
+                    var username = serviceAdditionalInfo["username"];
+                    var password = serviceAdditionalInfo["password"];
+                    var shortcode = "98" + serviceAdditionalInfo["shortCode"];
+                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    using (var client = new HttpClient())
+                    {
+                        foreach (var message in messages)
+                        {
+                            if (message.RetryCount != null && message.RetryCount >= retryCountMax)
+                            {
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                entity.Entry(message).State = EntityState.Modified;
+                                continue;
+                            }
+
+                            var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                            try
+                            {
+                                var json = string.Format(@"{{""username"":""{0}"",""password"":""{1}"",""serviceid"":""{2}"",""shortcode"":""{3}"", ""msisdn"": ""{4}"", ""message"":""{5}""}}"
+                                                            , username, password, serviceId, shortcode, mobileNumber, message.Content);
+                                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                                var result = await client.PostAsync(url, content);
+                                var responseString = await result.Content.ReadAsStringAsync();
+                                dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                                if (Convert.ToInt32(jsonResponse.data.ToString()) > 100)
+                                {
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                    message.ReferenceId = jsonResponse.data;
+                                    message.SentDate = DateTime.Now;
+                                    message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                    if (message.MessagePoint > 0)
+                                        SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+                                    entity.Entry(message).State = EntityState.Modified;
+                                }
+                                else
+                                {
+                                    logs.Info("SendMesssagesToTelepromoMapfa Message was not sended with data of: " + jsonResponse.data + " - description: " + jsonResponse.status_txt);
+                                    if (message.RetryCount > retryCountMax)
+                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    message.DateLastTried = DateTime.Now;
+                                    message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                                    entity.Entry(message).State = EntityState.Modified;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                logs.Error("Exception in SendSingleMessageToTelepromo: " + e);
+                                if (message.RetryCount > retryCountMax)
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                message.DateLastTried = DateTime.Now;
+                                message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                                entity.Entry(message).State = EntityState.Modified;
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SendMesssagesToTelepromoMapfa: " + e);
+                    foreach (var message in messages)
+                    {
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+        }
+
+        public static async Task<dynamic> TelepromoMapfaOtpCharge(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var url = telepromoIp + "/samsson-gateway/otp-generationpardis";
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var json = string.Format(@"{{
+                                ""username"": ""{0}"",
+                                ""password"": ""{1}"",
+                                ""serviceid"": ""{2}"",
+                                ""msisdn"": ""{3}""
+                    }}", username, password, aggregatorServiceId, mobileNumber);
+                using (var client = new HttpClient())
+                {
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var result = await client.PostAsync(url, content);
+                    var responseString = await result.Content.ReadAsStringAsync();
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    if (jsonResponse.data.ToString() == "0")
+                    {
+                        singlecharge.Description = "SUCCESS-Pending Confirmation";
+                    }
+                    else
+                    {
+                        singlecharge.Description = jsonResponse.data.ToString() + " : " + jsonResponse.status_txt.ToString() + " : " + jsonResponse.status_code.ToString();
+                    }
+                    singlecharge.ReferenceId = "";
+                }
+
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoMapfaOtpCharge: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoMapfaOtpCharge on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> TelepromoPardisOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            try
+            {
+                var url = telepromoIp + "samsson-gateway/otp-confirmationpardis";
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var shortcode = "98" + serviceAdditionalInfo["shortCode"];
+                var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
+                var serviceId = serviceAdditionalInfo["serviceId"];
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                string otpIds = singlecharge.ReferenceId;
+                var optIdsSplitted = otpIds.Split('_');
+                var referenceCode = optIdsSplitted[0];
+                var otpTransactionId = optIdsSplitted[1];
+                var json = string.Format(@"{{
+                                ""username"": ""{0}"",
+                                ""password"": ""{1}"",
+                                ""serviceid"": ""{2}"",
+                                ""msisdn"": ""{3}"",
+                                ""message"": ""{4}""
+                    }}", username, password, aggregatorServiceId, mobileNumber, confirmationCode);
+                using (var client = new HttpClient())
+                {
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var result = await client.PostAsync(url, content);
+                    var responseString = await result.Content.ReadAsStringAsync();
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    if (jsonResponse.data.ToString() == "0")
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = "SUCCESS";
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                    else
+                        singlecharge.Description = jsonResponse.data.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoPardisOTPConfirm: " + e);
                 singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
             }
 

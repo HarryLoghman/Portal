@@ -575,6 +575,8 @@ namespace SharedLibrary
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMobinOne(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "MciDirect")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMci(entityType, chunkedMessages, serviceAdditionalInfo));
+                else if (aggregatorName == "TelepromoMapfa")
+                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromoMapfa(entityType, chunkedMessages, serviceAdditionalInfo));
             }
             Task.WaitAll(TaskList.ToArray());
         }
