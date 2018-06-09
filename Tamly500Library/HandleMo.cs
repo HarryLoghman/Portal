@@ -28,7 +28,32 @@ namespace Tamly500Library
                 var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
                 if (isInBlackList == true)
                     isCampaignActive = (int)CampaignStatus.Deactive;
+                if (isCampaignActive != (int)CampaignStatus.Deactive)
+                {
+                    using (var portalEntity = new SharedLibrary.Models.PortalEntities())
+                    {
+                        var is95ContentSended = portalEntity.ReceievedMessages.FirstOrDefault(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode && o.Content == "95");
+                        if (is95ContentSended != null)
+                        {
+                            try
+                            {
+                                var black = new SharedLibrary.Models.BlackList();
+                                black.DateAdded = DateTime.Now;
+                                black.MobileNumber = message.MobileNumber;
+                                black.ServiceId = service.Id;
+                                portalEntity.BlackLists.Add(black);
+                                portalEntity.SaveChanges();
+                            }
+                            catch (Exception e)
+                            {
+                                logs.Error("", e);
+                            }
 
+                            isInBlackList = true;
+                            isCampaignActive = (int)CampaignStatus.Deactive;
+                        }
+                    }
+                }
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                 message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
@@ -141,7 +166,7 @@ namespace Tamly500Library
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
-                
+
                 //if (isUserSendsSubscriptionKeyword == true && message.Content == "7")
                 //{
                 //    isCampaignActive = (int)CampaignStatus.Deactive;
