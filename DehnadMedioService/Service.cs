@@ -217,7 +217,7 @@ namespace DehnadMedioService
                         if (isInMaintenace != null)
                             isInMaintenanceTime = isInMaintenace.Value == "True" ? true : false;
                     }
-                    if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || DateTime.Now.Hour < 7 || (DateTime.Now.Hour == 7 && DateTime.Now.Minute < 2) || isInMaintenanceTime == true)
+                    if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("07:02:00")) || isInMaintenanceTime == true)
                     {
                         installmentCycleNumber = 1;
                         Thread.Sleep(/*50 * 60 * */1000);
@@ -265,7 +265,7 @@ namespace DehnadMedioService
                         //    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                         //    installmentCycleNumber++;
                         //}
-                        if (DateTime.Now.Hour >= 7 && (DateTime.Now.Hour <= 23 && DateTime.Now.Minute < 45))
+                        if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("07:02:00"))
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;

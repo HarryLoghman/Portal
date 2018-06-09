@@ -194,15 +194,15 @@ namespace DehnadDambelService
             var singlechargeInstallment = new SinglechargeInstallmentClass();
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
-            if (DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 14)
+            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("14:00:00"))
                 installmentCycleNumber = 2;
-            else if (DateTime.Now.Hour >= 14 && DateTime.Now.Hour < 17)
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("14:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("17:00:00"))
                 installmentCycleNumber = 3;
-            else if (DateTime.Now.Hour >= 17 && DateTime.Now.Hour < 20)
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("17:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
                 installmentCycleNumber = 4;
-            else if (DateTime.Now.Hour >= 20 && DateTime.Now.Hour < 22)
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
                 installmentCycleNumber = 5;
-            else if (DateTime.Now.Hour >= 22)
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
                 installmentCycleNumber = 6;
             else
                 installmentCycleNumber = 1;
@@ -220,7 +220,7 @@ namespace DehnadDambelService
                         if (isInMaintenace != null)
                             isInMaintenanceTime = isInMaintenace.Value == "True" ? true : false;
                     }
-                    if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 05) || isInMaintenanceTime == true)
+                    if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00")) || isInMaintenanceTime == true)
                     {
                         logs.Info("isInMaintenanceTime:" + isInMaintenanceTime);
                         installmentCycleNumber = 1;
@@ -229,7 +229,7 @@ namespace DehnadDambelService
                     else
                     {
                         var startTime = DateTime.Now;
-                        if (installmentCycleNumber == 1 && DateTime.Now.Hour < 11)
+                        if (installmentCycleNumber == 1 && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
@@ -237,7 +237,7 @@ namespace DehnadDambelService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 2 && DateTime.Now.Hour >= 11 && DateTime.Now.Hour < 14)
+                        else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("14:00:00"))
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
@@ -245,7 +245,7 @@ namespace DehnadDambelService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 3 && DateTime.Now.Hour >= 14 && DateTime.Now.Hour < 17)
+                        else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("14:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("17:00:00"))
                         {
                             //TimeSpan hour = TimeSpan.Parse("16:00:00");
                             //timeDiffs = hour - startTime.TimeOfDay;
@@ -257,7 +257,7 @@ namespace DehnadDambelService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 4 && DateTime.Now.Hour >= 17 && DateTime.Now.Hour < 20)
+                        else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("17:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
                         {
                             //TimeSpan hour = TimeSpan.Parse("21:00:00");
                             //timeDiffs = hour - startTime.TimeOfDay;
@@ -269,7 +269,7 @@ namespace DehnadDambelService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 5 && DateTime.Now.Hour >= 20 && DateTime.Now.Hour < 22)
+                        else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
                         {
                             //TimeSpan hour = TimeSpan.Parse("22:30:00");
                             //timeDiffs = hour - startTime.TimeOfDay;
@@ -281,7 +281,7 @@ namespace DehnadDambelService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 6 && DateTime.Now.Hour >= 22)
+                        else if (installmentCycleNumber == 6 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
                         {
                             //TimeSpan hour = TimeSpan.Parse("22:30:00");
                             //timeDiffs = hour - startTime.TimeOfDay;

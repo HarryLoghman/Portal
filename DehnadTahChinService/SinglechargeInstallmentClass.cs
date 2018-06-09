@@ -29,9 +29,6 @@ namespace DehnadTahChinService
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
-                Type entityType = typeof(TahChinEntities);
-                Type singleChargeType = typeof(Singlecharge);
-                Singlecharge singlecharge = new Singlecharge();
                 using (var entity = new TahChinEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
@@ -70,7 +67,7 @@ namespace DehnadTahChinService
                         int installmentListCount = installmentList.Count;
                         logs.Info("installmentList final list count:" + installmentListCount);
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
@@ -82,7 +79,7 @@ namespace DehnadTahChinService
             return income;
         }
 
-        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo, dynamic singlecharge)
+        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo)
         {
             var income = 0;
             try
@@ -103,7 +100,7 @@ namespace DehnadTahChinService
                 for (int i = 0; i < take.Length; i++)
                 {
                     var chunkedInstallmentList = installmentList.Skip(skip[i]).Take(take[i]).ToList();
-                    TaskList.Add(ProcessMtnInstallmentChunk(maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber, singlecharge));
+                    TaskList.Add(ProcessMtnInstallmentChunk(maxChargeLimit, chunkedInstallmentList, serviceAdditionalInfo, chargeCodes, i, installmentCycleNumber, installmentInnerCycleNumber));
                 }
                 Task.WaitAll(TaskList.ToArray());
                 income = TaskList.Select(o => o.Result).ToList().Sum();
@@ -117,7 +114,7 @@ namespace DehnadTahChinService
             return income;
         }
 
-        private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<string> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, dynamic singlecharge)
+        private static async Task<int> ProcessMtnInstallmentChunk(int maxChargeLimit, List<string> chunkedSingleChargeInstallment, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber)
         {
             logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
             var today = DateTime.Now.Date;
@@ -132,7 +129,7 @@ namespace DehnadTahChinService
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
+                        if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
                         if (batchSaveCounter >= 500)
                         {

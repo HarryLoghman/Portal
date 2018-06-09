@@ -266,7 +266,7 @@ namespace DehnadTamly500Service
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 5)
+                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 45) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
                             break;
                         if (batchSaveCounter >= 500)
                         {

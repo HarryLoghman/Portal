@@ -55,15 +55,13 @@ namespace DehnadTahChinService
                     }
                     entity.SaveChanges();
 
-                    Type entityType = typeof(TahChinEntities);
                     var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
                     string aggregatorName = Properties.Settings.Default.AggregatorName;
                     var serviceCode = Properties.Settings.Default.ServiceCode;
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
-                    Type singleChargeType = typeof(Singlecharge);
                     int installmentListCount = mobileNumbers.Count;
                     var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                    SharedLibrary.InstallmentHandler.MtnInstallmentJob(entityType, maxChargeLimit, 0, 0, serviceCode, chargeCodes, mobileNumbers, installmentListCount, installmentListTakeSize, serviceAdditionalInfo, singleChargeType);
+                    SinglechargeInstallmentClass.InstallmentJob(maxChargeLimit, 0, 0, serviceCode, chargeCodes, mobileNumbers, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
                 }
             }
             catch (Exception e)
