@@ -6,6 +6,7 @@ using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;
+using Audit.Mvc;
 
 namespace Portal.Areas.Soraty.Controllers
 {
@@ -34,6 +35,7 @@ namespace Portal.Areas.Soraty.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        [Audit(IncludeModel = true)]
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Settings_Update([DataSourceRequest]DataSourceRequest request, [Bind(Exclude = "Name,PersianName")] Setting messagesTemplate)
         {
