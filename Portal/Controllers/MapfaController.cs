@@ -40,7 +40,7 @@ namespace Portal.Controllers
                         messageObj.ReceivedFrom += "-FromImi-Unsubscribe";
                     
                     messageObj.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromOperatorServiceId(HttpContext.Current.Request.Headers["serviceId"]).ShortCode;
-                    messageObj.Content = HttpContext.Current.Request.Headers["actor"];
+                    messageObj.Content = messageObj.Text;
                 }
                 messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
 
