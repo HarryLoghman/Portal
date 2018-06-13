@@ -141,10 +141,12 @@ namespace DehnadDambelService
                         message.MobileNumber = installment;
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
                         message = SharedLibrary.InstallmentHandler.ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
-                        if (installmentInnerCycleNumber == 1 && message.Price != 300)
+                        if (installmentCycleNumber == 1 && installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
                             continue;
-                        else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
-                            message.Price = 100;
+                        else if (installmentCycleNumber > 1)
+                            message.Price = 150;
+                        if (priceUserChargedToday + message.Price > maxChargeLimit)
+                            continue;
                         var start = DateTime.Now.TimeOfDay;
                         var diff = start - previousStart;
                         if (diff.Milliseconds < 1000)

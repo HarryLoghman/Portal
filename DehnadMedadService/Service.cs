@@ -194,7 +194,7 @@ namespace DehnadMedadService
             var singlechargeInstallment = new SinglechargeInstallmentClass();
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
-            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("14:00:00"))
+            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("14:00:00"))
                 installmentCycleNumber = 2;
             else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("14:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("17:00:00"))
                 installmentCycleNumber = 3;
@@ -229,7 +229,7 @@ namespace DehnadMedadService
                     else
                     {
                         var startTime = DateTime.Now;
-                        if (installmentCycleNumber == 1 && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
+                        if (installmentCycleNumber == 1 && DateTime.Now.TimeOfDay < TimeSpan.Parse("10:30:00"))
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;

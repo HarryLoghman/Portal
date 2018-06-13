@@ -93,19 +93,6 @@ namespace PorShetabLibrary
                     }
 
                     var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
-                    if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                    {
-                        if (message.IsReceivedFromIntegratedPanel)
-                        {
-                            message.SubUnSubMoMssage = "ارسال درخواست از طریق پنل تجمیعی غیر فعال سازی";
-                            message.SubUnSubType = 2;
-                        }
-                        else
-                        {
-                            message.SubUnSubMoMssage = message.Content;
-                            message.SubUnSubType = 1;
-                        }
-                    }
                     var subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                     if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
                     {
@@ -117,15 +104,10 @@ namespace PorShetabLibrary
                     else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                     {
                         ContentManager.DeleteFromSinglechargeQueue(message.MobileNumber);
-                        ServiceHandler.CancelUserInstallments(message.MobileNumber);
-                        var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                        message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                     }
                     else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                        var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                        Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
                         ContentManager.AddSubscriberToSinglechargeQueue(message.MobileNumber, content);
                     }
                     else
@@ -147,7 +129,6 @@ namespace PorShetabLibrary
                         else if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend || isCampaignActive == (int)CampaignStatus.MatchActiveAndReferalDeactive)
                         {
                             var sha = SharedLibrary.Security.GetSha256Hash("match" + message.MobileNumber);
-
                             var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
                             if (result.description == "success")
                             {

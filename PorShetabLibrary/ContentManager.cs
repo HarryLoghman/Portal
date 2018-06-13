@@ -45,13 +45,9 @@ namespace PorShetabLibrary
             {
                 using (var entity = new PorShetabEntities())
                 {
-                    //var chargeCode = Convert.ToInt32(content);
-                    //var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.ChargeCode == chargeCode);
-                    //if (imichargeCode == null)
-                    //    return false;
                     var singlechargeQueueItem = new SinglechargeWaiting();
                     singlechargeQueueItem.MobileNumber = mobileNumber;
-                    singlechargeQueueItem.Price = 9000;
+                    singlechargeQueueItem.Price = 0;
                     singlechargeQueueItem.DateAdded = DateTime.Now;
                     singlechargeQueueItem.PersianDateAdded = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlechargeQueueItem.IsLastDayWarningSent = false;
@@ -85,7 +81,7 @@ namespace PorShetabLibrary
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
                     if (isInBlackList == true)
                         isCampaignActive = (int)CampaignStatus.MatchAndReferalDeactive;
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+
                     if (message.Content == null || message.Content.Trim() == "")
                     {
                         if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive)
@@ -256,34 +252,8 @@ namespace PorShetabLibrary
                         MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
-                    if (message.Content == "77" || message.Content.ToLower() == "m")
-                    {
-                        message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();
-                        MessageHandler.InsertMessageToQueue(message);
-                        return;
-                    }
                     if (!service.OnKeywords.Contains(message.Content))
                     {
-                        //if (subscriber.ActivationDate.Value.AddMinutes(1) < DateTime.Now)
-                        //{
-                        //    message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                        //    MessageHandler.InsertMessageToQueue(message);
-                        //}
-                        return;
-                    }
-
-                    var isUserAlreadyInSinglechargeQueue = IsUserAlreadyInSinglechargeQueue(message.MobileNumber);
-                    if (isUserAlreadyInSinglechargeQueue == true)
-                    {
-                        message = MessageHandler.UserHasActiveSinglecharge(message, messagesTemplate);
-                        MessageHandler.InsertMessageToQueue(message);
-                        return;
-                    }
-                    var isUserAlreadyChargedThisMonth = IsUserAlreadyChargedThisMonth(message.MobileNumber);
-                    if (isUserAlreadyChargedThisMonth == true)
-                    {
-                        message = MessageHandler.UserHasActiveSinglecharge(message, messagesTemplate);
-                        MessageHandler.InsertMessageToQueue(message);
                         return;
                     }
 
@@ -299,43 +269,6 @@ namespace PorShetabLibrary
             {
                 logs.Error("Error in HandleContent: ", e);
             }
-        }
-
-        private static bool IsUserAlreadyChargedThisMonth(string mobileNumber)
-        {
-            try
-            {
-                using (var entity = new PorShetabEntities())
-                {
-                    var lastMonth = DateTime.Today.AddDays(-30);
-                    var isUserAlreadychargedThisMonth = entity.Singlecharges.FirstOrDefault(o => o.MobileNumber == mobileNumber && (DbFunctions.TruncateTime(o.DateCreated) <= DateTime.Now.Date && DbFunctions.TruncateTime(o.DateCreated) >= lastMonth));
-                    if (isUserAlreadychargedThisMonth == null)
-                        return false;
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in IsUserAlreadyChargedThisMonth: ", e);
-            }
-            return true;
-        }
-
-        private static bool IsUserAlreadyInSinglechargeQueue(string mobileNumber)
-        {
-            try
-            {
-                using (var entity = new PorShetabEntities())
-                {
-                    var isUserAlreadyInSinglechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber);
-                    if (isUserAlreadyInSinglechargeQueue == null)
-                        return false;
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in IsUserAlreadyInSinglechargeQueue: ", e);
-            }
-            return true;
         }
     }
 }
