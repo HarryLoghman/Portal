@@ -2167,7 +2167,10 @@ namespace Portal.Controllers
                     else if (serviceCode == "Medad")
                         pageNo = 0;
                     else if (serviceCode == "PorShetab")
-                        pageNo = 0;
+                    {
+                        pageNo = 299;
+                        price = "5000";
+                    }
 
                     sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
                     var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"
