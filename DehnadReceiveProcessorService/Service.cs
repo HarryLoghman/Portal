@@ -367,11 +367,16 @@ namespace DehnadReceiveProcessorService
             var ftp = new Ftp();
             while (!shutdownEvent.WaitOne(0))
             {
-                if (DateTime.Now.Hour == 10 && DateTime.Now.Minute > 30 && DateTime.Now.Minute < 40)
-                {
-                    ftp.TelepromoIncomeReport();
-                    Thread.Sleep(23 * 60 * 60 * 1000);
-                }
+                //if (DateTime.Now < DateTime.Parse("2018-06-20 00:00:00"))
+                //{
+                    if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("10:35:00"))
+                    {
+                        ftp.TelepromoIncomeReport();
+                        Thread.Sleep(23 * 60 * 60 * 1000);
+                    }
+                //}
+                //else
+                //    break;
                 Thread.Sleep(2 * 60 * 1000);
             }
         }

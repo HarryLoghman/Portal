@@ -53,45 +53,52 @@ namespace DehnadReceiveProcessorService
                     var reports = ((IEnumerable<dynamic>)entity.DailyStatistics).Where(o => o.Date >= startDate && (o.SumOfSinglechargeSuccessfulCharge == null || o.SumOfSinglechargeSuccessfulCharge == 0)).ToList();
                     foreach (var report in reports)
                     {
-                        var date = report.Date.ToString("yyyyMMdd");
-                        bool isSucceed = false;
-                        int numberOfTries = 1;
-                        string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
-                        var fileName = date + "-" + serviceInfo.AggregatorServiceId.ToString() + ".txt.bz2";
-                        var imiBz2FileUri = filePath + fileName;
-                        if (File.Exists(imiBz2FileUri))
+                        try
                         {
-                            File.Delete(imiBz2FileUri);
-                        }
-                        while (isSucceed == false && numberOfTries < 1000)
-                        {
-                            isSucceed = SharedLibrary.HelpfulFunctions.DownloadFileFromWeb(uri, filePath);
-                            numberOfTries++;
-                        }
-                        if (isSucceed == false)
-                            continue;
+                            var date = report.Date.ToString("yyyyMMdd");
+                            bool isSucceed = false;
+                            int numberOfTries = 1;
+                            string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                            var fileName = date + "-" + serviceInfo.AggregatorServiceId.ToString() + ".txt.bz2";
+                            var imiBz2FileUri = filePath + fileName;
+                            if (File.Exists(imiBz2FileUri))
+                            {
+                                File.Delete(imiBz2FileUri);
+                            }
+                            while (isSucceed == false && numberOfTries < 1000)
+                            {
+                                isSucceed = SharedLibrary.HelpfulFunctions.DownloadFileFromWeb(uri, filePath);
+                                numberOfTries++;
+                            }
+                            if (isSucceed == false)
+                                continue;
 
-                        var decompressedFileName = imiBz2FileUri.Replace(".bz2", "");
-                        if (File.Exists(decompressedFileName))
-                        {
-                            File.Delete(decompressedFileName);
+                            var decompressedFileName = imiBz2FileUri.Replace(".bz2", "");
+                            if (File.Exists(decompressedFileName))
+                            {
+                                File.Delete(decompressedFileName);
+                            }
+                            SharedLibrary.HelpfulFunctions.DecompressFromBZ2File(imiBz2FileUri);
+                            var imiDataList = SharedLibrary.HelpfulFunctions.ReadImiDataFile(decompressedFileName);
+                            var result = SharedLibrary.HelpfulFunctions.GetIncomeAndSubscriptionsFromImiDataFile(imiDataList, Service.prefix);
+                            report.SumOfSinglechargeSuccessfulCharge = result["sumOfCharges"];
+                            report.SumOfSinglechargeSuccessfulPostpaidCharge = result["postpaidCharges"];
+                            report.SumOfSinglechargeSuccessfulPrepaidCharge = result["prepaidCharges"];
+                            entity.Entry(report).State = System.Data.Entity.EntityState.Modified;
+                            entity.SaveChanges();
+                            ExportTelepromoIncomeToExcel(serviceCode, report.PersianDate, result);
+                            SharedLibrary.HelpfulFunctions.DeleteFile(decompressedFileName);
+                            var archiveUri = fileArchivePath + fileName;
+                            if (File.Exists(archiveUri))
+                            {
+                                File.Delete(archiveUri);
+                            }
+                            File.Move(imiBz2FileUri, archiveUri);
                         }
-                        SharedLibrary.HelpfulFunctions.DecompressFromBZ2File(imiBz2FileUri);
-                        var imiDataList = SharedLibrary.HelpfulFunctions.ReadImiDataFile(decompressedFileName);
-                        var result = SharedLibrary.HelpfulFunctions.GetIncomeAndSubscriptionsFromImiDataFile(imiDataList, Service.prefix);
-                        report.SumOfSinglechargeSuccessfulCharge = result["sumOfCharges"];
-                        report.SumOfSinglechargeSuccessfulPostpaidCharge = result["postpaidCharges"];
-                        report.SumOfSinglechargeSuccessfulPrepaidCharge = result["prepaidCharges"];
-                        entity.Entry(report).State = System.Data.Entity.EntityState.Modified;
-                        entity.SaveChanges();
-                        ExportTelepromoIncomeToExcel(serviceCode, report.PersianDate, result);
-                        SharedLibrary.HelpfulFunctions.DeleteFile(decompressedFileName);
-                        var archiveUri = fileArchivePath + fileName;
-                        if (File.Exists(archiveUri))
+                        catch (Exception e)
                         {
-                            File.Delete(archiveUri);
+                            logs.Error("Exception in TelepromoGetIncome foreach:", e);
                         }
-                        File.Move(imiBz2FileUri, archiveUri);
                     }
                 }
             }

@@ -131,7 +131,7 @@ namespace MedioLibrary
                     //    return;
                     //}
 
-                    if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
+                    if (!message.ReceivedFrom.ToLower().Contains("imi") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                         return isSucceeded;
 
                     if (message.ReceivedFrom.Contains("Register"))
