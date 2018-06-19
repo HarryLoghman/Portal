@@ -395,6 +395,14 @@
           <Property Name="SubscriberId" Type="bigint" Nullable="false" />
           <Property Name="Reason" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="ServicesRealtimeStatistics">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
         <EntityType Name="Settings">
           <Key>
             <PropertyRef Name="Id" />
@@ -603,6 +611,7 @@ warning 6002: The table/view 'DefendIran.dbo.vw_Singlecharge' does not have a pr
           <EntitySet Name="Otp" EntityType="Self.Otp" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistics" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Settings" EntityType="Self.Settings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
@@ -1210,6 +1219,7 @@ warning 6002: The table/view 'DefendIran.dbo.vw_Singlecharge' does not have a pr
           <EntitySet Name="InstallmentCycles" EntityType="DefendIranModel.InstallmentCycle" />
           <EntitySet Name="vw_Singlecharge" EntityType="DefendIranModel.vw_Singlecharge" />
           <EntitySet Name="Otps" EntityType="DefendIranModel.Otp" />
+          <EntitySet Name="ServicesRealtimeStatistics" EntityType="DefendIranModel.ServicesRealtimeStatistic" />
         </EntityContainer>
         <EntityType Name="Setting">
           <Key>
@@ -1263,6 +1273,14 @@ warning 6002: The table/view 'DefendIran.dbo.vw_Singlecharge' does not have a pr
           <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ReturnValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="UserMessage" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ServicesRealtimeStatistic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1843,6 +1861,15 @@ warning 6002: The table/view 'DefendIran.dbo.vw_Singlecharge' does not have a pr
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServicesRealtimeStatistics">
+            <EntityTypeMapping TypeName="DefendIranModel.ServicesRealtimeStatistic">
+              <MappingFragment StoreEntitySet="ServicesRealtimeStatistics">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
