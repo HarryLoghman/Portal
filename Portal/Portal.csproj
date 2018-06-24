@@ -221,6 +221,14 @@
     <Compile Include="Areas\BimeIran\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\BimeIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\BimeKarbala\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\LahzeyeAkhar\LahzeyeAkharAreaRegistration.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\MonitoringController.cs" />
@@ -1500,6 +1508,16 @@
     <Content Include="Areas\TajoTakht\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\TajoTakht\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\TajoTakht\Views\web.config" />
+    <Content Include="Areas\LahzeyeAkhar\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\LahzeyeAkhar\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1867,6 +1885,7 @@
     <Folder Include="Areas\DonyayeAsatir\Models\" />
     <Folder Include="Areas\FitShow\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
+    <Folder Include="Areas\LahzeyeAkhar\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Medad\Models\" />
     <Folder Include="Areas\Medio\Models\" />
@@ -1990,6 +2009,10 @@
     <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
       <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
       <Name>JabehAbzarLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LahzeyeAkharLibrary\LahzeyeAkharLibrary.csproj">
+      <Project>{15344255-1b21-1533-4331-4864db1bb442}</Project>
+      <Name>LahzeyeAkharLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
       <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>

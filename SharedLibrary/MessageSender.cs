@@ -2304,7 +2304,7 @@ namespace SharedLibrary
                         payload += string.Format(@"
                         <loc:message> {0} </loc:message>
                             <loc:receiptRequest>
-                                         <endpoint>http://79.175.164.51:200/api/Mci/Delivery</endpoint>
+                                         <endpoint>http://10.20.96.65:8090/api/Mci/Delivery</endpoint>
                                     <interfaceName>SMS</interfaceName>
                                     <correlator>{1}</correlator>
                                     </loc:receiptRequest>

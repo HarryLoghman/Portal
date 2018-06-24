@@ -12,6 +12,552 @@ namespace DehnadReceiveProcessorService
     class Ftp
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public static void TelepromoDailyFtp()
+        {
+            TelepromoGetDailyIncome("MenchBaz");
+            TelepromoGetDailyIncome("ShenoYad");
+            TelepromoGetDailyIncome("Tamly");
+            TelepromoGetDailyIncome("JabehAbzar");
+            TelepromoGetDailyIncome("FitShow");
+            TelepromoGetDailyIncome("Takavar");
+            TelepromoGetDailyIncome("DonyayeAsatir");
+            TelepromoGetDailyIncome("Soltan");
+            TelepromoGetDailyIncome("AvvalPod500");
+            TelepromoGetDailyIncome("BehAmooz500");
+            TelepromoGetDailyIncome("ShenoYad500");
+            TelepromoGetDailyIncome("Tamly500");
+            TelepromoGetDailyIncome("Aseman");
+        }
+
+        public static void TelepromoGetDailyIncome(string serviceCode)
+        {
+            try
+            {
+                string filePath = @"E:\ImiFtps\";
+                string fileArchivePath = @"E:\ImiFtps\Archive\";
+
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
+                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+                var date = DateTime.Now.ToString("yyyyMMdd");
+                bool isSucceed = false;
+                int numberOfTries = 1;
+                string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                var fileName = date + "-" + serviceInfo.AggregatorServiceId.ToString() + ".txt.bz2";
+                var imiBz2FileUri = filePath + fileName;
+                if (File.Exists(imiBz2FileUri))
+                {
+                    File.Delete(imiBz2FileUri);
+                }
+                while (isSucceed == false && numberOfTries < 1000)
+                {
+                    isSucceed = SharedLibrary.HelpfulFunctions.DownloadFileFromWeb(uri, filePath);
+                    numberOfTries++;
+                }
+                if (isSucceed == false)
+                    return;
+
+                var decompressedFileName = imiBz2FileUri.Replace(".bz2", "");
+                if (File.Exists(decompressedFileName))
+                {
+                    File.Delete(decompressedFileName);
+                }
+                SharedLibrary.HelpfulFunctions.DecompressFromBZ2File(imiBz2FileUri);
+                var imiDataList = SharedLibrary.HelpfulFunctions.ReadImiDataFile(decompressedFileName);
+                ImiDataToSingleCharge(serviceCode, imiDataList);
+                SharedLibrary.HelpfulFunctions.DeleteFile(decompressedFileName);
+                var archiveUri = fileArchivePath + fileName;
+                if (File.Exists(archiveUri))
+                {
+                    File.Delete(archiveUri);
+                }
+                File.Move(imiBz2FileUri, archiveUri);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoGetDailyIncome:", e);
+            }
+        }
+
+        private static void ImiDataToSingleCharge(string serviceCode, List<SharedLibrary.Models.ImiData> imiDataList)
+        {
+            try
+            {
+                if (serviceCode == "Aseman")
+                {
+                    using (var entity = new AsemanLibrary.Models.AsemanEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new AsemanLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "MenchBaz")
+                {
+                    using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new MenchBazLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+                                
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "ShenoYad")
+                {
+                    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "ShenoYad500")
+                {
+                    using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new ShenoYad500Library.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "Tamly")
+                {
+                    using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "Tamly500")
+                {
+                    using (var entity = new Tamly500Library.Models.Tamly500Entities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new Tamly500Library.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "JabehAbzar")
+                {
+                    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "FitShow")
+                {
+                    using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new FitShowLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "Takavar")
+                {
+                    using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new TakavarLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "DonyayeAsatir")
+                {
+                    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "Soltan")
+                {
+                    using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new SoltanLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "AvvalPod500")
+                {
+                    using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new AvvalPod500Library.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "BehAmooz500")
+                {
+                    using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new BehAmooz500Library.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ImiDataToSingleCharge:", e);
+            }
+        }
+
         public void TelepromoIncomeReport()
         {
             try

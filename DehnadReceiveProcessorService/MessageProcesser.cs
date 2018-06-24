@@ -688,6 +688,8 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = PorShetabLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "TajoTakht")
                     isSucceeded = TajoTakhtLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                else if (service.ServiceCode == "LahzeyeAkhar")
+                    isSucceeded = LahzeyeAkharLibrary.HandleMo.ReceivedMessage(message, service).Result;
             }
             catch (Exception e)
             {
@@ -770,6 +772,8 @@ namespace DehnadReceiveProcessorService
                     PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
                 else if (serviceCode == "TajoTakht")
                     TajoTakhtLibrary.MessageHandler.InsertMessageToQueue(message);
+                else if (serviceCode == "LahzeyeAkhar")
+                    LahzeyeAkharLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

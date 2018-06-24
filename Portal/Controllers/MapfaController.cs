@@ -38,9 +38,13 @@ namespace Portal.Controllers
                         messageObj.ReceivedFrom += "-FromIMI-Register";
                     else if (HttpContext.Current.Request.Headers["action"] == "unsubscribe")
                         messageObj.ReceivedFrom += "-FromIMI-Unsubscribe";
-                    
+
                     messageObj.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromOperatorServiceId(HttpContext.Current.Request.Headers["serviceId"]).ShortCode;
-                    messageObj.Content = messageObj.Text;
+
+                    if (HttpContext.Current.Request.Headers["action"] == "unsubscribe")
+                        messageObj.Content = HttpContext.Current.Request.Headers["actor"];
+                    else
+                        messageObj.Content = messageObj.Text;
                 }
                 messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
 

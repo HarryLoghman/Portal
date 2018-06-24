@@ -11,7 +11,7 @@ namespace DehnadReceiveProcessorService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Thread processThread;
         private Thread telepromoProcessThread;
-        private Thread telepromoOtpConfirmProcessThread; 
+        private Thread telepromoOtpConfirmProcessThread;
         private Thread hubProcessThread;
         private Thread irancellProcessThread;
         private Thread mobinoneProcessThread;
@@ -365,19 +365,55 @@ namespace DehnadReceiveProcessorService
         private void FtpWorkerThread()
         {
             var ftp = new Ftp();
+            var counter = 1;
+            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("08:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("12:00:00"))
+                counter = 2;
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("12:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
+                counter = 3;
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
+                counter = 4;
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00"))
+                counter = 5;
             while (!shutdownEvent.WaitOne(0))
             {
-                //if (DateTime.Now < DateTime.Parse("2018-06-20 00:00:00"))
+                //if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("10:35:00"))
                 //{
-                    if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("10:35:00"))
-                    {
-                        ftp.TelepromoIncomeReport();
-                        Thread.Sleep(23 * 60 * 60 * 1000);
-                    }
+                //    ftp.TelepromoIncomeReport();
+                //    Thread.Sleep(23 * 60 * 60 * 1000);
                 //}
-                //else
-                //    break;
-                Thread.Sleep(2 * 60 * 1000);
+                //Thread.Sleep(2 * 60 * 1000);
+                if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("00:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("04:00:00"))
+                    counter = 1;
+
+                if (counter == 1 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("04:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("08:00:00"))
+                {
+                    Ftp.TelepromoDailyFtp();
+                    counter++;
+                }
+                else if (counter == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("08:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("12:00:00"))
+                {
+                    Ftp.TelepromoDailyFtp();
+                    counter++;
+                }
+                else if (counter == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("12:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
+                {
+                    Ftp.TelepromoDailyFtp();
+                    counter++;
+                }
+                else if (counter == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
+                {
+                    Ftp.TelepromoDailyFtp();
+                    counter++;
+                }
+                else if (counter > 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00"))
+                {
+                    Ftp.TelepromoDailyFtp();
+                    counter++;
+                }
+                if (counter < 4)
+                    Thread.Sleep(4 * 60 * 60 * 1000);
+                else
+                    Thread.Sleep(1 * 60 * 60 * 1000);
             }
         }
     }
