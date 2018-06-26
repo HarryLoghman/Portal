@@ -31,5 +31,6 @@ namespace SharedLibrary.Models
         public string PersianDateTime { get; set; }
         public string SubscriptionKeyword { get; set; }
         public string UnsubscriptionKeyword { get; set; }
+        public string UserMessage { get; set; }
     }
 }

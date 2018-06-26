@@ -229,6 +229,7 @@
     <Compile Include="Areas\LahzeyeAkhar\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\LahzeyeAkhar\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\LahzeyeAkhar\LahzeyeAkharAreaRegistration.cs" />
+    <Compile Include="Areas\Statistics\Controllers\AllServicesStatisticsController.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\MonitoringController.cs" />
@@ -1518,6 +1519,7 @@
     <Content Include="Areas\LahzeyeAkhar\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\LahzeyeAkhar\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\LahzeyeAkhar\Views\web.config" />
+    <Content Include="Areas\Statistics\Views\AllServicesStatistics\Index.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />

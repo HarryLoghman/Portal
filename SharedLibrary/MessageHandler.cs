@@ -456,7 +456,7 @@ namespace SharedLibrary
         {
             try
             {
-                var singlecharge = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == message.MobileNumber && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                var singlecharge = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == message.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
                 if (singlecharge != null)
                     return singlecharge;
                 else
@@ -615,8 +615,8 @@ namespace SharedLibrary
             }
             var takeSize = readSize / threadNumbers;
 
-            int[] take = new int[threadNumbers + 1];
-            int[] skip = new int[threadNumbers + 1];
+            int[] take = new int[threadNumbers];
+            int[] skip = new int[threadNumbers];
             skip[0] = 0;
             take[0] = takeSize;
             for (int i = 1; i < take.Length; i++)

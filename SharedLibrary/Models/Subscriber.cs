@@ -29,6 +29,7 @@ namespace SharedLibrary.Models
         public long OperatorPlan { get; set; }
         public string SubscriberUniqueId { get; set; }
         public string SpecialUniqueId { get; set; }
+        public string UserMessage { get; set; }
     
         public virtual Service Service { get; set; }
     }

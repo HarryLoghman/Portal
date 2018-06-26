@@ -53,5 +53,21 @@ namespace SharedLibrary
                 date = DateTime.Now;
             return date.Value.ToString("yyyyMMddHHmmss");
         }
+
+        public static double DateTimeToUnixTimestampLocal(DateTime dateTime)
+        {
+            try
+            {
+                var convert = (dateTime.AddHours(5) -
+                   new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;
+                return convert;
+            }
+            catch (Exception)
+            {
+                var convert = (dateTime.AddHours(1) -
+                   new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;
+                return convert;
+            }
+        }
     }
 }

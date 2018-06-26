@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
@@ -193,8 +194,6 @@ namespace DehnadPhantomService
         private void SinglechargeInstallmentWorkerThread()
         {
             var singlechargeInstallment = new SinglechargeInstallmentClass();
-            var entityType = typeof(PhantomLibrary.Models.PhantomEntities);
-            var cycleType = typeof(PhantomLibrary.Models.InstallmentCycle);
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("9:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
@@ -237,7 +236,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("09:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
@@ -245,7 +244,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("13:00:00"))
@@ -253,7 +252,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("13:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
@@ -261,7 +260,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:00:00"))
@@ -269,7 +268,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 6 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("18:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
@@ -277,7 +276,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 7 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
@@ -285,7 +284,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 8 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
@@ -293,7 +292,7 @@ namespace DehnadPhantomService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else
@@ -305,6 +304,37 @@ namespace DehnadPhantomService
                     logs.Error("Exception in SinglechargeInstallmentWorkerThread: ", e);
                     Thread.Sleep(1000);
                 }
+            }
+        }
+
+        public static void InstallmentCycleToDb(int cycleNumber, long duration, int income)
+        {
+            try
+            {
+                var today = DateTime.Now;
+                using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                {
+                    var cycle = entity.InstallmentCycles.FirstOrDefault(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.CycleNumber == cycleNumber);
+                    if (cycle != null)
+                    {
+                        cycle.Income += income;
+                        entity.Entry(cycle).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        var installmentCycle = new PhantomLibrary.Models.InstallmentCycle();
+                        installmentCycle.CycleNumber = cycleNumber;
+                        installmentCycle.DateCreated = DateTime.Now;
+                        installmentCycle.Duration = duration;
+                        installmentCycle.Income = income;
+                        entity.InstallmentCycles.Add(installmentCycle);
+                    }
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in InstallmentCycleToDb: ", e);
             }
         }
 

@@ -57,6 +57,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<TempReferralData> TempReferralDatas { get; set; }
         public virtual DbSet<BlackList> BlackLists { get; set; }
         public virtual DbSet<Audit> Audits { get; set; }
+        public virtual DbSet<vw_DehnadAllServicesStatistics> vw_DehnadAllServicesStatistics { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

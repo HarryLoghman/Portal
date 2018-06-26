@@ -15,6 +15,27 @@ namespace PhantomLibrary
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public static dynamic GetUnprocessedMessages(SharedLibrary.MessageHandler.MessageType messageType, int readSize)
+        {
+            var today = DateTime.Now.Date;
+            var maxRetryCount = SharedLibrary.MessageSender.retryCountMax;
+            var retryPauseBeforeSendByMinute = SharedLibrary.MessageSender.retryPauseBeforeSendByMinute;
+            var retryTimeOut = DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute);
+            using (var entity = new PhantomEntities())
+            {
+                entity.Configuration.AutoDetectChangesEnabled = false;
+
+                if (messageType == SharedLibrary.MessageHandler.MessageType.AutoCharge)
+                    return ((IEnumerable<dynamic>)entity.AutochargeMessagesBuffers).Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
+                else if (messageType == SharedLibrary.MessageHandler.MessageType.EventBase)
+                    return ((IEnumerable<dynamic>)entity.EventbaseMessagesBuffers).Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
+                else if (messageType == SharedLibrary.MessageHandler.MessageType.OnDemand)
+                    return ((IEnumerable<dynamic>)entity.OnDemandMessagesBuffers).Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)).Take(readSize).ToList();
+                else
+                    return new List<dynamic>();
+            }
+        }
+
         public static long OtpLog(string mobileNumber, string otpType, string userMessage)
         {
             try

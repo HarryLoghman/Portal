@@ -192,7 +192,7 @@ namespace MedioLibrary
         {
             try
             {
-                var singlecharge = entity.Singlecharges.Where(o => o.MobileNumber == message.MobileNumber).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                var singlecharge = entity.Singlecharges.Where(o => o.MobileNumber == message.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
                 if (singlecharge != null)
                     return singlecharge;
                 else

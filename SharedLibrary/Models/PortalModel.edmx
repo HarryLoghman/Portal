@@ -308,6 +308,7 @@
           <Property Name="OperatorPlan" Type="bigint" Nullable="false" />
           <Property Name="SubscriberUniqueId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="SpecialUniqueId" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserMessage" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -330,6 +331,7 @@
           <Property Name="PersianDateTime" Type="nvarchar" MaxLength="50" />
           <Property Name="SubscriptionKeyword" Type="nvarchar" MaxLength="100" />
           <Property Name="UnsubscriptionKeyword" Type="nvarchar" MaxLength="100" />
+          <Property Name="UserMessage" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersPoints">
           <Key>
@@ -379,6 +381,38 @@ warning 6002: The table/view 'Portal.dbo.vw_DehnadAllSentMessages' does not have
           <Property Name="Time" Type="nvarchar" MaxLength="21" />
           <Property Name="Content" Type="nvarchar(max)" />
           <Property Name="ProcessStatus" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_DehnadAllServicesStatistics">
+          <Key>
+            <PropertyRef Name="ServiceName" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="PersianDate" />
+            <PropertyRef Name="NumberOfSubscriptions" />
+            <PropertyRef Name="NumberOfUnsubscriptions" />
+            <PropertyRef Name="NumberOfPostpaidSubscriptions" />
+            <PropertyRef Name="NumberOfPrepaidSubscriptions" />
+            <PropertyRef Name="NumberOfPostpaidUnsubscriptions" />
+            <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
+            <PropertyRef Name="TotalSubscribers" />
+          </Key>
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="12" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="PersianDate" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="NumberOfSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="TotalSubscribers" Type="int" Nullable="false" />
+          <Property Name="TotalPrepaidSubscribers" Type="int" />
+          <Property Name="TotalPostpaidSubscribers" Type="int" />
+          <Property Name="TotalUnSubscribers" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -570,6 +604,26 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
     [vw_DehnadAllSentMessages].[Content] AS [Content], 
     [vw_DehnadAllSentMessages].[ProcessStatus] AS [ProcessStatus]
     FROM [dbo].[vw_DehnadAllSentMessages] AS [vw_DehnadAllSentMessages]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="Self.vw_DehnadAllServicesStatistics" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_DehnadAllServicesStatistics].[ServiceName] AS [ServiceName], 
+    [vw_DehnadAllServicesStatistics].[Date] AS [Date], 
+    [vw_DehnadAllServicesStatistics].[PersianDate] AS [PersianDate], 
+    [vw_DehnadAllServicesStatistics].[NumberOfSubscriptions] AS [NumberOfSubscriptions], 
+    [vw_DehnadAllServicesStatistics].[NumberOfUnsubscriptions] AS [NumberOfUnsubscriptions], 
+    [vw_DehnadAllServicesStatistics].[NumberOfPostpaidSubscriptions] AS [NumberOfPostpaidSubscriptions], 
+    [vw_DehnadAllServicesStatistics].[NumberOfPrepaidSubscriptions] AS [NumberOfPrepaidSubscriptions], 
+    [vw_DehnadAllServicesStatistics].[NumberOfPostpaidUnsubscriptions] AS [NumberOfPostpaidUnsubscriptions], 
+    [vw_DehnadAllServicesStatistics].[NumberOfPrepaidUnsubscriptions] AS [NumberOfPrepaidUnsubscriptions], 
+    [vw_DehnadAllServicesStatistics].[TotalSubscribers] AS [TotalSubscribers], 
+    [vw_DehnadAllServicesStatistics].[TotalPrepaidSubscribers] AS [TotalPrepaidSubscribers], 
+    [vw_DehnadAllServicesStatistics].[TotalPostpaidSubscribers] AS [TotalPostpaidSubscribers], 
+    [vw_DehnadAllServicesStatistics].[TotalUnSubscribers] AS [TotalUnSubscribers], 
+    [vw_DehnadAllServicesStatistics].[SumOfSinglechargeSuccessfulPrepaidCharge] AS [SumOfSinglechargeSuccessfulPrepaidCharge], 
+    [vw_DehnadAllServicesStatistics].[SumOfSinglechargeSuccessfulPostpaidCharge] AS [SumOfSinglechargeSuccessfulPostpaidCharge], 
+    [vw_DehnadAllServicesStatistics].[SumOfSinglechargeSuccessfulCharge] AS [SumOfSinglechargeSuccessfulCharge]
+    FROM [dbo].[vw_DehnadAllServicesStatistics] AS [vw_DehnadAllServicesStatistics]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -806,6 +860,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="SubscriberUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Service" Relationship="PortalModel.FK_Subscribers_Subscribers" FromRole="Subscriber" ToRole="Service" />
           <Property Name="SpecialUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -828,6 +883,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="PersianDateTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="SubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UnsubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SubscribersPoint">
           <Key>
@@ -987,6 +1043,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="TempReferralDatas" EntityType="PortalModel.TempReferralData" />
           <EntitySet Name="BlackLists" EntityType="PortalModel.BlackList" />
           <EntitySet Name="Audits" EntityType="PortalModel.Audit" />
+          <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="PortalModel.vw_DehnadAllServicesStatistics" />
         </EntityContainer>
         <EntityType Name="Delivery">
           <Key>
@@ -1202,6 +1259,36 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Ip" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="vw_DehnadAllServicesStatistics">
+          <Key>
+            <PropertyRef Name="ServiceName" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="PersianDate" />
+            <PropertyRef Name="NumberOfSubscriptions" />
+            <PropertyRef Name="NumberOfUnsubscriptions" />
+            <PropertyRef Name="NumberOfPostpaidSubscriptions" />
+            <PropertyRef Name="NumberOfPrepaidSubscriptions" />
+            <PropertyRef Name="NumberOfPostpaidUnsubscriptions" />
+            <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
+            <PropertyRef Name="TotalSubscribers" />
+          </Key>
+          <Property Name="ServiceName" Type="String" Nullable="false" MaxLength="12" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PersianDate" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="TotalSubscribers" Type="Int32" Nullable="false" />
+          <Property Name="TotalPrepaidSubscribers" Type="Int32" />
+          <Property Name="TotalPostpaidSubscribers" Type="Int32" />
+          <Property Name="TotalUnSubscribers" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1367,6 +1454,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="Subscribers">
             <EntityTypeMapping TypeName="PortalModel.Subscriber">
               <MappingFragment StoreEntitySet="Subscribers">
+                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
                 <ScalarProperty Name="SpecialUniqueId" ColumnName="SpecialUniqueId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -1388,6 +1476,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="SubscribersHistories">
             <EntityTypeMapping TypeName="PortalModel.SubscribersHistory">
               <MappingFragment StoreEntitySet="SubscribersHistory">
+                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
@@ -1633,6 +1722,28 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_DehnadAllServicesStatistics">
+            <EntityTypeMapping TypeName="PortalModel.vw_DehnadAllServicesStatistics">
+              <MappingFragment StoreEntitySet="vw_DehnadAllServicesStatistics">
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
+                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
+                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
+                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
+                <ScalarProperty Name="TotalSubscribers" ColumnName="TotalSubscribers" />
+                <ScalarProperty Name="NumberOfPrepaidUnsubscriptions" ColumnName="NumberOfPrepaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidUnsubscriptions" ColumnName="NumberOfPostpaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPrepaidSubscriptions" ColumnName="NumberOfPrepaidSubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidSubscriptions" ColumnName="NumberOfPostpaidSubscriptions" />
+                <ScalarProperty Name="NumberOfUnsubscriptions" ColumnName="NumberOfUnsubscriptions" />
+                <ScalarProperty Name="NumberOfSubscriptions" ColumnName="NumberOfSubscriptions" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

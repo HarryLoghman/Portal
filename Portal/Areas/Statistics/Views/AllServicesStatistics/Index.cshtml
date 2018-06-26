@@ -1,0 +1,852 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName;
+}
+
+<style>
+    .loadAnimation {
+        position: relative;
+        margin-right: 30px;
+    }
+
+        .loadAnimation > .k-loading-mask > .k-loading-image {
+            background-size: contain;
+        }
+
+    .highcharts-tooltip span {
+        height: auto;
+        width: 120px;
+        white-space: normal !important;
+    }
+</style>
+
+<script src="@Url.Content("~/Scripts/Highstock/highstock.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/highcharts-3d.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/modules/exporting.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/modules/export-csv.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/themes/dark-unica.js")"></script>
+
+
+<div id="IncomeContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+<br />
+<div id="SubscribersContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+<br />
+<div id="ActiveSubsContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+<br />
+<div id="AggergateIncomeContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+
+<script>
+    window.ODate = Date;
+    window.Date = JDate;
+
+    Highcharts.setOptions({
+        chart: {
+            style: {
+                fontFamily: 'BMITRA BOLD'
+            },
+        },
+        credits: {
+            enabled: false,
+        },
+        lang: {
+            months: ['فروردين', 'ارديبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+            shortMonths: ['فروردين', 'ارديبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+            weekdays: ["یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"]
+        }
+    });
+</script>
+
+<script>
+    var statisticsData;
+    $.ajax(
+        {
+            type: 'POST',
+            url: 'AllServicesStatistics/Data_Read',
+            async: false,
+            dataType: 'json',
+            success: function (result) {
+                statisticsData = result;
+            }
+        });
+
+    $(function () {
+
+
+        $('#IncomeContainer').highcharts('StockChart', {
+
+            rangeSelector: {
+                allButtonsEnabled: false,
+                buttons: [{
+                    type: 'month',
+                    count: 3,
+                    text: 'روز',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['day', [1]]]
+                    }
+                },],
+                selected: 0
+            },
+
+            title: {
+                text: 'نمودار درآمد'
+            },
+            legend: {
+                enabled: true
+            },
+            scrollbar: {
+                barBackgroundColor: 'gray',
+                barBorderRadius: 7,
+                barBorderWidth: 0,
+                buttonBackgroundColor: 'gray',
+                buttonBorderWidth: 0,
+                buttonBorderRadius: 7,
+                trackBackgroundColor: 'none',
+                trackBorderWidth: 1,
+                trackBorderRadius: 8,
+                trackBorderColor: '#CCC'
+            },
+
+            yAxis: {
+                allowDecimals: false,
+            },
+
+            plotOptions: {
+                series: {
+                    //compare: 'percent'
+                }
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color};float:left">{series.name}</span>: <b>{point.y}</b> تومان<br/>',
+                valueDecimals: 0,
+                useHTML: true,
+            },
+
+            series: [
+                {
+                    name: statisticsData.income[0].Name,
+                    data: statisticsData.income[0].Data,
+                },
+                {
+                    name: statisticsData.income[1].Name,
+                    data: statisticsData.income[1].Data,
+                },
+                {
+                    name: statisticsData.income[2].Name,
+                    data: statisticsData.income[2].Data,
+                    color: '#29C2E4',
+                },
+                {
+                    name: statisticsData.income[3].Name,
+                    data: statisticsData.income[3].Data,
+                    color: '#C5D317',
+                },
+                {
+                    name: statisticsData.income[4].Name,
+                    data: statisticsData.income[4].Data,
+                    color: '#B27CDF',
+                },
+                {
+                    name: statisticsData.income[5].Name,
+                    data: statisticsData.income[5].Data,
+                    color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[6].Name,
+                    data: statisticsData.income[6].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[7].Name,
+                    data: statisticsData.income[7].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[8].Name,
+                    data: statisticsData.income[8].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[9].Name,
+                    data: statisticsData.income[9].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[10].Name,
+                    data: statisticsData.income[10].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[11].Name,
+                    data: statisticsData.income[11].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[12].Name,
+                    data: statisticsData.income[12].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[13].Name,
+                    data: statisticsData.income[13].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[14].Name,
+                    data: statisticsData.income[14].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[15].Name,
+                    data: statisticsData.income[15].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[16].Name,
+                    data: statisticsData.income[16].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[17].Name,
+                    data: statisticsData.income[17].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[18].Name,
+                    data: statisticsData.income[18].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[19].Name,
+                    data: statisticsData.income[19].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[20].Name,
+                    data: statisticsData.income[20].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[21].Name,
+                    data: statisticsData.income[21].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[22].Name,
+                    data: statisticsData.income[22].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[23].Name,
+                    data: statisticsData.income[23].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[24].Name,
+                    data: statisticsData.income[24].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[25].Name,
+                    data: statisticsData.income[25].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.income[26].Name,
+                    data: statisticsData.income[26].Data,
+                    //color: '#FF4500',
+                },
+            ],
+        });
+
+        $('#SubscribersContainer').highcharts('StockChart', {
+
+            rangeSelector: {
+                allButtonsEnabled: false,
+                buttons: [{
+                    type: 'month',
+                    count: 3,
+                    text: 'روز',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['day', [1]]]
+                    }
+                },],
+                selected: 0
+            },
+
+            title: {
+                text: 'نمودار عضویت و لغو عضویت'
+            },
+            legend: {
+                enabled: true
+            },
+            scrollbar: {
+                barBackgroundColor: 'gray',
+                barBorderRadius: 7,
+                barBorderWidth: 0,
+                buttonBackgroundColor: 'gray',
+                buttonBorderWidth: 0,
+                buttonBorderRadius: 7,
+                trackBackgroundColor: 'none',
+                trackBorderWidth: 1,
+                trackBorderRadius: 8,
+                trackBorderColor: '#CCC'
+            },
+
+            yAxis: {
+                allowDecimals: false,
+            },
+
+            plotOptions: {
+                series: {
+                    events: {
+                        legendItemClick: function (event) {
+                            var name = this.name;
+                            name = name.replace("عضویت", "");
+                            name = name.replace("لغو", "");
+                            name = name.replace("(", "");
+                            name = name.replace(")", "");
+                            name = name.trim();
+                            subscribersChart.setTitle({ text: "نمودار عضویت و لغو عضویت " + name });
+                            $(subscribersChart.series).each(function () {
+                                if (this.name.indexOf(name) == -1) {
+                                    this.setVisible(false, false);
+                                }
+                                else {
+                                    this.setVisible(true, false);
+                                }
+                            });
+                            subscribersChart.redraw();
+                            return false;
+                        }
+                    }
+                }
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color};float:left">{series.name}</span>: <b>{point.y}</b> نفر<br/>',
+                valueDecimals: 0,
+                useHTML: true,
+            },
+
+            series: [
+                {
+                    name: '(' + statisticsData.subscriptions[0].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[0].SubscriptionData,
+                },
+                {
+                    name: statisticsData.subscriptions[0].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[0].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[1].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[1].SubscriptionData,
+                },
+                {
+                    name: statisticsData.subscriptions[1].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[1].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[2].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[2].SubscriptionData,
+                    color: '#29C2E4',
+                },
+                {
+                    name: statisticsData.subscriptions[2].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[2].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[3].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[3].SubscriptionData,
+                    color: '#C5D317',
+                },
+                {
+                    name: statisticsData.subscriptions[3].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[3].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[4].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[4].SubscriptionData,
+                    color: '#B27CDF',
+                },
+                {
+                    name: statisticsData.subscriptions[4].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[4].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[5].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[5].SubscriptionData,
+                    color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[5].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[5].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[6].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[6].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[6].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[6].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[7].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[7].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[7].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[7].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[8].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[8].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[8].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[8].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[9].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[9].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[9].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[9].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[10].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[10].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[10].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[10].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[11].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[11].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[11].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[11].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[12].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[12].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[12].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[12].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[13].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[13].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[13].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[13].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[14].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[14].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[14].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[14].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[15].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[15].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[15].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[15].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[16].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[16].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[16].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[16].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[17].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[17].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[17].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[17].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[18].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[18].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[18].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[18].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[19].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[19].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[19].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[19].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[20].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[20].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[20].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[20].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[21].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[21].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[21].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[21].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[22].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[22].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[22].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[22].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[23].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[23].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[23].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[23].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[24].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[24].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[24].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[24].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[25].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[25].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[25].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[25].UnsubscriptionData,
+                },
+                {
+                    name: '(' + statisticsData.subscriptions[26].Name + ' ' + 'عضویت',
+                    data: statisticsData.subscriptions[26].SubscriptionData,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.subscriptions[26].Name + ' ' + 'لغو عضویت' + ')',
+                    data: statisticsData.subscriptions[26].UnsubscriptionData,
+                },
+            ],
+        });
+        var subscribersChart = $('#SubscribersContainer').highcharts();
+        $(subscribersChart.series).each(function (index) {
+            if (index === 0 || index === 1) {
+                this.setVisible(true, false);
+                var name = this.name;
+                name = name.replace("عضویت", "");
+                name = name.replace("لغو", "");
+                name = name.replace("(", "");
+                name = name.replace(")", "");
+                name = name.trim();
+                subscribersChart.setTitle({ text: "نمودار عضویت و لغو عضویت " + name });
+            }
+            else {
+                this.setVisible(false, false);
+            }
+        });
+        subscribersChart.redraw();
+
+        $('#ActiveSubsContainer').highcharts('StockChart', {
+
+            rangeSelector: {
+                allButtonsEnabled: false,
+                buttons: [{
+                    type: 'month',
+                    count: 3,
+                    text: 'روز',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['day', [1]]]
+                    }
+                },],
+                selected: 0
+            },
+
+            title: {
+                text: 'نمودار اعضای فعال'
+            },
+            legend: {
+                enabled: true
+            },
+            scrollbar: {
+                barBackgroundColor: 'gray',
+                barBorderRadius: 7,
+                barBorderWidth: 0,
+                buttonBackgroundColor: 'gray',
+                buttonBorderWidth: 0,
+                buttonBorderRadius: 7,
+                trackBackgroundColor: 'none',
+                trackBorderWidth: 1,
+                trackBorderRadius: 8,
+                trackBorderColor: '#CCC'
+            },
+
+            yAxis: {
+                allowDecimals: false,
+            },
+
+            plotOptions: {
+                series: {
+                    //compare: 'percent'
+                }
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color};float:left">{series.name}</span>: <b>{point.y}</b> نفر<br/>',
+                valueDecimals: 0,
+                useHTML: true,
+            },
+
+            series: [
+                {
+                    name: statisticsData.activeSubscriptions[0].Name,
+                    data: statisticsData.activeSubscriptions[0].Data,
+                },
+                {
+                    name: statisticsData.activeSubscriptions[1].Name,
+                    data: statisticsData.activeSubscriptions[1].Data,
+                },
+                {
+                    name: statisticsData.activeSubscriptions[2].Name,
+                    data: statisticsData.activeSubscriptions[2].Data,
+                    color: '#29C2E4',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[3].Name,
+                    data: statisticsData.activeSubscriptions[3].Data,
+                    color: '#C5D317',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[4].Name,
+                    data: statisticsData.activeSubscriptions[4].Data,
+                    color: '#B27CDF',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[5].Name,
+                    data: statisticsData.activeSubscriptions[5].Data,
+                    color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[6].Name,
+                    data: statisticsData.activeSubscriptions[6].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[7].Name,
+                    data: statisticsData.activeSubscriptions[7].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[8].Name,
+                    data: statisticsData.activeSubscriptions[8].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[9].Name,
+                    data: statisticsData.activeSubscriptions[9].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[10].Name,
+                    data: statisticsData.activeSubscriptions[10].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[11].Name,
+                    data: statisticsData.activeSubscriptions[11].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[12].Name,
+                    data: statisticsData.activeSubscriptions[12].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[13].Name,
+                    data: statisticsData.activeSubscriptions[13].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[14].Name,
+                    data: statisticsData.activeSubscriptions[14].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[15].Name,
+                    data: statisticsData.activeSubscriptions[15].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[16].Name,
+                    data: statisticsData.activeSubscriptions[16].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[17].Name,
+                    data: statisticsData.activeSubscriptions[17].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[18].Name,
+                    data: statisticsData.activeSubscriptions[18].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[19].Name,
+                    data: statisticsData.activeSubscriptions[19].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[20].Name,
+                    data: statisticsData.activeSubscriptions[20].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[21].Name,
+                    data: statisticsData.activeSubscriptions[21].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[22].Name,
+                    data: statisticsData.activeSubscriptions[22].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[23].Name,
+                    data: statisticsData.activeSubscriptions[23].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[24].Name,
+                    data: statisticsData.activeSubscriptions[24].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[25].Name,
+                    data: statisticsData.activeSubscriptions[25].Data,
+                    //color: '#FF4500',
+                },
+                {
+                    name: statisticsData.activeSubscriptions[26].Name,
+                    data: statisticsData.activeSubscriptions[26].Data,
+                    //color: '#FF4500',
+                },
+            ],
+        });
+
+        $('#AggergateIncomeContainer').highcharts('StockChart', {
+
+            rangeSelector: {
+                allButtonsEnabled: false,
+                buttons: [{
+                    type: 'month',
+                    count: 3,
+                    text: 'روز',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['day', [1]]]
+                    }
+                },],
+                selected: 0
+            },
+
+            title: {
+                text: 'نمودار درآمد کلی همه سرویس ها'
+            },
+            legend: {
+                enabled: false
+            },
+            scrollbar: {
+                barBackgroundColor: 'gray',
+                barBorderRadius: 7,
+                barBorderWidth: 0,
+                buttonBackgroundColor: 'gray',
+                buttonBorderWidth: 0,
+                buttonBorderRadius: 7,
+                trackBackgroundColor: 'none',
+                trackBorderWidth: 1,
+                trackBorderRadius: 8,
+                trackBorderColor: '#CCC'
+            },
+
+            yAxis: {
+                allowDecimals: false,
+            },
+
+            plotOptions: {
+                series: {
+                    //compare: 'percent'
+                }
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color};float:left">{series.name}</span>: <b>{point.y}</b> تومان<br/>',
+                valueDecimals: 0,
+                useHTML: true,
+            },
+
+            series: [
+                {
+                    name: 'درآمد کلی همه سرویس ها',
+                    data: statisticsData.aggregateIncome[0],
+                },
+            ],
+        });
+    });
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+</script>

@@ -43,6 +43,7 @@
         <EntityTypeShape EntityType="PortalModel.TempReferralData" Width="1.5" PointX="14.375" PointY="15.75" />
         <EntityTypeShape EntityType="PortalModel.BlackList" Width="1.5" PointX="16.375" PointY="4.75" />
         <EntityTypeShape EntityType="PortalModel.Audit" Width="1.5" PointX="6.375" PointY="16.75" />
+        <EntityTypeShape EntityType="PortalModel.vw_DehnadAllServicesStatistics" Width="1.5" PointX="16.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

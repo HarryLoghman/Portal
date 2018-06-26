@@ -191,6 +191,9 @@
     <Compile Include="Models\vw_DehnadAllSentMessages.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\vw_DehnadAllServicesStatistics.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\vw_ReceivedMessages.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
