@@ -227,12 +227,12 @@ namespace DehnadTakavarService
 
         private void SinglechargeQueueWorkerThread()
         {
-            //var singlechargeQueue = new SinglechargeQueue();
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    singlechargeQueue.ProcessQueue();
-            //    Thread.Sleep(1000);
-            //}
+            var singlechargeQueue = new SinglechargeQueue();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                singlechargeQueue.ProcessQueue();
+                Thread.Sleep(60 * 1000);
+            }
         }
     }
 }

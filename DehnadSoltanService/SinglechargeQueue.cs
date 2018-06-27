@@ -16,10 +16,11 @@ namespace DehnadSoltanService
         {
             try
             {
+                RemoveUsersFromSinglechargeWaitingList();
                 //SendWarningToSinglechargeUsersInQueue();
-                ChargeUsersFromSinglechargeQueue();
+                //ChargeUsersFromSinglechargeQueue();
                 //SendRenewalWarningToSinglechargeUsersInQueue();
-                RenewSinglechargeInstallmentQueue();
+                //RenewSinglechargeInstallmentQueue();
             }
             catch (Exception e)
             {
@@ -27,7 +28,7 @@ namespace DehnadSoltanService
             }
         }
 
-        private void SendRenewalWarningToSinglechargeUsersInQueue()
+        private void RemoveUsersFromSinglechargeWaitingList()
         {
             try
             {
@@ -35,40 +36,37 @@ namespace DehnadSoltanService
                 int batchSaveCounter = 0;
                 using (var entity = new SoltanEntities())
                 {
-                    entity.Configuration.AutoDetectChangesEnabled = false;
+
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 29) < now && now < DbFunctions.AddDays(o.DateCreated, 30) && o.IsUserCanceledTheInstallment == false && o.IsRenewalMessageSent != true).ToList();
-                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Soltan");
-                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
-                    if (serviceInfo == null)
-                    {
-                        logs.Info("serviceInfo is null in SendRenewalWarningToSinglechargeUsersInQueue!");
+                    var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
+                    if (QueueList.Count == 0)
                         return;
-                    }
-                    var shortCode = serviceInfo.ShortCode;
+                    var mobileNumbers = QueueList.Select(o => o.MobileNumber).ToList();
                     foreach (var item in QueueList)
                     {
-                        var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
-                        var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "RenewalSinglechargeMessage").Content;
-                        var imiChargeObject = SoltanLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                        var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
-                        SoltanLibrary.MessageHandler.InsertMessageToQueue(message);
-                        item.IsRenewalMessageSent = true;
-                        entity.Entry(item).State = EntityState.Modified;
-                        if (batchSaveCounter > 500)
+                        if (batchSaveCounter >= 500)
                         {
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        batchSaveCounter++;
+                        entity.SinglechargeWaitings.Remove(item);
+                        batchSaveCounter += 1;
                     }
                     entity.SaveChanges();
+
+                    //var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
+                    //string aggregatorName = Properties.Settings.Default.AggregatorName;
+                    //var serviceCode = Properties.Settings.Default.ServiceCode;
+                    //var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                    //int installmentListCount = mobileNumbers.Count;
+                    //var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                    //SinglechargeInstallmentClass.InstallmentJob(maxChargeLimit, 0, 0, serviceCode, chargeCodes, mobileNumbers, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
                 }
             }
             catch (Exception e)
             {
-                logs.Error("Exception in SinglechargeQueue SendRenewalWarningToSinglechargeUsersInQueue : ", e);
+                logs.Error("Exception in SinglechargeQueue RemoveUsersFromSinglechargeWaitingList : ", e);
             }
         }
 

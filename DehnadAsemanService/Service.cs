@@ -56,9 +56,9 @@ namespace DehnadAsemanService
             //singlechargeInstallmentBalancerThread.IsBackground = true;
             //singlechargeInstallmentBalancerThread.Start();
 
-            //singlechargeQueueThread = new Thread(SinglechargeQueueWorkerThread);
-            //singlechargeQueueThread.IsBackground = true;
-            //singlechargeQueueThread.Start();
+            singlechargeQueueThread = new Thread(SinglechargeQueueWorkerThread);
+            singlechargeQueueThread.IsBackground = true;
+            singlechargeQueueThread.Start();
         }
 
         protected override void OnStop()
@@ -228,12 +228,12 @@ namespace DehnadAsemanService
 
         private void SinglechargeQueueWorkerThread()
         {
-            //var singlechargeQueue = new SinglechargeQueue();
-            //while (!shutdownEvent.WaitOne(0))
-            //{
-            //    singlechargeQueue.ProcessQueue();
-            //    Thread.Sleep(1000);
-            //}
+            var singlechargeQueue = new SinglechargeQueue();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                singlechargeQueue.ProcessQueue();
+                Thread.Sleep(60 * 1000);
+            }
         }
     }
 }

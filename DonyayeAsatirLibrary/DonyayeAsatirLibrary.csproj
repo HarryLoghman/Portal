@@ -125,6 +125,9 @@
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServicesRealtimeStatistic.cs">
+      <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Setting.cs">
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
@@ -135,6 +138,9 @@
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SinglechargeInstallment.cs">
+      <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SinglechargeLiveStatu.cs">
       <DependentUpon>DonyayeAsatirModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SinglechargeWaiting.cs">
