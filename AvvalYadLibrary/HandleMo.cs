@@ -48,7 +48,17 @@ namespace AvvalYadLibrary
                 else if (message.Content == "00" || message.Content.ToLower().Contains("abc"))
                 {
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
-                    if (result.Status != "SUCCESS-Pending Confirmation")
+                    if (result.Status == "User already subscribed")
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestForAlreadySubsceribed").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                    }
+                    else if (result.Status == "Otp request already exists for this subscriber")
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestExistsForThisSubscriber").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                    }
+                    else if (result.Status != "SUCCESS-Pending Confirmation")
                     {
                         message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
                         MessageHandler.InsertMessageToQueue(message);
