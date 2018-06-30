@@ -93,7 +93,7 @@ namespace Portal.Controllers
                                                 result.Status = "Invalid Price";
                                             else
                                             {
-                                                var isOtpExists = entity.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward ).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                                var isOtpExists = entity.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
                                                 if (isOtpExists != null && messageObj.Price.Value == 0)
                                                 {
                                                     result.Status = "Otp request already exists for this subscriber";
@@ -899,7 +899,7 @@ namespace Portal.Controllers
                                             if (messageObj.Price == null)
                                                 result.Status = "Invalid Price";
                                             else
-                                            { 
+                                            {
                                                 var isOtpExists = entity.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
                                                 if (isOtpExists != null && messageObj.Price.Value == 0)
                                                 {
@@ -1444,6 +1444,61 @@ namespace Portal.Controllers
             catch (Exception e)
             {
                 logs.Error("Excepiton in OtpConfirm method: ", e);
+            }
+            var json = JsonConvert.SerializeObject(result);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> WebMessage([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            result.Status = "";
+            try
+            {
+                var hash = SharedLibrary.Security.GetSha256Hash("WebMessage" + messageObj.ServiceCode + messageObj.MobileNumber);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else if (messageObj.Content == null)
+                    result.Status = "Content cannot be null";
+                else if(messageObj.ServiceCode == null)
+                    result.Status = "ServiceCode cannot be null";
+                else
+                {
+                    var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                    if (service == null)
+                        result.Status = "Invalid ServiceCode";
+                    else
+                    {
+                        var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+                        using (var entity = new PortalEntities())
+                        {
+                            var mo = new ReceievedMessage()
+                            {
+                                MobileNumber = messageObj.MobileNumber,
+                                ShortCode = serviceInfo.ShortCode,
+                                ReceivedTime = DateTime.Now,
+                                PersianReceivedTime = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
+                                Content = (messageObj.Content == null) ? " " : messageObj.Content,
+                                IsProcessed = false,
+                                IsReceivedFromIntegratedPanel = false,
+                                IsReceivedFromWeb = false,
+                                ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-WebMessage" : null
+                            };
+                            entity.ReceievedMessages.Add(mo);
+                            entity.SaveChanges();
+                        }
+                        result.Status = "Success";
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in WebMessage: ", e);
+                result.Status = "Failed";
             }
             var json = JsonConvert.SerializeObject(result);
             var response = new HttpResponseMessage(HttpStatusCode.OK);

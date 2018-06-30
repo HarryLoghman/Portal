@@ -433,20 +433,38 @@ namespace SharedLibrary
 
         private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, Service service, Subscriber subscriber, ServiceInfo serviceInfo)
         {
-            using (var entity = new PortalEntities())
+            try
             {
-                subscriber.DeactivationDate = DateTime.Now;
-                subscriber.PersianDeactivationDate = Date.GetPersianDate();
-                subscriber.OffKeyword = message.Content;
-                if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
-                    subscriber.OffMethod = "keyword";
-                else if (message.IsReceivedFromIntegratedPanel == true)
-                    subscriber.OffMethod = "Integrated Panel";
-                else
-                    subscriber.OffMethod = "Web";
-                entity.Entry(subscriber).State = EntityState.Modified;
-                entity.SaveChanges();
-                AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null, serviceInfo);
+                using (var entity = new PortalEntities())
+                {
+                    subscriber.DeactivationDate = DateTime.Now;
+                    subscriber.PersianDeactivationDate = Date.GetPersianDate();
+                    subscriber.OffKeyword = message.Content;
+                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                        subscriber.OffMethod = "keyword";
+                    else if (message.IsReceivedFromIntegratedPanel == true)
+                        subscriber.OffMethod = "Integrated Panel";
+                    else
+                        subscriber.OffMethod = "Web";
+                    entity.Entry(subscriber).State = EntityState.Modified;
+                    entity.SaveChanges();
+                    AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null, serviceInfo);
+                }
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            {
+                Exception raise = dbEx;
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        logs.Error(string.Format("{0}:{1}", validationErrors.Entry.Entity.ToString(), validationError.ErrorMessage));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in DeactivateServiceForSubscriber:", e);
             }
             return ServiceStatusForSubscriberState.Deactivated;
         }

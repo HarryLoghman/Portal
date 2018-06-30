@@ -25,8 +25,6 @@ namespace DehnadMedioService
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
-                Type entityType = typeof(MedioEntities);
-                Type singleChargeType = typeof(Singlecharge);
 
                 using (var entity = new MedioEntities())
                 {
