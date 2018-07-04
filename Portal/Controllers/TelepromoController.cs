@@ -649,7 +649,7 @@ namespace Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public HttpResponseMessage MapfaMo([FromBody]dynamic input)
+        public HttpResponseMessage PardisMessage([FromBody]dynamic input)
         {
             var messageObj = new MessageObject();
             messageObj.MobileNumber = input.msisdn;
@@ -678,6 +678,26 @@ namespace Portal.Controllers
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                 result = "";
             }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage PardisDelivery([FromBody]dynamic input)
+        {
+            var result = "";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage PardisIntegratedPanel([FromBody]dynamic input)
+        {
+            var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
