@@ -212,14 +212,16 @@ namespace DehnadTajoTakhtService
                     else
                         domain = "alladmin";
                     var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    var client = new SharedLibrary.MobinOneMapfaChargingServiceReference.ChargingClient();
-                    var result = client.singleCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
-                    if (result > 10000)
-                        singlecharge.IsSucceeded = true;
-                    else
-                        singlecharge.IsSucceeded = false;
+                    using (var client = new SharedLibrary.MobinOneMapfaChargingServiceReference.ChargingClient())
+                    {
+                        var result = client.singleCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
+                        if (result > 10000)
+                            singlecharge.IsSucceeded = true;
+                        else
+                            singlecharge.IsSucceeded = false;
 
-                    singlecharge.Description = result.ToString();
+                        singlecharge.Description = result.ToString();
+                    }
                 }
                 catch (Exception e)
                 {

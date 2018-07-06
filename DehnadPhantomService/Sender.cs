@@ -149,13 +149,17 @@ namespace DehnadPhantomService
                     long[] pardisResponse;
                     if (aggregatorId == "3")
                     {
-                        var pardisClient = new SharedLibrary.PardisPlatformServiceReference.SendClient();
-                        pardisResponse = pardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        using (var pardisClient = new SharedLibrary.PardisPlatformServiceReference.SendClient())
+                        {
+                            pardisResponse = pardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        }
                     }
                     else
                     {
-                        var mobinonePardisClient = new SharedLibrary.MobinOneMapfaSendServiceReference.SendClient();
-                        pardisResponse = mobinonePardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        using (var mobinonePardisClient = new SharedLibrary.MobinOneMapfaSendServiceReference.SendClient())
+                        {
+                            pardisResponse = mobinonePardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        }
                     }
                     logs.Info("pardis Response count: " + pardisResponse.Count());
                     if (pardisResponse == null || pardisResponse.Count() < messagesCount)

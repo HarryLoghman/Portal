@@ -130,7 +130,7 @@ namespace DehnadLahzeyeAkharService
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today)).Select(o=> o.Price).ToList().Sum(o => o);
+                        int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today)).Select(o => o.Price).ToList().Sum(o => o);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
@@ -213,14 +213,16 @@ namespace DehnadLahzeyeAkharService
                     else
                         domain = "alladmin";
                     var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    var client = new SharedLibrary.MobinOneMapfaChargingServiceReference.ChargingClient();
-                    var result = client.singleCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
-                    if (result > 10000)
-                        singlecharge.IsSucceeded = true;
-                    else
-                        singlecharge.IsSucceeded = false;
+                    using (var client = new SharedLibrary.MobinOneMapfaChargingServiceReference.ChargingClient())
+                    {
+                        var result = client.singleCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
+                        if (result > 10000)
+                            singlecharge.IsSucceeded = true;
+                        else
+                            singlecharge.IsSucceeded = false;
 
-                    singlecharge.Description = result.ToString();
+                        singlecharge.Description = result.ToString();
+                    }
                 }
                 catch (Exception e)
                 {

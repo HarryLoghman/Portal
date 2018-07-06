@@ -1125,13 +1125,17 @@ namespace SharedLibrary
                     long[] pardisResponse;
                     if (aggregatorId == "3")
                     {
-                        var pardisClient = new SharedLibrary.PardisPlatformServiceReference.SendClient();
-                        pardisResponse = pardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        using (var pardisClient = new SharedLibrary.PardisPlatformServiceReference.SendClient())
+                        {
+                            pardisResponse = pardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        }
                     }
                     else
                     {
-                        var mobinonePardisClient = new SharedLibrary.MobinOneMapfaSendServiceReference.SendClient();
-                        pardisResponse = mobinonePardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        using (var mobinonePardisClient = new SharedLibrary.MobinOneMapfaSendServiceReference.SendClient())
+                        {
+                            pardisResponse = mobinonePardisClient.ServiceSend(username, password, domain, 0, messageContents, mobileNumbers, shortCodes, udhs, mclass, aggregatorServiceIds);
+                        }
                     }
                     logs.Info("pardis Response count: " + pardisResponse.Count());
                     if (pardisResponse == null || pardisResponse.Count() < messagesCount)
@@ -1211,17 +1215,19 @@ namespace SharedLibrary
                 else
                     domain = "alladmin";
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
-                logs.Info("Mapfa OtpCharge: " + mobileNumber);
-                var result = client.sendVerificationCode(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
-                logs.Info("Mapfa OtpCharge: " + mobileNumber);
-                if (result == 0)
-                    singlecharge.Description = "SUCCESS-Pending Confirmation";
-                else
-                    singlecharge.Description = result.ToString();
+                using (var client = new MobinOneMapfaChargingServiceReference.ChargingClient())
+                {
+                    logs.Info("Mapfa OtpCharge: " + mobileNumber);
+                    var result = client.sendVerificationCode(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
+                    logs.Info("Mapfa OtpCharge: " + mobileNumber);
+                    if (result == 0)
+                        singlecharge.Description = "SUCCESS-Pending Confirmation";
+                    else
+                        singlecharge.Description = result.ToString();
 
-                entity.Entry(singlecharge).State = EntityState.Modified;
-                entity.SaveChanges();
+                    entity.Entry(singlecharge).State = EntityState.Modified;
+                    entity.SaveChanges();
+                }
             }
             catch (Exception e)
             {
@@ -1249,17 +1255,19 @@ namespace SharedLibrary
                 else
                     domain = "alladmin";
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
-                logs.Error("Mapfa OtpConfirm: " + mobileNumber);
-                var result = client.verifySubscriber(username, password, domain, channelType, mobileNumber, aggregatorServiceId, confirmationCode);
-                logs.Error("Mapfa OtpConfirm: " + mobileNumber);
-                singlecharge.Description = result.ToString();
-                if (result == 0)
+                using (var client = new MobinOneMapfaChargingServiceReference.ChargingClient())
                 {
-                    singlecharge.IsSucceeded = true;
-                    singlecharge.Description = "SUCCESS";
-                    entity.Entry(singlecharge).State = EntityState.Modified;
-                    entity.SaveChanges();
+                    logs.Error("Mapfa OtpConfirm: " + mobileNumber);
+                    var result = client.verifySubscriber(username, password, domain, channelType, mobileNumber, aggregatorServiceId, confirmationCode);
+                    logs.Error("Mapfa OtpConfirm: " + mobileNumber);
+                    singlecharge.Description = result.ToString();
+                    if (result == 0)
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = "SUCCESS";
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
+                    }
                 }
             }
             catch (Exception e)
@@ -1951,42 +1959,44 @@ namespace SharedLibrary
                         var messageId = rnd.Next(1000000, 9999999).ToString();
                         smsList.requestId[index] = messageId.ToString();
                     }
-                    var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient();
-                    var result = mobineOneClient.sendSms(smsList);
-                    logs.Info("response:" + result);
-                    if (result.Length == 0)
+                    using (var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient())
                     {
-                        logs.Info("SendMesssagesToMobinOne does not return response there must be somthing wrong with the parameters");
-                        foreach (var message in messages)
+                        var result = mobineOneClient.sendSms(smsList);
+                        logs.Info("response:" + result);
+                        if (result.Length == 0)
                         {
-                            if (message.RetryCount > retryCountMax)
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                            message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
-                            message.DateLastTried = DateTime.Now;
-                            entity.Entry(message).State = EntityState.Modified;
+                            logs.Info("SendMesssagesToMobinOne does not return response there must be somthing wrong with the parameters");
+                            foreach (var message in messages)
+                            {
+                                if (message.RetryCount > retryCountMax)
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                                message.DateLastTried = DateTime.Now;
+                                entity.Entry(message).State = EntityState.Modified;
+                            }
                         }
-                    }
-                    else
-                    {
-                        for (int index = 0; index < messagesCount; index++)
+                        else
                         {
-                            var res = result[index].Split('-');
-                            if (res[0] == "Success")
+                            for (int index = 0; index < messagesCount; index++)
                             {
-                                messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                                if (messages[index].MessagePoint > 0)
-                                    SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
-                                messages[index].SentDate = DateTime.Now;
-                                messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                var res = result[index].Split('-');
+                                if (res[0] == "Success")
+                                {
+                                    messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                    if (messages[index].MessagePoint > 0)
+                                        SharedLibrary.MessageHandler.SetSubscriberPoint(messages[index].MobileNumber, messages[index].ServiceId, messages[index].MessagePoint);
+                                    messages[index].SentDate = DateTime.Now;
+                                    messages[index].PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                }
+                                else
+                                {
+                                    if (messages[index].RetryCount > retryCountMax)
+                                        messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                    messages[index].RetryCount = messages[index].RetryCount == null ? 1 : messages[index].RetryCount + 1;
+                                    messages[index].DateLastTried = DateTime.Now;
+                                }
+                                entity.Entry(messages[index]).State = EntityState.Modified;
                             }
-                            else
-                            {
-                                if (messages[index].RetryCount > retryCountMax)
-                                    messages[index].ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                messages[index].RetryCount = messages[index].RetryCount == null ? 1 : messages[index].RetryCount + 1;
-                                messages[index].DateLastTried = DateTime.Now;
-                            }
-                            entity.Entry(messages[index]).State = EntityState.Modified;
                         }
                     }
                 }
