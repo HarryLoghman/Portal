@@ -46,8 +46,6 @@ namespace PorShetabLibrary.Models
         public virtual DbSet<ServiceOffReason> ServiceOffReasons { get; set; }
         public virtual DbSet<ServicesRealtimeStatistic> ServicesRealtimeStatistics { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
-        public virtual DbSet<Singlecharge> Singlecharges { get; set; }
-        public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
         public virtual DbSet<SinglechargeInstallmentArchive> SinglechargeInstallmentArchives { get; set; }
         public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
@@ -55,6 +53,8 @@ namespace PorShetabLibrary.Models
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<vw_Singlecharge> vw_Singlecharge { get; set; }
+        public virtual DbSet<Singlecharge> Singlecharges { get; set; }
+        public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

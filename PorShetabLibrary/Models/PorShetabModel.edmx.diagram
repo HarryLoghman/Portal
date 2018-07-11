@@ -24,8 +24,6 @@
         <EntityTypeShape EntityType="PorShetabModel.ServiceOffReason" Width="1.5" PointX="6.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.ServicesRealtimeStatistic" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.Setting" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="PorShetabModel.Singlecharge" Width="1.5" PointX="12.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="PorShetabModel.SinglechargeArchive" Width="1.5" PointX="12.75" PointY="10.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeInstallment" Width="1.5" PointX="8.75" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeInstallmentArchive" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeWaiting" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
@@ -33,6 +31,8 @@
         <EntityTypeShape EntityType="PorShetabModel.TimedTempMessagesBuffer" Width="1.5" PointX="14.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.vw_SentMessages" Width="1.5" PointX="10.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.vw_Singlecharge" Width="1.5" PointX="14.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PorShetabModel.Singlecharge" Width="1.5" PointX="13.375" PointY="15.75" />
+        <EntityTypeShape EntityType="PorShetabModel.SinglechargeArchive" Width="1.5" PointX="15.375" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -128,7 +128,7 @@ namespace DehnadPorShetabService
             var today = DateTime.Now.Date;
             int batchSaveCounter = 0;
             int income = 0;
-            var previousStart = DateTime.Now.TimeOfDay;
+            var previousStart = TimeSpan.Parse("00:00:00");
             await Task.Delay(10); // for making it async
             try
             {
@@ -166,7 +166,7 @@ namespace DehnadPorShetabService
                         if (diff.Milliseconds < 1000)
                             Thread.Sleep(1000 - diff.Milliseconds);
 
-                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo).Result;
+                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, taskId).Result;
                         previousStart = DateTime.Now.TimeOfDay;
                         //if (response.IsSucceeded == false && message.Price == 300)
                         //{
@@ -218,12 +218,15 @@ namespace DehnadPorShetabService
             return income;
         }
 
-        public static async Task<Singlecharge> ChargeMtnSubscriber(PorShetabEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<Singlecharge> ChargeMtnSubscriber(PorShetabEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int threadNumber, long installmentId = 0)
         {
+            var startTime = DateTime.Now;
             string charge = "";
             var spId = "980110006379";
             var singlecharge = new Singlecharge();
             singlecharge.MobileNumber = message.MobileNumber;
+            singlecharge.ThreadNumber = threadNumber;
+            singlecharge.CycleNumber = installmentCycleNumber;
             if (isRefund == true)
                 charge = "refundAmount";
             else
@@ -303,6 +306,9 @@ namespace DehnadPorShetabService
 
                 singlecharge.IsCalledFromInAppPurchase = isInAppPurchase;
 
+                var endTime = DateTime.Now;
+                var duration = endTime - startTime;
+                singlecharge.ProcessTimeInMilliSecond = (int)duration.TotalMilliseconds;
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
             }

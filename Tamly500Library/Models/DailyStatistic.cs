@@ -148,5 +148,6 @@ namespace Tamly500Library.Models
         public Nullable<int> NumberOfSinglechargeInAppPurchasesFailed { get; set; }
         public Nullable<int> NumberOfSinglechargeInAppPurchasesSucceeded { get; set; }
         public Nullable<int> SumOfSinglechargeInAppPurchases { get; set; }
+        public Nullable<int> FtpUserCount { get; set; }
     }
 }

@@ -164,7 +164,8 @@ namespace Portal.Areas.DefendIran.Controllers
                     TotalNumberOfSinglechargeInAppPurchases = dailyStatistics.TotalNumberOfSinglechargeInAppPurchases,
                     NumberOfSinglechargeInAppPurchasesFailed = dailyStatistics.NumberOfSinglechargeInAppPurchasesFailed,
                     NumberOfSinglechargeInAppPurchasesSucceeded = dailyStatistics.NumberOfSinglechargeInAppPurchasesSucceeded,
-                    SumOfSinglechargeInAppPurchases = dailyStatistics.SumOfSinglechargeInAppPurchases
+                    SumOfSinglechargeInAppPurchases = dailyStatistics.SumOfSinglechargeInAppPurchases,
+                    FtpUserCount = dailyStatistics.FtpUserCount
                 });
             }
             else if (User.IsInRole("DefendIranUser"))

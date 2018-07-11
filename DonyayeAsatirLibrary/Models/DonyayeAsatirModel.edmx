@@ -214,6 +214,7 @@
           <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="int" />
           <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="int" />
           <Property Name="SumOfSinglechargeInAppPurchases" Type="int" />
+          <Property Name="FtpUserCount" Type="int" />
         </EntityType>
         <EntityType Name="EventbaseContents">
           <Key>
@@ -890,6 +891,7 @@ warning 6002: The table/view 'DonyayeAsatir.dbo.vw_Singlecharge' does not have a
           <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="Int32" />
           <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="Int32" />
           <Property Name="SumOfSinglechargeInAppPurchases" Type="Int32" />
+          <Property Name="FtpUserCount" Type="Int32" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -1391,6 +1393,7 @@ warning 6002: The table/view 'DonyayeAsatir.dbo.vw_Singlecharge' does not have a
           <EntitySetMapping Name="DailyStatistics">
             <EntityTypeMapping TypeName="DonyayeAsatirModel.DailyStatistic">
               <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="FtpUserCount" ColumnName="FtpUserCount" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />

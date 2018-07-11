@@ -53,8 +53,12 @@ namespace Portal.Controllers
                         result.Status = "This ServiceCode does not have permission for OTP operation";
                     else
                     {
+                        messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
                         if (messageObj.Number != null)
+                        {
+                            messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
                             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                        }
                         else
                             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                         if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -1123,10 +1127,16 @@ namespace Portal.Controllers
                         messageObj.ServiceCode = "Soltan";
                     else if (messageObj.ServiceCode == "ShenoYad")
                         messageObj.ServiceCode = "ShenoYad500";
+
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
                     if (messageObj.Number != null)
+                    {
+                        messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                    }
                     else
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
                     else if (messageObj.MobileNumber == "Invalid Number")
@@ -1662,6 +1672,7 @@ namespace Portal.Controllers
                     result.Status = "ServiceCode cannot be null";
                 else
                 {
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
                     var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                     if (service == null)
                         result.Status = "Invalid ServiceCode";
@@ -1872,10 +1883,15 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else
                 {
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
                     if (messageObj.Number != null)
+                    {
+                        messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                    }
                     else
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
                     else if (messageObj.MobileNumber == "Invalid Number")

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="PorShetabModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="PorShetabModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -427,6 +427,9 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="int" />
+          <Property Name="CycleNumber" Type="int" />
+          <Property Name="ThreadNumber" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -443,6 +446,9 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="int" />
+          <Property Name="CycleNumber" Type="int" />
+          <Property Name="ThreadNumber" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -688,8 +694,7 @@ warning 6002: The table/view 'PorShetab.dbo.vw_Singlecharge' does not have a pri
     FROM [dbo].[vw_Singlecharge] AS [vw_Singlecharge]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PorShetabModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1100,38 +1105,6 @@ warning 6002: The table/view 'PorShetab.dbo.vw_Singlecharge' does not have a pri
           <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="PersianName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="Singlecharge">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="SinglechargeArchive">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-        </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
             <PropertyRef Name="Id" />
@@ -1301,8 +1274,6 @@ warning 6002: The table/view 'PorShetab.dbo.vw_Singlecharge' does not have a pri
           <EntitySet Name="ServiceOffReasons" EntityType="Self.ServiceOffReason" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistic" />
           <EntitySet Name="Settings" EntityType="Self.Setting" />
-          <EntitySet Name="Singlecharges" EntityType="Self.Singlecharge" />
-          <EntitySet Name="SinglechargeArchives" EntityType="Self.SinglechargeArchive" />
           <EntitySet Name="SinglechargeInstallments" EntityType="Self.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeInstallmentArchives" EntityType="Self.SinglechargeInstallmentArchive" />
           <EntitySet Name="SinglechargeWaitings" EntityType="Self.SinglechargeWaiting" />
@@ -1326,9 +1297,49 @@ warning 6002: The table/view 'PorShetab.dbo.vw_Singlecharge' does not have a pri
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
           <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(String)">
-            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Singlecharges" EntityType="PorShetabModel.Singlecharge" />
+          <EntitySet Name="SinglechargeArchives" EntityType="PorShetabModel.SinglechargeArchive" />
         </EntityContainer>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="ThreadNumber" Type="Int32" />
+        </EntityType>
+        <EntityType Name="SinglechargeArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="ThreadNumber" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1761,40 +1772,6 @@ warning 6002: The table/view 'PorShetab.dbo.vw_Singlecharge' does not have a pri
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Singlecharges">
-            <EntityTypeMapping TypeName="PorShetabModel.Singlecharge">
-              <MappingFragment StoreEntitySet="Singlecharge">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SinglechargeArchives">
-            <EntityTypeMapping TypeName="PorShetabModel.SinglechargeArchive">
-              <MappingFragment StoreEntitySet="SinglechargeArchive">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="SinglechargeInstallments">
             <EntityTypeMapping TypeName="PorShetabModel.SinglechargeInstallment">
               <MappingFragment StoreEntitySet="SinglechargeInstallment">
@@ -1942,6 +1919,46 @@ warning 6002: The table/view 'PorShetab.dbo.vw_Singlecharge' does not have a pri
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="PorShetabModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="PorShetabModel.Store.RetryUndeliveredMessages" />
           <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="PorShetabModel.Store.SinglechargeLiveStatuses" />
+          <EntitySetMapping Name="Singlecharges">
+            <EntityTypeMapping TypeName="PorShetabModel.Singlecharge">
+              <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeArchives">
+            <EntityTypeMapping TypeName="PorShetabModel.SinglechargeArchive">
+              <MappingFragment StoreEntitySet="SinglechargeArchive">
+                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
