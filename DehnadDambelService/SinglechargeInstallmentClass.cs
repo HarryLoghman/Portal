@@ -196,9 +196,10 @@ namespace DehnadDambelService
 , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
             try
             {
+                singlecharge.ReferenceId = referenceCode;
                 using (var client = new HttpClient())
                 {
-                    //client.Timeout = TimeSpan.FromSeconds(15);
+                    client.Timeout = TimeSpan.FromSeconds(60);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var response = await client.SendAsync(request))
@@ -235,7 +236,6 @@ namespace DehnadDambelService
                             singlecharge.IsSucceeded = false;
                             singlecharge.Description = response.StatusCode.ToString();
                         }
-                        singlecharge.ReferenceId = referenceCode;
                     }
                 }
             }

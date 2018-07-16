@@ -1828,8 +1828,7 @@ namespace Portal.Controllers
             try
             {
                 result.Status = "error";
-
-                var hash = SharedLibrary.Security.GetSha256Hash("AppMessage" + messageObj.ServiceCode + messageObj.MobileNumber);
+                var hash = SharedLibrary.Security.GetSha256Hash("AppMessage" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.Content.Substring(0,3));
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
                 else

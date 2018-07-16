@@ -194,16 +194,14 @@ namespace DehnadMusicYadService
             var singlechargeInstallment = new SinglechargeInstallmentClass();
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
-            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("14:00:00"))
+            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
                 installmentCycleNumber = 2;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("14:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("17:00:00"))
+            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
                 installmentCycleNumber = 3;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("17:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
-                installmentCycleNumber = 4;
             else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
-                installmentCycleNumber = 5;
+                installmentCycleNumber = 4;
             else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
-                installmentCycleNumber = 6;
+                installmentCycleNumber = 5;
             else
                 installmentCycleNumber = 1;
 
@@ -238,7 +236,7 @@ namespace DehnadMusicYadService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("14:00:00"))
+                        else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
                         {
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
@@ -246,48 +244,24 @@ namespace DehnadMusicYadService
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("14:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("17:00:00"))
+                        else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
                         {
-                            //TimeSpan hour = TimeSpan.Parse("16:00:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("17:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
+                        else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
                         {
-                            //TimeSpan hour = TimeSpan.Parse("21:00:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
                             SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
-                        else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
+                        else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
                         {
-                            //TimeSpan hour = TimeSpan.Parse("22:30:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 6 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
-                        {
-                            //TimeSpan hour = TimeSpan.Parse("22:30:00");
-                            //timeDiffs = hour - startTime.TimeOfDay;
-                            //if (timeDiffs.TotalSeconds >= 5)
-                            //    Thread.Sleep((int)timeDiffs.TotalMilliseconds);
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
