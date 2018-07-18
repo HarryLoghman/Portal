@@ -21,6 +21,7 @@ namespace DehnadReceiveProcessorService
         private Thread mciDirectProcessThread;
         private Thread getIrancellsMoThread;
         private Thread getFtpThread;
+        private Thread getFtpThreadTemp;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public static List<SharedLibrary.Models.OperatorsPrefix> prefix;
         public Service()
@@ -77,6 +78,10 @@ namespace DehnadReceiveProcessorService
             getFtpThread = new Thread(FtpWorkerThread);
             getFtpThread.IsBackground = true;
             getFtpThread.Start();
+
+            getFtpThreadTemp = new Thread(FtpWorkerThreadTemp);
+            getFtpThreadTemp.IsBackground = true;
+            getFtpThreadTemp.Start();
         }
 
         protected override void OnStop()
@@ -127,6 +132,10 @@ namespace DehnadReceiveProcessorService
                 if (!getFtpThread.Join(3000))
                 {
                     getFtpThread.Abort();
+                }
+                if (!getFtpThreadTemp.Join(3000))
+                {
+                    getFtpThreadTemp.Abort();
                 }
                 if (!telepromoOtpConfirmProcessThread.Join(3000))
                 {
@@ -362,6 +371,10 @@ namespace DehnadReceiveProcessorService
             }
         }
 
+        private void FtpWorkerThreadTemp()
+        {
+            Ftp.TelepromoDailyFtpTemp();
+        }
         private void FtpWorkerThread()
         {
             var ftp = new Ftp();

@@ -151,9 +151,10 @@ namespace DehnadMusicYadService
                         var diff = start - previousStart;
                         if (diff.Milliseconds < 1000)
                             Thread.Sleep(1000 - diff.Milliseconds);
-                        
-                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo).Result;
+
                         previousStart = DateTime.Now.TimeOfDay;
+                        var response = ChargeMtnSubscriber(entity, message, false, false, serviceAdditionalInfo).Result;
+
                         //if (response.IsSucceeded == false && message.Price == 300)
                         //{
                         //    message.Price = 100;
