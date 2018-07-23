@@ -81,34 +81,48 @@ namespace DehnadReceiveProcessorService
 
         public static void TelepromoDailyFtpTemp()
         {
-            var startDate = DateTime.Parse("2018-03-21");
+            var startDate = DateTime.Parse("2018-03-23");
             var endDate = DateTime.Parse("2018-06-21");
             int i = 0;
-            while(true)
+            while (true)
             {
                 var d = startDate.AddDays(i);
                 if (d >= endDate)
                     break;
-                var date = d.ToString("yyyyMMdd");
-                TelepromoGetDailyIncomeTemp("MenchBaz", date);
-                TelepromoGetDailyIncomeTemp("ShenoYad", date);
-                TelepromoGetDailyIncomeTemp("Tamly", date);
-                TelepromoGetDailyIncomeTemp("JabehAbzar", date);
-                TelepromoGetDailyIncomeTemp("FitShow", date);
-                TelepromoGetDailyIncomeTemp("Takavar", date);
-                TelepromoGetDailyIncomeTemp("DonyayeAsatir", date);
-                TelepromoGetDailyIncomeTemp("Soltan", date);
-                TelepromoGetDailyIncomeTemp("AvvalPod500", date);
-                TelepromoGetDailyIncomeTemp("BehAmooz500", date);
-                TelepromoGetDailyIncomeTemp("ShenoYad500", date);
-                TelepromoGetDailyIncomeTemp("Tamly500", date);
-                TelepromoGetDailyIncomeTemp("Aseman", date);
+                try
+                {
+                    var date = d.ToString("yyyyMMdd");
+                    logs.Info("TelepromoDailyFtpTemp date: " + date);
+                    var taskList = new List<Task>();
+
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("MenchBaz", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("ShenoYad", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("Tamly", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("JabehAbzar", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("FitShow", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("Takavar", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("DonyayeAsatir", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("Soltan", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("AvvalPod500", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("BehAmooz500", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("ShenoYad500", date));
+                    taskList.Add(TelepromoGetDailyIncomeTemp("Tamly500", date));
+                    //taskList.Add(TelepromoGetDailyIncomeTemp("Aseman", date));
+                    Task.WaitAll(taskList.ToArray());
+                }
+                catch (Exception e)
+                {
+                    logs.Error("TelepromoDailyFtpTemp: ", e);
+                }
                 i++;
             }
         }
 
-        public static void TelepromoGetDailyIncomeTemp(string serviceCode, string date)
+
+        public static async Task TelepromoGetDailyIncomeTemp(string serviceCode, string date)
         {
+            logs.Info("TelepromoGetDailyIncomeTemp " + serviceCode + " " + date + " start");
+            await Task.Delay(10);
             try
             {
                 string filePath = @"E:\ImiFtps\";
@@ -125,21 +139,24 @@ namespace DehnadReceiveProcessorService
                 {
                     File.Delete(imiBz2FileUri);
                 }
-                while (isSucceed == false && numberOfTries < 2)
+                while (isSucceed == false && numberOfTries < 3)
                 {
                     isSucceed = SharedLibrary.HelpfulFunctions.DownloadFileFromWeb(uri, filePath);
                     numberOfTries++;
                 }
                 if (isSucceed == false)
                     return;
-
+                if (!File.Exists(@"E:\ImiFtps\" + fileName))
+                    return;
                 var decompressedFileName = imiBz2FileUri.Replace(".bz2", "");
-                if (File.Exists(decompressedFileName))
-                {
-                    File.Delete(decompressedFileName);
-                }
+                //if (File.Exists(decompressedFileName))
+                //{
+                //    File.Delete(decompressedFileName);
+                //}
                 SharedLibrary.HelpfulFunctions.DecompressFromBZ2File(imiBz2FileUri);
                 var imiDataList = SharedLibrary.HelpfulFunctions.ReadImiDataFile(decompressedFileName);
+                if (imiDataList.Count == 0)
+                    return;
                 ImiDataToSingleChargeTemp(serviceCode, imiDataList);
                 SharedLibrary.HelpfulFunctions.DeleteFile(decompressedFileName);
                 var archiveUri = fileArchivePath + fileName;
@@ -153,6 +170,7 @@ namespace DehnadReceiveProcessorService
             {
                 logs.Error("Exception in TelepromoGetDailyIncome:", e);
             }
+            logs.Info("TelepromoGetDailyIncomeTemp " + serviceCode + " " + date + " end");
         }
 
         private static void ImiDataToSingleChargeTemp(string serviceCode, List<SharedLibrary.Models.ImiData> imiDataList)
@@ -163,11 +181,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new AsemanLibrary.Models.AsemanEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -175,7 +200,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new AsemanLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new AsemanLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -189,7 +214,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -199,11 +225,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -211,7 +244,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new MenchBazLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new MenchBazLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -225,7 +258,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -235,11 +269,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -247,7 +288,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new ShenoYadLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -261,7 +302,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -271,11 +313,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -283,7 +332,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new ShenoYad500Library.Models.SinglechargeArchive();
+                                var singleCharge = new ShenoYad500Library.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -297,7 +346,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -307,11 +357,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new TamlyLibrary.Models.TamlyEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -319,7 +376,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new TamlyLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new TamlyLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -333,7 +390,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -343,11 +401,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new Tamly500Library.Models.Tamly500Entities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -355,7 +420,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new Tamly500Library.Models.SinglechargeArchive();
+                                var singleCharge = new Tamly500Library.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -369,7 +434,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -379,11 +445,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -391,7 +464,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new JabehAbzarLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -405,7 +478,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -415,11 +489,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new FitShowLibrary.Models.FitShowEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -427,7 +508,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new FitShowLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new FitShowLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -441,7 +522,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -451,11 +533,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new TakavarLibrary.Models.TakavarEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -463,7 +552,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new TakavarLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new TakavarLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -477,7 +566,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -487,11 +577,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -499,7 +596,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new DonyayeAsatirLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -513,7 +610,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -523,11 +621,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new SoltanLibrary.Models.SoltanEntities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -535,7 +640,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new SoltanLibrary.Models.SinglechargeArchive();
+                                var singleCharge = new SoltanLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -549,7 +654,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -559,11 +665,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -571,7 +684,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new AvvalPod500Library.Models.SinglechargeArchive();
+                                var singleCharge = new AvvalPod500Library.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -585,7 +698,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -595,11 +709,18 @@ namespace DehnadReceiveProcessorService
                 {
                     using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
                     {
+                        entity.Database.CommandTimeout = 240;
+                        var i = 0;
                         foreach (var data in imiDataList)
                         {
                             if (data.eventType == "1.5")
                             {
-                                var isSingleChargeExists = entity.SinglechargeArchives.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (i > 1000)
+                                {
+                                    entity.SaveChanges();
+                                    i = 0;
+                                }
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
                                 if (isSingleChargeExists != null)
                                     continue;
 
@@ -607,7 +728,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new BehAmooz500Library.Models.SinglechargeArchive();
+                                var singleCharge = new BehAmooz500Library.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -621,7 +742,8 @@ namespace DehnadReceiveProcessorService
                                 singleCharge.DateCreated = data.datetime;
                                 singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
                                 singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
-                                entity.SinglechargeArchives.Add(singleCharge);
+                                entity.Singlecharges.Add(singleCharge);
+                                i++;
                             }
                         }
                         entity.SaveChanges();
@@ -630,7 +752,7 @@ namespace DehnadReceiveProcessorService
             }
             catch (Exception e)
             {
-                logs.Error("Exception in ImiDataToSingleCharge:", e);
+                logs.Error("Exception in ImiDataToSingleCharge: " + serviceCode + " : ", e);
             }
         }
 
@@ -695,7 +817,7 @@ namespace DehnadReceiveProcessorService
                                     singleCharge.IsSucceeded = false;
                                 else
                                     singleCharge.IsSucceeded = true;
-                                
+
                                 singleCharge.ReferenceId = data.transId;
                                 singleCharge.Price = data.basePricePoint.Value / 10;
                                 singleCharge.IsApplicationInformed = false;

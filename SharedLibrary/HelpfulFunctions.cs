@@ -75,23 +75,31 @@ namespace SharedLibrary
 
         public static bool DecompressFromBZ2File(string fileUri)
         {
-            FileInfo zipFile = new FileInfo(fileUri);
-            using (FileStream fileToDecompressAsStream = zipFile.OpenRead())
+            try
             {
-                string decompressedFileName = fileUri.Replace(".bz2", "");
-                using (FileStream decompressedStream = File.Create(decompressedFileName))
+                FileInfo zipFile = new FileInfo(fileUri);
+                using (FileStream fileToDecompressAsStream = zipFile.OpenRead())
                 {
-                    try
+                    string decompressedFileName = fileUri.Replace(".bz2", "");
+                    using (FileStream decompressedStream = File.Create(decompressedFileName))
                     {
-                        BZip2.Decompress(fileToDecompressAsStream, decompressedStream, true);
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        logs.Error("Exception in DecompressFromBZ2File-" + fileUri + ":", e);
-                        return false;
+                        try
+                        {
+                            BZip2.Decompress(fileToDecompressAsStream, decompressedStream, true);
+                            return true;
+                        }
+                        catch (Exception e)
+                        {
+                            logs.Error("Exception in DecompressFromBZ2File-" + fileUri + ":", e);
+                            return false;
+                        }
                     }
                 }
+            }
+            catch(Exception e)
+            {
+                logs.Error("Exception in outerlayer of DecompressFromBZ2File-" + fileUri + ":", e);
+                return false;
             }
         }
 
