@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -128,6 +129,9 @@
     <Compile Include="Models\SinglechargeInstallmentArchive.cs">
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SingleChargeTiming.cs">
+      <DependentUpon>TahChinModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SinglechargeWaiting.cs">
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
@@ -159,6 +163,7 @@
       <DependentUpon>TahChinModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="publicVariables.cs" />
     <Compile Include="ServiceHandler.cs" />
     <Compile Include="Subscribers.cs" />
   </ItemGroup>

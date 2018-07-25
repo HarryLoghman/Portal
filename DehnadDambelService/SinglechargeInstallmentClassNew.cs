@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PorShetabLibrary.Models;
-using PorShetabLibrary;
+using DambelLibrary.Models;
+using DambelLibrary;
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -14,12 +14,12 @@ using System.Net;
 using SharedLibrary;
 using SharedLibrary.Models;
 
-namespace DehnadPorShetabService
+namespace DehnadDambelService
 {
     public class SinglechargeInstallmentClassNew
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static int maxChargeLimit = 500;
+        public static int maxChargeLimit = 300;
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
@@ -29,7 +29,7 @@ namespace DehnadPorShetabService
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new DambelEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
@@ -93,15 +93,15 @@ namespace DehnadPorShetabService
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 int isCampaignActive = 0;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new DambelEntities())
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 120;
-                int tps = 95;
+                int maxTaskCount = 36;
+                int tps = 30;
                 int rowCount = installmentList.Count;
                 int i;
                 string mobileNumber;
@@ -118,7 +118,7 @@ namespace DehnadPorShetabService
                 System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
-                    cnn = PorShetabLibrary.publicVariables.GetConnectionPorshetab();
+                    cnn = DambelLibrary.publicVariables.GetConnection();
                     cnn.Open();
                 }
                 catch (Exception e)
@@ -244,7 +244,7 @@ namespace DehnadPorShetabService
 
             try
             {
-                using (var entity = new PorShetabEntities())
+                using (var entity = new DambelEntities())
                 {
                     DateTime timeAfterEntity = DateTime.Now;
                     entity.Configuration.AutoDetectChangesEnabled = false;
@@ -271,7 +271,7 @@ namespace DehnadPorShetabService
                     if (installmentCycleNumber == 1 && installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
                         return 0;
                     else if (installmentCycleNumber > 1)
-                        message.Price = 250;
+                        message.Price = 150;
                     if (priceUserChargedToday + message.Price > maxChargeLimit)
                         return 0;
                     var response = ChargeMtnSubscriber(timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere
@@ -280,31 +280,6 @@ namespace DehnadPorShetabService
                     if (response.IsSucceeded == true)
                     {
                         income += message.Price.GetValueOrDefault();
-                    }
-                    if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
-                    {
-                        try
-                        {
-                            var serviceId = Convert.ToInt64(serviceAdditionalInfo["serviceId"]);
-
-                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, serviceId);
-                            if (sub != null)
-                            {
-                                if (sub.SpecialUniqueId != null)
-                                {
-                                    var sha = SharedLibrary.Security.GetSha256Hash(sub.SpecialUniqueId + message.MobileNumber);
-                                    var price = 0;
-                                    if (response.IsSucceeded == true)
-                                        price = message.Price.Value;
-                                    await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
-                                }
-                            }
-
-                        }
-                        catch (Exception e)
-                        {
-                            logs.Error("Exception in calling danoop charge service: " + e);
-                        }
                     }
 
                     entity.SaveChanges();
@@ -321,7 +296,7 @@ namespace DehnadPorShetabService
 
         public static async Task<Singlecharge> ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-            PorShetabEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int threadNumber, long installmentId = 0)
+            DambelEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int threadNumber, long installmentId = 0)
         {
             DateTime timeStartChargeMtnSubscriber = DateTime.Now;
             Nullable<DateTime> timeAfterXML = null;
