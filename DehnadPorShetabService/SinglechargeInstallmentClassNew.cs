@@ -155,7 +155,7 @@ namespace DehnadPorShetabService
                     }
                     waitTime = DateTime.Now - startTime;
                     if (waitTime.TotalMilliseconds < 1000)
-                        Thread.Sleep((int)waitTime.TotalMilliseconds);
+                        Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds);
                     startTime = DateTime.Now;
                 }
 
