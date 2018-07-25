@@ -191,7 +191,7 @@ namespace DehnadPorShetabService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            var singlechargeInstallment = new SinglechargeInstallmentClass();
+            var singlechargeInstallment = new SinglechargeInstallmentClassNew();
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("09:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
