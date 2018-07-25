@@ -100,8 +100,8 @@ namespace DehnadPorShetabService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 76;
-                int tps = 75;
+                int maxTaskCount = 120;
+                int tps = 95;
                 int rowCount = installmentList.Count;
                 int i;
                 string mobileNumber;
