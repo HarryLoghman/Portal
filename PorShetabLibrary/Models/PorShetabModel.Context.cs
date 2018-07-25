@@ -55,6 +55,7 @@ namespace PorShetabLibrary.Models
         public virtual DbSet<vw_Singlecharge> vw_Singlecharge { get; set; }
         public virtual DbSet<Singlecharge> Singlecharges { get; set; }
         public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
+        public virtual DbSet<SingleChargeTiming> SingleChargeTimings { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

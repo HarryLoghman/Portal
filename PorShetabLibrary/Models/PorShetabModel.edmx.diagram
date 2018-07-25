@@ -33,6 +33,7 @@
         <EntityTypeShape EntityType="PorShetabModel.vw_Singlecharge" Width="1.5" PointX="14.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.Singlecharge" Width="1.5" PointX="13.375" PointY="15.75" />
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeArchive" Width="1.5" PointX="15.375" PointY="15.75" />
+        <EntityTypeShape EntityType="PorShetabModel.SingleChargeTiming" Width="1.5" PointX="17.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
