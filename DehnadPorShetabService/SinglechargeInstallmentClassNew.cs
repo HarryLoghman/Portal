@@ -152,6 +152,7 @@ namespace DehnadPorShetabService
                             position++;
                             i++;
                         }
+
                     }
                     waitTime = DateTime.Now - startTime;
                     if (waitTime.TotalMilliseconds < 1000)
