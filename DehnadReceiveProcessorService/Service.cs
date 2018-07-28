@@ -373,7 +373,7 @@ namespace DehnadReceiveProcessorService
 
         private void FtpWorkerThreadTemp()
         {
-            Ftp.TelepromoDailyFtpTemp();
+            //Ftp.TelepromoDailyFtpTemp();
         }
         private void FtpWorkerThread()
         {
