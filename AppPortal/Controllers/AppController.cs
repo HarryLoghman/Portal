@@ -2729,6 +2729,64 @@ namespace Portal.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        public HttpResponseMessage GetIrancellUnsubUrl(string serviceCode, string callBackParam)
+        {
+            dynamic result = new ExpandoObject();
+            try
+            {
+                if (serviceCode != null && (serviceCode == "TahChin" || serviceCode == "MusicYad" || serviceCode == "Dambel" || serviceCode == "Medad" || serviceCode == "PorShetab"))
+                {
+                    string timestampParam = DateTime.Now.ToString("yyyyMMddhhmmss");
+                    string requestIdParam = Guid.NewGuid().ToString();
+                    var price = "3000";
+                    var modeParam = "1"; //Web
+                    var pageNo = 0;
+                    var authKey = "393830313130303036333739";
+                    var sign = "";
+                    var cpId = "980110006379";
+
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode).Value;
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId);
+                    if (serviceCode == "TahChin")
+                        pageNo = 146;
+                    else if (serviceCode == "MusicYad")
+                        pageNo = 206;
+                    else if (serviceCode == "Dambel")
+                        pageNo = 0;
+                    else if (serviceCode == "Medad")
+                        pageNo = 0;
+                    else if (serviceCode == "PorShetab")
+                    {
+                        pageNo = 299;
+                        price = "5000";
+                    }
+
+                    sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
+                    var url = string.Format(@"http://92.42.51.91/CGGateway/UnSubscribe.aspx?Timestamp={0}&RequestID={1}&CpCode={2}&Callback={3}&Sign={4}&mode={5}"
+                                            , timestampParam, requestIdParam, cpId, callBackParam, sign, modeParam);
+                    result.Status = "Success";
+                    result.uuid = requestIdParam;
+                    result.Description = url;
+                }
+                else
+                {
+                    result.Status = "Invalid Service Code";
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetIrancellOtpUrl:" + e);
+                result.Status = "Error";
+                result.Description = "General error occurred";
+            }
+            var json = JsonConvert.SerializeObject(result);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         public HttpResponseMessage DecryptIrancellMessage(string data)
         {
             dynamic result = new ExpandoObject();
