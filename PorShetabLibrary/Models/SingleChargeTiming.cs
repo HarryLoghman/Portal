@@ -15,6 +15,9 @@ namespace PorShetabLibrary.Models
     public partial class SingleChargeTiming
     {
         public int id { get; set; }
+        public Nullable<int> cycleNumber { get; set; }
+        public Nullable<int> loopNo { get; set; }
+        public Nullable<int> threadNumber { get; set; }
         public string mobileNumber { get; set; }
         public Nullable<System.DateTime> timeStartProcessMtnInstallment { get; set; }
         public Nullable<System.DateTime> timeAfterEntity { get; set; }

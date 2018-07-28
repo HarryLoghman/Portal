@@ -39,7 +39,14 @@ namespace DehnadPorShetabService
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                         //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
 
-                        installmentList = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        List<string> installmentListNotOrdered = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+
+                        Dictionary<string, int> orderedSubscribers = getSubscribersDueToTotalPriceYesterday(entity);
+
+                        installmentList = (from a in installmentListNotOrdered
+                                           join b in orderedSubscribers on a equals b.Key into ab from b in ab.DefaultIfEmpty()
+                                           orderby b.Value descending select new { mobileNumber = a }).Select(t => t.mobileNumber).ToList();
+
                         logs.Info("installmentList all users count:" + installmentList.Count);
                         var today = DateTime.Now;
                         List<string> chargeCompleted;
@@ -79,7 +86,17 @@ namespace DehnadPorShetabService
             return income;
         }
 
-        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo)
+        private static Dictionary<string, int> getSubscribersDueToTotalPriceYesterday(PorShetabEntities entity)
+        {
+            DateTime today = DateTime.Now.AddDays(-1);
+            Dictionary<string, int> chargeOnes = (from sca in entity.SinglechargeArchives where System.Data.Entity.DbFunctions.TruncateTime(sca.DateCreated) == today.Date && (sca.IsSucceeded == true) group sca by sca.MobileNumber into scat let totalPrice = scat.Sum(t => t.Price) select new { mobileNumber = (string)scat.Key, totalPrice }).ToDictionary(t => t.mobileNumber, t => t.totalPrice);
+
+            return chargeOnes;
+        }
+
+        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber
+            , string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize
+            , Dictionary<string, string> serviceAdditionalInfo)
         {
             var income = 0;
             object obj = new object();
@@ -112,8 +129,8 @@ namespace DehnadPorShetabService
                 startTime = DateTime.Now;
                 TimeSpan waitTime;
 
-                int threadNo;
-                threadNo = 0;
+                //int threadNo;
+                //threadNo = 0;
                 //bool checkTimeDifferences;
                 System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
                 try
@@ -126,21 +143,23 @@ namespace DehnadPorShetabService
                     logs.Error("Exception in Opening Connection: ", e);
                     return 0;
                 }
-
+                int loopNo = 0;
                 while (position < rowCount)
                 {
 
                     i = 0;
-                    while (i <= tps - 1 && (DateTime.Now - startTime).TotalMilliseconds < 1000 && position < rowCount)
+
+                    while (i <= tps - 1 && DateTime.Now.Second == startTime.Second
+                        /*(DateTime.Now - startTime).TotalMilliseconds < 1000*/ && position < rowCount)
                     {
                         if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
-                        threadNo = -1;
+                        int threadNo = -1;
                         mobileNumber = installmentList[position];
 
-                        task = getTask(tasksNew, cnn, maxTaskCount, out threadNo
+                        task = getTask(tasksNew, cnn, maxTaskCount
                             , maxChargeLimit, mobileNumber, serviceAdditionalInfo, chargeCodes, installmentCycleNumber
-                            , installmentInnerCycleNumber, isCampaignActive);
+                            , installmentInnerCycleNumber, loopNo, out threadNo, isCampaignActive);
                         if (task == null)
                         {
 
@@ -154,10 +173,15 @@ namespace DehnadPorShetabService
                         }
 
                     }
-                    waitTime = DateTime.Now - startTime;
-                    if (waitTime.TotalMilliseconds < 1000)
-                        Thread.Sleep(1100 - (int)waitTime.TotalMilliseconds);
+                    while (DateTime.Now.Second == startTime.Second)
+                    {
+
+                    }
+                    //waitTime = DateTime.Now - startTime;
+                    //if (waitTime.TotalMilliseconds < 1000)
+                    //    Thread.Sleep(1100 - (int)waitTime.TotalMilliseconds);
                     startTime = DateTime.Now;
+                    loopNo++;
                 }
 
                 while (true)
@@ -185,9 +209,9 @@ namespace DehnadPorShetabService
         }
 
 
-        private static Task<int> getTask(List<Task> tasks, System.Data.SqlClient.SqlConnection cnn, int maxCounterCount, out int threadNo
+        private static Task<int> getTask(List<Task> tasks, System.Data.SqlClient.SqlConnection cnn, int maxCounterCount
             , int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes
-            , int installmentCycleNumber, int installmentInnerCycleNumber, int isCampaignActive)
+            , int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, out int threadNo, int isCampaignActive)
         {
             threadNo = -1;
 
@@ -213,7 +237,7 @@ namespace DehnadPorShetabService
                     tasks.Add(new Task<int>(() =>
                     {
                         return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber, serviceAdditionalInfo
-, chargeCodes, k, installmentCycleNumber, installmentInnerCycleNumber, isCampaignActive);
+, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, k, isCampaignActive);
                     }));
                 }
                 else
@@ -228,7 +252,7 @@ namespace DehnadPorShetabService
                 tasks[threadNo] = new Task<int>(() =>
                 {
                     return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber, serviceAdditionalInfo
-, chargeCodes, k, installmentCycleNumber, installmentInnerCycleNumber, isCampaignActive);
+, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, k, isCampaignActive);
                 });
                 //tasks[threadNo] = new Task<int>(ProcessMtnInstallment, new object[]{beat, threadNo, delay, this.v_position + 1 });
             }
@@ -236,7 +260,7 @@ namespace DehnadPorShetabService
         }
 
         private static async Task<int> ProcessMtnInstallment(System.Data.SqlClient.SqlConnection cnn, int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo
-            , dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, int isCampaignActive)
+            , dynamic chargeCodes, int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, int taskId, int isCampaignActive)
         {
             //logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
             DateTime timeStartProcessMtnInstallment = DateTime.Now;
@@ -276,7 +300,7 @@ namespace DehnadPorShetabService
                     if (priceUserChargedToday + message.Price > maxChargeLimit)
                         return 0;
                     var response = ChargeMtnSubscriber(timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere
-                        , entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, taskId).Result;
+                        , entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, loopNo, taskId).Result;
 
                     if (response.IsSucceeded == true)
                     {
@@ -322,7 +346,8 @@ namespace DehnadPorShetabService
 
         public static async Task<Singlecharge> ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-            PorShetabEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int threadNumber, long installmentId = 0)
+            PorShetabEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
+            , Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int loopNo, int threadNumber, long installmentId = 0)
         {
             DateTime timeStartChargeMtnSubscriber = DateTime.Now;
             Nullable<DateTime> timeAfterXML = null;
@@ -360,7 +385,7 @@ namespace DehnadPorShetabService
                     client.Timeout = TimeSpan.FromSeconds(60);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
-                    
+
                     timeBeforeSendMTNClient = DateTime.Now;
 
                     using (var response = await client.SendAsync(request))
@@ -438,6 +463,9 @@ namespace DehnadPorShetabService
                 entity.Singlecharges.Add(singlecharge);
 
                 SingleChargeTiming timingTable = new SingleChargeTiming();
+                timingTable.cycleNumber = installmentCycleNumber;
+                timingTable.loopNo = loopNo;
+                timingTable.threadNumber = threadNumber;
                 timingTable.mobileNumber = message.MobileNumber;
                 timingTable.timeAfterReadStringClient = timeAfterReadStringClient;
                 timingTable.timeAfterSendMTNClient = timeAfterSendMTNClient;
