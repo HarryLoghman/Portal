@@ -20,9 +20,20 @@ namespace DehnadPorShetabService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 500;
+        static int v_requestSleepInMilliseconds;
+        static Nullable<DateTime> v_requestFirstStartTime;
+        static int v_requestCounterPerSecond;
+        static int v_requestTPS;
+
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
+
+            v_requestSleepInMilliseconds = 0;
+            v_requestFirstStartTime = null;
+            v_requestCounterPerSecond = 0;
+            v_requestTPS = 95;
+
             try
             {
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
@@ -44,8 +55,10 @@ namespace DehnadPorShetabService
                         Dictionary<string, int> orderedSubscribers = getSubscribersDueToTotalPriceYesterday(entity);
 
                         installmentList = (from a in installmentListNotOrdered
-                                           join b in orderedSubscribers on a equals b.Key into ab from b in ab.DefaultIfEmpty()
-                                           orderby b.Value descending select new { mobileNumber = a }).Select(t => t.mobileNumber).ToList();
+                                           join b in orderedSubscribers on a equals b.Key into ab
+                                           from b in ab.DefaultIfEmpty()
+                                           orderby b.Value descending
+                                           select new { mobileNumber = a }).Select(t => t.mobileNumber).ToList();
 
                         logs.Info("installmentList all users count:" + installmentList.Count);
                         var today = DateTime.Now;
@@ -146,11 +159,15 @@ namespace DehnadPorShetabService
                 int loopNo = 0;
                 while (position < rowCount)
                 {
-
+                    while (v_requestSleepInMilliseconds > 0)
+                    {
+                        //wait till the sleep time is zero
+                    }
                     i = 0;
 
-                    while (i <= tps - 1 && DateTime.Now.Second == startTime.Second
-                        /*(DateTime.Now - startTime).TotalMilliseconds < 1000*/ && position < rowCount)
+                    while (i <= tps - 1 && //DateTime.Now.Second == startTime.Second
+                        (DateTime.Now - startTime).TotalMilliseconds < 1000
+                        && position < rowCount)
                     {
                         if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
@@ -173,13 +190,13 @@ namespace DehnadPorShetabService
                         }
 
                     }
-                    while (DateTime.Now.Second == startTime.Second)
-                    {
+                    //while (DateTime.Now.Second == startTime.Second)
+                    //{
 
-                    }
-                    //waitTime = DateTime.Now - startTime;
-                    //if (waitTime.TotalMilliseconds < 1000)
-                    //    Thread.Sleep(1100 - (int)waitTime.TotalMilliseconds);
+                    //}
+                    waitTime = DateTime.Now - startTime;
+                    if (waitTime.TotalMilliseconds < 1000)
+                        Thread.Sleep(1100 - (int)waitTime.TotalMilliseconds);
                     startTime = DateTime.Now;
                     loopNo++;
                 }
@@ -379,6 +396,9 @@ namespace DehnadPorShetabService
             try
             {
                 singlecharge.ReferenceId = referenceCode;
+
+                throttleRequests(DateTime.Now);
+
                 timeBeforeHTTPClient = DateTime.Now;
                 using (var client = new HttpClient())
                 {
@@ -387,6 +407,7 @@ namespace DehnadPorShetabService
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
                     timeBeforeSendMTNClient = DateTime.Now;
+
 
                     using (var response = await client.SendAsync(request))
                     {
@@ -486,6 +507,61 @@ namespace DehnadPorShetabService
                 logs.Error("Exception in ChargeMtnSubscriber on saving values to db: " + e);
             }
             return singlecharge;
+        }
+
+        private static void throttleRequests(DateTime requestTime)
+        {
+            if (v_requestSleepInMilliseconds > 0)
+            {
+
+                Thread.Sleep(v_requestSleepInMilliseconds + 10);//add ten to provide time for the locking thread to set the v_sleepMilliseconds sooner than current thread
+
+            }
+            object obj = new object();
+            if (!v_requestFirstStartTime.HasValue)
+            {
+                lock (obj)
+                {
+                    v_requestCounterPerSecond = 1;
+                    v_requestFirstStartTime = requestTime;
+                    v_requestSleepInMilliseconds = 0;
+                }
+                return;
+            }
+            TimeSpan waitTime = requestTime - v_requestFirstStartTime.Value;
+
+            if (waitTime.TotalMilliseconds <= 1000)
+            {
+                if (v_requestCounterPerSecond <= v_requestTPS)
+                {
+                    lock (obj)
+                    { v_requestCounterPerSecond++; }
+                }
+                else
+                {
+                    lock (obj)
+                    {
+                        v_requestSleepInMilliseconds = (int)(1000 - waitTime.TotalMilliseconds);
+                    }
+                    Thread.Sleep(v_requestSleepInMilliseconds);
+                    lock (obj)
+                    {
+                        v_requestSleepInMilliseconds = 0;
+                        v_requestCounterPerSecond = 1;
+                        v_requestFirstStartTime = DateTime.Now;
+                    }
+
+                }
+            }
+            else
+            {
+                lock (obj)
+                {
+                    v_requestCounterPerSecond = 1;
+                    v_requestFirstStartTime = requestTime;
+                }
+            }
+
         }
 
         public static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
