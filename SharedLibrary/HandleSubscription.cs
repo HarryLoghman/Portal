@@ -83,6 +83,24 @@ namespace SharedLibrary
                         subscriber.OnMethod = "Integrated Panel";
                     else
                         subscriber.OnMethod = "Web";
+                    if (message.Content == null || (message.Content.Length == 1 && message.Content != "0") || message.Content.Length >= 10)
+                    {
+                        subscriber.UserMessage = message.Content;
+                        message.UserMessage = message.Content;
+                    }
+                    else
+                    {
+                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Take(10).ToList();
+                        foreach (var item in recievedMessages)
+                        {
+                            if (item.Content.Length < 4)
+                            {
+                                subscriber.UserMessage = item.Content;
+                                message.UserMessage = item.Content;
+                                break;
+                            }
+                        }
+                    }
                     entity.Entry(subscriber).State = EntityState.Modified;
                     entity.SaveChanges();
                 }
@@ -151,6 +169,24 @@ namespace SharedLibrary
                     //}
                     newSubscriber.SubscriberUniqueId = "";
                     newSubscriber.SpecialUniqueId = null;
+                    if (message.Content == null || (message.Content.Length == 1 && message.Content != "0") || message.Content.Length >= 10)
+                    {
+                        newSubscriber.UserMessage = message.Content;
+                        message.UserMessage = message.Content;
+                    }
+                    else
+                    {
+                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Take(10).ToList();
+                        foreach (var item in recievedMessages)
+                        {
+                            if (item.Content.Length < 4)
+                            {
+                                newSubscriber.UserMessage = item.Content;
+                                message.UserMessage = item.Content;
+                                break;
+                            }
+                        }
+                    }
                     entity.Subscribers.Add(newSubscriber);
                     entity.SaveChanges();
                 }
@@ -311,6 +347,7 @@ namespace SharedLibrary
                     subscriberHistory.Date = DateTime.Now;
                     subscriberHistory.ServiceName = service.Name;
                     subscriberHistory.ServiceId = service.Id;
+                    subscriberHistory.UserMessage = message.UserMessage;
                     subscriberHistory.ServiceStatusForSubscriber = state;
                     subscriberHistory.ShortCode = message.ShortCode;
                     subscriberHistory.Time = DateTime.Now.TimeOfDay;

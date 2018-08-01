@@ -282,7 +282,7 @@ namespace DehnadPorShetabService
                     message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
                     if (installmentCycleNumber == 1 && installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
                         return 0;
-                    else if (installmentCycleNumber > 1)
+                    else if (installmentCycleNumber > 2)
                         message.Price = 250;
                     if (priceUserChargedToday + message.Price > maxChargeLimit)
                         return 0;
