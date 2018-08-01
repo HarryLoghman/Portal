@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.BehAmooz500.Controllers
 {
-    [Authorize(Roles = "Admin, BehAmooz500User, Spectator")]
+    [Authorize(Roles = "Admin, AvvalYadUser, Spectator")]
     public class StatisticsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -179,13 +179,14 @@ namespace Portal.Areas.BehAmooz500.Controllers
                     NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions,
                 });
             }
-            else if (User.IsInRole("BehAmooz500User"))
+            else if (User.IsInRole("AvvalYadUser"))
             {
                 result = db.DailyStatistics.ToDataSourceResult(request, dailyStatistics => new
                 {
                     Id = dailyStatistics.Id,
                     PersianDate = dailyStatistics.PersianDate,
-                    SumOfSinglechargeSuccessfulCharge = dailyStatistics.SumOfSinglechargeSuccessfulCharge,
+                    NumberOfSubscriptions = dailyStatistics.NumberOfSubscriptions,
+                    NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions
                 });
             }
             else
