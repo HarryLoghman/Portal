@@ -139,8 +139,7 @@ namespace DehnadPorShetabService
                 int maxTaskCount = 120;
                 int tps = 95;
                 int rowCount = installmentList.Count;
-                int i;
-                string mobileNumber;
+                
                 List<Task> tasksNew = new List<Task>();
                 Task task;
 
@@ -156,7 +155,7 @@ namespace DehnadPorShetabService
                     return 0;
                 }
                 int loopNo = 0;
-                i = 0;
+                
 
                 while (position < rowCount)
                 {
@@ -164,7 +163,7 @@ namespace DehnadPorShetabService
                     {
                         v_requestWaitEvent.WaitOne();
                     }
-                    i = 0;
+                    int i = 0;
                     loopNo++;
                     DateTime startTime = DateTime.Now;
                     while (i <= tps - 1 && //DateTime.Now.Second == startTime.Second
@@ -176,7 +175,7 @@ namespace DehnadPorShetabService
 
                         
                         int threadNo = -1;
-                        mobileNumber = installmentList[position];
+                        String mobileNumber = installmentList[position];
 
                         task = tasksNew.Where(o => o.IsCompleted).FirstOrDefault();
                         if (task == null)
@@ -211,7 +210,10 @@ namespace DehnadPorShetabService
                             ((Task<int>)tasksNew[threadNo]).ContinueWith(o => { lock (obj) { income += o.Result; } });
                             if (i == 0) startTime = DateTime.Now;
                             tasksNew[threadNo].Start();
-                            position++;
+                            lock (obj)
+                            {
+                                position++;
+                            }
                             i++;
                         }
 
