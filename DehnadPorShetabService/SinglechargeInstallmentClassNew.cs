@@ -20,20 +20,21 @@ namespace DehnadPorShetabService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 500;
-        static int v_requestSleepInMilliseconds;
+        static bool v_requestWait;
         static Nullable<DateTime> v_requestFirstStartTime;
         static int v_requestCounterPerSecond;
         static int v_requestTPS;
+        static ManualResetEvent v_requestWaitEvent;
 
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
 
-            v_requestSleepInMilliseconds = 0;
+            v_requestWait = false;
             v_requestFirstStartTime = null;
             v_requestCounterPerSecond = 0;
             v_requestTPS = 95;
-
+            v_requestWaitEvent = new ManualResetEvent(true);
             try
             {
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
@@ -42,6 +43,11 @@ namespace DehnadPorShetabService
                 List<string> installmentList;
                 using (var entity = new PorShetabEntities())
                 {
+
+                    DateTime fiveDaysBefore = DateTime.Now.AddDays(-5);
+                    entity.SingleChargeTimings.RemoveRange(entity.SingleChargeTimings.Where(o => DbFunctions.TruncateTime(o.timeStartProcessMtnInstallment) < fiveDaysBefore.Date));
+                    entity.SaveChanges();
+
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
@@ -138,13 +144,6 @@ namespace DehnadPorShetabService
                 List<Task> tasksNew = new List<Task>();
                 Task task;
 
-                DateTime startTime;
-                startTime = DateTime.Now;
-                TimeSpan waitTime;
-
-                //int threadNo;
-                //threadNo = 0;
-                //bool checkTimeDifferences;
                 System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
@@ -157,63 +156,83 @@ namespace DehnadPorShetabService
                     return 0;
                 }
                 int loopNo = 0;
+                i = 0;
+
                 while (position < rowCount)
                 {
-                    while (v_requestSleepInMilliseconds > 0)
+                    if (v_requestWait)
                     {
-                        //wait till the sleep time is zero
+                        v_requestWaitEvent.WaitOne();
                     }
                     i = 0;
-
+                    loopNo++;
+                    DateTime startTime = DateTime.Now;
                     while (i <= tps - 1 && //DateTime.Now.Second == startTime.Second
                         (DateTime.Now - startTime).TotalMilliseconds < 1000
                         && position < rowCount)
                     {
                         if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
+
+                        
                         int threadNo = -1;
                         mobileNumber = installmentList[position];
 
-                        task = getTask(tasksNew, cnn, maxTaskCount
-                            , maxChargeLimit, mobileNumber, serviceAdditionalInfo, chargeCodes, installmentCycleNumber
-                            , installmentInnerCycleNumber, loopNo, out threadNo, isCampaignActive);
+                        task = tasksNew.Where(o => o.IsCompleted).FirstOrDefault();
                         if (task == null)
                         {
+                            if (tasksNew.Count < maxTaskCount)
+                            {
+                                threadNo = tasksNew.Count;
+                                task = new Task<int>(() =>
+                                {
+                                    return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber
+            , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, threadNo, isCampaignActive, DateTime.Now).Result;
+                                });
+                                tasksNew.Add(task);
 
+                            }
                         }
                         else
                         {
+                            threadNo = tasksNew.IndexOf(task);
+
+                            task = new Task<int>(() =>
+                            {
+                                return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber
+            , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, threadNo, isCampaignActive, DateTime.Now).Result;
+                            });
+
+                            tasksNew[threadNo] = task;
+
+                        }
+                        if (task != null)
+                        {
                             ((Task<int>)tasksNew[threadNo]).ContinueWith(o => { lock (obj) { income += o.Result; } });
+                            if (i == 0) startTime = DateTime.Now;
                             tasksNew[threadNo].Start();
                             position++;
                             i++;
                         }
 
                     }
-                    //while (DateTime.Now.Second == startTime.Second)
-                    //{
+                    
+                    while (tasksNew.Where(o => o.Status == TaskStatus.WaitingForActivation || o.Status == TaskStatus.WaitingForChildrenToComplete || o.Status == TaskStatus.WaitingToRun
+                         || o.Status == TaskStatus.Created).Count() > 0)
+                    {
 
-                    //}
-                    waitTime = DateTime.Now - startTime;
+                    }
+                    TimeSpan waitTime = DateTime.Now - startTime;
                     if (waitTime.TotalMilliseconds < 1000)
-                        Thread.Sleep(1100 - (int)waitTime.TotalMilliseconds);
-                    startTime = DateTime.Now;
-                    loopNo++;
+                        Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds);
+
+                    
                 }
 
-                while (true)
+                while (tasksNew.Where(o => !o.IsCompleted).Count() > 0)
                 {
-                    for (i = 0; i <= tasksNew.Count - 1; i++)
-                    {
-                        if (!tasksNew[i].IsCompleted)
-                            break;
-                    }
-                    if (i == tasksNew.Count)
-                    {
-                        cnn.Close();
-                        break;
-                    }
                 }
+                cnn.Close();
 
             }
             catch (Exception e)
@@ -226,58 +245,9 @@ namespace DehnadPorShetabService
         }
 
 
-        private static Task<int> getTask(List<Task> tasks, System.Data.SqlClient.SqlConnection cnn, int maxCounterCount
-            , int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes
-            , int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, out int threadNo, int isCampaignActive)
-        {
-            threadNo = -1;
-
-            int j, k;
-            for (j = 0; j <= tasks.Count - 1; j++)
-            {
-                if (tasks[j].IsCompleted)
-                {
-                    threadNo = j;
-                    break;
-                }
-            }
-
-            if (threadNo == -1)
-            {
-                //new task needed
-                if (tasks.Count <= maxCounterCount)
-                {
-                    //not meet the maximum
-                    //add new task
-                    threadNo = tasks.Count;
-                    k = threadNo;
-                    tasks.Add(new Task<int>(() =>
-                    {
-                        return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber, serviceAdditionalInfo
-, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, k, isCampaignActive);
-                    }));
-                }
-                else
-                {
-                    //meet the maximum
-                    return null;
-                }
-            }
-            else
-            {
-                k = threadNo;
-                tasks[threadNo] = new Task<int>(() =>
-                {
-                    return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber, serviceAdditionalInfo
-, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, k, isCampaignActive);
-                });
-                //tasks[threadNo] = new Task<int>(ProcessMtnInstallment, new object[]{beat, threadNo, delay, this.v_position + 1 });
-            }
-            return (Task<int>)tasks[threadNo];
-        }
-
         private static async Task<int> ProcessMtnInstallment(System.Data.SqlClient.SqlConnection cnn, int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo
-            , dynamic chargeCodes, int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, int taskId, int isCampaignActive)
+            , dynamic chargeCodes, int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, int taskId, int isCampaignActive
+            , DateTime timeLoop)
         {
             //logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
             DateTime timeStartProcessMtnInstallment = DateTime.Now;
@@ -317,7 +287,7 @@ namespace DehnadPorShetabService
                     if (priceUserChargedToday + message.Price > maxChargeLimit)
                         return 0;
                     var response = ChargeMtnSubscriber(timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere
-                        , entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, loopNo, taskId).Result;
+                        , entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, loopNo, taskId, timeLoop).Result;
 
                     if (response.IsSucceeded == true)
                     {
@@ -364,7 +334,8 @@ namespace DehnadPorShetabService
         public static async Task<Singlecharge> ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
             PorShetabEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
-            , Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int loopNo, int threadNumber, long installmentId = 0)
+            , Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int loopNo, int threadNumber
+            , DateTime timeLoop, long installmentId = 0)
         {
             DateTime timeStartChargeMtnSubscriber = DateTime.Now;
             Nullable<DateTime> timeAfterXML = null;
@@ -397,8 +368,6 @@ namespace DehnadPorShetabService
             {
                 singlecharge.ReferenceId = referenceCode;
 
-                throttleRequests(DateTime.Now);
-
                 timeBeforeHTTPClient = DateTime.Now;
                 using (var client = new HttpClient())
                 {
@@ -406,6 +375,7 @@ namespace DehnadPorShetabService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
+                    throttleRequests(DateTime.Now);
                     timeBeforeSendMTNClient = DateTime.Now;
 
 
@@ -494,6 +464,7 @@ namespace DehnadPorShetabService
                 timingTable.timeBeforeHTTPClient = timeBeforeHTTPClient;
                 timingTable.timeBeforeReadStringClient = timeBeforeReadStringClient;
                 timingTable.timeBeforeSendMTNClient = timeBeforeSendMTNClient;
+                timingTable.timeCreate = timeLoop;
                 timingTable.timeFinish = singlecharge.DateCreated;
                 timingTable.timeStartChargeMtnSubscriber = timeStartChargeMtnSubscriber;
                 timingTable.timeStartProcessMtnInstallment = timeStartProcessMtnInstallment;
@@ -511,12 +482,13 @@ namespace DehnadPorShetabService
 
         private static void throttleRequests(DateTime requestTime)
         {
-            if (v_requestSleepInMilliseconds > 0)
+            bool wait = v_requestWait;
+
+            if (wait)
             {
-
-                Thread.Sleep(v_requestSleepInMilliseconds + 10);//add ten to provide time for the locking thread to set the v_sleepMilliseconds sooner than current thread
-
+                v_requestWaitEvent.WaitOne();//wait till v_requestWaitEvent is signaled
             }
+
             object obj = new object();
             if (!v_requestFirstStartTime.HasValue)
             {
@@ -524,7 +496,7 @@ namespace DehnadPorShetabService
                 {
                     v_requestCounterPerSecond = 1;
                     v_requestFirstStartTime = requestTime;
-                    v_requestSleepInMilliseconds = 0;
+                    v_requestWait = false;
                 }
                 return;
             }
@@ -539,18 +511,33 @@ namespace DehnadPorShetabService
                 }
                 else
                 {
+                    Nullable<DateTime> requestFirstStartTime = v_requestFirstStartTime;
+                    bool blockerTask = false;
                     lock (obj)
                     {
-                        v_requestSleepInMilliseconds = (int)(1000 - waitTime.TotalMilliseconds);
+                        v_requestWait = true;
+                        blockerTask = true;
+                        v_requestWaitEvent.Reset();
                     }
-                    Thread.Sleep(v_requestSleepInMilliseconds);
-                    lock (obj)
+                    if (!blockerTask)
                     {
-                        v_requestSleepInMilliseconds = 0;
-                        v_requestCounterPerSecond = 1;
-                        v_requestFirstStartTime = DateTime.Now;
+                        if (v_requestWait)
+                        {
+                            v_requestWaitEvent.WaitOne();
+                        }
                     }
+                    else
+                    {
+                        Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds + 50);
 
+                        lock (obj)
+                        {
+                            v_requestWait = false; ;
+                            v_requestCounterPerSecond = 1;
+                            v_requestFirstStartTime = DateTime.Now;
+                        }
+                        v_requestWaitEvent.Set();
+                    }
                 }
             }
             else
