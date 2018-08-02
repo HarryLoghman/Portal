@@ -139,7 +139,7 @@ namespace DehnadPorShetabService
                 int maxTaskCount = 120;
                 int tps = 95;
                 int rowCount = installmentList.Count;
-                
+
                 List<Task> tasksNew = new List<Task>();
                 Task task;
 
@@ -155,7 +155,7 @@ namespace DehnadPorShetabService
                     return 0;
                 }
                 int loopNo = 0;
-                
+
 
                 while (position < rowCount)
                 {
@@ -173,7 +173,7 @@ namespace DehnadPorShetabService
                         if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
 
-                        
+
                         int threadNo = -1;
                         String mobileNumber = installmentList[position];
 
@@ -218,7 +218,7 @@ namespace DehnadPorShetabService
                         }
 
                     }
-                    
+
                     while (tasksNew.Where(o => o.Status == TaskStatus.WaitingForActivation || o.Status == TaskStatus.WaitingForChildrenToComplete || o.Status == TaskStatus.WaitingToRun
                          || o.Status == TaskStatus.Created).Count() > 0)
                     {
@@ -228,7 +228,7 @@ namespace DehnadPorShetabService
                     if (waitTime.TotalMilliseconds < 1000)
                         Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds);
 
-                    
+
                 }
 
                 while (tasksNew.Where(o => !o.IsCompleted).Count() > 0)
