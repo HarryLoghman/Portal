@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="ce1dc86056eb4cdb9022992d87313006" Name="Diagram1">
+      <Diagram DiagramId="025ff603a1ad4c25b4170ae680a8fefe" Name="Diagram1">
         <EntityTypeShape EntityType="PorShetabModel.AutochargeContent" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.AutochargeContentsSendedToUser" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.AutochargeHeaderFooter" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
@@ -28,12 +28,12 @@
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeArchive" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeInstallment" Width="1.5" PointX="8.75" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeInstallmentArchive" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PorShetabModel.SingleChargeTiming" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.SinglechargeWaiting" Width="1.5" PointX="4.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.SubscribersAdditionalInfo" Width="1.5" PointX="14.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.TimedTempMessagesBuffer" Width="1.5" PointX="14.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.vw_SentMessages" Width="1.5" PointX="14.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PorShetabModel.vw_Singlecharge" Width="1.5" PointX="16.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="PorShetabModel.SingleChargeTiming" Width="1.5" PointX="11.375" PointY="16.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
