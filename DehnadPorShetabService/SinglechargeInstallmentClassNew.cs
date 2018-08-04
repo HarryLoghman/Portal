@@ -20,23 +20,16 @@ namespace DehnadPorShetabService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 500;
-        static bool v_requestWait;
-        static Nullable<DateTime> v_requestFirstStartTime;
-        static int v_requestCounterPerSecond;
-        static int v_requestTPS;
-        static ManualResetEvent v_requestWaitEvent;
 
+        static throttle v_throttle;
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
 
-            v_requestWait = false;
-            v_requestFirstStartTime = null;
-            v_requestCounterPerSecond = 0;
-            v_requestTPS = 95;
-            v_requestWaitEvent = new ManualResetEvent(true);
             try
             {
+                v_throttle = new throttle(95, 1000, 10);
+
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
@@ -44,10 +37,10 @@ namespace DehnadPorShetabService
                 using (var entity = new PorShetabEntities())
                 {
 
-                    DateTime fiveDaysBefore = DateTime.Now.AddDays(-5);
-                    entity.SingleChargeTimings.RemoveRange(entity.SingleChargeTimings.Where(o => DbFunctions.TruncateTime(o.timeStartProcessMtnInstallment) < fiveDaysBefore.Date));
-                    entity.SaveChanges();
-
+                    //DateTime fiveDaysBefore = DateTime.Now.AddDays(-5);
+                    //entity.SingleChargeTimings.RemoveRange(entity.SingleChargeTimings.Where(o => DbFunctions.TruncateTime(o.timeStartProcessMtnInstallment) < fiveDaysBefore.Date));
+                    //entity.SaveChanges();
+                    
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
@@ -139,7 +132,7 @@ namespace DehnadPorShetabService
                 int maxTaskCount = 120;
                 int tps = 95;
                 int rowCount = installmentList.Count;
-                
+
                 List<Task> tasksNew = new List<Task>();
                 Task task;
 
@@ -155,14 +148,10 @@ namespace DehnadPorShetabService
                     return 0;
                 }
                 int loopNo = 0;
-                
+
 
                 while (position < rowCount)
                 {
-                    if (v_requestWait)
-                    {
-                        v_requestWaitEvent.WaitOne();
-                    }
                     int i = 0;
                     loopNo++;
                     DateTime startTime = DateTime.Now;
@@ -172,7 +161,6 @@ namespace DehnadPorShetabService
                     {
                         if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
-
                         
                         int threadNo = -1;
                         String mobileNumber = installmentList[position];
@@ -218,7 +206,7 @@ namespace DehnadPorShetabService
                         }
 
                     }
-                    
+
                     while (tasksNew.Where(o => o.Status == TaskStatus.WaitingForActivation || o.Status == TaskStatus.WaitingForChildrenToComplete || o.Status == TaskStatus.WaitingToRun
                          || o.Status == TaskStatus.Created).Count() > 0)
                     {
@@ -228,7 +216,7 @@ namespace DehnadPorShetabService
                     if (waitTime.TotalMilliseconds < 1000)
                         Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds);
 
-                    
+
                 }
 
                 while (tasksNew.Where(o => !o.IsCompleted).Count() > 0)
@@ -377,7 +365,7 @@ namespace DehnadPorShetabService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
-                    throttleRequests(DateTime.Now);
+                    v_throttle.throttleRequests();
                     timeBeforeSendMTNClient = DateTime.Now;
 
 
@@ -482,76 +470,7 @@ namespace DehnadPorShetabService
             return singlecharge;
         }
 
-        private static void throttleRequests(DateTime requestTime)
-        {
-            bool wait = v_requestWait;
-
-            if (wait)
-            {
-                v_requestWaitEvent.WaitOne();//wait till v_requestWaitEvent is signaled
-            }
-
-            object obj = new object();
-            if (!v_requestFirstStartTime.HasValue)
-            {
-                lock (obj)
-                {
-                    v_requestCounterPerSecond = 1;
-                    v_requestFirstStartTime = requestTime;
-                    v_requestWait = false;
-                }
-                return;
-            }
-            TimeSpan waitTime = requestTime - v_requestFirstStartTime.Value;
-
-            if (waitTime.TotalMilliseconds <= 1000)
-            {
-                if (v_requestCounterPerSecond <= v_requestTPS)
-                {
-                    lock (obj)
-                    { v_requestCounterPerSecond++; }
-                }
-                else
-                {
-                    Nullable<DateTime> requestFirstStartTime = v_requestFirstStartTime;
-                    bool blockerTask = false;
-                    lock (obj)
-                    {
-                        v_requestWait = true;
-                        blockerTask = true;
-                        v_requestWaitEvent.Reset();
-                    }
-                    if (!blockerTask)
-                    {
-                        if (v_requestWait)
-                        {
-                            v_requestWaitEvent.WaitOne();
-                        }
-                    }
-                    else
-                    {
-                        Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds + 50);
-
-                        lock (obj)
-                        {
-                            v_requestWait = false; ;
-                            v_requestCounterPerSecond = 1;
-                            v_requestFirstStartTime = DateTime.Now;
-                        }
-                        v_requestWaitEvent.Set();
-                    }
-                }
-            }
-            else
-            {
-                lock (obj)
-                {
-                    v_requestCounterPerSecond = 1;
-                    v_requestFirstStartTime = requestTime;
-                }
-            }
-
-        }
+       
 
         public static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
         {
@@ -567,5 +486,137 @@ namespace DehnadPorShetabService
                 message.Price = 0;
             return message;
         }
+
+
     }
+    public class throttle
+    {
+        Nullable<long> v_startTick;
+        int v_currentPart = 0;
+        int v_tps = 95;
+        int v_partLengthInMilliSecond = 1000;
+        int v_currentCount = 0;
+        int v_counter = 0;
+        int v_safeMarginInMillisecond;
+        public throttle(int tps, int partLengthInMilliSecond, int safeMarginInMillisecond)
+        {
+            if (tps <= 0) throw new ArgumentException("TPS should be a positive value");
+            if (tps > partLengthInMilliSecond) throw new ArgumentException("TPS should be lower than partLengthInMilliSecond");
+            if (partLengthInMilliSecond < 0) throw new ArgumentException("partLengthInMilliSecond should be a positive value");
+            if (partLengthInMilliSecond < safeMarginInMillisecond) throw new ArgumentException("partLengthInMilliSecond should be greater than safeMerginInMillisecond");
+            if (safeMarginInMillisecond < 0) throw new ArgumentException("safeMerginInMillisecond should be a non negative value");
+
+            this.v_counter = 0;
+            this.v_currentPart = 0;
+            this.v_tps = tps;
+            this.v_partLengthInMilliSecond = partLengthInMilliSecond;
+            this.v_safeMarginInMillisecond = safeMarginInMillisecond;
+        }
+        public void throttleRequests()
+        {
+            int diffInMillisecond;
+            object obj = new object();
+            if (this.v_counter == 0)
+            {
+                lock (obj)
+                {
+                    if (!this.v_startTick.HasValue)
+                        this.v_startTick = DateTime.Now.Ticks;
+                }
+            }
+
+            diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+
+            this.setCurrentPart(diffInMillisecond);
+
+            lock (obj)
+            {
+                this.v_counter++;
+                this.v_currentCount++;
+            }
+            int counterTps = ((this.v_counter - 1) / this.v_tps);
+            int counterTpsRemain = ((this.v_counter - 1) & this.v_tps) + 1;
+
+            int temp = counterTps * this.v_partLengthInMilliSecond;
+
+            int currentCountTPS = (this.v_currentCount / this.v_tps);
+            int currentCountTpsRemain = (this.v_currentCount % this.v_tps);
+
+            if (temp <= diffInMillisecond && diffInMillisecond <= (this.v_partLengthInMilliSecond - 1) + temp)
+            {
+                //on time
+                if (this.v_currentCount <= this.v_tps)
+                {
+                    //enough seat
+                    //ok do not sleep
+
+                }
+                else
+                {
+                    //not enough seat
+                    while (this.v_currentCount > this.v_tps)
+                    {
+                        //wait till there is a free seat
+                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
+                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+                        this.setCurrentPart(diffInMillisecond);
+                    }
+                    lock (obj) { this.v_currentCount++; }
+                }
+            }
+            else if (diffInMillisecond < temp)
+            {
+
+                //early in time
+                //wait till till your turn
+                while (this.v_currentCount > this.v_tps)
+                {
+                    Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
+                    diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+                    this.setCurrentPart(diffInMillisecond);
+                }
+                lock (obj) { this.v_currentCount++; }
+
+            }
+            else if (diffInMillisecond > (this.v_partLengthInMilliSecond - 1) + temp)
+            {
+                //late in time
+                if (this.v_currentCount <= this.v_tps)
+                {
+                    //enough seat
+                    //lock (obj) { this.v_currentCount++; }
+                }
+                else
+                {
+                    //not enough seat
+                    //wait till there is a seat
+                    while (this.v_currentCount > this.v_tps)
+                    {
+                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
+                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+                        this.setCurrentPart(diffInMillisecond);
+                    }
+                    lock (obj) { this.v_currentCount++; }
+                }
+            }
+
+        }
+
+        private void setCurrentPart(int diffInMillisecond)
+        {
+            object obj = new object();
+            lock (obj)
+            {
+                if ((diffInMillisecond / this.v_partLengthInMilliSecond) + 1 != this.v_currentPart)
+                {
+
+                    this.v_currentPart = (diffInMillisecond / this.v_partLengthInMilliSecond) + 1;
+                    this.v_currentCount = 0;
+                }
+
+            }
+        }
+
+    }
+
 }
