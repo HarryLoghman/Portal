@@ -535,7 +535,7 @@ namespace DehnadPorShetabService
                 this.v_currentCount++;
             }
             int counterTps = ((this.v_counter - 1) / this.v_tps);
-            int counterTpsRemain = ((this.v_counter - 1) & this.v_tps) + 1;
+            int counterTpsRemain = ((this.v_counter - 1) % this.v_tps) + 1;
 
             int temp = counterTps * this.v_partLengthInMilliSecond;
 
