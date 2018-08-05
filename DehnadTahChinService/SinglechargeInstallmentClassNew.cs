@@ -28,7 +28,7 @@ namespace DehnadTahChinService
 
             try
             {
-                v_throttle = new throttle(45, 1000, 10);
+                v_throttle = new throttle(36, 1000, 10);
 
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
@@ -129,8 +129,8 @@ namespace DehnadTahChinService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 54;
-                int tps = 45;
+                int maxTaskCount = 45;
+                int tps = 36;
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();

@@ -28,7 +28,7 @@ namespace DehnadMusicYadService
 
             try
             {
-                v_throttle = new throttle(30, 1000, 10);
+                v_throttle = new throttle(24, 1000, 10);
 
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
@@ -129,8 +129,8 @@ namespace DehnadMusicYadService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 36;
-                int tps = 30;
+                int maxTaskCount = 30;
+                int tps = 24;
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();

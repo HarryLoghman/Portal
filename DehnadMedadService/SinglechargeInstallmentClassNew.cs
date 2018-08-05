@@ -28,7 +28,7 @@ namespace DehnadMedadService
 
             try
             {
-                v_throttle = new throttle(5, 1000, 10);
+                v_throttle = new throttle(3, 1000, 10);
 
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
@@ -129,8 +129,8 @@ namespace DehnadMedadService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 8;
-                int tps = 5;
+                int maxTaskCount = 5;
+                int tps = 3;
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();
