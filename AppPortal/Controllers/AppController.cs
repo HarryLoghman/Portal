@@ -836,9 +836,12 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new ShahreKalamehLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj.Price = 5; //5 is Sub for hub
+                                            messageObj = ShahreKalamehLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
-                                            messageObj.Price = 6; //6 is Unsub for hub
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = ShahreKalamehLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
                                         else
                                             messageObj = ShahreKalamehLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
@@ -857,9 +860,9 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Hub";
+                                                string aggregatorName = "MciDirect";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             ShahreKalamehLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -872,9 +875,12 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj.Price = 5; //5 is Sub for hub
+                                            messageObj = SoratyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
-                                            messageObj.Price = 6; //6 is Unsub for hub
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = SoratyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
                                         else
                                             messageObj = SoratyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
@@ -893,9 +899,9 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new SoratyLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Hub";
+                                                string aggregatorName = "MciDirect";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             SoratyLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -908,9 +914,12 @@ namespace Portal.Controllers
                                     {
                                         var imiChargeCode = new DefendIranLibrary.Models.ImiChargeCode();
                                         if (messageObj.Price.Value == 0)
-                                            messageObj.Price = 5; //5 is Sub for hub
+                                            messageObj = DefendIranLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                                         else if (messageObj.Price.Value == -1)
-                                            messageObj.Price = 6; //6 is Unsub for hub
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = DefendIranLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
                                         else
                                             messageObj = DefendIranLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                         if (messageObj.Price == null)
@@ -929,9 +938,9 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new DefendIranLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Hub";
+                                                string aggregatorName = "MciDirect";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.HubOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             DefendIranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1517,9 +1526,9 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Hub";
+                                        string aggregatorName = "MciDirect";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.HubOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     ShahreKalamehLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1535,9 +1544,9 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Hub";
+                                        string aggregatorName = "MciDirect";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.HubOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     SoratyLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1553,9 +1562,9 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Hub";
+                                        string aggregatorName = "MciDirect";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.HubOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     DefendIranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
