@@ -27,5 +27,9 @@ namespace MedadLibrary.Models
         public Nullable<System.DateTime> timeAfterReadStringClient { get; set; }
         public Nullable<System.DateTime> timeAfterXML { get; set; }
         public Nullable<System.DateTime> timeFinish { get; set; }
+        public Nullable<int> cycleNumber { get; set; }
+        public Nullable<int> loopNo { get; set; }
+        public Nullable<int> threadNumber { get; set; }
+        public Nullable<System.DateTime> timeCreate { get; set; }
     }
 }

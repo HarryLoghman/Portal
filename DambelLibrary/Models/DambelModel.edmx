@@ -507,6 +507,10 @@
           <Property Name="timeAfterReadStringClient" Type="datetime" />
           <Property Name="timeAfterXML" Type="datetime" />
           <Property Name="timeFinish" Type="datetime" />
+          <Property Name="cycleNumber" Type="int" />
+          <Property Name="loopNo" Type="int" />
+          <Property Name="threadNumber" Type="int" />
+          <Property Name="timeCreate" Type="datetime" />
         </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
@@ -1377,6 +1381,10 @@ warning 6002: The table/view 'Dambel.dbo.vw_Singlecharge' does not have a primar
           <Property Name="timeAfterReadStringClient" Type="DateTime" Precision="3" />
           <Property Name="timeAfterXML" Type="DateTime" Precision="3" />
           <Property Name="timeFinish" Type="DateTime" Precision="3" />
+          <Property Name="cycleNumber" Type="Int32" />
+          <Property Name="loopNo" Type="Int32" />
+          <Property Name="threadNumber" Type="Int32" />
+          <Property Name="timeCreate" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2000,6 +2008,10 @@ warning 6002: The table/view 'Dambel.dbo.vw_Singlecharge' does not have a primar
           <EntitySetMapping Name="SingleChargeTimings">
             <EntityTypeMapping TypeName="DambelModel.SingleChargeTiming">
               <MappingFragment StoreEntitySet="SingleChargeTiming">
+                <ScalarProperty Name="timeCreate" ColumnName="timeCreate" />
+                <ScalarProperty Name="threadNumber" ColumnName="threadNumber" />
+                <ScalarProperty Name="loopNo" ColumnName="loopNo" />
+                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
                 <ScalarProperty Name="timeFinish" ColumnName="timeFinish" />
                 <ScalarProperty Name="timeAfterXML" ColumnName="timeAfterXML" />
                 <ScalarProperty Name="timeAfterReadStringClient" ColumnName="timeAfterReadStringClient" />

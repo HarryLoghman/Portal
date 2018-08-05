@@ -20,17 +20,27 @@ namespace DehnadDambelService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 300;
+
+        static throttle v_throttle;
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
+
             try
             {
+                v_throttle = new throttle(30, 1000, 10);
+
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
                 using (var entity = new DambelEntities())
                 {
+
+                    //DateTime fiveDaysBefore = DateTime.Now.AddDays(-5);
+                    //entity.SingleChargeTimings.RemoveRange(entity.SingleChargeTimings.Where(o => DbFunctions.TruncateTime(o.timeStartProcessMtnInstallment) < fiveDaysBefore.Date));
+                    //entity.SaveChanges();
+
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
@@ -39,7 +49,16 @@ namespace DehnadDambelService
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                         //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
 
-                        installmentList = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        List<string> installmentListNotOrdered = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+
+                        Dictionary<string, int> orderedSubscribers = getSubscribersDueToTotalPriceYesterday(entity);
+
+                        installmentList = (from a in installmentListNotOrdered
+                                           join b in orderedSubscribers on a equals b.Key into ab
+                                           from b in ab.DefaultIfEmpty()
+                                           orderby b.Value descending
+                                           select new { mobileNumber = a }).Select(t => t.mobileNumber).ToList();
+
                         logs.Info("installmentList all users count:" + installmentList.Count);
                         var today = DateTime.Now;
                         List<string> chargeCompleted;
@@ -79,7 +98,17 @@ namespace DehnadDambelService
             return income;
         }
 
-        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo)
+        private static Dictionary<string, int> getSubscribersDueToTotalPriceYesterday(DambelEntities entity)
+        {
+            DateTime today = DateTime.Now.AddDays(-1);
+            Dictionary<string, int> chargeOnes = (from sca in entity.SinglechargeArchives where System.Data.Entity.DbFunctions.TruncateTime(sca.DateCreated) == today.Date && (sca.IsSucceeded == true) group sca by sca.MobileNumber into scat let totalPrice = scat.Sum(t => t.Price) select new { mobileNumber = (string)scat.Key, totalPrice }).ToDictionary(t => t.mobileNumber, t => t.totalPrice);
+
+            return chargeOnes;
+        }
+
+        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber
+            , string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize
+            , Dictionary<string, string> serviceAdditionalInfo)
         {
             var income = 0;
             object obj = new object();
@@ -103,18 +132,10 @@ namespace DehnadDambelService
                 int maxTaskCount = 36;
                 int tps = 30;
                 int rowCount = installmentList.Count;
-                int i;
-                string mobileNumber;
+
                 List<Task> tasksNew = new List<Task>();
                 Task task;
 
-                DateTime startTime;
-                startTime = DateTime.Now;
-                TimeSpan waitTime;
-
-                int threadNo;
-                threadNo = 0;
-                //bool checkTimeDifferences;
                 System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
@@ -126,52 +147,82 @@ namespace DehnadDambelService
                     logs.Error("Exception in Opening Connection: ", e);
                     return 0;
                 }
+                int loopNo = 0;
+
 
                 while (position < rowCount)
                 {
-
-                    i = 0;
-                    while (i <= tps - 1 && (DateTime.Now - startTime).TotalMilliseconds < 1000 && position < rowCount)
+                    int i = 0;
+                    loopNo++;
+                    DateTime startTime = DateTime.Now;
+                    while (i <= tps - 1 && //DateTime.Now.Second == startTime.Second
+                        (DateTime.Now - startTime).TotalMilliseconds < 1000
+                        && position < rowCount)
                     {
                         if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
-                        threadNo = -1;
-                        mobileNumber = installmentList[position];
 
-                        task = getTask(tasksNew, cnn, maxTaskCount, out threadNo
-                            , maxChargeLimit, mobileNumber, serviceAdditionalInfo, chargeCodes, installmentCycleNumber
-                            , installmentInnerCycleNumber, isCampaignActive);
+                        int threadNo = -1;
+                        String mobileNumber = installmentList[position];
+
+                        task = tasksNew.Where(o => o.IsCompleted).FirstOrDefault();
                         if (task == null)
                         {
+                            if (tasksNew.Count < maxTaskCount)
+                            {
+                                threadNo = tasksNew.Count;
+                                task = new Task<int>(() =>
+                                {
+                                    return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber
+            , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, threadNo, isCampaignActive, DateTime.Now).Result;
+                                });
+                                tasksNew.Add(task);
 
+                            }
                         }
                         else
                         {
+                            threadNo = tasksNew.IndexOf(task);
+
+                            task = new Task<int>(() =>
+                            {
+                                return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber
+            , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, threadNo, isCampaignActive, DateTime.Now).Result;
+                            });
+
+                            tasksNew[threadNo] = task;
+
+                        }
+                        if (task != null)
+                        {
                             ((Task<int>)tasksNew[threadNo]).ContinueWith(o => { lock (obj) { income += o.Result; } });
+                            if (i == 0) startTime = DateTime.Now;
                             tasksNew[threadNo].Start();
-                            position++;
+                            lock (obj)
+                            {
+                                position++;
+                            }
                             i++;
                         }
+
                     }
-                    waitTime = DateTime.Now - startTime;
+
+                    while (tasksNew.Where(o => o.Status == TaskStatus.WaitingForActivation || o.Status == TaskStatus.WaitingForChildrenToComplete || o.Status == TaskStatus.WaitingToRun
+                         || o.Status == TaskStatus.Created).Count() > 0)
+                    {
+
+                    }
+                    TimeSpan waitTime = DateTime.Now - startTime;
                     if (waitTime.TotalMilliseconds < 1000)
-                        Thread.Sleep(1100 - (int)waitTime.TotalMilliseconds);
-                    startTime = DateTime.Now;
+                        Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds);
+
+
                 }
 
-                while (true)
+                while (tasksNew.Where(o => !o.IsCompleted).Count() > 0)
                 {
-                    for (i = 0; i <= tasksNew.Count - 1; i++)
-                    {
-                        if (!tasksNew[i].IsCompleted)
-                            break;
-                    }
-                    if (i == tasksNew.Count)
-                    {
-                        cnn.Close();
-                        break;
-                    }
                 }
+                cnn.Close();
 
             }
             catch (Exception e)
@@ -184,58 +235,9 @@ namespace DehnadDambelService
         }
 
 
-        private static Task<int> getTask(List<Task> tasks, System.Data.SqlClient.SqlConnection cnn, int maxCounterCount, out int threadNo
-            , int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo, dynamic chargeCodes
-            , int installmentCycleNumber, int installmentInnerCycleNumber, int isCampaignActive)
-        {
-            threadNo = -1;
-
-            int j, k;
-            for (j = 0; j <= tasks.Count - 1; j++)
-            {
-                if (tasks[j].IsCompleted)
-                {
-                    threadNo = j;
-                    break;
-                }
-            }
-
-            if (threadNo == -1)
-            {
-                //new task needed
-                if (tasks.Count <= maxCounterCount)
-                {
-                    //not meet the maximum
-                    //add new task
-                    threadNo = tasks.Count;
-                    k = threadNo;
-                    tasks.Add(new Task<int>(() =>
-                    {
-                        return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber, serviceAdditionalInfo
-, chargeCodes, k, installmentCycleNumber, installmentInnerCycleNumber, isCampaignActive);
-                    }));
-                }
-                else
-                {
-                    //meet the maximum
-                    return null;
-                }
-            }
-            else
-            {
-                k = threadNo;
-                tasks[threadNo] = new Task<int>(() =>
-                {
-                    return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber, serviceAdditionalInfo
-, chargeCodes, k, installmentCycleNumber, installmentInnerCycleNumber, isCampaignActive);
-                });
-                //tasks[threadNo] = new Task<int>(ProcessMtnInstallment, new object[]{beat, threadNo, delay, this.v_position + 1 });
-            }
-            return (Task<int>)tasks[threadNo];
-        }
-
         private static async Task<int> ProcessMtnInstallment(System.Data.SqlClient.SqlConnection cnn, int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo
-            , dynamic chargeCodes, int taskId, int installmentCycleNumber, int installmentInnerCycleNumber, int isCampaignActive)
+            , dynamic chargeCodes, int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, int taskId, int isCampaignActive
+            , DateTime timeLoop)
         {
             //logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
             DateTime timeStartProcessMtnInstallment = DateTime.Now;
@@ -270,12 +272,12 @@ namespace DehnadDambelService
                     message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
                     if (installmentCycleNumber == 1 && installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
                         return 0;
-                    else if (installmentCycleNumber > 1)
+                    else if (installmentCycleNumber > 2)
                         message.Price = 150;
                     if (priceUserChargedToday + message.Price > maxChargeLimit)
                         return 0;
                     var response = ChargeMtnSubscriber(timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere
-                        , entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, taskId).Result;
+                        , entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, loopNo, taskId, timeLoop).Result;
 
                     if (response.IsSucceeded == true)
                     {
@@ -296,7 +298,9 @@ namespace DehnadDambelService
 
         public static async Task<Singlecharge> ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-            DambelEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int threadNumber, long installmentId = 0)
+            DambelEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
+            , Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int loopNo, int threadNumber
+            , DateTime timeLoop, long installmentId = 0)
         {
             DateTime timeStartChargeMtnSubscriber = DateTime.Now;
             Nullable<DateTime> timeAfterXML = null;
@@ -328,14 +332,17 @@ namespace DehnadDambelService
             try
             {
                 singlecharge.ReferenceId = referenceCode;
+
                 timeBeforeHTTPClient = DateTime.Now;
                 using (var client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(60);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
-                    
+
+                    v_throttle.throttleRequests();
                     timeBeforeSendMTNClient = DateTime.Now;
+
 
                     using (var response = await client.SendAsync(request))
                     {
@@ -412,6 +419,9 @@ namespace DehnadDambelService
                 entity.Singlecharges.Add(singlecharge);
 
                 SingleChargeTiming timingTable = new SingleChargeTiming();
+                timingTable.cycleNumber = installmentCycleNumber;
+                timingTable.loopNo = loopNo;
+                timingTable.threadNumber = threadNumber;
                 timingTable.mobileNumber = message.MobileNumber;
                 timingTable.timeAfterReadStringClient = timeAfterReadStringClient;
                 timingTable.timeAfterSendMTNClient = timeAfterSendMTNClient;
@@ -419,6 +429,7 @@ namespace DehnadDambelService
                 timingTable.timeBeforeHTTPClient = timeBeforeHTTPClient;
                 timingTable.timeBeforeReadStringClient = timeBeforeReadStringClient;
                 timingTable.timeBeforeSendMTNClient = timeBeforeSendMTNClient;
+                timingTable.timeCreate = timeLoop;
                 timingTable.timeFinish = singlecharge.DateCreated;
                 timingTable.timeStartChargeMtnSubscriber = timeStartChargeMtnSubscriber;
                 timingTable.timeStartProcessMtnInstallment = timeStartProcessMtnInstallment;
@@ -434,19 +445,153 @@ namespace DehnadDambelService
             return singlecharge;
         }
 
+
+
         public static SharedLibrary.Models.MessageObject ChooseMtnSinglechargePrice(SharedLibrary.Models.MessageObject message, dynamic chargeCodes, int priceUserChargedToday, int maxChargeLimit)
         {
             if (priceUserChargedToday == 0)
             {
                 message.Price = maxChargeLimit;
             }
-            else if (priceUserChargedToday <= 250)
+            else if (priceUserChargedToday <= 150)
             {
-                message.Price = 250;
+                message.Price = 150;
             }
             else
                 message.Price = 0;
             return message;
         }
+
+
     }
+    public class throttle
+    {
+        Nullable<long> v_startTick;
+        int v_currentPart = 0;
+        int v_tps = 95;
+        int v_partLengthInMilliSecond = 1000;
+        int v_currentCount = 0;
+        int v_counter = 0;
+        int v_safeMarginInMillisecond;
+        public throttle(int tps, int partLengthInMilliSecond, int safeMarginInMillisecond)
+        {
+            if (tps <= 0) throw new ArgumentException("TPS should be a positive value");
+            if (tps > partLengthInMilliSecond) throw new ArgumentException("TPS should be lower than partLengthInMilliSecond");
+            if (partLengthInMilliSecond < 0) throw new ArgumentException("partLengthInMilliSecond should be a positive value");
+            if (partLengthInMilliSecond < safeMarginInMillisecond) throw new ArgumentException("partLengthInMilliSecond should be greater than safeMerginInMillisecond");
+            if (safeMarginInMillisecond < 0) throw new ArgumentException("safeMerginInMillisecond should be a non negative value");
+
+            this.v_counter = 0;
+            this.v_currentPart = 0;
+            this.v_tps = tps;
+            this.v_partLengthInMilliSecond = partLengthInMilliSecond;
+            this.v_safeMarginInMillisecond = safeMarginInMillisecond;
+        }
+        public void throttleRequests()
+        {
+            int diffInMillisecond;
+            object obj = new object();
+            if (this.v_counter == 0)
+            {
+                lock (obj)
+                {
+                    if (!this.v_startTick.HasValue)
+                        this.v_startTick = DateTime.Now.Ticks;
+                }
+            }
+
+            diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+
+            this.setCurrentPart(diffInMillisecond);
+
+            lock (obj)
+            {
+                this.v_counter++;
+                this.v_currentCount++;
+            }
+            int counterTps = ((this.v_counter - 1) / this.v_tps);
+            int counterTpsRemain = ((this.v_counter - 1) % this.v_tps) + 1;
+
+            int temp = counterTps * this.v_partLengthInMilliSecond;
+
+            int currentCountTPS = (this.v_currentCount / this.v_tps);
+            int currentCountTpsRemain = (this.v_currentCount % this.v_tps);
+
+            if (temp <= diffInMillisecond && diffInMillisecond <= (this.v_partLengthInMilliSecond - 1) + temp)
+            {
+                //on time
+                if (this.v_currentCount <= this.v_tps)
+                {
+                    //enough seat
+                    //ok do not sleep
+
+                }
+                else
+                {
+                    //not enough seat
+                    while (this.v_currentCount > this.v_tps)
+                    {
+                        //wait till there is a free seat
+                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
+                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+                        this.setCurrentPart(diffInMillisecond);
+                    }
+                    lock (obj) { this.v_currentCount++; }
+                }
+            }
+            else if (diffInMillisecond < temp)
+            {
+
+                //early in time
+                //wait till till your turn
+                while (this.v_currentCount > this.v_tps)
+                {
+                    Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
+                    diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+                    this.setCurrentPart(diffInMillisecond);
+                }
+                lock (obj) { this.v_currentCount++; }
+
+            }
+            else if (diffInMillisecond > (this.v_partLengthInMilliSecond - 1) + temp)
+            {
+                //late in time
+                if (this.v_currentCount <= this.v_tps)
+                {
+                    //enough seat
+                    //lock (obj) { this.v_currentCount++; }
+                }
+                else
+                {
+                    //not enough seat
+                    //wait till there is a seat
+                    while (this.v_currentCount > this.v_tps)
+                    {
+                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
+                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
+                        this.setCurrentPart(diffInMillisecond);
+                    }
+                    lock (obj) { this.v_currentCount++; }
+                }
+            }
+
+        }
+
+        private void setCurrentPart(int diffInMillisecond)
+        {
+            object obj = new object();
+            lock (obj)
+            {
+                if ((diffInMillisecond / this.v_partLengthInMilliSecond) + 1 != this.v_currentPart)
+                {
+
+                    this.v_currentPart = (diffInMillisecond / this.v_partLengthInMilliSecond) + 1;
+                    this.v_currentCount = 0;
+                }
+
+            }
+        }
+
+    }
+
 }

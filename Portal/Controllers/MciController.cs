@@ -25,6 +25,7 @@ namespace Portal.Controllers
             string recievedPayload = await Request.Content.ReadAsStringAsync();
             var messageObj = new SharedLibrary.Models.MessageObject();
             XmlDocument xml = new XmlDocument();
+            logs.Info(recievedPayload);
             xml.LoadXml(recievedPayload);
             XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
             manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
