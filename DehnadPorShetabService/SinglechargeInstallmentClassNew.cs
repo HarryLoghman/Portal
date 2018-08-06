@@ -28,7 +28,7 @@ namespace DehnadPorShetabService
 
             try
             {
-                v_throttle = new throttle(76, 1000, 10);
+                v_throttle = new throttle(68, 1000, 10);
 
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
@@ -129,8 +129,8 @@ namespace DehnadPorShetabService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 101;
-                int tps = 76;
+                int maxTaskCount = 94;
+                int tps = 68;
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();

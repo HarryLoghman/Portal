@@ -28,7 +28,7 @@ namespace DehnadDambelService
 
             try
             {
-                v_throttle = new throttle(24, 1000, 10);
+                v_throttle = new throttle(22, 1000, 10);
 
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
@@ -129,8 +129,8 @@ namespace DehnadDambelService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 30;
-                int tps = 24;
+                int maxTaskCount = 28;
+                int tps = 22;
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();
