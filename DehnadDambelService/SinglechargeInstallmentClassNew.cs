@@ -342,7 +342,7 @@ namespace DehnadDambelService
 
                     v_throttle.throttleRequests();
                     timeBeforeSendMTNClient = DateTime.Now;
-
+                    logs.Info("dambel:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 
                     using (var response = await client.SendAsync(request))
                     {

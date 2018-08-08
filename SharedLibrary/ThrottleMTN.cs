@@ -13,6 +13,7 @@ namespace SharedLibrary
 {
     public class ThrottleMTN
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         int v_tps;
         int v_intervalInMillisecond;
         int v_safeMarginInMillisecond;
@@ -96,9 +97,10 @@ namespace SharedLibrary
 
                     using (MemoryMappedViewStream stream = mmf.CreateViewStream())
                     {
-                        using (BinaryReader reader = new BinaryReader(stream))
+                        using (StreamReader reader = new StreamReader(stream))
                         {
-                            str = reader.ReadString();
+                            str = reader.ReadToEnd();
+                            str = str.Replace("\0", "").Replace("\u0011", "");
                         }
                     }
 
@@ -124,13 +126,14 @@ namespace SharedLibrary
                                 waitInMillisecond = (int)((ticksFile + (this.v_intervalInMillisecond * divider) - ticksNow) + (this.v_safeMarginInMillisecond) * remain);
                             }
                             str = ticksFile + "," + count;
+
                         }
                         else
                         {
                             //ticksNow > ticksFile + this.v_intervalInMillisecond
                             //same second
                             count = 1;
-                            str = ticksNow + "," + count;
+                            str = ticksFile + (((ticksNow - ticksFile) / this.v_intervalInMillisecond) * this.v_intervalInMillisecond) + "," + count;
 
                         }
 
@@ -139,16 +142,18 @@ namespace SharedLibrary
                     }
                     using (MemoryMappedViewStream stream = mmf.CreateViewStream())
                     {
-
-                        BinaryWriter writer = new BinaryWriter(stream);
+                        StreamWriter writer = new StreamWriter(stream);
                         writer.Write(str);
+                        writer.Flush();
                     }
                     //Debug.WriteLine("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + str);
 
 
                 }
-
+                TimeSpan ts = new TimeSpan(int.Parse(str.Split(',')[0]) * 1000);
+                logs.Warn(str + "," + waitInMillisecond + "," + ts.Hours.ToString() + ":" + ts.Minutes.ToString() + ":" + ts.Seconds.ToString() + "," + ts.Milliseconds.ToString());
                 smph.Release();
+
                 if (waitInMillisecond > 0)
                 {
                     //Debug.WriteLine("&&&&&&&&&&Sleep" + waitInMillisecond);
@@ -156,6 +161,7 @@ namespace SharedLibrary
 
                     goto start;
                 }
+
             }
 
         }

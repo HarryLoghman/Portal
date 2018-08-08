@@ -345,7 +345,7 @@ namespace DehnadTahChinService
 
                     v_throttle.throttleRequests();
                     timeBeforeSendMTNClient = DateTime.Now;
-
+                    logs.Info("tahchin:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 
                     using (var response = await client.SendAsync(request))
                     {

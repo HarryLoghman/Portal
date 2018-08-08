@@ -341,7 +341,7 @@ namespace DehnadMusicYadService
 
                     v_throttle.throttleRequests();
                     timeBeforeSendMTNClient = DateTime.Now;
-
+                    logs.Info("musicyad:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 
                     using (var response = await client.SendAsync(request))
                     {
