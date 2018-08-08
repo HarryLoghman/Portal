@@ -13,6 +13,7 @@ namespace SharedLibrary
 {
     public class ThrottleMTN
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         int v_tps;
         int v_intervalInMillisecond;
         int v_safeMarginInMillisecond;
@@ -124,14 +125,14 @@ namespace SharedLibrary
                                 waitInMillisecond = (int)((ticksFile + (this.v_intervalInMillisecond * divider) - ticksNow) + (this.v_safeMarginInMillisecond) * remain);
                             }
                             str = ticksFile + "," + count;
-                            
+
                         }
                         else
                         {
                             //ticksNow > ticksFile + this.v_intervalInMillisecond
                             //same second
                             count = 1;
-                            str = ticksFile + (((ticksNow-ticksFile)/this.v_intervalInMillisecond) * this.v_intervalInMillisecond) + "," + count;
+                            str = ticksFile + (((ticksNow - ticksFile) / this.v_intervalInMillisecond) * this.v_intervalInMillisecond) + "," + count;
 
                         }
 
@@ -147,9 +148,10 @@ namespace SharedLibrary
 
 
                 }
-
+                TimeSpan ts = new TimeSpan(int.Parse(str.Split(',')[0]) * 1000);
+                logs.Warn(str + "||" + ts.Hours.ToString() + ":" + ts.Minutes.ToString() + ":" + ts.Seconds.ToString() + "," + ts.Milliseconds.ToString());
                 smph.Release();
-                
+
                 if (waitInMillisecond > 0)
                 {
                     //Debug.WriteLine("&&&&&&&&&&Sleep" + waitInMillisecond);
@@ -157,7 +159,7 @@ namespace SharedLibrary
 
                     goto start;
                 }
-                
+
             }
 
         }
