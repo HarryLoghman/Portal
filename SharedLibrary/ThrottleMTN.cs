@@ -141,8 +141,9 @@ namespace SharedLibrary
                     }
                     using (MemoryMappedViewStream stream = mmf.CreateViewStream())
                     {
-                        BinaryWriter writer = new BinaryWriter(stream);
+                        StreamWriter writer = new StreamWriter(stream);
                         writer.Write(str);
+                        writer.Flush();
                     }
                     //Debug.WriteLine("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + str);
 
