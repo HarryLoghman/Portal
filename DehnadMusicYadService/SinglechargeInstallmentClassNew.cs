@@ -342,7 +342,7 @@ namespace DehnadMusicYadService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
-                    v_throttle.throttleRequests();
+                    v_throttle.throttleRequests("musicyad");
                     timeBeforeSendMTNClient = DateTime.Now;
                     logs.Info("musicyad:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 
@@ -466,134 +466,6 @@ namespace DehnadMusicYadService
 
 
     }
-    public class throttle
-    {
-        Nullable<long> v_startTick;
-        int v_currentPart = 0;
-        int v_tps = 95;
-        int v_partLengthInMilliSecond = 1000;
-        int v_currentCount = 0;
-        int v_counter = 0;
-        int v_safeMarginInMillisecond;
-        public throttle(int tps, int partLengthInMilliSecond, int safeMarginInMillisecond)
-        {
-            if (tps <= 0) throw new ArgumentException("TPS should be a positive value");
-            if (tps > partLengthInMilliSecond) throw new ArgumentException("TPS should be lower than partLengthInMilliSecond");
-            if (partLengthInMilliSecond < 0) throw new ArgumentException("partLengthInMilliSecond should be a positive value");
-            if (partLengthInMilliSecond < safeMarginInMillisecond) throw new ArgumentException("partLengthInMilliSecond should be greater than safeMerginInMillisecond");
-            if (safeMarginInMillisecond < 0) throw new ArgumentException("safeMerginInMillisecond should be a non negative value");
-
-            this.v_counter = 0;
-            this.v_currentPart = 0;
-            this.v_tps = tps;
-            this.v_partLengthInMilliSecond = partLengthInMilliSecond;
-            this.v_safeMarginInMillisecond = safeMarginInMillisecond;
-        }
-        public void throttleRequests()
-        {
-            int diffInMillisecond;
-            object obj = new object();
-            if (this.v_counter == 0)
-            {
-                lock (obj)
-                {
-                    if (!this.v_startTick.HasValue)
-                        this.v_startTick = DateTime.Now.Ticks;
-                }
-            }
-
-            diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-
-            this.setCurrentPart(diffInMillisecond);
-
-            lock (obj)
-            {
-                this.v_counter++;
-                this.v_currentCount++;
-            }
-            int counterTps = ((this.v_counter - 1) / this.v_tps);
-            int counterTpsRemain = ((this.v_counter - 1) % this.v_tps) + 1;
-
-            int temp = counterTps * this.v_partLengthInMilliSecond;
-
-            int currentCountTPS = (this.v_currentCount / this.v_tps);
-            int currentCountTpsRemain = (this.v_currentCount % this.v_tps);
-
-            if (temp <= diffInMillisecond && diffInMillisecond <= (this.v_partLengthInMilliSecond - 1) + temp)
-            {
-                //on time
-                if (this.v_currentCount <= this.v_tps)
-                {
-                    //enough seat
-                    //ok do not sleep
-
-                }
-                else
-                {
-                    //not enough seat
-                    while (this.v_currentCount > this.v_tps)
-                    {
-                        //wait till there is a free seat
-                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
-                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-                        this.setCurrentPart(diffInMillisecond);
-                    }
-                    lock (obj) { this.v_currentCount++; }
-                }
-            }
-            else if (diffInMillisecond < temp)
-            {
-
-                //early in time
-                //wait till till your turn
-                while (this.v_currentCount > this.v_tps)
-                {
-                    Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
-                    diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-                    this.setCurrentPart(diffInMillisecond);
-                }
-                lock (obj) { this.v_currentCount++; }
-
-            }
-            else if (diffInMillisecond > (this.v_partLengthInMilliSecond - 1) + temp)
-            {
-                //late in time
-                if (this.v_currentCount <= this.v_tps)
-                {
-                    //enough seat
-                    //lock (obj) { this.v_currentCount++; }
-                }
-                else
-                {
-                    //not enough seat
-                    //wait till there is a seat
-                    while (this.v_currentCount > this.v_tps)
-                    {
-                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
-                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-                        this.setCurrentPart(diffInMillisecond);
-                    }
-                    lock (obj) { this.v_currentCount++; }
-                }
-            }
-
-        }
-
-        private void setCurrentPart(int diffInMillisecond)
-        {
-            object obj = new object();
-            lock (obj)
-            {
-                if ((diffInMillisecond / this.v_partLengthInMilliSecond) + 1 != this.v_currentPart)
-                {
-
-                    this.v_currentPart = (diffInMillisecond / this.v_partLengthInMilliSecond) + 1;
-                    this.v_currentCount = 0;
-                }
-
-            }
-        }
-
-    }
+    
 
 }

@@ -367,7 +367,7 @@ namespace DehnadPorShetabService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
-                    v_throttle.throttleRequests();
+                    v_throttle.throttleRequests("porshetab");
                     timeBeforeSendMTNClient = DateTime.Now;
                     logs.Info("porshetab:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 
