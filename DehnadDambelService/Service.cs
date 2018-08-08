@@ -235,26 +235,30 @@ namespace DehnadDambelService
                         using (var portal = new SharedLibrary.Models.PortalEntities())
                         {
                             TimeSpan ts = DateTime.Now.TimeOfDay;
-                            Nullable<int> maxCycleNumberDB;
-                            using (var dambel = new DambelLibrary.Models.DambelEntities())
-                            {
-                                DateTime now = DateTime.Now;
-                                maxCycleNumberDB = dambel.Singlecharges.Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(now)).Max(o => o.CycleNumber);
-                                maxCycleNumberDB = (maxCycleNumberDB.HasValue ? maxCycleNumberDB.Value : -1);
-                            }
+                           
                             var serviceCycles = portal.serviceCycles.Where(o => o.serviceID.ToString() == serviceAdditionalInfo["serviceId"] && o.startTime <= ts && ts <= o.endTime).Select(o => o);
-                            if (serviceCycles.Count() == 1 && maxCycleNumberDB != serviceCycles.FirstOrDefault().cycleNumber)
+                            if (serviceCycles.Count() == 1 )
                             {
-                                tps = maxTaskCount = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                                Nullable<int> maxCycleNumberDB;
+                                using (var dambel = new DambelLibrary.Models.DambelEntities())
+                                {
+                                    DateTime now = DateTime.Now;
+                                    maxCycleNumberDB = dambel.Singlecharges.Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(now)).Max(o => o.CycleNumber);
+                                    maxCycleNumberDB = (maxCycleNumberDB.HasValue ? maxCycleNumberDB.Value : -1);
+                                }
+                                if (maxCycleNumberDB != serviceCycles.FirstOrDefault().cycleNumber)
+                                {
+                                    tps = maxTaskCount = Properties.Settings.Default.DefaultSingleChargeTakeSize;
 
-                                installmentCycleNumber = serviceCycles.FirstOrDefault().cycleNumber;
-                                tps = serviceCycles.FirstOrDefault().tps.HasValue ? serviceCycles.FirstOrDefault().tps.Value : tps;
-                                maxTaskCount = serviceCycles.FirstOrDefault().maxTaskCount.HasValue ? serviceCycles.FirstOrDefault().maxTaskCount.Value : maxTaskCount;
+                                    installmentCycleNumber = serviceCycles.FirstOrDefault().cycleNumber;
+                                    tps = serviceCycles.FirstOrDefault().tps.HasValue ? serviceCycles.FirstOrDefault().tps.Value : tps;
+                                    maxTaskCount = serviceCycles.FirstOrDefault().maxTaskCount.HasValue ? serviceCycles.FirstOrDefault().maxTaskCount.Value : maxTaskCount;
 
-                                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber, tps, maxTaskCount);
-                                var endTime = DateTime.Now;
-                                var duration = endTime - startTime;
-                                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                                    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber, tps, maxTaskCount);
+                                    var endTime = DateTime.Now;
+                                    var duration = endTime - startTime;
+                                    SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                                }
                             }
                             else Thread.Sleep(1000);
                         }
