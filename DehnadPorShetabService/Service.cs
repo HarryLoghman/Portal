@@ -235,8 +235,9 @@ namespace DehnadPorShetabService
                         using (var portal = new SharedLibrary.Models.PortalEntities())
                         {
                             TimeSpan ts = DateTime.Now.TimeOfDay;
-                            
-                            var serviceCycles = portal.serviceCycles.Where(o => o.serviceID.ToString() == serviceAdditionalInfo["serviceId"] && o.startTime <= ts && ts <= o.endTime).Select(o => o);
+
+                            string serviceId = serviceAdditionalInfo["serviceId"];
+                            var serviceCycles = portal.serviceCycles.Where(o => o.serviceID.ToString() == serviceId && o.startTime <= ts && ts <= o.endTime).Select(o => o);
                             if (serviceCycles.Count() == 1)
                             {
                                 Nullable<int> maxCycleNumberDB;
