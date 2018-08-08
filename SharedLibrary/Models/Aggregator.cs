@@ -14,6 +14,12 @@ namespace SharedLibrary.Models
     
     public partial class Aggregator
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Aggregator()
+        {
+            this.ServiceInfoes = new HashSet<ServiceInfo>();
+        }
+    
         public long Id { get; set; }
         public long OperatorId { get; set; }
         public string AggregatorName { get; set; }
@@ -21,5 +27,7 @@ namespace SharedLibrary.Models
         public string AggregatorPassword { get; set; }
     
         public virtual Operator Operator { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ServiceInfo> ServiceInfoes { get; set; }
     }
 }

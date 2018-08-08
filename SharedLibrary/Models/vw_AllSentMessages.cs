@@ -12,16 +12,15 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ServiceInfo
+    public partial class vw_AllSentMessages
     {
-        public long Id { get; set; }
-        public long AggregatorId { get; set; }
-        public long ServiceId { get; set; }
+        public string Type { get; set; }
+        public string ServiceName { get; set; }
+        public string MobileNumber { get; set; }
         public string ShortCode { get; set; }
-        public string AggregatorServiceId { get; set; }
-        public string OperatorServiceId { get; set; }
-    
-        public virtual Aggregator Aggregator { get; set; }
-        public virtual Service Service { get; set; }
+        public string PersianDate { get; set; }
+        public string Time { get; set; }
+        public string Content { get; set; }
+        public int ProcessStatus { get; set; }
     }
 }
