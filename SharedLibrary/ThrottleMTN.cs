@@ -121,7 +121,7 @@ namespace SharedLibrary
 
                             if (count >= this.v_tps)
                             {
-                                waitInMillisecond = (int)((ticksFile + this.v_intervalInMillisecond - ticksNow) * divider + (this.v_safeMarginInMillisecond) * remain);
+                                waitInMillisecond = (int)((ticksFile + (this.v_intervalInMillisecond * divider) - ticksNow) + (this.v_safeMarginInMillisecond) * remain);
                             }
                             str = ticksFile + "," + count;
                         }

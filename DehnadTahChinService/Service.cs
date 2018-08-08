@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
@@ -228,8 +229,15 @@ namespace DehnadTahChinService
                         using (var portal = new SharedLibrary.Models.PortalEntities())
                         {
                             TimeSpan ts = DateTime.Now.TimeOfDay;
+                            Nullable<int> maxCycleNumberDB;
+                            using (var dambel = new TahChinLibrary.Models.TahChinEntities())
+                            {
+                                DateTime now = DateTime.Now;
+                                maxCycleNumberDB = dambel.Singlecharges.Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(now)).Max(o => o.CycleNumber);
+                                maxCycleNumberDB = (maxCycleNumberDB.HasValue ? maxCycleNumberDB.Value : -1);
+                            }
                             var serviceCycles = portal.serviceCycles.Where(o => o.serviceID.ToString() == serviceAdditionalInfo["serviceId"] && o.startTime <= ts && ts <= o.endTime).Select(o => o);
-                            if (serviceCycles.Count() == 1)
+                            if (serviceCycles.Count() == 1 && maxCycleNumberDB != serviceCycles.FirstOrDefault().cycleNumber)
                             {
                                 tps = maxTaskCount = Properties.Settings.Default.DefaultSingleChargeTakeSize;
 

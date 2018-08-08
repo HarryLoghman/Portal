@@ -41,7 +41,7 @@ namespace DehnadDambelService
                     //DateTime fiveDaysBefore = DateTime.Now.AddDays(-5);
                     //entity.SingleChargeTimings.RemoveRange(entity.SingleChargeTimings.Where(o => DbFunctions.TruncateTime(o.timeStartProcessMtnInstallment) < fiveDaysBefore.Date));
                     //entity.SaveChanges();
-
+                    
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
