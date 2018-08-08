@@ -20,6 +20,7 @@ namespace DehnadPorShetabService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 500;
+        int maxServiceTries = 4;
 
         static SharedLibrary.ThrottleMTN v_throttle;
         public int ProcessInstallment(int installmentCycleNumber, int tps, int maxTaskCount)
@@ -50,6 +51,8 @@ namespace DehnadPorShetabService
                         //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
 
                         List<string> installmentListNotOrdered = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        var installmentExceededRetries = entity.Singlecharges.GroupBy(o => o.MobileNumber).Where(o => o.Count() > maxServiceTries).Select(o => o.Key).ToList();
+                        installmentListNotOrdered.RemoveAll(o => installmentExceededRetries.Contains(o));
 
                         Dictionary<string, int> orderedSubscribers = getSubscribersDueToTotalPriceYesterday(entity);
 
