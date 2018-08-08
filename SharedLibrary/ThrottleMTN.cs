@@ -149,7 +149,7 @@ namespace SharedLibrary
 
                 }
                 TimeSpan ts = new TimeSpan(int.Parse(str.Split(',')[0]) * 1000);
-                logs.Warn(str + "," + ts.Hours.ToString() + ":" + ts.Minutes.ToString() + ":" + ts.Seconds.ToString() + "," + ts.Milliseconds.ToString());
+                logs.Warn(str + "," + waitInMillisecond + "," + ts.Hours.ToString() + ":" + ts.Minutes.ToString() + ":" + ts.Seconds.ToString() + "," + ts.Milliseconds.ToString());
                 smph.Release();
 
                 if (waitInMillisecond > 0)
