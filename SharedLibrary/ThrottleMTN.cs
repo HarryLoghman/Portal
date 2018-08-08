@@ -97,9 +97,10 @@ namespace SharedLibrary
 
                     using (MemoryMappedViewStream stream = mmf.CreateViewStream())
                     {
-                        using (BinaryReader reader = new BinaryReader(stream))
+                        using (StreamReader reader = new StreamReader(stream))
                         {
-                            str = reader.ReadString();
+                            str = reader.ReadToEnd();
+                            str = str.Replace("\0", "").Replace("\u0011", "");
                         }
                     }
 
