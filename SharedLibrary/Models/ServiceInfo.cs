@@ -21,7 +21,6 @@ namespace SharedLibrary.Models
         public string AggregatorServiceId { get; set; }
         public string OperatorServiceId { get; set; }
     
-        public virtual Aggregator Aggregator { get; set; }
         public virtual Service Service { get; set; }
     }
 }

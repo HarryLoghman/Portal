@@ -21,18 +21,19 @@ namespace DehnadDambelService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 300;
 
-        static throttle v_throttle;
-        public int ProcessInstallment(int installmentCycleNumber)
+        static SharedLibrary.ThrottleMTN v_throttle;
+        public int ProcessInstallment(int installmentCycleNumber, int tps, int maxTaskCount)
         {
             var income = 0;
 
             try
             {
-                v_throttle = new throttle(30, 1000, 10);
 
+                v_throttle = new ThrottleMTN(@"E:\Windows Services\MTNThrottleTPS");
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+
                 List<string> installmentList;
                 using (var entity = new DambelEntities())
                 {
@@ -86,7 +87,7 @@ namespace DehnadDambelService
                         int installmentListCount = installmentList.Count;
                         logs.Info("installmentList final list count:" + installmentListCount);
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
+                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, serviceAdditionalInfo, tps, maxTaskCount);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
@@ -107,8 +108,8 @@ namespace DehnadDambelService
         }
 
         public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber
-            , string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize
-            , Dictionary<string, string> serviceAdditionalInfo)
+            , string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount
+            , Dictionary<string, string> serviceAdditionalInfo, int tps, int maxTaskCount)
         {
             var income = 0;
             object obj = new object();
@@ -129,8 +130,7 @@ namespace DehnadDambelService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 36;
-                int tps = 30;
+
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();
@@ -464,134 +464,6 @@ namespace DehnadDambelService
 
 
     }
-    public class throttle
-    {
-        Nullable<long> v_startTick;
-        int v_currentPart = 0;
-        int v_tps = 95;
-        int v_partLengthInMilliSecond = 1000;
-        int v_currentCount = 0;
-        int v_counter = 0;
-        int v_safeMarginInMillisecond;
-        public throttle(int tps, int partLengthInMilliSecond, int safeMarginInMillisecond)
-        {
-            if (tps <= 0) throw new ArgumentException("TPS should be a positive value");
-            if (tps > partLengthInMilliSecond) throw new ArgumentException("TPS should be lower than partLengthInMilliSecond");
-            if (partLengthInMilliSecond < 0) throw new ArgumentException("partLengthInMilliSecond should be a positive value");
-            if (partLengthInMilliSecond < safeMarginInMillisecond) throw new ArgumentException("partLengthInMilliSecond should be greater than safeMerginInMillisecond");
-            if (safeMarginInMillisecond < 0) throw new ArgumentException("safeMerginInMillisecond should be a non negative value");
 
-            this.v_counter = 0;
-            this.v_currentPart = 0;
-            this.v_tps = tps;
-            this.v_partLengthInMilliSecond = partLengthInMilliSecond;
-            this.v_safeMarginInMillisecond = safeMarginInMillisecond;
-        }
-        public void throttleRequests()
-        {
-            int diffInMillisecond;
-            object obj = new object();
-            if (this.v_counter == 0)
-            {
-                lock (obj)
-                {
-                    if (!this.v_startTick.HasValue)
-                        this.v_startTick = DateTime.Now.Ticks;
-                }
-            }
-
-            diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-
-            this.setCurrentPart(diffInMillisecond);
-
-            lock (obj)
-            {
-                this.v_counter++;
-                this.v_currentCount++;
-            }
-            int counterTps = ((this.v_counter - 1) / this.v_tps);
-            int counterTpsRemain = ((this.v_counter - 1) % this.v_tps) + 1;
-
-            int temp = counterTps * this.v_partLengthInMilliSecond;
-
-            int currentCountTPS = (this.v_currentCount / this.v_tps);
-            int currentCountTpsRemain = (this.v_currentCount % this.v_tps);
-
-            if (temp <= diffInMillisecond && diffInMillisecond <= (this.v_partLengthInMilliSecond - 1) + temp)
-            {
-                //on time
-                if (this.v_currentCount <= this.v_tps)
-                {
-                    //enough seat
-                    //ok do not sleep
-
-                }
-                else
-                {
-                    //not enough seat
-                    while (this.v_currentCount > this.v_tps)
-                    {
-                        //wait till there is a free seat
-                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
-                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-                        this.setCurrentPart(diffInMillisecond);
-                    }
-                    lock (obj) { this.v_currentCount++; }
-                }
-            }
-            else if (diffInMillisecond < temp)
-            {
-
-                //early in time
-                //wait till till your turn
-                while (this.v_currentCount > this.v_tps)
-                {
-                    Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
-                    diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-                    this.setCurrentPart(diffInMillisecond);
-                }
-                lock (obj) { this.v_currentCount++; }
-
-            }
-            else if (diffInMillisecond > (this.v_partLengthInMilliSecond - 1) + temp)
-            {
-                //late in time
-                if (this.v_currentCount <= this.v_tps)
-                {
-                    //enough seat
-                    //lock (obj) { this.v_currentCount++; }
-                }
-                else
-                {
-                    //not enough seat
-                    //wait till there is a seat
-                    while (this.v_currentCount > this.v_tps)
-                    {
-                        Thread.Sleep(((this.v_currentPart * this.v_partLengthInMilliSecond * currentCountTPS) - diffInMillisecond) + (this.v_safeMarginInMillisecond * currentCountTpsRemain));
-                        diffInMillisecond = (int)(new TimeSpan(DateTime.Now.Ticks - this.v_startTick.Value).TotalMilliseconds);
-                        this.setCurrentPart(diffInMillisecond);
-                    }
-                    lock (obj) { this.v_currentCount++; }
-                }
-            }
-
-        }
-
-        private void setCurrentPart(int diffInMillisecond)
-        {
-            object obj = new object();
-            lock (obj)
-            {
-                if ((diffInMillisecond / this.v_partLengthInMilliSecond) + 1 != this.v_currentPart)
-                {
-
-                    this.v_currentPart = (diffInMillisecond / this.v_partLengthInMilliSecond) + 1;
-                    this.v_currentCount = 0;
-                }
-
-            }
-        }
-
-    }
 
 }

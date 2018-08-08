@@ -28,12 +28,10 @@ namespace SharedLibrary.Models
         }
     
         public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
-        public virtual DbSet<Aggregator> Aggregators { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-        public virtual DbSet<Operator> Operators { get; set; }
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
         public virtual DbSet<OperatorsPrefix> OperatorsPrefixs { get; set; }
         public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
@@ -58,6 +56,9 @@ namespace SharedLibrary.Models
         public virtual DbSet<BlackList> BlackLists { get; set; }
         public virtual DbSet<Audit> Audits { get; set; }
         public virtual DbSet<vw_DehnadAllServicesStatistics> vw_DehnadAllServicesStatistics { get; set; }
+        public virtual DbSet<Aggregator> Aggregators { get; set; }
+        public virtual DbSet<Operator> Operators { get; set; }
+        public virtual DbSet<serviceCycle> serviceCycles { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

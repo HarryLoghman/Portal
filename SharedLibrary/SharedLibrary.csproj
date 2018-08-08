@@ -163,6 +163,9 @@
     <Compile Include="Models\Service.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\serviceCycle.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ServiceInfo.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -243,6 +246,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="ServiceHandler.cs" />
+    <Compile Include="ThrottleMTN.cs" />
     <Compile Include="UsefulWebApis.cs" />
   </ItemGroup>
   <ItemGroup>

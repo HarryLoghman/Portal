@@ -12,14 +12,14 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Aggregator
+    public partial class serviceCycle
     {
-        public long Id { get; set; }
-        public long OperatorId { get; set; }
-        public string AggregatorName { get; set; }
-        public string AggregatorUsername { get; set; }
-        public string AggregatorPassword { get; set; }
-    
-        public virtual Operator Operator { get; set; }
+        public long serviceID { get; set; }
+        public int cycleNumber { get; set; }
+        public string shortCode { get; set; }
+        public System.TimeSpan startTime { get; set; }
+        public System.TimeSpan endTime { get; set; }
+        public Nullable<int> tps { get; set; }
+        public Nullable<int> maxTaskCount { get; set; }
     }
 }

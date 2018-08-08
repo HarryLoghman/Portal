@@ -22,6 +22,7 @@ namespace SharedLibrary.Models
     
         public long Id { get; set; }
         public string OperatorName { get; set; }
+        public Nullable<int> tps { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Aggregator> Aggregators { get; set; }

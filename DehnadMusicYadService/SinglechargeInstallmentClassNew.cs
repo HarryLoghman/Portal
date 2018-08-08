@@ -21,18 +21,18 @@ namespace DehnadMusicYadService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 300;
 
-        static throttle v_throttle;
-        public int ProcessInstallment(int installmentCycleNumber)
+        static SharedLibrary.ThrottleMTN v_throttle;
+        public int ProcessInstallment(int installmentCycleNumber, int tps, int maxTaskCount)
         {
             var income = 0;
 
             try
             {
-                v_throttle = new throttle(30, 1000, 10);
-
+                v_throttle = new ThrottleMTN(@"E:\Windows Services\MTNThrottleTPS");
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+
                 List<string> installmentList;
                 using (var entity = new MusicYadEntities())
                 {
@@ -86,7 +86,8 @@ namespace DehnadMusicYadService
                         int installmentListCount = installmentList.Count;
                         logs.Info("installmentList final list count:" + installmentListCount);
                         var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
+                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, serviceAdditionalInfo
+                            , tps, maxTaskCount);
                         logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                     }
                 }
@@ -107,8 +108,8 @@ namespace DehnadMusicYadService
         }
 
         public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber
-            , string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize
-            , Dictionary<string, string> serviceAdditionalInfo)
+            , string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount
+            , Dictionary<string, string> serviceAdditionalInfo, int tps, int maxTaskCount)
         {
             var income = 0;
             object obj = new object();
@@ -129,8 +130,6 @@ namespace DehnadMusicYadService
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
                 int position = 0;
-                int maxTaskCount = 36;
-                int tps = 30;
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();

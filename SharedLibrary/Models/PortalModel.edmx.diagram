@@ -6,12 +6,10 @@
     <edmx:Diagrams>
       <Diagram DiagramId="078fa22e80e241d4a55e0d56a6161e5c" Name="Diagram1">
         <EntityTypeShape EntityType="PortalModel.C__MigrationHistory" Width="1.5" PointX="5.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="5.75" PointY="2.5" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserLogin" Width="1.5" PointX="10.25" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUser" Width="1.5" PointX="8" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.Operator" Width="1.5" PointX="1.5" PointY="13.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.OperatorsPlan" Width="1.5" PointX="5.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.OperatorsPrefix" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="7.75" PointY="9.75" IsExpanded="true" />
@@ -22,8 +20,6 @@
         <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="11.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SubscribersPoint" Width="1.5" PointX="3" PointY="10.625" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
-        <AssociationConnector Association="PortalModel.FK_Aggregators_Operators" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_ServiceInfo_Aggregators" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
@@ -44,6 +40,10 @@
         <EntityTypeShape EntityType="PortalModel.BlackList" Width="1.5" PointX="16.375" PointY="4.75" />
         <EntityTypeShape EntityType="PortalModel.Audit" Width="1.5" PointX="6.375" PointY="16.75" />
         <EntityTypeShape EntityType="PortalModel.vw_DehnadAllServicesStatistics" Width="1.5" PointX="16.375" PointY="7.75" />
+        <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="18.625" PointY="12.875" />
+        <EntityTypeShape EntityType="PortalModel.Operator" Width="1.5" PointX="16.375" PointY="13.125" />
+        <AssociationConnector Association="PortalModel.C_FK_Aggregators_Operators" />
+        <EntityTypeShape EntityType="PortalModel.serviceCycle" Width="1.5" PointX="16.375" PointY="16.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

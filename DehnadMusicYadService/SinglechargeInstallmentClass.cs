@@ -20,7 +20,7 @@ namespace DehnadMusicYadService
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 300;
-        public int ProcessInstallment(int installmentCycleNumber)
+        public int ProcessInstallment(int installmentCycleNumber,int tps,int maxTaskCount)
         {
             var income = 0;
             try
