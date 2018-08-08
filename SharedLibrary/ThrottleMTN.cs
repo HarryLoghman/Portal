@@ -124,13 +124,14 @@ namespace SharedLibrary
                                 waitInMillisecond = (int)((ticksFile + (this.v_intervalInMillisecond * divider) - ticksNow) + (this.v_safeMarginInMillisecond) * remain);
                             }
                             str = ticksFile + "," + count;
+                            
                         }
                         else
                         {
                             //ticksNow > ticksFile + this.v_intervalInMillisecond
                             //same second
                             count = 1;
-                            str = ticksNow + "," + count;
+                            str = ticksFile + (((ticksNow-ticksFile)/this.v_intervalInMillisecond) * this.v_intervalInMillisecond) + "," + count;
 
                         }
 
@@ -139,7 +140,6 @@ namespace SharedLibrary
                     }
                     using (MemoryMappedViewStream stream = mmf.CreateViewStream())
                     {
-
                         BinaryWriter writer = new BinaryWriter(stream);
                         writer.Write(str);
                     }
@@ -149,6 +149,7 @@ namespace SharedLibrary
                 }
 
                 smph.Release();
+                
                 if (waitInMillisecond > 0)
                 {
                     //Debug.WriteLine("&&&&&&&&&&Sleep" + waitInMillisecond);
@@ -156,6 +157,7 @@ namespace SharedLibrary
 
                     goto start;
                 }
+                
             }
 
         }
