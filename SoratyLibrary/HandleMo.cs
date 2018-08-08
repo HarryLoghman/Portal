@@ -19,7 +19,7 @@ namespace SoratyLibrary
             {
                 using (var entity = new SoratyEntities())
                 {
-                    string aggregatorName = "Hub";
+                    string aggregatorName = "MciDirect";
                     var content = message.Content;
                     message.ServiceCode = service.ServiceCode;
                     message.ServiceId = service.Id;

@@ -57,7 +57,7 @@ namespace DefendIranLibrary
                     }
                     else if (((message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content == message.ShortCode) && message.Content.All(char.IsDigit)) || message.Content.ToLower().Contains("abc"))
                     {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "Hub");
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(message.ServiceCode, "MciDirect");
                         var logId = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
                         var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
                         MessageHandler.OtpLogUpdate(logId, result.Status.ToString());

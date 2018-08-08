@@ -2502,7 +2502,6 @@ namespace SharedLibrary
                     var result = await client.PostAsync(url, content);
                     var responseString = await result.Content.ReadAsStringAsync();
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                    singlecharge.Description = jsonResponse.data.ToString();
                     if (jsonResponse.statusInfo.statusCode.ToString() == "200")
                     {
                         singlecharge.IsSucceeded = true;
