@@ -32,5 +32,6 @@ namespace SharedLibrary.Models
         public string SubscriptionKeyword { get; set; }
         public string UnsubscriptionKeyword { get; set; }
         public string UserMessage { get; set; }
+        public string UserMessageOff { get; set; }
     }
 }

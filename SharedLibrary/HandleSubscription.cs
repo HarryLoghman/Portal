@@ -477,6 +477,7 @@ namespace SharedLibrary
                     subscriber.DeactivationDate = DateTime.Now;
                     subscriber.PersianDeactivationDate = Date.GetPersianDate();
                     subscriber.OffKeyword = message.Content;
+                    subscriber.UserMessageOff = subscriber.UserMessage;
                     if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                         subscriber.OffMethod = "keyword";
                     else if (message.IsReceivedFromIntegratedPanel == true)
