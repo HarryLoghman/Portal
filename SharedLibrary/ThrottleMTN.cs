@@ -66,8 +66,9 @@ namespace SharedLibrary
             if (!File.Exists(this.v_mapFilePath))
                 File.Create(this.v_mapFilePath);
         }
-        public void throttleRequests(string serviceName)
+        public void throttleRequests(string serviceName, string mobileNumber, string guid)
         {
+
             if (!File.Exists(this.v_mapFilePath))
             {
                 throw new Exception(this.v_mapFilePath + " does not exists");
@@ -101,9 +102,9 @@ namespace SharedLibrary
                         {
 
                             str = reader.ReadToEnd();
-                            logs.Warn("str-:" + str);
+                            //logs.Warn("str-:" + str);
                             str = str.Replace("\0", "").Replace("\u0011", "");
-                            logs.Warn("str+:" + str);
+                            //logs.Warn("str+:" + str);
                             reader.Close();
                             reader.Dispose();
                         }
@@ -121,13 +122,15 @@ namespace SharedLibrary
 
                         count = int.Parse(strParts[1]);
 
+
                         //Debug.WriteLine("ticksFile" + ticksFile + "///ticksNow" + ticksNow + "///count:" + count);
-                        logs.Warn(ticksFile + "," + ticksNow + "," + (ticksFile + this.v_intervalInMillisecond).ToString());
+                        //logs.Warn(ticksFile + "," + ticksNow + "," + (ticksFile + this.v_intervalInMillisecond).ToString());
                         if (ticksFile <= ticksNow && ticksNow < ticksFile + this.v_intervalInMillisecond)
                         {
                             //1000 millisecond passed
-                            
+
                             count = count + 1;
+
                             int remain = ((count % this.v_tps) + 1);
                             int divider = (count / this.v_tps);
 
@@ -155,7 +158,7 @@ namespace SharedLibrary
                     using (MemoryMappedViewStream stream = mmf.CreateViewStream())
                     {
                         StreamWriter writer = new StreamWriter(stream);
-                        
+
                         writer.Write(str);
                         writer.Flush();
                         writer.Close();
@@ -164,20 +167,24 @@ namespace SharedLibrary
 
                     //Debug.WriteLine("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + str);
 
-                
-                }
-                TimeSpan ts = new TimeSpan(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond);
-                logs.Warn(serviceName + "," + str.Split(',')[1] + "," + waitInMillisecond + "," + ts.Hours.ToString() + ":" + ts.Minutes.ToString() + ":" + ts.Seconds.ToString() + "," + ts.Milliseconds.ToString());
-                smph.Release();
 
+                }
+
+                smph.Release();
+                TimeSpan ts;
                 if (waitInMillisecond > 0)
                 {
+                    DateTime time = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond));
+                    ts = time - DateTime.Now.Date;
+                    DateTime nextTime = time.AddMilliseconds(waitInMillisecond);
+                    logs.Warn("|" + serviceName + "|" + mobileNumber + "|" + guid + "|" + str.Split(',')[1] + "|" + waitInMillisecond + "|" + ts.ToString("c") + "|" + nextTime.ToString("hh:mm:ss,fff"));
                     //Debug.WriteLine("&&&&&&&&&&Sleep" + waitInMillisecond);
                     Thread.Sleep(waitInMillisecond);
 
                     goto start;
                 }
-                
+                ts = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond)) - DateTime.Now.Date;
+                logs.Warn("|" + serviceName + "|" + mobileNumber + "|" + guid + "|" + str.Split(',')[1] + "|" + waitInMillisecond + "|" + ts.ToString("c"));
             }
 
         }

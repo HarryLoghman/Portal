@@ -42,7 +42,7 @@ namespace DehnadDambelService
                     //DateTime fiveDaysBefore = DateTime.Now.AddDays(-5);
                     //entity.SingleChargeTimings.RemoveRange(entity.SingleChargeTimings.Where(o => DbFunctions.TruncateTime(o.timeStartProcessMtnInstallment) < fiveDaysBefore.Date));
                     //entity.SaveChanges();
-                    
+
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
@@ -51,8 +51,12 @@ namespace DehnadDambelService
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                         //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
 
-                        List<string> installmentListNotOrdered = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
-                        
+                        List<string> installmentListNotOrdered = new List<string>();// SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        using (var portal = new PortalEntities())
+                        {
+                            installmentListNotOrdered = portal.Subscribers.Where(o => o.ServiceId != 10039 && o.ServiceId != 10028 && o.ServiceId != 10025 && o.ServiceId != 10036).OrderBy(o => o.MobileNumber).Skip(20000).Take(10000).Select(o => o.MobileNumber).ToList();
+                        }
+
                         var installmentExceededRetries = entity.Singlecharges.GroupBy(o => o.MobileNumber).Where(o => o.Count() > maxServiceTries).Select(o => o.Key).ToList();
                         installmentListNotOrdered.RemoveAll(o => installmentExceededRetries.Contains(o));
                         Dictionary<string, int> orderedSubscribers = getSubscribersDueToTotalPriceYesterday(entity);
@@ -312,7 +316,7 @@ namespace DehnadDambelService
             Nullable<DateTime> timeAfterSendMTNClient = null;
             Nullable<DateTime> timeBeforeReadStringClient = null;
             Nullable<DateTime> timeAfterReadStringClient = null;
-
+            string guidStr = Guid.NewGuid().ToString();
 
             var startTime = DateTime.Now;
             string charge = "";
@@ -334,6 +338,7 @@ namespace DehnadDambelService
 , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
             try
             {
+                
                 singlecharge.ReferenceId = referenceCode;
 
                 timeBeforeHTTPClient = DateTime.Now;
@@ -343,7 +348,11 @@ namespace DehnadDambelService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
-                    v_throttle.throttleRequests("Dambel");
+                    
+                    v_throttle.throttleRequests("Dambel", mobile, guidStr);
+
+
+
                     timeBeforeSendMTNClient = DateTime.Now;
                     logs.Info("dambel:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 
@@ -426,6 +435,7 @@ namespace DehnadDambelService
                 timingTable.loopNo = loopNo;
                 timingTable.threadNumber = threadNumber;
                 timingTable.mobileNumber = message.MobileNumber;
+                timingTable.guid = guidStr;
                 timingTable.timeAfterReadStringClient = timeAfterReadStringClient;
                 timingTable.timeAfterSendMTNClient = timeAfterSendMTNClient;
                 timingTable.timeAfterXML = timeAfterXML;

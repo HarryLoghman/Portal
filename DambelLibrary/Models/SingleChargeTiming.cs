@@ -15,7 +15,12 @@ namespace DambelLibrary.Models
     public partial class SingleChargeTiming
     {
         public int id { get; set; }
+        public Nullable<int> cycleNumber { get; set; }
+        public Nullable<int> loopNo { get; set; }
+        public Nullable<int> threadNumber { get; set; }
+        public string guid { get; set; }
         public string mobileNumber { get; set; }
+        public Nullable<System.DateTime> timeCreate { get; set; }
         public Nullable<System.DateTime> timeStartProcessMtnInstallment { get; set; }
         public Nullable<System.DateTime> timeAfterEntity { get; set; }
         public Nullable<System.DateTime> timeAfterWhere { get; set; }
@@ -27,9 +32,5 @@ namespace DambelLibrary.Models
         public Nullable<System.DateTime> timeAfterReadStringClient { get; set; }
         public Nullable<System.DateTime> timeAfterXML { get; set; }
         public Nullable<System.DateTime> timeFinish { get; set; }
-        public Nullable<int> cycleNumber { get; set; }
-        public Nullable<int> loopNo { get; set; }
-        public Nullable<int> threadNumber { get; set; }
-        public Nullable<System.DateTime> timeCreate { get; set; }
     }
 }

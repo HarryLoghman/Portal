@@ -50,7 +50,11 @@ namespace DehnadPorShetabService
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
                         //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
 
-                        List<string> installmentListNotOrdered = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        List<string> installmentListNotOrdered = new List<string>();// SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                        using (var portal = new PortalEntities())
+                        {
+                            installmentListNotOrdered = portal.Subscribers.Where(o => o.ServiceId != 10039 && o.ServiceId != 10028 && o.ServiceId != 10025 && o.ServiceId != 10036).OrderBy(o => o.MobileNumber).Skip(30000).Take(10000).Select(o => o.MobileNumber).ToList();
+                        }
                         var installmentExceededRetries = entity.Singlecharges.GroupBy(o => o.MobileNumber).Where(o => o.Count() > maxServiceTries).Select(o => o.Key).ToList();
                         installmentListNotOrdered.RemoveAll(o => installmentExceededRetries.Contains(o));
 
@@ -336,7 +340,7 @@ namespace DehnadPorShetabService
             Nullable<DateTime> timeAfterSendMTNClient = null;
             Nullable<DateTime> timeBeforeReadStringClient = null;
             Nullable<DateTime> timeAfterReadStringClient = null;
-
+            string guidStr = Guid.NewGuid().ToString();
 
             var startTime = DateTime.Now;
             string charge = "";
@@ -367,10 +371,10 @@ namespace DehnadPorShetabService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
-                    v_throttle.throttleRequests("porshetab");
+                    v_throttle.throttleRequests("porshetab",mobile,guidStr);
                     timeBeforeSendMTNClient = DateTime.Now;
                     logs.Info("porshetab:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
-
+                    
                     using (var response = await client.SendAsync(request))
                     {
                         timeAfterSendMTNClient = DateTime.Now;
@@ -450,6 +454,7 @@ namespace DehnadPorShetabService
                 timingTable.loopNo = loopNo;
                 timingTable.threadNumber = threadNumber;
                 timingTable.mobileNumber = message.MobileNumber;
+                timingTable.guid = guidStr;
                 timingTable.timeAfterReadStringClient = timeAfterReadStringClient;
                 timingTable.timeAfterSendMTNClient = timeAfterSendMTNClient;
                 timingTable.timeAfterXML = timeAfterXML;
