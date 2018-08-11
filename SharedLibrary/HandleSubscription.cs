@@ -90,10 +90,10 @@ namespace SharedLibrary
                     }
                     else
                     {
-                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Take(10).ToList();
+                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Skip(1).Take(10).ToList();
                         foreach (var item in recievedMessages)
                         {
-                            if (item.Content.Length < 4)
+                            if (item.Content.Length != 4)
                             {
                                 subscriber.UserMessage = item.Content;
                                 message.UserMessage = item.Content;
@@ -176,10 +176,10 @@ namespace SharedLibrary
                     }
                     else
                     {
-                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Take(10).ToList();
+                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Skip(1).Take(10).ToList();
                         foreach (var item in recievedMessages)
                         {
-                            if (item.Content.Length < 4)
+                            if (item.Content.Length != 4)
                             {
                                 newSubscriber.UserMessage = item.Content;
                                 message.UserMessage = item.Content;
@@ -219,7 +219,7 @@ namespace SharedLibrary
             {
                 logs.Error("Exception in IsSubscriberActive:", e);
             }
-            return result;
+            return true;// result;
         }
 
         public static string CampaignUniqueId(string mobileNumber, long serviceId)
@@ -348,6 +348,7 @@ namespace SharedLibrary
                     subscriberHistory.ServiceName = service.Name;
                     subscriberHistory.ServiceId = service.Id;
                     subscriberHistory.UserMessage = message.UserMessage;
+                    subscriberHistory.UserMessageOff = message.UserMessageOff;
                     subscriberHistory.ServiceStatusForSubscriber = state;
                     subscriberHistory.ShortCode = message.ShortCode;
                     subscriberHistory.Time = DateTime.Now.TimeOfDay;
@@ -477,6 +478,8 @@ namespace SharedLibrary
                     subscriber.DeactivationDate = DateTime.Now;
                     subscriber.PersianDeactivationDate = Date.GetPersianDate();
                     subscriber.OffKeyword = message.Content;
+                    subscriber.UserMessageOff = subscriber.UserMessage;
+                    message.UserMessageOff = subscriber.UserMessageOff;
                     if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                         subscriber.OffMethod = "keyword";
                     else if (message.IsReceivedFromIntegratedPanel == true)

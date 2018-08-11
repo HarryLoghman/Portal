@@ -36,26 +36,26 @@ namespace MusicYadLibrary.Models
         public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
         public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
         public virtual DbSet<ImiChargeCode> ImiChargeCodes { get; set; }
+        public virtual DbSet<InstallmentCycle> InstallmentCycles { get; set; }
         public virtual DbSet<MessagesArchive> MessagesArchives { get; set; }
         public virtual DbSet<MessagesMonitoring> MessagesMonitorings { get; set; }
         public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
         public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
+        public virtual DbSet<Otp> Otps { get; set; }
         public virtual DbSet<PointsTable> PointsTables { get; set; }
         public virtual DbSet<ServiceOffReason> ServiceOffReasons { get; set; }
         public virtual DbSet<ServicesRealtimeStatistic> ServicesRealtimeStatistics { get; set; }
+        public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<Singlecharge> Singlecharges { get; set; }
         public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
         public virtual DbSet<SinglechargeInstallmentArchive> SinglechargeInstallmentArchives { get; set; }
+        public virtual DbSet<SingleChargeTiming> SingleChargeTimings { get; set; }
         public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
         public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
-        public virtual DbSet<InstallmentCycle> InstallmentCycles { get; set; }
-        public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<vw_Singlecharge> vw_Singlecharge { get; set; }
-        public virtual DbSet<Otp> Otps { get; set; }
-        public virtual DbSet<SingleChargeTiming> SingleChargeTimings { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

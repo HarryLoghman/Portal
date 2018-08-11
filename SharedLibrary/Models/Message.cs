@@ -42,5 +42,6 @@ namespace SharedLibrary.Models
         public string Number { get; set; }
         public string Token { get; set; }
         public string UserMessage { get; set; }
+        public string UserMessageOff { get; set; }
     }
 }

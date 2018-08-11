@@ -30,6 +30,7 @@ namespace SharedLibrary.Models
         public string SubscriberUniqueId { get; set; }
         public string SpecialUniqueId { get; set; }
         public string UserMessage { get; set; }
+        public string UserMessageOff { get; set; }
     
         public virtual Service Service { get; set; }
     }

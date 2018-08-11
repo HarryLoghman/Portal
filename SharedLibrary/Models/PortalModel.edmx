@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="__MigrationHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -323,6 +323,7 @@
           <Property Name="SubscriberUniqueId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="SpecialUniqueId" Type="nvarchar" MaxLength="50" />
           <Property Name="UserMessage" Type="nvarchar" MaxLength="100" />
+          <Property Name="UserMessageOff" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -346,6 +347,7 @@
           <Property Name="SubscriptionKeyword" Type="nvarchar" MaxLength="100" />
           <Property Name="UnsubscriptionKeyword" Type="nvarchar" MaxLength="100" />
           <Property Name="UserMessage" Type="nvarchar" MaxLength="100" />
+          <Property Name="UserMessageOff" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersPoints">
           <Key>
@@ -731,8 +733,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PortalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1061,6 +1062,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="SpecialUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Service" Relationship="Self.FK_Subscribers_Subscribers" FromRole="Subscribers" ToRole="Services" />
+          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -1084,6 +1086,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="SubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UnsubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SubscribersPoint">
           <Key>
@@ -1363,13 +1366,13 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           </AssociationSet>
           <FunctionImport Name="ArchiveReceivedMessages" />
           <FunctionImport Name="GetUserLog" ReturnType="Collection(PortalModel.GetUserLog_Result)">
-            <Parameter Name="MobileNumber" Mode="In" Type="String" />
+          <Parameter Name="MobileNumber" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_DehnadAll2GServicesStatistics">
-            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_DehnadAll3GServicesStatistics">
-            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
@@ -1700,6 +1703,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="Subscribers">
             <EntityTypeMapping TypeName="PortalModel.Subscriber">
               <MappingFragment StoreEntitySet="Subscribers">
+                <ScalarProperty Name="UserMessageOff" ColumnName="UserMessageOff" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
@@ -1722,6 +1726,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="SubscribersHistories">
             <EntityTypeMapping TypeName="PortalModel.SubscribersHistory">
               <MappingFragment StoreEntitySet="SubscribersHistory">
+                <ScalarProperty Name="UserMessageOff" ColumnName="UserMessageOff" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
