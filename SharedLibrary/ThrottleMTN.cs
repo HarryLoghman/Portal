@@ -69,9 +69,9 @@ namespace SharedLibrary
         public void throttleRequests(string serviceName, string mobileNumber, string guid)
         {
 
-
             if (!File.Exists(this.v_mapFilePath))
             {
+
                 throw new Exception(this.v_mapFilePath + " does not exists");
             }
 
