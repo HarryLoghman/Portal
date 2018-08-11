@@ -348,6 +348,7 @@ namespace SharedLibrary
                     subscriberHistory.ServiceName = service.Name;
                     subscriberHistory.ServiceId = service.Id;
                     subscriberHistory.UserMessage = message.UserMessage;
+                    subscriberHistory.UserMessageOff = message.UserMessageOff;
                     subscriberHistory.ServiceStatusForSubscriber = state;
                     subscriberHistory.ShortCode = message.ShortCode;
                     subscriberHistory.Time = DateTime.Now.TimeOfDay;
@@ -478,6 +479,7 @@ namespace SharedLibrary
                     subscriber.PersianDeactivationDate = Date.GetPersianDate();
                     subscriber.OffKeyword = message.Content;
                     subscriber.UserMessageOff = subscriber.UserMessage;
+                    message.UserMessageOff = subscriber.UserMessageOff;
                     if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
                         subscriber.OffMethod = "keyword";
                     else if (message.IsReceivedFromIntegratedPanel == true)
