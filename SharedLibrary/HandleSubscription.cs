@@ -90,10 +90,10 @@ namespace SharedLibrary
                     }
                     else
                     {
-                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Take(10).ToList();
+                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Skip(1).Take(10).ToList();
                         foreach (var item in recievedMessages)
                         {
-                            if (item.Content.Length < 4)
+                            if (item.Content.Length != 4)
                             {
                                 subscriber.UserMessage = item.Content;
                                 message.UserMessage = item.Content;
@@ -176,10 +176,10 @@ namespace SharedLibrary
                     }
                     else
                     {
-                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Take(10).ToList();
+                        var recievedMessages = entity.ReceievedMessages.Where(o => o.MobileNumber == message.MobileNumber && o.ShortCode == message.ShortCode).OrderByDescending(o => o.ReceivedTime).Skip(1).Take(10).ToList();
                         foreach (var item in recievedMessages)
                         {
-                            if (item.Content.Length < 4)
+                            if (item.Content.Length != 4)
                             {
                                 newSubscriber.UserMessage = item.Content;
                                 message.UserMessage = item.Content;
