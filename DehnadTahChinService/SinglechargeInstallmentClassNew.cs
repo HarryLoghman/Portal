@@ -22,10 +22,9 @@ namespace DehnadTahChinService
         public static int maxChargeLimit = 300;
         int maxServiceTries = 4;
 
-        SharedLibrary.ThrottleMTN v_throttle;
+        static SharedLibrary.ThrottleMTN v_throttle;
         public int ProcessInstallment(int installmentCycleNumber, int tps, int maxTaskCount)
         {
-            v_throttle = new ThrottleMTN();
             var income = 0;
 
             try
@@ -246,7 +245,7 @@ namespace DehnadTahChinService
         }
 
 
-        private async Task<int> ProcessMtnInstallment(System.Data.SqlClient.SqlConnection cnn, int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo
+        private static async Task<int> ProcessMtnInstallment(System.Data.SqlClient.SqlConnection cnn, int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo
             , dynamic chargeCodes, int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, int taskId, int isCampaignActive
             , DateTime timeLoop)
         {
@@ -307,7 +306,7 @@ namespace DehnadTahChinService
             return income;
         }
 
-        public async Task<Singlecharge> ChargeMtnSubscriber(
+        public static async Task<Singlecharge> ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
             TahChinEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
             , Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int loopNo, int threadNumber
@@ -351,9 +350,11 @@ namespace DehnadTahChinService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
-
-                    v_throttle.throttleRequests("tahchin", mobile, guidStr);
-
+                    object obj = new object();
+                    lock (obj)
+                    {
+                        v_throttle.throttleRequests("tahchin", mobile, guidStr);
+                    }
                     timeBeforeSendMTNClient = DateTime.Now;
                     logs.Info("tahchin;" + mobile + ";" + guidStr + ";" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 

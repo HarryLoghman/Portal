@@ -188,7 +188,7 @@ namespace SharedLibrary
                     DateTime time = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond));
                     ts = time - DateTime.Now.Date;
                     DateTime nextTime = time.AddMilliseconds(waitInMillisecond);
-                    logs.Warn(";;" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c") + ";" + nextTime.ToString("hh:mm:ss,fff"));
+                    logs.Warn(";" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c") + ";" + nextTime.ToString("hh:mm:ss,fff"));
                     //Debug.WriteLine("&&&&&&&&&&Sleep" + waitInMillisecond);
                     Thread.Sleep(waitInMillisecond);
                     temp = ticksFile = ticksNow = waitInMillisecond =  count = 0;
@@ -196,7 +196,7 @@ namespace SharedLibrary
                     goto start;
                 }
                 ts = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond)) - DateTime.Now.Date;
-                logs.Warn(";;" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c"));
+                logs.Warn(";" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c"));
             }
 
         }
