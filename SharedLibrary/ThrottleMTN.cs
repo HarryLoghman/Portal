@@ -69,18 +69,19 @@ namespace SharedLibrary
         }
         public void throttleRequests(string serviceName, string mobileNumber, string guid)
         {
-
+            logs.Warn(";start;" + serviceName + ";" + mobileNumber + ";" + guid + ";");
             if (!File.Exists(this.v_mapFilePath))
             {
 
                 throw new Exception(this.v_mapFilePath + " does not exists");
             }
-
+            logs.Warn(";before;" + serviceName + ";" + mobileNumber + ";" + guid + ";");
             start: 
             Semaphore smph;
-            
+            logs.Warn(";after;" + serviceName + ";" + mobileNumber + ";" + guid + ";");
             lock (v_lockObj)
             {
+                logs.Warn(";lockstart;" + serviceName + ";" + mobileNumber + ";" + guid + ";");
                 long temp;
                 long ticksFile;
                 int waitInMillisecond = 0;
@@ -96,8 +97,9 @@ namespace SharedLibrary
                     smph = new Semaphore(1, 1, this.v_smphName);
                 }
 
-
+                logs.Warn(";beforeSema;" + serviceName + ";" + mobileNumber + ";" + guid + ";");
                 smph.WaitOne();
+                logs.Warn(";startsema;" + serviceName + ";" + mobileNumber + ";" + guid + ";");
                 using (MemoryMappedFile mmf = MemoryMappedFile.CreateFromFile(this.v_mapFilePath, FileMode.OpenOrCreate, this.v_mappedFileName, 25))
                 {
 
@@ -186,7 +188,7 @@ namespace SharedLibrary
                     DateTime time = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond));
                     ts = time - DateTime.Now.Date;
                     DateTime nextTime = time.AddMilliseconds(waitInMillisecond);
-                    logs.Warn(";" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c") + ";" + nextTime.ToString("hh:mm:ss,fff"));
+                    logs.Warn(";;" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c") + ";" + nextTime.ToString("hh:mm:ss,fff"));
                     //Debug.WriteLine("&&&&&&&&&&Sleep" + waitInMillisecond);
                     Thread.Sleep(waitInMillisecond);
                     temp = ticksFile = ticksNow = waitInMillisecond =  count = 0;
@@ -194,7 +196,7 @@ namespace SharedLibrary
                     goto start;
                 }
                 ts = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond)) - DateTime.Now.Date;
-                logs.Warn(";" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c"));
+                logs.Warn(";;" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c"));
             }
 
         }

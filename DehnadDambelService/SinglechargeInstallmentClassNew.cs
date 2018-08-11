@@ -338,7 +338,7 @@ namespace DehnadDambelService
 , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
             try
             {
-                
+
                 singlecharge.ReferenceId = referenceCode;
 
                 timeBeforeHTTPClient = DateTime.Now;
@@ -348,13 +348,15 @@ namespace DehnadDambelService
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
 
-                    
-                    v_throttle.throttleRequests("Dambel", mobile, guidStr);
-
+                    object obj = new object();
+                    lock (obj)
+                    {
+                        v_throttle.throttleRequests("Dambel", mobile, guidStr);
+                    }
 
 
                     timeBeforeSendMTNClient = DateTime.Now;
-                    logs.Info("dambel:" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
+                    logs.Info("dambel;" + mobile + ";" + guidStr + ";" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
 
                     using (var response = await client.SendAsync(request))
                     {

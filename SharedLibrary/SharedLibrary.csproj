@@ -204,6 +204,7 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Notify.cs" />
+    <Compile Include="Ping.cs" />
     <Compile Include="PortalException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawSql.cs" />
