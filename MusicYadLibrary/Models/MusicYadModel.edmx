@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="MusicYadModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="MusicYadModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -490,6 +490,29 @@
           <Property Name="IsRenewalMessageSent" Type="bit" />
           <Property Name="IsRenewd" Type="bit" />
         </EntityType>
+        <EntityType Name="SingleChargeTiming">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="mobileNumber" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="timeStartProcessMtnInstallment" Type="datetime" />
+          <Property Name="timeAfterEntity" Type="datetime" />
+          <Property Name="timeAfterWhere" Type="datetime" />
+          <Property Name="timeStartChargeMtnSubscriber" Type="datetime" />
+          <Property Name="timeBeforeHTTPClient" Type="datetime" />
+          <Property Name="timeBeforeSendMTNClient" Type="datetime" />
+          <Property Name="timeAfterSendMTNClient" Type="datetime" />
+          <Property Name="timeBeforeReadStringClient" Type="datetime" />
+          <Property Name="timeAfterReadStringClient" Type="datetime" />
+          <Property Name="timeAfterXML" Type="datetime" />
+          <Property Name="timeFinish" Type="datetime" />
+          <Property Name="cycleNumber" Type="int" />
+          <Property Name="loopNo" Type="int" />
+          <Property Name="threadNumber" Type="int" />
+          <Property Name="timeCreate" Type="datetime" />
+          <Property Name="guid" Type="varchar" MaxLength="100" />
+        </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
             <PropertyRef Name="Id" />
@@ -645,6 +668,7 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallmentArchive" EntityType="Self.SinglechargeInstallmentArchive" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SingleChargeTiming" EntityType="Self.SingleChargeTiming" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
@@ -694,7 +718,8 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
     FROM [dbo].[vw_Singlecharge] AS [vw_Singlecharge]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MusicYadModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -963,6 +988,16 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           <Property Name="ChargeKey" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="InstallmentCycle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="Income" Type="Int32" />
+          <Property Name="Duration" Type="Int64" />
+        </EntityType>
         <EntityType Name="MessagesArchive">
           <Key>
             <PropertyRef Name="Id" />
@@ -1050,6 +1085,17 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           <Property Name="DateLastTried" Type="DateTime" Precision="3" />
           <Property Name="RetryCount" Type="Int32" />
         </EntityType>
+        <EntityType Name="Otp">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReturnValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessage" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
         <EntityType Name="PointsTable">
           <Key>
             <PropertyRef Name="Id" />
@@ -1074,6 +1120,15 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PersianName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Singlecharge">
           <Key>
@@ -1152,6 +1207,29 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           <Property Name="PersianCancelationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsRenewalMessageSent" Type="Boolean" />
           <Property Name="IsRenewd" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SingleChargeTiming">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="mobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="timeStartProcessMtnInstallment" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterEntity" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterWhere" Type="DateTime" Precision="3" />
+          <Property Name="timeStartChargeMtnSubscriber" Type="DateTime" Precision="3" />
+          <Property Name="timeBeforeHTTPClient" Type="DateTime" Precision="3" />
+          <Property Name="timeBeforeSendMTNClient" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterSendMTNClient" Type="DateTime" Precision="3" />
+          <Property Name="timeBeforeReadStringClient" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterReadStringClient" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterXML" Type="DateTime" Precision="3" />
+          <Property Name="timeFinish" Type="DateTime" Precision="3" />
+          <Property Name="cycleNumber" Type="Int32" />
+          <Property Name="loopNo" Type="Int32" />
+          <Property Name="threadNumber" Type="Int32" />
+          <Property Name="timeCreate" Type="DateTime" Precision="3" />
+          <Property Name="guid" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
@@ -1239,6 +1317,29 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           <Property Name="DateLastTried" Type="DateTime" Precision="3" />
           <Property Name="RetryCount" Type="Int32" />
         </EntityType>
+        <EntityType Name="vw_Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="PersianDateCreated" />
+            <PropertyRef Name="Price" />
+            <PropertyRef Name="IsSucceeded" />
+            <PropertyRef Name="IsApplicationInformed" />
+            <PropertyRef Name="IsCalledFromInAppPurchase" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="MusicYadEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AutochargeContents" EntityType="Self.AutochargeContent" />
           <EntitySet Name="AutochargeContentsSendedToUsers" EntityType="Self.AutochargeContentsSendedToUser" />
@@ -1249,21 +1350,26 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContent" />
           <EntitySet Name="EventbaseMessagesBuffers" EntityType="Self.EventbaseMessagesBuffer" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCode" />
+          <EntitySet Name="InstallmentCycles" EntityType="Self.InstallmentCycle" />
           <EntitySet Name="MessagesArchives" EntityType="Self.MessagesArchive" />
           <EntitySet Name="MessagesMonitorings" EntityType="Self.MessagesMonitoring" />
           <EntitySet Name="MessagesTemplates" EntityType="Self.MessagesTemplate" />
           <EntitySet Name="OnDemandMessagesBuffers" EntityType="Self.OnDemandMessagesBuffer" />
+          <EntitySet Name="Otps" EntityType="Self.Otp" />
           <EntitySet Name="PointsTables" EntityType="Self.PointsTable" />
           <EntitySet Name="ServiceOffReasons" EntityType="Self.ServiceOffReason" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistic" />
+          <EntitySet Name="Settings" EntityType="Self.Setting" />
           <EntitySet Name="Singlecharges" EntityType="Self.Singlecharge" />
           <EntitySet Name="SinglechargeArchives" EntityType="Self.SinglechargeArchive" />
           <EntitySet Name="SinglechargeInstallments" EntityType="Self.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeInstallmentArchives" EntityType="Self.SinglechargeInstallmentArchive" />
+          <EntitySet Name="SingleChargeTimings" EntityType="Self.SingleChargeTiming" />
           <EntitySet Name="SinglechargeWaitings" EntityType="Self.SinglechargeWaiting" />
           <EntitySet Name="SubscribersAdditionalInfoes" EntityType="Self.SubscribersAdditionalInfo" />
           <EntitySet Name="TimedTempMessagesBuffers" EntityType="Self.TimedTempMessagesBuffer" />
           <EntitySet Name="vw_SentMessages" EntityType="Self.vw_SentMessages" />
+          <EntitySet Name="vw_Singlecharge" EntityType="Self.vw_Singlecharge" />
           <FunctionImport Name="AggregateDailyStatistics">
             <Parameter Name="MiladiDate" Mode="In" Type="DateTime" />
             <Parameter Name="ServiceCode" Mode="In" Type="String" />
@@ -1280,90 +1386,9 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
           </FunctionImport>
           <FunctionImport Name="RetryUndeliveredMessages" />
           <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(String)">
-          <Parameter Name="ServiceCode" Mode="In" Type="String" />
+            <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
-          <EntitySet Name="InstallmentCycles" EntityType="MusicYadModel.InstallmentCycle" />
-          <EntitySet Name="Settings" EntityType="MusicYadModel.Setting" />
-          <EntitySet Name="vw_Singlecharge" EntityType="MusicYadModel.vw_Singlecharge" />
-          <EntitySet Name="Otps" EntityType="MusicYadModel.Otp" />
-          <EntitySet Name="SingleChargeTimings" EntityType="MusicYadModel.SingleChargeTiming" />
         </EntityContainer>
-        <EntityType Name="InstallmentCycle">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="CycleNumber" Type="Int32" />
-          <Property Name="Income" Type="Int32" />
-          <Property Name="Duration" Type="Int64" />
-        </EntityType>
-        <EntityType Name="Setting">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="PersianName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="vw_Singlecharge">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="DateCreated" />
-            <PropertyRef Name="PersianDateCreated" />
-            <PropertyRef Name="Price" />
-            <PropertyRef Name="IsSucceeded" />
-            <PropertyRef Name="IsApplicationInformed" />
-            <PropertyRef Name="IsCalledFromInAppPurchase" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Otp">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ReturnValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="UserMessage" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="SingleChargeTiming">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="cycleNumber" Type="Int32" />
-          <Property Name="loopNo" Type="Int32" />
-          <Property Name="threadNumber" Type="Int32" />
-          <Property Name="guid" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="mobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="timeCreate" Type="DateTime" Precision="3" />
-          <Property Name="timeStartProcessMtnInstallment" Type="DateTime" Precision="3" />
-          <Property Name="timeAfterEntity" Type="DateTime" Precision="3" />
-          <Property Name="timeAfterWhere" Type="DateTime" Precision="3" />
-          <Property Name="timeStartChargeMtnSubscriber" Type="DateTime" Precision="3" />
-          <Property Name="timeBeforeHTTPClient" Type="DateTime" Precision="3" />
-          <Property Name="timeBeforeSendMTNClient" Type="DateTime" Precision="3" />
-          <Property Name="timeAfterSendMTNClient" Type="DateTime" Precision="3" />
-          <Property Name="timeBeforeReadStringClient" Type="DateTime" Precision="3" />
-          <Property Name="timeAfterReadStringClient" Type="DateTime" Precision="3" />
-          <Property Name="timeAfterXML" Type="DateTime" Precision="3" />
-          <Property Name="timeFinish" Type="DateTime" Precision="3" />
-        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1644,6 +1669,17 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="InstallmentCycles">
+            <EntityTypeMapping TypeName="MusicYadModel.InstallmentCycle">
+              <MappingFragment StoreEntitySet="InstallmentCycles">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="Income" ColumnName="Income" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="MessagesArchives">
             <EntityTypeMapping TypeName="MusicYadModel.MessagesArchive">
               <MappingFragment StoreEntitySet="MessagesArchive">
@@ -1735,6 +1771,18 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Otps">
+            <EntityTypeMapping TypeName="MusicYadModel.Otp">
+              <MappingFragment StoreEntitySet="Otp">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ReturnValue" ColumnName="ReturnValue" />
+                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="PointsTables">
             <EntityTypeMapping TypeName="MusicYadModel.PointsTable">
               <MappingFragment StoreEntitySet="PointsTable">
@@ -1763,12 +1811,19 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="MusicYadModel.Setting">
+              <MappingFragment StoreEntitySet="Settings">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="PersianName" ColumnName="PersianName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Singlecharges">
             <EntityTypeMapping TypeName="MusicYadModel.Singlecharge">
               <MappingFragment StoreEntitySet="Singlecharge">
-                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
-                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
-                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
@@ -1780,15 +1835,15 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
                 <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
                 <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
                 <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SinglechargeArchives">
             <EntityTypeMapping TypeName="MusicYadModel.SinglechargeArchive">
               <MappingFragment StoreEntitySet="SinglechargeArchive">
-                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
-                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
-                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
@@ -1800,6 +1855,9 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
                 <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
                 <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
                 <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1842,6 +1900,30 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
                 <ScalarProperty Name="PersianCancelationDate" ColumnName="PersianCancelationDate" />
                 <ScalarProperty Name="IsRenewalMessageSent" ColumnName="IsRenewalMessageSent" />
                 <ScalarProperty Name="IsRenewd" ColumnName="IsRenewd" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SingleChargeTimings">
+            <EntityTypeMapping TypeName="MusicYadModel.SingleChargeTiming">
+              <MappingFragment StoreEntitySet="SingleChargeTiming">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
+                <ScalarProperty Name="timeStartProcessMtnInstallment" ColumnName="timeStartProcessMtnInstallment" />
+                <ScalarProperty Name="timeAfterEntity" ColumnName="timeAfterEntity" />
+                <ScalarProperty Name="timeAfterWhere" ColumnName="timeAfterWhere" />
+                <ScalarProperty Name="timeStartChargeMtnSubscriber" ColumnName="timeStartChargeMtnSubscriber" />
+                <ScalarProperty Name="timeBeforeHTTPClient" ColumnName="timeBeforeHTTPClient" />
+                <ScalarProperty Name="timeBeforeSendMTNClient" ColumnName="timeBeforeSendMTNClient" />
+                <ScalarProperty Name="timeAfterSendMTNClient" ColumnName="timeAfterSendMTNClient" />
+                <ScalarProperty Name="timeBeforeReadStringClient" ColumnName="timeBeforeReadStringClient" />
+                <ScalarProperty Name="timeAfterReadStringClient" ColumnName="timeAfterReadStringClient" />
+                <ScalarProperty Name="timeAfterXML" ColumnName="timeAfterXML" />
+                <ScalarProperty Name="timeFinish" ColumnName="timeFinish" />
+                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
+                <ScalarProperty Name="loopNo" ColumnName="loopNo" />
+                <ScalarProperty Name="threadNumber" ColumnName="threadNumber" />
+                <ScalarProperty Name="timeCreate" ColumnName="timeCreate" />
+                <ScalarProperty Name="guid" ColumnName="guid" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1928,61 +2010,28 @@ warning 6002: The table/view 'MusicYad.dbo.vw_Singlecharge' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vw_Singlecharge">
+            <EntityTypeMapping TypeName="MusicYadModel.vw_Singlecharge">
+              <MappingFragment StoreEntitySet="vw_Singlecharge">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="MusicYadModel.Store.AggregateDailyStatistics" />
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="MusicYadModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="MusicYadModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="MusicYadModel.Store.RetryUndeliveredMessages" />
           <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="MusicYadModel.Store.SinglechargeLiveStatuses" />
-          <EntitySetMapping Name="InstallmentCycles">
-            <EntityTypeMapping TypeName="MusicYadModel.InstallmentCycle">
-              <MappingFragment StoreEntitySet="InstallmentCycles">
-                <ScalarProperty Name="Duration" ColumnName="Duration" />
-                <ScalarProperty Name="Income" ColumnName="Income" />
-                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Settings">
-            <EntityTypeMapping TypeName="MusicYadModel.Setting">
-              <MappingFragment StoreEntitySet="Settings">
-                <ScalarProperty Name="PersianName" ColumnName="PersianName" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_Singlecharge">
-            <EntityTypeMapping TypeName="MusicYadModel.vw_Singlecharge">
-              <MappingFragment StoreEntitySet="vw_Singlecharge">
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Otps">
-            <EntityTypeMapping TypeName="MusicYadModel.Otp">
-              <MappingFragment StoreEntitySet="Otp">
-                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
-                <ScalarProperty Name="ReturnValue" ColumnName="ReturnValue" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

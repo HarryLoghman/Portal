@@ -50,12 +50,12 @@ namespace PorShetabLibrary.Models
         public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
         public virtual DbSet<SinglechargeInstallmentArchive> SinglechargeInstallmentArchives { get; set; }
+        public virtual DbSet<SingleChargeTiming> SingleChargeTimings { get; set; }
         public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
         public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<vw_Singlecharge> vw_Singlecharge { get; set; }
-        public virtual DbSet<SingleChargeTiming> SingleChargeTimings { get; set; }
     
         public virtual int AggregateDailyStatistics(Nullable<System.DateTime> miladiDate, string serviceCode)
         {

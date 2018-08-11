@@ -54,7 +54,7 @@ namespace DehnadDambelService
                         List<string> installmentListNotOrdered = new List<string>();// SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
                         using (var portal = new PortalEntities())
                         {
-                            installmentListNotOrdered = portal.Subscribers.Where(o => o.ServiceId != 10039 && o.ServiceId != 10028 && o.ServiceId != 10025 && o.ServiceId != 10036).OrderBy(o => o.MobileNumber).Skip(20000).Take(10000).Select(o => o.MobileNumber).ToList();
+                            installmentListNotOrdered = portal.Subscribers.Where(o => o.ServiceId != 10039 && o.ServiceId != 10028 && o.ServiceId != 10025 && o.ServiceId != 10036 && o.DeactivationDate == null).OrderBy(o => o.MobileNumber).Skip(20000).Take(10000).Select(o => o.MobileNumber).ToList();
                         }
 
                         var installmentExceededRetries = entity.Singlecharges.GroupBy(o => o.MobileNumber).Where(o => o.Count() > maxServiceTries).Select(o => o.Key).ToList();
