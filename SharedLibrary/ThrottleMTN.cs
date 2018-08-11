@@ -20,6 +20,7 @@ namespace SharedLibrary
         string v_mapFilePath = "";
         string v_smphName = "";
         string v_mappedFileName = "";
+        private object v_lockObj = new object();
         public ThrottleMTN()
         {
             this.throttleConstructor(this.getOperatorTPS(), 1100, 10, Path.GetTempPath() + "MTNThrottleTPS", "MTNThrottle", "MTNThrottleSamephore");
@@ -75,15 +76,20 @@ namespace SharedLibrary
                 throw new Exception(this.v_mapFilePath + " does not exists");
             }
 
-            start: object obj = new object();
+            start: 
             Semaphore smph;
-            lock (obj)
+            
+            lock (v_lockObj)
             {
                 long temp;
                 long ticksFile;
                 int waitInMillisecond = 0;
                 int count = 0;
                 string str = "";
+                long ticksNow = 0;
+
+                temp = ticksFile = ticksNow = waitInMillisecond = count = 0;
+                str = "";
 
                 if (!Semaphore.TryOpenExisting(this.v_smphName, out smph))
                 {
@@ -95,7 +101,7 @@ namespace SharedLibrary
                 {
 
                     DateTime timeArrive = DateTime.Now;
-                    long ticksNow = timeArrive.Ticks / TimeSpan.TicksPerMillisecond;
+                    ticksNow = timeArrive.Ticks / TimeSpan.TicksPerMillisecond;
 
                     using (MemoryMappedViewStream stream = mmf.CreateViewStream())
                     {
@@ -114,7 +120,6 @@ namespace SharedLibrary
                     if (str == "" || str.Split(',').Where(o => long.TryParse(o, out temp) == false).Count() > 0)
                     {
                         str = ticksNow + "," + 1;
-
                     }
                     else
                     {
@@ -178,14 +183,15 @@ namespace SharedLibrary
                     DateTime time = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond));
                     ts = time - DateTime.Now.Date;
                     DateTime nextTime = time.AddMilliseconds(waitInMillisecond);
-                    logs.Warn("|" + serviceName + "|" + mobileNumber + "|" + guid + "|" + str.Split(',')[1] + "|" + waitInMillisecond + "|" + ts.ToString("c") + "|" + nextTime.ToString("hh:mm:ss,fff"));
+                    logs.Warn(";" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c") + ";" + nextTime.ToString("hh:mm:ss,fff"));
                     //Debug.WriteLine("&&&&&&&&&&Sleep" + waitInMillisecond);
                     Thread.Sleep(waitInMillisecond);
-
+                    temp = ticksFile = ticksNow = waitInMillisecond =  count = 0;
+                    str = "";
                     goto start;
                 }
                 ts = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond)) - DateTime.Now.Date;
-                logs.Warn("|" + serviceName + "|" + mobileNumber + "|" + guid + "|" + str.Split(',')[1] + "|" + waitInMillisecond + "|" + ts.ToString("c"));
+                logs.Warn(";" + serviceName + ";" + mobileNumber + ";" + guid + ";" + str.Split(',')[1] + ";" + waitInMillisecond + ";" + ts.ToString("c"));
             }
 
         }
