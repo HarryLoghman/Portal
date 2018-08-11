@@ -96,6 +96,7 @@ namespace SharedLibrary
                     smph = new Semaphore(1, 1, this.v_smphName);
                 }
 
+
                 smph.WaitOne();
                 using (MemoryMappedFile mmf = MemoryMappedFile.CreateFromFile(this.v_mapFilePath, FileMode.OpenOrCreate, this.v_mappedFileName, 25))
                 {
@@ -175,6 +176,8 @@ namespace SharedLibrary
 
 
                 }
+
+
 
                 smph.Release();
                 TimeSpan ts;
