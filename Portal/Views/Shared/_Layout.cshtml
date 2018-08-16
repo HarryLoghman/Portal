@@ -1029,6 +1029,32 @@
                                                 </ul>
                                             </li>
                                         }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Hazaran"))
+                                        {
+                                            <li>
+                                                هزاران
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Hazaran" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }

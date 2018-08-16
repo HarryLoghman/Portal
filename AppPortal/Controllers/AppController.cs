@@ -19,9 +19,9 @@ namespace Portal.Controllers
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran" };
         private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
 
         [HttpPost]
@@ -174,6 +174,45 @@ namespace Portal.Controllers
                                                 result.Status = singleCharge.Description;
                                             }
                                             TajoTakhtLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                                        }
+                                    }
+                                }
+                                else if (service.ServiceCode == "Hazaran")
+                                {
+                                    using (var entity = new HazaranLibrary.Models.HazaranEntities())
+                                    {
+                                        var imiChargeCode = new HazaranLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = HazaranLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = HazaranLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = HazaranLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var otpMessage = "webservice";
+                                            if (messageObj.Content != null)
+                                                otpMessage = otpMessage + "-" + messageObj.Content;
+                                            var logId = HazaranLibrary.MessageHandler.OtpLog(messageObj.MobileNumber, "request", otpMessage);
+                                            var isOtpExists = entity.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                            if (isOtpExists != null && messageObj.Price.Value == 0)
+                                            {
+                                                result.Status = "Otp request already exists for this subscriber";
+                                            }
+                                            else
+                                            {
+                                                var singleCharge = new TajoTakhtLibrary.Models.Singlecharge();
+                                                string aggregatorName = "MobinOneMapfa";
+                                                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                                singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                result.Status = singleCharge.Description;
+                                            }
+                                            HazaranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                                         }
                                     }
                                 }
@@ -1212,6 +1251,24 @@ namespace Portal.Controllers
                                         result.Status = singleCharge.Description;
                                     }
                                     TajoTakhtLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                                }
+                            }
+                            else if (service.ServiceCode == "Hazaran")
+                            {
+                                using (var entity = new HazaranLibrary.Models.HazaranEntities())
+                                {
+                                    var logId = HazaranLibrary.MessageHandler.OtpLog(messageObj.MobileNumber, "confirm", "webservice-" + messageObj.ConfirmCode);
+                                    var singleCharge = HazaranLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        string aggregatorName = "MobinOneMapfa";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                    HazaranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                                 }
                             }
                             else if (service.ServiceCode == "LahzeyeAkhar")
@@ -2580,6 +2637,24 @@ namespace Portal.Controllers
                             else if (messageObj.ServiceCode == "Phantom")
                             {
                                 using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                                {
+                                    var now = DateTime.Now;
+                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (singlechargeInstallment == null)
+                                    {
+                                        var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
+                                        if (installmentQueue != null)
+                                            daysLeft = 30;
+                                        else
+                                            daysLeft = 0;
+                                    }
+                                    else
+                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                }
+                            }
+                            else if (messageObj.ServiceCode == "Hazaran")
+                            {
+                                using (var entity = new HazaranLibrary.Models.HazaranEntities())
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();

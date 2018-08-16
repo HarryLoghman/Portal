@@ -229,6 +229,14 @@
     <Compile Include="Areas\LahzeyeAkhar\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\LahzeyeAkhar\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\LahzeyeAkhar\LahzeyeAkharAreaRegistration.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Hazaran\HazaranAreaRegistration.cs" />
     <Compile Include="Areas\Statistics\Controllers\AllServicesStatisticsController.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\MessagesTemplate.cs" />
@@ -1520,6 +1528,16 @@
     <Content Include="Areas\LahzeyeAkhar\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\LahzeyeAkhar\Views\web.config" />
     <Content Include="Areas\Statistics\Views\AllServicesStatistics\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Hazaran\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1886,6 +1904,7 @@
     <Folder Include="Areas\Dezhban\Models\" />
     <Folder Include="Areas\DonyayeAsatir\Models\" />
     <Folder Include="Areas\FitShow\Models\" />
+    <Folder Include="Areas\Hazaran\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
     <Folder Include="Areas\LahzeyeAkhar\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
@@ -2003,6 +2022,10 @@
     <ProjectReference Include="..\FitShowLibrary\FitShowLibrary.csproj">
       <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
       <Name>FitShowLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
+      <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
+      <Name>HazaranLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\IrancellTestLibrary\IrancellTestLibrary.csproj">
       <Project>{d112bf46-33f5-c224-2122-4bc23f4d2122}</Project>

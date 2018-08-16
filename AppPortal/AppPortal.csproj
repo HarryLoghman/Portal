@@ -1151,6 +1151,10 @@
       <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
       <Name>FitShowLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
+      <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
+      <Name>HazaranLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
       <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
       <Name>JabehAbzarLibrary</Name>
