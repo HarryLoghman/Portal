@@ -19,9 +19,9 @@ namespace Portal.Controllers
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin" };
         private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
 
         [HttpPost]
@@ -2675,17 +2675,18 @@ namespace Portal.Controllers
                                 using (var entity = new MedioLibrary.Models.MedioEntities())
                                 {
                                     var now = DateTime.Now;
-                                    var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                                    if (singlechargeInstallment == null)
+                                    using (var portalEntity = new SharedLibrary.Models.PortalEntities())
                                     {
-                                        var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
-                                        if (installmentQueue != null)
-                                            daysLeft = 30;
-                                        else
+                                        var singlechargeInstallment = portalEntity.Subscribers.Where(o => o.MobileNumber == messageObj.MobileNumber && o.ServiceId == 10030).FirstOrDefault();
+                                        if (singlechargeInstallment == null)
+                                        {
                                             daysLeft = 0;
+                                        }
+                                        else if (singlechargeInstallment.DeactivationDate != null)
+                                            daysLeft = 0;
+                                        else
+                                            daysLeft = 30;
                                     }
-                                    else
-                                        daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
                                 }
                             }
                             else if (messageObj.ServiceCode == "TajoTakht")

@@ -99,6 +99,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadLahzeyeAkharService",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadHazaranService", "DehnadHazaranService\DehnadHazaranService.csproj", "{4B114B21-1F11-145B-4121-5414455CBB13}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadJhoobinService", "DehnadJhoobinService\DehnadJhoobinService.csproj", "{4B114B21-1F15-135B-41B1-5114255DBB15}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalTester", "PortalTester\PortalTester.csproj", "{7D190C53-6694-40C8-8FBE-643C14771526}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLeagueLibrary", "MyLeagueLibrary\MyLeagueLibrary.csproj", "{3097AECB-B184-4E33-8E50-605C31F7A8E8}"
@@ -192,6 +194,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LahzeyeAkharLibrary", "LahzeyeAkharLibrary\LahzeyeAkharLibrary.csproj", "{15344255-1B21-1533-4331-4864DB1BB442}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HazaranLibrary", "HazaranLibrary\HazaranLibrary.csproj", "{14324215-1C21-1533-4331-5134DB5BB44F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JhoobinDambelLibrary", "JhoobinDambelLibrary\JhoobinDambelLibrary.csproj", "{54314515-1421-1533-4351-5134DB5BB441}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JhoobinMedadLibrary", "JhoobinMedadLibrary\JhoobinMedadLibrary.csproj", "{54314515-1421-1533-4351-5134DB5BB442}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JhoobinMusicYadLibrary", "JhoobinMusicYadLibrary\JhoobinMusicYadLibrary.csproj", "{54314515-1421-1533-4351-5134DB5BB443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JhoobinPinLibrary", "JhoobinPinLibrary\JhoobinPinLibrary.csproj", "{54314515-1421-1533-4351-5134DB5BB444}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JhoobinPorShetabLibrary", "JhoobinPorShetabLibrary\JhoobinPorShetabLibrary.csproj", "{54314515-1421-1533-4351-5134DB5BB445}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JhoobinTahChinLibrary", "JhoobinTahChinLibrary\JhoobinTahChinLibrary.csproj", "{54314515-1421-1533-4351-5134DB5BB446}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -391,6 +405,10 @@ Global
 		{4B114B21-1F11-145B-4121-5414455CBB13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B114B21-1F11-145B-4121-5414455CBB13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B114B21-1F11-145B-4121-5414455CBB13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B114B21-1F15-135B-41B1-5114255DBB15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B114B21-1F15-135B-41B1-5114255DBB15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B114B21-1F15-135B-41B1-5114255DBB15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B114B21-1F15-135B-41B1-5114255DBB15}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D190C53-6694-40C8-8FBE-643C14771526}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -579,6 +597,30 @@ Global
 		{14324215-1C21-1533-4331-5134DB5BB44F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14324215-1C21-1533-4331-5134DB5BB44F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14324215-1C21-1533-4331-5134DB5BB44F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB445}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB445}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB445}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB445}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB446}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB446}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB446}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54314515-1421-1533-4351-5134DB5BB446}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

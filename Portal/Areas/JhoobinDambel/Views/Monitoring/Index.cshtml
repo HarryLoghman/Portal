@@ -1,0 +1,193 @@
+﻿@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "وضعیت ارسال ها";
+}
+
+<style>
+    .loadAnimation {
+        position: relative;
+        margin-right: 30px;
+    }
+
+    .loadAnimation > .k-loading-mask > .k-loading-image {
+        background-size: contain;
+    }
+</style>
+
+<div class="k-rtl" id="grid"></div>
+
+<script>
+    var gridElement = $("#grid");
+
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "ردیف", width: 100 },
+            { field: "PersianDateCreated", title: "تاریخ", width: 100 },
+            { field: "MessageType", title: "نوع محتوا", template: "#= MessageType == 2 ? 'محتوای ایونت بیس' : 'محتوای اتوشارژ' #", width: 100 },
+            { field: "ContentId", title: "شماره محتوا", width: 100 },
+            { field: "Tag", title: "شماره ارسال(مخصوص اتوشارژ)", width: 100 },
+            { field: "TotalMessages", title: "تعداد پیامک", width: 100 },
+            { field: "TotalSuccessfulySended", title: "تعداد ارسال موفق", width: 100 },
+            { field: "TotalFailed", title: "تعداد خطا", width: 100 },
+            { field: "Status", title: "وضعیت", template: "#=getProcessStatus(Status)#", width: 100 },
+            { command: [{ text: "ارسال", click: SendButton }], width: 300 }
+        ],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Monitoring/Monitoring_Read",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        PersianDateCreated: { type: "string" },
+                        MessageType: { type: "number" },
+                        ContentId: { type: "number" },
+                        Tag: { type: "number" },
+                        TotalMessages: { type: "number" },
+                        TotalSuccessfulySended: { type: "number" },
+                        TotalFailed: { type: "number" },
+                        Status: { type: "number" },
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Id", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+        dataBound: function (e) {
+            e.sender.dataItems().forEach(function (entry) {
+                if (entry.Status == 2) {
+                    ChangeButtonTextToPauesed(entry.uid);
+                    AddLoadingAnimationToEachRow(entry.uid);
+                    loadingElement = $("#" + entry.uid + "-loading");
+                    kendo.ui.progress(loadingElement, true);
+                }
+                else if (entry.Status == 5)
+                    HideGridButtons(entry.uid);
+                else if (entry.Status == 6)
+                    ChangeButtonTextToResume(entry.uid);
+            });
+        }
+    });
+
+    function ChangeButtonTextToPauesed(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").text("توقف ارسال");
+    }
+
+    function ChangeButtonTextToResume(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").text("ادامه ارسال");
+    }
+
+    function HideGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").hide();
+    }
+
+    function AddLoadingAnimationToEachRow(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").after("<span class='loadAnimation' id='" + entry + "-loading' >&nbsp;&nbsp;&nbsp;&nbsp;</span>");
+    }
+
+    function DisbaleGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").addClass("k-state-disabled ");
+    }
+
+    function EnableGridButtons(entry) {
+        $("#grid").find('[data-uid="' + entry + '"]').find(".k-button").removeClass("k-state-disabled ");
+    }
+
+    function SendButton(e) {
+        if ($(e.currentTarget).closest(".k-button").hasClass("k-state-disabled") == true)
+            return false;
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var loadingElement = $("#" + dataItem.uid + "-loading");
+        if (dataItem.Status == 1) {
+            DisbaleGridButtons(dataItem.uid);
+            $.ajax({
+                url: '@Url.Action("StartSendingMessages", "Monitoring")',
+                data: { MonitoringId: dataItem.Id, ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
+                dataType: 'html',
+                success: function (data) {
+                    kendo.ui.progress(loadingElement, true);
+                    ChangeButtonTextToPauesed(dataItem.uid);
+                    EnableGridButtons(dataItem.uid);
+                    $("#grid").data("kendoGrid").dataSource.read();
+                },
+                error: function () {
+                    kendo.ui.progress(loadingElement, false);
+                    EnableGridButtons(dataItem.uid);
+                },
+            });
+        }
+        else if (dataItem.Status == 2) {
+            DisbaleGridButtons(dataItem.uid);
+            $.ajax({
+                url: '@Url.Action("PauseSendingMessages", "Monitoring")',
+                data: { MonitoringId: dataItem.Id, ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
+                dataType: 'html',
+                success: function (data) {
+                    kendo.ui.progress(loadingElement, false);
+                    ChangeButtonTextToResume(dataItem.uid);
+                    EnableGridButtons(dataItem.uid);
+                    $("#grid").data("kendoGrid").dataSource.read();
+                },
+                error: function () {
+                    kendo.ui.progress(loadingElement, true);
+                    EnableGridButtons(dataItem.uid);
+                },
+            });
+        }
+        else if (dataItem.Status == 6) {
+            DisbaleGridButtons(dataItem.uid);
+            $.ajax({
+                url: '@Url.Action("ResumeSendingMessages", "Monitoring")',
+                data: { MonitoringId: dataItem.Id, ContentId: dataItem.ContentId, MessageType: dataItem.MessageType, PersianDateCreated: dataItem.PersianDateCreated, Tag: dataItem.Tag },
+                dataType: 'html',
+                success: function (data) {
+                    kendo.ui.progress(loadingElement, true);
+                    ChangeButtonTextToPauesed(dataItem.uid);
+                    EnableGridButtons(dataItem.uid);
+                    $("#grid").data("kendoGrid").dataSource.read();
+                },
+                error: function () {
+                    kendo.ui.progress(loadingElement, false);
+                    EnableGridButtons(dataItem.uid);
+                },
+            });
+        }
+    }
+</script>
