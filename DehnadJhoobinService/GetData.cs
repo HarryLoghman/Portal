@@ -47,6 +47,9 @@ namespace DehnadJhoobinService
                 for (int i = 0; i < 450; i++)
                 {
                     var date = d.AddDays(i);
+                    if (date.Date < DateTime.Parse("2017-09-25"))
+                        continue;
+                    logs.Info(date);
                     if (DateTime.Now.Date < date.Date)
                         break;
                     foreach (var item in serviceIdsDic)
@@ -226,7 +229,7 @@ namespace DehnadJhoobinService
                                 startTime = startTime.Replace("/", "-");
                                 var splitedStartTime = startTime.Split(' ');
                                 var georgianDate = SharedLibrary.Date.GetGregorianDate(splitedStartTime[0]);
-                                var georgianDateTime = DateTime.Parse(georgianDate + " " + splitedStartTime[1]);
+                                var georgianDateTime = SharedLibrary.Date.GetGregorianDateTime(startTime);
                                 //subscriber.ActivationDate = georgianDateTime;
                                 //subscriber.PersianActivationDate = splitedStartTime[0];
                                 //entity.Entry(subscriber).State = EntityState.Modified;
@@ -237,7 +240,7 @@ namespace DehnadJhoobinService
                                 //history.PersianDateTime = startTime;
                                 //entity.Entry(history).State = EntityState.Modified;
                                 //entity.SaveChanges();
-                                result.Add("Register: MobileNumber=" + mobileNumber + ",date=" + georgianDateTime + ",persianDate=" + startTime + Environment.NewLine);
+                                result.Add("Register " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime + ",persianDate=" + startTime + Environment.NewLine);
                             }
                         }
                     }
@@ -298,7 +301,7 @@ namespace DehnadJhoobinService
                                     startTime = startTime.Replace("/", "-");
                                     var splitedStartTime = startTime.Split(' ');
                                     var georgianDate = SharedLibrary.Date.GetGregorianDate(splitedStartTime[0]);
-                                    var georgianDateTime = DateTime.Parse(georgianDate + " " + splitedStartTime[1]);
+                                    var georgianDateTime = SharedLibrary.Date.GetGregorianDateTime(startTime);
                                     //    subscriber.ActivationDate = georgianDateTime;
                                     //    subscriber.PersianActivationDate = splitedStartTime[0];
                                     //    entity.Entry(subscriber).State = EntityState.Modified;
@@ -309,7 +312,7 @@ namespace DehnadJhoobinService
                                     //    history.PersianDateTime = startTime;
                                     //    entity.Entry(history).State = EntityState.Modified;
                                     //    entity.SaveChanges();
-                                    result.Add("Register: MobileNumber=" + mobileNumber + ",date=" + georgianDateTime + ",persianDate=" + startTime + Environment.NewLine);
+                                    result.Add("Register " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime + ",persianDate=" + startTime + Environment.NewLine);
                                 }
                                 //var message2 = new SharedLibrary.Models.MessageObject();
                                 //message2.MobileNumber = mobileNumber;
@@ -323,7 +326,7 @@ namespace DehnadJhoobinService
                                 expiryTime = expiryTime.Replace("/", "-");
                                 var splitedExpiryTime = expiryTime.Split(' ');
                                 var georgianDate2 = SharedLibrary.Date.GetGregorianDate(splitedExpiryTime[0]);
-                                var georgianDateTime2 = DateTime.Parse(georgianDate2 + " " + splitedExpiryTime[1]);
+                                var georgianDateTime2 = SharedLibrary.Date.GetGregorianDateTime(expiryTime);
                                 //subscriber.ActivationDate = georgianDateTime2;
                                 //subscriber.PersianActivationDate = splitedExpiryTime[0];
                                 //entity.Entry(subscriber).State = EntityState.Modified;
@@ -334,11 +337,11 @@ namespace DehnadJhoobinService
                                 //history2.PersianDateTime = expiryTime;
                                 //entity.Entry(history2).State = EntityState.Modified;
                                 //entity.SaveChanges();
-                                result.Add("Unsub: MobileNumber=" + mobileNumber + ",date=" + georgianDateTime2 + ",persianDate=" + expiryTime + Environment.NewLine);
+                                result.Add("Unsub " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime2 + ",persianDate=" + expiryTime + Environment.NewLine);
                             }
                         }
                     }
-                    File.WriteAllLines(DehnadJhoobinService.Properties.Settings.Default.TempPath + "result.txt", result);
+                    File.AppendAllLines(DehnadJhoobinService.Properties.Settings.Default.TempPath + "result.txt", result);
                 }
                 return true;
             }
