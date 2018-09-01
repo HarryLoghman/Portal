@@ -46,6 +46,7 @@
         <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="PortalModel.JhoobinSetting" Width="1.5" PointX="12.375" PointY="17.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

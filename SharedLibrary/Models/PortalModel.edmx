@@ -123,6 +123,15 @@
           <Property Name="AggregatorId" Type="bigint" Nullable="false" />
           <Property Name="IsProcessed" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="JhoobinSettings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Cookie" Type="nvarchar" MaxLength="255" />
+          <Property Name="AccessToken" Type="nvarchar" MaxLength="255" />
+          <Property Name="SubscriptionsViewState" Type="nvarchar" MaxLength="255" />
+        </EntityType>
         <EntityType Name="Operators">
           <Key>
             <PropertyRef Name="Id" />
@@ -616,6 +625,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BulkList" EntityType="Self.BulkList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Operators" EntityType="Self.Operators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
@@ -1374,6 +1384,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <FunctionImport Name="sp_DehnadAll3GServicesStatistics">
           <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="JhoobinSettings" EntityType="PortalModel.JhoobinSetting" />
         </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1384,6 +1395,15 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Type="String" Name="Time" Nullable="true" MaxLength="21" />
           <Property Type="String" Name="Content" Nullable="true" />
         </ComplexType>
+        <EntityType Name="JhoobinSetting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Cookie" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AccessToken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SubscriptionsViewState" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1874,6 +1894,16 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_DehnadAll2GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll2GServicesStatistics" />
           <FunctionImportMapping FunctionImportName="sp_DehnadAll3GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll3GServicesStatistics" />
+          <EntitySetMapping Name="JhoobinSettings">
+            <EntityTypeMapping TypeName="PortalModel.JhoobinSetting">
+              <MappingFragment StoreEntitySet="JhoobinSettings">
+                <ScalarProperty Name="SubscriptionsViewState" ColumnName="SubscriptionsViewState" />
+                <ScalarProperty Name="AccessToken" ColumnName="AccessToken" />
+                <ScalarProperty Name="Cookie" ColumnName="Cookie" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

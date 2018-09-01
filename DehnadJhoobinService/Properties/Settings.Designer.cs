@@ -12,7 +12,7 @@ namespace DehnadJhoobinService.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,133 +25,13 @@ namespace DehnadJhoobinService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MobinOneMapfa")]
-        public string AggregatorName {
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\JhoobinTemp\\")]
+        public string TempPath {
             get {
-                return ((string)(this["AggregatorName"]));
+                return ((string)(this["TempPath"]));
             }
             set {
-                this["AggregatorName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("03:15:00")]
-        public string InsertAutochargeMessageInQueueTime {
-            get {
-                return ((string)(this["InsertAutochargeMessageInQueueTime"]));
-            }
-            set {
-                this["InsertAutochargeMessageInQueueTime"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("03:15:15")]
-        public string InsertAutochargeMessageInQueueEndTime {
-            get {
-                return ((string)(this["InsertAutochargeMessageInQueueEndTime"]));
-            }
-            set {
-                this["InsertAutochargeMessageInQueueEndTime"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int NumberOfAutochargeMessagesPerDay {
-            get {
-                return ((int)(this["NumberOfAutochargeMessagesPerDay"]));
-            }
-            set {
-                this["NumberOfAutochargeMessagesPerDay"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
-        public int ReadSize {
-            get {
-                return ((int)(this["ReadSize"]));
-            }
-            set {
-                this["ReadSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Jhoobin")]
-        public string ServiceCode {
-            get {
-                return ((string)(this["ServiceCode"]));
-            }
-            set {
-                this["ServiceCode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool RetryNotDeliveredMessages {
-            get {
-                return ((bool)(this["RetryNotDeliveredMessages"]));
-            }
-            set {
-                this["RetryNotDeliveredMessages"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3000")]
-        public int FirstSingleChargeTakeSize {
-            get {
-                return ((int)(this["FirstSingleChargeTakeSize"]));
-            }
-            set {
-                this["FirstSingleChargeTakeSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
-        public int SecondSingleChargeTakeSize {
-            get {
-                return ((int)(this["SecondSingleChargeTakeSize"]));
-            }
-            set {
-                this["SecondSingleChargeTakeSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7000")]
-        public int DefaultSingleChargeTakeSize {
-            get {
-                return ((int)(this["DefaultSingleChargeTakeSize"]));
-            }
-            set {
-                this["DefaultSingleChargeTakeSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
-        public int Take {
-            get {
-                return ((int)(this["Take"]));
-            }
-            set {
-                this["Take"] = value;
+                this["TempPath"] = value;
             }
         }
     }

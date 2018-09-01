@@ -48,6 +48,7 @@ namespace DehnadJhoobinService
             while (!shutdownEvent.WaitOne(0))
             {
                 dataClass.GetJoobinData();
+                break;
                 Thread.Sleep(1000);
             }
         }

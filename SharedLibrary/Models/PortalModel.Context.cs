@@ -60,6 +60,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<vw_DehnadAllSentMessages> vw_DehnadAllSentMessages { get; set; }
         public virtual DbSet<vw_DehnadAllServicesStatistics> vw_DehnadAllServicesStatistics { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
+        public virtual DbSet<JhoobinSetting> JhoobinSettings { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

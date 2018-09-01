@@ -206,7 +206,7 @@ namespace Portal.Controllers
                                             }
                                             else
                                             {
-                                                var singleCharge = new TajoTakhtLibrary.Models.Singlecharge();
+                                                var singleCharge = new HazaranLibrary.Models.Singlecharge();
                                                 string aggregatorName = "MobinOneMapfa";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                                 singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);

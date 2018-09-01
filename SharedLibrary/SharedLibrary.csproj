@@ -117,6 +117,9 @@
     </Compile>
     <Compile Include="Models\ImiData.cs" />
     <Compile Include="Models\IntegratedPanel.cs" />
+    <Compile Include="Models\JhoobinSetting.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Operator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
