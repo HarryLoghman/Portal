@@ -53,6 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
@@ -112,6 +113,12 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DeliveryObject.cs" />
+    <Compile Include="Models\fn_receievedMessagesFirstTwoRows_Result.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\fn_receivedMessagesArchiveFirstTwoRows_Result.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetUserLog_Result.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -184,8 +191,14 @@
     <Compile Include="Models\SubscribersPoint.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\telepromo.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\TelepromoBulkMessage.cs" />
     <Compile Include="Models\TempReferralData.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\test_Result.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VerifySubscriber.cs">
@@ -194,13 +207,16 @@
     <Compile Include="Models\vw_AllSentMessages.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\vw_DehnadAllSentMessages.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\vw_DehnadAllServicesStatistics.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\vw_ReceievedMessagesPorshetabKeyword.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\vw_ReceivedMessages.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_ReceivedMessagesArchivePorshetabKeyword.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Notify.cs" />
@@ -250,6 +266,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="ServiceHandler.cs" />
+    <Compile Include="ThrottleDedicated.cs" />
     <Compile Include="ThrottleMTN.cs" />
     <Compile Include="UsefulWebApis.cs" />
   </ItemGroup>

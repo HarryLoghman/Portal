@@ -54,12 +54,34 @@ namespace SharedLibrary.Models
         public virtual DbSet<Subscriber> Subscribers { get; set; }
         public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
         public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
-        public virtual DbSet<TempReferralData> TempReferralDatas { get; set; }
+        public virtual DbSet<telepromo> telepromoes { get; set; }
         public virtual DbSet<VerifySubscriber> VerifySubscribers { get; set; }
         public virtual DbSet<vw_AllSentMessages> vw_AllSentMessages { get; set; }
-        public virtual DbSet<vw_DehnadAllSentMessages> vw_DehnadAllSentMessages { get; set; }
         public virtual DbSet<vw_DehnadAllServicesStatistics> vw_DehnadAllServicesStatistics { get; set; }
+        public virtual DbSet<vw_ReceievedMessagesPorshetabKeyword> vw_ReceievedMessagesPorshetabKeyword { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
+        public virtual DbSet<vw_ReceivedMessagesArchivePorshetabKeyword> vw_ReceivedMessagesArchivePorshetabKeyword { get; set; }
+        public virtual DbSet<TempReferralData> TempReferralDatas { get; set; }
+    
+        [DbFunction("PortalEntities", "fn_receievedMessagesFirstTwoRows")]
+        public virtual IQueryable<fn_receievedMessagesFirstTwoRows_Result> fn_receievedMessagesFirstTwoRows(string serviceShortCode)
+        {
+            var serviceShortCodeParameter = serviceShortCode != null ?
+                new ObjectParameter("serviceShortCode", serviceShortCode) :
+                new ObjectParameter("serviceShortCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<fn_receievedMessagesFirstTwoRows_Result>("[PortalEntities].[fn_receievedMessagesFirstTwoRows](@serviceShortCode)", serviceShortCodeParameter);
+        }
+    
+        [DbFunction("PortalEntities", "fn_receivedMessagesArchiveFirstTwoRows")]
+        public virtual IQueryable<fn_receivedMessagesArchiveFirstTwoRows_Result> fn_receivedMessagesArchiveFirstTwoRows(string serviceShortCode)
+        {
+            var serviceShortCodeParameter = serviceShortCode != null ?
+                new ObjectParameter("serviceShortCode", serviceShortCode) :
+                new ObjectParameter("serviceShortCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<fn_receivedMessagesArchiveFirstTwoRows_Result>("[PortalEntities].[fn_receivedMessagesArchiveFirstTwoRows](@serviceShortCode)", serviceShortCodeParameter);
+        }
     
         public virtual int ArchiveReceivedMessages()
         {
@@ -91,6 +113,244 @@ namespace SharedLibrary.Models
                 new ObjectParameter("ServiceCode", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_DehnadAll3GServicesStatistics", serviceCodeParameter);
+        }
+    
+        public virtual int sp_getSubscribersForCharging(string dbName, Nullable<int> serviceId, Nullable<int> maxTries, Nullable<int> cycleNumber, Nullable<int> maxPrice)
+        {
+            var dbNameParameter = dbName != null ?
+                new ObjectParameter("dbName", dbName) :
+                new ObjectParameter("dbName", typeof(string));
+    
+            var serviceIdParameter = serviceId.HasValue ?
+                new ObjectParameter("serviceId", serviceId) :
+                new ObjectParameter("serviceId", typeof(int));
+    
+            var maxTriesParameter = maxTries.HasValue ?
+                new ObjectParameter("maxTries", maxTries) :
+                new ObjectParameter("maxTries", typeof(int));
+    
+            var cycleNumberParameter = cycleNumber.HasValue ?
+                new ObjectParameter("cycleNumber", cycleNumber) :
+                new ObjectParameter("cycleNumber", typeof(int));
+    
+            var maxPriceParameter = maxPrice.HasValue ?
+                new ObjectParameter("maxPrice", maxPrice) :
+                new ObjectParameter("maxPrice", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_getSubscribersForCharging", dbNameParameter, serviceIdParameter, maxTriesParameter, cycleNumberParameter, maxPriceParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<decimal>> sp_getTotalPriceAllDatabases()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("sp_getTotalPriceAllDatabases");
+        }
+    
+        public virtual int sp_getTriggerSubscribersDeActiveCount(string serviceShortCode, string date, string subscriptionKeyword, string unsubscriptionKeyword)
+        {
+            var serviceShortCodeParameter = serviceShortCode != null ?
+                new ObjectParameter("serviceShortCode", serviceShortCode) :
+                new ObjectParameter("serviceShortCode", typeof(string));
+    
+            var dateParameter = date != null ?
+                new ObjectParameter("date", date) :
+                new ObjectParameter("date", typeof(string));
+    
+            var subscriptionKeywordParameter = subscriptionKeyword != null ?
+                new ObjectParameter("subscriptionKeyword", subscriptionKeyword) :
+                new ObjectParameter("subscriptionKeyword", typeof(string));
+    
+            var unsubscriptionKeywordParameter = unsubscriptionKeyword != null ?
+                new ObjectParameter("unsubscriptionKeyword", unsubscriptionKeyword) :
+                new ObjectParameter("unsubscriptionKeyword", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_getTriggerSubscribersDeActiveCount", serviceShortCodeParameter, dateParameter, subscriptionKeywordParameter, unsubscriptionKeywordParameter);
+        }
+    
+        public virtual int sp_getTriggerSubscribersDeActiveCountAllKeyWords(string serviceShortCode, string subscriptionKeyword, string unsubscriptionKeyword, string keyWordAll, string date)
+        {
+            var serviceShortCodeParameter = serviceShortCode != null ?
+                new ObjectParameter("serviceShortCode", serviceShortCode) :
+                new ObjectParameter("serviceShortCode", typeof(string));
+    
+            var subscriptionKeywordParameter = subscriptionKeyword != null ?
+                new ObjectParameter("subscriptionKeyword", subscriptionKeyword) :
+                new ObjectParameter("subscriptionKeyword", typeof(string));
+    
+            var unsubscriptionKeywordParameter = unsubscriptionKeyword != null ?
+                new ObjectParameter("unsubscriptionKeyword", unsubscriptionKeyword) :
+                new ObjectParameter("unsubscriptionKeyword", typeof(string));
+    
+            var keyWordAllParameter = keyWordAll != null ?
+                new ObjectParameter("keyWordAll", keyWordAll) :
+                new ObjectParameter("keyWordAll", typeof(string));
+    
+            var dateParameter = date != null ?
+                new ObjectParameter("date", date) :
+                new ObjectParameter("date", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_getTriggerSubscribersDeActiveCountAllKeyWords", serviceShortCodeParameter, subscriptionKeywordParameter, unsubscriptionKeywordParameter, keyWordAllParameter, dateParameter);
+        }
+    
+        public virtual int sp_subscribersSubscriptionKeywordArchiveLogUpdate(Nullable<System.DateTime> logDate, string shortCode, Nullable<int> advertisorID, string advertisorName, string sentKeyword, Nullable<int> triggerCountIncrementValue, Nullable<int> validSubCountIncrementValue, Nullable<int> invalidSubCountIncrementValue)
+        {
+            var logDateParameter = logDate.HasValue ?
+                new ObjectParameter("logDate", logDate) :
+                new ObjectParameter("logDate", typeof(System.DateTime));
+    
+            var shortCodeParameter = shortCode != null ?
+                new ObjectParameter("shortCode", shortCode) :
+                new ObjectParameter("shortCode", typeof(string));
+    
+            var advertisorIDParameter = advertisorID.HasValue ?
+                new ObjectParameter("advertisorID", advertisorID) :
+                new ObjectParameter("advertisorID", typeof(int));
+    
+            var advertisorNameParameter = advertisorName != null ?
+                new ObjectParameter("advertisorName", advertisorName) :
+                new ObjectParameter("advertisorName", typeof(string));
+    
+            var sentKeywordParameter = sentKeyword != null ?
+                new ObjectParameter("sentKeyword", sentKeyword) :
+                new ObjectParameter("sentKeyword", typeof(string));
+    
+            var triggerCountIncrementValueParameter = triggerCountIncrementValue.HasValue ?
+                new ObjectParameter("triggerCountIncrementValue", triggerCountIncrementValue) :
+                new ObjectParameter("triggerCountIncrementValue", typeof(int));
+    
+            var validSubCountIncrementValueParameter = validSubCountIncrementValue.HasValue ?
+                new ObjectParameter("validSubCountIncrementValue", validSubCountIncrementValue) :
+                new ObjectParameter("validSubCountIncrementValue", typeof(int));
+    
+            var invalidSubCountIncrementValueParameter = invalidSubCountIncrementValue.HasValue ?
+                new ObjectParameter("invalidSubCountIncrementValue", invalidSubCountIncrementValue) :
+                new ObjectParameter("invalidSubCountIncrementValue", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_subscribersSubscriptionKeywordArchiveLogUpdate", logDateParameter, shortCodeParameter, advertisorIDParameter, advertisorNameParameter, sentKeywordParameter, triggerCountIncrementValueParameter, validSubCountIncrementValueParameter, invalidSubCountIncrementValueParameter);
+        }
+    
+        public virtual int sp_subscribersSubscriptionKeywordLogUpdate(Nullable<System.DateTime> logDate, string shortCode, Nullable<int> advertisorID, string advertisorName, string sentKeyword, Nullable<int> triggerCountIncrementValue, Nullable<int> triggerSubCountIncrementValue, Nullable<int> validSubCountIncrementValue, Nullable<int> invalidSubCountIncrementValue, Nullable<int> deactiveCountIncrementValue, Nullable<decimal> deliveryRate)
+        {
+            var logDateParameter = logDate.HasValue ?
+                new ObjectParameter("logDate", logDate) :
+                new ObjectParameter("logDate", typeof(System.DateTime));
+    
+            var shortCodeParameter = shortCode != null ?
+                new ObjectParameter("shortCode", shortCode) :
+                new ObjectParameter("shortCode", typeof(string));
+    
+            var advertisorIDParameter = advertisorID.HasValue ?
+                new ObjectParameter("advertisorID", advertisorID) :
+                new ObjectParameter("advertisorID", typeof(int));
+    
+            var advertisorNameParameter = advertisorName != null ?
+                new ObjectParameter("advertisorName", advertisorName) :
+                new ObjectParameter("advertisorName", typeof(string));
+    
+            var sentKeywordParameter = sentKeyword != null ?
+                new ObjectParameter("sentKeyword", sentKeyword) :
+                new ObjectParameter("sentKeyword", typeof(string));
+    
+            var triggerCountIncrementValueParameter = triggerCountIncrementValue.HasValue ?
+                new ObjectParameter("triggerCountIncrementValue", triggerCountIncrementValue) :
+                new ObjectParameter("triggerCountIncrementValue", typeof(int));
+    
+            var triggerSubCountIncrementValueParameter = triggerSubCountIncrementValue.HasValue ?
+                new ObjectParameter("triggerSubCountIncrementValue", triggerSubCountIncrementValue) :
+                new ObjectParameter("triggerSubCountIncrementValue", typeof(int));
+    
+            var validSubCountIncrementValueParameter = validSubCountIncrementValue.HasValue ?
+                new ObjectParameter("validSubCountIncrementValue", validSubCountIncrementValue) :
+                new ObjectParameter("validSubCountIncrementValue", typeof(int));
+    
+            var invalidSubCountIncrementValueParameter = invalidSubCountIncrementValue.HasValue ?
+                new ObjectParameter("invalidSubCountIncrementValue", invalidSubCountIncrementValue) :
+                new ObjectParameter("invalidSubCountIncrementValue", typeof(int));
+    
+            var deactiveCountIncrementValueParameter = deactiveCountIncrementValue.HasValue ?
+                new ObjectParameter("deactiveCountIncrementValue", deactiveCountIncrementValue) :
+                new ObjectParameter("deactiveCountIncrementValue", typeof(int));
+    
+            var deliveryRateParameter = deliveryRate.HasValue ?
+                new ObjectParameter("deliveryRate", deliveryRate) :
+                new ObjectParameter("deliveryRate", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_subscribersSubscriptionKeywordLogUpdate", logDateParameter, shortCodeParameter, advertisorIDParameter, advertisorNameParameter, sentKeywordParameter, triggerCountIncrementValueParameter, triggerSubCountIncrementValueParameter, validSubCountIncrementValueParameter, invalidSubCountIncrementValueParameter, deactiveCountIncrementValueParameter, deliveryRateParameter);
+        }
+    
+        public virtual int sp_subscribersSubscriptionKeywordLogUpdateDelivery(string logDate, Nullable<System.DateTime> logDateTime)
+        {
+            var logDateParameter = logDate != null ?
+                new ObjectParameter("logDate", logDate) :
+                new ObjectParameter("logDate", typeof(string));
+    
+            var logDateTimeParameter = logDateTime.HasValue ?
+                new ObjectParameter("logDateTime", logDateTime) :
+                new ObjectParameter("logDateTime", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_subscribersSubscriptionKeywordLogUpdateDelivery", logDateParameter, logDateTimeParameter);
+        }
+    
+        public virtual int sp_subscriberSubscriptionKeyword(string shortCode, Nullable<System.DateTime> dateTime, string mobileNumber, Nullable<long> subHistoryID, string sentKeyword, Nullable<bool> logEntryAnyway)
+        {
+            var shortCodeParameter = shortCode != null ?
+                new ObjectParameter("shortCode", shortCode) :
+                new ObjectParameter("shortCode", typeof(string));
+    
+            var dateTimeParameter = dateTime.HasValue ?
+                new ObjectParameter("dateTime", dateTime) :
+                new ObjectParameter("dateTime", typeof(System.DateTime));
+    
+            var mobileNumberParameter = mobileNumber != null ?
+                new ObjectParameter("mobileNumber", mobileNumber) :
+                new ObjectParameter("mobileNumber", typeof(string));
+    
+            var subHistoryIDParameter = subHistoryID.HasValue ?
+                new ObjectParameter("subHistoryID", subHistoryID) :
+                new ObjectParameter("subHistoryID", typeof(long));
+    
+            var sentKeywordParameter = sentKeyword != null ?
+                new ObjectParameter("sentKeyword", sentKeyword) :
+                new ObjectParameter("sentKeyword", typeof(string));
+    
+            var logEntryAnywayParameter = logEntryAnyway.HasValue ?
+                new ObjectParameter("logEntryAnyway", logEntryAnyway) :
+                new ObjectParameter("logEntryAnyway", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_subscriberSubscriptionKeyword", shortCodeParameter, dateTimeParameter, mobileNumberParameter, subHistoryIDParameter, sentKeywordParameter, logEntryAnywayParameter);
+        }
+    
+        public virtual int sp_subscriberSubscriptionKeywordArchive(string shortCode, Nullable<System.DateTime> dateTime, string mobileNumber, Nullable<long> subHistoryID, string sentKeyword, Nullable<bool> logEntryAnyway)
+        {
+            var shortCodeParameter = shortCode != null ?
+                new ObjectParameter("shortCode", shortCode) :
+                new ObjectParameter("shortCode", typeof(string));
+    
+            var dateTimeParameter = dateTime.HasValue ?
+                new ObjectParameter("dateTime", dateTime) :
+                new ObjectParameter("dateTime", typeof(System.DateTime));
+    
+            var mobileNumberParameter = mobileNumber != null ?
+                new ObjectParameter("mobileNumber", mobileNumber) :
+                new ObjectParameter("mobileNumber", typeof(string));
+    
+            var subHistoryIDParameter = subHistoryID.HasValue ?
+                new ObjectParameter("subHistoryID", subHistoryID) :
+                new ObjectParameter("subHistoryID", typeof(long));
+    
+            var sentKeywordParameter = sentKeyword != null ?
+                new ObjectParameter("sentKeyword", sentKeyword) :
+                new ObjectParameter("sentKeyword", typeof(string));
+    
+            var logEntryAnywayParameter = logEntryAnyway.HasValue ?
+                new ObjectParameter("logEntryAnyway", logEntryAnyway) :
+                new ObjectParameter("logEntryAnyway", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_subscriberSubscriptionKeywordArchive", shortCodeParameter, dateTimeParameter, mobileNumberParameter, subHistoryIDParameter, sentKeywordParameter, logEntryAnywayParameter);
+        }
+    
+        public virtual ObjectResult<test_Result> test()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<test_Result>("test");
         }
     }
 }
