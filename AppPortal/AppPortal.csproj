@@ -1151,9 +1151,37 @@
       <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
       <Name>FitShowLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
+      <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
+      <Name>HazaranLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
       <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
       <Name>JabehAbzarLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinDambelLibrary\JhoobinDambelLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb441}</Project>
+      <Name>JhoobinDambelLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinMedadLibrary\JhoobinMedadLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb442}</Project>
+      <Name>JhoobinMedadLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinMusicYadLibrary\JhoobinMusicYadLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb443}</Project>
+      <Name>JhoobinMusicYadLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinPinLibrary\JhoobinPinLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb444}</Project>
+      <Name>JhoobinPinLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinPorShetabLibrary\JhoobinPorShetabLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb445}</Project>
+      <Name>JhoobinPorShetabLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinTahChinLibrary\JhoobinTahChinLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb446}</Project>
+      <Name>JhoobinTahChinLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\LahzeyeAkharLibrary\LahzeyeAkharLibrary.csproj">
       <Project>{15344255-1b21-1533-4331-4864db1bb442}</Project>

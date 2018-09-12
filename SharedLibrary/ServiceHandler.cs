@@ -598,6 +598,23 @@ namespace SharedLibrary
             }
         }
 
+        public static JhoobinSetting GetJhoobinSettings()
+        {
+            JhoobinSetting settings = new JhoobinSetting();
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    settings = entity.JhoobinSettings.FirstOrDefault();
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in GetJhoobinSettings: " + e);
+                }
+                return settings;
+            }
+        }
+
         public static dynamic GetServiceImiChargeCodes(dynamic entity)
         {
             try

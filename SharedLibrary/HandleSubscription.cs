@@ -430,6 +430,23 @@ namespace SharedLibrary
             return null;
         }
 
+        public static SubscribersHistory GetLastInsertedSubscriberHistory(string mobileNumber, long serviceId)
+        {
+            try
+            {
+                using (var entity = new PortalEntities())
+                {
+                    var subscriber = entity.SubscribersHistories.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == serviceId).OrderByDescending(o => o.Id).FirstOrDefault();
+                    return subscriber;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetLastInsertedSubscriberHistory: ", e);
+            }
+            return null;
+        }
+
         public static string IsSubscriberInvited(string mobileNumber, long serviceId)
         {
             string result = "";

@@ -34,6 +34,17 @@ namespace SharedLibrary
             return gregorianDate;
         }
 
+        public static DateTime GetGregorianDateTime(string persianDateTime)
+        {
+            var splitString = persianDateTime.Split(' ');
+            var persianDateArray = splitString[0].Split('-');
+            var persianCal = new System.Globalization.PersianCalendar();
+            DateTime gregorianDate = persianCal.ToDateTime(Convert.ToInt32(persianDateArray[0]), Convert.ToInt32(persianDateArray[1]), Convert.ToInt32(persianDateArray[2]), 0, 0, 0, 0);
+            TimeSpan time = TimeSpan.Parse(splitString[1]);
+            gregorianDate = gregorianDate.Add(time);
+            return gregorianDate;
+        }
+
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);

@@ -1029,6 +1029,32 @@
                                                 </ul>
                                             </li>
                                         }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Hazaran"))
+                                        {
+                                            <li>
+                                                هزاران
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Hazaran" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Hazaran" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }
@@ -1167,6 +1193,98 @@
                                                     {
                                                         <li>
                                                             @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "PorShetab" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinGroup"))
+                            {
+                                <li>
+                                    ژوبین
+                                    <ul>
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinDambelUser"))
+                                        {
+                                            <li>
+                                                دمبل (ژوبین)
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinDambelUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "JhoobinDambel" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinMedadUser"))
+                                        {
+                                            <li>
+                                                مداد (ژوبین)
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinMedadUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "JhoobinMedad" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinMusicYadUser"))
+                                        {
+                                            <li>
+                                                موزیک یاد (ژوبین)
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinMusicYadUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "JhoobinMusicYad" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinPinUser"))
+                                        {
+                                            <li>
+                                                پین (ژوبین)
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinPinUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "JhoobinPin" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinPorShetabUser"))
+                                        {
+                                            <li>
+                                                پرشتاب (ژوبین)
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinPorShetabUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "JhoobinPorShetab" }, null)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinTahChinUser"))
+                                        {
+                                            <li>
+                                                ته چین (ژوبین)
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JhoobinTahChinUser"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "JhoobinTahChin" }, null)
                                                         </li>
                                                     }
                                                 </ul>

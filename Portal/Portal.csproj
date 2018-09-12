@@ -229,6 +229,62 @@
     <Compile Include="Areas\LahzeyeAkhar\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\LahzeyeAkhar\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\LahzeyeAkhar\LahzeyeAkharAreaRegistration.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Hazaran\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\Hazaran\HazaranAreaRegistration.cs" />
+    <Compile Include="Areas\JhoobinMedad\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\JhoobinMedad\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\JhoobinMedad\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\JhoobinMedad\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\JhoobinMedad\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JhoobinMedad\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\JhoobinMedad\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\JhoobinMedad\JhoobinMedadAreaRegistration.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\JhoobinMusicYad\JhoobinMusicYadAreaRegistration.cs" />
+    <Compile Include="Areas\JhoobinPin\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\JhoobinPin\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\JhoobinPin\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\JhoobinPin\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\JhoobinPin\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JhoobinPin\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\JhoobinPin\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\JhoobinPin\JhoobinPinAreaRegistration.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\JhoobinPorShetab\JhoobinPorShetabAreaRegistration.cs" />
+    <Compile Include="Areas\JhoobinTahChin\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\JhoobinTahChin\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\JhoobinTahChin\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\JhoobinTahChin\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\JhoobinTahChin\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JhoobinTahChin\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\JhoobinTahChin\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\JhoobinTahChin\JhoobinTahChinAreaRegistration.cs" />
+    <Compile Include="Areas\JhoobinDambel\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\JhoobinDambel\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\JhoobinDambel\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\JhoobinDambel\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\JhoobinDambel\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\JhoobinDambel\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\JhoobinDambel\Controllers\StatisticsController.cs" />
+    <Compile Include="Areas\JhoobinDambel\JhoobinDambelAreaRegistration.cs" />
     <Compile Include="Areas\Statistics\Controllers\AllServicesStatisticsController.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\TajoTakht\Controllers\MessagesTemplate.cs" />
@@ -1520,6 +1576,76 @@
     <Content Include="Areas\LahzeyeAkhar\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\LahzeyeAkhar\Views\web.config" />
     <Content Include="Areas\Statistics\Views\AllServicesStatistics\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Hazaran\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Hazaran\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Hazaran\Views\web.config" />
+    <Content Include="Areas\JhoobinDambel\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\JhoobinDambel\Views\web.config" />
+    <Content Include="Areas\JhoobinMedad\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\JhoobinMedad\Views\web.config" />
+    <Content Include="Areas\JhoobinMusicYad\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\JhoobinMusicYad\Views\web.config" />
+    <Content Include="Areas\JhoobinPin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\JhoobinPin\Views\web.config" />
+    <Content Include="Areas\JhoobinPorShetab\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\JhoobinPorShetab\Views\web.config" />
+    <Content Include="Areas\JhoobinTahChin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\JhoobinTahChin\Views\web.config" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -1886,7 +2012,14 @@
     <Folder Include="Areas\Dezhban\Models\" />
     <Folder Include="Areas\DonyayeAsatir\Models\" />
     <Folder Include="Areas\FitShow\Models\" />
+    <Folder Include="Areas\Hazaran\Models\" />
     <Folder Include="Areas\JabehAbzar\Models\" />
+    <Folder Include="Areas\JhoobinDambel\Models\" />
+    <Folder Include="Areas\JhoobinMedad\Models\" />
+    <Folder Include="Areas\JhoobinMusicYad\Models\" />
+    <Folder Include="Areas\JhoobinPin\Models\" />
+    <Folder Include="Areas\JhoobinPorShetab\Models\" />
+    <Folder Include="Areas\JhoobinTahChin\Models\" />
     <Folder Include="Areas\LahzeyeAkhar\Models\" />
     <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Medad\Models\" />
@@ -2004,6 +2137,10 @@
       <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
       <Name>FitShowLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
+      <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
+      <Name>HazaranLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IrancellTestLibrary\IrancellTestLibrary.csproj">
       <Project>{d112bf46-33f5-c224-2122-4bc23f4d2122}</Project>
       <Name>IrancellTestLibrary</Name>
@@ -2011,6 +2148,30 @@
     <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
       <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
       <Name>JabehAbzarLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinDambelLibrary\JhoobinDambelLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb441}</Project>
+      <Name>JhoobinDambelLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinMedadLibrary\JhoobinMedadLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb442}</Project>
+      <Name>JhoobinMedadLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinMusicYadLibrary\JhoobinMusicYadLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb443}</Project>
+      <Name>JhoobinMusicYadLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinPinLibrary\JhoobinPinLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb444}</Project>
+      <Name>JhoobinPinLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinPorShetabLibrary\JhoobinPorShetabLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb445}</Project>
+      <Name>JhoobinPorShetabLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JhoobinTahChinLibrary\JhoobinTahChinLibrary.csproj">
+      <Project>{54314515-1421-1533-4351-5134db5bb446}</Project>
+      <Name>JhoobinTahChinLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\LahzeyeAkharLibrary\LahzeyeAkharLibrary.csproj">
       <Project>{15344255-1b21-1533-4331-4864db1bb442}</Project>
