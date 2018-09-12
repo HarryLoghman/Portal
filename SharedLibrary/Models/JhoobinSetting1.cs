@@ -12,8 +12,11 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class telepromo
+    public partial class JhoobinSetting1
     {
-        public string MobileNumber { get; set; }
+        public long Id { get; set; }
+        public string Cookie { get; set; }
+        public string SubscriptionsViewState { get; set; }
+        public string AccessToken { get; set; }
     }
 }

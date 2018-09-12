@@ -113,18 +113,15 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DeliveryObject.cs" />
-    <Compile Include="Models\fn_receievedMessagesFirstTwoRows_Result.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\fn_receivedMessagesArchiveFirstTwoRows_Result.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\GetUserLog_Result.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ImiData.cs" />
     <Compile Include="Models\IntegratedPanel.cs" />
     <Compile Include="Models\JhoobinSetting.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\JhoobinSetting1.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Message.cs" />
@@ -194,14 +191,8 @@
     <Compile Include="Models\SubscribersPoint.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\telepromo.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\TelepromoBulkMessage.cs" />
     <Compile Include="Models\TempReferralData.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\test_Result.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VerifySubscriber.cs">
@@ -213,13 +204,7 @@
     <Compile Include="Models\vw_DehnadAllServicesStatistics.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\vw_ReceievedMessagesPorshetabKeyword.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\vw_ReceivedMessages.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_ReceivedMessagesArchivePorshetabKeyword.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Notify.cs" />

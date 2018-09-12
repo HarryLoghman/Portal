@@ -17,9 +17,11 @@ namespace SharedLibrary.Models
         public long serviceID { get; set; }
         public int cycleNumber { get; set; }
         public string shortCode { get; set; }
-        public string daysOfWeek { get; set; }
         public System.TimeSpan startTime { get; set; }
         public System.TimeSpan endTime { get; set; }
+        public Nullable<int> tps { get; set; }
+        public Nullable<int> maxTaskCount { get; set; }
+        public string daysOfWeek { get; set; }
         public Nullable<int> minTPS { get; set; }
     }
 }
