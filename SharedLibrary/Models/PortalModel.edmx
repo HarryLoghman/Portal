@@ -129,8 +129,8 @@
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Cookie" Type="nvarchar" MaxLength="255" />
-          <Property Name="AccessToken" Type="nvarchar" MaxLength="255" />
           <Property Name="SubscriptionsViewState" Type="nvarchar" MaxLength="255" />
+          <Property Name="AccessToken" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Operators">
           <Key>
@@ -259,14 +259,15 @@
           <Key>
             <PropertyRef Name="serviceID" />
             <PropertyRef Name="cycleNumber" />
+            <PropertyRef Name="daysOfWeek" />
           </Key>
           <Property Name="serviceID" Type="bigint" Nullable="false" />
           <Property Name="cycleNumber" Type="int" Nullable="false" />
           <Property Name="shortCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="daysOfWeek" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="startTime" Type="time" Precision="7" Nullable="false" />
           <Property Name="endTime" Type="time" Precision="7" Nullable="false" />
-          <Property Name="tps" Type="int" />
-          <Property Name="maxTaskCount" Type="int" />
+          <Property Name="minTPS" Type="int" />
         </EntityType>
         <EntityType Name="ServiceInfo">
           <Key>
@@ -278,6 +279,8 @@
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="AggregatorServiceId" Type="nvarchar" MaxLength="50" />
           <Property Name="OperatorServiceId" Type="varchar" MaxLength="50" />
+          <Property Name="databaseName" Type="nvarchar" MaxLength="100" />
+          <Property Name="chargePrice" Type="int" />
         </EntityType>
         <EntityType Name="ServiceKeywords">
           <Key>
@@ -292,7 +295,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Id" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ServiceCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
@@ -356,7 +359,7 @@
           <Property Name="SubscriptionKeyword" Type="nvarchar" MaxLength="100" />
           <Property Name="UnsubscriptionKeyword" Type="nvarchar" MaxLength="100" />
           <Property Name="UserMessage" Type="nvarchar" MaxLength="100" />
-          <Property Name="UserMessageOff" Type="varchar" MaxLength="100" />
+          <Property Name="UserMessageOff" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersPoints">
           <Key>
@@ -408,25 +411,6 @@ warning 6002: The table/view 'Portal.dbo.vw_AllSentMessages' does not have a pri
           <Property Name="ProcessStatus" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_DehnadAllSentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vw_DehnadAllSentMessages">
-          <Key>
-            <PropertyRef Name="Type" />
-            <PropertyRef Name="ServiceName" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ProcessStatus" />
-          </Key>
-          <Property Name="Type" Type="varchar" MaxLength="2" Nullable="false" />
-          <Property Name="ServiceName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="PersianDate" Type="nvarchar" MaxLength="10" />
-          <Property Name="Time" Type="nvarchar" MaxLength="21" />
-          <Property Name="Content" Type="nvarchar(max)" />
-          <Property Name="ProcessStatus" Type="int" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
 warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_DehnadAllServicesStatistics">
           <Key>
@@ -441,7 +425,7 @@ warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does no
             <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
             <PropertyRef Name="TotalSubscribers" />
           </Key>
-          <Property Name="ServiceName" Type="nvarchar" MaxLength="12" Nullable="false" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="6" Nullable="false" />
           <Property Name="Date" Type="date" Nullable="false" />
           <Property Name="PersianDate" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="NumberOfSubscriptions" Type="int" Nullable="false" />
@@ -483,7 +467,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="RetryCount" Type="int" />
           <Property Name="LastRetryDate" Type="datetime" />
         </EntityType>
-        <Association Name="FK_Aggregators_Operators">
+        <Association Name=" FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operators" Multiplicity="1" />
           <End Role="Aggregators" Type="Self.Aggregators" Multiplicity="*" />
           <ReferentialConstraint>
@@ -495,10 +479,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+        <Association Name=" FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -509,10 +491,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+        <Association Name=" FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -523,10 +503,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
-          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+        <Association Name=" FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
           <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetRoles">
@@ -537,10 +515,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+        <Association Name=" FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -551,7 +527,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ServiceInfo_Aggregators">
+        <Association Name=" FK_ServiceInfo_Aggregators">
           <End Role="Aggregators" Type="Self.Aggregators" Multiplicity="1" />
           <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -563,7 +539,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ServiceShortCodes_Services">
+        <Association Name=" FK_ServiceShortCodes_Services">
           <End Role="Services" Type="Self.Services" Multiplicity="1" />
           <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -575,19 +551,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Subscribers_Subscribers">
-          <End Role="Services" Type="Self.Services" Multiplicity="1" />
-          <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Services">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Subscribers">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SubscribersPoints_Services">
+        <Association Name=" FK_SubscribersPoints_Services">
           <End Role="Services" Type="Self.Services" Multiplicity="1" />
           <End Role="SubscribersPoints" Type="Self.SubscribersPoints" Multiplicity="*" />
           <ReferentialConstraint>
@@ -595,6 +559,18 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="SubscribersPoints">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Subscribers_Services">
+          <End Role="Services" Type="Self.Services" Multiplicity="1" />
+          <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Subscribers">
               <PropertyRef Name="ServiceId" />
             </Dependent>
           </ReferentialConstraint>
@@ -657,18 +633,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
     [vw_AllSentMessages].[ProcessStatus] AS [ProcessStatus]
     FROM [dbo].[vw_AllSentMessages] AS [vw_AllSentMessages]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="vw_DehnadAllSentMessages" EntityType="Self.vw_DehnadAllSentMessages" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vw_DehnadAllSentMessages].[Type] AS [Type], 
-    [vw_DehnadAllSentMessages].[ServiceName] AS [ServiceName], 
-    [vw_DehnadAllSentMessages].[MobileNumber] AS [MobileNumber], 
-    [vw_DehnadAllSentMessages].[ShortCode] AS [ShortCode], 
-    [vw_DehnadAllSentMessages].[PersianDate] AS [PersianDate], 
-    [vw_DehnadAllSentMessages].[Time] AS [Time], 
-    [vw_DehnadAllSentMessages].[Content] AS [Content], 
-    [vw_DehnadAllSentMessages].[ProcessStatus] AS [ProcessStatus]
-    FROM [dbo].[vw_DehnadAllSentMessages] AS [vw_DehnadAllSentMessages]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="Self.vw_DehnadAllServicesStatistics" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [vw_DehnadAllServicesStatistics].[ServiceName] AS [ServiceName], 
@@ -706,41 +670,41 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
     [vw_ReceivedMessages].[LastRetryDate] AS [LastRetryDate]
     FROM [dbo].[vw_ReceivedMessages] AS [vw_ReceivedMessages]</DefiningQuery>
           </EntitySet>
-          <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
+          <AssociationSet Name=" FK_Aggregators_Operators" Association="Self. FK_Aggregators_Operators">
             <End Role="Operators" EntitySet="Operators" />
             <End Role="Aggregators" EntitySet="Aggregators" />
           </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <AssociationSet Name=" FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self. FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
           </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <AssociationSet Name=" FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self. FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+          <AssociationSet Name=" FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self. FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+          <AssociationSet Name=" FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self. FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK_ServiceInfo_Aggregators" Association="Self.FK_ServiceInfo_Aggregators">
+          <AssociationSet Name=" FK_ServiceInfo_Aggregators" Association="Self. FK_ServiceInfo_Aggregators">
             <End Role="Aggregators" EntitySet="Aggregators" />
             <End Role="ServiceInfo" EntitySet="ServiceInfo" />
           </AssociationSet>
-          <AssociationSet Name="FK_ServiceShortCodes_Services" Association="Self.FK_ServiceShortCodes_Services">
+          <AssociationSet Name=" FK_ServiceShortCodes_Services" Association="Self. FK_ServiceShortCodes_Services">
             <End Role="Services" EntitySet="Services" />
             <End Role="ServiceInfo" EntitySet="ServiceInfo" />
           </AssociationSet>
-          <AssociationSet Name="FK_Subscribers_Subscribers" Association="Self.FK_Subscribers_Subscribers">
-            <End Role="Services" EntitySet="Services" />
-            <End Role="Subscribers" EntitySet="Subscribers" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SubscribersPoints_Services" Association="Self.FK_SubscribersPoints_Services">
+          <AssociationSet Name=" FK_SubscribersPoints_Services" Association="Self. FK_SubscribersPoints_Services">
             <End Role="Services" EntitySet="Services" />
             <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Subscribers_Services" Association="Self.FK_Subscribers_Services">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="Subscribers" EntitySet="Subscribers" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -993,6 +957,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Key>
             <PropertyRef Name="serviceID" />
             <PropertyRef Name="cycleNumber" />
+            <PropertyRef Name="daysOfWeek" />
           </Key>
           <Property Name="serviceID" Type="Int64" Nullable="false" />
           <Property Name="cycleNumber" Type="Int32" Nullable="false" />
@@ -1001,6 +966,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
           <Property Name="tps" Type="Int32" />
           <Property Name="maxTaskCount" Type="Int32" />
+          <Property Name="daysOfWeek" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="minTPS" Type="Int32" />
         </EntityType>
         <EntityType Name="ServiceInfo">
           <Key>
@@ -1014,6 +981,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Aggregator" Relationship="Self.FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregators" />
           <NavigationProperty Name="Service" Relationship="Self.FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Services" />
+          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="chargePrice" Type="Int32" />
         </EntityType>
         <EntityType Name="ServiceKeyword">
           <Key>
@@ -1096,7 +1065,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="SubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UnsubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SubscribersPoint">
           <Key>
@@ -1146,23 +1115,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityType Name="vw_DehnadAllSentMessages">
-          <Key>
-            <PropertyRef Name="Type" />
-            <PropertyRef Name="ServiceName" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ProcessStatus" />
-          </Key>
-          <Property Name="Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ServiceName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PersianDate" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Time" Type="String" MaxLength="21" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-        </EntityType>
         <EntityType Name="vw_DehnadAllServicesStatistics">
           <Key>
             <PropertyRef Name="ServiceName" />
@@ -1176,7 +1128,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
             <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
             <PropertyRef Name="TotalSubscribers" />
           </Key>
-          <Property Name="ServiceName" Type="String" MaxLength="12" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ServiceName" Type="String" MaxLength="6" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="PersianDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
@@ -1339,7 +1291,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySet Name="TempReferralDatas" EntityType="Self.TempReferralData" />
           <EntitySet Name="VerifySubscribers" EntityType="Self.VerifySubscriber" />
           <EntitySet Name="vw_AllSentMessages" EntityType="Self.vw_AllSentMessages" />
-          <EntitySet Name="vw_DehnadAllSentMessages" EntityType="Self.vw_DehnadAllSentMessages" />
           <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="Self.vw_DehnadAllServicesStatistics" />
           <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" />
           <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
@@ -1385,6 +1336,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="JhoobinSettings" EntityType="PortalModel.JhoobinSetting" />
+          <EntitySet Name="JhoobinSetting1" EntityType="PortalModel.JhoobinSetting1" />
         </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1403,6 +1355,15 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="Cookie" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="AccessToken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="SubscriptionsViewState" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="JhoobinSetting1">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Cookie" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SubscriptionsViewState" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AccessToken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1662,19 +1623,21 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <EntitySetMapping Name="serviceCycles">
             <EntityTypeMapping TypeName="PortalModel.serviceCycle">
               <MappingFragment StoreEntitySet="serviceCycles">
+                <ScalarProperty Name="minTPS" ColumnName="minTPS" />
+                <ScalarProperty Name="daysOfWeek" ColumnName="daysOfWeek" />
                 <ScalarProperty Name="serviceID" ColumnName="serviceID" />
                 <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
                 <ScalarProperty Name="shortCode" ColumnName="shortCode" />
                 <ScalarProperty Name="startTime" ColumnName="startTime" />
                 <ScalarProperty Name="endTime" ColumnName="endTime" />
-                <ScalarProperty Name="tps" ColumnName="tps" />
-                <ScalarProperty Name="maxTaskCount" ColumnName="maxTaskCount" />
-              </MappingFragment>
+                </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ServiceInfoes">
             <EntityTypeMapping TypeName="PortalModel.ServiceInfo">
               <MappingFragment StoreEntitySet="ServiceInfo">
+                <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
+                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
@@ -1815,20 +1778,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vw_DehnadAllSentMessages">
-            <EntityTypeMapping TypeName="PortalModel.vw_DehnadAllSentMessages">
-              <MappingFragment StoreEntitySet="vw_DehnadAllSentMessages">
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="vw_DehnadAllServicesStatistics">
             <EntityTypeMapping TypeName="PortalModel.vw_DehnadAllServicesStatistics">
               <MappingFragment StoreEntitySet="vw_DehnadAllServicesStatistics">
@@ -1894,11 +1843,11 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_DehnadAll2GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll2GServicesStatistics" />
           <FunctionImportMapping FunctionImportName="sp_DehnadAll3GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll3GServicesStatistics" />
-          <EntitySetMapping Name="JhoobinSettings">
-            <EntityTypeMapping TypeName="PortalModel.JhoobinSetting">
+          <EntitySetMapping Name="JhoobinSetting1">
+            <EntityTypeMapping TypeName="PortalModel.JhoobinSetting1">
               <MappingFragment StoreEntitySet="JhoobinSettings">
-                <ScalarProperty Name="SubscriptionsViewState" ColumnName="SubscriptionsViewState" />
                 <ScalarProperty Name="AccessToken" ColumnName="AccessToken" />
+                <ScalarProperty Name="SubscriptionsViewState" ColumnName="SubscriptionsViewState" />
                 <ScalarProperty Name="Cookie" ColumnName="Cookie" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

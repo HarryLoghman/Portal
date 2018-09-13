@@ -19,84 +19,124 @@ namespace DehnadTahChinService
     public class SinglechargeInstallmentClassNew
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static int maxChargeLimit = 300;
-        int maxServiceTries = 4;
 
         static SharedLibrary.ThrottleMTN v_throttle;
-        public int ProcessInstallment(int installmentCycleNumber, int tps, int maxTaskCount)
+        static SharedLibrary.ThrottleDedicated v_throttleDedicated;
+
+        static bool v_tpsDedicatedChanged;
+        public int ProcessInstallment(int installmentCycleNumber, int tpsOperator, int tps, DateTime lastExecutionTime, bool forciblyExecute)
         {
             var income = 0;
 
             try
             {
+
+
                 v_throttle = new ThrottleMTN(@"E:\Windows Services\MTNThrottleTPS");
+                v_throttleDedicated = new ThrottleDedicated(@"E:\Windows Services\MTNThrottleTpsOccupied");
+
                 string aggregatorName = Properties.Settings.Default.AggregatorName;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                var installmentCount = SharedLibrary.ServiceHandler.GetActiveSubscribersAndChargesCount(Service.v_dbName, serviceCode, Service.maxServiceTries, installmentCycleNumber
+                    , Service.maxChargeLimit, DateTime.Now, false, "", lastExecutionTime, forciblyExecute);
+                if (installmentCount == 0) return 0;
 
-                List<string> installmentList;
+                //List<string> installmentList;
                 using (var entity = new TahChinEntities())
                 {
-
-                    //DateTime fiveDaysBefore = DateTime.Now.AddDays(-5);
-                    //entity.SingleChargeTimings.RemoveRange(entity.SingleChargeTimings.Where(o => DbFunctions.TruncateTime(o.timeStartProcessMtnInstallment) < fiveDaysBefore.Date));
-                    //entity.SaveChanges();
-
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                    for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
+
+                    logs.Info("start of installmentCycleNumber " + installmentCycleNumber);
+                    ////installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
+
+                    ////List<string> installmentListNotOrdered = new List<string>();// SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+                    ////using (var portal = new PortalEntities())
+                    ////{
+                    ////    installmentListNotOrdered = portal.Subscribers.Where(o => o.ServiceId != 10039 && o.ServiceId != 10028 && o.ServiceId != 10025 && o.ServiceId != 10036 && o.DeactivationDate == null).GroupBy(o => o.MobileNumber).Select(o => new { MobileNumber = o.Key }).OrderBy(o => o.MobileNumber).Skip(30000).Take(10000).Select(o => o.MobileNumber).ToList();
+                    ////}
+                    //////var installmentExceededRetries = entity.Singlecharges.GroupBy(o => o.MobileNumber).Where(o => o.Count() > maxServiceTries).Select(o => o.Key).ToList();
+                    //////installmentListNotOrdered.RemoveAll(o => installmentExceededRetries.Contains(o));
+
+                    //List<string> installmentListNotOrdered = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
+
+                    //var installmentExceededRetries = entity.Singlecharges.GroupBy(o => o.MobileNumber).Where(o => o.Count() > maxServiceTries).Select(o => o.Key).ToList();
+                    //installmentListNotOrdered.RemoveAll(o => installmentExceededRetries.Contains(o));
+
+                    //Dictionary<string, int> orderedSubscribers = getSubscribersDueToTotalPriceYesterday(entity);
+
+                    //installmentList = (from a in installmentListNotOrdered
+                    //                   join b in orderedSubscribers on a equals b.Key into ab
+                    //                   from b in ab.DefaultIfEmpty()
+                    //                   orderby b.Value descending
+                    //                   select new { mobileNumber = a }).Select(t => t.mobileNumber).ToList();
+
+                    //logs.Info("installmentList all users count:" + installmentList.Count);
+                    installmentCount = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersCountFromServiceCode(serviceCode);
+                    var today = DateTime.Now;
+                    int chargeCompletedCount;
+                    var delayDateBetweenCharges = today.AddDays(0);
+                    if (delayDateBetweenCharges.Date != today.Date)
                     {
-                        logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
-                        //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
-
-                        List<string> installmentListNotOrdered = new List<string>();// SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
-                        using (var portal = new PortalEntities())
-                        {
-                            installmentListNotOrdered = portal.Subscribers.Where(o => o.ServiceId != 10039 && o.ServiceId != 10028 && o.ServiceId != 10025 && o.ServiceId != 10036).OrderBy(o => o.MobileNumber).Skip(10000).Take(10000).Select(o => o.MobileNumber).ToList();
-                        }
-                        var installmentExceededRetries = entity.Singlecharges.GroupBy(o => o.MobileNumber).Where(o => o.Count() > maxServiceTries).Select(o => o.Key).ToList();
-                        installmentListNotOrdered.RemoveAll(o => installmentExceededRetries.Contains(o));
-
-                        Dictionary<string, int> orderedSubscribers = getSubscribersDueToTotalPriceYesterday(entity);
-
-                        installmentList = (from a in installmentListNotOrdered
-                                           join b in orderedSubscribers on a equals b.Key into ab
-                                           from b in ab.DefaultIfEmpty()
-                                           orderby b.Value descending
-                                           select new { mobileNumber = a }).Select(t => t.mobileNumber).ToList();
-
-                        logs.Info("installmentList all users count:" + installmentList.Count);
-                        var today = DateTime.Now;
-                        List<string> chargeCompleted;
-                        var delayDateBetweenCharges = today.AddDays(0);
-                        if (delayDateBetweenCharges.Date != today.Date)
-                        {
-                            chargeCompleted = entity.vw_Singlecharge.AsNoTracking()
-                                .Where(o => DbFunctions.TruncateTime(o.DateCreated) >= DbFunctions.TruncateTime(delayDateBetweenCharges) && DbFunctions.TruncateTime(o.DateCreated) <= DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
-                                .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
-                        }
-                        else
-                        {
-                            chargeCompleted = entity.Singlecharges.AsNoTracking()
-                                .Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
-                                .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
-                        }
-                        var waitingList = entity.SinglechargeWaitings.AsNoTracking().Select(o => o.MobileNumber).ToList();
-                        logs.Info("installmentList compeleted charge users count:" + chargeCompleted.Count);
-                        logs.Info("installmentList users in waiting list count:" + waitingList.Count);
-                        installmentList.RemoveAll(o => chargeCompleted.Contains(o));
-                        installmentList.RemoveAll(o => waitingList.Contains(o));
-                        var yesterday = DateTime.Now.AddDays(-1);
-                        //var sucessfulyChargedYesterday = entity.SinglechargeArchives.AsNoTracking().Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(yesterday) && o.IsSucceeded == true && o.Price > 0).GroupBy(o => o.MobileNumber).Select(o => o.Key).ToList();
-                        var randomList = installmentList.OrderBy(o => Guid.NewGuid()).ToList();
-                        int installmentListCount = installmentList.Count;
-                        logs.Info("installmentList final list count:" + installmentListCount);
-                        var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes
-                            , randomList, installmentListCount, serviceAdditionalInfo, tps, maxTaskCount);
-                        logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
+                        chargeCompletedCount = entity.vw_Singlecharge.AsNoTracking()
+                            .Where(o => DbFunctions.TruncateTime(o.DateCreated) >= DbFunctions.TruncateTime(delayDateBetweenCharges) && DbFunctions.TruncateTime(o.DateCreated) <= DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
+                            .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= Service.maxChargeLimit).Count();
                     }
+                    else
+                    {
+                        chargeCompletedCount = entity.Singlecharges.AsNoTracking()
+                            .Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
+                            .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= Service.maxChargeLimit).Count();
+                    }
+                    var waitingListCount = entity.SinglechargeWaitings.AsNoTracking().Count();
+                    logs.Info("installmentList all users count:" + installmentCount);
+                    logs.Info("installmentList compeleted charge users count:" + chargeCompletedCount);
+                    logs.Info("installmentList users in waiting list count:" + waitingListCount);
+                    //installmentList.RemoveAll(o => chargeCompleted.Contains(o));
+                    //installmentList.RemoveAll(o => waitingList.Contains(o));
+
+                    //Dictionary<string, int> singleCharge = getSubscribersChargesPriceToday(entity);
+
+                    //Dictionary<string, int> subscribersAndCharges = (from mobile in installmentList
+                    //                                                 join charges in singleCharge on mobile equals charges.Key
+                    //                                                 into temp
+                    //                                                 from charges in temp.DefaultIfEmpty()
+                    //                                                 select new { mobile, chargePrice = charges.Value }).ToDictionary(o => o.mobile, o => o.chargePrice);
+
+                    //var yesterday = DateTime.Now.AddDays(-1);
+                    ////var sucessfulyChargedYesterday = entity.SinglechargeArchives.AsNoTracking().Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(yesterday) && o.IsSucceeded == true && o.Price > 0).GroupBy(o => o.MobileNumber).Select(o => o.Key).ToList();
+                    ////var randomList = installmentList.OrderBy(o => Guid.NewGuid()).ToList();
+                    //int installmentListCount = installmentList.Count;
+                    //logs.Info("installmentList final list count:" + installmentListCount);
+                    //var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+
+                    List<SharedLibrary.ServiceHandler.SubscribersAndCharges> subscribersAndChargesList =
+                        SharedLibrary.ServiceHandler.GetActiveSubscribersAndCharges(Service.v_dbName, serviceCode, Service.maxServiceTries, installmentCycleNumber
+                        , Service.maxChargeLimit, true, null, DateTime.Now, false, "", lastExecutionTime, forciblyExecute);
+
+                    logs.Info("installmentList final list count:" + subscribersAndChargesList.Count);
+
+                    v_throttleDedicated.occupyTps(Service.v_dbName, tps, tpsOperator);
+                    v_throttleDedicated.ev_tpsOccupiedChanged += delegate (object sender, EventArgs e) { v_tpsDedicatedChanged = true; };
+                    income += InstallmentJob(Service.maxChargeLimit, installmentCycleNumber, serviceCode, chargeCodes
+                        , subscribersAndChargesList, serviceAdditionalInfo, tpsOperator, tps);
+
+                    subscribersAndChargesList =
+                       SharedLibrary.ServiceHandler.GetActiveSubscribersAndCharges(Service.v_dbName, serviceCode, Service.maxServiceTries, installmentCycleNumber
+                       , Service.maxChargeLimit, true, null, DateTime.Now, true, "SVC0001: Service Error;POL0904: SP API level request rate control not pass, sla id is 1002."
+                       , lastExecutionTime, forciblyExecute);
+
+                    logs.Info("wipe Count:" + subscribersAndChargesList.Count);
+
+                    income += InstallmentJob(Service.maxChargeLimit, installmentCycleNumber, serviceCode, chargeCodes
+                        , subscribersAndChargesList, serviceAdditionalInfo, tpsOperator, tps);
+
+                    v_throttleDedicated.releaseTps(Service.v_dbName, tps, tpsOperator);
+
+                    logs.Info("end of installmentCycleNumber " + installmentCycleNumber);
+
                 }
             }
             catch (Exception e)
@@ -106,17 +146,9 @@ namespace DehnadTahChinService
             return income;
         }
 
-        private static Dictionary<string, int> getSubscribersDueToTotalPriceYesterday(TahChinEntities entity)
-        {
-            DateTime today = DateTime.Now.AddDays(-1);
-            Dictionary<string, int> chargeOnes = (from sca in entity.SinglechargeArchives where System.Data.Entity.DbFunctions.TruncateTime(sca.DateCreated) == today.Date && (sca.IsSucceeded == true) group sca by sca.MobileNumber into scat let totalPrice = scat.Sum(t => t.Price) select new { mobileNumber = (string)scat.Key, totalPrice }).ToDictionary(t => t.mobileNumber, t => t.totalPrice);
-
-            return chargeOnes;
-        }
-
-        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber
-            , string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount
-            , Dictionary<string, string> serviceAdditionalInfo, int tps, int maxTaskCount)
+        public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber
+            , string serviceCode, dynamic chargeCodes, List<SharedLibrary.ServiceHandler.SubscribersAndCharges> installmentList
+            , Dictionary<string, string> serviceAdditionalInfo, int tpsOperator, int tps)
         {
             var income = 0;
             object obj = new object();
@@ -136,103 +168,98 @@ namespace DehnadTahChinService
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                 }
-                using (var entity = new PortalEntities())
-                {
-
-                }
                 int position = 0;
+
                 int rowCount = installmentList.Count;
 
                 List<Task> tasksNew = new List<Task>();
-                Task task;
+                //Task task;
 
-                System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
-                try
-                {
-                    cnn = TahChinLibrary.publicVariables.GetConnection();
-                    cnn.Open();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in Opening Connection: ", e);
-                    return 0;
-                }
+                //System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
+                //try
+                //{
+                //    cnn = DambelLibrary.publicVariables.GetConnection();
+                //    cnn.Open();
+                //}
+                //catch (Exception e)
+                //{
+                //    logs.Error("Exception in Opening Connection: ", e);
+                //    return 0;
+                //}
                 int loopNo = 0;
+                int taskCount = 0;
 
 
+                //List<string> mobiles = installmentArr.ToList();
+                //List<int> chargedPrices = installmentArr.Values.ToList();
+                rowCount = installmentList.Count;
                 while (position < rowCount)
                 {
-                    int i = 0;
+                    if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
+                        break;
+                    string mobileNumber = installmentList[position].mobileNumber;
+                    int chargedPriceToday = installmentList[position].priceChargedToday;
+
+                    int currentTps = tps;
+                    if (v_tpsDedicatedChanged) { v_tpsDedicatedChanged = false; currentTps = v_throttleDedicated.getMaxTps(tpsOperator, tps); logs.Info(";tpsChanged;Tahchin;" + tps + ";" + tpsOperator + ";" + currentTps + ";"); }
+
+                    v_throttleDedicated.throttleRequests(Service.v_dbName, mobileNumber, Guid.NewGuid().ToString(), currentTps);
+
+                    lock (obj) { taskCount = taskCount + 1; }
                     loopNo++;
-                    DateTime startTime = DateTime.Now;
-                    while (i <= tps - 1 && //DateTime.Now.Second == startTime.Second
-                        (DateTime.Now - startTime).TotalMilliseconds < 1000
-                        && position < rowCount)
+                    int threadNo = taskCount;
+                    int lpNo = loopNo;
+                    Task<int> task = new Task<int>(() =>
                     {
-                        if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
-                            break;
-
-                        int threadNo = -1;
-                        String mobileNumber = installmentList[position];
-
-                        task = tasksNew.Where(o => o.IsCompleted).FirstOrDefault();
-                        if (task == null)
-                        {
-                            if (tasksNew.Count < maxTaskCount)
-                            {
-                                threadNo = tasksNew.Count;
-                                task = new Task<int>(() =>
-                                {
-                                    return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber
-            , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, threadNo, isCampaignActive, DateTime.Now).Result;
-                                });
-                                tasksNew.Add(task);
-
-                            }
-                        }
-                        else
-                        {
-                            threadNo = tasksNew.IndexOf(task);
-
-                            task = new Task<int>(() =>
-                            {
-                                return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber
-            , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, loopNo, threadNo, isCampaignActive, DateTime.Now).Result;
-                            });
-
-                            tasksNew[threadNo] = task;
-
-                        }
-                        if (task != null)
-                        {
-                            ((Task<int>)tasksNew[threadNo]).ContinueWith(o => { lock (obj) { income += o.Result; } });
-                            if (i == 0) startTime = DateTime.Now;
-                            tasksNew[threadNo].Start();
-                            lock (obj)
-                            {
-                                position++;
-                            }
-                            i++;
-                        }
-
-                    }
-
-                    while (tasksNew.Where(o => o.Status == TaskStatus.WaitingForActivation || o.Status == TaskStatus.WaitingForChildrenToComplete || o.Status == TaskStatus.WaitingToRun
-                         || o.Status == TaskStatus.Created).Count() > 0)
+                        return ProcessMtnInstallment(maxChargeLimit, mobileNumber, chargedPriceToday
+                        , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, lpNo, threadNo, isCampaignActive, DateTime.Now);
+                    });
+                    task.ContinueWith(o => { lock (obj) { taskCount = taskCount - 1; income += o.Result; } });
+                    task.Start();
+                    while (task.Status == TaskStatus.WaitingForActivation || task.Status == TaskStatus.WaitingForChildrenToComplete || task.Status == TaskStatus.WaitingToRun
+                         || task.Status == TaskStatus.Created)
                     {
 
                     }
-                    TimeSpan waitTime = DateTime.Now - startTime;
-                    if (waitTime.TotalMilliseconds < 1000)
-                        Thread.Sleep(1000 - (int)waitTime.TotalMilliseconds);
+                    position++;
 
 
                 }
 
-                while (tasksNew.Where(o => !o.IsCompleted).Count() > 0)
+                while (taskCount > 0)
                 {
                 }
-                cnn.Close();
+
+                //while (position < rowCount)
+                //{
+                //    if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
+                //        break;
+                //    String mobileNumber = installmentDic[position];
+
+                //    throttleDedicated.throttleRequests("dambel", mobileNumber, Guid.NewGuid().ToString(), 1050, tps);
+
+                //    taskCount++;
+                //    loopNo++;
+                //    int threadNo = taskCount;
+                //    int lpNo = loopNo;
+                //    task = new Task<int>(() =>
+                //    {
+                //        return ProcessMtnInstallment(cnn, maxChargeLimit, mobileNumber
+                //        , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, installmentInnerCycleNumber, lpNo, threadNo, isCampaignActive, DateTime.Now).Result;
+                //    });
+                //    ((Task<int>)task).ContinueWith(o => { lock (obj) { taskCount--; income += o.Result; } });
+
+                //    while (task.Status == TaskStatus.WaitingForActivation || task.Status == TaskStatus.WaitingForChildrenToComplete || task.Status == TaskStatus.WaitingToRun
+                //         || task.Status == TaskStatus.Created)
+                //    {
+
+                //    }
+                //}
+
+                //while (taskCount > 0)
+                //{
+                //}
+                //cnn.Close();
 
             }
             catch (Exception e)
@@ -245,8 +272,8 @@ namespace DehnadTahChinService
         }
 
 
-        private static async Task<int> ProcessMtnInstallment(System.Data.SqlClient.SqlConnection cnn, int maxChargeLimit, string mobileNumber, Dictionary<string, string> serviceAdditionalInfo
-            , dynamic chargeCodes, int installmentCycleNumber, int installmentInnerCycleNumber, int loopNo, int taskId, int isCampaignActive
+        private static int ProcessMtnInstallment(int maxChargeLimit, string mobileNumber, int priceUserChargedToday, Dictionary<string, string> serviceAdditionalInfo
+            , dynamic chargeCodes, int installmentCycleNumber, int loopNo, int taskId, int isCampaignActive
             , DateTime timeLoop)
         {
             //logs.Info("InstallmentJob Chunk started: task: " + taskId + " - installmentList count:" + chunkedSingleChargeInstallment.Count);
@@ -264,30 +291,31 @@ namespace DehnadTahChinService
                     if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                         return 0;
 
-                    //singlecharge = reserverdSingleCharge;
-                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand("select isnull(sum(price),0) from singleCharge where isSucceeded = 1 and mobileNumber = '" + mobileNumber + "' and convert(date,dateCreated) ='" + DateTime.Now.ToString("yyyy-MM-dd") + "'");
-                    cmd.Connection = cnn;
-                    int priceUserChargedToday = int.Parse(cmd.ExecuteScalar().ToString());
+                    ////singlecharge = reserverdSingleCharge;
+                    //newcomment System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand("select isnull(sum(price),0) from singleCharge where isSucceeded = 1 and mobileNumber = '" + mobileNumber + "' and convert(date,dateCreated) ='" + DateTime.Now.ToString("yyyy-MM-dd") + "'");
+                    //newcomment cmd.Connection = cnn;
+                    //newcomment int priceUserChargedToday = int.Parse(cmd.ExecuteScalar().ToString());
 
                     DateTime timeAfterWhere = DateTime.Now;
-                    //int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == mobileNumber && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
-                    bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(mobileNumber, serviceAdditionalInfo["serviceId"]);
-                    if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
-                    {
-                        return 0;
-                    }
+                    ////int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == mobileNumber && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
+                    //newcomment bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(mobileNumber, serviceAdditionalInfo["serviceId"]);
+                    //newcomment if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
+                    //newcomment {
+                    //newcomment     return 0;
+                    //newcomment }
                     var message = new SharedLibrary.Models.MessageObject();
                     message.MobileNumber = mobileNumber;
                     message.ShortCode = serviceAdditionalInfo["shortCode"];
                     message = ChooseMtnSinglechargePrice(message, chargeCodes, priceUserChargedToday, maxChargeLimit);
-                    if (installmentCycleNumber == 1 && installmentInnerCycleNumber == 1 && message.Price != maxChargeLimit)
+                    if (installmentCycleNumber == 1 && message.Price != maxChargeLimit)
                         return 0;
                     else if (installmentCycleNumber > 2)
                         message.Price = 150;
                     if (priceUserChargedToday + message.Price > maxChargeLimit)
                         return 0;
                     var response = ChargeMtnSubscriber(timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere
-                        , entity, message, false, false, serviceAdditionalInfo, installmentCycleNumber, loopNo, taskId, timeLoop).Result;
+                        , entity, message, false, false, serviceAdditionalInfo["aggregatorServiceId"], installmentCycleNumber, loopNo, taskId, timeLoop);
+
 
                     if (response.IsSucceeded == true)
                     {
@@ -306,10 +334,10 @@ namespace DehnadTahChinService
             return income;
         }
 
-        public static async Task<Singlecharge> ChargeMtnSubscriber(
+        public static Singlecharge ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
             TahChinEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
-            , Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int loopNo, int threadNumber
+            , string aggregatorServiceId, int installmentCycleNumber, int loopNo, int threadNumber
             , DateTime timeLoop, long installmentId = 0)
         {
             DateTime timeStartChargeMtnSubscriber = DateTime.Now;
@@ -336,73 +364,123 @@ namespace DehnadTahChinService
             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
             int rialedPrice = message.Price.Value * 10;
             var referenceCode = Guid.NewGuid().ToString();
+
             var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
-, timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
+, timeStamp, mobile, rialedPrice, referenceCode, charge, aggregatorServiceId, spId);
             try
             {
                 singlecharge.ReferenceId = referenceCode;
 
                 timeBeforeHTTPClient = DateTime.Now;
-                using (var client = new HttpClient())
+
+
+                DateTime timeLimitToSend = DateTime.Now.AddSeconds(-1);
+
+                while (DateTime.Now > timeLimitToSend)
                 {
-                    client.Timeout = TimeSpan.FromSeconds(60);
-                    var request = new HttpRequestMessage(HttpMethod.Post, url);
-                    request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
+                    timeLimitToSend = v_throttle.throttleRequests(Service.v_dbName, mobile, guidStr);
 
-                    object obj = new object();
-                    lock (obj)
+                    payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
+                    , timeStamp, mobile, rialedPrice, referenceCode, charge, aggregatorServiceId, spId);
+                    //v_client.Timeout = TimeSpan.FromSeconds(60);
+
+                    //request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
+                    if (DateTime.Now > timeLimitToSend)
+                        logs.Info("TimePassed:" + DateTime.Now.ToString("HH:mm:ss,fff") + "-" + timeLimitToSend.ToString("HH:mm:ss,fff"));
+                }
+
+                timeBeforeSendMTNClient = DateTime.Now;
+                //logs.Warn(";tahchin;" + mobile + ";" + guidStr + ";" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
+                bool internalServerError;
+                WebExceptionStatus status;
+                string httpResult;
+                httpResult = SharedLibrary.UsefulWebApis.sendPostWithWebRequest(url, payload, out internalServerError, out status);
+                timeAfterSendMTNClient = DateTime.Now;
+
+                if (status == WebExceptionStatus.Success || internalServerError)
+                {
+
+                    timeBeforeReadStringClient = DateTime.Now;
+                    //string httpResult = response.Content.ReadAsStringAsync().Result;
+                    timeAfterReadStringClient = DateTime.Now;
+
+                    XmlDocument xml = new XmlDocument();
+                    xml.LoadXml(httpResult);
+                    XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                    manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                    manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                    manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local");
+                    XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns1:chargeAmountResponse", manager);
+                    if (successNode != null)
                     {
-                        v_throttle.throttleRequests("tahchin", mobile, guidStr);
+                        singlecharge.IsSucceeded = true;
                     }
-                    timeBeforeSendMTNClient = DateTime.Now;
-                    logs.Info("tahchin;" + mobile + ";" + guidStr + ";" + timeBeforeSendMTNClient.Value.ToString("hh:mm:ss.fff"));
-
-                    using (var response = await client.SendAsync(request))
+                    else
                     {
-                        timeAfterSendMTNClient = DateTime.Now;
+                        singlecharge.IsSucceeded = false;
 
-
-                        if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
+                        manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
+                        XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
+                        foreach (XmlNode fault in faultNode)
                         {
-
-                            timeBeforeReadStringClient = DateTime.Now;
-                            string httpResult = response.Content.ReadAsStringAsync().Result;
-                            timeAfterReadStringClient = DateTime.Now;
-
-                            XmlDocument xml = new XmlDocument();
-                            xml.LoadXml(httpResult);
-                            XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
-                            manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
-                            manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                            manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local");
-                            XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns1:chargeAmountResponse", manager);
-                            if (successNode != null)
-                            {
-                                singlecharge.IsSucceeded = true;
-                            }
-                            else
-                            {
-                                singlecharge.IsSucceeded = false;
-
-                                manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
-                                XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
-                                foreach (XmlNode fault in faultNode)
-                                {
-                                    XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
-                                    XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
-                                    singlecharge.Description = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
-                                }
-                            }
+                            XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
+                            XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
+                            singlecharge.Description = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
                         }
-                        else
-                        {
-                            singlecharge.IsSucceeded = false;
-                            singlecharge.Description = response.StatusCode.ToString();
-                        }
-                        timeAfterXML = DateTime.Now;
                     }
                 }
+                else
+                {
+                    singlecharge.IsSucceeded = false;
+                    singlecharge.Description = status.ToString();
+                }
+                timeAfterXML = DateTime.Now;
+                //using (var response = await v_client.SendAsync(request))
+                //{
+                //    timeAfterSendMTNClient = DateTime.Now;
+
+
+                //    if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
+                //    {
+
+                //        timeBeforeReadStringClient = DateTime.Now;
+                //        string httpResult = response.Content.ReadAsStringAsync().Result;
+                //        timeAfterReadStringClient = DateTime.Now;
+
+                //        XmlDocument xml = new XmlDocument();
+                //        xml.LoadXml(httpResult);
+                //        XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                //        manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                //        manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                //        manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local");
+                //        XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns1:chargeAmountResponse", manager);
+                //        if (successNode != null)
+                //        {
+                //            singlecharge.IsSucceeded = true;
+                //        }
+                //        else
+                //        {
+                //            singlecharge.IsSucceeded = false;
+
+                //            manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
+                //            XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
+                //            foreach (XmlNode fault in faultNode)
+                //            {
+                //                XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
+                //                XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
+                //                singlecharge.Description = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
+                //            }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        singlecharge.IsSucceeded = false;
+                //        singlecharge.Description = response.StatusCode.ToString();
+                //    }
+                //    timeAfterXML = DateTime.Now;
+                //}
+
             }
             catch (Exception e)
             {

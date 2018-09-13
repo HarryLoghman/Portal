@@ -21,5 +21,7 @@ namespace SharedLibrary.Models
         public System.TimeSpan endTime { get; set; }
         public Nullable<int> tps { get; set; }
         public Nullable<int> maxTaskCount { get; set; }
+        public string daysOfWeek { get; set; }
+        public Nullable<int> minTPS { get; set; }
     }
 }

@@ -12,15 +12,11 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class vw_DehnadAllSentMessages
+    public partial class JhoobinSetting1
     {
-        public string Type { get; set; }
-        public string ServiceName { get; set; }
-        public string MobileNumber { get; set; }
-        public string ShortCode { get; set; }
-        public string PersianDate { get; set; }
-        public string Time { get; set; }
-        public string Content { get; set; }
-        public int ProcessStatus { get; set; }
+        public long Id { get; set; }
+        public string Cookie { get; set; }
+        public string SubscriptionsViewState { get; set; }
+        public string AccessToken { get; set; }
     }
 }

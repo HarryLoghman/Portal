@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,33 +80,36 @@ namespace SharedLibrary
             }
             return result;
         }
-
+        static HttpClient v_client;
         public static async Task<dynamic> DanoopReferral(string ipAndMethodName, string parameters)
         {
             dynamic result = new ExpandoObject();
             result.status = "Error";
             try
             {
-                using (var client = new HttpClient())
+                if (v_client == null)
                 {
-                    client.Timeout = TimeSpan.FromSeconds(20);
-                    var url = string.Format("{0}?{1}", ipAndMethodName, parameters);
-                    logs.Info("danoop request:" + url);
-                    var response = client.GetAsync(new Uri(url)).Result;
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseString = await response.Content.ReadAsStringAsync();
-                        logs.Info("danoop response:" + responseString);
-                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                        result = jsonResponse;
-                    }
-                    else
-                    {
-                        result.stauts = "Error";
-                        result.description = "exception";
-                        logs.Error("DanoopReferral returned status: " + response.StatusCode);
-                    }
+                    v_client = new HttpClient();
+                    v_client.Timeout = TimeSpan.FromSeconds(20);
                 }
+
+                var url = string.Format("{0}?{1}", ipAndMethodName, parameters);
+                logs.Info("danoop request:" + url);
+                var response = v_client.GetAsync(new Uri(url)).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    logs.Info("danoop response:" + responseString);
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    result = jsonResponse;
+                }
+                else
+                {
+                    result.stauts = "Error";
+                    result.description = "exception";
+                    logs.Error("DanoopReferral returned status: " + response.StatusCode);
+                }
+
             }
             catch (Exception e)
             {
@@ -115,6 +120,102 @@ namespace SharedLibrary
             return result;
         }
 
+        public static string DanoopReferralWithWebRequest(string ipAndMethodName, string parameters)
+        {
+            bool internalServerError = false;
+            WebExceptionStatus status = WebExceptionStatus.Success;
+            var url = string.Format("{0}?{1}", ipAndMethodName, parameters);
+            Uri uri = new Uri(url, UriKind.Absolute);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+            webRequest.Timeout = 20 * 1000;
+
+            //webRequest.Headers.Add("SOAPAction", action);
+            webRequest.ContentType = "text/html;charset=\"utf-8\"";
+            webRequest.Accept = "text/html";
+            webRequest.Method = "Get";
+
+            //using (Stream stream = webRequest.GetRequestStream())
+            //{
+            //    //Byte[] bts = UnicodeEncoding.UTF8.GetBytes(content);
+            //    //stream.Write(bts, 0, bts.Count());
+            //}
+
+            string result;
+            try
+            {
+                var response = webRequest.GetResponse();
+                using (StreamReader rd = new StreamReader(response.GetResponseStream()))
+                {
+                    result = rd.ReadToEnd();
+                }
+                response.Close();
+            }
+            catch (System.Net.WebException ex)
+            {
+                status = ex.Status;
+                if (ex.Response != null)
+                {
+                    internalServerError = true;
+                    using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
+                    {
+                        result = rd.ReadToEnd();
+                    }
+                }
+                else result = "";
+                ex.Response.Close();
+            }
+
+            return result;
+        }
+
+        public static string sendPostWithWebRequest(string url, string content, out bool internalServerError , out WebExceptionStatus status )
+        {
+            internalServerError = false;
+            status = WebExceptionStatus.Success;
+            
+            Uri uri = new Uri(url, UriKind.Absolute);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+            webRequest.Timeout = 60 * 1000;
+            
+            //webRequest.Headers.Add("SOAPAction", action);
+            webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+            webRequest.Accept = "text/xml";
+            webRequest.Method = "POST";
+            
+            using (Stream stream = webRequest.GetRequestStream())
+            {
+                Byte[] bts = UnicodeEncoding.UTF8.GetBytes(content);
+                stream.Write(bts, 0, bts.Count());
+            }
+            
+            string result;
+            try
+            {
+                var response = webRequest.GetResponse();
+                using (StreamReader rd = new StreamReader(response.GetResponseStream()))
+                {
+                    result = rd.ReadToEnd();
+                }
+                response.Close();
+            }
+            catch (System.Net.WebException ex)
+            {
+                status = ex.Status;
+                if (ex.Response != null)
+                { 
+                    internalServerError = true;
+                    using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
+                    {
+                        result = rd.ReadToEnd();
+                    }
+                    ex.Response.Close();
+                }
+                else result = "";
+
+            }
+            
+            return result;
+        }
         public static async Task<T> NotificationBotApi<T>(string methodName, Dictionary<string, string> parameters) where T : class
         {
             try
