@@ -178,170 +178,179 @@ namespace DehnadJhoobinService
                 var path = folderPath + @"newSubs.csv";
                 var result = new List<string>();
                 string value = "";
-                using (var entity = new PortalEntities())
-                {
-                    using (TextReader fileReader = File.OpenText(path))
-                    {
-                        fileReader.ReadLine();
-                        fileReader.ReadLine();
-                        var csv = new CsvReader(fileReader);
-                        //csv.Configuration.HasHeaderRecord = true;
-                        while (csv.Read())
-                        {
-                            var token = "";
-                            var mobileNumber = "";
-                            var startTime = "";
-                            var expiryTime = "";
-                            var autoRenew = "";
-                            var cancelReason = "";
-                            var cancelChannel = "";
-                            var developerPayload = "";
-                            for (int i = 0; csv.TryGetField<string>(i, out value); i++)
-                            {
-                                if (i == 0)
-                                    token = value;
-                                else if (i == 1)
-                                    mobileNumber = value;
-                                else if (i == 2)
-                                    startTime = value;
-                                else if (i == 3)
-                                    expiryTime = value;
-                                else if (i == 4)
-                                    autoRenew = value;
-                                else if (i == 5)
-                                    cancelReason = value;
-                                else if (i == 6)
-                                    cancelChannel = value;
-                                else if (i == 7)
-                                    developerPayload = value;
-                            }
-                            if (token != "")
-                            {
-                                //var message = new SharedLibrary.Models.MessageObject();
-                                //message.MobileNumber = mobileNumber;
-                                //message.ShortCode = "0";
-                                //message.Content = token;
-                                //message.MobileOperator = 2;
-                                //message.OperatorPlan = 0;
-                                //SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, false);
 
-                                //var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
+                using (TextReader fileReader = File.OpenText(path))
+                {
+                    fileReader.ReadLine();
+                    fileReader.ReadLine();
+                    var csv = new CsvReader(fileReader);
+                    //csv.Configuration.HasHeaderRecord = true;
+                    while (csv.Read())
+                    {
+                        var token = "";
+                        var mobileNumber = "";
+                        var startTime = "";
+                        var expiryTime = "";
+                        var autoRenew = "";
+                        var cancelReason = "";
+                        var cancelChannel = "";
+                        var developerPayload = "";
+                        for (int i = 0; csv.TryGetField<string>(i, out value); i++)
+                        {
+                            if (i == 0)
+                                token = value;
+                            else if (i == 1)
+                                mobileNumber = value;
+                            else if (i == 2)
+                                startTime = value;
+                            else if (i == 3)
+                                expiryTime = value;
+                            else if (i == 4)
+                                autoRenew = value;
+                            else if (i == 5)
+                                cancelReason = value;
+                            else if (i == 6)
+                                cancelChannel = value;
+                            else if (i == 7)
+                                developerPayload = value;
+                        }
+                        if (token != "")
+                        {
+                            var message = new SharedLibrary.Models.MessageObject();
+                            message.MobileNumber = mobileNumber;
+                            message.ShortCode = "0";
+                            message.Content = token;
+                            message.MobileOperator = 2;
+                            message.OperatorPlan = 0;
+                            SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, false);
+                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
+                            startTime = startTime.Replace("/", "-");
+                            var splitedStartTime = startTime.Split(' ');
+                            var georgianDate = SharedLibrary.Date.GetGregorianDate(splitedStartTime[0]);
+                            var georgianDateTime = SharedLibrary.Date.GetGregorianDateTime(startTime);
+                            subscriber.ActivationDate = georgianDateTime;
+                            subscriber.PersianActivationDate = splitedStartTime[0];
+                            using (var entity = new PortalEntities())
+                            {
+                                entity.Entry(subscriber).State = EntityState.Modified;
+                                entity.SaveChanges();
+                                var history = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
+                                history.Date = georgianDate.Date;
+                                history.Time = georgianDateTime.TimeOfDay;
+                                history.DateTime = georgianDateTime;
+                                history.PersianDateTime = startTime;
+                                entity.Entry(history).State = EntityState.Modified;
+                                entity.SaveChanges();
+                            }
+                            result.Add("Register " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime + ",persianDate=" + startTime + Environment.NewLine);
+                        }
+                    }
+                }
+
+
+                path = folderPath + @"unSubs.csv";
+                result = new List<string>();
+                value = "";
+                using (TextReader fileReader = File.OpenText(path))
+                {
+                    fileReader.ReadLine();
+                    fileReader.ReadLine();
+                    var csv = new CsvReader(fileReader);
+                    //csv.Configuration.HasHeaderRecord = true;
+                    while (csv.Read())
+                    {
+                        var token = "";
+                        var mobileNumber = "";
+                        var startTime = "";
+                        var expiryTime = "";
+                        var autoRenew = "";
+                        var cancelReason = "";
+                        var cancelChannel = "";
+                        var developerPayload = "";
+                        for (int i = 0; csv.TryGetField<string>(i, out value); i++)
+                        {
+                            if (i == 0)
+                                token = value;
+                            else if (i == 1)
+                                mobileNumber = value;
+                            else if (i == 2)
+                                startTime = value;
+                            else if (i == 3)
+                                expiryTime = value;
+                            else if (i == 4)
+                                autoRenew = value;
+                            else if (i == 5)
+                                cancelReason = value;
+                            else if (i == 6)
+                                cancelChannel = value;
+                            else if (i == 7)
+                                developerPayload = value;
+                        }
+                        if (token != "")
+                        {
+                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
+                            if (subscriber == null)
+                            {
+                                var message = new SharedLibrary.Models.MessageObject();
+                                message.MobileNumber = mobileNumber;
+                                message.ShortCode = "0";
+                                message.Content = token;
+                                message.MobileOperator = 2;
+                                message.OperatorPlan = 0;
+                                SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, false);
+
+                                subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
                                 startTime = startTime.Replace("/", "-");
                                 var splitedStartTime = startTime.Split(' ');
                                 var georgianDate = SharedLibrary.Date.GetGregorianDate(splitedStartTime[0]);
                                 var georgianDateTime = SharedLibrary.Date.GetGregorianDateTime(startTime);
-                                //subscriber.ActivationDate = georgianDateTime;
-                                //subscriber.PersianActivationDate = splitedStartTime[0];
-                                //entity.Entry(subscriber).State = EntityState.Modified;
-                                //var history = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
-                                //history.Date = georgianDate.Date;
-                                //history.Time = georgianDateTime.TimeOfDay;
-                                //history.DateTime = georgianDateTime;
-                                //history.PersianDateTime = startTime;
-                                //entity.Entry(history).State = EntityState.Modified;
-                                //entity.SaveChanges();
+                                subscriber.ActivationDate = georgianDateTime;
+                                using (var entity = new PortalEntities())
+                                {
+                                    subscriber.PersianActivationDate = splitedStartTime[0];
+                                    entity.Entry(subscriber).State = EntityState.Modified;
+                                    entity.SaveChanges();
+                                    var history = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
+                                    history.Date = georgianDate.Date;
+                                    history.Time = georgianDateTime.TimeOfDay;
+                                    history.DateTime = georgianDateTime;
+                                    history.PersianDateTime = startTime;
+                                    entity.Entry(history).State = EntityState.Modified;
+                                    entity.SaveChanges();
+                                }
                                 result.Add("Register " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime + ",persianDate=" + startTime + Environment.NewLine);
                             }
+                            var message2 = new SharedLibrary.Models.MessageObject();
+                            message2.MobileNumber = mobileNumber;
+                            message2.ShortCode = "0";
+                            message2.Content = cancelChannel;
+                            message2.MobileOperator = 2;
+                            message2.OperatorPlan = 0;
+                            SharedLibrary.HandleSubscription.HandleSubscriptionContent(message2, service, true);
+
+                            expiryTime = expiryTime.Replace("/", "-");
+                            var splitedExpiryTime = expiryTime.Split(' ');
+                            var georgianDate2 = SharedLibrary.Date.GetGregorianDate(splitedExpiryTime[0]);
+                            var georgianDateTime2 = SharedLibrary.Date.GetGregorianDateTime(expiryTime);
+                            subscriber.DeactivationDate = georgianDateTime2;
+                            subscriber.PersianDeactivationDate = splitedExpiryTime[0];
+                            using (var entity = new PortalEntities())
+                            {
+                                entity.Entry(subscriber).State = EntityState.Modified;
+                                entity.SaveChanges();
+
+                                var history2 = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message2.MobileNumber, service.Id);
+                                history2.Date = georgianDate2.Date;
+                                history2.Time = georgianDateTime2.TimeOfDay;
+                                history2.DateTime = georgianDateTime2;
+                                history2.PersianDateTime = expiryTime;
+                                entity.Entry(history2).State = EntityState.Modified;
+                                entity.SaveChanges();
+                            }
+                            result.Add("Unsub " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime2 + ",persianDate=" + expiryTime + Environment.NewLine);
                         }
                     }
-
-
-                    path = folderPath + @"unSubs.csv";
-                    result = new List<string>();
-                    value = "";
-                    using (TextReader fileReader = File.OpenText(path))
-                    {
-                        fileReader.ReadLine();
-                        fileReader.ReadLine();
-                        var csv = new CsvReader(fileReader);
-                        //csv.Configuration.HasHeaderRecord = true;
-                        while (csv.Read())
-                        {
-                            var token = "";
-                            var mobileNumber = "";
-                            var startTime = "";
-                            var expiryTime = "";
-                            var autoRenew = "";
-                            var cancelReason = "";
-                            var cancelChannel = "";
-                            var developerPayload = "";
-                            for (int i = 0; csv.TryGetField<string>(i, out value); i++)
-                            {
-                                if (i == 0)
-                                    token = value;
-                                else if (i == 1)
-                                    mobileNumber = value;
-                                else if (i == 2)
-                                    startTime = value;
-                                else if (i == 3)
-                                    expiryTime = value;
-                                else if (i == 4)
-                                    autoRenew = value;
-                                else if (i == 5)
-                                    cancelReason = value;
-                                else if (i == 6)
-                                    cancelChannel = value;
-                                else if (i == 7)
-                                    developerPayload = value;
-                            }
-                            if (token != "")
-                            {
-                                var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
-                                if (subscriber == null)
-                                {
-                                    //    var message = new SharedLibrary.Models.MessageObject();
-                                    //    message.MobileNumber = mobileNumber;
-                                    //    message.ShortCode = "0";
-                                    //    message.Content = token;
-                                    //    message.MobileOperator = 2;
-                                    //    message.OperatorPlan = 0;
-                                    //    SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, false);
-
-                                    //    subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
-                                    startTime = startTime.Replace("/", "-");
-                                    var splitedStartTime = startTime.Split(' ');
-                                    var georgianDate = SharedLibrary.Date.GetGregorianDate(splitedStartTime[0]);
-                                    var georgianDateTime = SharedLibrary.Date.GetGregorianDateTime(startTime);
-                                    //    subscriber.ActivationDate = georgianDateTime;
-                                    //    subscriber.PersianActivationDate = splitedStartTime[0];
-                                    //    entity.Entry(subscriber).State = EntityState.Modified;
-                                    //    var history = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
-                                    //    history.Date = georgianDate.Date;
-                                    //    history.Time = georgianDateTime.TimeOfDay;
-                                    //    history.DateTime = georgianDateTime;
-                                    //    history.PersianDateTime = startTime;
-                                    //    entity.Entry(history).State = EntityState.Modified;
-                                    //    entity.SaveChanges();
-                                    result.Add("Register " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime + ",persianDate=" + startTime + Environment.NewLine);
-                                }
-                                //var message2 = new SharedLibrary.Models.MessageObject();
-                                //message2.MobileNumber = mobileNumber;
-                                //message2.ShortCode = "0";
-                                //message2.Content = cancelChannel;
-                                //message2.MobileOperator = 2;
-                                //message2.OperatorPlan = 0;
-                                //SharedLibrary.HandleSubscription.HandleSubscriptionContent(message2, service, true);
-
-                                //subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
-                                expiryTime = expiryTime.Replace("/", "-");
-                                var splitedExpiryTime = expiryTime.Split(' ');
-                                var georgianDate2 = SharedLibrary.Date.GetGregorianDate(splitedExpiryTime[0]);
-                                var georgianDateTime2 = SharedLibrary.Date.GetGregorianDateTime(expiryTime);
-                                //subscriber.ActivationDate = georgianDateTime2;
-                                //subscriber.PersianActivationDate = splitedExpiryTime[0];
-                                //entity.Entry(subscriber).State = EntityState.Modified;
-                                //var history2 = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message2.MobileNumber, service.Id);
-                                //history2.Date = georgianDate2.Date;
-                                //history2.Time = georgianDateTime2.TimeOfDay;
-                                //history2.DateTime = georgianDateTime2;
-                                //history2.PersianDateTime = expiryTime;
-                                //entity.Entry(history2).State = EntityState.Modified;
-                                //entity.SaveChanges();
-                                result.Add("Unsub " + serviceCode + ": MobileNumber=" + mobileNumber + ",date=" + georgianDateTime2 + ",persianDate=" + expiryTime + Environment.NewLine);
-                            }
-                        }
-                    }
-                    File.AppendAllLines(DehnadJhoobinService.Properties.Settings.Default.TempPath + "result.txt", result);
+                    //File.AppendAllLines(DehnadJhoobinService.Properties.Settings.Default.TempPath + "result.txt", result);
                 }
                 return true;
             }

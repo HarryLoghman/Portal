@@ -119,7 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
-      <Project>{b232d11f-151b-a5b6-131d-4bc28b1314c8}</Project>
+      <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
       <Name>HazaranLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">

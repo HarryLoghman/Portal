@@ -223,7 +223,7 @@ namespace DehnadPhantomService
                         if (isInMaintenace != null)
                             isInMaintenanceTime = isInMaintenace.Value == "True" ? true : false;
                     }
-                    if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("07:02:00")) || isInMaintenanceTime == true)
+                    if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("07:03:00")) || isInMaintenanceTime == true)
                     {
                         installmentCycleNumber = 1;
                         Thread.Sleep(/*50 * 60 * */1000);
