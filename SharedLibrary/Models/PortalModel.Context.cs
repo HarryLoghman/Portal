@@ -37,6 +37,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<BlackList> BlackLists { get; set; }
         public virtual DbSet<BulkList> BulkLists { get; set; }
         public virtual DbSet<Delivery> Deliveries { get; set; }
+        public virtual DbSet<JhoobinSetting> JhoobinSettings { get; set; }
         public virtual DbSet<Operator> Operators { get; set; }
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
         public virtual DbSet<OperatorsPrefix> OperatorsPrefixs { get; set; }
@@ -45,7 +46,6 @@ namespace SharedLibrary.Models
         public virtual DbSet<RealtimeStatisticsFor3GServices> RealtimeStatisticsFor3GServices { get; set; }
         public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
         public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
-        public virtual DbSet<Referral> Referrals { get; set; }
         public virtual DbSet<serviceCycle> serviceCycles { get; set; }
         public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
         public virtual DbSet<ServiceKeyword> ServiceKeywords { get; set; }
@@ -59,8 +59,9 @@ namespace SharedLibrary.Models
         public virtual DbSet<vw_AllSentMessages> vw_AllSentMessages { get; set; }
         public virtual DbSet<vw_DehnadAllServicesStatistics> vw_DehnadAllServicesStatistics { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
-        public virtual DbSet<JhoobinSetting> JhoobinSettings { get; set; }
-        public virtual DbSet<JhoobinSetting1> JhoobinSetting1 { get; set; }
+        public virtual DbSet<chargeInfo> chargeInfoes { get; set; }
+        public virtual DbSet<Referral> Referrals { get; set; }
+        public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

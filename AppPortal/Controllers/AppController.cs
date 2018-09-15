@@ -942,6 +942,27 @@ namespace Portal.Controllers
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                                 singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
+                                                if (result.Status == "SUCCESS-Pending Confirmation")
+                                                {
+
+                                                    var messagesTemplate = SoratyLibrary.ServiceHandler.GetServiceMessagesTemplate();
+                                                    int isCampaignActive = 0;
+                                                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                                                    if (campaign != null)
+                                                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                                                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
+                                                    if (isInBlackList == true)
+                                                        isCampaignActive = 0;
+                                                    if (isCampaignActive == 1)
+                                                    {
+                                                        SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
+                                                        messageObj.ShortCode = serviceInfo.ShortCode;
+                                                        messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                                                        messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                                                        messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                                                        SoratyLibrary.MessageHandler.InsertMessageToQueue(messageObj);
+                                                    }
+                                                }
                                             }
                                             SoratyLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                                         }

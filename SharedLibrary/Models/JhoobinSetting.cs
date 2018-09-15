@@ -16,7 +16,7 @@ namespace SharedLibrary.Models
     {
         public long Id { get; set; }
         public string Cookie { get; set; }
-        public string AccessToken { get; set; }
         public string SubscriptionsViewState { get; set; }
+        public string AccessToken { get; set; }
     }
 }
