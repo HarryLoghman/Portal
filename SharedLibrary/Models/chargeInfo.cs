@@ -12,11 +12,15 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class JhoobinSetting1
+    public partial class chargeInfo
     {
-        public long Id { get; set; }
-        public string Cookie { get; set; }
-        public string SubscriptionsViewState { get; set; }
-        public string AccessToken { get; set; }
+        public long serviceId { get; set; }
+        public System.DateTime dateCharge { get; set; }
+        public string mobileNumber { get; set; }
+        public Nullable<int> pricePaiedToday { get; set; }
+        public Nullable<int> pricePaiedYesterday { get; set; }
+        public Nullable<System.DateTime> subscriberActivationDate { get; set; }
+        public Nullable<int> tryCount { get; set; }
+        public string cycles { get; set; }
     }
 }

@@ -145,7 +145,6 @@ namespace DehnadPorShetabService
                 Thread.Sleep(1000);
             }
         }
-
         private void EventbaseWorkerThread()
         {
             var eventbase = new Eventbase();
@@ -165,8 +164,6 @@ namespace DehnadPorShetabService
                 Thread.Sleep(1000);
             }
         }
-
-
         private void StatisticsWorkerThread()
         {
             var statistic = new Statistic();
@@ -234,6 +231,7 @@ namespace DehnadPorShetabService
                     }
                     else
                     {
+                        return;
                         //var singlechargeInstallment = new SinglechargeInstallmentClassNew();
                         //var income = singlechargeInstallment.ProcessInstallment(-1, SharedLibrary.ThrottleMTN.getOperatorTPS(), 85, 120);
                         //Thread.Sleep(180 * 1000);

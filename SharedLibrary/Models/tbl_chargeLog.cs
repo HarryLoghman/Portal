@@ -12,14 +12,13 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class serviceCycle
+    public partial class tbl_chargeLog
     {
-        public long serviceID { get; set; }
-        public int cycleNumber { get; set; }
-        public string shortCode { get; set; }
-        public string daysOfWeek { get; set; }
-        public System.TimeSpan startTime { get; set; }
-        public System.TimeSpan endTime { get; set; }
-        public Nullable<int> minTPS { get; set; }
+        public int id { get; set; }
+        public string serviceCode { get; set; }
+        public Nullable<System.DateTime> dateTime { get; set; }
+        public Nullable<decimal> sumPrice { get; set; }
+        public Nullable<long> sumTries { get; set; }
+        public Nullable<long> activeUsers { get; set; }
     }
 }

@@ -33,7 +33,7 @@ namespace SharedLibrary
                     var campaign = ((IEnumerable<dynamic>)entity.Settings).FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
-                }   
+                }
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
@@ -109,7 +109,7 @@ namespace SharedLibrary
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        int priceUserChargedToday = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == installment && o.IsSucceeded == true  && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
+                        int priceUserChargedToday = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == installment && o.IsSucceeded == true && o.DateCreated.Date == today.Date).ToList().Sum(o => o.Price);
                         bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
@@ -298,7 +298,7 @@ namespace SharedLibrary
                             continue;
                         else if (installmentInnerCycleNumber == 2 && message.Price >= 100)
                             message.Price = 100;
-                        
+
                         var response = MessageSender.ChargeMtnSubscriber(entityType, singlechargeType, message, false, false, serviceAdditionalInfo).Result;
                         if (response.IsSucceeded == true)
                         {
@@ -381,5 +381,6 @@ namespace SharedLibrary
                 logs.Error("Exception in InstallmentCycleToDb: ", e);
             }
         }
+
     }
 }

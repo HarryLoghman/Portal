@@ -12,14 +12,15 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class serviceCycle
+    public partial class serviceAdvertisor
     {
-        public long serviceID { get; set; }
-        public int cycleNumber { get; set; }
-        public string shortCode { get; set; }
-        public string daysOfWeek { get; set; }
-        public System.TimeSpan startTime { get; set; }
-        public System.TimeSpan endTime { get; set; }
-        public Nullable<int> minTPS { get; set; }
+        public int id { get; set; }
+        public string ShortCode { get; set; }
+        public Nullable<int> AdvertisorID { get; set; }
+        public string validKeys { get; set; }
+        public string asciiKey { get; set; }
+        public Nullable<System.DateTime> fromDateTime { get; set; }
+        public Nullable<System.DateTime> toDateTime { get; set; }
+        public Nullable<bool> isValid { get; set; }
     }
 }

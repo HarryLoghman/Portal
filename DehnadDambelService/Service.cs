@@ -234,6 +234,7 @@ namespace DehnadDambelService
                     }
                     else
                     {
+                        return;
                         //var singlechargeInstallment = new SinglechargeInstallmentClassNew();
                         //var income = singlechargeInstallment.ProcessInstallment(-1, SharedLibrary.ThrottleMTN.getOperatorTPS(), 30, 45);
                         //Thread.Sleep(180 * 1000);

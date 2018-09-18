@@ -197,7 +197,7 @@ namespace DehnadPorShetabService
                     if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                         break;
                     string mobileNumber = installmentList[position].mobileNumber;
-                    int chargedPriceToday = installmentList[position].priceChargedToday;
+                    int chargedPriceToday = (installmentList[position].pricePaidToday.HasValue ? installmentList[position].pricePaidToday.Value : 0);
 
                     int currentTps = tps;
                     if (v_tpsDedicatedChanged) { v_tpsDedicatedChanged = false; currentTps = v_throttleDedicated.getMaxTps(tpsOperator, tps); logs.Info(";tpsChanged;tpsChanged;porshetab;" + mobileNumber + ";" + taskCount + ";" + tps + ";" + tpsOperator + ";" + currentTps + ";"); }

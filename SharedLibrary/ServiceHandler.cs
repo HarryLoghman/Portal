@@ -197,8 +197,8 @@ namespace SharedLibrary
         public class SubscribersAndCharges
         {
             public string mobileNumber { get; set; }
-            public int priceChargedToday { get; set; }
-            public int priceChargedYesterday { get; set; }
+            public int? pricePaidToday { get; set; }
+            public int? pricePaidYesterday { get; set; }
         }
         public static int GetActiveSubscribersAndChargesCount(string dbName, string serviceCode, int maxTries, int cycleNumber, int maxPrice
             , DateTime date, bool wipe, string wipeDescriptionSeparatedBySemicolon, Nullable<DateTime> lastExecutionTime, bool forciblyExecute)
@@ -247,7 +247,34 @@ namespace SharedLibrary
             }
             return arr[0];
         }
+        public static List<SubscribersAndCharges> getActiveSubscribersForCharge(string dbName, long serviceId, DateTime date, int maxPrice, int maxTries, int cycleNumber, bool order
+            , bool wipe, string wipeDescriptionSeparatedBySemicolon, Nullable<int> offset, Nullable<int> fetch)
+        {
 
+            string yesterday = (DateTime.Now.AddDays(-1)).ToString("yyyy-MM-dd");
+            string str = "";
+
+            str = "exec sp_getActiveSubscribersAndChargesNew "
+                + " '" + dbName + "'"
+                + "," + serviceId.ToString()
+                + "," + "'" + date.ToString("yyyy-MM-dd") + "'"
+                + "," + maxPrice.ToString()
+                + "," + maxTries.ToString()
+                + "," + cycleNumber.ToString()
+                + "," + (order ? "1" : "0")
+                + "," + (wipe ? "1" : "0")
+                + "," + (string.IsNullOrEmpty(wipeDescriptionSeparatedBySemicolon) ? "Null" : "'" + wipeDescriptionSeparatedBySemicolon + "'")
+                + "," + (offset.HasValue ? offset.Value.ToString() : "Null")
+                + "," + (fetch.HasValue ? fetch.Value.ToString() : "Null");
+
+            List<SubscribersAndCharges> arr = null;
+            using (PortalEntities portal = new PortalEntities())
+            {
+                portal.Database.CommandTimeout = 180;
+                arr = portal.Database.SqlQuery<SubscribersAndCharges>(str).ToList();
+            }
+            return arr;
+        }
         public static List<SubscribersAndCharges> GetActiveSubscribersAndCharges(string dbName, string serviceCode, int maxTries, int cycleNumber, int maxPrice, bool orderByChargeYesterday
             , Nullable<int> topRecord, DateTime date, bool wipe, string wipeDescriptionSeparatedBySemicolon, Nullable<DateTime> lastExecutionTime
             , bool forciblyExecute)
@@ -295,7 +322,7 @@ namespace SharedLibrary
                 + ", 0"
                 + "," + (lastExecutionTime.HasValue ? "'" + lastExecutionTime.Value.ToString("yyyy-MM-dd HH:mm:ss") + "'" : "Null")
                 + "," + (forciblyExecute ? "1" : "0");
-                
+
 
             List<SubscribersAndCharges> arr = null;
             using (PortalEntities portal = new PortalEntities())
