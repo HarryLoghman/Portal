@@ -103,36 +103,36 @@ namespace Portal.Controllers
             }
             else
             {
-                if (smsId == null || smsId == "" || smsId == "null")
-                {
-                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromShortCode(messageObj.ShortCode);
-                    if (serviceInfo != null)
-                    {
-                        messageObj.Content = serviceInfo.AggregatorServiceId;
-                        messageObj.IsReceivedFromIntegratedPanel = true;
-                    }
-                }
-                else
-                    messageObj.ShortCode = to;
+                //if (smsId == null || smsId == "" || smsId == "null")
+                //{
+                //    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromShortCode(messageObj.ShortCode);
+                //    if (serviceInfo != null)
+                //    {
+                //        messageObj.Content = serviceInfo.AggregatorServiceId;
+                //        messageObj.IsReceivedFromIntegratedPanel = true;
+                //    }
+                //}
+                //else
+                //    messageObj.ShortCode = to;
 
-                messageObj.MessageId = smsId;
+                //messageObj.MessageId = smsId;
 
-                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                //messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
 
-                if (messageObj.MobileNumber == "Invalid Mobile Number")
-                    result = "-1";
-                else
-                {
-                    messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                    if (messageObj.Content == "Subscription")
-                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Register" : null;
-                    else if (messageObj.Content == "Unsubscription")
-                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Unsubscription" : null;
-                    else
-                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                    SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                    result = "1";
-                }
+                //if (messageObj.MobileNumber == "Invalid Mobile Number")
+                //    result = "-1";
+                //else
+                //{
+                //    messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                //    if (messageObj.Content == "Subscription")
+                //        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Register" : null;
+                //    else if (messageObj.Content == "Unsubscription")
+                //        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Unsubscription" : null;
+                //    else
+                //        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                //    SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                //    result = "1";
+                //}
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
@@ -224,42 +224,42 @@ namespace Portal.Controllers
             }
             else
             {
-                if (NotificationId == null || NotificationId == "" || NotificationId == "null")
-                {
-                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromShortCode(messageObj.ShortCode);
-                    if (serviceInfo != null)
-                    {
-                        messageObj.Content = serviceInfo.AggregatorServiceId;
-                        messageObj.IsReceivedFromIntegratedPanel = true;
-                    }
-                }
-                else
-                    messageObj.ShortCode = to;
+                //if (NotificationId == null || NotificationId == "" || NotificationId == "null")
+                //{
+                //    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromShortCode(messageObj.ShortCode);
+                //    if (serviceInfo != null)
+                //    {
+                //        messageObj.Content = serviceInfo.AggregatorServiceId;
+                //        messageObj.IsReceivedFromIntegratedPanel = true;
+                //    }
+                //}
+                //else
+                //    messageObj.ShortCode = to;
 
-                messageObj.MessageId = NotificationId;
-                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                //messageObj.MessageId = NotificationId;
+                //messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
 
-                if (messageObj.MobileNumber == "Invalid Mobile Number")
-                    result = "-1";
-                else
-                {
-                    messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                    if (messageObj.Content == "Subscription")
-                    {
-                        //messageObj.Content = keyword;
-                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Register" : null;
-                    }
-                    else if (messageObj.Content == "Unsubscription")
-                    {
-                        //messageObj.Content = keyword;
-                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Unsubscription" : null;
-                    }
-                    else
-                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                    messageObj.Content = keyword;
-                    SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                    result = "1";
-                }
+                //if (messageObj.MobileNumber == "Invalid Mobile Number")
+                //    result = "-1";
+                //else
+                //{
+                //    messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                //    if (messageObj.Content == "Subscription")
+                //    {
+                //        //messageObj.Content = keyword;
+                //        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Register" : null;
+                //    }
+                //    else if (messageObj.Content == "Unsubscription")
+                //    {
+                //        //messageObj.Content = keyword;
+                //        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-Notify-Unsubscription" : null;
+                //    }
+                //    else
+                //        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                //    messageObj.Content = keyword;
+                //    SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                //    result = "1";
+                //}
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");

@@ -29,7 +29,7 @@ namespace DehnadMedioService
                 using (var entity = new MedioEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    entity.Database.CommandTimeout = 120;
+                    entity.Database.CommandTimeout = 240;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {

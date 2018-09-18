@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Model" Type="varbinary(max)" Nullable="false" />
+          <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
+        </EntityType>
         <EntityType Name="Aggregators">
           <Key>
             <PropertyRef Name="Id" />
@@ -114,7 +124,6 @@
           <Property Name="pricePaiedYesterday" Type="int" />
           <Property Name="subscriberActivationDate" Type="datetime" />
           <Property Name="tryCount" Type="int" />
-          <Property Name="cycles" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Delivery">
           <Key>
@@ -260,19 +269,6 @@
           <Property Name="DateInvited" Type="datetime" Nullable="false" />
           <Property Name="PersianDateInvited" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
-        <EntityType Name="serviceAdvertisors">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
-          <Property Name="AdvertisorID" Type="int" />
-          <Property Name="validKeys" Type="nvarchar" MaxLength="50" />
-          <Property Name="asciiKey" Type="nvarchar" MaxLength="50" />
-          <Property Name="fromDateTime" Type="datetime" />
-          <Property Name="toDateTime" Type="datetime" />
-          <Property Name="isValid" Type="bit" />
-        </EntityType>
         <EntityType Name="serviceCycles">
           <Key>
             <PropertyRef Name="serviceID" />
@@ -292,7 +288,7 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="daysOfWeekOrDate" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="dayOfWeekOrDate" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="cycleNumber" Type="int" Nullable="false" />
           <Property Name="startTime" Type="time" Precision="7" Nullable="false" />
           <Property Name="endTime" Type="time" Precision="7" Nullable="false" />
@@ -326,7 +322,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ServiceCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
@@ -390,7 +386,7 @@
           <Property Name="SubscriptionKeyword" Type="nvarchar" MaxLength="100" />
           <Property Name="UnsubscriptionKeyword" Type="nvarchar" MaxLength="100" />
           <Property Name="UserMessage" Type="nvarchar" MaxLength="100" />
-          <Property Name="UserMessageOff" Type="nvarchar" MaxLength="100" />
+          <Property Name="UserMessageOff" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="SubscribersPoints">
           <Key>
@@ -402,25 +398,6 @@
           <Property Name="Point" Type="int" Nullable="false" />
           <Property Name="BundledServiceId" Type="bigint" />
           <Property Name="WeeklyPoint" Type="int" />
-        </EntityType>
-        <EntityType Name="tbl_chargeLog">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="serviceCode" Type="varchar" MaxLength="50" />
-          <Property Name="dateTime" Type="datetime" />
-          <Property Name="sumPrice" Type="numeric" Precision="18" Scale="0" />
-          <Property Name="sumTries" Type="bigint" />
-          <Property Name="activeUsers" Type="bigint" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.tbl_serviceCycles_log' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="telepromo">
-          <Key>
-            <PropertyRef Name="MobileNumber" />
-          </Key>
-          <Property Name="MobileNumber" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="TempReferralData">
           <Key>
@@ -475,7 +452,7 @@ warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does no
             <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
             <PropertyRef Name="TotalSubscribers" />
           </Key>
-          <Property Name="ServiceName" Type="nvarchar" MaxLength="6" Nullable="false" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="12" Nullable="false" />
           <Property Name="Date" Type="date" Nullable="false" />
           <Property Name="PersianDate" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="NumberOfSubscriptions" Type="int" Nullable="false" />
@@ -491,32 +468,6 @@ warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does no
           <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="int" />
           <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="int" />
           <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_ReceievedMessagesPorshetabKeyword' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vw_ReceievedMessagesPorshetabKeyword">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ReceivedTime" />
-            <PropertyRef Name="IsProcessed" />
-            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
-          </Key>
-          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ReceivedTime" Type="datetime" Nullable="false" />
-          <Property Name="MessageId" Type="nvarchar" MaxLength="100" />
-          <Property Name="IsProcessed" Type="bit" Nullable="false" />
-          <Property Name="Content" Type="nvarchar(max)" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
-          <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsReceivedFromWeb" Type="bit" />
-          <Property Name="RetryCount" Type="int" />
-          <Property Name="LastRetryDate" Type="datetime" />
-          <Property Name="rn" Type="bigint" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -543,33 +494,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="RetryCount" Type="int" />
           <Property Name="LastRetryDate" Type="datetime" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyword' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vw_ReceivedMessagesArchivePorshetabKeyword">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ReceivedTime" />
-            <PropertyRef Name="IsProcessed" />
-            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
-          </Key>
-          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ReceivedTime" Type="datetime" Nullable="false" />
-          <Property Name="MessageId" Type="nvarchar" MaxLength="100" />
-          <Property Name="IsProcessed" Type="bit" Nullable="false" />
-          <Property Name="Content" Type="nvarchar(max)" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
-          <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsReceivedFromWeb" Type="bit" />
-          <Property Name="RetryCount" Type="int" />
-          <Property Name="LastRetryDate" Type="datetime" />
-          <Property Name="rn" Type="bigint" />
-        </EntityType>
-        <Association Name=" FK_Aggregators_Operators">
+        <Association Name="FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operators" Multiplicity="1" />
           <End Role="Aggregators" Type="Self.Aggregators" Multiplicity="*" />
           <ReferentialConstraint>
@@ -581,8 +506,10 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name=" FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -593,8 +520,10 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name=" FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -605,8 +534,10 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name=" FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
-          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetRoles">
@@ -617,8 +548,10 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name=" FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -629,7 +562,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name=" FK_ServiceInfo_Aggregators">
+        <Association Name="FK_ServiceInfo_Aggregators">
           <End Role="Aggregators" Type="Self.Aggregators" Multiplicity="1" />
           <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -641,7 +574,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name=" FK_ServiceShortCodes_Services">
+        <Association Name="FK_ServiceShortCodes_Services">
           <End Role="Services" Type="Self.Services" Multiplicity="1" />
           <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -653,19 +586,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name=" FK_SubscribersPoints_Services">
-          <End Role="Services" Type="Self.Services" Multiplicity="1" />
-          <End Role="SubscribersPoints" Type="Self.SubscribersPoints" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Services">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SubscribersPoints">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Subscribers_Services">
+        <Association Name="FK_Subscribers_Subscribers">
           <End Role="Services" Type="Self.Services" Multiplicity="1" />
           <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="*" />
           <ReferentialConstraint>
@@ -677,10 +598,34 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SubscribersPoints_Services">
+          <End Role="Services" Type="Self.Services" Multiplicity="1" />
+          <End Role="SubscribersPoints" Type="Self.SubscribersPoints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SubscribersPoints">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="ArchiveReceivedMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="GetUserLog" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MobileNumber" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="ShamsiDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="nvarchar(max)">
+          <Parameter Name="intDate" Type="datetime" Mode="In" />
+          <Parameter Name="format" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_DehnadAll2GServicesStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ServiceCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sp_DehnadAll3GServicesStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ServiceCode" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="PortalModelStoreContainer">
+          <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Aggregators" EntityType="Self.Aggregators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -702,7 +647,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Referral" EntityType="Self.Referral" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="serviceAdvertisors" EntityType="Self.serviceAdvertisors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="serviceCycles" EntityType="Self.serviceCycles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="serviceCyclesNew" EntityType="Self.serviceCyclesNew" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceInfo" EntityType="Self.ServiceInfo" Schema="dbo" store:Type="Tables" />
@@ -712,8 +656,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <EntitySet Name="Subscribers" EntityType="Self.Subscribers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersHistory" EntityType="Self.SubscribersHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoints" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="tbl_chargeLog" EntityType="Self.tbl_chargeLog" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="telepromo" EntityType="Self.telepromo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TempReferralData" EntityType="Self.TempReferralData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VerifySubscribers" EntityType="Self.VerifySubscribers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vw_AllSentMessages" EntityType="Self.vw_AllSentMessages" store:Type="Views" store:Schema="dbo">
@@ -748,24 +690,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
     [vw_DehnadAllServicesStatistics].[SumOfSinglechargeSuccessfulCharge] AS [SumOfSinglechargeSuccessfulCharge]
     FROM [dbo].[vw_DehnadAllServicesStatistics] AS [vw_DehnadAllServicesStatistics]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="vw_ReceievedMessagesPorshetabKeyword" EntityType="Self.vw_ReceievedMessagesPorshetabKeyword" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vw_ReceievedMessagesPorshetabKeyword].[Id] AS [Id], 
-    [vw_ReceievedMessagesPorshetabKeyword].[MobileNumber] AS [MobileNumber], 
-    [vw_ReceievedMessagesPorshetabKeyword].[ShortCode] AS [ShortCode], 
-    [vw_ReceievedMessagesPorshetabKeyword].[ReceivedTime] AS [ReceivedTime], 
-    [vw_ReceievedMessagesPorshetabKeyword].[MessageId] AS [MessageId], 
-    [vw_ReceievedMessagesPorshetabKeyword].[IsProcessed] AS [IsProcessed], 
-    [vw_ReceievedMessagesPorshetabKeyword].[Content] AS [Content], 
-    [vw_ReceievedMessagesPorshetabKeyword].[IsReceivedFromIntegratedPanel] AS [IsReceivedFromIntegratedPanel], 
-    [vw_ReceievedMessagesPorshetabKeyword].[PersianReceivedTime] AS [PersianReceivedTime], 
-    [vw_ReceievedMessagesPorshetabKeyword].[ReceivedFrom] AS [ReceivedFrom], 
-    [vw_ReceievedMessagesPorshetabKeyword].[IsReceivedFromWeb] AS [IsReceivedFromWeb], 
-    [vw_ReceievedMessagesPorshetabKeyword].[RetryCount] AS [RetryCount], 
-    [vw_ReceievedMessagesPorshetabKeyword].[LastRetryDate] AS [LastRetryDate], 
-    [vw_ReceievedMessagesPorshetabKeyword].[rn] AS [rn]
-    FROM [dbo].[vw_ReceievedMessagesPorshetabKeyword] AS [vw_ReceievedMessagesPorshetabKeyword]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [vw_ReceivedMessages].[Id] AS [Id], 
@@ -783,65 +707,57 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
     [vw_ReceivedMessages].[LastRetryDate] AS [LastRetryDate]
     FROM [dbo].[vw_ReceivedMessages] AS [vw_ReceivedMessages]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="vw_ReceivedMessagesArchivePorshetabKeyword" EntityType="Self.vw_ReceivedMessagesArchivePorshetabKeyword" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[Id] AS [Id], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[MobileNumber] AS [MobileNumber], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[ShortCode] AS [ShortCode], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[ReceivedTime] AS [ReceivedTime], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[MessageId] AS [MessageId], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[IsProcessed] AS [IsProcessed], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[Content] AS [Content], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[IsReceivedFromIntegratedPanel] AS [IsReceivedFromIntegratedPanel], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[PersianReceivedTime] AS [PersianReceivedTime], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[ReceivedFrom] AS [ReceivedFrom], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[IsReceivedFromWeb] AS [IsReceivedFromWeb], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[RetryCount] AS [RetryCount], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[LastRetryDate] AS [LastRetryDate], 
-    [vw_ReceivedMessagesArchivePorshetabKeyword].[rn] AS [rn]
-    FROM [dbo].[vw_ReceivedMessagesArchivePorshetabKeyword] AS [vw_ReceivedMessagesArchivePorshetabKeyword]</DefiningQuery>
-          </EntitySet>
-          <AssociationSet Name=" FK_Aggregators_Operators" Association="Self. FK_Aggregators_Operators">
+          <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
             <End Role="Operators" EntitySet="Operators" />
             <End Role="Aggregators" EntitySet="Aggregators" />
           </AssociationSet>
-          <AssociationSet Name=" FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self. FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
           </AssociationSet>
-          <AssociationSet Name=" FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self. FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
-          <AssociationSet Name=" FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self. FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name=" FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self. FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name=" FK_ServiceInfo_Aggregators" Association="Self. FK_ServiceInfo_Aggregators">
+          <AssociationSet Name="FK_ServiceInfo_Aggregators" Association="Self.FK_ServiceInfo_Aggregators">
             <End Role="Aggregators" EntitySet="Aggregators" />
             <End Role="ServiceInfo" EntitySet="ServiceInfo" />
           </AssociationSet>
-          <AssociationSet Name=" FK_ServiceShortCodes_Services" Association="Self. FK_ServiceShortCodes_Services">
+          <AssociationSet Name="FK_ServiceShortCodes_Services" Association="Self.FK_ServiceShortCodes_Services">
             <End Role="Services" EntitySet="Services" />
             <End Role="ServiceInfo" EntitySet="ServiceInfo" />
           </AssociationSet>
-          <AssociationSet Name=" FK_SubscribersPoints_Services" Association="Self. FK_SubscribersPoints_Services">
-            <End Role="Services" EntitySet="Services" />
-            <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Subscribers_Services" Association="Self.FK_Subscribers_Services">
+          <AssociationSet Name="FK_Subscribers_Subscribers" Association="Self.FK_Subscribers_Subscribers">
             <End Role="Services" EntitySet="Services" />
             <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubscribersPoints_Services" Association="Self.FK_SubscribersPoints_Services">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PortalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="C__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+          <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
         <EntityType Name="Aggregator">
           <Key>
             <PropertyRef Name="Id" />
@@ -851,8 +767,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="AggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="AggregatorUsername" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="AggregatorPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Operator" Relationship="Self.C_FK_Aggregators_Operators" FromRole="Aggregators" ToRole="Operators" />
-          <NavigationProperty Name="ServiceInfoes" Relationship="Self.C_FK_ServiceInfo_Aggregators" FromRole="Aggregators" ToRole="ServiceInfo" />
+          <NavigationProperty Name="Operator" Relationship="Self.FK_Aggregators_Operators" FromRole="Aggregators" ToRole="Operators" />
+          <NavigationProperty Name="ServiceInfoes" Relationship="Self.FK_ServiceInfo_Aggregators" FromRole="Aggregators" ToRole="ServiceInfo" />
         </EntityType>
         <EntityType Name="AspNetRole">
           <Key>
@@ -870,7 +786,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
         </EntityType>
         <EntityType Name="AspNetUserLogin">
           <Key>
@@ -881,7 +797,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="LoginProvider" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ProviderKey" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
         </EntityType>
         <EntityType Name="AspNetUser">
           <Key>
@@ -901,8 +817,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
           <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="Self.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
-          <NavigationProperty Name="AspNetUserLogins" Relationship="Self.C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
         </EntityType>
         <EntityType Name="Audit">
@@ -938,21 +854,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PersianDateAdded" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
         </EntityType>
-        <EntityType Name="chargeInfo">
-          <Key>
-            <PropertyRef Name="serviceId" />
-            <PropertyRef Name="dateCharge" />
-            <PropertyRef Name="mobileNumber" />
-          </Key>
-          <Property Name="serviceId" Type="Int64" Nullable="false" />
-          <Property Name="dateCharge" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="mobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="pricePaiedToday" Type="Int32" />
-          <Property Name="pricePaiedYesterday" Type="Int32" />
-          <Property Name="subscriberActivationDate" Type="DateTime" Precision="3" />
-          <Property Name="tryCount" Type="Int32" />
-          <Property Name="cycles" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
         <EntityType Name="Delivery">
           <Key>
             <PropertyRef Name="Id" />
@@ -981,7 +882,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="Id" Type="Int64" Nullable="false" />
           <Property Name="OperatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="tps" Type="Int32" />
-          <NavigationProperty Name="Aggregators" Relationship="Self.C_FK_Aggregators_Operators" FromRole="Operators" ToRole="Aggregators" />
+          <NavigationProperty Name="Aggregators" Relationship="Self.FK_Aggregators_Operators" FromRole="Operators" ToRole="Aggregators" />
         </EntityType>
         <EntityType Name="OperatorsPlan">
           <Key>
@@ -1088,29 +989,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="RetryCount" Type="Int32" />
           <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="Referral">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InviterUniqueId" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="InviteeUniqueId" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="DateInvited" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateInvited" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-        </EntityType>
-        <EntityType Name="serviceAdvertisor">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AdvertisorID" Type="Int32" />
-          <Property Name="validKeys" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="asciiKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="fromDateTime" Type="DateTime" Precision="3" />
-          <Property Name="toDateTime" Type="DateTime" Precision="3" />
-          <Property Name="isValid" Type="Boolean" />
-        </EntityType>
         <EntityType Name="serviceCycle">
           <Key>
             <PropertyRef Name="serviceID" />
@@ -1137,8 +1015,8 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="chargePrice" Type="Int32" />
-          <NavigationProperty Name="Aggregator" Relationship="Self.C_FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregators" />
-          <NavigationProperty Name="Service" Relationship="Self.C_FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Services" />
+          <NavigationProperty Name="Aggregator" Relationship="Self.FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregators" />
+          <NavigationProperty Name="Service" Relationship="Self.FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Services" />
         </EntityType>
         <EntityType Name="ServiceKeyword">
           <Key>
@@ -1153,16 +1031,16 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ServiceCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="OnKeywords" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
           <Property Name="Enable2StepSubscription" Type="Boolean" />
-          <NavigationProperty Name="ServiceInfoes" Relationship="Self.C_FK_ServiceShortCodes_Services" FromRole="Services" ToRole="ServiceInfo" />
-          <NavigationProperty Name="SubscribersPoints" Relationship="Self.C_FK_SubscribersPoints_Services" FromRole="Services" ToRole="SubscribersPoints" />
-          <NavigationProperty Name="Subscribers" Relationship="Self.FK_Subscribers_Services" FromRole="Services" ToRole="Subscribers" />
+          <NavigationProperty Name="ServiceInfoes" Relationship="Self.FK_ServiceShortCodes_Services" FromRole="Services" ToRole="ServiceInfo" />
+          <NavigationProperty Name="Subscribers" Relationship="Self.FK_Subscribers_Subscribers" FromRole="Services" ToRole="Subscribers" />
+          <NavigationProperty Name="SubscribersPoints" Relationship="Self.FK_SubscribersPoints_Services" FromRole="Services" ToRole="SubscribersPoints" />
         </EntityType>
         <EntityType Name="SinglechargeDelivery">
           <Key>
@@ -1197,7 +1075,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="SpecialUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Service" Relationship="Self.FK_Subscribers_Services" FromRole="Subscribers" ToRole="Services" />
+          <NavigationProperty Name="Service" Relationship="Self.FK_Subscribers_Subscribers" FromRole="Subscribers" ToRole="Services" />
         </EntityType>
         <EntityType Name="SubscribersHistory">
           <Key>
@@ -1221,7 +1099,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="SubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UnsubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SubscribersPoint">
           <Key>
@@ -1233,24 +1111,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="Point" Type="Int32" Nullable="false" />
           <Property Name="BundledServiceId" Type="Int64" />
           <Property Name="WeeklyPoint" Type="Int32" />
-          <NavigationProperty Name="Service" Relationship="Self.C_FK_SubscribersPoints_Services" FromRole="SubscribersPoints" ToRole="Services" />
-        </EntityType>
-        <EntityType Name="tbl_chargeLog">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="serviceCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="dateTime" Type="DateTime" Precision="3" />
-          <Property Name="sumPrice" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="sumTries" Type="Int64" />
-          <Property Name="activeUsers" Type="Int64" />
-        </EntityType>
-        <EntityType Name="telepromo">
-          <Key>
-            <PropertyRef Name="MobileNumber" />
-          </Key>
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Service" Relationship="Self.FK_SubscribersPoints_Services" FromRole="SubscribersPoints" ToRole="Services" />
         </EntityType>
         <EntityType Name="TempReferralData">
           <Key>
@@ -1301,7 +1162,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
             <PropertyRef Name="TotalSubscribers" />
           </Key>
-          <Property Name="ServiceName" Type="String" MaxLength="6" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ServiceName" Type="String" MaxLength="12" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="PersianDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
@@ -1317,30 +1178,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
           <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
           <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
-        </EntityType>
-        <EntityType Name="vw_ReceievedMessagesPorshetabKeyword">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ReceivedTime" />
-            <PropertyRef Name="IsProcessed" />
-            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
-          <Property Name="rn" Type="Int64" />
         </EntityType>
         <EntityType Name="vw_ReceivedMessages">
           <Key>
@@ -1365,31 +1202,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Name="RetryCount" Type="Int32" />
           <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="vw_ReceivedMessagesArchivePorshetabKeyword">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ReceivedTime" />
-            <PropertyRef Name="IsProcessed" />
-            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
-          <Property Name="rn" Type="Int64" />
-        </EntityType>
-        <Association Name="C_FK_Aggregators_Operators">
+        <Association Name="FK_Aggregators_Operators">
           <End Role="Operators" Type="Self.Operator" Multiplicity="1" />
           <End Role="Aggregators" Type="Self.Aggregator" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1401,7 +1214,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="C_FK_ServiceInfo_Aggregators">
+        <Association Name="FK_ServiceInfo_Aggregators">
           <End Role="Aggregators" Type="Self.Aggregator" Multiplicity="1" />
           <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1413,8 +1226,10 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="AspNetUserClaims" Type="Self.AspNetUserClaim" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -1425,8 +1240,10 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="AspNetUserLogins" Type="Self.AspNetUserLogin" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -1437,7 +1254,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="C_FK_ServiceShortCodes_Services">
+        <Association Name="FK_ServiceShortCodes_Services">
           <End Role="Services" Type="Self.Service" Multiplicity="1" />
           <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1449,19 +1266,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="C_FK_SubscribersPoints_Services">
-          <End Role="Services" Type="Self.Service" Multiplicity="1" />
-          <End Role="SubscribersPoints" Type="Self.SubscribersPoint" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Services">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SubscribersPoints">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Subscribers_Services">
+        <Association Name="FK_Subscribers_Subscribers">
           <End Role="Services" Type="Self.Service" Multiplicity="1" />
           <End Role="Subscribers" Type="Self.Subscriber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1473,11 +1278,24 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SubscribersPoints_Services">
+          <End Role="Services" Type="Self.Service" Multiplicity="1" />
+          <End Role="SubscribersPoints" Type="Self.SubscribersPoint" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SubscribersPoints">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="AspNetUserRoles">
           <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
         </Association>
         <EntityContainer Name="PortalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
           <EntitySet Name="Aggregators" EntityType="Self.Aggregator" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
@@ -1486,7 +1304,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <EntitySet Name="Audits" EntityType="Self.Audit" />
           <EntitySet Name="BlackLists" EntityType="Self.BlackList" />
           <EntitySet Name="BulkLists" EntityType="Self.BulkList" />
-          <EntitySet Name="chargeInfoes" EntityType="Self.chargeInfo" />
           <EntitySet Name="Deliveries" EntityType="Self.Delivery" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSetting" />
           <EntitySet Name="Operators" EntityType="Self.Operator" />
@@ -1497,8 +1314,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessage" />
           <EntitySet Name="ReceivedMessagesArchives" EntityType="Self.ReceivedMessagesArchive" />
-          <EntitySet Name="Referrals" EntityType="Self.Referral" />
-          <EntitySet Name="serviceAdvertisors" EntityType="Self.serviceAdvertisor" />
           <EntitySet Name="serviceCycles" EntityType="Self.serviceCycle" />
           <EntitySet Name="ServiceInfoes" EntityType="Self.ServiceInfo" />
           <EntitySet Name="ServiceKeywords" EntityType="Self.ServiceKeyword" />
@@ -1507,50 +1322,55 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <EntitySet Name="Subscribers" EntityType="Self.Subscriber" />
           <EntitySet Name="SubscribersHistories" EntityType="Self.SubscribersHistory" />
           <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoint" />
-          <EntitySet Name="tbl_chargeLog" EntityType="Self.tbl_chargeLog" />
-          <EntitySet Name="telepromoes" EntityType="Self.telepromo" />
           <EntitySet Name="TempReferralDatas" EntityType="Self.TempReferralData" />
           <EntitySet Name="VerifySubscribers" EntityType="Self.VerifySubscriber" />
           <EntitySet Name="vw_AllSentMessages" EntityType="Self.vw_AllSentMessages" />
           <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="Self.vw_DehnadAllServicesStatistics" />
-          <EntitySet Name="vw_ReceievedMessagesPorshetabKeyword" EntityType="Self.vw_ReceievedMessagesPorshetabKeyword" />
           <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" />
-          <EntitySet Name="vw_ReceivedMessagesArchivePorshetabKeyword" EntityType="Self.vw_ReceivedMessagesArchivePorshetabKeyword" />
-          <AssociationSet Name="C_FK_Aggregators_Operators" Association="Self.C_FK_Aggregators_Operators">
+          <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
             <End Role="Operators" EntitySet="Operators" />
             <End Role="Aggregators" EntitySet="Aggregators" />
           </AssociationSet>
-          <AssociationSet Name="C_FK_ServiceInfo_Aggregators" Association="Self.C_FK_ServiceInfo_Aggregators">
+          <AssociationSet Name="FK_ServiceInfo_Aggregators" Association="Self.FK_ServiceInfo_Aggregators">
             <End Role="Aggregators" EntitySet="Aggregators" />
             <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
           </AssociationSet>
-          <AssociationSet Name="C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
           </AssociationSet>
-          <AssociationSet Name="C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
-          <AssociationSet Name="C_FK_ServiceShortCodes_Services" Association="Self.C_FK_ServiceShortCodes_Services">
+          <AssociationSet Name="FK_ServiceShortCodes_Services" Association="Self.FK_ServiceShortCodes_Services">
             <End Role="Services" EntitySet="Services" />
             <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
           </AssociationSet>
-          <AssociationSet Name="C_FK_SubscribersPoints_Services" Association="Self.C_FK_SubscribersPoints_Services">
-            <End Role="Services" EntitySet="Services" />
-            <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Subscribers_Services" Association="Self.FK_Subscribers_Services">
+          <AssociationSet Name="FK_Subscribers_Subscribers" Association="Self.FK_Subscribers_Subscribers">
             <End Role="Services" EntitySet="Services" />
             <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubscribersPoints_Services" Association="Self.FK_SubscribersPoints_Services">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="SubscribersPoints" EntitySet="SubscribersPoints" />
           </AssociationSet>
           <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
+          <FunctionImport Name="ArchiveReceivedMessages" />
           <FunctionImport Name="GetUserLog" ReturnType="Collection(PortalModel.GetUserLog_Result)">
           <Parameter Name="MobileNumber" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="sp_DehnadAll2GServicesStatistics">
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_DehnadAll3GServicesStatistics">
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="chargeInfoes" EntityType="PortalModel.chargeInfo" />
+          <EntitySet Name="Referrals" EntityType="PortalModel.Referral" />
           <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
         </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
@@ -1562,12 +1382,36 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
           <Property Type="String" Name="Time" Nullable="true" MaxLength="21" />
           <Property Type="String" Name="Content" Nullable="true" />
         </ComplexType>
+        <EntityType Name="chargeInfo">
+          <Key>
+            <PropertyRef Name="serviceId" />
+            <PropertyRef Name="dateCharge" />
+            <PropertyRef Name="mobileNumber" />
+          </Key>
+          <Property Name="serviceId" Type="Int64" Nullable="false" />
+          <Property Name="dateCharge" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="mobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="pricePaiedToday" Type="Int32" />
+          <Property Name="pricePaiedYesterday" Type="Int32" />
+          <Property Name="subscriberActivationDate" Type="DateTime" Precision="3" />
+          <Property Name="tryCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Referral">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InviterUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="InviteeUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="DateInvited" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateInvited" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
         <EntityType Name="serviceCyclesNew">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="daysOfWeekOrDate" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="dayOfWeekOrDate" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="cycleNumber" Type="Int32" Nullable="false" />
           <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
           <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
@@ -1581,6 +1425,16 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="PortalModelStoreContainer" CdmEntityContainer="PortalEntities">
+          <EntitySetMapping Name="C__MigrationHistory">
+            <EntityTypeMapping TypeName="PortalModel.C__MigrationHistory">
+              <MappingFragment StoreEntitySet="__MigrationHistory">
+                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
+                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Aggregators">
             <EntityTypeMapping TypeName="PortalModel.Aggregator">
               <MappingFragment StoreEntitySet="Aggregators">
@@ -1672,20 +1526,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
                 <ScalarProperty Name="IsDone" ColumnName="IsDone" />
                 <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
                 <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="chargeInfoes">
-            <EntityTypeMapping TypeName="PortalModel.chargeInfo">
-              <MappingFragment StoreEntitySet="chargeInfo">
-                <ScalarProperty Name="cycles" ColumnName="cycles" />
-                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
-                <ScalarProperty Name="dateCharge" ColumnName="dateCharge" />
-                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
-                <ScalarProperty Name="pricePaiedToday" ColumnName="pricePaiedToday" />
-                <ScalarProperty Name="pricePaiedYesterday" ColumnName="pricePaiedYesterday" />
-                <ScalarProperty Name="subscriberActivationDate" ColumnName="subscriberActivationDate" />
-                <ScalarProperty Name="tryCount" ColumnName="tryCount" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1833,31 +1673,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Referrals">
-            <EntityTypeMapping TypeName="PortalModel.Referral">
-              <MappingFragment StoreEntitySet="Referral">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
-                <ScalarProperty Name="InviteeUniqueId" ColumnName="InviteeUniqueId" />
-                <ScalarProperty Name="DateInvited" ColumnName="DateInvited" />
-                <ScalarProperty Name="PersianDateInvited" ColumnName="PersianDateInvited" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="serviceAdvertisors">
-            <EntityTypeMapping TypeName="PortalModel.serviceAdvertisor">
-              <MappingFragment StoreEntitySet="serviceAdvertisors">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="AdvertisorID" ColumnName="AdvertisorID" />
-                <ScalarProperty Name="validKeys" ColumnName="validKeys" />
-                <ScalarProperty Name="asciiKey" ColumnName="asciiKey" />
-                <ScalarProperty Name="fromDateTime" ColumnName="fromDateTime" />
-                <ScalarProperty Name="toDateTime" ColumnName="toDateTime" />
-                <ScalarProperty Name="isValid" ColumnName="isValid" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="serviceCycles">
             <EntityTypeMapping TypeName="PortalModel.serviceCycle">
               <MappingFragment StoreEntitySet="serviceCycles">
@@ -1981,25 +1796,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="tbl_chargeLog">
-            <EntityTypeMapping TypeName="PortalModel.tbl_chargeLog">
-              <MappingFragment StoreEntitySet="tbl_chargeLog">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="serviceCode" ColumnName="serviceCode" />
-                <ScalarProperty Name="dateTime" ColumnName="dateTime" />
-                <ScalarProperty Name="sumPrice" ColumnName="sumPrice" />
-                <ScalarProperty Name="sumTries" ColumnName="sumTries" />
-                <ScalarProperty Name="activeUsers" ColumnName="activeUsers" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="telepromoes">
-            <EntityTypeMapping TypeName="PortalModel.telepromo">
-              <MappingFragment StoreEntitySet="telepromo">
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="TempReferralDatas">
             <EntityTypeMapping TypeName="PortalModel.TempReferralData">
               <MappingFragment StoreEntitySet="TempReferralData">
@@ -2057,26 +1853,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vw_ReceievedMessagesPorshetabKeyword">
-            <EntityTypeMapping TypeName="PortalModel.vw_ReceievedMessagesPorshetabKeyword">
-              <MappingFragment StoreEntitySet="vw_ReceievedMessagesPorshetabKeyword">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-                <ScalarProperty Name="rn" ColumnName="rn" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="vw_ReceivedMessages">
             <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
               <MappingFragment StoreEntitySet="vw_ReceivedMessages">
@@ -2096,26 +1872,6 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vw_ReceivedMessagesArchivePorshetabKeyword">
-            <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessagesArchivePorshetabKeyword">
-              <MappingFragment StoreEntitySet="vw_ReceivedMessagesArchivePorshetabKeyword">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-                <ScalarProperty Name="rn" ColumnName="rn" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <AssociationSetMapping Name="AspNetUserRoles" TypeName="PortalModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
             <EndProperty Name="AspNetRoles">
               <ScalarProperty Name="Id" ColumnName="RoleId" />
@@ -2124,6 +1880,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="ArchiveReceivedMessages" FunctionName="PortalModel.Store.ArchiveReceivedMessages" />
           <FunctionImportMapping FunctionImportName="GetUserLog" FunctionName="PortalModel.Store.GetUserLog">
             <ResultMapping>
               <ComplexTypeMapping TypeName="PortalModel.GetUserLog_Result">
@@ -2137,6 +1894,32 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_DehnadAll2GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll2GServicesStatistics" />
+          <FunctionImportMapping FunctionImportName="sp_DehnadAll3GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll3GServicesStatistics" />
+          <EntitySetMapping Name="chargeInfoes">
+            <EntityTypeMapping TypeName="PortalModel.chargeInfo">
+              <MappingFragment StoreEntitySet="chargeInfo">
+                <ScalarProperty Name="tryCount" ColumnName="tryCount" />
+                <ScalarProperty Name="subscriberActivationDate" ColumnName="subscriberActivationDate" />
+                <ScalarProperty Name="pricePaiedYesterday" ColumnName="pricePaiedYesterday" />
+                <ScalarProperty Name="pricePaiedToday" ColumnName="pricePaiedToday" />
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
+                <ScalarProperty Name="dateCharge" ColumnName="dateCharge" />
+                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Referrals">
+            <EntityTypeMapping TypeName="PortalModel.Referral">
+              <MappingFragment StoreEntitySet="Referral">
+                <ScalarProperty Name="PersianDateInvited" ColumnName="PersianDateInvited" />
+                <ScalarProperty Name="DateInvited" ColumnName="DateInvited" />
+                <ScalarProperty Name="InviteeUniqueId" ColumnName="InviteeUniqueId" />
+                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="serviceCyclesNews">
             <EntityTypeMapping TypeName="PortalModel.serviceCyclesNew">
               <MappingFragment StoreEntitySet="serviceCyclesNew">
@@ -2146,7 +1929,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessagesArchivePorshetabKeyw
                 <ScalarProperty Name="endTime" ColumnName="endTime" />
                 <ScalarProperty Name="startTime" ColumnName="startTime" />
                 <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
-                <ScalarProperty Name="daysOfWeekOrDate" ColumnName="daysOfWeekOrDate" />
+                <ScalarProperty Name="dayOfWeekOrDate" ColumnName="dayOfWeekOrDate" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>

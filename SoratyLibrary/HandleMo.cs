@@ -90,6 +90,7 @@ namespace SoratyLibrary
                             {
                                 SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
                                 message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                                MessageHandler.InsertMessageToQueue(message);
                             }
                         }
                         return isSucceeded;
