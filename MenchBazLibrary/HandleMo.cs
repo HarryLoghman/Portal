@@ -183,9 +183,8 @@ namespace MenchBazLibrary
                     {
                         ContentManager.DeleteFromSinglechargeQueue(message.MobileNumber);
                         ServiceHandler.CancelUserInstallments(message.MobileNumber);
-                        //var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                        //message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                        return isSucceeded;
+                        var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
+                        message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                     }
                     else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
