@@ -46,8 +46,8 @@
         <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
         <EntityTypeShape EntityType="PortalModel.chargeInfo" Width="1.5" PointX="4.375" PointY="0.75" />
-        <EntityTypeShape EntityType="PortalModel.Referral" Width="1.5" PointX="16.375" PointY="17.75" />
         <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="18.375" PointY="7.75" />
+        <EntityTypeShape EntityType="PortalModel.Referral" Width="1.5" PointX="16.375" PointY="17.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

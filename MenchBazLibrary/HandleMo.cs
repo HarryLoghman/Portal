@@ -22,7 +22,18 @@ namespace MenchBazLibrary
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
+
+                int isCampaignActive = 0;
+                var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                if (campaign != null)
+                    isCampaignActive = Convert.ToInt32(campaign.Value);
+
+                var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
+                if (isInBlackList == true)
+                    isCampaignActive = (int)CampaignStatus.Deactive;
+
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
 
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
@@ -45,18 +56,39 @@ namespace MenchBazLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
-                else if (message.Content == "00" || message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content.ToLower().Contains("abc"))
+                else if (((message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000") || message.Content.ToLower().Contains("abc"))
                 {
+                    if (message.Content.Contains("25000"))
+                        message.Content = "25000";
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
-                    if (result.Status != "SUCCESS-Pending Confirmation")
+                    if (result.Status == "User already subscribed")
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestForAlreadySubsceribed").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                    }
+                    else if (result.Status == "Otp request already exists for this subscriber")
+                    {
+                        message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestExistsForThisSubscriber").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(message);
+                    }
+                    else if (result.Status != "SUCCESS-Pending Confirmation")
                     {
                         if (result.Status == "Error" || result.Status == "Exception")
                             isSucceeded = false;
                         else
                         {
                             message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
+                            MessageHandler.InsertMessageToQueue(message);
+                        }
+                    }
+                    else
+                    {
+                        if (isCampaignActive == (int)CampaignStatus.Active)
+                        {
+                            SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
+                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
                             MessageHandler.InsertMessageToQueue(message);
                         }
                     }
@@ -165,9 +197,70 @@ namespace MenchBazLibrary
                     else
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
-                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
-                    if (isUserWantsToUnsubscribe != true)
-                        MessageHandler.InsertMessageToQueue(message);
+                    if (isCampaignActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
+                    {
+                        SharedLibrary.HandleSubscription.CampaignUniqueId(message.MobileNumber, service.Id);
+                        subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                        string parentId = "1";
+                        var subscriberInviterCode = SharedLibrary.HandleSubscription.IsSubscriberInvited(message.MobileNumber, service.Id);
+                        if (subscriberInviterCode != "")
+                        {
+                            parentId = subscriberInviterCode;
+                            SharedLibrary.HandleSubscription.AddReferral(subscriberInviterCode, subsciber.SpecialUniqueId);
+                        }
+                        var subId = "1";
+                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                        if (sub != null)
+                            subId = sub.SpecialUniqueId;
+                        var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                        var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/menchbaz/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
+                        if (result.description == "success")
+                        {
+                            if (parentId != "1")
+                            {
+                                var parentSubscriber = SharedLibrary.HandleSubscription.GetSubscriberBySpecialUniqueId(parentId);
+                                if (parentSubscriber != null)
+                                {
+                                    var oldMobileNumber = message.MobileNumber;
+                                    var oldSubId = message.SubscriberId;
+                                    var newMessage = message;
+                                    newMessage.MobileNumber = parentSubscriber.MobileNumber;
+                                    newMessage.SubscriberId = parentSubscriber.Id;
+                                    newMessage = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                                    newMessage.Content = messagesTemplate.Where(o => o.Title == "CampaignNotifyParentForNewReferral").Select(o => o.Content).FirstOrDefault();
+                                    if (newMessage.Content.Contains("{REFERRALCODE}"))
+                                    {
+                                        newMessage.Content = message.Content.Replace("{REFERRALCODE}", parentSubscriber.SpecialUniqueId);
+                                    }
+                                    MessageHandler.InsertMessageToQueue(newMessage);
+                                    message.MobileNumber = oldMobileNumber;
+                                    message.SubscriberId = oldSubId;
+                                }
+                            }
+                        }
+                    }
+                    else if ((isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend) && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                    {
+                        var subId = "1";
+                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                        if (sub != null && sub.SpecialUniqueId != null)
+                        {
+                            subId = sub.SpecialUniqueId;
+                            var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/menchbaz/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                        }
+                    }
+
+                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                    if (message.Content.Contains("{REFERRALCODE}"))
+                    {
+                        var subId = "1";
+                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                        if (sub != null && sub.SpecialUniqueId != null)
+                            subId = sub.SpecialUniqueId;
+                        message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                    }
+                    MessageHandler.InsertMessageToQueue(message);
                     //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     //{
                     //    message.Content = content;
@@ -297,5 +390,11 @@ namespace MenchBazLibrary
             singlecharge = ContentManager.HandleSinglechargeContent(message, service, subscriber, messagesTemplate);
             return singlecharge;
         }
+    }
+    public enum CampaignStatus
+    {
+        Deactive = 0,
+        Active = 1,
+        Suspend = 2
     }
 }
