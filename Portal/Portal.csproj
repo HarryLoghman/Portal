@@ -2137,6 +2137,10 @@
       <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
       <Name>FitShowLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HalgheLibrary\HalgheLibrary.csproj">
+      <Project>{cfb68ea5-0d44-4c0c-9a04-7a1b84b29bf1}</Project>
+      <Name>HalgheLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
       <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
       <Name>HazaranLibrary</Name>

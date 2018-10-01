@@ -18,8 +18,8 @@ namespace SharedLibrary.Models
         public Service()
         {
             this.ServiceInfoes = new HashSet<ServiceInfo>();
-            this.SubscribersPoints = new HashSet<SubscribersPoint>();
             this.Subscribers = new HashSet<Subscriber>();
+            this.SubscribersPoints = new HashSet<SubscribersPoint>();
         }
     
         public long Id { get; set; }
@@ -33,8 +33,8 @@ namespace SharedLibrary.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ServiceInfo> ServiceInfoes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SubscribersPoint> SubscribersPoints { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Subscriber> Subscribers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SubscribersPoint> SubscribersPoints { get; set; }
     }
 }

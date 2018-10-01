@@ -402,6 +402,7 @@
                                                 </ul>
                                             </li>
                                         }
+
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("JabehAbzarUser") || ViewContext.HttpContext.User.IsInRole("Spectator"))
                                         {
                                             <li>
@@ -644,6 +645,35 @@
                                                     }
                                                     <li>
                                                         @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Ashpazkhoone" }, null)
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        }
+                                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Halghe") || ViewContext.HttpContext.User.IsInRole("Spectator"))
+                                        {
+                                            <li>
+                                                حلقه
+                                                <ul>
+                                                    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            @Html.ActionLink("مانیتورینگ", "Index", "Monitoring", new { area = "Halghe" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های کاربری", "Index", "MessagesTemplate", new { area = "Halghe" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("ارسال پیغام مستقیم", "Index", "SendDirectMessage", new { area = "Halghe" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های دریافت شده", "Index", "Receive", new { area = "Halghe" }, null)
+                                                        </li>
+                                                        <li>
+                                                            @Html.ActionLink("پیغام های ارسال شده", "Index", "SentMessages", new { area = "Halghe" }, null)
+                                                        </li>
+                                                    }
+                                                    <li>
+                                                        @Html.ActionLink("گزارشات", "Index", "Statistics", new { area = "Halghe" }, null)
                                                     </li>
                                                 </ul>
                                             </li>

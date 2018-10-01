@@ -196,6 +196,7 @@ namespace DehnadPorShetabService
 
         private void SinglechargeInstallmentWorkerThread()
         {
+            return;
             int installmentCycleNumber = 1;
             //TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             //if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
@@ -214,6 +215,7 @@ namespace DehnadPorShetabService
 
             while (!shutdownEvent.WaitOne(0))
             {
+                
                 bool isInMaintenanceTime = false;
                 try
                 {

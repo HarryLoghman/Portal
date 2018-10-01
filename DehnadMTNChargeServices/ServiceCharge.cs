@@ -55,6 +55,7 @@ namespace DehnadMTNChargeServices
             }
         }
         internal int prp_cycleNumber { get; set; }
+        internal int prp_rowsSavedToDB { get; set; }
 
         #endregion
 
@@ -115,19 +116,21 @@ namespace DehnadMTNChargeServices
                 reason = "23:45:00 to 00:01:00";
                 return canStart;
             }
+            SqlCommand cmd = new SqlCommand();
             try
             {
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = publicVariables.GetConnectionPortal();
-                cmd.Connection.Open();
+
                 cmd.CommandText = "Select top 1 value from " + this.prp_databaseName + ".dbo.settings where Name='IsInMaintenanceTime'";
+                cmd.Connection = new SqlConnection(Program.v_cnnStr);
+                cmd.Connection.Open();
+
                 object isInMaintenace = cmd.ExecuteScalar();
                 bool bl;
                 if (isInMaintenace == null || isInMaintenace == DBNull.Value || isInMaintenace.ToString() == "" || (bool.TryParse(isInMaintenace.ToString(), out bl) && !bl))
                 {
                     cmd.CommandText = "Select top 1 value from " + this.prp_databaseName + ".dbo.settings where Name='LastSingleCharge'";
                     object lastSingleCharge = cmd.ExecuteScalar();
-                    if (lastSingleCharge == null || lastSingleCharge == DBNull.Value || lastSingleCharge.ToString() == "" || (!lastSingleCharge.ToString().StartsWith(date.ToString("yyyy-MM-dd")) || !lastSingleCharge.ToString().EndsWith(";" + cycleNumber.ToString())))
+                    if (lastSingleCharge == null || lastSingleCharge == DBNull.Value || lastSingleCharge.ToString() == "" || (!lastSingleCharge.ToString().StartsWith(date.ToString("yyyy-MM-dd")) || !lastSingleCharge.ToString().EndsWith(";" + cycleNumber.ToString() + ";wipe")))
                     {
                         canStart = true;
                     }
@@ -142,16 +145,28 @@ namespace DehnadMTNChargeServices
                     reason = "Service " + this.prp_serviceId.ToString() + " is in maintenance mode";
                     canStart = false;
                 }
+                cmd.Connection.Close();
             }
             catch (Exception e)
             {
-                Program.logs.Error(this.prp_serviceCode + ": can start charging", e);
+                Program.logs.Error(this.prp_serviceCode + ": cannot start charging", e);
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, this.prp_serviceCode + " : cannot start charging" + e.Message);
+                try
+                {
+                    cmd.Connection.Close();
+                    reason = e.Message + "\r\n" + e.StackTrace;
+                }
+                catch
+                {
+
+                }
             }
             return canStart;
         }
 
-        public virtual void sb_fill()
+        public virtual void sb_fill(out bool error)
         {
+            error = false;
             try
             {
                 this.v_subscribersAndCharges = null;
@@ -165,12 +180,15 @@ namespace DehnadMTNChargeServices
             }
             catch (Exception e)
             {
+                error = true;
                 Program.logs.Error(this.prp_serviceCode + " : fill", e);
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_serviceCode + " : fill " + e.Message);
             }
         }
 
-        public virtual void sb_fillWipe()
+        public virtual void sb_fillWipe(out bool error)
         {
+            error = false;
             try
             {
                 this.v_subscribersAndCharges = null;
@@ -184,14 +202,16 @@ namespace DehnadMTNChargeServices
             }
             catch (Exception e)
             {
+                error = true;
                 Program.logs.Error(this.prp_serviceCode + " : fill wipe", e);
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_serviceCode + " : fill wipe" + e.Message);
             }
 
         }
 
-        public virtual void sb_chargeMtnSubscriber(SqlConnection cnn,
+        public virtual void sb_chargeMtnSubscriber(bool wipe,
        SharedLibrary.ServiceHandler.SubscribersAndCharges subscriber
-        , int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, out bool isSucceed, long installmentId = 0)
+       , int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, out bool isSucceed, long installmentId = 0)
         {
             isSucceed = false;
             var message = new SharedLibrary.Models.MessageObject();
@@ -206,18 +226,27 @@ namespace DehnadMTNChargeServices
             else if (installmentCycleNumber > 2)
                 message.Price = this.prp_maxPrice / 2;
 
+
+
+            //if (installmentCycleNumber == 4 && this.prp_serviceCode.ToLower() == "tahchin")
+            //{
+            //    if(wipe)
+            //        message.Price = 150;
+            //    else message.Price = 65;
+            //}
+
+
+
             if (pricePaidToday + message.Price > this.prp_maxPrice)
                 return;
-            object obj = new object();
-            lock (obj)
-            {
-                chargeServices.v_taskCount++;
-            }
-            this.sb_chargeMtnSubscriberWithOutThread(cnn, subscriber, message, installmentCycleNumber, loopNo, threadNumber, timeLoop
+            System.Threading.Interlocked.Increment(ref chargeServices.v_taskCount);
+            //object obj = new object();
+            //lock (obj) { int t = chargeServices.v_taskCount; chargeServices.v_taskCount = t + 1; }
+            this.sb_chargeMtnSubscriberWithOutThread(subscriber, message, installmentCycleNumber, loopNo, threadNumber, timeLoop
                 , out isSucceed, installmentId);
         }
 
-        public virtual void sb_chargeMtnSubscriberDepricated(SqlConnection cnn,
+        public virtual void sb_chargeMtnSubscriberDepricated(
          chargeInfo subscriber, MessageObject message
           , int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, out bool isSucceed, long installmentId = 0)
         {
@@ -314,26 +343,26 @@ namespace DehnadMTNChargeServices
             }
             catch (Exception e)
             {
-                Program.logs.Info(this.prp_serviceCode + " : " + payload);
+                //Program.logs.Info(this.prp_serviceCode + " : " + payload);
                 Program.logs.Error(this.prp_serviceCode + " : Exception in ChargeMtnSubscriber: " + e);
             }
             try
             {
-                this.insertSingleCharge(cnn, message.MobileNumber, referenceCode, dateCreated, message.Price.GetValueOrDefault(), isSucceed
+                this.insertSingleCharge(message.MobileNumber, referenceCode, dateCreated, message.Price.GetValueOrDefault(), isSucceed
                    , resultDescription, false, installmentId, false, (duration.HasValue ? (int)duration.Value.TotalMilliseconds : (int?)null), installmentCycleNumber, threadNumber);
 
-                this.insertSingleChargeTiming(cnn, installmentCycleNumber, loopNo, threadNumber, message.MobileNumber, guidStr
+                this.insertSingleChargeTiming(installmentCycleNumber, loopNo, threadNumber, message.MobileNumber, guidStr
                     , timeLoop, null, null, null, timeStartChargeMtnSubscriber, timeBeforeHTTPClient, timeBeforeSendMTNClient
                     , timeAfterSendMTNClient, timeBeforeReadStringClient, timeAfterReadStringClient, timeAfterXML, dateCreated);
             }
             catch (Exception e)
             {
-                Program.logs.Info(this.prp_serviceCode + ":" + payload);
+                //Program.logs.Info(this.prp_serviceCode + ":" + payload);
                 Program.logs.Error(this.prp_serviceCode + " : Exception in Save to DB: " + e);
             }
         }
 
-        public virtual void sb_chargeMtnSubscriberWithOutThread(SqlConnection cnn,
+        public virtual void sb_chargeMtnSubscriberWithOutThread(
         SharedLibrary.ServiceHandler.SubscribersAndCharges subscriber, MessageObject message
          , int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, out bool isSucceed, long installmentId = 0)
         {
@@ -346,7 +375,10 @@ namespace DehnadMTNChargeServices
 
 
             if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
+            {
+                System.Threading.Interlocked.Decrement(ref chargeServices.v_taskCount);
                 return;
+            }
 
             #region prepare Request
             var startTime = DateTime.Now;
@@ -397,41 +429,50 @@ namespace DehnadMTNChargeServices
                 singleChargeReq.webStatus = WebExceptionStatus.UnknownError;
                 singleChargeReq.url = url;
 
-                sendPostAsync(cnn, singleChargeReq);
+                sendPostAsync(singleChargeReq);
 
 
             }
             catch (Exception e)
             {
-                Program.logs.Info(this.prp_serviceCode + " : " + payload);
+                //Program.logs.Info(this.prp_serviceCode + " : " + payload);
                 Program.logs.Error(this.prp_serviceCode + " : Exception in ChargeMtnSubscriber: ", e);
                 singleChargeReq.httpResult = e.Message + "\r\n" + e.StackTrace;
-                this.saveResponseToDB(cnn, singleChargeReq);
+                this.saveResponseToDB(singleChargeReq);
             }
 
         }
 
-        public void sendPostAsync(SqlConnection cnn, singleChargeRequest singleChargeReq)
+        public void sendPostAsync(singleChargeRequest singleChargeReq)
         {
-            Uri uri = new Uri(singleChargeReq.url, UriKind.Absolute);
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
-            webRequest.Timeout = 60 * 1000;
 
-            //webRequest.Headers.Add("SOAPAction", action);
-            webRequest.ContentType = "text/xml;charset=\"utf-8\"";
-            webRequest.Accept = "text/xml";
-            webRequest.Method = "POST";
+            try
+            {
+                Uri uri = new Uri(singleChargeReq.url, UriKind.Absolute);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                webRequest.Timeout = 60 * 1000;
 
-            webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { cnn, webRequest, singleChargeReq });
-
+                //webRequest.Headers.Add("SOAPAction", action);
+                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                webRequest.Accept = "text/xml";
+                webRequest.Method = "POST";
+                
+                webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, singleChargeReq });
+            }
+            catch (Exception ex)
+            {
+                Program.logs.Error(this.prp_serviceCode + " : Exception in SendPostAsync: ", ex);
+                singleChargeReq.httpResult = ex.Message + "\r\n" + ex.StackTrace;
+                this.saveResponseToDB(singleChargeReq);
+            }
         }
 
         private void GetRequestStreamCallBack(IAsyncResult parameters)
         {
             object[] objs = (object[])parameters.AsyncState;
-            SqlConnection cnn = (SqlConnection)objs[0];
-            HttpWebRequest webRequest = (HttpWebRequest)objs[1];
-            singleChargeRequest singleChargeReq = (singleChargeRequest)objs[2];
+
+            HttpWebRequest webRequest = (HttpWebRequest)objs[0];
+            singleChargeRequest singleChargeReq = (singleChargeRequest)objs[1];
             try
             {
                 singleChargeReq.timeStartProcessMtnInstallment = DateTime.Now;
@@ -442,34 +483,44 @@ namespace DehnadMTNChargeServices
                     stream.Write(bts, 0, bts.Count());
                 }
 
-                webRequest.BeginGetResponse(new AsyncCallback(GetResponseCallback), new object[] { cnn, webRequest, singleChargeReq });
+                webRequest.BeginGetResponse(new AsyncCallback(GetResponseCallback), new object[] { webRequest, singleChargeReq });
                 singleChargeReq.timeAfterEntity = DateTime.Now;
 
             }
             catch (System.Net.WebException ex)
             {
+                Program.logs.Error(this.prp_serviceCode + " : Exception in GetRequestStreamCallBack1: ", ex);
+
                 singleChargeReq.webStatus = ex.Status;
-                if (ex.Response != null)
+                singleChargeReq.internalServerError = true;
+                singleChargeReq.httpResult = "";
+                try
                 {
-                    singleChargeReq.internalServerError = true;
-                    using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
+                    if (ex.Response != null)
                     {
-                        singleChargeReq.httpResult = rd.ReadToEnd();
+                        using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
+                        {
+                            singleChargeReq.httpResult = rd.ReadToEnd();
+                        }
+                        ex.Response.Close();
                     }
-                    ex.Response.Close();
+                    else singleChargeReq.httpResult = "";
                 }
-                else singleChargeReq.httpResult = "";
-                Program.logs.Error(this.prp_serviceCode + " : Exception in GetRequestStreamCallBack: ", ex);
-                this.saveResponseToDB(cnn, singleChargeReq);
+                catch (Exception e1)
+                {
+                    Program.logs.Error(this.prp_serviceCode + " : Exception in GetRequestStreamCallBack inner try: ", e1);
+                }
+
+                this.saveResponseToDB(singleChargeReq);
             }
             catch (Exception ex1)
             {
+                Program.logs.Error(this.prp_serviceCode + " : Exception in GetRequestStreamCallBack2: ", ex1);
                 singleChargeReq.webStatus = WebExceptionStatus.UnknownError;
                 singleChargeReq.httpResult = ex1.Message + "\r\n" + ex1.StackTrace;
                 singleChargeReq.internalServerError = true;
 
-                Program.logs.Error(this.prp_serviceCode + " : Exception in GetRequestStreamCallBack: ", ex1);
-                this.saveResponseToDB(cnn, singleChargeReq);
+                this.saveResponseToDB(singleChargeReq);
 
             }
         }
@@ -477,14 +528,14 @@ namespace DehnadMTNChargeServices
         private void GetResponseCallback(IAsyncResult parameters)
         {
             object[] objs = (object[])parameters.AsyncState;
-            SqlConnection cnn = (SqlConnection)objs[0];
-            HttpWebRequest webRequest = (HttpWebRequest)objs[1];
-            singleChargeRequest singleChargeReq = (singleChargeRequest)objs[2];
+
+            HttpWebRequest webRequest = (HttpWebRequest)objs[0];
+            singleChargeRequest singleChargeReq = (singleChargeRequest)objs[1];
 
             singleChargeReq.timeAfterWhere = DateTime.Now;
             try
             {
-
+                
                 HttpWebResponse response = (HttpWebResponse)webRequest.EndGetResponse(parameters);
                 string result = "";
                 using (StreamReader rd = new StreamReader(response.GetResponseStream()))
@@ -516,24 +567,33 @@ namespace DehnadMTNChargeServices
                 singleChargeReq.webStatus = WebExceptionStatus.Success;
                 singleChargeReq.isSucceeded = true;
                 //singleChargeReq.url = url;
-                this.saveResponseToDB(cnn, singleChargeReq);
+                this.saveResponseToDB(singleChargeReq);
                 this.afterSend(singleChargeReq);
             }
             catch (System.Net.WebException ex)
             {
+                Program.logs.Error(this.prp_serviceCode + " : Exception in GetResponseCallback1: ", ex);
                 singleChargeReq.webStatus = ex.Status;
-                if (ex.Response != null)
+                singleChargeReq.internalServerError = true;
+                singleChargeReq.httpResult = "";
+                try
                 {
-                    singleChargeReq.internalServerError = true;
-                    using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
+                    if (ex.Response != null)
                     {
-                        singleChargeReq.httpResult = rd.ReadToEnd();
+                        using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
+                        {
+                            singleChargeReq.httpResult = rd.ReadToEnd();
+                        }
+                        ex.Response.Close();
                     }
-                    ex.Response.Close();
+                    else singleChargeReq.httpResult = "";
                 }
-                else singleChargeReq.httpResult = "";
-                Program.logs.Error(this.prp_serviceCode + " : Exception in GetResponseCallback123: ", ex);
-                this.saveResponseToDB(cnn, singleChargeReq);
+                catch (Exception ex1)
+                {
+                    Program.logs.Error(this.prp_serviceCode + " : Exception in GetResponseCallback1 inner try: ", ex1);
+                }
+
+                this.saveResponseToDB(singleChargeReq);
             }
             catch (Exception ex1)
             {
@@ -541,14 +601,14 @@ namespace DehnadMTNChargeServices
                 singleChargeReq.httpResult = ex1.Message + "\r\n" + ex1.StackTrace;
                 singleChargeReq.internalServerError = true;
 
-                Program.logs.Error(this.prp_serviceCode + " : Exception in GetResponseCallback: ", ex1);
-                this.saveResponseToDB(cnn, singleChargeReq);
+                Program.logs.Error(this.prp_serviceCode + " : Exception in GetResponseCallback2: ", ex1);
+                this.saveResponseToDB(singleChargeReq);
             }
 
 
         }
 
-        internal void saveResponseToDB(SqlConnection cnn, singleChargeRequest singleChargeReq)
+        internal void saveResponseToDB(singleChargeRequest singleChargeReq)
         {
             //DateTime timeResponse = DateTime.Now;
             //Nullable<DateTime> timeAfterXML = null;
@@ -557,11 +617,9 @@ namespace DehnadMTNChargeServices
             //Nullable<DateTime> timeAfterSendMTNClient = null;
             //Nullable<DateTime> timeBeforeReadStringClient = null;
             //Nullable<DateTime> timeAfterReadStringClient = null;
-            object obj = new object();
-            lock (obj)
-            {
-                chargeServices.v_taskCount--;
-            }
+            System.Threading.Interlocked.Decrement(ref chargeServices.v_taskCount);
+            //object obj = new object();
+            //lock (obj) { int t = chargeServices.v_taskCount; chargeServices.v_taskCount = t - 1; }
             singleChargeReq.timeAfterSendMTNClient = DateTime.Now;
             bool isSucceeded = false;
             string resultDescription = "";
@@ -618,88 +676,118 @@ namespace DehnadMTNChargeServices
             }
             catch (Exception e)
             {
-                Program.logs.Info(this.prp_serviceCode + " :  " + singleChargeReq.payload);
-                Program.logs.Error(this.prp_serviceCode + " : Exception in ChargeMtnSubscriber: ", e);
+                //Program.logs.Info(this.prp_serviceCode + " :  " + singleChargeReq.payload);
+                Program.logs.Error(this.prp_serviceCode + " : Exception in Save to DB1: ", e);
             }
             try
             {
-                this.insertSingleCharge(cnn, singleChargeReq.mobileNumber, singleChargeReq.referenceCode, singleChargeReq.dateCreated, singleChargeReq.Price.GetValueOrDefault()
+
+                this.insertSingleCharge(singleChargeReq.mobileNumber, singleChargeReq.referenceCode, singleChargeReq.dateCreated, singleChargeReq.Price.GetValueOrDefault()
                     , isSucceeded
                    , resultDescription, false, singleChargeReq.installmentCycleNumber, false, (duration.HasValue ? (int)duration.Value.TotalMilliseconds : (int?)null), singleChargeReq.installmentCycleNumber, singleChargeReq.threadNumber);
 
-                this.insertSingleChargeTiming(cnn, singleChargeReq.installmentCycleNumber, singleChargeReq.loopNo, singleChargeReq.threadNumber, singleChargeReq.mobileNumber, singleChargeReq.guidStr
+                this.insertSingleChargeTiming(singleChargeReq.installmentCycleNumber, singleChargeReq.loopNo, singleChargeReq.threadNumber, singleChargeReq.mobileNumber, singleChargeReq.guidStr
                     , singleChargeReq.timeLoop, singleChargeReq.timeStartProcessMtnInstallment, singleChargeReq.timeAfterEntity, singleChargeReq.timeAfterWhere
                     , singleChargeReq.timeStartChargeMtnSubscriber, singleChargeReq.timeBeforeHTTPClient
                     , singleChargeReq.timeBeforeSendMTNClient, singleChargeReq.timeAfterSendMTNClient, singleChargeReq.timeBeforeReadStringClient
                     , singleChargeReq.timeAfterReadStringClient, singleChargeReq.timeAfterXML, singleChargeReq.dateCreated);
+
             }
             catch (Exception e)
             {
-                Program.logs.Info(this.prp_serviceCode + " : " + singleChargeReq.payload);
-                Program.logs.Error(this.prp_serviceCode + " : Exception in Save to DB: ", e);
+                //Program.logs.Info(this.prp_serviceCode + " : " + singleChargeReq.payload);
+                Program.logs.Error(this.prp_serviceCode + " : Exception in Save to DB2: ", e);
+
             }
         }
 
-        protected void insertSingleCharge(SqlConnection cnn, string MobileNumber, string ReferenceId, DateTime DateCreated, int Price, bool IsSucceeded
+        protected void insertSingleCharge(string MobileNumber, string ReferenceId, DateTime DateCreated, int Price, bool IsSucceeded
             , string Description, bool IsApplicationInformed, long InstallmentId, bool IsCalledFromInAppPurchase, Nullable<int> ProcessTimeInMilliSecond, int CycleNumber,
                          int ThreadNumber)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = cnn;
-            cmd.CommandText = "insert into " + this.prp_databaseName + ".dbo.singleCharge "
-                         + "(MobileNumber, ReferenceId, DateCreated, PersianDateCreated, Price, IsSucceeded, Description, IsApplicationInformed, InstallmentId"
-                         + ", IsCalledFromInAppPurchase, ProcessTimeInMilliSecond, CycleNumber, ThreadNumber) "
-                         + " values"
-                         + "('" + MobileNumber + "'" + ","
-                         + (string.IsNullOrEmpty(ReferenceId) ? "Null" : "'" + ReferenceId + "'") + ","
-                         + "'" + DateCreated.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" + ","
-                         + "'" + SharedLibrary.Date.GetPersianDate(DateCreated) + " " + DateCreated.ToString("HH:mm:ss.fff") + "'" + ","
-                         + Price + ","
-                         + (IsSucceeded ? "1" : "0") + ","
-                         + (string.IsNullOrEmpty(Description) ? "Null" : "'" + Description + "'") + ","
-                         + (IsApplicationInformed ? "1" : "0") + ","
-                         + InstallmentId.ToString() + ","
-                         + (IsCalledFromInAppPurchase ? "1" : "0") + ","
-                         + (ProcessTimeInMilliSecond.HasValue ? ProcessTimeInMilliSecond.Value.ToString() : "null") + ","
-                         + CycleNumber.ToString() + ","
-                         + ThreadNumber.ToString() + ")";
 
-            cmd.ExecuteNonQuery();
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = new SqlConnection(Program.v_cnnStr);
 
+                cmd.CommandText = "insert into " + this.prp_databaseName + ".dbo.singleCharge "
+                             + "(MobileNumber, ReferenceId, DateCreated, PersianDateCreated, Price, IsSucceeded, Description, IsApplicationInformed, InstallmentId"
+                             + ", IsCalledFromInAppPurchase, ProcessTimeInMilliSecond, CycleNumber, ThreadNumber) "
+                             + " values"
+                             + "('" + MobileNumber + "'" + ","
+                             + (string.IsNullOrEmpty(ReferenceId) ? "Null" : "'" + ReferenceId + "'") + ","
+                             + "'" + DateCreated.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" + ","
+                             + "'" + SharedLibrary.Date.GetPersianDate(DateCreated) + " " + DateCreated.ToString("HH:mm:ss.fff") + "'" + ","
+                             + Price + ","
+                             + (IsSucceeded ? "1" : "0") + ","
+                             + (string.IsNullOrEmpty(Description) ? "Null" : "'" + Description + "'") + ","
+                             + (IsApplicationInformed ? "1" : "0") + ","
+                             + InstallmentId.ToString() + ","
+                             + (IsCalledFromInAppPurchase ? "1" : "0") + ","
+                             + (ProcessTimeInMilliSecond.HasValue ? ProcessTimeInMilliSecond.Value.ToString() : "null") + ","
+                             + CycleNumber.ToString() + ","
+                             + ThreadNumber.ToString() + ")";
+                Program.logs.Info(cmd.CommandText);
+                cmd.Connection.Open();
+                cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
+            }
+            catch (Exception ex1)
+            {
+                Program.logs.Error(this.prp_serviceCode + " : Exception in insertSingleCharge: ", ex1);
+                Program.logs.Error("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
+                Program.logs.Warn("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
+                Program.logs.Info("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
+
+                ServiceMTN.StopService("Service " + this.prp_serviceCode + " stops because of :" + ex1.Message);
+
+            }
         }
 
-        protected void insertSingleChargeTiming(SqlConnection cnn, int cycleNumber, int loopNo, int threadNumber, string mobileNumber, string guid, Nullable<DateTime> timeCreate
+        protected void insertSingleChargeTiming(int cycleNumber, int loopNo, int threadNumber, string mobileNumber, string guid, Nullable<DateTime> timeCreate
             , Nullable<DateTime> timeStartProcessMtnInstallment, Nullable<DateTime> timeAfterEntity, Nullable<DateTime> timeAfterWhere, Nullable<DateTime> timeStartChargeMtnSubscriber
             , Nullable<DateTime> timeBeforeHTTPClient, Nullable<DateTime> timeBeforeSendMTNClient, Nullable<DateTime> timeAfterSendMTNClient, Nullable<DateTime> timeBeforeReadStringClient
             , Nullable<DateTime> timeAfterReadStringClient, Nullable<DateTime> timeAfterXML, Nullable<DateTime> timeFinish)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = cnn;
-            cmd.CommandText = "insert into " + this.prp_databaseName + ".dbo.singleChargeTiming "
-                         + "(cycleNumber, loopNo, threadNumber, mobileNumber, guid, timeCreate, timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere "
-                         + ", timeStartChargeMtnSubscriber, timeBeforeHTTPClient, timeBeforeSendMTNClient, timeAfterSendMTNClient, timeBeforeReadStringClient"
-                         + ", timeAfterReadStringClient, timeAfterXML, timeFinish) "
-                         + " values"
-                         + "("
-                         + cycleNumber.ToString() + ","
-                         + loopNo.ToString() + ","
-                         + threadNumber.ToString() + ","
-                         + "'" + mobileNumber + "'" + ","
-                         + "'" + guid + "'" + ","
-                         + (timeCreate.HasValue ? "'" + timeCreate.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeStartProcessMtnInstallment.HasValue ? "'" + timeStartProcessMtnInstallment.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeAfterEntity.HasValue ? "'" + timeAfterEntity.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeAfterWhere.HasValue ? "'" + timeAfterWhere.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeStartChargeMtnSubscriber.HasValue ? "'" + timeStartChargeMtnSubscriber.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeBeforeHTTPClient.HasValue ? "'" + timeBeforeHTTPClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeBeforeSendMTNClient.HasValue ? "'" + timeBeforeSendMTNClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeAfterSendMTNClient.HasValue ? "'" + timeAfterSendMTNClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeBeforeReadStringClient.HasValue ? "'" + timeBeforeReadStringClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeAfterReadStringClient.HasValue ? "'" + timeAfterReadStringClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeAfterXML.HasValue ? "'" + timeAfterXML.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
-                         + (timeFinish.HasValue ? "'" + timeFinish.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ")";
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = new SqlConnection(Program.v_cnnStr);
 
-            cmd.ExecuteNonQuery();
+                cmd.CommandText = "insert into " + this.prp_databaseName + ".dbo.singleChargeTiming "
+                             + "(cycleNumber, loopNo, threadNumber, mobileNumber, guid, timeCreate, timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere "
+                             + ", timeStartChargeMtnSubscriber, timeBeforeHTTPClient, timeBeforeSendMTNClient, timeAfterSendMTNClient, timeBeforeReadStringClient"
+                             + ", timeAfterReadStringClient, timeAfterXML, timeFinish) "
+                             + " values"
+                             + "("
+                             + cycleNumber.ToString() + ","
+                             + loopNo.ToString() + ","
+                             + threadNumber.ToString() + ","
+                             + "'" + mobileNumber + "'" + ","
+                             + "'" + guid + "'" + ","
+                             + (timeCreate.HasValue ? "'" + timeCreate.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeStartProcessMtnInstallment.HasValue ? "'" + timeStartProcessMtnInstallment.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeAfterEntity.HasValue ? "'" + timeAfterEntity.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeAfterWhere.HasValue ? "'" + timeAfterWhere.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeStartChargeMtnSubscriber.HasValue ? "'" + timeStartChargeMtnSubscriber.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeBeforeHTTPClient.HasValue ? "'" + timeBeforeHTTPClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeBeforeSendMTNClient.HasValue ? "'" + timeBeforeSendMTNClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeAfterSendMTNClient.HasValue ? "'" + timeAfterSendMTNClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeBeforeReadStringClient.HasValue ? "'" + timeBeforeReadStringClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeAfterReadStringClient.HasValue ? "'" + timeAfterReadStringClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeAfterXML.HasValue ? "'" + timeAfterXML.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ","
+                             + (timeFinish.HasValue ? "'" + timeFinish.Value.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'" : "Null") + ")";
+                //Program.logs.Info(cmd.CommandText);
+                cmd.Connection.Open();
+                cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
+            }
+            catch (Exception e)
+            {
+                Program.logs.Error(this.prp_serviceCode + " : Exception in insertSingleChargeTiming: ", e);
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_serviceCode + " : Exception in insertSingleChargeTiming: " + e.Message);
+            }
         }
 
         protected virtual void afterSend(singleChargeRequest chargeRequest)
@@ -721,20 +809,29 @@ namespace DehnadMTNChargeServices
             return message;
         }
 
-        public virtual void sb_finishCharge(int duration)
+        public virtual void sb_finishCharge(int duration, bool wipe)
         {
-            string yesterday = (DateTime.Now.AddDays(-1)).ToString("yyyy-MM-dd");
-            string str = "";
-
-            str = "exec sp_finishCharging "
-                + " '" + this.prp_databaseName + "'"
-                + "," + "'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
-                + "," + this.prp_cycleNumber.ToString()
-                + "," + duration.ToString();
-            using (PortalEntities portal = new PortalEntities())
+            try
             {
-                portal.Database.CommandTimeout = 180;
-                portal.Database.ExecuteSqlCommand(str);
+                string yesterday = (DateTime.Now.AddDays(-1)).ToString("yyyy-MM-dd");
+                string str = "";
+
+                str = "exec sp_finishCharging "
+                    + " '" + this.prp_databaseName + "'"
+                    + "," + "'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
+                    + "," + this.prp_cycleNumber.ToString()
+                    + "," + (wipe ? "'wipe'" : "Null")
+                    + "," + duration.ToString();
+                using (PortalEntities portal = new PortalEntities())
+                {
+                    portal.Database.CommandTimeout = 180;
+                    portal.Database.ExecuteSqlCommand(str);
+                }
+            }
+            catch (Exception e)
+            {
+                Program.logs.Error(this.prp_serviceCode + " : Exception in sb_finishCharge: ", e);
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_serviceCode + " : Exception in sb_finishCharge: " + e.Message);
             }
 
         }

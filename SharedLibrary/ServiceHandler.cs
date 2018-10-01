@@ -270,7 +270,7 @@ namespace SharedLibrary
             List<SubscribersAndCharges> arr = null;
             using (PortalEntities portal = new PortalEntities())
             {
-                portal.Database.CommandTimeout = 180;
+                portal.Database.CommandTimeout = 300;
                 arr = portal.Database.SqlQuery<SubscribersAndCharges>(str).ToList();
             }
             return arr;

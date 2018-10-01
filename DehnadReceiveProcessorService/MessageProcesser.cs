@@ -692,6 +692,8 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = LahzeyeAkharLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Hazaran")
                     isSucceeded = HazaranLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                else if (service.ServiceCode == "Halghe")
+                    isSucceeded = HalgheLibrary.HandleMo.ReceivedMessage(message, service).Result;
             }
             catch (Exception e)
             {

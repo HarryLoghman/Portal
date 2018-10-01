@@ -1135,6 +1135,10 @@
       <Project>{d124b1f6-3bf5-2124-537f-1bc43b41256d}</Project>
       <Name>DefendIranLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DehnadHalgheService\DehnadHalgheService.csproj">
+      <Project>{33d53a12-e468-49d5-aade-48b148b1b46e}</Project>
+      <Name>DehnadHalgheService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DehnadNotificationService\DehnadNotificationService.csproj">
       <Project>{1df14122-4d21-8222-4d51-34141b3539c1}</Project>
       <Name>DehnadNotificationService</Name>
@@ -1150,6 +1154,10 @@
     <ProjectReference Include="..\FitShowLibrary\FitShowLibrary.csproj">
       <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
       <Name>FitShowLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HalgheLibrary\HalgheLibrary.csproj">
+      <Project>{cfb68ea5-0d44-4c0c-9a04-7a1b84b29bf1}</Project>
+      <Name>HalgheLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
       <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>

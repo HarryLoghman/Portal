@@ -25,7 +25,7 @@ namespace DehnadMTNChargeServices
         }
 
         public ServiceChargePorshetab(int serviceId, int tpsService, string aggregatorServiceId, int maxTries, int cycleNumber)
-            : base( serviceId, tpsService, aggregatorServiceId, maxTries, cycleNumber)
+            : base(serviceId, tpsService, aggregatorServiceId, maxTries, cycleNumber)
         {
 
             using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
@@ -35,15 +35,16 @@ namespace DehnadMTNChargeServices
                     v_isCampaignActive = Convert.ToInt32(campaign.Value);
             }
         }
-     
-       
+
+
 
         protected override void afterSend(singleChargeRequest chargeRequest)
         {
-            if (v_isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || v_isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
+            try
             {
-                try
+                if (v_isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || v_isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
                 {
+
                     var sub = SharedLibrary.HandleSubscription.GetSubscriber(chargeRequest.mobileNumber, this.prp_serviceId);
                     if (sub != null)
                     {
@@ -60,10 +61,10 @@ namespace DehnadMTNChargeServices
                     }
 
                 }
-                catch (Exception e)
-                {
-                    Program.logs.Error("Exception in calling danoop charge service: " + e);
-                }
+            }
+            catch (Exception e)
+            {
+                Program.logs.Error("Exception in calling danoop charge service: " + e);
             }
         }
 

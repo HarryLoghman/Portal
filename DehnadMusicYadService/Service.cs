@@ -198,6 +198,7 @@ namespace DehnadMusicYadService
 
         private void SinglechargeInstallmentWorkerThread()
         {
+            return;
             int installmentCycleNumber = 1;
             //TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             //if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
@@ -219,6 +220,7 @@ namespace DehnadMusicYadService
                 bool isInMaintenanceTime = false;
                 try
                 {
+                    
                     using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
@@ -233,7 +235,7 @@ namespace DehnadMusicYadService
                     }
                     else
                     {
-                        return;
+                        
                         //var singlechargeInstallment = new SinglechargeInstallmentClassNew();
                         //var income = singlechargeInstallment.ProcessInstallment(-1, SharedLibrary.ThrottleMTN.getOperatorTPS(), 30, 45);
                         //Thread.Sleep(180 * 1000);

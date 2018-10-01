@@ -56,11 +56,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\PorShetabLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="SharedLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SharedLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -78,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="chargeServices.cs" />
+    <Compile Include="MessageBoxIcon.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -98,6 +96,8 @@
     <Compile Include="ServiceChargePorshetab.cs" />
     <Compile Include="ServiceChargeTahchin.cs" />
     <Compile Include="singleChargeRequest.cs" />
+    <Compile Include="ServicePointSettings.cs" />
+    <Compile Include="ThreadPoolSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -106,6 +106,12 @@
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
+      <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
+      <Name>SharedLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

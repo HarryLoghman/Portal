@@ -192,6 +192,7 @@ namespace DehnadTahChinService
 
         private void SinglechargeInstallmentWorkerThread()
         {
+            return;
             int installmentCycleNumber = 1;
             //TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             //if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
@@ -210,6 +211,7 @@ namespace DehnadTahChinService
 
             while (!shutdownEvent.WaitOne(0))
             {
+                
                 bool isInMaintenanceTime = false;
                 try
                 {
@@ -227,7 +229,6 @@ namespace DehnadTahChinService
                     }
                     else
                     {
-                        return;
                         //var singlechargeInstallment = new SinglechargeInstallmentClassNew();
                         //var income = singlechargeInstallment.ProcessInstallment(-1, SharedLibrary.ThrottleMTN.getOperatorTPS(), 45, 55);
                         //Thread.Sleep(180 * 1000);

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using log4net.Config;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading;
@@ -25,12 +27,14 @@ namespace DehnadMTNChargeServices
         internal static long v_startTimeTicks;
         protected override void OnStart(string[] args)
         {
+            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Service DehnadMTNChargeServices has been started");
             singlechargeInstallmentThread = new Thread(SinglechargeInstallmentWorkerThread);
             singlechargeInstallmentThread.IsBackground = true;
             singlechargeInstallmentThread.Start();
         }
         internal void StartDebugging(string[] args)
         {
+            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Service DehnadMTNChargeServices has been started");
             this.OnStart(args);
             Console.ReadLine();
             this.OnStop();
@@ -39,24 +43,37 @@ namespace DehnadMTNChargeServices
         {
             try
             {
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Service DehnadMTNChargeServices has been stopped");
                 shutdownEvent.Set();
                 if (!singlechargeInstallmentThread.Join(3000))
                 {
                     singlechargeInstallmentThread.Abort();
                 }
+
             }
             catch (Exception exp)
             {
-                Program.logs.Info(" Exception in thread termination ");
-                Program.logs.Error(" Exception in thread termination " + exp);
+                Program.logs.Info("Exception in thread termination ");
+                Program.logs.Error("Exception in thread termination " + exp);
             }
+
+        }
+
+        static internal void StopService(string reason)
+        {
+            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, reason);
+            ServiceController sc = new ServiceController("DehnadMTNChargeServices");
+            sc.Stop();
+            sc.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 0, 30));
 
         }
 
         private void SinglechargeInstallmentWorkerThread()
         {
+
             while (!shutdownEvent.WaitOne(0))
             {
+                Program.sb_setLoggerQuarterNumber();
                 bool isInMaintenanceTime = false;
                 try
                 {
@@ -120,7 +137,7 @@ namespace DehnadMTNChargeServices
                                             ServiceChargeTahchin sc = new ServiceChargeTahchin(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Info(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
@@ -130,7 +147,7 @@ namespace DehnadMTNChargeServices
                                             ServiceChargeDambel sc = new ServiceChargeDambel(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Info(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
@@ -140,7 +157,7 @@ namespace DehnadMTNChargeServices
                                             ServiceChargeMusicYad sc = new ServiceChargeMusicYad(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Info(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
@@ -150,7 +167,7 @@ namespace DehnadMTNChargeServices
                                             ServiceChargePorshetab sc = new ServiceChargePorshetab(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Info(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
@@ -166,13 +183,14 @@ namespace DehnadMTNChargeServices
                                     DateTime startTime = DateTime.Now;
                                     chargeServices cs = new chargeServices();
                                     cs.sb_chargeAll(tpsTotal.Value, v_lst_services, v_startTimeTicks);
-                                    while (!cs.prp_finished)
-                                    {
+                                    //while (!cs.prp_finished)
+                                    //{
 
-                                    }
+                                    //}
 
                                     Program.logs.Info("installmentCycleNumber: ended");
                                     Program.logs.Info("InstallmentJob ended!");
+                                    
                                 }
 
                             }
@@ -183,6 +201,7 @@ namespace DehnadMTNChargeServices
                 catch (Exception e)
                 {
                     Program.logs.Error("Exception in SinglechargeInstallmentWorkerThread: ", e);
+                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Exception in SinglechargeInstallmentWorkerThread: (" + e.Message + ")");
                     Thread.Sleep(1000);
                 }
             }

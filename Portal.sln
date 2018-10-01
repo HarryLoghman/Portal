@@ -209,6 +209,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JhoobinTahChinLibrary", "Jh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMTNChargeServices", "DehnadMTNChargeServices\DehnadMTNChargeServices.csproj", "{6400D5EE-7007-4B1C-9C96-3B773A8E421B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalgheLibrary", "HalgheLibrary\HalgheLibrary.csproj", "{CFB68EA5-0D44-4C0C-9A04-7A1B84B29BF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadHalgheService", "DehnadHalgheService\DehnadHalgheService.csproj", "{33D53A12-E468-49D5-AADE-48B148B1B46E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -627,6 +631,14 @@ Global
 		{6400D5EE-7007-4B1C-9C96-3B773A8E421B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6400D5EE-7007-4B1C-9C96-3B773A8E421B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6400D5EE-7007-4B1C-9C96-3B773A8E421B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFB68EA5-0D44-4C0C-9A04-7A1B84B29BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFB68EA5-0D44-4C0C-9A04-7A1B84B29BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFB68EA5-0D44-4C0C-9A04-7A1B84B29BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFB68EA5-0D44-4C0C-9A04-7A1B84B29BF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33D53A12-E468-49D5-AADE-48B148B1B46E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33D53A12-E468-49D5-AADE-48B148B1B46E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33D53A12-E468-49D5-AADE-48B148B1B46E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33D53A12-E468-49D5-AADE-48B148B1B46E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,534 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.ServiceName + " : " + "گزارشات";
+}
+
+<style>
+    .loadAnimation {
+        position: relative;
+        margin-right: 30px;
+    }
+
+        .loadAnimation > .k-loading-mask > .k-loading-image {
+            background-size: contain;
+        }
+</style>
+
+<script src="@Url.Content("~/Scripts/Highstock/highstock.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/highcharts-3d.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/modules/exporting.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/modules/export-csv.js")"></script>
+<script src="@Url.Content("~/Scripts/Highstock/themes/dark-unica.js")"></script>
+
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <div id="SubscriptionAndUnsubscriptionContainer" style="height: 400px; min-width: 310px;direction:ltr !important;"></div>
+    <BR>
+}
+<div id="subscribersStaticsContainer" style="height: 400px;direction:ltr !important;"></div>
+<BR>
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <div id="singlechargeLiveStatusesContainer" style="height: 400px;direction:ltr !important;"></div>
+    <BR>
+}
+<div class="k-rtl" id="grid"></div>
+
+<!--DataSources-->
+<script>
+    var subscribersInfo;
+    var statisticsData;
+    var singlechargeLiveStatus;
+    var date = [];
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'Statistics/SinglechargeLive_Read',
+        async: false,
+        dataType: 'json',
+        success: function (result) {
+            singlechargeLiveStatus = result;
+        }
+    });
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'Statistics/Statistics_Read',
+        async: false,
+        dataType: 'json',
+        success: function (result) {
+            statisticsData = result;
+        }
+    });
+
+    $.ajax(
+    {
+        type: 'POST',
+        url: 'Statistics/Subscribers_Read',
+        async: false,
+        dataType: 'json',
+        success: function (result) {
+            subscribersInfo = result;
+        }
+    });
+
+    jQuery.each(statisticsData, function (index, value) {
+        date[index] = Number(value.Date.replace(/[^0-9]/g, ''));
+    });
+
+    var subscriptionData = [];
+    var unSubcriptionData = [];
+    jQuery.each(statisticsData, function (index, value) {
+        subscriptionData[index] = [];
+        subscriptionData[index][0] = date[index];
+        subscriptionData[index][1] = value.NumberOfSubscriptions;
+
+        unSubcriptionData[index] = [];
+        unSubcriptionData[index][0] = date[index];
+        unSubcriptionData[index][1] = value.NumberOfUnsubscriptions;
+    });
+</script>
+
+<script>
+    window.ODate = Date;
+    window.Date = JDate;
+
+    Highcharts.setOptions({
+        chart: {
+            style: {
+                fontFamily: 'BMITRA BOLD'
+            },
+        },
+        credits: {
+            enabled: false,
+        },
+        lang: {
+            months: ['فروردين', 'ارديبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+            shortMonths: ['فروردين', 'ارديبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+            weekdays: ["یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"]
+        }
+    });
+</script>
+
+<!--Grid-->
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <script>
+    var gridElement = $("#grid");
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            { field: "TotalPostpaidSubscribers", title: "تعداد اعضای دائمی", width: 100 },
+            { field: "TotalPrepaidSubscribers", title: "تعداد اعضای اعتباری", width: 100 },
+            { field: "TotalSubscribers", title: "تعداد اعضای کل", width: 100 },
+            { field: "FtpUserCount", title: "تعداد اعضا از روی Ftp", width: 100 },
+            { field: "NumberOfPostpaidSubscriptions", title: "تعداد عضویت دائمی", width: 100 },
+            { field: "NumberOfPrepaidSubscriptions", title: "تعداد عضویت اعتباری", width: 100 },
+            { field: "NumberOfSubscriptions", title: "تعداد کل عضویت", width: 100 },
+            { field: "NumberOfPostpaidUnsubscriptions", title: "تعداد لغو عضویت دائمی", width: 100 },
+            { field: "NumberOfPrepaidUnsubscriptions", title: "تعداد لغو عضویت اعتباری", width: 100 },
+            { field: "NumberOfUnsubscriptions", title: "تعداد کل لغو عضویت", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulPostpaidCharge", title: "درآمد تحقق یافته دائمی", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulPrepaidCharge", title: "درآمد تحقق یافته اعتباری", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulCharge", title: "مجموع درآمد", width: 100 },
+            { field: "NumberOfSinglechargeSuccessfulPostpaidFullCharge", title: "تعداد شارژ کامل دائمی", width: 100 },
+            { field: "NumberOfSinglechargeSuccessfulPrepaidFullCharge", title: "تعداد شارژ کامل اعتباری", width: 100 },
+            { field: "NumberOfSinglechargeSuccessfulFullCharge", title: "تعداد کل شارژ کامل", width: 100 },
+            { field: "NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge", title: "تعداد شارژ ناقص اعتباری", width: 100 },
+            { field: "NumberOfSinglechargeSuccessfulIncompleteCharge", title: "تعداد کل شارژ ناقص", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulPostpaidFullCharge", title: "درآمد شارژ کامل دائمی", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulPrepaidFullCharge", title: "درآمد شارژ کامل اعتباری", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulFullCharge", title: "مجموع کل درآمد شارژ کامل", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulPrepaidIncompleteCharge", title: "درآمد شارژ ناقص اعتباری", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulIncompleteCharge", title: "مجموع کل درآمد شارژ ناقص", width: 100 },
+            { field: "NumberOfSinglechargeDistinctNumbersTriedToCharge", title: "تعداد شماره هایی که اقدام به شارژ شدن", width: 100 },
+            { field: "TotalNumberOfSinglechargeInAppPurchases", title: "تعداد درخواست پرداخت درون برنامه ای", width: 100 },
+            { field: "SumOfSinglechargeInAppPurchases", title: "مجموع کل درآمد خرید درون برنامه ای", width: 100 },
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_GridRead",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "PersianDate", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+
+    </script>
+}
+else if (ViewContext.HttpContext.User.IsInRole("Spectator"))
+{
+    <script>
+    var gridElement = $("#grid");
+
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            { field: "TotalSubscribers", title: "تعداد اعضای کل", width: 100 },
+            { field: "NumberOfSubscriptions", title: "تعداد کل عضویت", width: 100 },
+            { field: "NumberOfUnsubscriptions", title: "تعداد کل لغو عضویت", width: 100 },
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_GridRead",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "PersianDate", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+    </script>
+}
+else
+{
+    <script>
+    var gridElement = $("#grid");
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "PersianDate", title: "تاریخ", width: 100 },
+            { field: "SumOfSinglechargeSuccessfulCharge", title: "مجموع درآمد", width: 100 },
+        ],
+        toolbar: ["excel"],
+        dataSource: {
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Statistics/Statistics_GridRead",
+                    type: "POST"
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+
+                    }
+                }
+            },
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 3,
+            serverPaging: true,
+            sort: [
+                { field: "PersianDate", dir: "desc" }
+            ]
+        },
+        columnMenu: true,
+        editable: {
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+            confirmation: "آیا می خواهید این مطلب را حذف کنید؟",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [3, 10, 25, 50, 100],
+            buttonCount: 3,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: true,
+        dataBound: function () {
+            var grid = $("#grid").data("kendoGrid");
+            for (var i = 0; i < grid.columns.length; i++) {
+                grid.autoFitColumn(i);
+            }
+        }
+    });
+
+    </script>
+}
+
+
+<!--Subscribers-->
+<script type="text/javascript">
+    $(function () {
+        $('#subscribersStaticsContainer').highcharts({
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
+            },
+            title: {
+                text: 'تعداد اعضای سرویس'
+            },
+            subtitle: {
+                text: 'کل اعضا: ' + subscribersInfo['TotalSubscribers']
+            },
+            tooltip: {
+                pointFormat: ' <b>{point.y}نفر</b> <BR> {point.percentage:.1f} %',
+                shared: false,
+                useHTML: true
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                data: [
+                    ['فعال', subscribersInfo['ActiveSubscribers']],
+                    {
+                        name: 'غیر فعال',
+                        y: subscribersInfo['DeactiveSubscribers'],
+                        sliced: false,
+                        selected: true
+                    },
+                ]
+            }]
+        });
+    });
+</script>
+
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <!--SubscriptionAndUnsubscriptionChart-->
+    <script>
+    $(function () {
+        $('#SubscriptionAndUnsubscriptionContainer').highcharts('StockChart', {
+
+            rangeSelector: {
+                allButtonsEnabled: false,
+                buttons: [{
+                    type: 'month',
+                    count: 3,
+                    text: 'روز',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['day', [1]]]
+                    }
+                }, ],
+                selected: 0
+            },
+
+            title: {
+                text: 'نمودار عضویت و لغو عضویت'
+            },
+
+            scrollbar: {
+                barBackgroundColor: 'gray',
+                barBorderRadius: 7,
+                barBorderWidth: 0,
+                buttonBackgroundColor: 'gray',
+                buttonBorderWidth: 0,
+                buttonBorderRadius: 7,
+                trackBackgroundColor: 'none',
+                trackBorderWidth: 1,
+                trackBorderRadius: 8,
+                trackBorderColor: '#CCC'
+            },
+
+            yAxis: {
+                allowDecimals: false,
+            },
+
+            plotOptions: {
+                series: {
+                    //compare: 'percent'
+                }
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> <br/>',
+                valueDecimals: 0,
+                useHTML: true,
+            },
+
+            series: [{
+                name: 'عضویت',
+                data: subscriptionData
+            },
+            {
+                name: 'لغو عضویت',
+                data: unSubcriptionData
+            },
+            ],
+        });
+    });
+    </script>
+}
+
+@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <!--Singlecharge Live Statuses Chart-->
+    <script type="text/javascript">
+    $(function () {
+        $('#singlechargeLiveStatusesContainer').highcharts({
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
+            },
+            title: {
+                useHTML: true,
+                text: ' وضعیت سینگل شارژ آخرین بروزرسانی ' + '<span style="float:left">' + singlechargeLiveStatus.DateUpdated + '</span>'
+            },
+            subtitle: {
+                useHTML: true,
+                text: '<span style="text-align:right;float:right">' + 'تعداد کل تلاش برای سینگل شارژ در روز جاری: ' + singlechargeLiveStatus.TotalTries
+                + '<br>'
+                + 'تعداد شماره هایی که اقدام به شارژ شدن: ' + singlechargeLiveStatus.DistinctNumbersTried
+                + '<br>'
+                + 'در آمد روز جاری: ' + singlechargeLiveStatus.Income
+                + '<br>'
+                + 'تعداد کل کاربران فعال: ' + singlechargeLiveStatus.TotalSubscribers
+                + '<br>'
+                + 'کاربرانی که شارژ کامل شده اند: ' + singlechargeLiveStatus.TotalSubscribersFullyCharged
+                + '<br>'
+                + 'کاربرانی که در دوره رایگان هستند: ' + singlechargeLiveStatus.TotalSubscribersInWaitingList
+                + '<br>'
+                + 'کاربران در لیست شارژینگ: ' + singlechargeLiveStatus.TotalSubscribersMustBeCharged
+				+ '</span>'
+            },
+            tooltip: {
+                pointFormat: ' <b>{point.y} تلاش</b> <BR> {point.percentage:.1f} %',
+                shared: false,
+                useHTML: true
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name} کد'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                data: singlechargeLiveStatus.Data
+            }]
+        });
+    });
+    </script>
+}

@@ -18,10 +18,10 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin" };
+        private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin", "Halghe" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin","Halghe" };
         private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
 
         [HttpPost]
@@ -830,6 +830,45 @@ namespace Portal.Controllers
                                         }
                                     }
                                 }
+                                else if (service.ServiceCode == "Halghe")
+                                {
+                                    using (var entity = new HalgheLibrary.Models.HalgheEntities())
+                                    {
+                                        var imiChargeCode = new HalgheLibrary.Models.ImiChargeCode();
+                                        if (messageObj.Price.Value == 0)
+                                            messageObj = HalgheLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                        else if (messageObj.Price.Value == -1)
+                                        {
+                                            messageObj.Price = 0;
+                                            messageObj = HalgheLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        }
+                                        else
+                                            messageObj = HalgheLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                        if (messageObj.Price == null)
+                                            result.Status = "Invalid Price";
+                                        else
+                                        {
+                                            var otpMessage = "webservice";
+                                            if (messageObj.Content != null)
+                                                otpMessage = otpMessage + "-" + messageObj.Content;
+                                            var logId = HalgheLibrary.MessageHandler.OtpLog(messageObj.MobileNumber, "request", otpMessage);
+                                            var isOtpExists = entity.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                            if (isOtpExists != null && messageObj.Price.Value == 0)
+                                            {
+                                                result.Status = "Otp request already exists for this subscriber";
+                                            }
+                                            else
+                                            {
+                                                var singleCharge = new HalgheLibrary.Models.Singlecharge();
+                                                string aggregatorName = "Telepromo";
+                                                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                result.Status = singleCharge.Description;
+                                            }
+                                            HalgheLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                                        }
+                                    }
+                                }
                                 else if (service.ServiceCode == "Dezhban")
                                 {
                                     using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
@@ -1574,6 +1613,24 @@ namespace Portal.Controllers
                                         result.Status = singleCharge.Description;
                                     }
                                     Tamly500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                                }
+                            }
+                            else if (service.ServiceCode == "Halghe")
+                            {
+                                using (var entity = new HalgheLibrary.Models.HalgheEntities())
+                                {
+                                    var logId = HalgheLibrary.MessageHandler.OtpLog(messageObj.MobileNumber, "confirm", "webservice-" + messageObj.ConfirmCode);
+                                    var singleCharge = HalgheLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        string aggregatorName = "Telepromo";
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                    HalgheLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                                 }
                             }
                             else if (service.ServiceCode == "Dezhban")
