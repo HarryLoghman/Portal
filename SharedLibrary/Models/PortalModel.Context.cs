@@ -27,6 +27,7 @@ namespace SharedLibrary.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
         public virtual DbSet<Aggregator> Aggregators { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
@@ -59,9 +60,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<vw_DehnadAllServicesStatistics> vw_DehnadAllServicesStatistics { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
         public virtual DbSet<chargeInfo> chargeInfoes { get; set; }
-        public virtual DbSet<Referral> Referrals { get; set; }
-        public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
         public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
+        public virtual DbSet<Referral> Referrals { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

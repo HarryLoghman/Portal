@@ -2035,16 +2035,18 @@ namespace SharedLibrary
                 var rnd = new Random();
                 var requestId = rnd.Next(1000000, 9999999).ToString();
 
-                var client = new MobinOneServiceReference.tpsPortTypeClient();
-                var result = client.inAppCharge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
-                var splitedResult = result.Split('-');
+                using (var client = new MobinOneServiceReference.tpsPortTypeClient())
+                {
+                    var result = client.inAppCharge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
+                    var splitedResult = result.Split('-');
 
-                if (splitedResult[0] == "Success")
-                    singlecharge.Description = "SUCCESS-Pending Confirmation";
-                else
-                    singlecharge.Description = splitedResult[0] + "-" + splitedResult[1];
+                    if (splitedResult[0] == "Success")
+                        singlecharge.Description = "SUCCESS-Pending Confirmation";
+                    else
+                        singlecharge.Description = splitedResult[0] + "-" + splitedResult[1];
 
-                singlecharge.ReferenceId = splitedResult[2] + "_" + splitedResult[3];
+                    singlecharge.ReferenceId = splitedResult[2] + "_" + splitedResult[3];
+                }
             }
             catch (Exception e)
             {
@@ -2083,19 +2085,21 @@ namespace SharedLibrary
                 var optIdsSplitted = otpIds.Split('_');
                 var transactionId = optIdsSplitted[0];
                 var txCode = optIdsSplitted[1];
-                var client = new MobinOneServiceReference.tpsPortTypeClient();
-                var result = client.inAppChargeConfirm(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], transactionId, txCode, confirmationCode);
-                var splitedResult = result.Split('-');
-
-                if (splitedResult[1] == "ACCEPTED")
+                using (var client = new MobinOneServiceReference.tpsPortTypeClient())
                 {
-                    singlecharge.IsSucceeded = true;
-                    singlecharge.Description = "SUCCESS";
+                    var result = client.inAppChargeConfirm(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], transactionId, txCode, confirmationCode);
+                    var splitedResult = result.Split('-');
+
+                    if (splitedResult[1] == "ACCEPTED")
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = "SUCCESS";
+                    }
+                    else
+                        singlecharge.Description = result;
+                    entity.Entry(singlecharge).State = EntityState.Modified;
+                    entity.SaveChanges();
                 }
-                else
-                    singlecharge.Description = result;
-                entity.Entry(singlecharge).State = EntityState.Modified;
-                entity.SaveChanges();
             }
             catch (Exception e)
             {

@@ -5,6 +5,7 @@ using SharedLibrary.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Xml;
+using System.Data.Entity.Validation;
 
 namespace SharedLibrary
 {
@@ -403,6 +404,20 @@ namespace SharedLibrary
                     }
                 }
             }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    logs.Error(string.Format("Error in AddReferral: Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State));
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        logs.Error(string.Format("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage));
+                    }
+                }
+                throw;
+            }
             catch (Exception e)
             {
                 logs.Error("Error in AddReferral: " + e);
@@ -449,7 +464,7 @@ namespace SharedLibrary
 
         public static string IsSubscriberInvited(string mobileNumber, long serviceId)
         {
-            string result = "";
+            string result = "1";
             try
             {
                 using (var entity = new PortalEntities())
