@@ -20,6 +20,7 @@ namespace SharedLibrary
             result.Status = "Error";
             try
             {
+                logs.Error("MyError1:OtpCharge" + serviceCode + mobileNumber);
                 var accessKey = Security.GetSha256Hash("OtpCharge" + serviceCode + mobileNumber);
                 using (var client = new HttpClient())
                 {
@@ -36,8 +37,10 @@ namespace SharedLibrary
                     var url = "http://79.175.164.51:8093/api/App/OtpCharge";
                     var response = await client.PostAsync(url, content);
                     var responseString = await response.Content.ReadAsStringAsync();
+                    logs.Error("MyError2:" + responseString);
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
                     result = jsonResponse;
+
                 }
             }
             catch (Exception e)
