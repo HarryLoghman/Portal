@@ -48,6 +48,48 @@ namespace Portal.Controllers
             return response;
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage MessagePost([FromBody] dynamic input)
+        {
+            dynamic responseJson = new ExpandoObject();
+            string msisdn = input.msisdn;
+            string shortCode = input.shortcode;
+            string message = input.message;
+            string partnerName = input.partnername;
+            //string transId = input.trans_id;//no map field in db
+            //string dateTimeStr = input.datetime;//set while saving to db
+            if (msisdn == "989168623674" || msisdn == "989195411097")
+            {
+                var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
+                blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");
+                return blackListResponse;
+            }
+            var messageObj = new MessageObject();
+            
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+            messageObj.ShortCode = shortCode;
+            messageObj.IsReceivedFromIntegratedPanel = false;
+            messageObj.Content = message;
+            
+            string result = "";
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                result = "-1";
+            else
+            {
+                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326"
+                    || messageObj.ShortCode== "3072428")
+                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
+                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                result = "";
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
         // /Telepromo/Delivery?refId=44353535&deliveryStatus=0
         [HttpGet]
         [AllowAnonymous]
@@ -351,7 +393,8 @@ namespace Portal.Controllers
                 message.ServiceId = serviceInfo.ServiceId;
                 if (type == "SUBSCRIBE")
                 {
-                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c")
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356"
+                        || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c")
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI-Register" : null;
                     else
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
@@ -373,6 +416,259 @@ namespace Portal.Controllers
                 else
                 {
                     if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c")
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI" : null;
+                    else
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;
+                    SharedLibrary.MessageHandler.SaveReceivedMessage(message);
+                }
+            }
+
+            responseJson.status = 0;
+            var json = JsonConvert.SerializeObject(responseJson);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage NotifyPost([FromBody]dynamic input)
+        {
+            dynamic responseJson = new ExpandoObject();
+            string msisdn = input.msisdn;
+            string serviceId = input.serviceid;
+            //string transId = input.trans_id;//no map field in db
+            //string transStatus = input.trans_status;//no map field in db
+            //string channel = input.channel;//no map field in db
+            string shortCode = input.shortcode;
+            string keyword = input.keyword;
+            //string dateTimeStr = input.datetime;//set while saving to db
+            //string chargeCode = input.chargecode;//no map field in db
+            //string basePricePoint = input.base_price_point;//no map field in db
+            //string baseBilledPoint = input.billed_price_point;//no map field in db
+            //string eventType = input.event_type;//no map field in db
+            string status = input.status;
+            //string validity = input.validity; //no map field in db
+            //string nextRenewalDate = input.next_renewal_date; //no map field in db
+
+
+            if (status != "0" && status != "5")
+            {
+                //var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
+                //if (service.ServiceCode == "JabehAbzar")
+                //{
+                //    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                //    {
+                //        var singlecharge = new JabehAbzarLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "Tamly")
+                //{
+                //    using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                //    {
+                //        var singlecharge = new TamlyLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "Soltan")
+                //{
+                //    using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                //    {
+                //        var singlecharge = new SoltanLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "DonyayeAsatir")
+                //{
+                //    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                //    {
+                //        var singlecharge = new DonyayeAsatirLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "ShenoYad")
+                //{
+                //    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                //    {
+                //        var singlecharge = new ShenoYadLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "FitShow")
+                //{
+                //    using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                //    {
+                //        var singlecharge = new FitShowLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "Takavar")
+                //{
+                //    using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                //    {
+                //        var singlecharge = new TakavarLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "AvvalPod")
+                //{
+                //    using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
+                //    {
+                //        var singlecharge = new AvvalPodLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+                //else if (service.ServiceCode == "AvvalYad")
+                //{
+                //    using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
+                //    {
+                //        var singlecharge = new AvvalYadLibrary.Models.Singlecharge();
+                //        singlecharge.MobileNumber = message.MobileNumber;
+                //        singlecharge.DateCreated = DateTime.Now;
+                //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                //        singlecharge.Price = 400;
+                //        singlecharge.IsSucceeded = true;
+                //        singlecharge.IsApplicationInformed = false;
+                //        singlecharge.IsCalledFromInAppPurchase = false;
+                //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                //        if (installment != null)
+                //            singlecharge.InstallmentId = installment.Id;
+                //        entity.Singlecharges.Add(singlecharge);
+                //        entity.SaveChanges();
+                //    }
+                //}
+            }
+            else
+            {//status ==0 or status ==5
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
+
+                var message = new SharedLibrary.Models.MessageObject();
+                message.MobileNumber = mobileNumber;
+                message.ShortCode = serviceInfo.ShortCode;
+                message.IsReceivedFromIntegratedPanel = false;
+                message.Content = keyword;
+                message.ServiceId = serviceInfo.ServiceId;
+
+                if (status == "0" || status == "SUBSCRIBE")
+                {//sub
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356"
+                        || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c"
+                        || serviceInfo.AggregatorServiceId == "6c9eb6912781471d88b2b3d367c54f89")
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI-Register" : null;
+                    else
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
+                    SharedLibrary.MessageHandler.SaveReceivedMessage(message);
+                }
+                else if (status == "5" || status == "UNSUBSCRIBE")
+                {//unsub
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356"
+                        || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c"
+                        || serviceInfo.AggregatorServiceId == "6c9eb6912781471d88b2b3d367c54f89")
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI-Unsubscribe" : null;
+                    else
+                        message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
+                    if (message.Content == null || message.Content.ToLower() == "null")
+                    {
+                        message.IsReceivedFromIntegratedPanel = true;
+                        message.Content = "Off";
+                    }
+                    SharedLibrary.MessageHandler.SaveReceivedMessage(message);
+                }
+                else
+                {
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" 
+                        || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c"
+                        || serviceInfo.AggregatorServiceId == "6c9eb6912781471d88b2b3d367c54f89")
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI" : null;
                     else
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI" : null;

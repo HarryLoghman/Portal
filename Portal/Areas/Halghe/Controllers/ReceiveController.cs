@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Tamly500Library.Models;
+using HalgheLibrary.Models;
 using SharedLibrary;
 using SharedLibrary.Models;
 using Kendo.Mvc.UI;
@@ -14,7 +14,7 @@ namespace Portal.Areas.Halghe.Controllers
     public class ReceiveController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        // GET: Tamly500/ReceievedMessages
+        // GET: Halghe/ReceievedMessages
         private PortalEntities db = new PortalEntities();
 
         public ActionResult Index()
@@ -26,7 +26,7 @@ namespace Portal.Areas.Halghe.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Receive_Read([DataSourceRequest]DataSourceRequest request)
         {
-            var service = db.Services.FirstOrDefault(o => o.ServiceCode == "Tamly500");
+            var service = db.Services.FirstOrDefault(o => o.ServiceCode == "Halghe");
             var shortCode = db.ServiceInfoes.Where(o => o.ServiceId == service.Id).Select(o => o.ShortCode).FirstOrDefault();
             DataSourceResult result = db.vw_ReceivedMessages.Where(o => o.ShortCode == shortCode).ToDataSourceResult(request, receivedMessages => new
             {

@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using Tamly500Library.Models;
+using HalgheLibrary.Models;
 using SharedLibrary;
 using System;
 using System.Data.Entity;
@@ -13,8 +13,8 @@ namespace Portal.Areas.Halghe.Controllers
     public class EventbaseContentsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        // GET: Tamly500/EventbaseContents
-        private Tamly500Entities db = new Tamly500Entities();
+        // GET: Halghe/EventbaseContents
+        private HalgheEntities db = new HalgheEntities();
 
         public ActionResult Index()
         {

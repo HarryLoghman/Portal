@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using Tamly500Library.Models;
+using HalgheLibrary.Models;
 using SharedLibrary;
 using SharedLibrary.Models;
 using System;
@@ -10,12 +10,12 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.Halghe.Controllers
 {
-    [Authorize(Roles = "Admin, Tamly500User, Spectator")]
+    [Authorize(Roles = "Admin, HalgheUser, Spectator")]
     public class StatisticsController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        // GET: Tamly500/Statistics
-        private Tamly500Entities db = new Tamly500Entities();
+        // GET: Halghe/Statistics
+        private HalgheEntities db = new HalgheEntities();
 
         public ActionResult Index()
         {
@@ -179,7 +179,7 @@ namespace Portal.Areas.Halghe.Controllers
                     NumberOfUnsubscriptions = dailyStatistics.NumberOfUnsubscriptions,
                 });
             }
-            else if (User.IsInRole("Tamly500User"))
+            else if (User.IsInRole("HalgheUser"))
             {
                 result = db.DailyStatistics.ToDataSourceResult(request, dailyStatistics => new
                 {
@@ -208,7 +208,7 @@ namespace Portal.Areas.Halghe.Controllers
         {
             using (var portalEntity = new PortalEntities())
             {
-                var serviceId = portalEntity.Services.FirstOrDefault(o => o.ServiceCode == "Tamly500").Id;
+                var serviceId = portalEntity.Services.FirstOrDefault(o => o.ServiceCode == "Halghe").Id;
                 var activeSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).Count();
                 var deactiveSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate != null).Count();
                 var totalSubscribers = activeSubscribers + deactiveSubscribers;

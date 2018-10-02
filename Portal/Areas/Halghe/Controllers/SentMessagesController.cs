@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Tamly500Library.Models;
+using HalgheLibrary.Models;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -13,8 +13,8 @@ namespace Portal.Areas.Halghe.Controllers
     public class SentMessagesController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        // GET: Tamly500/SentMessages
-        private Tamly500Entities db = new Tamly500Entities();
+        // GET: Halghe/SentMessages
+        private HalgheEntities db = new HalgheEntities();
 
         public ActionResult Index()
         {

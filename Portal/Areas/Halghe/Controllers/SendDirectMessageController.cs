@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Tamly500Library.Models;
+using HalgheLibrary.Models;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -13,8 +13,8 @@ namespace Portal.Areas.Halghe.Controllers
     public class SendDirectMessageController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        // GET: Tamly500/SendDirectMessage
-        private Tamly500Entities db = new Tamly500Entities();
+        // GET: Halghe/SendDirectMessage
+        private HalgheEntities db = new HalgheEntities();
 
         public ActionResult Index()
         {
@@ -36,7 +36,7 @@ namespace Portal.Areas.Halghe.Controllers
             var content = Request["message"];
             var price = Convert.ToInt32(Request["price"]);
             var point = Convert.ToInt32(Request["point"]);
-            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly500");
+            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Halghe");
             var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
             var messageObject = new SharedLibrary.Models.MessageObject();
             messageObject.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
@@ -52,8 +52,8 @@ namespace Portal.Areas.Halghe.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = Tamly500Library.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            Tamly500Library.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = HalgheLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
+            HalgheLibrary.MessageHandler.InsertMessageToQueue(messageObject);
             return Content("Ok");
         }
     }
