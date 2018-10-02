@@ -35,26 +35,14 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DambelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\DambelLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\..\portal\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\..\portal\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\..\Portal\DehnadPorShetabService\bin\Debug\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="MusicYadLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\MusicYadLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="PorShetabLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\PorShetabLibrary.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -101,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
@@ -108,6 +97,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DambelLibrary\DambelLibrary.csproj">
+      <Project>{1434b114-121b-1513-431d-4bc287131142}</Project>
+      <Name>DambelLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MusicYadLibrary\MusicYadLibrary.csproj">
+      <Project>{4211b11c-3511-a1b6-431d-fbc23b13d4b2}</Project>
+      <Name>MusicYadLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PorShetabLibrary\PorShetabLibrary.csproj">
+      <Project>{25344214-1b11-1513-4331-4842db123241}</Project>
+      <Name>PorShetabLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>

@@ -2542,6 +2542,11 @@ namespace SharedLibrary
                     var password = serviceAdditionalInfo["password"];
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    var serviceName = serviceAdditionalInfo["serviceName"];
+                    var currency = "RLS";
+                    var chargeCode = "";
+                    var correlator = shortcode + "-" + serviceAdditionalInfo["serviceCode"];
+                    var description = "";
                     using (var client = new HttpClient())
                     {
                         foreach (var message in messages)
@@ -2556,16 +2561,24 @@ namespace SharedLibrary
                             var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                             try
                             {
-                                var json = string.Format(@"{{""username"":""{0}"",""password"":""{1}"",""serviceid"":""{2}"",""shortcode"":""{3}"", ""msisdn"": ""{4}"", ""message"":""{5}""}}"
-                                                            , username, password, serviceId, shortcode, mobileNumber, message.Content);
+                                var isFree = true;
+                                var amount = "0";
+                                if (message.Price > 0)
+                                {
+                                    amount = (message.Price * 10).ToString();
+                                    isFree = false;
+                                }
+                                
+                                var json = string.Format(@"{{""username"":""{0}"",""password"":""{1}"",""serviceid"":""{2}"",""shortcode"":""{3}"", ""msisdn"": ""{4}"" , ""servicename"": ""{5}"", ""currency"": ""{6}"", ""chargecode"": ""{7}"", ""correlator"": ""{8}"" , ""is_free"": ""{9}"", ""description"": ""{10}"" , ""amount"": ""{11}"", ""message"":""{12}""}}"
+                                                            , username, password, serviceId, shortcode, mobileNumber, serviceName, currency, chargeCode, correlator, isFree, description, amount, message.Content);
                                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                                 var result = await client.PostAsync(url, content);
                                 var responseString = await result.Content.ReadAsStringAsync();
                                 dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                                if (Convert.ToInt32(jsonResponse.data.ToString()) > 100)
+                                if (jsonResponse.data.ToString().Lenght > 4)
                                 {
                                     message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                                    message.ReferenceId = jsonResponse.data;
+                                    message.ReferenceId = jsonResponse.data.ToString();
                                     message.SentDate = DateTime.Now;
                                     message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                                     if (message.MessagePoint > 0)
