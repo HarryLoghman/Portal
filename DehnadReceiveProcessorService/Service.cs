@@ -396,30 +396,41 @@ namespace DehnadReceiveProcessorService
                 //}
                 //Thread.Sleep(2 * 60 * 1000);
                 if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("00:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("04:00:00"))
+                {
                     counter = 1;
-
+                }
                 if (counter == 1 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("04:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("08:00:00"))
                 {
+                    var date = DateTime.Now;
+                    Ftp.GetImiFtpFiles(date);
                     Ftp.TelepromoDailyFtp();
                     counter++;
                 }
                 else if (counter == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("08:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("12:00:00"))
                 {
+                    var date = DateTime.Now;
+                    Ftp.GetImiFtpFiles(date);
                     Ftp.TelepromoDailyFtp();
                     counter++;
                 }
                 else if (counter == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("12:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
                 {
+                    var date = DateTime.Now;
+                    Ftp.GetImiFtpFiles(date);
                     Ftp.TelepromoDailyFtp();
                     counter++;
                 }
                 else if (counter == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
                 {
+                    var date = DateTime.Now;
+                    Ftp.GetImiFtpFiles(date);
                     Ftp.TelepromoDailyFtp();
                     counter++;
                 }
                 else if (counter > 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00"))
                 {
+                    var date = DateTime.Now;
+                    Ftp.GetImiFtpFiles(date);
                     Ftp.TelepromoDailyFtp();
                     counter++;
                 }

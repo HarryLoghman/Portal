@@ -131,6 +131,33 @@ namespace SharedLibrary
             return imiDataList;
         }
 
+        public static List<ImiData> ReadImiDataFromMemory(string serviceCode, List<string> data)
+        {
+            var preparedLine = "";
+            var imiDataList = new List<ImiData>();
+            try
+            {
+                foreach (var line in data)
+                {
+                    preparedLine = "";
+                    preparedLine = line.Replace("trans-id", "transId");
+                    preparedLine = preparedLine.Replace("base-price-point", "basePricePoint");
+                    preparedLine = preparedLine.Replace("next_renewal_date", "nextRenewalDate");
+                    preparedLine = preparedLine.Replace("trans-status", "transStatus");
+                    preparedLine = preparedLine.Replace("billed-price-point", "billedPricePoint");
+                    preparedLine = preparedLine.Replace("event-type", "eventType");
+                    var imiDataObj = JsonConvert.DeserializeObject<ImiData>(preparedLine);
+                    imiDataObj.keyword = HttpUtility.UrlDecode(imiDataObj.keyword, System.Text.UnicodeEncoding.Default);
+                    imiDataList.Add(imiDataObj);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in ReadImiDataMemory-" + serviceCode + ":", e);
+            }
+            return imiDataList;
+        }
+
         public static Dictionary<string, int> GetIncomeAndSubscriptionsFromImiDataFile(List<ImiData> imiDatas, List<SharedLibrary.Models.OperatorsPrefix> operatorPrefixes)
         {
             Dictionary<string, int> result = new Dictionary<string, int>();
