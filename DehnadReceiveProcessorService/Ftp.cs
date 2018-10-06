@@ -31,7 +31,7 @@ namespace DehnadReceiveProcessorService
                 {
                     session.Open(sessionOptions);
 
-                    for (var selectedDate = startDate; selectedDate <= DateTime.Now.Date; selectedDate = selectedDate.AddDays(1))
+                    for (var selectedDate = startDate; selectedDate.Date <= DateTime.Now.Date; selectedDate = selectedDate.AddDays(1))
                     {
                         var dateString = selectedDate.ToString("yyyyMMdd");
                         string subPath = string.Format(@"E:\ImiFtps\Mci Direct\{0}", dateString);
