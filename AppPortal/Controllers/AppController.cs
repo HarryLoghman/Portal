@@ -475,9 +475,9 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new AvvalPod500Library.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                string aggregatorName = "TelepromoMapfa";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.TelepromoMapfaOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             AvvalPod500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1423,18 +1423,18 @@ namespace Portal.Controllers
                             {
                                 using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
                                 {
-                                    var logId = AvvalPod500Library.MessageHandler.OtpLog(messageObj.MobileNumber, "confirm", "webservice-" + messageObj.ConfirmCode);
+                                    var logId = MenchBazLibrary.MessageHandler.OtpLog(messageObj.MobileNumber, "confirm", "webservice-" + messageObj.ConfirmCode);
                                     var singleCharge = AvvalPod500Library.ServiceHandler.GetOTPRequestId(entity, messageObj);
                                     if (singleCharge == null)
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        string aggregatorName = "TelepromoMapfa";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoMapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
-                                    AvvalPod500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
+                                    MenchBazLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                                 }
                             }
                             else if (service.ServiceCode == "AvvalYad")

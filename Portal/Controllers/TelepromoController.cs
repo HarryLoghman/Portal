@@ -9,11 +9,13 @@ using System.Dynamic;
 using System.Text;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 
 namespace Portal.Controllers
 {
     public class TelepromoController : ApiController
     {
+        static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         [HttpGet]
         [AllowAnonymous]
@@ -951,19 +953,16 @@ namespace Portal.Controllers
             messageObj.MobileNumber = input.msisdn;
             messageObj.ShortCode = input.shortcode;
             messageObj.Content = input.message;
+            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
 
-            if (input.action != "none")
+            if (input.action == "subscribe" || input.action == "unsubscribe")
             {
                 if (input.action == "subscribe")
                     messageObj.ReceivedFrom += "-FromImi-Register";
                 else if (input.action == "unsubscribe")
                     messageObj.ReceivedFrom += "-FromImi-Unsubscribe";
-
-                messageObj.Content = input.action;
             }
-            else
-                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-
+                
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")

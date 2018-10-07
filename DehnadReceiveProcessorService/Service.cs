@@ -11,6 +11,7 @@ namespace DehnadReceiveProcessorService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Thread processThread;
         private Thread telepromoProcessThread;
+        private Thread telepromoMapfaProcessThread;
         private Thread telepromoOtpConfirmProcessThread;
         private Thread hubProcessThread;
         private Thread irancellProcessThread;
@@ -42,6 +43,10 @@ namespace DehnadReceiveProcessorService
             telepromoProcessThread = new Thread(TelepromoMessageProcessorWorkerThread);
             telepromoProcessThread.IsBackground = true;
             telepromoProcessThread.Start();
+
+            telepromoMapfaProcessThread = new Thread(TelepromoMapfaMessageProcessorWorkerThread);
+            telepromoMapfaProcessThread.IsBackground = true;
+            telepromoMapfaProcessThread.Start();
 
             telepromoOtpConfirmProcessThread = new Thread(TelepromoOtpConfirmProcessorWorkerThread);
             telepromoOtpConfirmProcessThread.IsBackground = true;
@@ -189,6 +194,27 @@ namespace DehnadReceiveProcessorService
             catch (Exception e)
             {
                 logs.Error("Exception in MessageProcessorWorkerThread:", e);
+            }
+        }
+
+        private void TelepromoMapfaMessageProcessorWorkerThread()
+        {
+            try
+            {
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    prefix = entity.OperatorsPrefixs.ToList();
+                }
+                var messageProcessor = new MessageProcesser();
+                while (!shutdownEvent.WaitOne(0))
+                {
+                    messageProcessor.TelepromoMapfaProcess();
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoMapfaMessageProcessorWorkerThread:", e);
             }
         }
 
