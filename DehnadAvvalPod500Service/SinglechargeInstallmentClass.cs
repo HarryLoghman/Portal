@@ -170,21 +170,23 @@ namespace DehnadAvvalPod500Service
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
-                    var url = SharedLibrary.MessageSender.telepromoIp + "/samsson-gateway/chargingpardis/";
+                    var url = SharedLibrary.MessageSender.telepromoPardisIp + "/samsson-gateway/chargingpardis/";
                     var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
                     var paridsShortCodes = SharedLibrary.ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
+                    var shortCode = "98" + paridsShortCodes.FirstOrDefault().ShortCode;
                     var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
                     var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    var description = string.Format("deliverychannel=WAP|discoverychannel=WAP|origin={0}|contentid=1", "98" + paridsShortCodes.FirstOrDefault().ShortCode);
+                    var description = string.Format("deliverychannel=WAP|discoverychannel=WAP|origin={0}|contentid=1", shortCode);
                     var json = string.Format(@"{{
                                 ""username"": ""{0}"",
                                 ""password"": ""{1}"",
                                 ""serviceid"": ""{2}"",
                                 ""msisdn"": ""{3}"",
                                 ""description"": ""{4}"",
-                    }}", username, password, aggregatorServiceId, mobileNumber, description);
+                                ""shortcode"": ""{5}""
+                    }}", username, password, aggregatorServiceId, mobileNumber, description, shortCode);
                     using (var client = new HttpClient())
                     {
                         var content = new StringContent(json, Encoding.UTF8, "application/json");
