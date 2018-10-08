@@ -29,7 +29,7 @@ namespace DehnadAvvalPod500Service
                 using (var entity = new AvvalPod500Entities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
-                    entity.Database.CommandTimeout = 120;
+                    entity.Database.CommandTimeout = 240;
                     List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {
@@ -80,12 +80,12 @@ namespace DehnadAvvalPod500Service
                     return income;
                 }
                 int isCampaignActive = 0;
-                //using (var entity = new AvvalPod500Entities())
-                //{
-                //    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
-                //    if (campaign != null)
-                //        isCampaignActive = Convert.ToInt32(campaign.Value);
-                //}
+                using (var entity = new AvvalPod500Entities())
+                {
+                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                    if (campaign != null)
+                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                }
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 var threadsNo = SharedLibrary.MessageHandler.CalculateServiceSendMessageThreadNumbers(installmentListCount, installmentListTakeSize);
@@ -123,7 +123,7 @@ namespace DehnadAvvalPod500Service
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
-                        if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute > 57) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute < 01))
+                        if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
                             break;
                         if (batchSaveCounter >= 500)
                         {
@@ -170,27 +170,28 @@ namespace DehnadAvvalPod500Service
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
-                    var url = SharedLibrary.MessageSender.telepromoIp + "/samsson-gateway/chargingpardis";
+                    var url = SharedLibrary.MessageSender.telepromoIp + "/samsson-gateway/chargingpardis/";
                     var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
                     var paridsShortCodes = SharedLibrary.ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
                     var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
-                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
                     var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                    var description = string.Format("deliverychannel=WAP|discoverychannel=WAP|origin={0}|contentid=1", "98" + paridsShortCodes.FirstOrDefault().ShortCode);
                     var json = string.Format(@"{{
                                 ""username"": ""{0}"",
                                 ""password"": ""{1}"",
                                 ""serviceid"": ""{2}"",
-                                ""msisdn"": ""{3}""
-                    }}", username, password, aggregatorServiceId, mobileNumber);
+                                ""msisdn"": ""{3}"",
+                                ""description"": ""{4}"",
+                    }}", username, password, aggregatorServiceId, mobileNumber, description);
                     using (var client = new HttpClient())
                     {
                         var content = new StringContent(json, Encoding.UTF8, "application/json");
                         var result = await client.PostAsync(url, content);
                         var responseString = await result.Content.ReadAsStringAsync();
                         dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                        if (jsonResponse.status_txt.ToString() == "OK")
+                        if (jsonResponse.data.ToString().Length > 5)
                         {
                             singlecharge.IsSucceeded = true;
                         }
@@ -199,7 +200,7 @@ namespace DehnadAvvalPod500Service
                             singlecharge.IsSucceeded = false;
                         }
                         singlecharge.ReferenceId = jsonResponse.data.ToString();
-                        singlecharge.Description = jsonResponse.status_code.ToString() + "-" + jsonResponse.status_txt.ToString();
+                        singlecharge.Description = jsonResponse.status_code.ToString() + "-" + jsonResponse.status_txt.ToString() + "-" + jsonResponse.data.ToString();
                     }   
                 }
                 catch (Exception e)
