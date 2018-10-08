@@ -958,9 +958,9 @@ namespace Portal.Controllers
             if (input.action == "subscribe" || input.action == "unsubscribe")
             {
                 if (input.action == "subscribe")
-                    messageObj.ReceivedFrom += "-FromImi-Register";
+                    messageObj.ReceivedFrom += "-FromIMI-Register";
                 else if (input.action == "unsubscribe")
-                    messageObj.ReceivedFrom += "-FromImi-Unsubscribe";
+                    messageObj.ReceivedFrom += "-FromIMI-Unsubscribe";
             }
                 
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);

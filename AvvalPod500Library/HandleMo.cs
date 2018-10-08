@@ -23,6 +23,7 @@ namespace AvvalPod500Library
                 message.ServiceId = service.Id;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
 
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
@@ -45,7 +46,7 @@ namespace AvvalPod500Library
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
-                else if (message.Content == "00" || message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content.ToLower().Contains("abc"))
+                else if ((message.Content == "00" || message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 && message.Content.All(char.IsDigit)) || message.Content.ToLower().Contains("abc"))
                 {
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
@@ -72,7 +73,7 @@ namespace AvvalPod500Library
                     }
                     return isSucceeded;
                 }
-                else if (message.Content.Length == 4 && message.Content.All(char.IsDigit) && !message.ReceivedFrom.Contains("Register"))
+                else if (message.Content.Length == 4 && message.Content.All(char.IsDigit) && !message.ReceivedFrom.Contains("Register") && !message.ReceivedFrom.Contains("Unsubscribe"))
                 {
                     var confirmCode = message.Content;
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "confirm", confirmCode);
@@ -98,12 +99,6 @@ namespace AvvalPod500Library
 
                 var isUserSendsSubscriptionKeyword = SharedLibrary.ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = SharedLibrary.ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-
-                if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
-                {
-                    SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
-                    return isSucceeded;
-                }
 
                 if (!message.ReceivedFrom.Contains("IMI") && (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true))
                     return isSucceeded;
@@ -171,6 +166,7 @@ namespace AvvalPod500Library
                     }
                     else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                     {
+                        message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                         ContentManager.DeleteFromSinglechargeQueue(message.MobileNumber);
                         ServiceHandler.CancelUserInstallments(message.MobileNumber);
                         //var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);

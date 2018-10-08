@@ -2640,12 +2640,14 @@ namespace SharedLibrary
                 var password = serviceAdditionalInfo["password"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var description = "otp";
                 var json = string.Format(@"{{
                                 ""username"": ""{0}"",
                                 ""password"": ""{1}"",
                                 ""serviceid"": ""{2}"",
-                                ""msisdn"": ""{3}""
-                    }}", username, password, aggregatorServiceId, mobileNumber);
+                                ""msisdn"": ""{3}"",
+                                ""description"": ""{4}""
+                    }}", username, password, aggregatorServiceId, mobileNumber, description);
                 using (var client = new HttpClient())
                 {
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -2696,17 +2698,13 @@ namespace SharedLibrary
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
             {
-                var url = telepromoPardisIp + "samsson-gateway/otp-confirmationpardis/";
+                var url = telepromoPardisIp + "/samsson-gateway/otp-confirmationpardis/";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                string otpIds = singlecharge.ReferenceId;
-                var optIdsSplitted = otpIds.Split('_');
-                var referenceCode = optIdsSplitted[0];
-                var otpTransactionId = optIdsSplitted[1];
                 var json = string.Format(@"{{
                                 ""username"": ""{0}"",
                                 ""password"": ""{1}"",
@@ -2733,7 +2731,7 @@ namespace SharedLibrary
             }
             catch (Exception e)
             {
-                logs.Error("Exception in TelepromoPardisOTPConfirm: " + e);
+                logs.Error("Exception in TelepromoMapfaOTPConfirm: " + e);
                 singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
             }
 
