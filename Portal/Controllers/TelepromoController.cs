@@ -54,6 +54,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage MessagePost([FromBody] dynamic input)
         {
+            logs.Info(input);
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string shortCode = input.shortcode;
@@ -436,6 +437,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage NotifyPost([FromBody]dynamic input)
         {
+            logs.Info(input);
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string serviceId = input.serviceid;
@@ -632,7 +634,7 @@ namespace Portal.Controllers
             else
             {//status ==0 or status ==5
                 var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromAggregatorServiceId(serviceId);
+                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromOperatorServiceId(serviceId);
 
                 var message = new SharedLibrary.Models.MessageObject();
                 message.MobileNumber = mobileNumber;
@@ -997,5 +999,18 @@ namespace Portal.Controllers
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage DeliveryPost([FromBody]dynamic input)
+        {
+            dynamic responseJson = new ExpandoObject();
+            responseJson.status = 0;
+            var json = JsonConvert.SerializeObject(responseJson);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
     }
 }
