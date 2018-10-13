@@ -39,7 +39,7 @@ namespace DehnadAvvalPod500Service
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
-                    var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
+                    var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now).ToList();
                     if (QueueList.Count == 0)
                         return;
                     var mobileNumbers = QueueList.Select(o => o.MobileNumber).ToList();
@@ -55,13 +55,13 @@ namespace DehnadAvvalPod500Service
                     }
                     entity.SaveChanges();
 
-                    //var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
-                    //string aggregatorName = Properties.Settings.Default.AggregatorName;
-                    //var serviceCode = Properties.Settings.Default.ServiceCode;
-                    //var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
-                    //int installmentListCount = mobileNumbers.Count;
-                    //var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                    //SinglechargeInstallmentClass.InstallmentJob(maxChargeLimit, 0, 0, serviceCode, chargeCodes, mobileNumbers, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
+                    var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
+                    string aggregatorName = Properties.Settings.Default.AggregatorName;
+                    var serviceCode = Properties.Settings.Default.ServiceCode;
+                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                    int installmentListCount = mobileNumbers.Count;
+                    var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
+                    SinglechargeInstallmentClass.TelepromoMapfaInstallmentJob(maxChargeLimit, 0, 0, serviceCode, chargeCodes, mobileNumbers, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
                 }
             }
             catch (Exception e)

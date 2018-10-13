@@ -6,12 +6,100 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WinSCP;
 
 namespace DehnadReceiveProcessorService
 {
     class Ftp
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public static void GetImiFtpFiles(DateTime startDate)
+        {
+            try
+            {
+                SessionOptions sessionOptions = new SessionOptions
+                {
+                    Protocol = Protocol.Ftp,
+                    HostName = "172.17.252.201",
+                    UserName = "DEH",
+                    Password = "d9H&*&123",
+
+                };
+
+                using (Session session = new Session())
+                {
+                    session.Open(sessionOptions);
+
+                    for (var selectedDate = startDate; selectedDate.Date <= DateTime.Now.Date; selectedDate = selectedDate.AddDays(1))
+                    {
+                        var dateString = selectedDate.ToString("yyyyMMdd");
+                        string subPath = string.Format(@"E:\ImiFtps\Mci Direct\{0}", dateString);
+
+                        bool exists = System.IO.Directory.Exists(subPath);
+                        if (exists)
+                            continue;
+                        else
+                            System.IO.Directory.CreateDirectory(subPath);
+                        
+                        session.GetFiles(string.Format("/{0}/*", dateString), string.Format(@"E:\ImiFtps\Mci Direct\{0}\*", dateString)).Check();
+                        MakeMultipleFtpFilesToOneFilePerServiceAndProcess(string.Format(@"E:\ImiFtps\Mci Direct\{0}\", dateString));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in GetImiFtpFiles: ", e);
+            }
+        }
+
+        public static void MakeMultipleFtpFilesToOneFilePerServiceAndProcess(string path)
+        {
+            try
+            {
+                var files = Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories);
+                Dictionary<string, List<string>> filesDic = new Dictionary<string, List<string>>();
+                foreach (var file in files)
+                {
+                    var fileName = Path.GetFileName(file);
+                    var splittedFileName = fileName.Split('_');
+                    var serviceId = splittedFileName[0];
+                    var content = System.IO.File.ReadAllLines(file).ToList();
+                    if (filesDic.ContainsKey(serviceId))
+                    {
+                        var temp = filesDic[serviceId];
+                        temp.AddRange(content);
+                        filesDic[serviceId] = temp;
+                    }
+                    else
+                        filesDic[serviceId] = content;
+                }
+                foreach (string file in Directory.GetFiles(path, "*.txt"))
+                {
+                    File.Delete(file);
+                }
+
+                foreach (KeyValuePair<string, List<string>> entry in filesDic)
+                {
+                    File.WriteAllLines(path + entry.Key + ".txt", entry.Value);
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromOperatorServiceId(entry.Key);
+                    if (serviceInfo != null)
+                    {
+                        var serviceCode = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId).ServiceCode;
+                        var imiDataList = SharedLibrary.HelpfulFunctions.ReadImiDataFromMemory(serviceCode, entry.Value);
+                        ImiDataToSingleCharge(serviceCode, imiDataList);
+                    }
+                    else
+                    {
+                        logs.Info("No serviceInfo found!");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MakeMultipleFtpFilesToOneFilePerServiceAndProcess: ", e);
+            }
+        }
 
         public static void TelepromoDailyFtp()
         {
@@ -1209,6 +1297,114 @@ namespace DehnadReceiveProcessorService
                                 else if (data.basePricePoint == 0)
                                     continue;
                                 var singleCharge = new BehAmooz500Library.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "Soraty")
+                {
+                    using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "ShahreKalameh")
+                {
+                    using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
+                                if (data.status != 0)
+                                    singleCharge.IsSucceeded = false;
+                                else
+                                    singleCharge.IsSucceeded = true;
+
+                                singleCharge.ReferenceId = data.transId;
+                                singleCharge.Price = data.basePricePoint.Value / 10;
+                                singleCharge.IsApplicationInformed = false;
+                                singleCharge.IsCalledFromInAppPurchase = false;
+                                singleCharge.Description = null;
+                                singleCharge.DateCreated = data.datetime;
+                                singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(data.datetime);
+                                singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(data.msisdn);
+                                entity.Singlecharges.Add(singleCharge);
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                else if (serviceCode == "DefendIran")
+                {
+                    using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                    {
+                        foreach (var data in imiDataList)
+                        {
+                            if (data.eventType == "1.5")
+                            {
+                                var isSingleChargeExists = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == data.transId);
+                                if (isSingleChargeExists != null)
+                                    continue;
+
+                                if (data.basePricePoint == null)
+                                    continue;
+                                else if (data.basePricePoint == 0)
+                                    continue;
+                                var singleCharge = new DefendIranLibrary.Models.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else

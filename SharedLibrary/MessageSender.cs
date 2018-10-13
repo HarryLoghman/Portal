@@ -23,6 +23,7 @@ namespace SharedLibrary
         public static int retryCountMax = 15;
         public static int retryPauseBeforeSendByMinute = -1;
         public static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
+        public static string telepromoPardisIp = "http://10.20.9.188:9090";
         public static string irancellIp = "http://92.42.55.180:8310";
         public static string mciIp = "http://172.17.251.18:8090";
 
@@ -2537,11 +2538,12 @@ namespace SharedLibrary
                     if (messagesCount == 0)
                         return;
 
-                    var url = telepromoIp + "/samsson-gateway/sendmessagepardis";
+                    var url = telepromoPardisIp + "/samsson-gateway/sendmessagepardis/";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
-                    var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
+                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
                     var serviceName = serviceAdditionalInfo["serviceName"];
                     var currency = "RLS";
                     var chargeCode = "";
@@ -2568,14 +2570,18 @@ namespace SharedLibrary
                                     amount = (message.Price * 10).ToString();
                                     isFree = false;
                                 }
-                                
+
+                                var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price).PardisServiceId;
+                                message.Content = message.Content.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n");
+
                                 var json = string.Format(@"{{""username"":""{0}"",""password"":""{1}"",""serviceid"":""{2}"",""shortcode"":""{3}"", ""msisdn"": ""{4}"" , ""servicename"": ""{5}"", ""currency"": ""{6}"", ""chargecode"": ""{7}"", ""correlator"": ""{8}"" , ""is_free"": ""{9}"", ""description"": ""{10}"" , ""amount"": ""{11}"", ""message"":""{12}""}}"
-                                                            , username, password, serviceId, shortcode, mobileNumber, serviceName, currency, chargeCode, correlator, isFree, description, amount, message.Content);
+                                                            , username, password, aggregatorServiceId, shortcode, mobileNumber, serviceName, currency, chargeCode, correlator, isFree, description, amount, message.Content);
+
                                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                                 var result = await client.PostAsync(url, content);
                                 var responseString = await result.Content.ReadAsStringAsync();
                                 dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                                if (jsonResponse.data.ToString().Lenght > 4)
+                                if (jsonResponse.data.ToString().Length > 4)
                                 {
                                     message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
                                     message.ReferenceId = jsonResponse.data.ToString();
@@ -2629,22 +2635,25 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
-                var url = telepromoIp + "/samsson-gateway/otp-generationpardis";
+                var url = telepromoPardisIp + "/samsson-gateway/otp-generationpardis/";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var description = "otp";
                 var json = string.Format(@"{{
                                 ""username"": ""{0}"",
                                 ""password"": ""{1}"",
                                 ""serviceid"": ""{2}"",
-                                ""msisdn"": ""{3}""
-                    }}", username, password, aggregatorServiceId, mobileNumber);
+                                ""msisdn"": ""{3}"",
+                                ""description"": ""{4}""
+                    }}", username, password, aggregatorServiceId, mobileNumber, description);
                 using (var client = new HttpClient())
                 {
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
                     var result = await client.PostAsync(url, content);
                     var responseString = await result.Content.ReadAsStringAsync();
+                    logs.Info("response:" + responseString);
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
                     if (jsonResponse.data.ToString() == "0")
                     {
@@ -2684,22 +2693,18 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> TelepromoPardisOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<dynamic> TelepromoMapfaOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
             {
-                var url = telepromoIp + "samsson-gateway/otp-confirmationpardis";
+                var url = telepromoPardisIp + "/samsson-gateway/otp-confirmationpardis/";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                string otpIds = singlecharge.ReferenceId;
-                var optIdsSplitted = otpIds.Split('_');
-                var referenceCode = optIdsSplitted[0];
-                var otpTransactionId = optIdsSplitted[1];
                 var json = string.Format(@"{{
                                 ""username"": ""{0}"",
                                 ""password"": ""{1}"",
@@ -2726,7 +2731,7 @@ namespace SharedLibrary
             }
             catch (Exception e)
             {
-                logs.Error("Exception in TelepromoPardisOTPConfirm: " + e);
+                logs.Error("Exception in TelepromoMapfaOTPConfirm: " + e);
                 singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
             }
 
