@@ -23,6 +23,7 @@ namespace SharedLibrary
         public static int retryCountMax = 15;
         public static int retryPauseBeforeSendByMinute = -1;
         public static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
+        public static string telepromoIpJSON = "http://10.20.9.187:9090";
         public static string telepromoPardisIp = "http://10.20.9.188:9090";
         public static string irancellIp = "http://92.42.55.180:8310";
         public static string mciIp = "http://172.17.251.18:8090";
@@ -104,6 +105,138 @@ namespace SharedLibrary
                 catch (Exception e)
                 {
                     logs.Error("Exception in SendMessagesToTelepromo: " + e);
+                    foreach (var message in messages)
+                    {
+                        if (message.RetryCount > retryCountMax)
+                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        message.DateLastTried = DateTime.Now;
+                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                        entity.Entry(message).State = EntityState.Modified;
+                    }
+                    entity.SaveChanges();
+                }
+            }
+        }
+
+        public static async Task SendMesssagesToTelepromoJSON(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            using (dynamic entity = Activator.CreateInstance(entityType))
+            {
+                var result = new Dictionary<string, string>();
+                entity.Configuration.AutoDetectChangesEnabled = false;
+                try
+                {
+                    var messagesCount = messages.Count;
+                    if (messagesCount == 0)
+                        return;
+
+                    var url = telepromoIpJSON + "/samsson-gateway/sendmessage/";
+                    var username = "dehnad";
+                    var password = "D4@Hn!";
+                    var serviceId = serviceAdditionalInfo["OperatorServiceId"];
+                    var shortcode = "98" + serviceAdditionalInfo["shortCode"];
+                    //var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                    //var description = "deliverychannel:WAP|discoverychannel:WAP|origin:"+shortcode+ "|contentid:"+message.MessageType
+                    var chargeCode = "TELREWCTELHALG5000";
+                    var amount = "0";
+                    var currency = "RLS";
+                    var isFree = "1";
+                    var correlator = shortcode + Guid.NewGuid().ToString().Replace("-", "");
+                    var serviceName = "CTELHALGHE";
+                    string json = "";
+                    Random rnd = new Random();
+                    using (var client = new HttpClient())
+                    {
+                        foreach (var message in messages)
+                        {
+
+                            result["status_code"] = "";
+                            result["status_txt"] = "";
+                            result["result"] = "";
+                            result["success"] = "";
+
+                            if (message.RetryCount != null && message.RetryCount >= retryCountMax)
+                            {
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                entity.Entry(message).State = EntityState.Modified;
+                                continue;
+                            }
+
+                            var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                            var description = "deliverychannel:WAP|discoverychannel:WAP|origin:" + shortcode + "|contentid:" + message.MessageType;
+                            var messageContent = message.Content;
+
+                            Dictionary<string, string> dic = new Dictionary<string, string>()
+                            {
+                                { "username" , username }
+                                ,{ "password" , password }
+                                ,{"serviceid" , serviceId.ToString() }
+                                ,{"shortcode" , shortcode }
+                                ,{ "msisdn" , mobileNumber }
+                                ,{"description" , description }
+                                , {"chargecode" ,chargeCode }
+                                ,{ "amount" , amount }
+                                ,{"currency" , currency }
+                                ,{"message",  messageContent }
+                                ,{"is_free",isFree }
+                                ,{"correlator" , correlator }
+                                ,{ "servicename" , serviceName }
+                            };
+                            //json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"serviceid\":\"" + serviceId.ToString() + "\""
+                            //    + ",\"shortcode\":\"" + shortcode + "\",\"msisdn\":\"" + mobileNumber + "\",\"description\":\"" + description + "\""
+                            //    + ",\"chargecode\":\"" + chargeCode + "\",\"amount\":\"" + amount + "\",\"currency\":\"" + currency + "\""
+                            //    + ",\"message\":\"" + messageContent + "\",\"is_free\":\"" + isFree + "\",\"correlator\":\"" + correlator + "\""
+                            //    + ",\"servicename\":\"" + serviceName + "\"" + "}";
+                            json = JsonConvert.SerializeObject(dic);
+
+                            var request = new HttpRequestMessage(HttpMethod.Post, url);
+                            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                            request.Headers.Add("cache-control", "no-cache");
+
+                            using (var response = await client.SendAsync(request))
+                            {
+
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    string httpResult = response.Content.ReadAsStringAsync().Result;
+                                    dynamic results = JsonConvert.DeserializeObject<dynamic>(httpResult);
+                                    result["status_code"] = results["status_code"];
+                                    result["status_txt"] = results["status_txt"];
+                                    result["result"] = results["data"]["result"];
+                                    result["success"] = results["data"]["success"];
+
+                                }
+                                else
+                                {
+                                }
+                            }
+
+                            if (result["status_code"] == "0" && result["status_txt"].ToLower().Contains("ok"))
+                            {
+                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+                                message.ReferenceId = result["result"];
+                                message.SentDate = DateTime.Now;
+                                message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                if (message.MessagePoint > 0)
+                                    SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+                                entity.Entry(message).State = EntityState.Modified;
+                            }
+                            else
+                            {
+                                logs.Info("SendMesssagesToTelepromo Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+                                if (message.RetryCount > retryCountMax)
+                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                                message.DateLastTried = DateTime.Now;
+                                message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+                                entity.Entry(message).State = EntityState.Modified;
+                            }
+                        }
+                        entity.SaveChanges();
+                    }
+                }
+                catch (Exception e)
+                {
+                    logs.Error("Exception in SendMesssagesToTelepromoJSON: " + e);
                     foreach (var message in messages)
                     {
                         if (message.RetryCount > retryCountMax)
@@ -346,6 +479,133 @@ namespace SharedLibrary
             return singlecharge;
         }
 
+        public static async Task<dynamic> TelepromoOTPRequestJSON(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            //logs.Info("TelepromoOTPRequestJSON");
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            string description = "";
+            var result = new Dictionary<string, string>();
+            result["status_code"] = "";
+            result["status_txt"] = "";
+
+            result["statusCode"] = "";
+            result["serverReferenceCode"] = "";
+            result["OTPTransactionId"] = "";
+            result["referenceCode"] = "";
+
+            try
+            {
+                var url = telepromoIpJSON + "/samsson-gateway/otp-generation/";
+
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var username = "dehnad";
+                var password = "D4@Hn!";
+                var serviceName = "CTELHALGHE";
+                //logs.Info("TelepromoOTPRequestJSON1");
+                var serviceId = serviceAdditionalInfo["OperatorServiceId"];
+                //logs.Info("TelepromoOTPRequestJSON2");
+                var referenceCode = Guid.NewGuid().ToString();
+                var shortCode = "98" + serviceAdditionalInfo["shortCode"];
+                Dictionary<string, string> dic = new Dictionary<string, string>()
+                            {
+                                { "msisdn" , mobileNumber }
+                                ,{ "username" , username }
+                                ,{ "password" , password }
+                                ,{ "servicename" , serviceName }
+                                ,{"serviceid" , serviceId.ToString() }
+                                ,{"referencecode",referenceCode }
+                                ,{"shortcode" , shortCode }
+                                ,{"contentid","48" }
+                                , {"chargecode" ,"TELSUBCTELHALGHE" }
+                                , {"description" ,"description" }
+                                ,{ "amount" , "0" }
+
+                };
+                //json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"serviceid\":\"" + serviceId.ToString() + "\""
+                //    + ",\"shortcode\":\"" + shortcode + "\",\"msisdn\":\"" + mobileNumber + "\",\"description\":\"" + description + "\""
+                //    + ",\"chargecode\":\"" + chargeCode + "\",\"amount\":\"" + amount + "\",\"currency\":\"" + currency + "\""
+                //    + ",\"message\":\"" + messageContent + "\",\"is_free\":\"" + isFree + "\",\"correlator\":\"" + correlator + "\""
+                //    + ",\"servicename\":\"" + serviceName + "\"" + "}";
+                string json = JsonConvert.SerializeObject(dic);
+                //string json = "{\"msisdn\":\"" + mobileNumber + "\",\"username\":\"" + username + "\",\"password\":\"" + password + "\""
+                //    + ",\"servicename\":\"CTELHALGHE\",\"serviceid\":\"" + serviceId + "\",\"referencecode\":\"" + referenceCode + "\""
+                //    + ",\"shortcode\":\"" + shortCode + "\",\"contentid\":\"48\",\"chargecode\":\"TELSUBCTELHALGHE\",\"description\":\"description\",\"amount\":\"0\""
+                //    + "}";
+                logs.Info("TelepromoOTPRequestJSON" + json);
+                var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                request.Headers.Add("cache-control", "no-cache");
+                //request.Headers.Add("content-type", " multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+
+                try
+                {
+                    using (var client = new HttpClient())
+                    {
+                        using (var response = await client.SendAsync(request))
+                        {
+                            if (response.IsSuccessStatusCode)
+                            {
+                                string httpResult = response.Content.ReadAsStringAsync().Result;
+                                dynamic results = JsonConvert.DeserializeObject<dynamic>(httpResult);
+                                result["status_code"] = results["status_code"];
+                                result["status_txt"] = results["status_txt"];
+                                logs.Info("TelepromoOTPRequestJSONSave");
+                                result["statusCode"] = results["data"]["statusInfo"]["statusCode"];
+                                //result["serverReferenceCode"] = results["data"]["statusInfo"]["serverReferenceCode"];//equals to OTPTransactionId
+                                result["OTPTransactionId"] = results["data"]["statusInfo"]["OTPTransactionId"];
+                                result["referenceCode"] = results["data"]["statusInfo"]["referenceCode"];
+
+                            }
+                            else
+                            {
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    logs.Error("TelepromoOTPRequestJSON", e);
+                    result["status_code"] = "900";
+                    result["status_txt"] = "Exception in calling aggregator webservice";
+                }
+
+                if (result["status_code"] == "0" && result["status_txt"].ToLower().Contains("ok"))
+                    description = "SUCCESS-Pending Confirmation";
+                else
+                    description = result["status_txt"];
+
+                //singlecharge.ReferenceId = result["serverReferenceCode"] + "_" + result["OTPTransactionId"]+ "_"+ result["referenceCode"];
+
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoOTPRequest: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.MobileNumber = message.MobileNumber;
+
+                singlecharge.ReferenceId = (result["referenceCode"] + result["OTPTransactionId"] != "" ? result["referenceCode"] + "_" + result["OTPTransactionId"] : "");
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsSucceeded = false;
+                singlecharge.Description = description;
+                singlecharge.IsApplicationInformed = false;
+                singlecharge.InstallmentId = null;
+                singlecharge.IsCalledFromInAppPurchase = true;
+
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoOTPRequestJSON on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
         public static async Task<dynamic> TelepromoOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
@@ -384,6 +644,102 @@ namespace SharedLibrary
             catch (Exception e)
             {
                 logs.Error("Exception in TelepromoOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+
+            return singlecharge;
+        }
+
+        public static async Task<dynamic> TelepromoOTPConfirmJson(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        {
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            logs.Info("TelepromoOTPConfirmJSON");
+            var result = new Dictionary<string, string>();
+            result["status_code"] = "";
+            result["status_txt"] = "";
+
+            result["statusCode"] = "";
+            result["serverReferenceCode"] = "";
+            result["OTPTransactionId"] = "";
+            result["referenceCode"] = "";
+
+            try
+            {
+                var url = telepromoIpJSON + "/samsson-gateway/otp-confirmation/";
+
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var username = "dehnad";
+                var password = "D4@Hn!";
+                logs.Info("TelepromoOTPConfirmJson1");
+                var serviceId = serviceAdditionalInfo["OperatorServiceId"];
+                logs.Info("TelepromoOTPConfirmJson2");
+                string referenceId = singlecharge.ReferenceId;
+                var referenceIdSplitted = referenceId.Split('_');
+                var referencecode = referenceIdSplitted[0];
+
+                var shortCode = "98" + serviceAdditionalInfo["shortCode"];
+                var contentid = "48";
+                //var confirmationCode=confimrationCode
+                var OTPTransactionId = referenceIdSplitted[1];
+                Dictionary<string, string> dic = new Dictionary<string, string>()
+                            {
+                                { "msisdn" , mobileNumber }
+                                ,{ "username" , username }
+                                ,{ "password" , password }
+                                ,{"serviceid" , serviceId.ToString() }
+                                ,{"referencecode",referencecode }
+                                ,{"shortcode" , shortCode }
+                                ,{"contentid",contentid }
+                                ,{"message",confirmationCode}
+                                ,{ "otptransaction" , OTPTransactionId }
+                    
+                };
+                string json = JsonConvert.SerializeObject(dic);
+                //string json = "{\"msisdn\":\"" + mobileNumber + "\",\"username\":\"" + username + "\",\"password\":\"" + password + "\""
+                // + ",\"serviceid\":\"" + serviceId + "\",\"referencecode\":\"" + referencecode + "\""
+                // + ",\"shortcode\":\"" + shortCode + "\",\"contentid\":\"" + contentid + "\",\"message\":\"" + confirmationCode + "\",\"otptransaction\":\"" + OTPTransactionId + "\""
+                // + "}";
+                var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                request.Headers.Add("cache-control", "no-cache");
+                //request.Headers.Add("content-type", " multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+                logs.Info("TelepromoOTPConfirmJson3" + json);
+                using (var client = new HttpClient())
+                {
+
+                    using (var response = await client.SendAsync(request))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string httpResult = response.Content.ReadAsStringAsync().Result;
+                            dynamic results = JsonConvert.DeserializeObject<dynamic>(httpResult);
+                            result["status_code"] = results["status_code"];
+                            result["status_txt"] = results["status_txt"];
+
+                            result["statuscode"] = results["data"]["statusInfo"]["statuscode"];
+                            result["serverreferencecode"] = results["data"]["statusInfo"]["serverreferencecode"];//equals to OTPTransactionId
+                            //result["OTPTransactionId"] = results["data"]["statusInfo"]["OTPTransactionId"];
+                            result["referencecode"] = results["data"]["statusInfo"]["referencecode"];
+
+                        }
+                        else
+                        {
+                        }
+                    }
+
+                    singlecharge.Description = result["statuscode"] + "-code:" + confirmationCode;
+                    if (result["status_code"] == "0" && result["status_txt"].Contains("OK"))
+                    {
+                        singlecharge.IsSucceeded = true;
+                        singlecharge.Description = "SUCCESS";
+                        entity.Entry(singlecharge).State = EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in TelepromoOTPConfirmJSon: " + e);
                 singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
             }
 
@@ -1407,7 +1763,7 @@ namespace SharedLibrary
                     var sku = splitedToken[2];
                     bool isCancel = false;
                     ServicePointManager.ServerCertificateValidationCallback +=
-    (sender, cert, chain, sslPolicyErrors) => true;
+        (sender, cert, chain, sslPolicyErrors) => true;
                     using (var client = new HttpClient())
                     {
                         var values = new Dictionary<string, string>
@@ -1819,7 +2175,7 @@ namespace SharedLibrary
                 var referenceCode = Guid.NewGuid().ToString();
                 var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
                 string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
-    , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
+        , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
                 try
                 {
                     using (var client = new HttpClient())

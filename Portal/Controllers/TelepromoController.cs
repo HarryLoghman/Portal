@@ -11,8 +11,10 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 
+
 namespace Portal.Controllers
 {
+    
     public class TelepromoController : ApiController
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -21,6 +23,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Message(string da, string oa, string txt)
         {
+            logs.Info("message:"+da);
             if (da == "989168623674" || da == "989195411097")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
@@ -38,11 +41,14 @@ namespace Portal.Controllers
                 result = "-1";
             else
             {
+                logs.Info("message2:" + da);
                 messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                 if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326")
                     messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
+                logs.Info("message3:" + da);
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                logs.Info("message4:" + da);
                 result = "";
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -54,7 +60,8 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage MessagePost([FromBody] dynamic input)
         {
-            logs.Info(input);
+            logs.Info("MessagePost");
+            //logs.Info(input);
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string shortCode = input.shortcode;
@@ -88,6 +95,7 @@ namespace Portal.Controllers
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                 result = "";
             }
+            logs.Info("MessagePost2");
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
@@ -207,6 +215,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Notify(string type, string msisdn, string serviceId, string channel, string keyword, string eventId = null)
         {
+            //logs.Info("notify");
             dynamic responseJson = new ExpandoObject();
 
             if (type == "RENEWAL" || type == "RENEW")
@@ -437,6 +446,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage NotifyPost([FromBody]dynamic input)
         {
+            //logs.Info("NotifyPost");
             logs.Info(input);
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
