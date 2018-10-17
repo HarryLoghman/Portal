@@ -33,7 +33,7 @@ namespace DehnadHalgheService
                 var skip = threadsNo["skip"];
 
                 Type entityType = typeof(HalgheEntities);
-
+                
                 onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, readSize)).OfType<OnDemandMessagesBuffer>().ToList();
 
                 //if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)

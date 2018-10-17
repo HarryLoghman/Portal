@@ -862,7 +862,7 @@ namespace Portal.Controllers
                                                 var singleCharge = new HalgheLibrary.Models.Singlecharge();
                                                 string aggregatorName = "Telepromo";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             HalgheLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1627,7 +1627,7 @@ namespace Portal.Controllers
                                     {
                                         string aggregatorName = "Telepromo";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     HalgheLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
