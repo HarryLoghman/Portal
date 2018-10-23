@@ -23,7 +23,7 @@ namespace SharedLibrary
         public static int retryCountMax = 15;
         public static int retryPauseBeforeSendByMinute = -1;
         public static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
-        public static string telepromoIpJSON = "http://10.20.9.187:9090";
+        public static string telepromoIpJSON = "http://10.20.9.187:8700";
         public static string telepromoPardisIp = "http://10.20.9.188:9090";
         public static string irancellIp = "http://92.42.55.180:8310";
         public static string mciIp = "http://172.17.251.18:8090";
@@ -137,12 +137,33 @@ namespace SharedLibrary
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     //var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                     //var description = "deliverychannel:WAP|discoverychannel:WAP|origin:"+shortcode+ "|contentid:"+message.MessageType
-                    var chargeCode = "TELREWCTELHALG5000";
+                    var chargeCode = "";
                     var amount = "0";
                     var currency = "RLS";
                     var isFree = "1";
                     var correlator = shortcode + Guid.NewGuid().ToString().Replace("-", "");
-                    var serviceName = "CTELHALGHE";
+                    var serviceName = "";
+                    if (serviceAdditionalInfo["shortCode"] == "3072428")
+                    {
+                        serviceName = "CTELHALGHE";
+                        chargeCode = "TELREWCTELHALG5000";
+                    }
+                    else if (serviceAdditionalInfo["shortCode"] == "307251")
+                    {
+                        serviceName = "CTELSHENOYAD5000";
+                        chargeCode = "TELREWCTELSHEN5000";
+                    }
+                    else if (serviceAdditionalInfo["shortCode"] == "307251")
+                    {
+                        serviceName = "CTELSHENOYAD";
+                        chargeCode = "TELRENCTELSHENOYAD";
+                    }
+                    else if (serviceAdditionalInfo["shortCode"] == "307236")
+                    {
+                        serviceName = "CTELJABEHABZAR";
+                        chargeCode = "FREE";
+                    }
+
                     string json = "";
                     Random rnd = new Random();
                     using (var client = new HttpClient())
@@ -483,7 +504,7 @@ namespace SharedLibrary
         {
             //logs.Info("TelepromoOTPRequestJSON");
             entity.Configuration.AutoDetectChangesEnabled = false;
-            string description = "";
+            string description = "OTPRequest";
             var result = new Dictionary<string, string>();
             result["status_code"] = "";
             result["status_txt"] = "";
@@ -500,12 +521,35 @@ namespace SharedLibrary
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var username = "dehnad";
                 var password = "D4@Hn!";
-                var serviceName = "CTELHALGHE";
+
                 //logs.Info("TelepromoOTPRequestJSON1");
                 var serviceId = serviceAdditionalInfo["OperatorServiceId"];
                 //logs.Info("TelepromoOTPRequestJSON2");
                 var referenceCode = Guid.NewGuid().ToString();
                 var shortCode = "98" + serviceAdditionalInfo["shortCode"];
+                var chargeCode = "";
+                var serviceName = "";
+                if (serviceAdditionalInfo["shortCode"] == "3072428")
+                {
+                    serviceName = "CTELHALGHE";
+                    chargeCode = "TELSUBCTELHALGHE";
+                }
+                else if (serviceAdditionalInfo["shortCode"] == "307251")
+                {
+                    serviceName = "CTELSHENOYAD5000";
+                    chargeCode = "TELSUBCTELSHENOYA5";
+                }
+                else if (serviceAdditionalInfo["shortCode"] == "307251")
+                {
+                    serviceName = "CTELSHENOYAD";
+                    chargeCode = "TELSUBCTELSHENOYA5";
+                }
+                else if (serviceAdditionalInfo["shortCode"] == "307236")
+                {
+                    serviceName = "CTELJABEHABZAR";
+                    chargeCode = "TELSUBCTELJABEHABZ";
+                }
+
                 Dictionary<string, string> dic = new Dictionary<string, string>()
                             {
                                 { "msisdn" , mobileNumber }
@@ -516,8 +560,8 @@ namespace SharedLibrary
                                 ,{"referencecode",referenceCode }
                                 ,{"shortcode" , shortCode }
                                 ,{"contentid","48" }
-                                , {"chargecode" ,"TELSUBCTELHALGHE" }
-                                , {"description" ,"description" }
+                                , {"chargecode" ,chargeCode }
+                                , {"description" ,description }
                                 ,{ "amount" , "0" }
 
                 };
@@ -549,7 +593,7 @@ namespace SharedLibrary
                                 dynamic results = JsonConvert.DeserializeObject<dynamic>(httpResult);
                                 result["status_code"] = results["status_code"];
                                 result["status_txt"] = results["status_txt"];
-                                logs.Info("TelepromoOTPRequestJSONSave");
+                                //logs.Info("TelepromoOTPRequestJSONSave");
                                 result["statusCode"] = results["data"]["statusInfo"]["statusCode"];
                                 //result["serverReferenceCode"] = results["data"]["statusInfo"]["serverReferenceCode"];//equals to OTPTransactionId
                                 result["OTPTransactionId"] = results["data"]["statusInfo"]["OTPTransactionId"];
@@ -581,6 +625,7 @@ namespace SharedLibrary
             {
                 logs.Error("Exception in TelepromoOTPRequest: " + e);
                 singlecharge.Description = "Exception";
+
             }
             try
             {
@@ -670,9 +715,9 @@ namespace SharedLibrary
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var username = "dehnad";
                 var password = "D4@Hn!";
-                logs.Info("TelepromoOTPConfirmJson1");
+                //logs.Info("TelepromoOTPConfirmJson1");
                 var serviceId = serviceAdditionalInfo["OperatorServiceId"];
-                logs.Info("TelepromoOTPConfirmJson2");
+                //logs.Info("TelepromoOTPConfirmJson2");
                 string referenceId = singlecharge.ReferenceId;
                 var referenceIdSplitted = referenceId.Split('_');
                 var referencecode = referenceIdSplitted[0];
@@ -692,7 +737,7 @@ namespace SharedLibrary
                                 ,{"contentid",contentid }
                                 ,{"message",confirmationCode}
                                 ,{ "otptransaction" , OTPTransactionId }
-                    
+
                 };
                 string json = JsonConvert.SerializeObject(dic);
                 //string json = "{\"msisdn\":\"" + mobileNumber + "\",\"username\":\"" + username + "\",\"password\":\"" + password + "\""

@@ -563,7 +563,8 @@ namespace SharedLibrary
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "Telepromo")
                 {
-                    if(serviceAdditionalInfo["shortCode"]== "3072428")
+                    if(serviceAdditionalInfo["shortCode"]== "3072428"|| serviceAdditionalInfo["shortCode"] == "307251"
+                        || serviceAdditionalInfo["shortCode"] == "307251-" || serviceAdditionalInfo["shortCode"] == "307236")
                         TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromoJSON(entityType, chunkedMessages, serviceAdditionalInfo));
                     else TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entityType, chunkedMessages, serviceAdditionalInfo));
                 }

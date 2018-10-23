@@ -591,6 +591,28 @@ namespace Portal.Controllers
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                                 singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
+                                                if (result.Status == "SUCCESS-Pending Confirmation")
+                                                {
+
+                                                    var messagesTemplate = SoratyLibrary.ServiceHandler.GetServiceMessagesTemplate();
+                                                    int isCampaignActive = 0;
+                                                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                                                    if (campaign != null)
+                                                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                                                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
+                                                    if (isInBlackList == true)
+                                                        isCampaignActive = 0;
+                                                    if (isCampaignActive == 1)
+                                                    {
+                                                        SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
+                                                        messageObj.ShortCode = serviceInfo.ShortCode;
+                                                        messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                                                        messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                                                        messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                                                        SoratyLibrary.MessageHandler.InsertMessageToQueue(messageObj);
+                                                    }
+                                                }
+
                                             }
                                             FitShowLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
                                         }
@@ -628,7 +650,7 @@ namespace Portal.Controllers
                                                 var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
                                                 string aggregatorName = "Telepromo";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             JabehAbzarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -667,7 +689,7 @@ namespace Portal.Controllers
                                                 var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
                                                 string aggregatorName = "Telepromo";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             ShenoYadLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -706,7 +728,7 @@ namespace Portal.Controllers
                                                 var singleCharge = new ShenoYad500Library.Models.Singlecharge();
                                                 string aggregatorName = "Telepromo";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             ShenoYad500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -743,9 +765,9 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new TakavarLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                string aggregatorName = "MciDirect";
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             TakavarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1519,7 +1541,7 @@ namespace Portal.Controllers
                                     {
                                         string aggregatorName = "Telepromo";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     JabehAbzarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1537,7 +1559,7 @@ namespace Portal.Controllers
                                     {
                                         string aggregatorName = "Telepromo";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     ShenoYadLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1555,7 +1577,7 @@ namespace Portal.Controllers
                                     {
                                         string aggregatorName = "Telepromo";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     ShenoYad500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1571,9 +1593,9 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        string aggregatorName = "MciDirect";
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     TakavarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());

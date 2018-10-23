@@ -34,7 +34,7 @@ namespace JabehAbzarLibrary
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
-                else if (message.Content == "00" || message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content.ToLower().Contains("abc"))
+                else if (((message.Content.Length == 7 || message.Content.Length == 8 || message.Content.Length == 9 || message.Content == message.ShortCode || message.Content.Length == 2) && message.Content.All(char.IsDigit)) || message.Content.Contains("25000") || message.Content.ToLower().Contains("abc"))
                 {
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");

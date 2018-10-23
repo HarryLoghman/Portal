@@ -14,202 +14,10 @@ using System.ComponentModel;
 
 namespace Portal.Controllers
 {
-    
+
     public class TelepromoController : ApiController
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        [HttpGet]
-        [AllowAnonymous]
-        public HttpResponseMessage Message(string da, string oa, string txt)
-        {
-            logs.Info("message:"+da);
-            if (da == "989168623674" || da == "989195411097")
-            {
-                var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
-                blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");
-                return blackListResponse;
-            }
-            var messageObj = new MessageObject();
-            messageObj.MobileNumber = da;
-            messageObj.ShortCode = oa;
-            messageObj.Content = txt;
-
-            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-            string result = "";
-            if (messageObj.MobileNumber == "Invalid Mobile Number")
-                result = "-1";
-            else
-            {
-                logs.Info("message2:" + da);
-                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326")
-                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
-                logs.Info("message3:" + da);
-                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                logs.Info("message4:" + da);
-                result = "";
-            }
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
-            return response;
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public HttpResponseMessage MessagePost([FromBody] dynamic input)
-        {
-            logs.Info("MessagePost");
-            //logs.Info(input);
-            dynamic responseJson = new ExpandoObject();
-            string msisdn = input.msisdn;
-            string shortCode = input.shortcode;
-            string message = input.message;
-            string partnerName = input.partnername;
-            //string transId = input.trans_id;//no map field in db
-            //string dateTimeStr = input.datetime;//set while saving to db
-            if (msisdn == "989168623674" || msisdn == "989195411097")
-            {
-                var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
-                blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");
-                return blackListResponse;
-            }
-            var messageObj = new MessageObject();
-            
-            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-            messageObj.ShortCode = shortCode;
-            messageObj.IsReceivedFromIntegratedPanel = false;
-            messageObj.Content = message;
-            
-            string result = "";
-            if (messageObj.MobileNumber == "Invalid Mobile Number")
-                result = "-1";
-            else
-            {
-                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326"
-                    || messageObj.ShortCode== "3072428")
-                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
-                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                result = "";
-            }
-            logs.Info("MessagePost2");
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
-            return response;
-        }
-
-        // /Telepromo/Delivery?refId=44353535&deliveryStatus=0
-        [HttpGet]
-        [AllowAnonymous]
-        public HttpResponseMessage Delivery(string refId, string deliveryStatus)
-        {
-            //var delivery = new DeliveryObject();
-            //delivery.ReferenceId = refId;
-            //delivery.Status = deliveryStatus;
-            //delivery.AggregatorId = 5;
-            //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
-            var result = "";
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
-            return response;
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public HttpResponseMessage Services(string status, string msisdn, string serviceId = null)
-        {
-            List<dynamic> history = new List<dynamic>();
-            using (var entity = new PortalEntities())
-            {
-                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-                IQueryable<SubscribersHistory> subscriberServices;
-                if (serviceId == null || serviceId == "")
-                    subscriberServices = entity.SubscribersHistories.Where(o => o.AggregatorId == 5 && o.MobileNumber == mobileNumber);
-                else
-                    subscriberServices = entity.SubscribersHistories.Where(o => o.AggregatorId == 5 && o.MobileNumber == mobileNumber && o.AggregatorServiceId == serviceId);
-                var serviceIds = subscriberServices.GroupBy(o => o.ServiceId).ToList().Select(o => o.First()).ToList();
-                foreach (var service in serviceIds)
-                {
-                    dynamic subscriberHistory = new ExpandoObject();
-                    subscriberHistory.service = service.AggregatorServiceId;
-
-                    IQueryable<Subscriber> subscriber = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == service.ServiceId);
-                    if (status == "1")
-                    {
-                        var sub = subscriber.FirstOrDefault(o => o.DeactivationDate == null);
-                        if (sub == null)
-                            continue;
-                        subscriberHistory.subscriptionShortCode = "98" + service.ShortCode;
-                        subscriberHistory.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
-                        subscriberHistory.subscriptionKeyword = sub.OnKeyword;
-                        subscriberHistory.enabled = 0;
-                        if (sub.OnMethod == "keyword")
-                            subscriberHistory.subscriptionMethod = 1;
-                        else if (sub.OnMethod == "Integrated Panel")
-                            subscriberHistory.subscriptionMethod = 2;
-                        else
-                            subscriberHistory.subscriptionMethod = 3;
-                    }
-                    else if (status == "2")
-                    {
-                        var sub = subscriber.FirstOrDefault(o => o.DeactivationDate != null);
-                        if (sub == null)
-                            continue;
-                        subscriberHistory.unsubscriptionShortCode = "98" + service.ShortCode;
-                        subscriberHistory.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
-                        subscriberHistory.unsubscriptionKeyword = sub.OnKeyword;
-                        subscriberHistory.enabled = 1;
-                        if (sub.OffMethod == "keyword")
-                            subscriberHistory.unsubscriptionMethod = 1;
-                        else if (sub.OffMethod == "Integrated Panel")
-                            subscriberHistory.unsubscriptionMethod = 2;
-                        else
-                            subscriberHistory.unsubscriptionMethod = 3;
-                    }
-                    else
-                    {
-                        var sub = subscriber.FirstOrDefault();
-                        if (sub == null)
-                            continue;
-                        if (sub.DeactivationDate != null)
-                        {
-                            subscriberHistory.unsubscriptionShortCode = "98" + service.ShortCode;
-                            subscriberHistory.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
-                            subscriberHistory.unsubscriptionKeyword = sub.OnKeyword;
-                            subscriberHistory.enabled = 1;
-                            if (sub.OffMethod == "keyword")
-                                subscriberHistory.unsubscriptionMethod = 1;
-                            else if (sub.OffMethod == "Integrated Panel")
-                                subscriberHistory.unsubscriptionMethod = 2;
-                            else
-                                subscriberHistory.unsubscriptionMethod = 3;
-                        }
-                        subscriberHistory.subscriptionShortCode = "98" + service.ShortCode;
-                        subscriberHistory.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
-                        subscriberHistory.subscriptionKeyword = sub.OnKeyword;
-                        subscriberHistory.enabled = 0;
-                        if (sub.OnMethod == "keyword")
-                            subscriberHistory.subscriptionMethod = 1;
-                        else if (sub.OnMethod == "Integrated Panel")
-                            subscriberHistory.subscriptionMethod = 2;
-                        else
-                            subscriberHistory.subscriptionMethod = 3;
-                    }
-
-                    history.Add(subscriberHistory);
-                }
-            }
-            dynamic responseJson = new ExpandoObject();
-            responseJson.status = 0;
-            responseJson.result = history;
-            var json = JsonConvert.SerializeObject(responseJson);
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
-            return response;
-        }
 
         [HttpGet]
         [AllowAnonymous]
@@ -680,7 +488,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356" 
+                    if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356"
                         || serviceInfo.AggregatorServiceId == "1eeed64ecd6c4148bf11574e1a472cd1" || serviceInfo.AggregatorServiceId == "a9a395e997ba46168bf11cefef08018c"
                         || serviceInfo.AggregatorServiceId == "6c9eb6912781471d88b2b3d367c54f89")
                         message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-FromIMI" : null;
@@ -697,6 +505,210 @@ namespace Portal.Controllers
             return response;
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage Message(string da, string oa, string txt)
+        {
+            logs.Info("message:" + da);
+            if (da == "989168623674" || da == "989195411097")
+            {
+                var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
+                blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");
+                return blackListResponse;
+            }
+            var messageObj = new MessageObject();
+            messageObj.MobileNumber = da;
+            messageObj.ShortCode = oa;
+            messageObj.Content = txt;
+
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            string result = "";
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                result = "-1";
+            else
+            {
+                
+                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326")
+                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
+                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                
+                result = "";
+            }
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage MessagePost([FromBody] dynamic input)
+        {
+
+            //logs.Info(input);
+            dynamic responseJson = new ExpandoObject();
+            string msisdn = input.msisdn;
+            string shortCode = input.shortcode;
+            string message = input.message;
+            string partnerName = input.partnername;
+            //string transId = input.trans_id;//no map field in db
+            //string dateTimeStr = input.datetime;//set while saving to db
+            if (msisdn == "989168623674" || msisdn == "989195411097")
+            {
+                var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
+                blackListResponse.Content = new StringContent("", System.Text.Encoding.UTF8, "text/plain");
+                return blackListResponse;
+            }
+            var messageObj = new MessageObject();
+
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+            messageObj.ShortCode = shortCode;
+            messageObj.IsReceivedFromIntegratedPanel = false;
+            messageObj.Content = message;
+
+            string result = "";
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                result = "-1";
+            else
+            {
+                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326"
+                    || messageObj.ShortCode == "3072428")
+                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
+                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                result = "";
+            }
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        // /Telepromo/Delivery?refId=44353535&deliveryStatus=0
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage Delivery(string refId, string deliveryStatus)
+        {
+            //var delivery = new DeliveryObject();
+            //delivery.ReferenceId = refId;
+            //delivery.Status = deliveryStatus;
+            //delivery.AggregatorId = 5;
+            //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+            var result = "";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage DeliveryPost([FromBody]dynamic input)
+        {
+            dynamic responseJson = new ExpandoObject();
+            responseJson.status = 0;
+            var json = JsonConvert.SerializeObject(responseJson);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage Services(string status, string msisdn, string serviceId = null)
+        {
+            List<dynamic> history = new List<dynamic>();
+            using (var entity = new PortalEntities())
+            {
+                var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                IQueryable<SubscribersHistory> subscriberServices;
+                if (serviceId == null || serviceId == "")
+                    subscriberServices = entity.SubscribersHistories.Where(o => o.AggregatorId == 5 && o.MobileNumber == mobileNumber);
+                else
+                    subscriberServices = entity.SubscribersHistories.Where(o => o.AggregatorId == 5 && o.MobileNumber == mobileNumber && o.AggregatorServiceId == serviceId);
+                var serviceIds = subscriberServices.GroupBy(o => o.ServiceId).ToList().Select(o => o.First()).ToList();
+                foreach (var service in serviceIds)
+                {
+                    dynamic subscriberHistory = new ExpandoObject();
+                    subscriberHistory.service = service.AggregatorServiceId;
+
+                    IQueryable<Subscriber> subscriber = entity.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.ServiceId == service.ServiceId);
+                    if (status == "1")
+                    {
+                        var sub = subscriber.FirstOrDefault(o => o.DeactivationDate == null);
+                        if (sub == null)
+                            continue;
+                        subscriberHistory.subscriptionShortCode = "98" + service.ShortCode;
+                        subscriberHistory.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
+                        subscriberHistory.subscriptionKeyword = sub.OnKeyword;
+                        subscriberHistory.enabled = 0;
+                        if (sub.OnMethod == "keyword")
+                            subscriberHistory.subscriptionMethod = 1;
+                        else if (sub.OnMethod == "Integrated Panel")
+                            subscriberHistory.subscriptionMethod = 2;
+                        else
+                            subscriberHistory.subscriptionMethod = 3;
+                    }
+                    else if (status == "2")
+                    {
+                        var sub = subscriber.FirstOrDefault(o => o.DeactivationDate != null);
+                        if (sub == null)
+                            continue;
+                        subscriberHistory.unsubscriptionShortCode = "98" + service.ShortCode;
+                        subscriberHistory.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
+                        subscriberHistory.unsubscriptionKeyword = sub.OnKeyword;
+                        subscriberHistory.enabled = 1;
+                        if (sub.OffMethod == "keyword")
+                            subscriberHistory.unsubscriptionMethod = 1;
+                        else if (sub.OffMethod == "Integrated Panel")
+                            subscriberHistory.unsubscriptionMethod = 2;
+                        else
+                            subscriberHistory.unsubscriptionMethod = 3;
+                    }
+                    else
+                    {
+                        var sub = subscriber.FirstOrDefault();
+                        if (sub == null)
+                            continue;
+                        if (sub.DeactivationDate != null)
+                        {
+                            subscriberHistory.unsubscriptionShortCode = "98" + service.ShortCode;
+                            subscriberHistory.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.DeactivationDate.GetValueOrDefault());
+                            subscriberHistory.unsubscriptionKeyword = sub.OnKeyword;
+                            subscriberHistory.enabled = 1;
+                            if (sub.OffMethod == "keyword")
+                                subscriberHistory.unsubscriptionMethod = 1;
+                            else if (sub.OffMethod == "Integrated Panel")
+                                subscriberHistory.unsubscriptionMethod = 2;
+                            else
+                                subscriberHistory.unsubscriptionMethod = 3;
+                        }
+                        subscriberHistory.subscriptionShortCode = "98" + service.ShortCode;
+                        subscriberHistory.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(sub.ActivationDate.GetValueOrDefault());
+                        subscriberHistory.subscriptionKeyword = sub.OnKeyword;
+                        subscriberHistory.enabled = 0;
+                        if (sub.OnMethod == "keyword")
+                            subscriberHistory.subscriptionMethod = 1;
+                        else if (sub.OnMethod == "Integrated Panel")
+                            subscriberHistory.subscriptionMethod = 2;
+                        else
+                            subscriberHistory.subscriptionMethod = 3;
+                    }
+
+                    history.Add(subscriberHistory);
+                }
+            }
+            dynamic responseJson = new ExpandoObject();
+            responseJson.status = 0;
+            responseJson.result = history;
+            var json = JsonConvert.SerializeObject(responseJson);
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            return response;
+        }
+
+       
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage UnSubscribe(string msisdn, string serviceId)
@@ -974,7 +986,7 @@ namespace Portal.Controllers
                 else if (input.action == "unsubscribe")
                     messageObj.ReceivedFrom += "-FromIMI-Unsubscribe";
             }
-                
+
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -1010,17 +1022,7 @@ namespace Portal.Controllers
             return response;
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        public HttpResponseMessage DeliveryPost([FromBody]dynamic input)
-        {
-            dynamic responseJson = new ExpandoObject();
-            responseJson.status = 0;
-            var json = JsonConvert.SerializeObject(responseJson);
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
-            return response;
-        }
+      
 
     }
 }
