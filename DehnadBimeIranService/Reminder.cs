@@ -42,7 +42,7 @@ namespace DehnadBimeIranService
                         var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                         var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(0, null);
                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("BimeIran", "Telepromo");
-                        var aggregatorName = Properties.Settings.Default.AggregatorName;
+                        var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                         var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                         var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
                         var cancelList = entity.InsuranceInfoes.Where(o => o.IsUserRequestedInsuranceCancelation != true && o.IsCancelationSendedToInsuranceCompany != true && o.NextRenewalDate.Value < now).ToList();
@@ -80,7 +80,7 @@ namespace DehnadBimeIranService
                         var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                         var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(0, null);
                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("BimeIran", "Telepromo");
-                        var aggregatorName = Properties.Settings.Default.AggregatorName;
+                        var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                         var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                         var imiChargeCodes = ServiceHandler.GetImiChargeCodes();
                         var now = DateTime.Now;
@@ -175,7 +175,7 @@ namespace DehnadBimeIranService
                 var serviceId = SharedLibrary.ServiceHandler.GetServiceId("BimeIran");
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(0, null);
-                var aggregatorName = Properties.Settings.Default.AggregatorName;
+                var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                 using (var entity = new BimeIranEntities())
                 {

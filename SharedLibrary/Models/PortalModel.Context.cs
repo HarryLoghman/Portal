@@ -60,8 +60,9 @@ namespace SharedLibrary.Models
         public virtual DbSet<vw_DehnadAllServicesStatistics> vw_DehnadAllServicesStatistics { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
         public virtual DbSet<chargeInfo> chargeInfoes { get; set; }
-        public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
         public virtual DbSet<Referral> Referrals { get; set; }
+        public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
+        public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

@@ -30,7 +30,7 @@ namespace DehnadMedadService
             {
                 v_throttle = new throttle(3, 1000, 10);
 
-                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;

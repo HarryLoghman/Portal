@@ -215,6 +215,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalgheLibrary", "HalgheLibr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadHalgheService", "DehnadHalgheService\DehnadHalgheService.csproj", "{33D53A12-E468-49D5-AADE-48B148B1B46E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedShortCodeServiceLibrary", "SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj", "{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -645,6 +647,10 @@ Global
 		{33D53A12-E468-49D5-AADE-48B148B1B46E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33D53A12-E468-49D5-AADE-48B148B1B46E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33D53A12-E468-49D5-AADE-48B148B1B46E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

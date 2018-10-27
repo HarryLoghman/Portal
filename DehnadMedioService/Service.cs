@@ -212,6 +212,26 @@ namespace DehnadMedioService
                 installmentCycleNumber = 8;
             else
                 installmentCycleNumber = 1;
+            //if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("9:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
+            //    installmentCycleNumber = 2;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("13:00:00"))
+            //    installmentCycleNumber = 3;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("13:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
+            //    installmentCycleNumber = 4;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:00:00"))
+            //    installmentCycleNumber = 5;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("18:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:59:00"))
+            //    installmentCycleNumber = 6;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("19:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("19:59:00"))
+            //    installmentCycleNumber = 7;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:59:00"))
+            //    installmentCycleNumber = 8;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("21:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("21:59:00"))
+            //    installmentCycleNumber = 9;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:59:00"))
+            //    installmentCycleNumber = 10;
+            //else
+            //    installmentCycleNumber = 1;
             while (!shutdownEvent.WaitOne(0))
             {
                 bool isInMaintenanceTime = false;
@@ -297,6 +317,86 @@ namespace DehnadMedioService
                         }
                         else
                             Thread.Sleep(1000);
+                        //if (installmentCycleNumber == 1 && DateTime.Now.TimeOfDay < TimeSpan.Parse("09:00:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("09:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("13:00:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("13:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:00:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 6 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("18:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:59:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 7 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("19:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("19:59:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 8 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:59:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 9 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("21:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("21:59:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
+                        //else if (installmentCycleNumber == 10 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:59:00"))
+                        //{
+                        //    var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+                        //    var endTime = DateTime.Now;
+                        //    var duration = endTime - startTime;
+                        //    InstallmentCycleToDb(installmentCycleNumber, (long)duration.TotalSeconds, income);
+                        //    installmentCycleNumber++;
+                        //}
                     }
                 }
                 catch (Exception e)
@@ -305,6 +405,11 @@ namespace DehnadMedioService
                     Thread.Sleep(1000);
                 }
             }
+        }
+
+        private void InstallmentCycleToDb(int installmentCycleNumber, long totalSeconds, int income)
+        {
+            throw new NotImplementedException();
         }
 
         //private void SinglechargeInstallmentBalancerWorkerThread()

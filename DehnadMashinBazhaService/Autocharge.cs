@@ -52,7 +52,7 @@ namespace DehnadMashinBazhaService
             try
             {
                 var time = DateTime.Now.TimeOfDay;
-                var aggregatorName = Properties.Settings.Default.AggregatorName;
+                var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode);

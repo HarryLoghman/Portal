@@ -148,7 +148,7 @@ namespace DehnadAvvalYadService
             try
             {
                 logs.Info("InstallmentJob start!");
-                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode);
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("AvvalYad", aggregatorName);
                 List<SinglechargeInstallment> installmentList;
                 List<SharedLibrary.Models.Subscriber> subscribers = new List<SharedLibrary.Models.Subscriber>();

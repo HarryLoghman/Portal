@@ -19,7 +19,7 @@ namespace DehnadDarchinService
         {
             try
             {
-                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<SinglechargeInstallment> installmentList;
@@ -135,7 +135,7 @@ namespace DehnadDarchinService
             try
             {
                 logs.Info("InstallmentJob start!");
-                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Darchin", aggregatorName);
                 List<SinglechargeInstallment> installmentList;
                 List<SharedLibrary.Models.Subscriber> subscribers = new List<SharedLibrary.Models.Subscriber>();

@@ -20,7 +20,7 @@ namespace DehnadMobiligaService
                         return;
                     if (eventbaseContent.Content == null || eventbaseContent.Content.Trim() == "")
                         return;
-                    var aggregatorName = Properties.Settings.Default.AggregatorName;
+                    var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                     MobiligaLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
                 }

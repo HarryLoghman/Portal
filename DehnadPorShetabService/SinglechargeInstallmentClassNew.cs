@@ -32,7 +32,7 @@ namespace DehnadPorShetabService
                 v_throttle = new ThrottleMTN(@"E:\Windows Services\MTNThrottleTPS");
                 v_throttleDedicated = new ThrottleDedicated(@"E:\Windows Services\MTNThrottleTpsOccupied");
 
-                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 var installmentCount = SharedLibrary.ServiceHandler.GetActiveSubscribersAndChargesCount(Service.v_dbName, serviceCode, Service.maxServiceTries, installmentCycleNumber

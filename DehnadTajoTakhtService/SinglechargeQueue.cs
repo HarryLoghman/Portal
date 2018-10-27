@@ -57,7 +57,7 @@ namespace DehnadTajoTakhtService
                     entity.SaveChanges();
 
                     var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
-                    string aggregatorName = Properties.Settings.Default.AggregatorName;
+                    string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var serviceCode = Properties.Settings.Default.ServiceCode;
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                     int installmentListCount = mobileNumbers.Count;
@@ -281,7 +281,7 @@ namespace DehnadTajoTakhtService
                     var installmentList = entity.SinglechargeInstallments.Where(o => mobileNumbers.Contains(o.MobileNumber) && o.PricePayed == 0 && o.IsUserCanceledTheInstallment != true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today)).OrderByDescending(o => o.DateCreated).ToList();
                     Type entityType = typeof(TajoTakhtEntities);
                     var maxChargeLimit = SinglechargeInstallmentClass.maxChargeLimit;
-                    string aggregatorName = Properties.Settings.Default.AggregatorName;
+                    string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var serviceCode = Properties.Settings.Default.ServiceCode;
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                     Type singleChargeType = typeof(Singlecharge);

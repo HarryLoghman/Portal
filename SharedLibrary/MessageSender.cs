@@ -28,6 +28,91 @@ namespace SharedLibrary
         public static string irancellIp = "http://92.42.55.180:8310";
         public static string mciIp = "http://172.17.251.18:8090";
 
+        public static async Task<dynamic> OTPRequestGeneral(string aggregatorName, dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        {
+            string aggregatorNameLowerCase = aggregatorName.ToLower();
+            if (aggregatorNameLowerCase == "mobinonemapfa")
+            {
+                return await MapfaOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
+            }
+            else if (aggregatorNameLowerCase == "mcidirect")
+            {
+                return await MciDirectOtpCharge(entity, singlecharge, message, serviceAdditionalInfo);
+            }
+            else if (aggregatorNameLowerCase == "telepromo")
+            {
+                if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
+                   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500")
+                {
+                    return await TelepromoOTPRequestJSON(entity, singlecharge, message, serviceAdditionalInfo);
+                }
+                else
+                {
+                    return await TelepromoOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
+                }
+            }
+            else if (aggregatorNameLowerCase == "telepromomapfa")
+            {
+                return await TelepromoMapfaOtpCharge(entity, singlecharge, message, serviceAdditionalInfo);
+            }
+            else if (aggregatorNameLowerCase == "pardisimi")
+            {
+                return await PardisImiOtpChargeRequest(entity, singlecharge, message, serviceAdditionalInfo);
+            }
+            else if (aggregatorNameLowerCase == "mobinone")
+            {
+                return await MobinOneCharge(entity, singlecharge, message, serviceAdditionalInfo);
+            }
+            else if (aggregatorNameLowerCase == "samssontci")
+            {
+                return await SamssonTciOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
+            }
+            else return null;
+        }
+
+        public static async Task<dynamic> OTPConfirmGeneral(string aggregatorName, dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmCode)
+        {
+            string aggregatorNameLowerCase = aggregatorName.ToLower();
+            if (aggregatorNameLowerCase == "mobinonemapfa")
+            {
+                return await MapfaOTPConfirm(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+            }
+            else if (aggregatorNameLowerCase == "mcidirect")
+            {
+                return await MciDirectOTPConfirm(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+            }
+            else if (aggregatorNameLowerCase == "telepromo")
+            {
+                if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
+                   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500")
+                {
+                    return await TelepromoOTPConfirmJson(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+                }
+                else
+                {
+                    return await TelepromoOTPConfirmJson(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+                }
+            }
+            else if (aggregatorNameLowerCase == "telepromomapfa")
+            {
+                return await TelepromoMapfaOTPConfirm(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+            }
+            else if (aggregatorNameLowerCase == "pardisimi")
+            {
+                return await PardisImiOTPConfirm(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+            }
+            else if (aggregatorNameLowerCase == "mobinone")
+            {
+                return await MobinOneOTPConfirm(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+            }
+            else if (aggregatorNameLowerCase == "samssontci")
+            {
+                return await SamssonTciOTPConfirm(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+            }
+            else return null;
+        }
+
+
         public static async Task SendMesssagesToTelepromo(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
             using (dynamic entity = Activator.CreateInstance(entityType))

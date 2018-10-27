@@ -240,7 +240,7 @@ namespace DehnadPorShetabService
                         var startTime = DateTime.Now;
                         var singlechargeInstallment = new SinglechargeInstallmentClassNew();
                         var serviceCode = Properties.Settings.Default.ServiceCode;
-                        string aggregatorName = Properties.Settings.Default.AggregatorName;
+                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
 
                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                         using (var portal = new SharedLibrary.Models.PortalEntities())

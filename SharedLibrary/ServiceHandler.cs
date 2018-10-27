@@ -591,6 +591,23 @@ namespace SharedLibrary
             }
         }
 
+        public static string GetAggregatorNameFromServiceCode(string serviceCode)
+        {
+            string aggregatorName = ""; ;
+            using (var entity = new PortalEntities())
+            {
+                try
+                {
+                    aggregatorName = entity.vw_servicesServicesInfo.Where(o => o.ServiceCode == serviceCode).Select(o => o.aggregatorName).FirstOrDefault();   
+                }
+                catch (System.Exception e)
+                {
+                    logs.Error("Error in GetAllServicesByAggregatorId: " + e);
+                }
+                return aggregatorName;
+            }
+        }
+
         public static bool CheckIfUserSendedUnsubscribeContentToShortCode(string content)
         {
             foreach (var offKeyword in ServiceOffKeywords())

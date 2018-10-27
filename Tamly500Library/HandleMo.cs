@@ -14,6 +14,7 @@ namespace Tamly500Library
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
+            var e = new PortalEntities();
             bool isSucceeded = true;
             var content = message.Content;
             message.ServiceCode = service.ServiceCode;
@@ -181,26 +182,7 @@ namespace Tamly500Library
                 else if (message.ReceivedFrom.Contains("Unsubscribe"))
                     isUserWantsToUnsubscribe = true;
 
-                //if (isUserSendsSubscriptionKeyword == true && message.Content == "7")
-                //{
-                //    isCampaignActive = (int)CampaignStatus.Deactive;
-                //    try
-                //    {
-                //        using (var portalEntity = new PortalEntities())
-                //        {
-                //            var black = new SharedLibrary.Models.BlackList();
-                //            black.DateAdded = DateTime.Now;
-                //            black.MobileNumber = message.MobileNumber;
-                //            black.ServiceId = service.Id;
-                //            portalEntity.BlackLists.Add(black);
-                //            portalEntity.SaveChanges();
-                //        }
-                //    }
-                //    catch (Exception e)
-                //    {
-                //        logs.Error("", e);
-                //    }
-                //}
+                
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
                     if (isUserSendsSubscriptionKeyword == true)
@@ -215,16 +197,7 @@ namespace Tamly500Library
                             }
                         }
                     }
-                    //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                    //{
-                    //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                    //    if (user != null && user.DeactivationDate == null)
-                    //    {
-                    //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                    //        MessageHandler.InsertMessageToQueue(message);
-                    //        return;
-                    //    }
-                    //}
+                    
                     if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                     {
                         bool isSubscriberdVerified = Tamly500Library.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);

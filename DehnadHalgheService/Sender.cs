@@ -24,7 +24,7 @@ namespace DehnadHalgheService
                 int readSize = Convert.ToInt32(Properties.Settings.Default.ReadSize);
                 int takeSize = Convert.ToInt32(Properties.Settings.Default.Take);
                 bool retryNotDelieveredMessages = Properties.Settings.Default.RetryNotDeliveredMessages;
-                string aggregatorName = Properties.Settings.Default.AggregatorName;
+                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 string serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
 

@@ -21,7 +21,7 @@ namespace Portal.Controllers
         private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin", "Halghe" };
         private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe" };
         private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin","Halghe" };
+        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe" };
         private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
 
         [HttpPost]
@@ -119,7 +119,7 @@ namespace Portal.Controllers
                                         {
                                             var otpMessage = "webservice";
                                             if (messageObj.Content != null)
-                                                otpMessage = otpMessage + "-" + messageObj.Content; 
+                                                otpMessage = otpMessage + "-" + messageObj.Content;
                                             var logId = PhantomLibrary.MessageHandler.OtpLog(messageObj.MobileNumber, "request", otpMessage);
                                             var isOtpExists = entity.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
                                             if (isOtpExists != null && messageObj.Price.Value == 0)
@@ -129,9 +129,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new PhantomLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MobinOneMapfa";
+                                                //string aggregatorName = "MobinOneMapfa";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             PhantomLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -168,9 +169,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new TajoTakhtLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MobinOneMapfa";
+                                                //string aggregatorName = "MobinOneMapfa";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             TajoTakhtLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -207,9 +209,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new HazaranLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MobinOneMapfa";
+                                                //string aggregatorName = "MobinOneMapfa";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             HazaranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -246,9 +249,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new LahzeyeAkharLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MobinOneMapfa";
+                                                //string aggregatorName = "MobinOneMapfa";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             LahzeyeAkharLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -285,9 +289,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new SoltanLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             SoltanLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -324,9 +329,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new MenchBazLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             MenchBazLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -363,9 +369,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             DonyayeAsatirLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -402,9 +409,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new AsemanLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             AsemanLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -437,9 +445,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new AvvalPodLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                         }
@@ -475,9 +484,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new AvvalPod500Library.Models.Singlecharge();
-                                                string aggregatorName = "TelepromoMapfa";
+                                                //string aggregatorName = "TelepromoMapfa";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoMapfaOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             AvvalPod500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -510,9 +520,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new AvvalYadLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                         }
@@ -548,9 +559,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new BehAmooz500Library.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             BehAmooz500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -587,9 +599,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new FitShowLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                                 if (result.Status == "SUCCESS-Pending Confirmation")
                                                 {
@@ -648,9 +661,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             JabehAbzarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -687,9 +701,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             ShenoYadLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -726,9 +741,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new ShenoYad500Library.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             ShenoYad500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -765,9 +781,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new TakavarLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MciDirect";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             TakavarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -804,9 +821,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new TamlyLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             TamlyLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -843,9 +861,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new Tamly500Library.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             Tamly500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -882,9 +901,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new HalgheLibrary.Models.Singlecharge();
-                                                string aggregatorName = "Telepromo";
+                                                //string aggregatorName = "Telepromo";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.TelepromoOTPRequestJSON(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             HalgheLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -921,9 +941,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new DezhbanLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MciDirect";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             DezhbanLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -960,9 +981,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MciDirect";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             ShahreKalamehLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -999,9 +1021,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new SoratyLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MciDirect";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                                 if (result.Status == "SUCCESS-Pending Confirmation")
                                                 {
@@ -1059,9 +1082,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new DefendIranLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MciDirect";
+                                                //string aggregatorName = "MciDirect";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MciDirectOtpCharge(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             DefendIranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1094,9 +1118,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new SepidRoodLibrary.Models.Singlecharge();
-                                                string aggregatorName = "PardisImi";
+                                                //string aggregatorName = "PardisImi";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.PardisImiOtpChargeRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                         }
@@ -1132,9 +1157,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new NebulaLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MobinOne";
+                                                //string aggregatorName = "MobinOne";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MobinOneOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             NebulaLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1171,9 +1197,10 @@ namespace Portal.Controllers
                                             else
                                             {
                                                 var singleCharge = new MedioLibrary.Models.Singlecharge();
-                                                string aggregatorName = "MobinOneMapfa";
+                                                //string aggregatorName = "MobinOneMapfa";
+                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.MapfaOTPRequest(entity, singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo);
                                                 result.Status = singleCharge.Description;
                                             }
                                             MedioLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1195,10 +1222,11 @@ namespace Portal.Controllers
                                         else
                                         {
                                             var singleCharge = new DarchinLibrary.Models.Singlecharge();
-                                            string aggregatorName = "SamssonTci";
+                                            //string aggregatorName = "SamssonTci";
+                                            string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                             if (messageObj.Price >= 0)
-                                                singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPRequest(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
+                                                singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
                                             else
                                             {
                                                 var activeTokens = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();
@@ -1266,7 +1294,7 @@ namespace Portal.Controllers
                     }
                     else
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                    
+
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
                     else if (messageObj.MobileNumber == "Invalid Number")
@@ -1309,9 +1337,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MobinOneMapfa";
+                                        //string aggregatorName = "MobinOneMapfa";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     PhantomLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1327,9 +1356,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MobinOneMapfa";
+                                        //string aggregatorName = "MobinOneMapfa";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     TajoTakhtLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1345,9 +1375,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MobinOneMapfa";
+                                        //string aggregatorName = "MobinOneMapfa";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     HazaranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1363,9 +1394,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MobinOneMapfa";
+                                        //string aggregatorName = "MobinOneMapfa";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     LahzeyeAkharLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1381,9 +1413,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     SoltanLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1399,9 +1432,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     MenchBazLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1417,9 +1451,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "MciDirect";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     AsemanLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1434,9 +1469,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -1451,9 +1487,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "TelepromoMapfa";
+                                        //string aggregatorName = "TelepromoMapfa";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoMapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     MenchBazLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1468,9 +1505,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -1485,9 +1523,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     BehAmooz500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1503,9 +1542,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     DonyayeAsatirLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1521,9 +1561,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     FitShowLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1539,9 +1580,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     JabehAbzarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1557,9 +1599,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     ShenoYadLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1575,9 +1618,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     ShenoYad500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1593,9 +1637,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MciDirect";
+                                        //string aggregatorName = "MciDirect";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     TakavarLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1611,9 +1656,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     TamlyLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1629,9 +1675,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     Tamly500Library.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1647,9 +1694,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "Telepromo";
+                                        //string aggregatorName = "Telepromo";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.TelepromoOTPConfirmJson(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     HalgheLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1665,9 +1713,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MciDirect";
+                                        //string aggregatorName = "MciDirect";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     DezhbanLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1683,9 +1732,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MciDirect";
+                                        //string aggregatorName = "MciDirect";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     ShahreKalamehLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1701,9 +1751,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MciDirect";
+                                        //string aggregatorName = "MciDirect";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     SoratyLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1719,9 +1770,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MciDirect";
+                                        //string aggregatorName = "MciDirect";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MciDirectOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     DefendIranLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1737,9 +1789,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "PardisImi";
+                                        //string aggregatorName = "PardisImi";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.PardisImiOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                 }
@@ -1754,9 +1807,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MobinOne";
+                                        //string aggregatorName = "MobinOne";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MobinOneOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     NebulaLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1772,9 +1826,10 @@ namespace Portal.Controllers
                                         result.Status = "No Otp Request Found";
                                     else
                                     {
-                                        string aggregatorName = "MobinOneMapfa";
+                                        //string aggregatorName = "MobinOneMapfa";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.MapfaOTPConfirm(entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         result.Status = singleCharge.Description;
                                     }
                                     MedioLibrary.MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
@@ -1792,9 +1847,10 @@ namespace Portal.Controllers
                                         messageObj.Price = singleCharge.Price;
                                         messageObj.Token = singleCharge.ReferenceId;
                                         var token = singleCharge.ReferenceId;
-                                        string aggregatorName = "SamssonTci";
+                                        //string aggregatorName = "SamssonTci";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        singleCharge = await SharedLibrary.MessageSender.SamssonTciOTPConfirm(typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
                                         if (singleCharge.Description == "SUCCESS")
                                         {
                                             messageObj.Content = "Register";
@@ -1994,7 +2050,7 @@ namespace Portal.Controllers
             try
             {
                 result.Status = "error";
-                var hash = SharedLibrary.Security.GetSha256Hash("AppMessage" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.Content.Substring(0,3));
+                var hash = SharedLibrary.Security.GetSha256Hash("AppMessage" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.Content.Substring(0, 3));
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
                 else
@@ -2056,7 +2112,7 @@ namespace Portal.Controllers
                     }
                     else
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                    
+
                     if (messageObj.MobileNumber == "Invalid Mobile Number")
                         result.Status = "Invalid Mobile Number";
                     else if (messageObj.MobileNumber == "Invalid Number")

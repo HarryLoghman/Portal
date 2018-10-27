@@ -22,7 +22,7 @@ namespace DehnadTamly500Service
                         return;
                     if (eventbaseContent.Content == null || eventbaseContent.Content.Trim() == "")
                         return;
-                    var aggregatorName = Properties.Settings.Default.AggregatorName;
+                    var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                     Tamly500Library.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
                 }
@@ -56,7 +56,7 @@ namespace DehnadTamly500Service
                             //var existingSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null).Select(o => o.MobileNumber).ToList();
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
                             var imiChargeObject = Tamly500Library.MessageHandler.GetImiChargeObjectFromPrice(0, null);
-                            var aggregatorName = Properties.Settings.Default.AggregatorName;
+                            var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                             var rnd = new Random();
                             long contentId = rnd.Next(10000, 99999);

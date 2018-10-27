@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="9ebda56575074f109e97a0f267321995" Name="Diagram1">
+      <Diagram DiagramId="9ebda56575074f109e97a0f267321995" Name="Diagram1" ZoomLevel="43">
         <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="5.75" PointY="4.125" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="2.625" IsExpanded="true" />
@@ -49,8 +49,11 @@
         <EntityTypeShape EntityType="PortalModel.Referral" Width="1.5" PointX="16.375" PointY="17.75" />
         <EntityTypeShape EntityType="PortalModel.C__MigrationHistory" Width="1.5" PointX="18.375" PointY="11.75" />
 =======
->>>>>>> 49228c62def3990acee2dd6cd121b818b6d444ca
-        <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="18.375" PointY="7.75" />
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        
+        
+        <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="4.7278194486758762" PointY="11.822338512084604" />
+        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="8.2495546956777357" PointY="20.582376251268375" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

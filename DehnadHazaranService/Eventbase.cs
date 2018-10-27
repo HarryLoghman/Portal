@@ -22,7 +22,7 @@ namespace DehnadHazaranService
                         return;
                     if (eventbaseContent.Content == null || eventbaseContent.Content.Trim() == "")
                         return;
-                    var aggregatorName = Properties.Settings.Default.AggregatorName;
+                    var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                     HazaranLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
                 }
@@ -59,7 +59,7 @@ namespace DehnadHazaranService
                             //mobileNumbers = finalMobileNumbers;
                             //finalMobileNumbers.RemoveAll(o => o.Contains("09122137327"));
                             var imiChargeObject = HazaranLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
-                            var aggregatorName = Properties.Settings.Default.AggregatorName;
+                            var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                             var rnd = new Random();
                             long contentId = rnd.Next(10000, 99999);
