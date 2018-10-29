@@ -162,7 +162,7 @@ namespace BehAmooz500Library
                             else
                             {
                                 message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
-                                MessageHandler.InsertMessageToQueue(message);
+                                //MessageHandler.InsertMessageToQueue(message);
                             }
                             MessageHandler.InsertMessageToQueue(message);
                         }
@@ -211,7 +211,7 @@ namespace BehAmooz500Library
                             else
                             {
                                 message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
-                                MessageHandler.InsertMessageToQueue(message);
+                                //MessageHandler.InsertMessageToQueue(message);
                             }
                             MessageHandler.InsertMessageToQueue(message);
                         }

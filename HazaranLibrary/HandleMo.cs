@@ -156,7 +156,7 @@ namespace HazaranLibrary
 
                     if (message.ReceivedFrom.Contains("Register"))
                         isUserSendsSubscriptionKeyword = true;
-                    else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                    else if (message.ReceivedFrom.Contains("Unsubscribe") || message.ReceivedFrom.Contains("Unsubscription"))
                         isUserWantsToUnsubscribe = true;
 
                     if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)

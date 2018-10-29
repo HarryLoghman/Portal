@@ -223,6 +223,12 @@ namespace SharedLibrary
             return true;// result;
         }
 
+        /// <summary>
+        /// create a special uniqueId for the mobilenumber in serviceid and save to DB
+        /// </summary>
+        /// <param name="mobileNumber"></param>
+        /// <param name="serviceId"></param>
+        /// <returns></returns>
         public static string CampaignUniqueId(string mobileNumber, long serviceId)
         {
             var result = "1";
@@ -237,8 +243,10 @@ namespace SharedLibrary
                     var specialUniqeId = "";
                     Random random = new Random();
                     bool isUniqueIdAssigned = false;
+                    #region find uniqueID for user
                     while (isUniqueIdAssigned == false)
                     {
+                      
                         var unqiueId = random.Next(10000000, 99999999).ToString();
                         var subscriber = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId && o.ServiceId == serviceId);
                         if (subscriber == null)
@@ -247,6 +255,7 @@ namespace SharedLibrary
                             isUniqueIdAssigned = true;
                         }
                     }
+                    #endregion
                     result = specialUniqeId;
                     sub.SpecialUniqueId = specialUniqeId;
                     entity.Entry(sub).State = EntityState.Modified;
@@ -385,10 +394,10 @@ namespace SharedLibrary
             {
                 using (var entity = new PortalEntities())
                 {
-                    var otherWayAroundExits = entity.Referrals.FirstOrDefault(o => o.InviterUniqueId == inviteeUniqueId && o.InviteeUniqueId == o.InviterUniqueId);
-                    if (otherWayAroundExits != null)
+                    var inviteeInviteInviterBefore = entity.Referrals.FirstOrDefault(o => o.InviterUniqueId == inviteeUniqueId && o.InviteeUniqueId == o.InviterUniqueId);
+                    if (inviteeInviteInviterBefore != null)
                     {
-                        entity.Referrals.Remove(otherWayAroundExits);
+                        entity.Referrals.Remove(inviteeInviteInviterBefore);
                         entity.SaveChanges();
                     }
                     var isReferralExists = entity.Referrals.FirstOrDefault(o => o.InviterUniqueId == inviterUniqueId && o.InviteeUniqueId == inviteeUniqueId);

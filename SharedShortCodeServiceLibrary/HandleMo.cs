@@ -129,17 +129,21 @@ namespace SharedShortCodeServiceLibrary
                 var isUserSendsSubscriptionKeyword = SharedLibrary.ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = SharedLibrary.ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
+                #region (user wants to unsubscribe or message came from integrated panel) and it did not come from IMI UnsubscribeUserFromTelepromoService
                 if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
                 {
                     SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
                     return isSucceeded;
                 }
+                #endregion
+                #region (user wants to unsub or sub) and message did not come from IMI
                 if ((isUserWantsToUnsubscribe == true || isUserSendsSubscriptionKeyword == true) && !message.ReceivedFrom.Contains("IMI"))
                     return isSucceeded;
+                #endregion
 
                 if (message.ReceivedFrom.Contains("Register"))
                     isUserSendsSubscriptionKeyword = true;
-                else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                else if (message.ReceivedFrom.Contains("Unsubscribe") || message.ReceivedFrom.Contains("Unsubscription"))
                     isUserWantsToUnsubscribe = true;
 
                 #region user wants subscribe or unsubscribe
@@ -147,12 +151,27 @@ namespace SharedShortCodeServiceLibrary
                 {
                     if (isUserSendsSubscriptionKeyword == true)
                     {
-                        var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
-                        var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
-                        if (oldServiceSubscriber != null && oldServiceSubscriber.DeactivationDate == null)
+                        #region unsub user from old corresponding services
+                        var oldServicesStr = service.oldServiceCodes;
+                        if (!string.IsNullOrEmpty(oldServicesStr))
                         {
-                            await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(oldService.ServiceCode, message.MobileNumber, "-1");
+                            int i;
+                            string[] oldServicesArr = oldServicesStr.Split(';');
+                            for (i = 0; i <= oldServicesArr.Length - 1; i++)
+                            {
+
+                                var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(oldServicesArr[i]);
+                                var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                                if (oldServiceSubscriber != null && oldServiceSubscriber.DeactivationDate == null)
+                                {
+                                    await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(oldService.ServiceCode, message.MobileNumber, "-1");
+                                }
+
+                            }
                         }
+                        #endregion
+
+                        #region Enable2StepSubscription=true if user is verified return true
                         if (service.Enable2StepSubscription == true)
                         {
                             bool isSubscriberdVerified = ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
@@ -161,9 +180,12 @@ namespace SharedShortCodeServiceLibrary
                                 return isSucceeded;
                             }
                         }
+                        #endregion
                     }
 
                     var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
+
+                    #region received content is sub/unsub/renewal set message.SubUnSubMoMssage and message.SubUnSubType
                     if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     {
                         if (message.IsReceivedFromIntegratedPanel)
@@ -177,7 +199,11 @@ namespace SharedShortCodeServiceLibrary
                             message.SubUnSubType = 1;
                         }
                     }
+                    #endregion
+
                     var subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+
+                    #region subscriber additionalIndfo/subscriber points/add to single charge
                     if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
                     {
                         Subscribers.CreateSubscriberAdditionalInfo(connectionStringeNameInAppConfig, message.MobileNumber, service.Id);
@@ -201,9 +227,12 @@ namespace SharedShortCodeServiceLibrary
                     }
                     else
                         message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+                    #endregion
 
+                    #region campaignActive and user is active or renewal
                     if (isCampaignActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
                     {
+                        //create a special uniqueId for the mobilenumber in serviceid and save to DB
                         SharedLibrary.HandleSubscription.CampaignUniqueId(message.MobileNumber, service.Id);
                         subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                         string parentId = "1";
@@ -218,32 +247,38 @@ namespace SharedShortCodeServiceLibrary
                         if (sub != null)
                             subId = sub.SpecialUniqueId;
                         var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                        var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
-                        if (result.description == "success")
+                        if (!string.IsNullOrEmpty(service.referralUrl))
                         {
-                            if (parentId != "1")
+                            //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha)); 
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
+                            if (result.description == "success")
                             {
-                                var parentSubscriber = SharedLibrary.HandleSubscription.GetSubscriberBySpecialUniqueId(parentId);
-                                if (parentSubscriber != null)
+                                if (parentId != "1")
                                 {
-                                    var oldMobileNumber = message.MobileNumber;
-                                    var oldSubId = message.SubscriberId;
-                                    var newMessage = message;
-                                    newMessage.MobileNumber = parentSubscriber.MobileNumber;
-                                    newMessage.SubscriberId = parentSubscriber.Id;
-                                    newMessage = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                                    newMessage.Content = messagesTemplate.Where(o => o.Title == "CampaignNotifyParentForNewReferral").Select(o => o.Content).FirstOrDefault();
-                                    if (newMessage.Content.Contains("{REFERRALCODE}"))
+                                    var parentSubscriber = SharedLibrary.HandleSubscription.GetSubscriberBySpecialUniqueId(parentId);
+                                    if (parentSubscriber != null)
                                     {
-                                        newMessage.Content = message.Content.Replace("{REFERRALCODE}", parentSubscriber.SpecialUniqueId);
+                                        var oldMobileNumber = message.MobileNumber;
+                                        var oldSubId = message.SubscriberId;
+                                        var newMessage = message;
+                                        newMessage.MobileNumber = parentSubscriber.MobileNumber;
+                                        newMessage.SubscriberId = parentSubscriber.Id;
+                                        newMessage = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                                        newMessage.Content = messagesTemplate.Where(o => o.Title == "CampaignNotifyParentForNewReferral").Select(o => o.Content).FirstOrDefault();
+                                        if (newMessage.Content.Contains("{REFERRALCODE}"))
+                                        {
+                                            newMessage.Content = message.Content.Replace("{REFERRALCODE}", parentSubscriber.SpecialUniqueId);
+                                        }
+                                        MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, newMessage);
+                                        message.MobileNumber = oldMobileNumber;
+                                        message.SubscriberId = oldSubId;
                                     }
-                                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, newMessage);
-                                    message.MobileNumber = oldMobileNumber;
-                                    message.SubscriberId = oldSubId;
                                 }
                             }
                         }
                     }
+                    #endregion
+                    #region campaignActive and user is deactivated
                     else if ((isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend) && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                     {
                         var subId = "1";
@@ -252,9 +287,17 @@ namespace SharedShortCodeServiceLibrary
                         {
                             subId = sub.SpecialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+
+                            //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+
+                            if (!string.IsNullOrEmpty(service.referralUrl))
+                            {
+                                var result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            }
                         }
                     }
+                    #endregion
+
 
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
                     if (message.Content.Contains("{REFERRALCODE}"))

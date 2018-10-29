@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="9ebda56575074f109e97a0f267321995" Name="Diagram1" ZoomLevel="43">
+      <Diagram DiagramId="9ebda56575074f109e97a0f267321995" Name="Diagram1" ZoomLevel="49">
         <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="5.75" PointY="4.125" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="2.625" IsExpanded="true" />
@@ -26,7 +26,6 @@
         <EntityTypeShape EntityType="PortalModel.serviceCycle" Width="1.5" PointX="0.75" PointY="17.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ServiceInfo" Width="1.5" PointX="3" PointY="4.125" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="14.75" PointY="5.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="7.125" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SinglechargeDelivery" Width="1.5" PointX="2.75" PointY="17.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="4.75" PointY="17.375" IsExpanded="true" />
@@ -40,9 +39,6 @@
         <AssociationConnector Association="PortalModel.FK_ServiceInfo_Aggregators" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_ServiceShortCodes_Services" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_Subscribers_Subscribers" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_SubscribersPoints_Services" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
         <EntityTypeShape EntityType="PortalModel.chargeInfo" Width="1.5" PointX="4.375" PointY="0.75" />
 <<<<<<< HEAD
@@ -54,7 +50,11 @@
         
         <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="4.7278194486758762" PointY="11.822338512084604" />
         <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="8.2495546956777357" PointY="20.582376251268375" />
-      </Diagram>
+        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="10.486105167533319" PointY="29.856525628760703" />
+        <AssociationConnector Association="PortalModel.C_FK_ServiceShortCodes_Services" />
+        <AssociationConnector Association="PortalModel.C_FK_SubscribersPoints_Services" />
+        <AssociationConnector Association="PortalModel.FK_Subscribers_Services" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

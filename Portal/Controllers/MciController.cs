@@ -38,9 +38,10 @@ namespace Portal.Controllers
                     {
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(item["loc:addresses"].InnerText.Trim());
                         messageObj.ShortCode = item["loc:senderName"].InnerText.Substring(2).Trim();
-                        messageObj.Content = item["loc:message"].InnerText;
+                        messageObj.Content = HttpUtility.UrlDecode(item["loc:message"].InnerText);
                         messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                        logs.Info("MO:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
                     }
                 }
                 else
@@ -50,9 +51,10 @@ namespace Portal.Controllers
                     XmlNode contentNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/loc:sendSms/loc:message", manager);
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(mobileNumberNode.InnerText.Trim());
                     messageObj.ShortCode = shortcodeNode.InnerText.Substring(2).Trim();
-                    messageObj.Content = contentNode.InnerText;
+                    messageObj.Content = HttpUtility.UrlDecode(contentNode.InnerText);
                     messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                     SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                    logs.Info("MO:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
                 }
             }
             catch (Exception e)
@@ -89,9 +91,10 @@ namespace Portal.Controllers
                     var messageObj = new SharedLibrary.Models.MessageObject();
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(mobileNumberNode.InnerText.Trim());
                     messageObj.ShortCode = shortcodeNode.InnerText.Substring(2).Trim();
-                    messageObj.Content = contentNode.InnerText;
+                    messageObj.Content = HttpUtility.UrlDecode(contentNode.InnerText);
                     messageObj.ReceivedFrom = ip;
                     SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                    logs.Info("BatchMo:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
                 }
             }
             catch (Exception e)
@@ -207,7 +210,9 @@ namespace Portal.Controllers
                             messageObj.ReceivedFrom += "-IMI-Notify-Unsubscription";
                         SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                     }
+                    logs.Info("Notify:" + msisdn + "," + sid + "," + shortcode + "," + keyword + "," + event_type);
                 }
+
                 result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 200, "Success");
             }
             catch (Exception e)

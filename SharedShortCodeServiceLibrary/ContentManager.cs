@@ -25,7 +25,7 @@ namespace SharedShortCodeServiceLibrary
                 {
                     if (imiChargecode.Price == content)
                     {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Tamly500", "Telepromo");
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(service.ServiceCode, "Telepromo");
                         message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, imiChargecode.Price, 0, null);
                         chargecodeFound = true;
                         singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(connectionStringNameInAppConfig, message, serviceAdditionalInfo).Result;

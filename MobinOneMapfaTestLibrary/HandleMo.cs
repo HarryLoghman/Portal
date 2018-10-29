@@ -138,7 +138,7 @@ namespace MobinOneMapfaTestLibrary
 
                     if (message.ReceivedFrom.Contains("Register"))
                         isUserSendsSubscriptionKeyword = true;
-                    else if (message.ReceivedFrom.Contains("Unsubscribe"))
+                    else if (message.ReceivedFrom.Contains("Unsubscribe") || message.ReceivedFrom.Contains("Unsubscription"))
                         isUserWantsToUnsubscribe = true;
                     logs.Error("mobilenumber:" + message.MobileNumber + " - " + "23");
                     if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)

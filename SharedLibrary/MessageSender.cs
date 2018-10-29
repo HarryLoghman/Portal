@@ -42,7 +42,7 @@ namespace SharedLibrary
             else if (aggregatorNameLowerCase == "telepromo")
             {
                 if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
-                   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500")
+                   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500" || serviceAdditionalInfo["serviceCode"] == "Halghe")
                 {
                     return await TelepromoOTPRequestJSON(entity, singlecharge, message, serviceAdditionalInfo);
                 }

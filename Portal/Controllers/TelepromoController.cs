@@ -211,6 +211,8 @@ namespace Portal.Controllers
                 message.IsReceivedFromIntegratedPanel = false;
                 message.Content = keyword;
                 message.ServiceId = serviceInfo.ServiceId;
+                logs.Info("Notify:" + message.MobileNumber + ", " + message.ShortCode + "," + message.IsReceivedFromIntegratedPanel + "," + message.Content
+                    + "," + message.ServiceId);
                 if (type == "SUBSCRIBE")
                 {
                     if (serviceInfo.AggregatorServiceId == "99ae330a73b14ef085594ee348aaa06b" || serviceInfo.AggregatorServiceId == "441faa36103e44b2b2d69de90d195356"
@@ -255,7 +257,7 @@ namespace Portal.Controllers
         public HttpResponseMessage NotifyPost([FromBody]dynamic input)
         {
             //logs.Info("NotifyPost");
-            logs.Info(input);
+            
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string serviceId = input.serviceid;
@@ -272,7 +274,7 @@ namespace Portal.Controllers
             string status = input.status;
             //string validity = input.validity; //no map field in db
             //string nextRenewalDate = input.next_renewal_date; //no map field in db
-
+            logs.Info("NotifyPost:" + input.msisdn + ", " + input.shortcode + "," + input.keyword + "," + input.status);
 
             if (status != "0" && status != "5")
             {
@@ -509,7 +511,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Message(string da, string oa, string txt)
         {
-            logs.Info("message:" + da);
+            
             if (da == "989168623674" || da == "989195411097")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
@@ -520,20 +522,20 @@ namespace Portal.Controllers
             messageObj.MobileNumber = da;
             messageObj.ShortCode = oa;
             messageObj.Content = txt;
-
+            logs.Info("message:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content);
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
                 result = "-1";
             else
             {
-                
+
                 messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
                 messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                 if (messageObj.ShortCode == "307235" || messageObj.ShortCode == "307251" || messageObj.ShortCode == "3072316" || messageObj.ShortCode == "3072326")
                     messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-New500-" : null;
                 SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                
+
                 result = "";
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -545,15 +547,14 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage MessagePost([FromBody] dynamic input)
         {
-
-            //logs.Info(input);
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string shortCode = input.shortcode;
-            string message = input.message;
+            string message = HttpUtility.UrlDecode(input.message);
             string partnerName = input.partnername;
             //string transId = input.trans_id;//no map field in db
             //string dateTimeStr = input.datetime;//set while saving to db
+            logs.Info("MessagePost:" + input.msisdn + ", " + input.shortcode + "," + input.message + "," + input.partnername);
             if (msisdn == "989168623674" || msisdn == "989195411097")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
@@ -708,7 +709,7 @@ namespace Portal.Controllers
             return response;
         }
 
-       
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage UnSubscribe(string msisdn, string serviceId)
@@ -1022,7 +1023,7 @@ namespace Portal.Controllers
             return response;
         }
 
-      
+
 
     }
 }
