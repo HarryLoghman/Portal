@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ShortCodeServiceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ShortCodeServiceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -387,6 +387,15 @@
           <Property Name="Point" Type="int" Nullable="false" />
           <Property Name="PersianTitle" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
+        <EntityType Name="ServiceCommands">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="commandTitle" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="commandKeywords" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
         <EntityType Name="ServiceOffReason">
           <Key>
             <PropertyRef Name="Id" />
@@ -578,6 +587,7 @@
           <EntitySet Name="OnDemandMessagesBuffer" EntityType="Self.OnDemandMessagesBuffer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Otp" EntityType="Self.Otp" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PointsTable" EntityType="Self.PointsTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceCommands" EntityType="Self.ServiceCommands" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceOffReason" EntityType="Self.ServiceOffReason" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistics" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Settings" EntityType="Self.Settings" Schema="dbo" store:Type="Tables" />
@@ -590,8 +600,7 @@
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ShortCodeServiceModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -917,15 +926,6 @@
           <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Tag" Type="Int32" />
         </EntityType>
-        <EntityType Name="MessagesTemplate">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PersianTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="OnDemandMessagesBuffer">
           <Key>
             <PropertyRef Name="Id" />
@@ -1164,7 +1164,6 @@
           <EntitySet Name="InstallmentCycles" EntityType="Self.InstallmentCycle" />
           <EntitySet Name="MessagesArchives" EntityType="Self.MessagesArchive" />
           <EntitySet Name="MessagesMonitorings" EntityType="Self.MessagesMonitoring" />
-          <EntitySet Name="MessagesTemplates" EntityType="Self.MessagesTemplate" />
           <EntitySet Name="OnDemandMessagesBuffers" EntityType="Self.OnDemandMessagesBuffer" />
           <EntitySet Name="Otps" EntityType="Self.Otp" />
           <EntitySet Name="PointsTables" EntityType="Self.PointsTable" />
@@ -1179,7 +1178,27 @@
           <EntitySet Name="SinglechargeWaitings" EntityType="Self.SinglechargeWaiting" />
           <EntitySet Name="SubscribersAdditionalInfoes" EntityType="Self.SubscribersAdditionalInfo" />
           <EntitySet Name="TimedTempMessagesBuffers" EntityType="Self.TimedTempMessagesBuffer" />
+          <EntitySet Name="MessagesTemplates" EntityType="ShortCodeServiceModel.MessagesTemplate" />
+          <EntitySet Name="ServiceCommands" EntityType="ShortCodeServiceModel.ServiceCommand" />
         </EntityContainer>
+        <EntityType Name="MessagesTemplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PersianTitle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ServiceCommand">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="commandTitle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="commandKeywords" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1520,16 +1539,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="MessagesTemplates">
-            <EntityTypeMapping TypeName="ShortCodeServiceModel.MessagesTemplate">
-              <MappingFragment StoreEntitySet="MessagesTemplate">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="OnDemandMessagesBuffers">
             <EntityTypeMapping TypeName="ShortCodeServiceModel.OnDemandMessagesBuffer">
               <MappingFragment StoreEntitySet="OnDemandMessagesBuffer">
@@ -1766,6 +1775,26 @@
                 <ScalarProperty Name="SubUnSubType" ColumnName="SubUnSubType" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesTemplates">
+            <EntityTypeMapping TypeName="ShortCodeServiceModel.MessagesTemplate">
+              <MappingFragment StoreEntitySet="MessagesTemplate">
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="PersianTitle" ColumnName="PersianTitle" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceCommands">
+            <EntityTypeMapping TypeName="ShortCodeServiceModel.ServiceCommand">
+              <MappingFragment StoreEntitySet="ServiceCommands">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="commandKeywords" ColumnName="commandKeywords" />
+                <ScalarProperty Name="commandTitle" ColumnName="commandTitle" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

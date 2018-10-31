@@ -14,6 +14,19 @@ namespace SharedLibrary
     public class ServiceHandler
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public static Dictionary<string, string> GetAdditionalServiceInfoForSendingMessage(string serviceCode)
+        {
+            var sendInfoDic = new Dictionary<string, string>();
+            using (var entity = new PortalEntities())
+            {
+                var service = entity.Services.FirstOrDefault(o => o.ServiceCode == serviceCode);
+                var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.ServiceId == service.Id);
+                var aggregatorInfo = entity.Aggregators.FirstOrDefault(o => o.Id == serviceInfo.AggregatorId);
+
+                return GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorInfo.AggregatorName);
+            }
+        }
+
         public static Dictionary<string, string> GetAdditionalServiceInfoForSendingMessage(string serviceCode, string aggregatorName)
         {
             var sendInfoDic = new Dictionary<string, string>();
@@ -22,6 +35,7 @@ namespace SharedLibrary
                 var aggregatorInfo = entity.Aggregators.FirstOrDefault(o => o.AggregatorName == aggregatorName);
                 sendInfoDic["username"] = aggregatorInfo.AggregatorUsername;
                 sendInfoDic["password"] = aggregatorInfo.AggregatorPassword;
+                //sendInfoDic["aggregatorName"] = aggregatorInfo.AggregatorName;
                 var service = entity.Services.FirstOrDefault(o => o.ServiceCode == serviceCode);
                 var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.AggregatorId == aggregatorInfo.Id && o.ServiceId == service.Id);
                 sendInfoDic["shortCode"] = serviceInfo.ShortCode;

@@ -106,6 +106,9 @@
     <Compile Include="SharedModel\PointsTable.cs">
       <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="SharedModel\ServiceCommand.cs">
+      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="SharedModel\ServiceOffReason.cs">
       <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
     </Compile>

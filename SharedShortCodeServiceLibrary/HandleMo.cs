@@ -87,6 +87,7 @@ namespace SharedShortCodeServiceLibrary
                             message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
                             MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
                         }
+
                     }
                     else
                     {

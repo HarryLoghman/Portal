@@ -24,7 +24,7 @@ namespace SharedShortCodeServiceLibrary.SharedModel
         {
             throw new UnintentionalCodeFirstException();
         }
-
+    
         public virtual DbSet<AutochargeContent> AutochargeContents { get; set; }
         public virtual DbSet<AutochargeContentsSendedToUser> AutochargeContentsSendedToUsers { get; set; }
         public virtual DbSet<AutochargeHeaderFooter> AutochargeHeaderFooters { get; set; }
@@ -37,7 +37,6 @@ namespace SharedShortCodeServiceLibrary.SharedModel
         public virtual DbSet<InstallmentCycle> InstallmentCycles { get; set; }
         public virtual DbSet<MessagesArchive> MessagesArchives { get; set; }
         public virtual DbSet<MessagesMonitoring> MessagesMonitorings { get; set; }
-        public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
         public virtual DbSet<OnDemandMessagesBuffer> OnDemandMessagesBuffers { get; set; }
         public virtual DbSet<Otp> Otps { get; set; }
         public virtual DbSet<PointsTable> PointsTables { get; set; }
@@ -52,5 +51,7 @@ namespace SharedShortCodeServiceLibrary.SharedModel
         public virtual DbSet<SinglechargeWaiting> SinglechargeWaitings { get; set; }
         public virtual DbSet<SubscribersAdditionalInfo> SubscribersAdditionalInfoes { get; set; }
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
+        public virtual DbSet<MessagesTemplate> MessagesTemplates { get; set; }
+        public virtual DbSet<ServiceCommand> ServiceCommands { get; set; }
     }
 }

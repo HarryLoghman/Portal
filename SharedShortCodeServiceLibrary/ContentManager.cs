@@ -12,45 +12,6 @@ namespace SharedShortCodeServiceLibrary
     public class ContentManager
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static Singlecharge HandleSinglechargeContent(string connectionStringNameInAppConfig, MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
-        {
-            Singlecharge singlecharge = new Singlecharge();
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            try
-            {
-                var content = Convert.ToInt32(message.Content);
-                bool chargecodeFound = false;
-                var imiChargeCodes = ServiceHandler.GetImiChargeCodes(connectionStringNameInAppConfig);
-                foreach (var imiChargecode in imiChargeCodes)
-                {
-                    if (imiChargecode.Price == content)
-                    {
-                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(service.ServiceCode, "Telepromo");
-                        message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, imiChargecode.Price, 0, null);
-                        chargecodeFound = true;
-                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(connectionStringNameInAppConfig, message, serviceAdditionalInfo).Result;
-                        break;
-                    }
-                }
-                if (chargecodeFound == false)
-                {
-                    message = MessageHandler.SendServiceHelp(connectionStringNameInAppConfig, message, messagesTemplate);
-                    MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
-                }
-                if (singlecharge.IsSucceeded == true)
-                {
-                    message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";
-                    message = MessageHandler.SetImiChargeInfo( connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                    MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in ContentManager: ", e);
-            }
-            return singlecharge;
-        }
-
         public static bool DeleteFromSinglechargeQueue(string connectionStringNameInAppConfig, string mobileNumber)
         {
             bool succeed = false;
@@ -119,7 +80,7 @@ namespace SharedShortCodeServiceLibrary
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
                     if (isInBlackList == true)
                         isCampaignActive = (int)CampaignStatus.Deactive;
-                    message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig ,message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                     {
                         if (isCampaignActive == (int)CampaignStatus.Active)
@@ -129,104 +90,119 @@ namespace SharedShortCodeServiceLibrary
                         MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
                         return;
                     }
-                    else if (message.Content.ToLower() == "h")
+                    else 
                     {
-                        if (isCampaignActive == (int)CampaignStatus.Active)
-                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignHContent").Select(o => o.Content).FirstOrDefault();
-                        else
-                            message.Content = messagesTemplate.Where(o => o.Title == "HContent").Select(o => o.Content).FirstOrDefault();
-                        MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
-                        return;
-                    }
-                    else if (message.Content.ToLower() == "s")
-                    {
-                        if (isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend)
+                        var command = entity.ServiceCommands.Where(o => o.commandKeywords.ToLower().StartsWith(message.Content.ToLower() + ";")
+                          || o.commandKeywords.ToLower().Contains(";" + message.Content.ToLower() + ";")).FirstOrDefault();
+                        if (command != null)
                         {
-                            string subId = "1";
-                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
-                            if (sub != null && sub.SpecialUniqueId != null)
+                            if (command.commandTitle.ToLower() == "help")
                             {
-                                subId = sub.SpecialUniqueId;
-                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
-                                string n = result.n.ToString();
-                                string m = result.m.ToString();
-                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberStatus").Select(o => o.Content).FirstOrDefault();
-                                message.Content = message.Content.Replace("{m}", m);
-                                message.Content = message.Content.Replace("{n}", n);
-                                if (message.Content.Contains("{REFERRALCODE}"))
-                                {
-                                    message.Content = message.Content.Replace("{REFERRALCODE}", subId);
-                                }
-                            }
-                            else
-                            {
-                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                if (isCampaignActive == (int)CampaignStatus.Active)
+                                    message.Content = messagesTemplate.Where(o => o.Title == "CampaignHContent").Select(o => o.Content).FirstOrDefault();
+                                else
+                                    message.Content = messagesTemplate.Where(o => o.Title == "HContent").Select(o => o.Content).FirstOrDefault();
                                 MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
                             }
-                            MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
-                        }
-                        else
-                        {
-                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
-                            MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
-                        }
-                        return;
-                    }
-                    else if (message.Content.ToLower() == "g")
-                    {
-                        if (isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend)
-                        {
-                            string subId = "1";
-                            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
-                            if (sub != null && sub.SpecialUniqueId != null)
+                            else if (command.commandTitle.ToLower() == "status")
                             {
-                                subId = sub.SpecialUniqueId;
-                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
-                                var chargesList = new List<string>();
-                                foreach (var item in result.charges)
+                                if (isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend)
                                 {
-                                    chargesList.Add(item.ToString());
-                                }
-                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberCharges").Select(o => o.Content).FirstOrDefault();
-                                message.Content = message.Content.Replace("{count}", chargesList.Count.ToString());
-                                if (chargesList.Count > 0)
-                                {
-                                    var text = "";
-                                    foreach (var item in chargesList)
+                                    string subId = "1";
+                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                                    if (sub != null && sub.SpecialUniqueId != null)
                                     {
-                                        text = text + item + Environment.NewLine;
+                                        subId = sub.SpecialUniqueId;
+                                        var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                        //dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                        dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                        string n = result.n.ToString();
+                                        string m = result.m.ToString();
+                                        message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                        message.Content = message.Content.Replace("{m}", m);
+                                        message.Content = message.Content.Replace("{n}", n);
+                                        if (message.Content.Contains("{REFERRALCODE}"))
+                                        {
+                                            message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                        }
                                     }
-                                    message.Content = message.Content.Replace("{charges}", text);
+                                    else
+                                    {
+                                        message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                        //MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
+                                    }
+                                    MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
                                 }
                                 else
-                                    message.Content = message.Content.Replace("{charges}", "");
-
-                                if (message.Content.Contains("{REFERRALCODE}"))
                                 {
-                                    message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                    message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                    MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
                                 }
+                                return;
                             }
-                            else
+                            else if (message.Content.ToLower() == "charge")
                             {
-                                message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
-                                MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
+                                if (isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend)
+                                {
+                                    string subId = "1";
+                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                                    if (sub != null && sub.SpecialUniqueId != null)
+                                    {
+                                        subId = sub.SpecialUniqueId;
+                                        var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                        //dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                        dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                        var chargesList = new List<string>();
+                                        foreach (var item in result.charges)
+                                        {
+                                            chargesList.Add(item.ToString());
+                                        }
+                                        message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberCharges").Select(o => o.Content).FirstOrDefault();
+                                        message.Content = message.Content.Replace("{count}", chargesList.Count.ToString());
+                                        if (chargesList.Count > 0)
+                                        {
+                                            var text = "";
+                                            foreach (var item in chargesList)
+                                            {
+                                                text = text + item + Environment.NewLine;
+                                            }
+                                            message.Content = message.Content.Replace("{charges}", text);
+                                        }
+                                        else
+                                            message.Content = message.Content.Replace("{charges}", "");
+
+                                        if (message.Content.Contains("{REFERRALCODE}"))
+                                        {
+                                            message.Content = message.Content.Replace("{REFERRALCODE}", subId);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberStatus").Select(o => o.Content).FirstOrDefault();
+                                        //MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
+                                    }
+                                    MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
+                                }
+                                else
+                                {
+                                    message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberCharges").Select(o => o.Content).FirstOrDefault();
+                                    MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
+                                }
+                                return;
                             }
-                            MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
+                            else if (command.commandTitle.ToLower() == "content77")
+                            {
+                                message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();
+                                MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
+                                return;
+                            }
+                            else if(command.commandTitle.ToLower()=="junk")
+                            {
+                                //e.g. 30 for tamly500
+                                return;
+                            }
                         }
-                        else
-                        {
-                            message.Content = messagesTemplate.Where(o => o.Title == "CampaignOffSubscriberCharges").Select(o => o.Content).FirstOrDefault();
-                            MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
-                        }
-                        return;
-                    }
-                    else if (message.Content == "77" || message.Content.ToLower() == "m")
-                    {
-                        message.Content = messagesTemplate.Where(o => o.Title == "Content77Response").Select(o => o.Content).FirstOrDefault();
-                        MessageHandler.InsertMessageToQueue(connectionStringNameInAppConfig, message);
-                        return;
+                      
                     }
                     if (!service.OnKeywords.Contains(message.Content))
                     {
