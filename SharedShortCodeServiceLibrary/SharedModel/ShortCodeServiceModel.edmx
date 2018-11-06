@@ -393,8 +393,10 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="commandTitle" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="commandKeywords" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="condition" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="priority" Type="int" />
+          <Property Name="state" Type="int" />
         </EntityType>
         <EntityType Name="ServiceOffReason">
           <Key>
@@ -1196,8 +1198,10 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="commandTitle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="commandKeywords" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="condition" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="priority" Type="Int32" />
+          <Property Name="state" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1791,8 +1795,10 @@
           <EntitySetMapping Name="ServiceCommands">
             <EntityTypeMapping TypeName="ShortCodeServiceModel.ServiceCommand">
               <MappingFragment StoreEntitySet="ServiceCommands">
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="priority" ColumnName="priority" />
                 <ScalarProperty Name="description" ColumnName="description" />
-                <ScalarProperty Name="commandKeywords" ColumnName="commandKeywords" />
+                <ScalarProperty Name="condition" ColumnName="condition" />
                 <ScalarProperty Name="commandTitle" ColumnName="commandTitle" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>

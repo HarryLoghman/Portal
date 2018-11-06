@@ -547,14 +547,16 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage MessagePost([FromBody] dynamic input)
         {
+            
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string shortCode = input.shortcode;
-            string message = HttpUtility.UrlDecode(input.message);
+            logs.Info("MessagePost:" + input.msisdn + ", " + input.shortcode + "," + input.message + "," + input.partnername);
+            string message = HttpUtility.UrlDecode(input.message.Value.ToString());
             string partnerName = input.partnername;
             //string transId = input.trans_id;//no map field in db
             //string dateTimeStr = input.datetime;//set while saving to db
-            logs.Info("MessagePost:" + input.msisdn + ", " + input.shortcode + "," + input.message + "," + input.partnername);
+            
             if (msisdn == "989168623674" || msisdn == "989195411097")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);

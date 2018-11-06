@@ -9,11 +9,16 @@ using System.Threading.Tasks;
 
 namespace ShenoYad500Library
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public override Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
+            return base.ReceivedMessage(message, service);
+        }
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
+        {
+            logs.Info("Sheno12345start");
             bool isSucceeded = true;
             using (var entity = new ShenoYad500Entities())
             {
@@ -137,7 +142,7 @@ namespace ShenoYad500Library
                     }
                     return isSucceeded;
                 }
-
+                logs.Info("Sheno12345here" );
                 var isUserSendsSubscriptionKeyword = SharedLibrary.ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = SharedLibrary.ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
 
@@ -153,7 +158,7 @@ namespace ShenoYad500Library
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe") || message.ReceivedFrom.Contains("Unsubscription"))
                     isUserWantsToUnsubscribe = true;
-
+                logs.Info("Sheno123" + isUserWantsToUnsubscribe);
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
                     if (isUserSendsSubscriptionKeyword == true)
@@ -228,7 +233,7 @@ namespace ShenoYad500Library
                     }
                     else
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
-
+                    logs.Info("Sheno" + message.Content);
                     if (isCampaignActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
                     {
                         SharedLibrary.HandleSubscription.CampaignUniqueId(message.MobileNumber, service.Id);
@@ -282,7 +287,7 @@ namespace ShenoYad500Library
                             var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/shenoyad500/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                         }
                     }
-
+                    
                     message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
                     if (message.Content.Contains("{REFERRALCODE}"))
                     {
@@ -292,6 +297,7 @@ namespace ShenoYad500Library
                             subId = sub.SpecialUniqueId;
                         message.Content = message.Content.Replace("{REFERRALCODE}", subId);
                     }
+                    logs.Info("Sheno2" + message.Content);
                     MessageHandler.InsertMessageToQueue(message);
                     //if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                     //{

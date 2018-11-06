@@ -92,8 +92,8 @@ namespace SharedShortCodeServiceLibrary
                     }
                     else 
                     {
-                        var command = entity.ServiceCommands.Where(o => o.commandKeywords.ToLower().StartsWith(message.Content.ToLower() + ";")
-                          || o.commandKeywords.ToLower().Contains(";" + message.Content.ToLower() + ";")).FirstOrDefault();
+                        var command = "help";
+                        /*
                         if (command != null)
                         {
                             if (command.commandTitle.ToLower() == "help")
@@ -202,7 +202,7 @@ namespace SharedShortCodeServiceLibrary
                                 return;
                             }
                         }
-                      
+                      */
                     }
                     if (!service.OnKeywords.Contains(message.Content))
                     {

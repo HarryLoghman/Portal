@@ -16,7 +16,7 @@ namespace SharedShortCodeServiceLibrary.SharedModel
     public partial class ShortCodeServiceEntities : DbContext
     {
         public ShortCodeServiceEntities(string connectionStringNameInAppConfig)
-            : base("name=" + connectionStringNameInAppConfig)
+           : base("name=" + connectionStringNameInAppConfig)
         {
         }
 

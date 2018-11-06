@@ -16,7 +16,9 @@ namespace SharedShortCodeServiceLibrary.SharedModel
     {
         public int id { get; set; }
         public string commandTitle { get; set; }
-        public string commandKeywords { get; set; }
+        public string condition { get; set; }
         public string description { get; set; }
+        public Nullable<int> priority { get; set; }
+        public Nullable<int> state { get; set; }
     }
 }

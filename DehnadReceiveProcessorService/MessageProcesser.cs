@@ -686,7 +686,11 @@ namespace DehnadReceiveProcessorService
                 else if (service.ServiceCode == "ShenoYad")
                     isSucceeded = ShenoYadLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "ShenoYad500")
-                    isSucceeded = ShenoYad500Library.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    ShenoYad500Library.HandleMo h = new ShenoYad500Library.HandleMo();
+                    isSucceeded= h.ReceivedMessage(message, service).Result;
+                }
+                    //isSucceeded = (new ShenoYad500Library.HandleMo()).ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "FitShow")
                     isSucceeded = FitShowLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Takavar")
