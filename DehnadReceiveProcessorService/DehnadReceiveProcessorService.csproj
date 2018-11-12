@@ -111,6 +111,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AcharLibrary\AcharLibrary.csproj">
+      <Project>{42513ea5-5bd7-4436-8c9a-f273d15cb4f9}</Project>
+      <Name>AcharLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AsemanLibrary\AsemanLibrary.csproj">
       <Project>{14344114-121b-1513-431d-4b42fb131141}</Project>
       <Name>AsemanLibrary</Name>

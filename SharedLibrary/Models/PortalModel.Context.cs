@@ -63,6 +63,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
         public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
         public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<MCISingleChargeFtpFile> MCISingleChargeFtpFiles { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

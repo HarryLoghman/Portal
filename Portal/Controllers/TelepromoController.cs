@@ -257,7 +257,7 @@ namespace Portal.Controllers
         public HttpResponseMessage NotifyPost([FromBody]dynamic input)
         {
             //logs.Info("NotifyPost");
-            
+
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string serviceId = input.serviceid;
@@ -511,7 +511,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Message(string da, string oa, string txt)
         {
-            
+
             if (da == "989168623674" || da == "989195411097")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
@@ -547,7 +547,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage MessagePost([FromBody] dynamic input)
         {
-            
+
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string shortCode = input.shortcode;
@@ -556,7 +556,7 @@ namespace Portal.Controllers
             string partnerName = input.partnername;
             //string transId = input.trans_id;//no map field in db
             //string dateTimeStr = input.datetime;//set while saving to db
-            
+
             if (msisdn == "989168623674" || msisdn == "989195411097")
             {
                 var blackListResponse = new HttpResponseMessage(HttpStatusCode.OK);
@@ -746,7 +746,11 @@ namespace Portal.Controllers
                     if (service.ServiceCode == "Soltan")
                         SoltanLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "JabehAbzar")
-                        JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
+                    {
+                        JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                        h.ReceivedMessage(message, service);
+                    }
+                    //JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "Tamly")
                         TamlyLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "DonyayeAsatir")

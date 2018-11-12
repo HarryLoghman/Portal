@@ -649,6 +649,7 @@ namespace DehnadReceiveProcessorService
         private static bool ChooseService(MessageObject message, SharedLibrary.Models.Service service)
         {
             bool isSucceeded = true;
+            //logs.Info(service.ServiceCode);
             try
             {
                 if (service.ServiceCode == "MyLeague")
@@ -678,7 +679,11 @@ namespace DehnadReceiveProcessorService
                 else if (service.ServiceCode == "BimeIran")
                     isSucceeded = BimeIranLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "JabehAbzar")
-                    isSucceeded = JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                    isSucceeded = h.ReceivedMessage(message, service).Result;
+                }
+                //isSucceeded = JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Tamly")
                     isSucceeded = TamlyLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Tamly500")
@@ -688,9 +693,9 @@ namespace DehnadReceiveProcessorService
                 else if (service.ServiceCode == "ShenoYad500")
                 {
                     ShenoYad500Library.HandleMo h = new ShenoYad500Library.HandleMo();
-                    isSucceeded= h.ReceivedMessage(message, service).Result;
+                    isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
-                    //isSucceeded = (new ShenoYad500Library.HandleMo()).ReceivedMessage(message, service).Result;
+                //isSucceeded = (new ShenoYad500Library.HandleMo()).ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "FitShow")
                     isSucceeded = FitShowLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Takavar")
@@ -739,10 +744,15 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = HazaranLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Halghe")
                     isSucceeded = HalgheLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                else if (service.ServiceCode == "Achar")
+                {
+                    AcharLibrary.HandleMo h = new AcharLibrary.HandleMo();
+                    isSucceeded = h.ReceivedMessage(message, service).Result;
+                }
             }
             catch (Exception e)
             {
-                logs.Error("Exception in ChooseService: " + e);
+                logs.Error("Exception in ChooseService: " + service.ServiceCode + "," + message.MobileNumber + "," + e);
             }
             return isSucceeded;
         }

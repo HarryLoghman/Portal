@@ -13,7 +13,7 @@
         <EntityTypeShape EntityType="PortalModel.Audit" Width="1.5" PointX="7.75" PointY="8.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.BlackList" Width="1.5" PointX="9.75" PointY="8.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.BulkList" Width="1.5" PointX="9.75" PointY="11.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="5.75" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="7.75" PointY="12.125" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.JhoobinSetting" Width="1.5" PointX="11.75" PointY="8.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.Operator" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.OperatorsPlan" Width="1.5" PointX="11.75" PointY="11.375" IsExpanded="true" />
@@ -54,6 +54,7 @@
         <AssociationConnector Association="PortalModel.C_FK_ServiceShortCodes_Services" />
         <AssociationConnector Association="PortalModel.C_FK_SubscribersPoints_Services" />
         <AssociationConnector Association="PortalModel.FK_Subscribers_Services" />
+        <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="3.7714124674775693" PointY="19.481614941489703" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

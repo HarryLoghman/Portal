@@ -189,6 +189,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Achar\AcharAreaRegistration.cs" />
+    <Compile Include="Areas\Achar\Controllers\EventbaseContentsController.cs" />
+    <Compile Include="Areas\Achar\Controllers\MessagesTemplate.cs" />
+    <Compile Include="Areas\Achar\Controllers\MonitoringController.cs" />
+    <Compile Include="Areas\Achar\Controllers\ReceiveController.cs" />
+    <Compile Include="Areas\Achar\Controllers\SendDirectMessageController.cs" />
+    <Compile Include="Areas\Achar\Controllers\SentMessagesController.cs" />
+    <Compile Include="Areas\Achar\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\AvvalPod500\AvvalPod500AreaRegistration.cs" />
     <Compile Include="Areas\AvvalPod500\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\AvvalPod500\Controllers\MessagesTemplate.cs" />
@@ -1650,6 +1658,16 @@
     <Content Include="Areas\Halghe\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Halghe\Views\web.config" />
     <Content Include="Areas\Halghe\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Achar\Views\EventbaseContents\Index.cshtml" />
+    <Content Include="Areas\Achar\Views\MessagesTemplate\Index.cshtml" />
+    <Content Include="Areas\Achar\Views\Monitoring\Index.cshtml" />
+    <Content Include="Areas\Achar\Views\Receive\Index.cshtml" />
+    <Content Include="Areas\Achar\Views\SendDirectMessage\Index.cshtml" />
+    <Content Include="Areas\Achar\Views\SentMessages\Index.cshtml" />
+    <Content Include="Areas\Achar\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Achar\Views\Statistics\Index.cshtml" />
+    <Content Include="Areas\Achar\Views\web.config" />
+    <Content Include="Areas\Achar\Views\_ViewStart.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Highstock\adapters\standalone-framework.js" />
@@ -2000,6 +2018,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Achar\Models\" />
     <Folder Include="Areas\Aseman\Models\" />
     <Folder Include="Areas\Ashpazkhoone\Models\" />
     <Folder Include="Areas\AvvalPod500\Models\" />
@@ -2082,6 +2101,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AcharLibrary\AcharLibrary.csproj">
+      <Project>{42513ea5-5bd7-4436-8c9a-f273d15cb4f9}</Project>
+      <Name>AcharLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AsemanLibrary\AsemanLibrary.csproj">
       <Project>{14344114-121b-1513-431d-4b42fb131141}</Project>
       <Name>AsemanLibrary</Name>
@@ -2237,6 +2260,10 @@
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\ShenoYad500Library\ShenoYad500Library.csproj">
       <Project>{1c2c541d-aa02-1ec1-acfc-45d23145b565}</Project>

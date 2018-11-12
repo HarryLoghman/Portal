@@ -30,10 +30,13 @@ namespace SharedLibrary
 
         public static async Task<dynamic> OTPRequestGeneral(string aggregatorName, dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
+            logs.Info("OTPRequestGeneral,Start," + message.ServiceCode + "," + message.MobileNumber + "," + aggregatorName);
+            Task<dynamic> result;
             string aggregatorNameLowerCase = aggregatorName.ToLower();
             if (aggregatorNameLowerCase == "mobinonemapfa")
             {
                 return await MapfaOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
+
             }
             else if (aggregatorNameLowerCase == "mcidirect")
             {
@@ -61,17 +64,23 @@ namespace SharedLibrary
             }
             else if (aggregatorNameLowerCase == "mobinone")
             {
-                return await MobinOneCharge(entity, singlecharge, message, serviceAdditionalInfo);
+                return await MobinOneOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
+
             }
             else if (aggregatorNameLowerCase == "samssontci")
             {
                 return await SamssonTciOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
             }
             else return null;
+            //else return null;
+            logs.Info("OTPRequestGeneral,End," + message.ServiceCode + "," + message.MobileNumber);
+            return result;
         }
 
         public static async Task<dynamic> OTPConfirmGeneral(string aggregatorName, dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmCode)
         {
+            logs.Info("OTPConfirmGeneral,Start," + message.ServiceCode + "," + message.MobileNumber);
+            Task<dynamic> result = null;
             string aggregatorNameLowerCase = aggregatorName.ToLower();
             if (aggregatorNameLowerCase == "mobinonemapfa")
             {
@@ -110,6 +119,8 @@ namespace SharedLibrary
                 return await SamssonTciOTPConfirm(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
             }
             else return null;
+            logs.Info("OTPConfirmGeneral,End," + message.ServiceCode + "," + message.MobileNumber);
+            return result;
         }
 
 
@@ -1675,7 +1686,7 @@ namespace SharedLibrary
 
         public static async Task<dynamic> MapfaOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
-
+            logs.Info("MapfaOTPRequest:start" + message.ServiceCode + "," + message.MobileNumber);
             entity.Configuration.AutoDetectChangesEnabled = false;
             singlecharge.MobileNumber = message.MobileNumber;
             try
@@ -1721,6 +1732,7 @@ namespace SharedLibrary
                 logs.Error("Exception in MapfaOTPRequest: " + e);
                 singlecharge.Description = "Exception";
             }
+            logs.Info("MapfaOTPRequest:end" + message.ServiceCode + "," + message.MobileNumber);
             return singlecharge;
         }
 
@@ -2392,6 +2404,7 @@ namespace SharedLibrary
 
         public static async Task SendMesssagesToMobinOne(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo, bool isBulk = false)
         {
+
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
@@ -2446,8 +2459,24 @@ namespace SharedLibrary
                         var messageId = rnd.Next(1000000, 9999999).ToString();
                         smsList.requestId[index] = messageId.ToString();
                     }
+
                     using (var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient())
                     {
+                        logs.Info("SendMesssagesToMobinOne5:beforesendsms");
+                        logs.Info("smsList.type:" + smsList.type);
+                        logs.Info("smsList.username:" + smsList.username);
+                        logs.Info("smsList.pass:" + smsList.password);
+                        logs.Info("smsList.shortcode:" + smsList.shortcode);
+                        logs.Info("smsList.servicekey:" + smsList.servicekey);
+
+                        for (int i=0; i <= smsList.number.Length - 1; i++)
+                        {
+                            logs.Info("smsList.number[" + i.ToString() + "]:" + smsList.number[i]
+                                + ",smsList.message[" + i.ToString() + "]:" + smsList.message[i]
+                                + ",smsList.chargeCode[" + i.ToString() + "]:" + smsList.chargecode[i]
+                                + ",smsList.price[" + i.ToString() + "]:" + smsList.amount[i]
+                                + ",smsList.requestId[" + i.ToString() + "]:" + smsList.requestId[i]);
+                        }
                         var result = mobineOneClient.sendSms(smsList);
                         logs.Info("response:" + result);
                         if (result.Length == 0)
@@ -2524,7 +2553,9 @@ namespace SharedLibrary
 
                 using (var client = new MobinOneServiceReference.tpsPortTypeClient())
                 {
+                    logs.Error("MobinOneOTPRequest:inAppCharge(\"" + serviceAdditionalInfo["username"] + "\",\"" + serviceAdditionalInfo["password"] + "\",\"" + shortCode + "\",\"" + serviceAdditionalInfo["aggregatorServiceId"] + "\",\"" + message.ImiChargeKey + "\",\"" + mobile + "\",\"" + stringedPrice + "\",\"" + requestId + "\")");
                     var result = client.inAppCharge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
+                    logs.Error("MobinOneOTPRequest:Result:" + result);
                     var splitedResult = result.Split('-');
 
                     if (splitedResult[0] == "Success")
@@ -2563,6 +2594,7 @@ namespace SharedLibrary
 
         public static async Task<dynamic> MobinOneOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
+            logs.Error("mobineoneotpConfirm");
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
             {
@@ -2574,7 +2606,9 @@ namespace SharedLibrary
                 var txCode = optIdsSplitted[1];
                 using (var client = new MobinOneServiceReference.tpsPortTypeClient())
                 {
+                    logs.Error("MobinOneOTPConfirm:inAppChargeConfirm(\"" + serviceAdditionalInfo["username"] + "\",\"" + serviceAdditionalInfo["password"] + "\",\"" + transactionId + "\",\"" + txCode + "\",\"" + confirmationCode + "\")");
                     var result = client.inAppChargeConfirm(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], transactionId, txCode, confirmationCode);
+                    logs.Error("MobinOneOTPConfirm:Result:" + result);
                     var splitedResult = result.Split('-');
 
                     if (splitedResult[1] == "ACCEPTED")
@@ -2584,6 +2618,8 @@ namespace SharedLibrary
                     }
                     else
                         singlecharge.Description = result;
+
+                    logs.Error("mobineoneotpConfirm," + result);
                     entity.Entry(singlecharge).State = EntityState.Modified;
                     entity.SaveChanges();
                 }
@@ -2602,6 +2638,7 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
+                logs.Error("nebula,exception0");
                 var shortCode = "98" + serviceAdditionalInfo["shortCode"];
                 var mobile = "98" + message.MobileNumber.TrimStart('0');
                 var stringedPrice = ""; // (message.Price * 10).ToString();
@@ -2609,18 +2646,22 @@ namespace SharedLibrary
                     stringedPrice = "";
                 var rnd = new Random();
                 var requestId = rnd.Next(1000000, 9999999).ToString();
-
+                logs.Error("nebula,exception1");
                 var client = new MobinOneServiceReference.tpsPortTypeClient();
-                var result = client.charge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
-                var splitedResult = result.Split('-');
+                logs.Error(serviceAdditionalInfo["username"] + "," + serviceAdditionalInfo["password"] + "," + shortCode + "," + serviceAdditionalInfo["aggregatorServiceId"] + "," + message.ImiChargeKey + "," + mobile + "," + stringedPrice + "," + requestId);
 
+                var result = client.charge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
+                logs.Error("nebula,exceptio3");
+                var splitedResult = result.Split('-');
+                logs.Error("nebula,exception4");
                 if (splitedResult[0] == "Success")
                     singlecharge.IsSucceeded = true;
                 else
                     singlecharge.IsSucceeded = false;
-
+                logs.Error("nebula," + result);
                 singlecharge.Description = splitedResult[1] + "-" + splitedResult[2];
                 singlecharge.ReferenceId = splitedResult[3];
+                logs.Error("nebula,exception6");
             }
             catch (Exception e)
             {

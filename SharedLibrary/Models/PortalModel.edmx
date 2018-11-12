@@ -147,6 +147,19 @@
           <Property Name="SubscriptionsViewState" Type="nvarchar" MaxLength="255" />
           <Property Name="AccessToken" Type="nvarchar" MaxLength="255" />
         </EntityType>
+        <EntityType Name="MCISingleChargeFtpFiles">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="serverIP" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="ftpDirectory" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="fileName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="identifier" Type="nvarchar" MaxLength="500" />
+          <Property Name="processDateTime" Type="datetime" />
+          <Property Name="processLines" Type="int" />
+          <Property Name="chargeCount" Type="int" />
+        </EntityType>
         <EntityType Name="Operators">
           <Key>
             <PropertyRef Name="Id" />
@@ -664,6 +677,7 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="chargeInfo" EntityType="Self.chargeInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MCISingleChargeFtpFiles" EntityType="Self.MCISingleChargeFtpFiles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Operators" EntityType="Self.Operators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
@@ -1370,6 +1384,7 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
             <End Role="Service" EntitySet="Services" />
             <End Role="Subscriber" EntitySet="Subscribers" />
           </AssociationSet>
+          <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1500,6 +1515,19 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="MCISingleChargeFtpFile">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="serverIP" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ftpDirectory" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="fileName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="processDateTime" Type="DateTime" Precision="3" />
+          <Property Name="processLines" Type="Int32" />
+          <Property Name="chargeCount" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2039,6 +2067,20 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MCISingleChargeFtpFiles">
+            <EntityTypeMapping TypeName="PortalModel.MCISingleChargeFtpFile">
+              <MappingFragment StoreEntitySet="MCISingleChargeFtpFiles">
+                <ScalarProperty Name="chargeCount" ColumnName="chargeCount" />
+                <ScalarProperty Name="processLines" ColumnName="processLines" />
+                <ScalarProperty Name="processDateTime" ColumnName="processDateTime" />
+                <ScalarProperty Name="identifier" ColumnName="identifier" />
+                <ScalarProperty Name="fileName" ColumnName="fileName" />
+                <ScalarProperty Name="ftpDirectory" ColumnName="ftpDirectory" />
+                <ScalarProperty Name="serverIP" ColumnName="serverIP" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

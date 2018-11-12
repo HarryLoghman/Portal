@@ -132,18 +132,26 @@ namespace SharedShortCodeServiceLibrary
                         }
                         else
                         {
-                            MethodInfo method = cr.CompiledAssembly.GetType("runTimeEvaluation").GetMethod("EvaluateCondition");
-                            evaluateResult = (bool)method.Invoke(null, new object[] { message.Content, message.ReceivedFrom, message.ShortCode });
-                            if (evaluateResult)
+                            try
                             {
-                                logs.Info("EvaluateCommandFromDatabase" + row.commandTitle.ToString());
-                                if (Enum.TryParse(row.commandTitle, out commandTemp))
+                                MethodInfo method = cr.CompiledAssembly.GetType("runTimeEvaluation").GetMethod("EvaluateCondition");
+                                evaluateResult = (bool)method.Invoke(null, new object[] { message.Content, message.ReceivedFrom, message.ShortCode });
+                                if (evaluateResult)
                                 {
-                                    if (command == enumCommand.unknown)
-                                        command = commandTemp;
-                                    else
-                                        command = command | commandTemp;
+                                    logs.Info("EvaluateCommandFromDatabase" + row.commandTitle.ToString());
+                                    if (Enum.TryParse(row.commandTitle, out commandTemp))
+                                    {
+                                        if (command == enumCommand.unknown)
+                                            command = commandTemp;
+                                        else
+                                            command = command | commandTemp;
+                                    }
                                 }
+
+                            }
+                            catch (Exception e)
+                            {
+                                logs.Error(connectionStringeNameInAppConfig + ",commandTitle:" + row.commandTitle + ",condition:" + row.condition, e);
                             }
                         }
                     }
@@ -181,7 +189,7 @@ namespace SharedShortCodeServiceLibrary
                     message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
 
                     enumCommand command = EvaluateCommandFromDatabase(connectionStringeNameInAppConfig, message);
-                    logs.Info("ReceivedMessage:Command:" + command.ToString() + "," + ((command & enumCommand.OTPRequest) == enumCommand.OTPRequest).ToString());
+                    logs.Info("ReceivedMessage:Command:" + command.ToString() + "," + message.ShortCode + "," + message.MobileNumber);
 
                     if ((command & enumCommand.AppMessage) == enumCommand.AppMessage)
                     {

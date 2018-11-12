@@ -206,7 +206,6 @@ namespace DehnadReceiveProcessorService
             }
         }
 
-
         public static async Task TelepromoGetDailyIncomeTemp(string serviceCode, string date)
         {
             logs.Info("TelepromoGetDailyIncomeTemp " + serviceCode + " " + date + " start");
