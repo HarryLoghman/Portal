@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DehnadMCISingleChargeFTPService.Properties {
+namespace DehnadMCIFtpChargingService.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -61,13 +61,37 @@ namespace DehnadMCISingleChargeFTPService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\ImiFtps\\Mci_Direct_New")]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\ImiFtps\\MciDirectNew")]
         public string LocalPath {
             get {
                 return ((string)(this["LocalPath"]));
             }
             set {
                 this["LocalPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("900")]
+        public string TimeIntervalInSecond {
+            get {
+                return ((string)(this["TimeIntervalInSecond"]));
+            }
+            set {
+                this["TimeIntervalInSecond"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public string SaveFailFilesToSingleCharge {
+            get {
+                return ((string)(this["SaveFailFilesToSingleCharge"]));
+            }
+            set {
+                this["SaveFailFilesToSingleCharge"] = value;
             }
         }
     }

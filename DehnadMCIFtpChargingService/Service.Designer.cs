@@ -1,4 +1,4 @@
-﻿namespace DehnadMCISingleChargeFTPService
+﻿namespace DehnadMCIFtpChargingService
 {
     partial class Service
     {

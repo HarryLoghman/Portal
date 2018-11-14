@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
-namespace DehnadMCISingleChargeFTPService
+namespace DehnadMCIFtpChargingService
 {
     static class Program
     {
@@ -16,6 +16,8 @@ namespace DehnadMCISingleChargeFTPService
         /// </summary>
         static void Main()
         {
+            System.IO.Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
+            
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {

@@ -403,6 +403,8 @@ namespace DehnadReceiveProcessorService
         }
         private void FtpWorkerThread()
         {
+            return;
+
             var ftp = new Ftp();
             var counter = 1;
             if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("08:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("12:00:00"))

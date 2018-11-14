@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadMCISingleChargeFTPService.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadMCIFtpChargingService.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="ServerFtpIP" Type="System.String" Scope="User">
@@ -12,7 +12,13 @@
       <Value Profile="(Default)">d9H&amp;*&amp;123</Value>
     </Setting>
     <Setting Name="LocalPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">E:\ImiFtps\Mci_Direct_New</Value>
+      <Value Profile="(Default)">E:\ImiFtps\MciDirectNew</Value>
+    </Setting>
+    <Setting Name="TimeIntervalInSecond" Type="System.String" Scope="User">
+      <Value Profile="(Default)">900</Value>
+    </Setting>
+    <Setting Name="SaveFailFilesToSingleCharge" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
     </Setting>
   </Settings>
 </SettingsFile>

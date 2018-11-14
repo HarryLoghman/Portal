@@ -217,11 +217,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadHalgheService", "Dehn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedShortCodeServiceLibrary", "SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj", "{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMCISingleChargeFTPService", "DehnadMCISingleChargeFTPService\DehnadMCISingleChargeFTPService.csproj", "{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcharLibrary", "AcharLibrary\AcharLibrary.csproj", "{42513EA5-5BD7-4436-8C9A-F273D15CB4F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadAcharService", "DehnadAcharService\DehnadAcharService.csproj", "{574824E7-5CF8-4AFC-9493-645EB6133069}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMCIFtpChargingService", "DehnadMCIFtpChargingService\DehnadMCIFtpChargingService.csproj", "{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -657,10 +657,6 @@ Global
 		{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE3508CE-6D92-450B-A431-4A8F42FCFB3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{42513EA5-5BD7-4436-8C9A-F273D15CB4F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{42513EA5-5BD7-4436-8C9A-F273D15CB4F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42513EA5-5BD7-4436-8C9A-F273D15CB4F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -669,6 +665,10 @@ Global
 		{574824E7-5CF8-4AFC-9493-645EB6133069}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{574824E7-5CF8-4AFC-9493-645EB6133069}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{574824E7-5CF8-4AFC-9493-645EB6133069}.Release|Any CPU.Build.0 = Release|Any CPU
+		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

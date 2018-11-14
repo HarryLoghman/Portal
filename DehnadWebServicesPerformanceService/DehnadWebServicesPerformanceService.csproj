@@ -116,27 +116,27 @@
   <ItemGroup>
     <ProjectReference Include="..\JhoobinDambelLibrary\JhoobinDambelLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb441}</Project>
-      <Name>WebServicesPerformanceDambelLibrary</Name>
+      <Name>JhoobinDambelLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JhoobinMedadLibrary\JhoobinMedadLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb442}</Project>
-      <Name>WebServicesPerformanceMedadLibrary</Name>
+      <Name>JhoobinMedadLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JhoobinMusicYadLibrary\JhoobinMusicYadLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb443}</Project>
-      <Name>WebServicesPerformanceMusicYadLibrary</Name>
+      <Name>JhoobinMusicYadLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JhoobinPinLibrary\JhoobinPinLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb444}</Project>
-      <Name>WebServicesPerformancePinLibrary</Name>
+      <Name>JhoobinPinLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JhoobinPorShetabLibrary\JhoobinPorShetabLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb445}</Project>
-      <Name>WebServicesPerformancePorShetabLibrary</Name>
+      <Name>JhoobinPorShetabLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JhoobinTahChinLibrary\JhoobinTahChinLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb446}</Project>
-      <Name>WebServicesPerformanceTahChinLibrary</Name>
+      <Name>JhoobinTahChinLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
