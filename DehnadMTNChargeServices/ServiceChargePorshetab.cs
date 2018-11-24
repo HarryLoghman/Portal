@@ -20,7 +20,7 @@ namespace DehnadMTNChargeServices
         {
             get
             {
-                return 500;
+                return 300;
             }
         }
 

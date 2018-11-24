@@ -15,6 +15,31 @@ function textAreaEditor(container, options) {
         .appendTo(container);
 }
 
+function textEditor(container, options) {
+    $('<input style="width:150px;" data-bind="value: ' + options.field + '"/>')
+        .appendTo(container);
+}
+
+function multiselectEditor(container, options) {
+    $('<select style="width"150px;" data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoMultiSelect({
+            dataSource: options.values,
+            suggest: true,
+            valuePrimitive: true,
+            columnName:"roles"
+        });
+}
+
+function passwordEditor(container, options) {
+    $('<input data-text-field="' + options.field + '" ' +
+                //'class="k-input k-textbox" ' +
+        'type="password" ' +
+        'data-value-field="' + options.field + '" ' +
+        'data-bind="value:' + options.field + '"/>')
+        .appendTo(container);
+}
+
 var subscriberNotSendedMoInDaysDataSource = [{
     "Id": 0,
     "Value": "همه اعضا",

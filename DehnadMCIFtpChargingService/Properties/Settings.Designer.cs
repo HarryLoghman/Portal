@@ -25,42 +25,6 @@ namespace DehnadMCIFtpChargingService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("172.17.252.201")]
-        public string ServerFtpIP {
-            get {
-                return ((string)(this["ServerFtpIP"]));
-            }
-            set {
-                this["ServerFtpIP"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DEH")]
-        public string FtpUser {
-            get {
-                return ((string)(this["FtpUser"]));
-            }
-            set {
-                this["FtpUser"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("d9H&*&123")]
-        public string FtpPassword {
-            get {
-                return ((string)(this["FtpPassword"]));
-            }
-            set {
-                this["FtpPassword"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("E:\\ImiFtps\\MciDirectNew")]
         public string LocalPath {
             get {
@@ -92,6 +56,18 @@ namespace DehnadMCIFtpChargingService.Properties {
             }
             set {
                 this["SaveFailFilesToSingleCharge"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public string CheckNDaysBefore {
+            get {
+                return ((string)(this["CheckNDaysBefore"]));
+            }
+            set {
+                this["CheckNDaysBefore"] = value;
             }
         }
     }

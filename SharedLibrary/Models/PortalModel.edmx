@@ -78,6 +78,16 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="AspNetUsersRolesServiceAccess">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userId" Type="nvarchar" MaxLength="128" />
+          <Property Name="roleId" Type="nvarchar" MaxLength="128" />
+          <Property Name="serviceId" Type="bigint" />
+          <Property Name="aggregatorId" Type="bigint" />
+        </EntityType>
         <EntityType Name="Audit">
           <Key>
             <PropertyRef Name="Id" />
@@ -454,6 +464,61 @@ warning 6002: The table/view 'Portal.dbo.vw_AllSentMessages' does not have a pri
           <Property Name="ProcessStatus" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
+warning 6002: The table/view 'Portal.dbo.vw_AspNetRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_AspNetRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="users" Type="nvarchar(max)" />
+          <Property Name="Services" Type="nvarchar(max)" />
+          <Property Name="Aggregators" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Portal.dbo.vw_AspNetUserRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_AspNetUserRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" />
+          <Property Name="roleName" Type="nvarchar" MaxLength="256" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Portal.dbo.vw_AspNetUsers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="EmailConfirmed" />
+            <PropertyRef Name="PhoneNumberConfirmed" />
+            <PropertyRef Name="TwoFactorEnabled" />
+            <PropertyRef Name="LockoutEnabled" />
+            <PropertyRef Name="AccessFailedCount" />
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="Lastname" Type="nvarchar(max)" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar(max)" />
+          <Property Name="SecurityStamp" Type="nvarchar(max)" />
+          <Property Name="PhoneNumber" Type="nvarchar(max)" />
+          <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="datetime" />
+          <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="roles" Type="nvarchar(max)" />
+          <Property Name="Services" Type="nvarchar(max)" />
+          <Property Name="Aggregators" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
 warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_DehnadAllServicesStatistics">
           <Key>
@@ -650,7 +715,11 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           </ReferentialConstraint>
         </Association>
         <Function Name="ArchiveReceivedMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="getUserAvailableServices" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userId" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetUserLog" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userId" Type="nvarchar" Mode="In" />
           <Parameter Name="MobileNumber" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="ShamsiDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="nvarchar(max)">
@@ -663,6 +732,11 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
         <Function Name="sp_DehnadAll3GServicesStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ServiceCode" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="sp_getSubscriberServices" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userId" Type="nvarchar" Mode="In" />
+          <Parameter Name="mobileNumber" Type="nvarchar" Mode="In" />
+          <Parameter Name="chargePriceFrom" Type="datetime" Mode="In" />
+        </Function>
         <EntityContainer Name="PortalModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Aggregators" EntityType="Self.Aggregators" Schema="dbo" store:Type="Tables" />
@@ -671,6 +745,7 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUsersRolesServiceAccess" EntityType="Self.AspNetUsersRolesServiceAccess" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Audit" EntityType="Self.Audit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BulkList" EntityType="Self.BulkList" Schema="dbo" store:Type="Tables" />
@@ -709,6 +784,44 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
     [vw_AllSentMessages].[Content] AS [Content], 
     [vw_AllSentMessages].[ProcessStatus] AS [ProcessStatus]
     FROM [dbo].[vw_AllSentMessages] AS [vw_AllSentMessages]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_AspNetRoles" EntityType="Self.vw_AspNetRoles" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_AspNetRoles].[Id] AS [Id], 
+    [vw_AspNetRoles].[Name] AS [Name], 
+    [vw_AspNetRoles].[users] AS [users], 
+    [vw_AspNetRoles].[Services] AS [Services], 
+    [vw_AspNetRoles].[Aggregators] AS [Aggregators]
+    FROM [dbo].[vw_AspNetRoles] AS [vw_AspNetRoles]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_AspNetUserRoles" EntityType="Self.vw_AspNetUserRoles" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_AspNetUserRoles].[UserId] AS [UserId], 
+    [vw_AspNetUserRoles].[RoleId] AS [RoleId], 
+    [vw_AspNetUserRoles].[UserName] AS [UserName], 
+    [vw_AspNetUserRoles].[roleName] AS [roleName]
+    FROM [dbo].[vw_AspNetUserRoles] AS [vw_AspNetUserRoles]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_AspNetUsers" EntityType="Self.vw_AspNetUsers" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_AspNetUsers].[Id] AS [Id], 
+    [vw_AspNetUsers].[Name] AS [Name], 
+    [vw_AspNetUsers].[Lastname] AS [Lastname], 
+    [vw_AspNetUsers].[Email] AS [Email], 
+    [vw_AspNetUsers].[EmailConfirmed] AS [EmailConfirmed], 
+    [vw_AspNetUsers].[PasswordHash] AS [PasswordHash], 
+    [vw_AspNetUsers].[SecurityStamp] AS [SecurityStamp], 
+    [vw_AspNetUsers].[PhoneNumber] AS [PhoneNumber], 
+    [vw_AspNetUsers].[PhoneNumberConfirmed] AS [PhoneNumberConfirmed], 
+    [vw_AspNetUsers].[TwoFactorEnabled] AS [TwoFactorEnabled], 
+    [vw_AspNetUsers].[LockoutEndDateUtc] AS [LockoutEndDateUtc], 
+    [vw_AspNetUsers].[LockoutEnabled] AS [LockoutEnabled], 
+    [vw_AspNetUsers].[AccessFailedCount] AS [AccessFailedCount], 
+    [vw_AspNetUsers].[UserName] AS [UserName], 
+    [vw_AspNetUsers].[roles] AS [roles], 
+    [vw_AspNetUsers].[Services] AS [Services], 
+    [vw_AspNetUsers].[Aggregators] AS [Aggregators]
+    FROM [dbo].[vw_AspNetUsers] AS [vw_AspNetUsers]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="Self.vw_DehnadAllServicesStatistics" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1358,9 +1471,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
           <FunctionImport Name="ArchiveReceivedMessages" />
-          <FunctionImport Name="GetUserLog" ReturnType="Collection(PortalModel.GetUserLog_Result)">
-          <Parameter Name="MobileNumber" Mode="In" Type="String" />
-          </FunctionImport>
           <FunctionImport Name="sp_DehnadAll2GServicesStatistics">
           <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
@@ -1385,16 +1495,23 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
             <End Role="Subscriber" EntitySet="Subscribers" />
           </AssociationSet>
           <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
+          <EntitySet Name="vw_AspNetUsers" EntityType="PortalModel.vw_AspNetUsers" />
+          <EntitySet Name="AspNetUsersRolesServiceAccesses" EntityType="PortalModel.AspNetUsersRolesServiceAccess" />
+          <EntitySet Name="vw_AspNetUserRoles" EntityType="PortalModel.vw_AspNetUserRoles" />
+          <EntitySet Name="vw_AspNetRoles" EntityType="PortalModel.vw_AspNetRoles" />
+          <FunctionImport Name="GetUserLog" ReturnType="Collection(PortalModel.GetUserLog_Result)">
+            <Parameter Name="userId" Mode="In" Type="String" />
+            <Parameter Name="MobileNumber" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="getUserAvailableServices" ReturnType="Collection(PortalModel.getUserAvailableServices_Result)">
+          <Parameter Name="userId" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_getSubscriberServices" ReturnType="Collection(PortalModel.sp_getSubscriberServices_Result)">
+            <Parameter Name="userId" Mode="In" Type="String" />
+            <Parameter Name="mobileNumber" Mode="In" Type="String" />
+            <Parameter Name="chargePriceFrom" Mode="In" Type="DateTime" />
+          </FunctionImport>
           </EntityContainer>
-        <ComplexType Name="GetUserLog_Result">
-          <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
-          <Property Type="String" Name="ServiceName" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="MobileNumber" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="ShortCode" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="PersianDate" Nullable="true" MaxLength="10" />
-          <Property Type="String" Name="Time" Nullable="true" MaxLength="21" />
-          <Property Type="String" Name="Content" Nullable="true" />
-        </ComplexType>
         <EntityType Name="chargeInfo">
           <Key>
             <PropertyRef Name="serviceId" />
@@ -1528,6 +1645,95 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="processLines" Type="Int32" />
           <Property Name="chargeCount" Type="Int32" />
         </EntityType>
+        <EntityType Name="vw_AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="EmailConfirmed" />
+            <PropertyRef Name="PhoneNumberConfirmed" />
+            <PropertyRef Name="TwoFactorEnabled" />
+            <PropertyRef Name="LockoutEnabled" />
+            <PropertyRef Name="AccessFailedCount" />
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Lastname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="roles" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Services" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Aggregators" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AspNetUsersRolesServiceAccess">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="roleId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="serviceId" Type="Int64" />
+          <Property Name="aggregatorId" Type="Int64" />
+        </EntityType>
+        <EntityType Name="vw_AspNetUserRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="roleName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_AspNetRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="users" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Services" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Aggregators" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <ComplexType Name="GetUserLog_Result">
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="ServiceName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MobileNumber" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="ShortCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="PersianDate" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="Time" Nullable="true" MaxLength="21" />
+          <Property Type="String" Name="Content" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="getUserAvailableServices_Result">
+          <Property Type="Int64" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="ServiceCode" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="23" />
+          <Property Type="String" Name="OnKeywords" Nullable="false" MaxLength="200" />
+          <Property Type="Boolean" Name="IsServiceActive" Nullable="false" />
+          <Property Type="Boolean" Name="Enable2StepSubscription" Nullable="true" />
+          <Property Type="String" Name="oldServiceCodes" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="referralUrl" Nullable="true" MaxLength="1000" />
+        </ComplexType>
+        <ComplexType Name="sp_getSubscriberServices_Result" >
+          <Property Type="String" Name="databaseName" Nullable="false" />
+          <Property Type="DateTime" Name="activationDate" Nullable="false" />
+          <Property Type="Int64" Name="totalChargePrice" Nullable="false" />
+          <Property Type="String" Name="ServiceName" Nullable="false" />
+          <Property Type="String" Name="PersianActivationDate" Nullable="false" />
+          <Property Type="String" Name="PersianDeactivationDate" Nullable="false" />
+          <Property Type="String" Name="ShortCode" Nullable="false" />
+          <Property Type="String" Name="mobileNumber" Nullable="false" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1977,19 +2183,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
             </EndProperty>
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="ArchiveReceivedMessages" FunctionName="PortalModel.Store.ArchiveReceivedMessages" />
-          <FunctionImportMapping FunctionImportName="GetUserLog" FunctionName="PortalModel.Store.GetUserLog">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="PortalModel.GetUserLog_Result">
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_DehnadAll2GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll2GServicesStatistics" />
           <FunctionImportMapping FunctionImportName="sp_DehnadAll3GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll3GServicesStatistics" />
           <EntitySetMapping Name="chargeInfoes">
@@ -2084,6 +2277,102 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vw_AspNetUsers">
+            <EntityTypeMapping TypeName="PortalModel.vw_AspNetUsers">
+              <MappingFragment StoreEntitySet="vw_AspNetUsers">
+                <ScalarProperty Name="Aggregators" ColumnName="Aggregators" />
+                <ScalarProperty Name="Services" ColumnName="Services" />
+                <ScalarProperty Name="roles" ColumnName="roles" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsersRolesServiceAccesses">
+            <EntityTypeMapping TypeName="PortalModel.AspNetUsersRolesServiceAccess">
+              <MappingFragment StoreEntitySet="AspNetUsersRolesServiceAccess">
+                <ScalarProperty Name="aggregatorId" ColumnName="aggregatorId" />
+                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
+                <ScalarProperty Name="roleId" ColumnName="roleId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_AspNetUserRoles">
+            <EntityTypeMapping TypeName="PortalModel.vw_AspNetUserRoles">
+              <MappingFragment StoreEntitySet="vw_AspNetUserRoles">
+                <ScalarProperty Name="roleName" ColumnName="roleName" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_AspNetRoles">
+            <EntityTypeMapping TypeName="PortalModel.vw_AspNetRoles">
+              <MappingFragment StoreEntitySet="vw_AspNetRoles">
+                <ScalarProperty Name="Aggregators" ColumnName="Aggregators" />
+                <ScalarProperty Name="Services" ColumnName="Services" />
+                <ScalarProperty Name="users" ColumnName="users" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetUserLog" FunctionName="PortalModel.Store.GetUserLog">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PortalModel.GetUserLog_Result">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="getUserAvailableServices" FunctionName="PortalModel.Store.getUserAvailableServices">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PortalModel.getUserAvailableServices_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
+                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
+                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
+                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_getSubscriberServices" FunctionName="PortalModel.Store.sp_getSubscriberServices" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PortalModel.sp_getSubscriberServices_Result">
+                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
+                <ScalarProperty Name="activationDate" ColumnName="activationDate" />
+                <ScalarProperty Name="totalChargePrice" ColumnName="totalChargePrice" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="PersianActivationDate" ColumnName="PersianActivationDate" />
+                <ScalarProperty Name="PersianDeactivationDate" ColumnName="PersianDeactivationDate" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

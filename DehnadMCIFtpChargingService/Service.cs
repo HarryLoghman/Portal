@@ -48,7 +48,7 @@ namespace DehnadMCIFtpChargingService
 
         private void downloaderFunction()
         {
-            
+
             downloader down = new downloader();
             while (!shutdownEvent.WaitOne(0))
             {
@@ -104,22 +104,38 @@ namespace DehnadMCIFtpChargingService
                                 Program.logs.Info("end of reading parameter file");
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Program.logs.Error("Exception in downloaderFunction reading parameter file: ", ex);
                         }
-                        //check today
 
+                        //check today
                         down.updateSingleCharge();
+
+                        int nDaysBefore = 0;
+                        if (int.TryParse(Properties.Settings.Default.CheckNDaysBefore, out nDaysBefore))
+                        {
+                            if (nDaysBefore != 0)
+                            {
+                                int i;
+                                for (i = 1; i <= nDaysBefore; i++)
+                                {
+                                    Program.logs.Info("downloaderFunction:started:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                                    down.updateSingleCharge(DateTime.Now.AddDays(-1 * i).ToString("yyyyMMdd"), null, false);
+                                    Program.logs.Info("downloaderFunction:ended:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                                }
+                            }
+                        }
                         
+
                         Program.logs.Info("downloaderFunction: Ended");
                         int timeInterval;
-                        if(!int.TryParse(Properties.Settings.Default.TimeIntervalInSecond , out timeInterval))
+                        if (!int.TryParse(Properties.Settings.Default.TimeIntervalInSecond, out timeInterval))
                         {
                             timeInterval = 60 * 30;
                         }
                         Thread.Sleep(1000 * timeInterval);
-                        
+
 
                     }
                 }

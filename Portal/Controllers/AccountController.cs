@@ -20,15 +20,29 @@ namespace Portal.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            RoleManager = roleManager;
+        }
+
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            set
+            {
+                _roleManager = value;
+            }
         }
 
         public ApplicationSignInManager SignInManager
@@ -37,9 +51,9 @@ namespace Portal.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -144,19 +158,19 @@ namespace Portal.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username, Name = model.Name, Lastname = model.Lastname};
+                var user = new ApplicationUser { UserName = model.Username, Name = model.Name, Lastname = model.Lastname };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Users", "Tools");
                 }
                 AddErrors(result);
             }
@@ -242,6 +256,23 @@ namespace Portal.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        public async Task<bool> DeleteUser(string userId)
+        {
+
+            //Only SuperAdmin or Admin can delete users (Later when implement roles)
+
+            var user = await this.UserManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                IdentityResult result = await this.UserManager.DeleteAsync(user);
+                return result.Succeeded;
+
+            }
+            return false;
         }
 
         #region Helpers

@@ -58,6 +58,35 @@ namespace Portal.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public class User_ChangePasswordViewModel
+    {
+        public User_ChangePasswordViewModel()
+        {
+            
+        }
+        public User_ChangePasswordViewModel(string userId)
+        {
+            this.userId = userId;
+        }
+
+        [DataType(DataType.Text)]
+        [Display(Name = "شناسه کاربر")]
+        public string userId { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "{0} می بایست حداقل  {2} کاراکتر باشد.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "رمز عبور جدید")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "تکرار رمز عبور جدید")]
+        [Compare("NewPassword", ErrorMessage = "رمز عبور با تکرار آن یکسان نیست")]
+        public string ConfirmPassword { get; set; }
+
+        public bool SuccessfullySaved { get; set; }
+    }
+
     public class AddPhoneNumberViewModel
     {
         [Required]

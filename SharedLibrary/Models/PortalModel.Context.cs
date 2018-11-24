@@ -64,19 +64,14 @@ namespace SharedLibrary.Models
         public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<MCISingleChargeFtpFile> MCISingleChargeFtpFiles { get; set; }
+        public virtual DbSet<vw_AspNetUsers> vw_AspNetUsers { get; set; }
+        public virtual DbSet<AspNetUsersRolesServiceAccess> AspNetUsersRolesServiceAccesses { get; set; }
+        public virtual DbSet<vw_AspNetUserRoles> vw_AspNetUserRoles { get; set; }
+        public virtual DbSet<vw_AspNetRoles> vw_AspNetRoles { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ArchiveReceivedMessages");
-        }
-    
-        public virtual ObjectResult<GetUserLog_Result> GetUserLog(string mobileNumber)
-        {
-            var mobileNumberParameter = mobileNumber != null ?
-                new ObjectParameter("MobileNumber", mobileNumber) :
-                new ObjectParameter("MobileNumber", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUserLog_Result>("GetUserLog", mobileNumberParameter);
         }
     
         public virtual int sp_DehnadAll2GServicesStatistics(string serviceCode)
@@ -95,6 +90,45 @@ namespace SharedLibrary.Models
                 new ObjectParameter("ServiceCode", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_DehnadAll3GServicesStatistics", serviceCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetUserLog_Result> GetUserLog(string userId, string mobileNumber)
+        {
+            var userIdParameter = userId != null ?
+                new ObjectParameter("userId", userId) :
+                new ObjectParameter("userId", typeof(string));
+    
+            var mobileNumberParameter = mobileNumber != null ?
+                new ObjectParameter("MobileNumber", mobileNumber) :
+                new ObjectParameter("MobileNumber", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUserLog_Result>("GetUserLog", userIdParameter, mobileNumberParameter);
+        }
+    
+        public virtual ObjectResult<getUserAvailableServices_Result> getUserAvailableServices(string userId)
+        {
+            var userIdParameter = userId != null ?
+                new ObjectParameter("userId", userId) :
+                new ObjectParameter("userId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<getUserAvailableServices_Result>("getUserAvailableServices", userIdParameter);
+        }
+    
+        public virtual ObjectResult<sp_getSubscriberServices_Result> sp_getSubscriberServices(string userId, string mobileNumber, Nullable<System.DateTime> chargePriceFrom)
+        {
+            var userIdParameter = userId != null ?
+                new ObjectParameter("userId", userId) :
+                new ObjectParameter("userId", typeof(string));
+    
+            var mobileNumberParameter = mobileNumber != null ?
+                new ObjectParameter("mobileNumber", mobileNumber) :
+                new ObjectParameter("mobileNumber", typeof(string));
+    
+            var chargePriceFromParameter = chargePriceFrom.HasValue ?
+                new ObjectParameter("chargePriceFrom", chargePriceFrom) :
+                new ObjectParameter("chargePriceFrom", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_getSubscriberServices_Result>("sp_getSubscriberServices", userIdParameter, mobileNumberParameter, chargePriceFromParameter);
         }
     }
 }

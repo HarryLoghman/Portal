@@ -10,6 +10,9 @@ namespace DehnadMCIFtpChargingService
 {
     class downloader
     {
+        string ServerFtpIP = "172.17.252.201";
+        string FtpUser = "DEH";
+        string FtpPassword = "d9H&*&123";
         public void updateSingleCharge()
         {
             updateSingleCharge(DateTime.Now.ToString("yyyyMMdd"), null, false);
@@ -190,7 +193,7 @@ namespace DehnadMCIFtpChargingService
                                 portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
                                 portalFtpFiles.ftpDirectory = winDirectory;
                                 portalFtpFiles.processDateTime = DateTime.Now;
-                                portalFtpFiles.serverIP = Properties.Settings.Default.ServerFtpIP;
+                                portalFtpFiles.serverIP = this.ServerFtpIP;
                                 portalFtpFiles.identifier = newFtpFiles[i].identifier;
                                 portalFtpFiles.processLines = lines.Count();
                                 portalFtpFiles.chargeCount = chargeCount;
@@ -203,7 +206,7 @@ namespace DehnadMCIFtpChargingService
                                 portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
                                 portalFtpFiles.ftpDirectory = winDirectory;
                                 portalFtpFiles.processDateTime = DateTime.Now;
-                                portalFtpFiles.serverIP = Properties.Settings.Default.ServerFtpIP;
+                                portalFtpFiles.serverIP = this.ServerFtpIP;
                                 portalFtpFiles.identifier = newFtpFiles[i].identifier;
                                 portalFtpFiles.processLines = lines.Count();
                                 portalFtpFiles.chargeCount = chargeCount;
@@ -237,12 +240,12 @@ namespace DehnadMCIFtpChargingService
                 if (ftpDirectory.EndsWith("/"))
                     ftpDirectory = ftpDirectory.Remove(winDirectory.Length - 1, 1);
 
-                string ftpURL = "ftp://" + Properties.Settings.Default.ServerFtpIP + "/" + ftpDirectory + "/";
+                string ftpURL = "ftp://" + this.ServerFtpIP + "/" + ftpDirectory + "/";
                 return ftpURL;
             }
             catch (Exception e)
             {
-                Program.logs.Error("downloader:downloadNewFiles:", e);
+                Program.logs.Error("downloader:getFtpUrl:", e);
                 return null;
             }
         }
@@ -266,6 +269,7 @@ namespace DehnadMCIFtpChargingService
 
                 int i;
                 List<FtpFile> newFtpFiles = this.detectNewFtpFiles(localPath + "\\" + winDirectory, ftpUrl, operatorSIDs, downloadAnyway);
+                if (newFtpFiles == null) return newFtpFiles;
                 if (newFtpFiles != null && newFtpFiles.Count > 0)
                 {
                     Program.logs.Info(newFtpFiles.Count.ToString() + " new files has been detected");
@@ -275,7 +279,7 @@ namespace DehnadMCIFtpChargingService
                     Program.logs.Info("downloadNewFiles:downloadFile " + newFtpFiles[i].ftpFilePath + " is started");
                     FtpWebRequest request = (FtpWebRequest)WebRequest.Create(newFtpFiles[i].ftpFilePath);
                     request.Method = WebRequestMethods.Ftp.DownloadFile;
-                    request.Credentials = new NetworkCredential(Properties.Settings.Default.FtpUser, Properties.Settings.Default.FtpPassword);
+                    request.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
 
                     FtpWebResponse response = (FtpWebResponse)request.GetResponse();
                     Stream responseStream = response.GetResponseStream();
@@ -324,7 +328,7 @@ namespace DehnadMCIFtpChargingService
                 Uri uri = new Uri(ftpDirectory);
                 //Uri uri = new Uri("ftp://172.17.252.201/" + directoryName + "/");
                 FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
-                ftpRequest.Credentials = new NetworkCredential(Properties.Settings.Default.FtpUser, Properties.Settings.Default.FtpPassword);
+                ftpRequest.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
                 FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
                 FtpWebResponse response;
@@ -345,7 +349,7 @@ namespace DehnadMCIFtpChargingService
                         }
                         uri = new Uri(ftpDirectory + fileName);
                         ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
-                        ftpRequest.Credentials = new NetworkCredential(Properties.Settings.Default.FtpUser, Properties.Settings.Default.FtpPassword);
+                        ftpRequest.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
                         ftpRequest.Proxy = null;
                         ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
                         response = (FtpWebResponse)ftpRequest.GetResponse();
@@ -354,7 +358,7 @@ namespace DehnadMCIFtpChargingService
 
                         uri = new Uri(ftpDirectory + fileName);
                         ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
-                        ftpRequest.Credentials = new NetworkCredential(Properties.Settings.Default.FtpUser, Properties.Settings.Default.FtpPassword);
+                        ftpRequest.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
                         ftpRequest.Proxy = null;
                         ftpRequest.Method = WebRequestMethods.Ftp.GetDateTimestamp;
                         response = (FtpWebResponse)ftpRequest.GetResponse();

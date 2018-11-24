@@ -35,7 +35,7 @@ namespace DehnadMTNChargeServices
         public string prp_aggregatorServiceId { get; }
         public int prp_rowCount { get; set; }
         protected List<SharedLibrary.ServiceHandler.SubscribersAndCharges> v_subscribersAndCharges;
-        protected string[] v_wipeDescription = new string[] { "SVC0001: Service Error", "POL0904: SP API level request rate control not pass, sla id is 1002." };
+        protected string[] v_wipeDescription = new string[] { "SVC0001: Service Error", "POL0904: SP API level request rate control not pass, sla id is 1002.", "POL0910: Minimum Amount per Transaction" };
         public int prp_rowIndex { get; set; }
         public int prp_rowsProcessedInSecond { get; set; }
         public int prp_remainRowCount

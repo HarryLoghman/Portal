@@ -98,6 +98,9 @@
     <Compile Include="Models\AspNetUserLogin.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AspNetUsersRolesServiceAccess.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Audit.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -117,6 +120,9 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DeliveryObject.cs" />
+    <Compile Include="Models\getUserAvailableServices_Result.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetUserLog_Result.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -189,6 +195,9 @@
     <Compile Include="Models\SinglechargeDelivery.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\sp_getSubscriberServices_Result.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Subscriber.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -206,6 +215,15 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_AllSentMessages.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_AspNetRoles.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_AspNetUserRoles.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_AspNetUsers.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_DehnadAllServicesStatistics.cs">

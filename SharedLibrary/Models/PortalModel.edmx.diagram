@@ -55,6 +55,10 @@
         <AssociationConnector Association="PortalModel.C_FK_SubscribersPoints_Services" />
         <AssociationConnector Association="PortalModel.FK_Subscribers_Services" />
         <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="3.7714124674775693" PointY="19.481614941489703" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetUsers" Width="1.5" PointX="6.7813661409455186" PointY="17.415018790129114" />
+        <EntityTypeShape EntityType="PortalModel.AspNetUsersRolesServiceAccess" Width="1.5" PointX="14.125" PointY="29.625" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetUserRoles" Width="1.5" PointX="7.486709093435997" PointY="11.785516610269209" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetRoles" Width="1.5" PointX="1.418179561113091" PointY="14.533095515581358" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

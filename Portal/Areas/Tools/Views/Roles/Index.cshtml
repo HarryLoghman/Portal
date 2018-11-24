@@ -1,0 +1,191 @@
+﻿
+@{
+    ViewBag.Title = "نقشها";
+}
+
+<div class="k-rtl" id="grid"></div>
+
+<script>
+
+    var multiUsersToString = function (item) {
+        //alert(typeof item.roles ==="string");
+        //return item.roles.join(',');
+        //alert(item.roles.join(','));
+        if (item == null) return "";
+        if (item.users == null) return "";
+        if ((typeof item.users === "string"))
+            return item.users;
+        else {
+            //alert(item.roles.join(','));
+            return item.users.join(',');
+        }
+        return item.users;
+    };
+
+    var multiServicesToString = function (item) {
+        //alert(typeof item.roles ==="string");
+        //return item.roles.join(',');
+        //alert(item.roles.join(','));
+        if (item == null) return "";
+        if (item.services == null) return "";
+        if ((typeof item.services === "string"))
+            return item.services;
+        else {
+            //alert(item.roles.join(','));
+            return item.services.join(',');
+        }
+        return item.services;
+    };
+
+    var multiAggregatorsToString = function (item) {
+        //alert(typeof item.roles ==="string");
+        //return item.roles.join(',');
+        //alert(item.roles.join(','));
+        if (item == null) return "";
+        if (item.aggregators == null) return "";
+        if ((typeof item.aggregators === "string"))
+            return item.aggregators;
+        else {
+            //alert(item.roles.join(','));
+            return item.aggregators.join(',');
+        }
+        return item.aggregators;
+    };
+    @{  var portal = new SharedLibrary.Models.PortalEntities();
+        var dbUsers =  portal.AspNetUsers.Select(o => o.UserName).ToList();
+
+        string users = "";
+        for (int i = 0; i <= dbUsers.Count - 1; i++)
+        { users = users + "'" + dbUsers[i] + "',"; }
+        if (users != "") { users = users.Remove(users.Length - 1, 1); users = "[" + users + "]"; }
+
+
+        var dbServices = portal.Services.Select(o => o.ServiceCode).ToList();
+
+        string services = "";
+        for (int i = 0; i <= dbServices.Count - 1; i++)
+        { services = services + "'" + dbServices[i] + "',"; }
+        if (services != "") { services = services.Remove(services.Length - 1, 1); services = "[" + services + "]"; }
+
+
+        var dbAggregators = portal.Aggregators.Select(o => o.AggregatorName).ToList();
+
+        string aggregators = "";
+        for (int i = 0; i <= dbAggregators.Count - 1; i++)
+        { aggregators = aggregators + "'" + dbAggregators[i] + "',"; }
+        if (aggregators != "") { aggregators = aggregators.Remove(aggregators.Length - 1, 1); aggregators = "[" + aggregators + "]"; }
+            }
+        var vm = kendo.observable({
+            users:@Html.Raw(users),
+            services:@Html.Raw(services),
+            aggregators:@Html.Raw(aggregators),
+
+
+    });
+    $("#grid").kendoGrid({
+
+            columns: [
+            { field: "Id", title: "شناسه" },
+            { field: "name", title: "نام" },
+            { field: "users", title: "کاربران", editor: multiselectEditor, values: vm.users, template: multiUsersToString},
+            { field: "services", title: "دسترسی سرویسها", editor: multiselectEditor, values: vm.services, template: multiServicesToString },
+            { field: "aggregators", title: "دسترسی Aggregator ها", editor: multiselectEditor, values: vm.aggregators, template: multiAggregatorsToString },
+                {
+                    command: ["edit",
+                    ], width: 150
+                },
+
+        ],
+        dataSource: {
+                error: function (e) { grid_error_handler(e) },
+            type: "aspnetmvc-ajax",
+            transport: {
+                    read: {
+                        url: "Roles/Roles_Read",
+                    type: "POST"
+                    },
+                update: {
+                        url: "Roles/Roles_Update",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                        }
+                    },
+            },
+            schema: {
+                    data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    name:"name",
+                    fields: {
+                        Id: { type: "text", editable: false },
+                        name: { type: "text", editable: false },
+                    },
+
+                }
+                },
+
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "Name", dir: "asc" }
+            ],
+
+        },
+        columnMenu: true,
+        editable: {
+                mode: "inline",
+            window: {
+                    title: "ویرایش",
+                width: 500
+            },
+
+        },
+        pageable: {
+                refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+                mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+
+
+    });
+
+        function grid_error_handler(e) {
+
+            if (e.errors) {
+                var grid = $('#grid').data('kendoGrid');
+            $("#grid").data('kendoGrid').cancelChanges();
+                //prevent the dataBinding from refreshing so the current edit remains
+                grid.one("dataBinding", function (x) {
+                    //x.preventDefault();
+                    //              alert('b');
+                    var message = "";
+                $.each(e.errors, function (key, value) {
+                        //                    alert('c');
+                        if ('errors' in value) {
+                        $.each(value.errors, function () {
+                                message += this + "\n";
+                            });
+                        }
+                    });
+                    alert(message);
+                    //CBmessagebox.Warning(message);
+                });
+            }
+        }
+</script>
+
+

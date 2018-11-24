@@ -5,9 +5,14 @@ using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
 using System.Data.Entity;
+using Microsoft.AspNet.Identity;
+using System.Web;
+using Microsoft.AspNet.Identity.Owin;
+using System.Collections.Generic;
 
 namespace Portal.Areas.Statistics.Controllers
 {
+    [Authorize(Roles = "Admin , Reporter , DehnadGroup, TelepromoUser")]
     public class SubscribersLogController : Controller
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -25,14 +30,16 @@ namespace Portal.Areas.Statistics.Controllers
         {
             try
             {
+                string userId = User.Identity.GetUserId();
                 using (var entity = new SharedLibrary.Models.PortalEntities())
                 {
                     logs.Info(mobileNumber);
-                    entity.Configuration.AutoDetectChangesEnabled = false;
-                    entity.Database.CommandTimeout = 2400;
                     if (mobileNumber == null || mobileNumber == "")
                         return Json("", JsonRequestBehavior.AllowGet);
-                    var query = entity.GetUserLog(mobileNumber).ToList();
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    entity.Database.CommandTimeout = 2400;
+                    var query = entity.GetUserLog(userId, mobileNumber).ToList();
+
                     DataSourceResult result = query.ToDataSourceResult(request, messagesSendedToUserLog => new
                     {
                         Type = messagesSendedToUserLog.Type,
@@ -54,35 +61,86 @@ namespace Portal.Areas.Statistics.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult UserActiveServices_Read([DataSourceRequest]DataSourceRequest request, string mobileNumber)
+        public ActionResult UserServices_Read([DataSourceRequest]DataSourceRequest request, string mobileNumber)
         {
             //var mobileNumber = "";
-            DataSourceResult result = db.Subscribers.Where(o => o.MobileNumber == mobileNumber && o.DeactivationDate == null).ToDataSourceResult(request, messagesSendedToUserLog => new
+            try
             {
-                MobileNumber = messagesSendedToUserLog.MobileNumber,
-                ServiceName = messagesSendedToUserLog.Service.Name,
-                PersianActivationDate = messagesSendedToUserLog.PersianActivationDate,
-                ShortCode = messagesSendedToUserLog.Service.ServiceInfoes.Where(o => o.ServiceId == messagesSendedToUserLog.ServiceId).FirstOrDefault().ShortCode,
-            });
-            return Json(result, JsonRequestBehavior.AllowGet);
+                string userId = User.Identity.GetUserId();
+                using (var entity = new SharedLibrary.Models.PortalEntities())
+                {
+                    if (mobileNumber == null || mobileNumber == "")
+                        return Json("", JsonRequestBehavior.AllowGet);
+
+                    entity.Configuration.AutoDetectChangesEnabled = false;
+                    entity.Database.CommandTimeout = 2400;
+                    var query = db.sp_getSubscriberServices(userId, mobileNumber, null).ToList();
+                    DataSourceResult result = query.ToDataSourceResult(request, messagesSendedToUserLog => new
+                    {
+                        MobileNumber = messagesSendedToUserLog.mobileNumber,
+                        ServiceName = messagesSendedToUserLog.ServiceName,
+                        PersianActivationDate = messagesSendedToUserLog.PersianActivationDate,
+                        PersianDeactivationDate = messagesSendedToUserLog.PersianDeactivationDate,
+                        ShortCode = messagesSendedToUserLog.ShortCode,
+                        TotalChargePrice = messagesSendedToUserLog.totalChargePrice
+                    });
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in UserLog_Read:", e);
+                return Json("", JsonRequestBehavior.AllowGet);
+            }
         }
+
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult UserSubscriptionLog_Read([DataSourceRequest]DataSourceRequest request, string mobileNumber)
         {
-            //var mobileNumber = "";
-            DataSourceResult result = db.Subscribers.Where(o => o.MobileNumber == mobileNumber).ToDataSourceResult(request, messagesSendedToUserLog => new
+            try
             {
-                MobileNumber = messagesSendedToUserLog.MobileNumber,
-                ServiceName = messagesSendedToUserLog.Service.Name,
-                PersianActivationDate = messagesSendedToUserLog.PersianActivationDate,
-                PersianDeactivationDate = messagesSendedToUserLog.PersianDeactivationDate,
-                OnKeyword = messagesSendedToUserLog.OnKeyword,
-                OffKeyword = messagesSendedToUserLog.OffKeyword,
-                ShortCode = messagesSendedToUserLog.Service.ServiceInfoes.Where(o => o.ServiceId == messagesSendedToUserLog.ServiceId).FirstOrDefault().ShortCode,
-            });
-            return Json(result, JsonRequestBehavior.AllowGet);
+                string userId = User.Identity.GetUserId();
+                DataSourceResult result;
+                if (db.vw_AspNetUserRoles.Any(o => o.UserId == userId && (o.roleName.ToLower() == "admin" || o.roleName.ToLower() == "dehnadgroup")))
+                {
+                    //var mobileNumber = "";
+                    result = db.Subscribers.Where(o => o.MobileNumber == mobileNumber).ToDataSourceResult(request, messagesSendedToUserLog => new
+                    {
+                        MobileNumber = messagesSendedToUserLog.MobileNumber,
+                        ServiceName = messagesSendedToUserLog.Service.Name,
+                        PersianActivationDate = messagesSendedToUserLog.PersianActivationDate + " " + messagesSendedToUserLog.ActivationDate.Value.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                        PersianDeactivationDate = messagesSendedToUserLog.PersianDeactivationDate + " " + messagesSendedToUserLog.ActivationDate.Value.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                        OnKeyword = messagesSendedToUserLog.OnKeyword,
+                        OffKeyword = messagesSendedToUserLog.OffKeyword,
+                        ShortCode = messagesSendedToUserLog.Service.ServiceInfoes.Where(o => o.ServiceId == messagesSendedToUserLog.ServiceId).FirstOrDefault().ShortCode,
+                    });
+                }
+                else
+                {
+                    List<long> lstServiceIds = db.getUserAvailableServices(userId).Select(o => o.Id).ToList();
+
+                    result = db.Subscribers.Where(o => o.MobileNumber == mobileNumber && lstServiceIds.Contains(o.ServiceId)).ToDataSourceResult(request, messagesSendedToUserLog => new
+                    {
+                        MobileNumber = messagesSendedToUserLog.MobileNumber,
+                        ServiceName = messagesSendedToUserLog.Service.Name,
+                        PersianActivationDate = messagesSendedToUserLog.PersianActivationDate + " " + messagesSendedToUserLog.ActivationDate.Value.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                        PersianDeactivationDate = messagesSendedToUserLog.PersianDeactivationDate + " " + messagesSendedToUserLog.ActivationDate.Value.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                        OnKeyword = messagesSendedToUserLog.OnKeyword,
+                        OffKeyword = messagesSendedToUserLog.OffKeyword,
+                        ShortCode = messagesSendedToUserLog.Service.ServiceInfoes.Where(o => o.ServiceId == messagesSendedToUserLog.ServiceId).FirstOrDefault().ShortCode,
+                    });
+
+                }
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in UserLog_Read:", e);
+                return Json("", JsonRequestBehavior.AllowGet);
+            }
         }
+
 
         [HttpPost]
         public ActionResult Excel_Export_Save(string contentType, string base64, string fileName)
@@ -106,6 +164,7 @@ namespace Portal.Areas.Statistics.Controllers
             base.Dispose(disposing);
         }
 
+        [Authorize(Roles = "Admin")]
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult UnSubscribeUser([DataSourceRequest]DataSourceRequest request)
         {
