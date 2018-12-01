@@ -5,14 +5,14 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DehnadMTNChargeServices
+namespace ChargingLibrary
 {
     public class singleChargeRequest
     {
         public string mobileNumber{ get; set; }
         public WebExceptionStatus webStatus { get; set; }
         public bool internalServerError { get; set; }
-        public string httpResult { get; set; }
+        public string resultDescription { get; set; }
         public string payload { get; set; }
         public string referenceCode { get; set; }
         public int? Price { get; set; }

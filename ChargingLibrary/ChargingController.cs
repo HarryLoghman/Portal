@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DehnadMTNChargeServices
+namespace ChargingLibrary
 {
-    class chargeServices
+    public class ChargingController
     {
         int v_turn;
         int v_tps;
@@ -23,50 +22,24 @@ namespace DehnadMTNChargeServices
         private long v_notifTime;
 
         double v_intervalInMillisecond;
-        //public bool prp_finished { get; set; }
 
-        //private void sb_setServicePoint()
-        //{
-        //    try
-        //    {
-
-        //        Uri uri = new Uri("http://92.42.55.180:8310/");
-        //        ServicePoint sp = ServicePointManager.FindServicePoint(uri);
-        //        sp.ConnectionLimit = 4000;
-        //        sp.Expect100Continue = false;
-        //        sp.UseNagleAlgorithm = false;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Program.logs.Error("Error in fnc_getServicePoint", ex);
-        //        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Error in sb_setServicePoint:" + ex.Message);
-        //    }
-        //}
-
-        //private ServicePoint fnc_getServicePoint()
-        //{
-        //    try
-        //    {
-        //        Uri uri = new Uri("http://92.42.55.180:8310/");
-        //        ServicePoint sp = ServicePointManager.FindServicePoint(uri);
-        //        return sp;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Program.logs.Error("Error in fnc_getServicePoint", ex);
-        //        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Error in fnc_getServicePoint:" + ex.Message);
-        //    }
-        //    return null;
-        //}
-        public chargeServices()
+        public ChargingController()
         {
             //this.sb_setServicePoint();
         }
         ServicePointSettings v_spSettings;
 
 
-        public void sb_chargeAll(int tpsTotal, List<ServiceCharge> chargeServices, long ticksStart)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tpsTotal"></param>
+        /// <param name="chargeServices"></param>
+        /// <param name="ticksStart"></param>
+        /// <param name="chargingServiceName">for notify the user e.g. MTN Services or Phantom</param>
+        public void sb_chargeAll(int tpsTotal, List<ServiceCharge> chargeServices, long ticksStart, string chargingServiceName)
         {
+            
             object lockObj = new object();
             this.v_spSettings = new ServicePointSettings();
             ServicePoint sp;
@@ -82,8 +55,9 @@ namespace DehnadMTNChargeServices
             this.v_turn = 0;
             this.v_ticksPrevious = null;
             lock (lockObj) { v_taskCount = 0; }
-
+            
             this.sb_fillChargeList(chargeServices, false);
+            
             this.sb_resetTPSs();
             this.sb_assignServicesTPS(this.v_tpsTotal);
 
@@ -101,11 +75,11 @@ namespace DehnadMTNChargeServices
                 {
                     Program.logs.Error("Connection Limit is Default");
                     Console.WriteLine("Connection Limit to:" + sp.ConnectionLimit.ToString());
-                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default");
+                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default for " + chargingServiceName);
 
                 }
                 #endregion
-                
+
                 Program.logs.Info("startTime:" + DateTime.Now.ToString("HH:mm:ss,fff"));
                 Program.logs.Info("interval:" + this.v_intervalInMillisecond + " totalRowCount " + this.v_chargeServices.Sum(o => o.prp_rowCount));
 
@@ -114,13 +88,13 @@ namespace DehnadMTNChargeServices
 
                 this.v_notifTime = 0;
                 this.v_spSettings.Assign();
-                this.sb_chargeLoop(false);
+                this.sb_chargeLoop(false, chargingServiceName);
 
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Main cycle of MTN Services");
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Main cycle of " + chargingServiceName);
                 return;
             }
 
-           
+
             sp = this.v_spSettings.GetServicePoint();
             if (sp != null)
             {
@@ -131,9 +105,9 @@ namespace DehnadMTNChargeServices
             {
                 Program.logs.Error("Connection Limit is Default");
                 Console.WriteLine("Connection Limit to:" + sp.ConnectionLimit.ToString());
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default");
+                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default for " + chargingServiceName);
             }
-            
+
             this.v_turn = 0;
             this.v_ticksPrevious = null;
             lock (lockObj) { v_taskCount = 0; }
@@ -142,21 +116,23 @@ namespace DehnadMTNChargeServices
             this.sb_resetTPSs();
             this.sb_assignServicesTPS(this.v_tpsTotal);
 
-            
+
             this.v_notifTime = 0;
             this.v_spSettings.Assign();
-            this.sb_chargeLoop(true);
+            this.sb_chargeLoop(true, chargingServiceName);
 
-            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Wipe of MTN Services");
+            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Wipe of " + chargingServiceName);
             Console.WriteLine("Charging is Finished");
-            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Charging MTN Services is finished");
+            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Charging " + chargingServiceName + " is finished");
         }
 
         private void sb_fillChargeList(List<ServiceCharge> chargeServices, bool wipe)
         {
             int i;
             bool error;
+            
             this.v_chargeServices = new List<ServiceCharge>();
+
             if (!wipe)
             {
                 for (i = 0; i <= chargeServices.Count - 1; i++)
@@ -164,9 +140,9 @@ namespace DehnadMTNChargeServices
                     chargeServices[i].sb_fill(out error);
                     if (chargeServices[i].prp_rowCount > 0)
                     {
-                        Program.logs.Info(chargeServices[i].prp_serviceCode + ":start of installmentCycleNumber " + chargeServices[i].prp_cycleNumber);
-                        Program.logs.Info(chargeServices[i].prp_serviceCode + ":installmentList final list count:" + chargeServices[i].prp_rowCount);
-                        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_serviceCode + ":start of installmentCycleNumber " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
+                        Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":start of installmentCycleNumber " + chargeServices[i].prp_cycleNumber);
+                        Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":installmentList final list count:" + chargeServices[i].prp_rowCount);
+                        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_service.ServiceCode + ":start of installmentCycleNumber " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
                         this.v_chargeServices.Add(chargeServices[i]);
                     }
                     else
@@ -183,9 +159,9 @@ namespace DehnadMTNChargeServices
                     chargeServices[i].sb_fillWipe(out error);
                     if (chargeServices[i].prp_rowCount > 0)
                     {
-                        Program.logs.Info(chargeServices[i].prp_serviceCode + ":start of wipe " + chargeServices[i].prp_cycleNumber);
-                        Program.logs.Info(chargeServices[i].prp_serviceCode + ":installmentList wipe list count:" + chargeServices[i].prp_rowCount);
-                        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_serviceCode + ":start of wipe " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
+                        Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":start of wipe " + chargeServices[i].prp_cycleNumber);
+                        Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":installmentList wipe list count:" + chargeServices[i].prp_rowCount);
+                        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_service.ServiceCode + ":start of wipe " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
                         this.v_chargeServices.Add(chargeServices[i]);
                     }
                     else
@@ -208,7 +184,7 @@ namespace DehnadMTNChargeServices
             }
         }
 
-        private void sb_assignServicesTPS(int operatorTPS)
+        private void sb_assignServicesTPS(int totalTPS)
         {
             int i;
             int occupiedTPS = 0;
@@ -218,11 +194,11 @@ namespace DehnadMTNChargeServices
             if (chargeService.Count == 1)
             {
                 serviceTPS = chargeService[0].prp_tpsServiceInitial;
-                chargeService[0].prp_tpsServiceCurrent = operatorTPS;
-                Program.logs.Info("TPS ASSIGN:" + chargeService[0].prp_serviceCode + ";old tps:" + serviceTPS + ";newtps:" + chargeService[0].prp_tpsServiceCurrent.ToString());
+                chargeService[0].prp_tpsServiceCurrent = totalTPS;
+                Program.logs.Info("TPS ASSIGN:" + chargeService[0].prp_service.ServiceCode + ";old tps:" + serviceTPS + ";newtps:" + chargeService[0].prp_tpsServiceCurrent.ToString());
                 return;
             }
-            int freeTps = operatorTPS - this.v_chargeServices.Where(o => o.prp_remainRowCount > 0).Sum(o => o.prp_tpsServiceInitial);
+            int freeTps = totalTPS - this.v_chargeServices.Where(o => o.prp_remainRowCount > 0).Sum(o => o.prp_tpsServiceInitial);
             if (freeTps <= 0) return;
             //Program.logs.Info("ASSIGN:FREE" + freeTps);
 
@@ -231,8 +207,8 @@ namespace DehnadMTNChargeServices
                 if (this.v_chargeServices[i].prp_remainRowCount > 0)
                 {
                     serviceTPS = this.v_chargeServices[i].prp_tpsServiceInitial;
-                    this.v_chargeServices[i].prp_tpsServiceCurrent = (serviceTPS * operatorTPS) / occupiedTPS;
-                    Program.logs.Info("TPS ASSIGN:" + this.v_chargeServices[i].prp_serviceCode + ";old tps:" + serviceTPS + ";newtps:" + this.v_chargeServices[i].prp_tpsServiceCurrent.ToString());
+                    this.v_chargeServices[i].prp_tpsServiceCurrent = (serviceTPS * totalTPS) / occupiedTPS;
+                    Program.logs.Info("TPS ASSIGN:" + this.v_chargeServices[i].prp_service.ServiceCode + ";old tps:" + serviceTPS + ";newtps:" + this.v_chargeServices[i].prp_tpsServiceCurrent.ToString());
 
                 }
             }
@@ -310,7 +286,7 @@ namespace DehnadMTNChargeServices
             return -1;
         }
 
-        private void sb_chargeLoop(bool wipe)
+        private void sb_chargeLoop(bool wipe, string chargingServiceName)
         {
 
             while (true)
@@ -361,7 +337,7 @@ namespace DehnadMTNChargeServices
                 this.v_ticksPrevious = DateTime.Now.Ticks;
                 //Program.logs.Info(" diff:" + span2.ToString("c"));
 
-                this.sb_notifyLongCharging();
+                this.sb_notifyLongCharging(chargingServiceName);
             }
 
             Program.logs.Info("----------------------------------------");
@@ -382,13 +358,13 @@ namespace DehnadMTNChargeServices
                     Console.WriteLine("taskRemain:" + v_taskCount);
                     Program.logs.Warn("taskRemain:" + v_taskCount);
                 }
-                this.sb_notifyLongCharging();
+                this.sb_notifyLongCharging(chargingServiceName);
             }
             Thread.Sleep(10000);//wait for saving to db is finished
             //this.sb_finish();
         }
 
-        private void sb_notifyLongCharging()
+        private void sb_notifyLongCharging(string chargingServiceName)
         {
             TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - this.v_ticksStart);
             if (ts.TotalMinutes / 120 > 1)
@@ -407,7 +383,7 @@ namespace DehnadMTNChargeServices
 
                     }
 
-                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Long Charging:" + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")" + "(Connection Limit:" + connectionLimitStr + ")");
+                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, chargingServiceName + " Long Charging:" + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")" + "(Connection Limit:" + connectionLimitStr + ")");
 
 
                     this.v_notifTime = DateTime.Now.Ticks;
@@ -415,79 +391,15 @@ namespace DehnadMTNChargeServices
 
             }
         }
-        private void v_timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            //DateTime previousTime;
-            //if (!this.v_ticksPrevious.HasValue)
-            //    this.v_ticksPrevious = DateTime.Now.Ticks;
-
-            //previousTime = new DateTime(this.v_ticksPrevious.Value);
-
-            //TimeSpan span = DateTime.Now - previousTime;
-            //int loop = 1;
-            //if (span.TotalMilliseconds > this.v_timer.Interval)
-            //{
-            //    loop = (int)(span.TotalMilliseconds / this.v_timer.Interval);
-            //}
-            //else
-            //{
-            //    while (span.TotalMilliseconds < this.v_timer.Interval)
-            //    {
-            //        span = DateTime.Now - previousTime;
-            //    }
-            //}
-            //if (loop > this.v_tpsTotal / 10)
-            //{
-            //    Program.logs.Info("loop is exceeded" + loop + ";" + span.TotalMilliseconds + ";" + this.v_timer.Interval + ";" + previousTime.ToString("HH:mm:ss,fff") + ";" + DateTime.Now.ToString("HH:mm:ss,fff"));
-            //    this.v_timer.Enabled = false;
-            //    this.prp_finished = true;
-            //    this.v_cnn.Close();
-            //    return;
-            //}
-            //int k1, k2;
-            //System.Threading.ThreadPool.GetAvailableThreads(out k1, out k2);
-            //if (k1 < 100 || k2 < 100)
-            //{
-            //    Program.logs.Info("workder thread " + k1 + " completion port thread " + k2);
-            //}
-
-            //int i;
-            //for (i = 0; i <= loop - 1; i++)
-            //{
-            //    #region no rows remained
-            //    if (this.v_chargeServices.Where(o => o.prp_remainRowCount > 0).Count() == 0
-            //        && this.v_taskCount == 0)
-            //    {
-            //        Console.WriteLine("-no turn remain1:" + this.v_taskCount);
-            //        this.sb_finish();
-
-            //        return;
-            //    }
-            //    #endregion
-            //    this.v_turn = this.getNewTurn(this.v_turn);
-
-            //    if (this.v_turn < 0 || this.v_turn > this.v_chargeServices.Count - 1)
-            //    {
-            //        Console.WriteLine("-no turn remain2:" + this.v_taskCount);
-            //        this.sb_finish();
-            //        return;
-            //    }
-            //    this.sb_charge(this.v_turn);
-
-            //    this.v_ticksPrevious = DateTime.Now.Ticks;
-            //    this.v_timer.Start();
-            //}
-        }
 
         private void sb_charge(bool wipe, int turn)
         {
 
             if (turn < 0 || turn > this.v_chargeServices.Count - 1) return;
 
-            bool isSucceeded;
 
 
-            Program.logs.Warn(";" + this.v_chargeServices[turn].prp_serviceCode + ";"
+            Program.logs.Warn(";" + this.v_chargeServices[turn].prp_service.ServiceCode + ";"
                 + this.v_chargeServices[turn].prp_rowsProcessedInSecond + ";"
                 + this.v_chargeServices[turn].prp_rowIndex + ";"
                 + this.v_chargeServices[turn].prp_remainRowCount + ";"
@@ -495,13 +407,13 @@ namespace DehnadMTNChargeServices
 
             ServiceCharge service = this.v_chargeServices[turn];
             SharedLibrary.ServiceHandler.SubscribersAndCharges subscriber = service.prp_subscriberCurrent;
-
-            service.sb_chargeMtnSubscriber(wipe, subscriber, this.v_chargeServices[turn].prp_cycleNumber, 0, 0, DateTime.Now, out isSucceeded);
+            service.prp_wipe = wipe;
+            service.sb_charge(subscriber, this.v_chargeServices[turn].prp_cycleNumber, 0, 0, DateTime.Now);
             this.v_tps = this.v_tps + 1;
             this.v_chargeServices[turn].prp_rowsProcessedInSecond = this.v_chargeServices[turn].prp_rowsProcessedInSecond + 1;
             this.v_chargeServices[turn].prp_rowIndex = this.v_chargeServices[turn].prp_rowIndex + 1;
 
-            Console.WriteLine(this.v_tps + "-" + this.v_chargeServices[turn].prp_serviceCode + "-" + subscriber.mobileNumber);
+            Console.WriteLine(this.v_tps + "-" + this.v_chargeServices[turn].prp_service.ServiceCode + "-" + subscriber.mobileNumber);
 
         }
     }

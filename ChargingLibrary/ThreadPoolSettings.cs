@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Threading;
 
-namespace DehnadMTNChargeServices
+namespace ChargingLibrary
 {
     class ThreadPoolSettings : ConfigurationSection
     {

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Net;
-using System.ServiceProcess;
+
 using System.Text;
 using System.Threading.Tasks;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
-namespace DehnadMTNChargeServices
+namespace ChargingLibrary
 {
     internal static class Program
     {
@@ -21,22 +21,22 @@ namespace DehnadMTNChargeServices
         /// </summary>
         static void Main()
         {
-            //sb_setLoggerQuarterNumber();
-            if (Environment.UserInteractive)
-            {
-                ServiceMTN service1 = new ServiceMTN();
-                service1.StartDebugging(null);
-            }
-            else
-            {
-                // Put the body of your old Main method here.  
-                ServiceBase[] ServicesToRun;
-                ServicesToRun = new ServiceBase[]
-                {
-                new ServiceMTN()
-                };
-                ServiceBase.Run(ServicesToRun);
-            }
+            sb_setLoggerQuarterNumber();
+            //if (Environment.UserInteractive)
+            //{
+            //    ServiceMTN service1 = new ServiceMTN();
+            //    service1.StartDebugging(null);
+            //}
+            //else
+            //{
+            //    // Put the body of your old Main method here.  
+            //    ServiceBase[] ServicesToRun;
+            //    ServicesToRun = new ServiceBase[]
+            //    {
+            //    new ServiceMTN()
+            //    };
+            //    ServiceBase.Run(ServicesToRun);
+            //}
 
         }
 
@@ -84,7 +84,6 @@ namespace DehnadMTNChargeServices
 
         internal static void sb_sendNotification(string url, StandardEventLevel level, string message)
         {
-//            return;
             try
             {
                 string icon = "";

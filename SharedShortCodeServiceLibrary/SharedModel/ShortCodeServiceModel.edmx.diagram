@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="0f56446c7f47459cab393b67fef74351" Name="Diagram1">
+      <Diagram DiagramId="0f56446c7f47459cab393b67fef74351" Name="Diagram1" ZoomLevel="64">
         <EntityTypeShape EntityType="ShortCodeServiceModel.AutochargeContent" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.AutochargeContentsSendedToUser" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.AutochargeHeaderFooter" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
@@ -23,8 +23,6 @@
         <EntityTypeShape EntityType="ShortCodeServiceModel.ServiceOffReason" Width="1.5" PointX="6.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.ServicesRealtimeStatistic" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.Setting" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ShortCodeServiceModel.Singlecharge" Width="1.5" PointX="12.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ShortCodeServiceModel.SinglechargeArchive" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.SinglechargeInstallment" Width="1.5" PointX="8.75" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.SinglechargeInstallmentArchive" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.SingleChargeTiming" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
@@ -33,6 +31,8 @@
         <EntityTypeShape EntityType="ShortCodeServiceModel.TimedTempMessagesBuffer" Width="1.5" PointX="14.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.MessagesTemplate" Width="1.5" PointX="15.375" PointY="14.75" />
         <EntityTypeShape EntityType="ShortCodeServiceModel.ServiceCommand" Width="1.5" PointX="11.375" PointY="16.75" />
+        <EntityTypeShape EntityType="ShortCodeServiceModel.Singlecharge" Width="1.5" PointX="17.375" PointY="0.75" />
+        <EntityTypeShape EntityType="ShortCodeServiceModel.SinglechargeArchive" Width="1.5" PointX="17.375" PointY="5.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

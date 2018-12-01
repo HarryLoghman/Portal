@@ -28,5 +28,6 @@ namespace SharedShortCodeServiceLibrary.SharedModel
         public Nullable<int> ProcessTimeInMilliSecond { get; set; }
         public Nullable<int> CycleNumber { get; set; }
         public Nullable<int> ThreadNumber { get; set; }
+        public Nullable<bool> wipe { get; set; }
     }
 }

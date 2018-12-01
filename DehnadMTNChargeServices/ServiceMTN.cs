@@ -1,4 +1,5 @@
-﻿using log4net.Config;
+﻿using ChargingLibrary;
+using log4net.Config;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -91,10 +92,20 @@ namespace DehnadMTNChargeServices
                         
                         using (var portal = new SharedLibrary.Models.PortalEntities())
                         {
-                            var serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime && (o.daysOfWeekOrDate == strDate)).Select(o => o);
+                            var serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime 
+                            && ((o.servicesIDs == "10025" || o.servicesIDs.StartsWith("10025;") || o.servicesIDs.Contains(";10025;") || o.servicesIDs.EndsWith("10025;")) ||
+                            ((o.servicesIDs == "10036" || o.servicesIDs.StartsWith("10036;") || o.servicesIDs.Contains(";10036;") || o.servicesIDs.EndsWith("10036;")) ||
+                            (o.servicesIDs == "10028" || o.servicesIDs.StartsWith("10028;") || o.servicesIDs.Contains(";10028;") || o.servicesIDs.EndsWith("10028;")) ||
+                            (o.servicesIDs == "10039" || o.servicesIDs.StartsWith("10039;") || o.servicesIDs.Contains(";10039;") || o.servicesIDs.EndsWith("10039;"))))
+                            && (o.daysOfWeekOrDate == strDate)).Select(o => o);
                             if (serviceCycles.Count() == 0)
                             {
-                                serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime && o.daysOfWeekOrDate.Contains(day)).Select(o => o);
+                                serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime
+                                && ((o.servicesIDs == "10025" || o.servicesIDs.StartsWith("10025;") || o.servicesIDs.Contains(";10025;") || o.servicesIDs.EndsWith("10025;")) ||
+                            ((o.servicesIDs == "10036" || o.servicesIDs.StartsWith("10036;") || o.servicesIDs.Contains(";10036;") || o.servicesIDs.EndsWith("10036;")) ||
+                            (o.servicesIDs == "10028" || o.servicesIDs.StartsWith("10028;") || o.servicesIDs.Contains(";10028;") || o.servicesIDs.EndsWith("10028;")) ||
+                            (o.servicesIDs == "10039" || o.servicesIDs.StartsWith("10039;") || o.servicesIDs.Contains(";10039;") || o.servicesIDs.EndsWith("10039;"))))
+                                && o.daysOfWeekOrDate.Contains(day)).Select(o => o);
                             }
                             if (serviceCycles.Count() >= 1)
                             {
@@ -112,14 +123,22 @@ namespace DehnadMTNChargeServices
                                     cycleNumber = lstServiceCycles[element].cycleNumber;
                                     string servicesIDs = lstServiceCycles[element].servicesIDs;
                                     string minTPSs = lstServiceCycles[element].minTPSs;
+                                    string cycleChargePrices = lstServiceCycles[element].cycleChargePrices;
                                     string[] servicesIDsArr = servicesIDs.Split(';');
                                     string[] minTPSsArr = minTPSs.Split(';');
+                                    string[] cycleChargePricesArr = cycleChargePrices.Split(';');
+
                                     string aggregatorServiceId;
                                     int serviceId;
 
                                     if (servicesIDsArr.Length != minTPSsArr.Length)
                                     {
                                         Program.logs.Error("Number of services (" + servicesIDsArr.Length + ") does not match the number of TPSs (" + minTPSsArr.Length + ")");
+                                        return;
+                                    }
+                                    if (servicesIDsArr.Length != cycleChargePricesArr.Length)
+                                    {
+                                        Program.logs.Error("Number of services (" + servicesIDsArr.Length + ") does not match the number of cycleChargePrice (" + cycleChargePricesArr.Length + ")");
                                         return;
                                     }
                                     string notStartReason;
@@ -130,44 +149,45 @@ namespace DehnadMTNChargeServices
                                             continue;
                                         serviceId = int.Parse(servicesIDsArr[i]);
                                         aggregatorServiceId = portal.ServiceInfoes.Where(o => o.ServiceId == serviceId).Select(o => o.AggregatorServiceId).FirstOrDefault();
+                                        
                                         if (string.IsNullOrEmpty(aggregatorServiceId))
                                             continue;
                                         if (servicesIDsArr[i] == "10025")
                                         {
-                                            ServiceChargeTahchin sc = new ServiceChargeTahchin(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
                                         }
                                         else if (servicesIDsArr[i] == "10036")
                                         {
-                                            ServiceChargeDambel sc = new ServiceChargeDambel(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i])); 
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
                                         }
                                         else if (servicesIDsArr[i] == "10028")
                                         {
-                                            ServiceChargeMusicYad sc = new ServiceChargeMusicYad(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
                                         }
                                         else if (servicesIDsArr[i] == "10039")
                                         {
-                                            ServiceChargePorshetab sc = new ServiceChargePorshetab(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber);
+                                            ServiceChargeMTNPorshetab sc = new ServiceChargeMTNPorshetab(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
-                                                Program.logs.Warn(sc.prp_serviceCode + " is not started because of : " + notStartReason);
+                                                Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
                                                 Thread.Sleep(1000);
                                             }
                                             else v_lst_services.Add(sc);
@@ -181,8 +201,8 @@ namespace DehnadMTNChargeServices
                                 if (v_lst_services.Count > 0)
                                 {
                                     DateTime startTime = DateTime.Now;
-                                    chargeServices cs = new chargeServices();
-                                    cs.sb_chargeAll(tpsTotal.Value, v_lst_services, v_startTimeTicks);
+                                    ChargingController cs = new ChargingController();
+                                    cs.sb_chargeAll(tpsTotal.Value, v_lst_services, v_startTimeTicks, "MTN");
                                     //while (!cs.prp_finished)
                                     //{
 

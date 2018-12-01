@@ -441,6 +441,7 @@
           <Property Name="ProcessTimeInMilliSecond" Type="int" />
           <Property Name="CycleNumber" Type="int" />
           <Property Name="ThreadNumber" Type="int" />
+          <Property Name="wipe" Type="bit" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -460,6 +461,7 @@
           <Property Name="ProcessTimeInMilliSecond" Type="int" />
           <Property Name="CycleNumber" Type="int" />
           <Property Name="ThreadNumber" Type="int" />
+          <Property Name="wipe" Type="bit" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -1004,44 +1006,6 @@
           <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="PersianName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="Singlecharge">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
-          <Property Name="CycleNumber" Type="Int32" />
-          <Property Name="ThreadNumber" Type="Int32" />
-        </EntityType>
-        <EntityType Name="SinglechargeArchive">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
-          <Property Name="CycleNumber" Type="Int32" />
-          <Property Name="ThreadNumber" Type="Int32" />
-        </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
             <PropertyRef Name="Id" />
@@ -1172,8 +1136,6 @@
           <EntitySet Name="ServiceOffReasons" EntityType="Self.ServiceOffReason" />
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistic" />
           <EntitySet Name="Settings" EntityType="Self.Setting" />
-          <EntitySet Name="Singlecharges" EntityType="Self.Singlecharge" />
-          <EntitySet Name="SinglechargeArchives" EntityType="Self.SinglechargeArchive" />
           <EntitySet Name="SinglechargeInstallments" EntityType="Self.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeInstallmentArchives" EntityType="Self.SinglechargeInstallmentArchive" />
           <EntitySet Name="SingleChargeTimings" EntityType="Self.SingleChargeTiming" />
@@ -1182,6 +1144,8 @@
           <EntitySet Name="TimedTempMessagesBuffers" EntityType="Self.TimedTempMessagesBuffer" />
           <EntitySet Name="MessagesTemplates" EntityType="ShortCodeServiceModel.MessagesTemplate" />
           <EntitySet Name="ServiceCommands" EntityType="ShortCodeServiceModel.ServiceCommand" />
+          <EntitySet Name="Singlecharges" EntityType="ShortCodeServiceModel.Singlecharge" />
+          <EntitySet Name="SinglechargeArchives" EntityType="ShortCodeServiceModel.SinglechargeArchive" />
         </EntityContainer>
         <EntityType Name="MessagesTemplate">
           <Key>
@@ -1202,6 +1166,46 @@
           <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="priority" Type="Int32" />
           <Property Name="state" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="ThreadNumber" Type="Int32" />
+          <Property Name="wipe" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SinglechargeArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="ThreadNumber" Type="Int32" />
+          <Property Name="wipe" Type="Boolean" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1625,46 +1629,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Singlecharges">
-            <EntityTypeMapping TypeName="ShortCodeServiceModel.Singlecharge">
-              <MappingFragment StoreEntitySet="Singlecharge">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
-                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
-                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SinglechargeArchives">
-            <EntityTypeMapping TypeName="ShortCodeServiceModel.SinglechargeArchive">
-              <MappingFragment StoreEntitySet="SinglechargeArchive">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
-                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
-                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="SinglechargeInstallments">
             <EntityTypeMapping TypeName="ShortCodeServiceModel.SinglechargeInstallment">
               <MappingFragment StoreEntitySet="SinglechargeInstallment">
@@ -1801,6 +1765,48 @@
                 <ScalarProperty Name="condition" ColumnName="condition" />
                 <ScalarProperty Name="commandTitle" ColumnName="commandTitle" />
                 <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Singlecharges">
+            <EntityTypeMapping TypeName="ShortCodeServiceModel.Singlecharge">
+              <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="wipe" ColumnName="wipe" />
+                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeArchives">
+            <EntityTypeMapping TypeName="ShortCodeServiceModel.SinglechargeArchive">
+              <MappingFragment StoreEntitySet="SinglechargeArchive">
+                <ScalarProperty Name="wipe" ColumnName="wipe" />
+                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

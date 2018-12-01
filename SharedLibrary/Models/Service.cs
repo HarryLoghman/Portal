@@ -31,6 +31,7 @@ namespace SharedLibrary.Models
         public Nullable<bool> Enable2StepSubscription { get; set; }
         public string oldServiceCodes { get; set; }
         public string referralUrl { get; set; }
+        public Nullable<int> tps { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ServiceInfo> ServiceInfoes { get; set; }

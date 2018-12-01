@@ -21,6 +21,7 @@ namespace SharedLibrary.Models
         public System.TimeSpan endTime { get; set; }
         public string servicesIDs { get; set; }
         public string minTPSs { get; set; }
+        public string cycleChargePrices { get; set; }
         public Nullable<int> state { get; set; }
     }
 }

@@ -58,6 +58,7 @@ namespace DehnadMCIFtpChargingService
 
                     if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00")) || isInMaintenanceTime == true)
                     {
+                        isInMaintenanceTime = true;
                         Program.logs.Info("isInMaintenanceTime:" + isInMaintenanceTime);
                         Thread.Sleep(1000);
                     }

@@ -280,7 +280,7 @@ namespace DehnadMCIFtpChargingService
                     FtpWebRequest request = (FtpWebRequest)WebRequest.Create(newFtpFiles[i].ftpFilePath);
                     request.Method = WebRequestMethods.Ftp.DownloadFile;
                     request.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
-
+                    request.KeepAlive = false;
                     FtpWebResponse response = (FtpWebResponse)request.GetResponse();
                     Stream responseStream = response.GetResponseStream();
                     StreamReader reader = new StreamReader(responseStream);
@@ -330,6 +330,7 @@ namespace DehnadMCIFtpChargingService
                 FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
                 ftpRequest.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
+                ftpRequest.KeepAlive = false;
                 FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
                 FtpWebResponse response;
                 StreamReader streamReader = new StreamReader(ftpResponse.GetResponseStream());
@@ -386,6 +387,7 @@ namespace DehnadMCIFtpChargingService
                     }
                 }
                 ftpResponse.Close();
+                
                 streamReader.Close();
                 Program.logs.Info("detectNewFtpFiles:" + newFtpFiles.Count + " new or modified files have been detected ");
                 return newFtpFiles;

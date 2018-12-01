@@ -5,7 +5,6 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="9ebda56575074f109e97a0f267321995" Name="Diagram1" ZoomLevel="49">
-        <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="5.75" PointY="4.125" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="2.625" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserLogin" Width="1.5" PointX="10.25" PointY="5.375" IsExpanded="true" />
@@ -23,10 +22,9 @@
         <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor3GServices" Width="1.5" PointX="13.75" PointY="8.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="7.75" PointY="15.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ReceivedMessagesArchive" Width="1.5" PointX="13.75" PointY="14.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.serviceCycle" Width="1.5" PointX="0.75" PointY="17.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ServiceInfo" Width="1.5" PointX="3" PointY="4.125" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="14.75" PointY="5.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="PortalModel.SinglechargeDelivery" Width="1.5" PointX="2.75" PointY="17.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="PortalModel.SinglechargeDelivery" Width="1.5" PointX="0.5" PointY="17.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="4.75" PointY="17.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.SubscribersPoint" Width="1.5" PointX="3" PointY="13.75" IsExpanded="true" />
@@ -35,8 +33,6 @@
         <EntityTypeShape EntityType="PortalModel.vw_AllSentMessages" Width="1.5" PointX="15.75" PointY="14.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.vw_DehnadAllServicesStatistics" Width="1.5" PointX="16.75" PointY="2.375" IsExpanded="true" />
         <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="9.75" PointY="18.375" IsExpanded="true" />
-        <AssociationConnector Association="PortalModel.FK_Aggregators_Operators" ManuallyRouted="false" />
-        <AssociationConnector Association="PortalModel.FK_ServiceInfo_Aggregators" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" ManuallyRouted="false" />
@@ -48,17 +44,22 @@
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
-        <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="4.7278194486758762" PointY="11.822338512084604" />
-        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="8.2495546956777357" PointY="20.582376251268375" />
-        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="10.486105167533319" PointY="29.856525628760703" />
+        
+        <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="0.875" PointY="20.375" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetUsers" Width="1.5" PointX="6.7813661409455186" PointY="17.415018790129114" />
+        <EntityTypeShape EntityType="PortalModel.AspNetUsersRolesServiceAccess" Width="1.5" PointX="14.125" PointY="29.625" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetUserRoles" Width="1.5" PointX="1" PointY="10.875" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetRoles" Width="1.5" PointX="1.418179561113091" PointY="14.533095515581358" />
+        <EntityTypeShape EntityType="PortalModel.PortalObject" Width="1.5" PointX="12.625" PointY="19.5" />
+        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="9.950779425888685" PointY="31.369525685612821" />
         <AssociationConnector Association="PortalModel.C_FK_ServiceShortCodes_Services" />
         <AssociationConnector Association="PortalModel.C_FK_SubscribersPoints_Services" />
         <AssociationConnector Association="PortalModel.FK_Subscribers_Services" />
-        <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="3.7714124674775693" PointY="19.481614941489703" />
-        <EntityTypeShape EntityType="PortalModel.vw_AspNetUsers" Width="1.5" PointX="6.7813661409455186" PointY="17.415018790129114" />
-        <EntityTypeShape EntityType="PortalModel.AspNetUsersRolesServiceAccess" Width="1.5" PointX="14.125" PointY="29.625" />
-        <EntityTypeShape EntityType="PortalModel.vw_AspNetUserRoles" Width="1.5" PointX="7.486709093435997" PointY="11.785516610269209" />
-        <EntityTypeShape EntityType="PortalModel.vw_AspNetRoles" Width="1.5" PointX="1.418179561113091" PointY="14.533095515581358" />
+        <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="0.5" PointY="4" />
+        <AssociationConnector Association="PortalModel.C_FK_Aggregators_Operators" />
+        <AssociationConnector Association="PortalModel.C_FK_ServiceInfo_Aggregators" />
+        <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="19.375" PointY="6.875" />
+        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="4.2502872926417208" PointY="23.946179281895134" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

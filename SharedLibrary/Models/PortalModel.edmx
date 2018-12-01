@@ -24,6 +24,7 @@
           <Property Name="AggregatorName" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="AggregatorUsername" Type="nvarchar" MaxLength="100" />
           <Property Name="AggregatorPassword" Type="nvarchar" MaxLength="100" />
+          <Property Name="tps" Type="int" />
         </EntityType>
         <EntityType Name="AspNetRoles">
           <Key>
@@ -206,6 +207,17 @@
           <Property Name="PardisServiceId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Price" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="PortalObjects">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="parentId" Type="bigint" />
+          <Property Name="objectName" Type="nvarchar" MaxLength="500" />
+          <Property Name="persianName" Type="nvarchar" MaxLength="500" />
+          <Property Name="tag" Type="nvarchar" MaxLength="500" />
+          <Property Name="description" Type="nvarchar" MaxLength="500" />
+        </EntityType>
         <EntityType Name="RealtimeStatisticsFor2GServices">
           <Key>
             <PropertyRef Name="Id" />
@@ -293,20 +305,6 @@
           <Property Name="DateInvited" Type="datetime" Nullable="false" />
           <Property Name="PersianDateInvited" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
-        <EntityType Name="serviceCycles">
-          <Key>
-            <PropertyRef Name="serviceID" />
-            <PropertyRef Name="cycleNumber" />
-            <PropertyRef Name="daysOfWeek" />
-          </Key>
-          <Property Name="serviceID" Type="bigint" Nullable="false" />
-          <Property Name="cycleNumber" Type="int" Nullable="false" />
-          <Property Name="shortCode" Type="nvarchar" MaxLength="50" />
-          <Property Name="daysOfWeek" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="startTime" Type="time" Precision="7" Nullable="false" />
-          <Property Name="endTime" Type="time" Precision="7" Nullable="false" />
-          <Property Name="minTPS" Type="int" />
-        </EntityType>
         <EntityType Name="serviceCyclesNew">
           <Key>
             <PropertyRef Name="id" />
@@ -318,6 +316,7 @@
           <Property Name="endTime" Type="time" Precision="7" Nullable="false" />
           <Property Name="servicesIDs" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="minTPSs" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="cycleChargePrices" Type="varchar" MaxLength="100" />
           <Property Name="state" Type="int" />
         </EntityType>
         <EntityType Name="ServiceInfo">
@@ -355,6 +354,7 @@
           <Property Name="Enable2StepSubscription" Type="bit" />
           <Property Name="oldServiceCodes" Type="nvarchar" MaxLength="1000" />
           <Property Name="referralUrl" Type="nvarchar" MaxLength="1000" />
+          <Property Name="tps" Type="int" />
         </EntityType>
         <EntityType Name="SinglechargeDelivery">
           <Key>
@@ -597,6 +597,8 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="OnKeywords" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="IsServiceActive" Type="bit" Nullable="false" />
           <Property Name="Enable2StepSubscription" Type="bit" />
+          <Property Name="oldServiceCodes" Type="nvarchar" MaxLength="1000" />
+          <Property Name="referralUrl" Type="nvarchar" MaxLength="1000" />
           <Property Name="ServiceInfoId" Type="bigint" />
           <Property Name="AggregatorId" Type="bigint" />
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
@@ -757,12 +759,12 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ParidsShortCodes" EntityType="Self.ParidsShortCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PortalObjects" EntityType="Self.PortalObjects" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="Self.RealtimeStatisticsFor2GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Referral" EntityType="Self.Referral" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="serviceCycles" EntityType="Self.serviceCycles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="serviceCyclesNew" EntityType="Self.serviceCyclesNew" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceInfo" EntityType="Self.ServiceInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceKeywords" EntityType="Self.ServiceKeywords" Schema="dbo" store:Type="Tables" />
@@ -872,6 +874,8 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
     [vw_servicesServicesInfo].[OnKeywords] AS [OnKeywords], 
     [vw_servicesServicesInfo].[IsServiceActive] AS [IsServiceActive], 
     [vw_servicesServicesInfo].[Enable2StepSubscription] AS [Enable2StepSubscription], 
+    [vw_servicesServicesInfo].[oldServiceCodes] AS [oldServiceCodes], 
+    [vw_servicesServicesInfo].[referralUrl] AS [referralUrl], 
     [vw_servicesServicesInfo].[ServiceInfoId] AS [ServiceInfoId], 
     [vw_servicesServicesInfo].[AggregatorId] AS [AggregatorId], 
     [vw_servicesServicesInfo].[ShortCode] AS [ShortCode], 
@@ -932,18 +936,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
           <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Aggregator">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OperatorId" Type="Int64" Nullable="false" />
-          <Property Name="AggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="AggregatorUsername" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Operator" Relationship="Self.FK_Aggregators_Operators" FromRole="Aggregators" ToRole="Operators" />
-          <NavigationProperty Name="ServiceInfoes" Relationship="Self.FK_ServiceInfo_Aggregators" FromRole="Aggregators" ToRole="ServiceInfo" />
         </EntityType>
         <EntityType Name="AspNetRole">
           <Key>
@@ -1057,7 +1049,7 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="Id" Type="Int64" Nullable="false" />
           <Property Name="OperatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="tps" Type="Int32" />
-          <NavigationProperty Name="Aggregators" Relationship="Self.FK_Aggregators_Operators" FromRole="Operators" ToRole="Aggregators" />
+          <NavigationProperty Name="Aggregators" Relationship="PortalModel.C_FK_Aggregators_Operators" FromRole="Operator" ToRole="Aggregator" />
         </EntityType>
         <EntityType Name="OperatorsPlan">
           <Key>
@@ -1164,20 +1156,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="RetryCount" Type="Int32" />
           <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="serviceCycle">
-          <Key>
-            <PropertyRef Name="serviceID" />
-            <PropertyRef Name="cycleNumber" />
-            <PropertyRef Name="daysOfWeek" />
-          </Key>
-          <Property Name="serviceID" Type="Int64" Nullable="false" />
-          <Property Name="cycleNumber" Type="Int32" Nullable="false" />
-          <Property Name="shortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="daysOfWeek" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="minTPS" Type="Int32" />
-        </EntityType>
         <EntityType Name="ServiceInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -1190,8 +1168,8 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="chargePrice" Type="Int32" />
-          <NavigationProperty Name="Aggregator" Relationship="Self.FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregators" />
           <NavigationProperty Name="Service" Relationship="PortalModel.C_FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Service" />
+          <NavigationProperty Name="Aggregator" Relationship="PortalModel.C_FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregator" />
         </EntityType>
         <EntityType Name="ServiceKeyword">
           <Key>
@@ -1362,30 +1340,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="RetryCount" Type="Int32" />
           <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <Association Name="FK_Aggregators_Operators">
-          <End Role="Operators" Type="Self.Operator" Multiplicity="1" />
-          <End Role="Aggregators" Type="Self.Aggregator" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Operators">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Aggregators">
-              <PropertyRef Name="OperatorId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ServiceInfo_Aggregators">
-          <End Role="Aggregators" Type="Self.Aggregator" Multiplicity="1" />
-          <End Role="ServiceInfo" Type="Self.ServiceInfo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Aggregators">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ServiceInfo">
-              <PropertyRef Name="AggregatorId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1420,7 +1374,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
         </Association>
         <EntityContainer Name="PortalEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
-          <EntitySet Name="Aggregators" EntityType="Self.Aggregator" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
@@ -1438,7 +1391,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessage" />
           <EntitySet Name="ReceivedMessagesArchives" EntityType="Self.ReceivedMessagesArchive" />
-          <EntitySet Name="serviceCycles" EntityType="Self.serviceCycle" />
           <EntitySet Name="ServiceInfoes" EntityType="Self.ServiceInfo" />
           <EntitySet Name="ServiceKeywords" EntityType="Self.ServiceKeyword" />
           <EntitySet Name="SinglechargeDeliveries" EntityType="Self.SinglechargeDelivery" />
@@ -1450,14 +1402,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="vw_AllSentMessages" EntityType="Self.vw_AllSentMessages" />
           <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="Self.vw_DehnadAllServicesStatistics" />
           <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" />
-          <AssociationSet Name="FK_Aggregators_Operators" Association="Self.FK_Aggregators_Operators">
-            <End Role="Operators" EntitySet="Operators" />
-            <End Role="Aggregators" EntitySet="Aggregators" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ServiceInfo_Aggregators" Association="Self.FK_ServiceInfo_Aggregators">
-            <End Role="Aggregators" EntitySet="Aggregators" />
-            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
-          </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -1479,21 +1423,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           </FunctionImport>
           <EntitySet Name="chargeInfoes" EntityType="PortalModel.chargeInfo" />
           <EntitySet Name="Referrals" EntityType="PortalModel.Referral" />
-          <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
-          <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
-          <EntitySet Name="Services" EntityType="PortalModel.Service" />
-          <AssociationSet Name="C_FK_ServiceShortCodes_Services" Association="PortalModel.C_FK_ServiceShortCodes_Services">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
-          </AssociationSet>
-          <AssociationSet Name="C_FK_SubscribersPoints_Services" Association="PortalModel.C_FK_SubscribersPoints_Services">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="SubscribersPoint" EntitySet="SubscribersPoints" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Subscribers_Services" Association="PortalModel.FK_Subscribers_Services">
-            <End Role="Service" EntitySet="Services" />
-            <End Role="Subscriber" EntitySet="Subscribers" />
-          </AssociationSet>
           <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
           <EntitySet Name="vw_AspNetUsers" EntityType="PortalModel.vw_AspNetUsers" />
           <EntitySet Name="AspNetUsersRolesServiceAccesses" EntityType="PortalModel.AspNetUsersRolesServiceAccess" />
@@ -1511,6 +1440,31 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
             <Parameter Name="mobileNumber" Mode="In" Type="String" />
             <Parameter Name="chargePriceFrom" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <EntitySet Name="PortalObjects" EntityType="PortalModel.PortalObject" />
+          <EntitySet Name="Services" EntityType="PortalModel.Service" />
+          <AssociationSet Name="C_FK_ServiceShortCodes_Services" Association="PortalModel.C_FK_ServiceShortCodes_Services">
+            <End Role="Service" EntitySet="Services" />
+            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="C_FK_SubscribersPoints_Services" Association="PortalModel.C_FK_SubscribersPoints_Services">
+            <End Role="Service" EntitySet="Services" />
+            <End Role="SubscribersPoint" EntitySet="SubscribersPoints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Subscribers_Services" Association="PortalModel.FK_Subscribers_Services">
+            <End Role="Service" EntitySet="Services" />
+            <End Role="Subscriber" EntitySet="Subscribers" />
+          </AssociationSet>
+          <EntitySet Name="Aggregators" EntityType="PortalModel.Aggregator" />
+          <AssociationSet Name="C_FK_Aggregators_Operators" Association="PortalModel.C_FK_Aggregators_Operators">
+            <End Role="Operator" EntitySet="Operators" />
+            <End Role="Aggregator" EntitySet="Aggregators" />
+          </AssociationSet>
+          <AssociationSet Name="C_FK_ServiceInfo_Aggregators" Association="PortalModel.C_FK_ServiceInfo_Aggregators">
+            <End Role="Aggregator" EntitySet="Aggregators" />
+            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
+          </AssociationSet>
+          <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
+          <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
           </EntityContainer>
         <EntityType Name="chargeInfo">
           <Key>
@@ -1537,101 +1491,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="DateInvited" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PersianDateInvited" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="serviceCyclesNew">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="daysOfWeekOrDate" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="cycleNumber" Type="Int32" Nullable="false" />
-          <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="servicesIDs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="minTPSs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="state" Type="Int32" />
-        </EntityType>
-        <EntityType Name="vw_servicesServicesInfo">
-          <Key>
-            <PropertyRef Name="TodayTillNowChargeAmount" />
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="ServiceCode" />
-            <PropertyRef Name="DateCreated" />
-            <PropertyRef Name="OnKeywords" />
-            <PropertyRef Name="IsServiceActive" />
-          </Key>
-          <Property Name="userCount" Type="Int32" />
-          <Property Name="activeUserCount" Type="Int32" />
-          <Property Name="TodayTillNowChargeAmount" Type="Int32" Nullable="false" />
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
-          <Property Name="Enable2StepSubscription" Type="Boolean" />
-          <Property Name="ServiceInfoId" Type="Int64" />
-          <Property Name="AggregatorId" Type="Int64" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="chargePrice" Type="Int32" />
-          <Property Name="aggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Service">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
-          <Property Name="Enable2StepSubscription" Type="Boolean" />
-          <Property Name="oldServiceCodes" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="referralUrl" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="ServiceInfoes" Relationship="PortalModel.C_FK_ServiceShortCodes_Services" FromRole="Service" ToRole="ServiceInfo" />
-          <NavigationProperty Name="SubscribersPoints" Relationship="PortalModel.C_FK_SubscribersPoints_Services" FromRole="Service" ToRole="SubscribersPoint" />
-          <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Services" FromRole="Service" ToRole="Subscriber" />
-        </EntityType>
-        <Association Name="C_FK_ServiceShortCodes_Services">
-          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
-          <End Type="PortalModel.ServiceInfo" Role="ServiceInfo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ServiceInfo">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="C_FK_SubscribersPoints_Services">
-          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
-          <End Type="PortalModel.SubscribersPoint" Role="SubscribersPoint" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SubscribersPoint">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Subscribers_Services">
-          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
-          <End Type="PortalModel.Subscriber" Role="Subscriber" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Service">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Subscriber">
-              <PropertyRef Name="ServiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="MCISingleChargeFtpFile">
           <Key>
             <PropertyRef Name="id" />
@@ -1734,6 +1593,153 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Type="String" Name="ShortCode" Nullable="false" />
           <Property Type="String" Name="mobileNumber" Nullable="false" />
         </ComplexType>
+        <EntityType Name="PortalObject">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="parentId" Type="Int64" />
+          <Property Name="objectName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="persianName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="tag" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
+          <Property Name="Enable2StepSubscription" Type="Boolean" />
+          <Property Name="oldServiceCodes" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="referralUrl" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="tps" Type="Int32" />
+          <NavigationProperty Name="ServiceInfoes" Relationship="PortalModel.C_FK_ServiceShortCodes_Services" FromRole="Service" ToRole="ServiceInfo" />
+          <NavigationProperty Name="SubscribersPoints" Relationship="PortalModel.C_FK_SubscribersPoints_Services" FromRole="Service" ToRole="SubscribersPoint" />
+          <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Services" FromRole="Service" ToRole="Subscriber" />
+        </EntityType>
+        <Association Name="C_FK_ServiceShortCodes_Services">
+          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
+          <End Type="PortalModel.ServiceInfo" Role="ServiceInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ServiceInfo">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="C_FK_SubscribersPoints_Services">
+          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
+          <End Type="PortalModel.SubscribersPoint" Role="SubscribersPoint" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SubscribersPoint">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Subscribers_Services">
+          <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
+          <End Type="PortalModel.Subscriber" Role="Subscriber" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Subscriber">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Aggregator">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OperatorId" Type="Int64" Nullable="false" />
+          <Property Name="AggregatorName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorUsername" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="tps" Type="Int32" />
+          <NavigationProperty Name="Operator" Relationship="PortalModel.C_FK_Aggregators_Operators" FromRole="Aggregator" ToRole="Operator" />
+          <NavigationProperty Name="ServiceInfoes" Relationship="PortalModel.C_FK_ServiceInfo_Aggregators" FromRole="Aggregator" ToRole="ServiceInfo" />
+        </EntityType>
+        <Association Name="C_FK_Aggregators_Operators">
+          <End Type="PortalModel.Operator" Role="Operator" Multiplicity="1" />
+          <End Type="PortalModel.Aggregator" Role="Aggregator" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operator">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Aggregator">
+              <PropertyRef Name="OperatorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="C_FK_ServiceInfo_Aggregators">
+          <End Type="PortalModel.Aggregator" Role="Aggregator" Multiplicity="1" />
+          <End Type="PortalModel.ServiceInfo" Role="ServiceInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Aggregator">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ServiceInfo">
+              <PropertyRef Name="AggregatorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="serviceCyclesNew">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="daysOfWeekOrDate" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="cycleNumber" Type="Int32" Nullable="false" />
+          <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="servicesIDs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="minTPSs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="cycleChargePrices" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="state" Type="Int32" />
+        </EntityType>
+        <EntityType Name="vw_servicesServicesInfo">
+          <Key>
+            <PropertyRef Name="TodayTillNowChargeAmount" />
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="ServiceCode" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="OnKeywords" />
+            <PropertyRef Name="IsServiceActive" />
+          </Key>
+          <Property Name="userCount" Type="Int32" />
+          <Property Name="activeUserCount" Type="Int32" />
+          <Property Name="TodayTillNowChargeAmount" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
+          <Property Name="Enable2StepSubscription" Type="Boolean" />
+          <Property Name="oldServiceCodes" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="referralUrl" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceInfoId" Type="Int64" />
+          <Property Name="AggregatorId" Type="Int64" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="chargePrice" Type="Int32" />
+          <Property Name="aggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1747,17 +1753,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
                 <ScalarProperty Name="Model" ColumnName="Model" />
                 <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Aggregators">
-            <EntityTypeMapping TypeName="PortalModel.Aggregator">
-              <MappingFragment StoreEntitySet="Aggregators">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
-                <ScalarProperty Name="AggregatorName" ColumnName="AggregatorName" />
-                <ScalarProperty Name="AggregatorUsername" ColumnName="AggregatorUsername" />
-                <ScalarProperty Name="AggregatorPassword" ColumnName="AggregatorPassword" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1988,19 +1983,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="serviceCycles">
-            <EntityTypeMapping TypeName="PortalModel.serviceCycle">
-              <MappingFragment StoreEntitySet="serviceCycles">
-                <ScalarProperty Name="serviceID" ColumnName="serviceID" />
-                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
-                <ScalarProperty Name="shortCode" ColumnName="shortCode" />
-                <ScalarProperty Name="daysOfWeek" ColumnName="daysOfWeek" />
-                <ScalarProperty Name="startTime" ColumnName="startTime" />
-                <ScalarProperty Name="endTime" ColumnName="endTime" />
-                <ScalarProperty Name="minTPS" ColumnName="minTPS" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ServiceInfoes">
             <EntityTypeMapping TypeName="PortalModel.ServiceInfo">
               <MappingFragment StoreEntitySet="ServiceInfo">
@@ -2210,59 +2192,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="serviceCyclesNews">
-            <EntityTypeMapping TypeName="PortalModel.serviceCyclesNew">
-              <MappingFragment StoreEntitySet="serviceCyclesNew">
-                <ScalarProperty Name="state" ColumnName="state" />
-                <ScalarProperty Name="minTPSs" ColumnName="minTPSs" />
-                <ScalarProperty Name="servicesIDs" ColumnName="servicesIDs" />
-                <ScalarProperty Name="endTime" ColumnName="endTime" />
-                <ScalarProperty Name="startTime" ColumnName="startTime" />
-                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
-                <ScalarProperty Name="daysOfWeekOrDate" ColumnName="daysOfWeekOrDate" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_servicesServicesInfo">
-            <EntityTypeMapping TypeName="PortalModel.vw_servicesServicesInfo">
-              <MappingFragment StoreEntitySet="vw_servicesServicesInfo">
-                <ScalarProperty Name="aggregatorName" ColumnName="aggregatorName" />
-                <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
-                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
-                <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
-                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="ServiceInfoId" ColumnName="ServiceInfoId" />
-                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
-                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
-                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="TodayTillNowChargeAmount" ColumnName="TodayTillNowChargeAmount" />
-                <ScalarProperty Name="activeUserCount" ColumnName="activeUserCount" />
-                <ScalarProperty Name="userCount" ColumnName="userCount" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Services">
-            <EntityTypeMapping TypeName="PortalModel.Service">
-              <MappingFragment StoreEntitySet="Services">
-                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
-                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
-                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
-                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
-                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="MCISingleChargeFtpFiles">
             <EntityTypeMapping TypeName="PortalModel.MCISingleChargeFtpFile">
               <MappingFragment StoreEntitySet="MCISingleChargeFtpFiles">
@@ -2373,6 +2302,87 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="PortalObjects">
+            <EntityTypeMapping TypeName="PortalModel.PortalObject">
+              <MappingFragment StoreEntitySet="PortalObjects">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="tag" ColumnName="tag" />
+                <ScalarProperty Name="persianName" ColumnName="persianName" />
+                <ScalarProperty Name="objectName" ColumnName="objectName" />
+                <ScalarProperty Name="parentId" ColumnName="parentId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Services">
+            <EntityTypeMapping TypeName="PortalModel.Service">
+              <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="tps" ColumnName="tps" />
+                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
+                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
+                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
+                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Aggregators">
+            <EntityTypeMapping TypeName="PortalModel.Aggregator">
+              <MappingFragment StoreEntitySet="Aggregators">
+                <ScalarProperty Name="tps" ColumnName="tps" />
+                <ScalarProperty Name="AggregatorPassword" ColumnName="AggregatorPassword" />
+                <ScalarProperty Name="AggregatorUsername" ColumnName="AggregatorUsername" />
+                <ScalarProperty Name="AggregatorName" ColumnName="AggregatorName" />
+                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="serviceCyclesNews">
+            <EntityTypeMapping TypeName="PortalModel.serviceCyclesNew">
+              <MappingFragment StoreEntitySet="serviceCyclesNew">
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="cycleChargePrices" ColumnName="cycleChargePrices" />
+                <ScalarProperty Name="minTPSs" ColumnName="minTPSs" />
+                <ScalarProperty Name="servicesIDs" ColumnName="servicesIDs" />
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
+                <ScalarProperty Name="daysOfWeekOrDate" ColumnName="daysOfWeekOrDate" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_servicesServicesInfo">
+            <EntityTypeMapping TypeName="PortalModel.vw_servicesServicesInfo">
+              <MappingFragment StoreEntitySet="vw_servicesServicesInfo">
+                <ScalarProperty Name="aggregatorName" ColumnName="aggregatorName" />
+                <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
+                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
+                <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
+                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceInfoId" ColumnName="ServiceInfoId" />
+                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
+                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
+                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
+                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TodayTillNowChargeAmount" ColumnName="TodayTillNowChargeAmount" />
+                <ScalarProperty Name="activeUserCount" ColumnName="activeUserCount" />
+                <ScalarProperty Name="userCount" ColumnName="userCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -223,6 +223,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadAcharService", "Dehna
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMCIFtpChargingService", "DehnadMCIFtpChargingService\DehnadMCIFtpChargingService.csproj", "{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingLibrary", "ChargingLibrary\ChargingLibrary.csproj", "{A8445FDB-2782-4CF8-90AA-42C6BB9D0CC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -669,6 +671,10 @@ Global
 		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8445FDB-2782-4CF8-90AA-42C6BB9D0CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8445FDB-2782-4CF8-90AA-42C6BB9D0CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8445FDB-2782-4CF8-90AA-42C6BB9D0CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8445FDB-2782-4CF8-90AA-42C6BB9D0CC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

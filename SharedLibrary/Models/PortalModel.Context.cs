@@ -28,7 +28,6 @@ namespace SharedLibrary.Models
         }
     
         public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
-        public virtual DbSet<Aggregator> Aggregators { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
@@ -46,7 +45,6 @@ namespace SharedLibrary.Models
         public virtual DbSet<RealtimeStatisticsFor3GServices> RealtimeStatisticsFor3GServices { get; set; }
         public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
         public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
-        public virtual DbSet<serviceCycle> serviceCycles { get; set; }
         public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
         public virtual DbSet<ServiceKeyword> ServiceKeywords { get; set; }
         public virtual DbSet<SinglechargeDelivery> SinglechargeDeliveries { get; set; }
@@ -60,14 +58,16 @@ namespace SharedLibrary.Models
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
         public virtual DbSet<chargeInfo> chargeInfoes { get; set; }
         public virtual DbSet<Referral> Referrals { get; set; }
-        public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
-        public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<MCISingleChargeFtpFile> MCISingleChargeFtpFiles { get; set; }
         public virtual DbSet<vw_AspNetUsers> vw_AspNetUsers { get; set; }
         public virtual DbSet<AspNetUsersRolesServiceAccess> AspNetUsersRolesServiceAccesses { get; set; }
         public virtual DbSet<vw_AspNetUserRoles> vw_AspNetUserRoles { get; set; }
         public virtual DbSet<vw_AspNetRoles> vw_AspNetRoles { get; set; }
+        public virtual DbSet<PortalObject> PortalObjects { get; set; }
+        public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<Aggregator> Aggregators { get; set; }
+        public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
+        public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

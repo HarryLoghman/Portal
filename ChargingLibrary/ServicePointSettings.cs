@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Net;
 
-namespace DehnadMTNChargeServices
+namespace ChargingLibrary
 {
     class ServicePointSettings : ConfigurationSection
     {
@@ -55,7 +55,7 @@ namespace DehnadMTNChargeServices
             {
                 object Uri = this["Uri"];
                 if (Uri == null || Uri == DBNull.Value || string.IsNullOrEmpty(Uri.ToString()))
-                    return "http://92.42.55.180:8310/";
+                    return "http://localhost/";
                 else return Uri.ToString();
             }
 

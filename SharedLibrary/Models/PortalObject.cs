@@ -12,14 +12,13 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class serviceCycle
+    public partial class PortalObject
     {
-        public long serviceID { get; set; }
-        public int cycleNumber { get; set; }
-        public string shortCode { get; set; }
-        public string daysOfWeek { get; set; }
-        public System.TimeSpan startTime { get; set; }
-        public System.TimeSpan endTime { get; set; }
-        public Nullable<int> minTPS { get; set; }
+        public long id { get; set; }
+        public Nullable<long> parentId { get; set; }
+        public string objectName { get; set; }
+        public string persianName { get; set; }
+        public string tag { get; set; }
+        public string description { get; set; }
     }
 }

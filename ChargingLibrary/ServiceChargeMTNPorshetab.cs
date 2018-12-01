@@ -1,5 +1,4 @@
-﻿using PorShetabLibrary;
-using SharedLibrary;
+﻿using SharedLibrary;
 using SharedLibrary.Models;
 using System;
 using System.Collections.Generic;
@@ -10,25 +9,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace DehnadMTNChargeServices
+namespace ChargingLibrary
 {
-    class ServiceChargePorshetab : ServiceCharge
+    public class ServiceChargeMTNPorshetab : ServiceChargeMTN
     {
         int v_isCampaignActive = 0;
 
-        public override int prp_maxPrice
-        {
-            get
-            {
-                return 300;
-            }
-        }
-
-        public ServiceChargePorshetab(int serviceId, int tpsService, string aggregatorServiceId, int maxTries, int cycleNumber)
-            : base(serviceId, tpsService, aggregatorServiceId, maxTries, cycleNumber)
+        public ServiceChargeMTNPorshetab(int serviceId, int tpsService, string aggregatorServiceId, int maxTries, int cycleNumber, int cyclePrice)
+            : base(serviceId, tpsService, aggregatorServiceId, maxTries, cycleNumber, cyclePrice)
         {
 
-            using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+            using (var entity = new SharedShortCodeServiceLibrary.SharedModel.ShortCodeServiceEntities("Shared" + this.prp_service.ServiceCode + "Entities"))
             {
                 var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                 if (campaign != null)
@@ -42,10 +33,10 @@ namespace DehnadMTNChargeServices
         {
             try
             {
-                if (v_isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || v_isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
+                if (v_isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralActive || v_isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralSuspend)
                 {
 
-                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(chargeRequest.mobileNumber, this.prp_serviceId);
+                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(chargeRequest.mobileNumber, this.prp_service.Id);
                     if (sub != null)
                     {
                         if (sub.SpecialUniqueId != null)
@@ -55,7 +46,9 @@ namespace DehnadMTNChargeServices
                             if (chargeRequest.isSucceeded == true)
                                 price = chargeRequest.Price.Value;
                             //logs.Warn(";porshetab;processMTNInstallment3;" + mobileNumber);
-                            SharedLibrary.UsefulWebApis.DanoopReferralWithWebRequest("http://79.175.164.52/porshetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, chargeRequest.mobileNumber, price, sha));
+                            //SharedLibrary.UsefulWebApis.DanoopReferralWithWebRequest("/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, chargeRequest.mobileNumber, price, sha));
+                            SharedLibrary.UsefulWebApis.DanoopReferralWithWebRequest(this.prp_service.referralUrl + (this.prp_service.referralUrl.EndsWith("/") ? "" : "/") + "platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, chargeRequest.mobileNumber, price, sha));
+
                             //logs.Warn(";porshetab;processMTNInstallment4;" + mobileNumber);
                         }
                     }

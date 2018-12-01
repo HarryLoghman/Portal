@@ -24,6 +24,8 @@ namespace SharedLibrary.Models
         public string OnKeywords { get; set; }
         public bool IsServiceActive { get; set; }
         public Nullable<bool> Enable2StepSubscription { get; set; }
+        public string oldServiceCodes { get; set; }
+        public string referralUrl { get; set; }
         public Nullable<long> ServiceInfoId { get; set; }
         public Nullable<long> AggregatorId { get; set; }
         public string ShortCode { get; set; }

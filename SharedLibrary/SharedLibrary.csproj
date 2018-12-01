@@ -162,6 +162,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PortalModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\PortalObject.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\RealtimeStatisticsFor2GServices.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -178,9 +181,6 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Service.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\serviceCycle.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\serviceCyclesNew.cs">

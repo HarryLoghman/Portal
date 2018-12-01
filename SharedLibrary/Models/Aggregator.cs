@@ -25,6 +25,7 @@ namespace SharedLibrary.Models
         public string AggregatorName { get; set; }
         public string AggregatorUsername { get; set; }
         public string AggregatorPassword { get; set; }
+        public Nullable<int> tps { get; set; }
     
         public virtual Operator Operator { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
