@@ -606,10 +606,6 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="MiladiDate" Type="date" Mode="In" />
-          <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
-        </Function>
         <Function Name="ArchiveMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MessageType" Type="int" Mode="In" />
@@ -1871,7 +1867,6 @@ warning 6002: The table/view 'BimeIran.dbo.vw_SentMessages' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="BimeIranModel.Store.AggregateDailyStatistics" />
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="BimeIranModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="BimeIranModel.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="BimeIranModel.Store.RetryUndeliveredMessages" />

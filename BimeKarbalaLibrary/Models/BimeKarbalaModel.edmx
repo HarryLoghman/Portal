@@ -526,10 +526,6 @@ warning 6002: The table/view 'BimeKarbala.dbo.vw_SentMessages' does not have a p
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
-        <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="MiladiDate" Type="date" Mode="In" />
-          <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
-        </Function>
         <Function Name="ArchiveMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MessageType" Type="int" Mode="In" />
@@ -1652,7 +1648,6 @@ warning 6002: The table/view 'BimeKarbala.dbo.vw_SentMessages' does not have a p
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="BimeKarbalaModel.Store.AggregateDailyStatistics" />
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="BimeKarbalaModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="BimeKarbalaModel.Store.ChangeMessageStatus" />
           <EntitySetMapping Name="SubscribersAdditionalInfoes">

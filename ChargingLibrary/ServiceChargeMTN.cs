@@ -210,6 +210,7 @@ namespace ChargingLibrary
         private void GetResponseCallback(IAsyncResult parameters)
         {
             object[] objs = (object[])parameters.AsyncState;
+            bool isSucceeded = false;
 
             HttpWebRequest webRequest = (HttpWebRequest)objs[0];
             singleChargeRequest singleChargeReq = (singleChargeRequest)objs[1];
@@ -228,7 +229,7 @@ namespace ChargingLibrary
 
                 //singleChargeReq.dateCreated = dateCreated;
                 //singleChargeReq.guidStr = guidStr;
-                bool isSucceeded = false;
+                
                 singleChargeReq.resultDescription = this.parseMTN_XMLResult(result, out isSucceeded);
                 //singleChargeReq.installmentCycleNumber = installmentCycleNumber;
                 //singleChargeReq.installmentId = installmentId;
@@ -266,7 +267,7 @@ namespace ChargingLibrary
                     {
                         using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
                         {
-                            singleChargeReq.resultDescription = rd.ReadToEnd();
+                            singleChargeReq.resultDescription = this.parseMTN_XMLResult(rd.ReadToEnd(), out isSucceeded);
                         }
                         ex.Response.Close();
                     }

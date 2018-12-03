@@ -519,10 +519,6 @@ warning 6002: The table/view 'Danestaneh.dbo.vw_SentMessages' does not have a pr
           <Property Name="DeliveryStatus" Type="bit" />
           <Property Name="DeliveryDescription" Type="nvarchar(max)" />
         </EntityType>
-        <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="MiladiDate" Type="date" Mode="In" />
-          <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
-        </Function>
         <Function Name="ArchiveMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MessageType" Type="int" Mode="In" />
@@ -1562,7 +1558,6 @@ warning 6002: The table/view 'Danestaneh.dbo.vw_SentMessages' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="DanestanehModel.Store.AggregateDailyStatistics" />
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="DanestanehModel.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="DanestanehModel.Store.ChangeMessageStatus" />
           <EntitySetMapping Name="SubscribersAdditionalInfoes">

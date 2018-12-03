@@ -607,10 +607,6 @@ warning 6002: The table/view 'Tamly500.dbo.vw_Singlecharge' does not have a prim
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
         </EntityType>
-        <Function Name="AggregateDailyStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="MiladiDate" Type="date" Mode="In" />
-          <Parameter Name="ServiceCode" Type="nvarchar" Mode="In" />
-        </Function>
         <Function Name="ArchiveMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="ChangeMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MessageType" Type="int" Mode="In" />
@@ -1920,7 +1916,6 @@ warning 6002: The table/view 'Tamly500.dbo.vw_Singlecharge' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="AggregateDailyStatistics" FunctionName="Tamly500Model.Store.AggregateDailyStatistics" />
           <FunctionImportMapping FunctionImportName="ArchiveMessages" FunctionName="Tamly500Model.Store.ArchiveMessages" />
           <FunctionImportMapping FunctionImportName="ChangeMessageStatus" FunctionName="Tamly500Model.Store.ChangeMessageStatus" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="Tamly500Model.Store.RetryUndeliveredMessages" />

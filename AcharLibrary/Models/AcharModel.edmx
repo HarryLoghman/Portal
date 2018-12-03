@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="AcharModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="AcharModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AutochargeContents">
           <Key>
             <PropertyRef Name="Id" />
@@ -83,105 +83,105 @@
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Date" Type="date" Nullable="false" />
           <Property Name="PersianDate" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="NumberOfSubscriptions" Type="int" Nullable="false" />
-          <Property Name="NumberOfUnsubscriptions" Type="int" Nullable="false" />
+          <Property Name="NumberOfSubscriptions" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfUnsubscriptions" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfPostpaidSubscriptions" Type="int" Nullable="false" />
           <Property Name="NumberOfPrepaidSubscriptions" Type="int" Nullable="false" />
-          <Property Name="NumberOfMessagesSent" Type="int" Nullable="false" />
-          <Property Name="NumberOfPostpaidMessagesSent" Type="int" Nullable="false" />
-          <Property Name="NumberOfPrepaidMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPostpaidMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="TotalSubscribers" Type="int" Nullable="false" />
-          <Property Name="NumberOfOnDemandMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfOnDemandPostpaidMessagesSent" Type="int" Nullable="false" />
           <Property Name="NumberOfOnDemandPrepaidMessagesSent" Type="int" Nullable="false" />
-          <Property Name="NumberOfAutochargeMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfAutochargePostpaidMessagesSent" Type="int" Nullable="false" />
           <Property Name="NumberOfAutochargePrepaidMessagesSent" Type="int" Nullable="false" />
-          <Property Name="NumberOfEventbaseMessagesSent" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfEventbasePostpaidMessagesSent" Type="int" Nullable="false" />
           <Property Name="NumberOfEventbasePrepaidMessagesSent" Type="int" Nullable="false" />
           <Property Name="NumberOfPostpaidUnsubscriptions" Type="int" Nullable="false" />
           <Property Name="NumberOfPrepaidUnsubscriptions" Type="int" Nullable="false" />
-          <Property Name="NumberOfMessagesFailed" Type="int" Nullable="false" />
-          <Property Name="NumberOfPostpaidMessagesFailed" Type="int" Nullable="false" />
-          <Property Name="NumberOfPrepaidMessagesFailed" Type="int" Nullable="false" />
-          <Property Name="NumberOfOnDemandMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfMessagesFailed" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPostpaidMessagesFailed" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesFailed" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesFailed" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfOnDemandPostpaidMessagesFailed" Type="int" Nullable="false" />
           <Property Name="NumberOfOnDemandPrepaidMessagesFailed" Type="int" Nullable="false" />
-          <Property Name="NumberOfAutochargeMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesFailed" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfAutochargePostpaidMessagesFailed" Type="int" Nullable="false" />
           <Property Name="NumberOfAutochargePrepaidMessagesFailed" Type="int" Nullable="false" />
-          <Property Name="NumberOfEventbaseMessagesFailed" Type="int" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesFailed" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="int" Nullable="false" />
           <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="int" Nullable="false" />
-          <Property Name="NumberOfOnDemandMessagesDelivered" Type="int" />
+          <Property Name="NumberOfOnDemandMessagesDelivered" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfOnDemandPostpaidMessagesDelivered" Type="int" />
           <Property Name="NumberOfOnDemandPrepaidMessagesDelivered" Type="int" />
-          <Property Name="NumberOfAutochargeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDelivered" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfAutochargePostpaidMessagesDelivered" Type="int" />
           <Property Name="NumberOfAutochargePrepaidMessagesDelivered" Type="int" />
-          <Property Name="NumberOfEventbaseMessagesDelivered" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDelivered" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfEventbasePostpaidMessagesDelivered" Type="int" />
           <Property Name="NumberOfEventbasePrepaidMessagesDelivered" Type="int" />
-          <Property Name="NumberOfPostpaidMessagesDelivered" Type="int" />
-          <Property Name="NumberOfPrepaidMessagesDelivered" Type="int" />
-          <Property Name="NumberOfMessagesDelivered" Type="int" />
-          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDelivered" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesDelivered" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesDelivered" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" Type="int" />
           <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" Type="int" />
-          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" Type="int" />
           <Property Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" Type="int" />
-          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" Type="int" />
           <Property Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" Type="int" />
-          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="int" />
-          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="int" />
-          <Property Name="NumberOfMessagesDeliveryFailed" Type="int" />
-          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesDeliveryFailed" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" Type="int" />
           <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" Type="int" />
-          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" Type="int" />
           <Property Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" Type="int" />
-          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" Type="int" />
           <Property Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" Type="int" />
-          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="int" />
-          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="int" />
-          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="int" />
-          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" Type="int" />
           <Property Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" Type="int" />
-          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" Type="int" />
           <Property Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" Type="int" />
-          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" Type="int" />
           <Property Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" Type="int" />
-          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="int" />
-          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="int" />
-          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="int" />
+          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfFreeOnDemandMessagesSent" Type="int" />
           <Property Name="NumberOfFreeEventbaseMessagesSent" Type="int" />
           <Property Name="NumberOfFreeAutochargeMessagesSent" Type="int" />
-          <Property Name="NumberOfFreeMessagesSent" Type="int" />
+          <Property Name="NumberOfFreeMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfFreeOnDemandMessagesDelivered" Type="int" />
           <Property Name="NumberOfFreeEventbaseMessagesDelivered" Type="int" />
           <Property Name="NumberOfFreeAutochargeMessagesDelivered" Type="int" />
-          <Property Name="NumberOfFreeMessagesDelivered" Type="int" />
+          <Property Name="NumberOfFreeMessagesDelivered" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfPaidOnDemandMessagesSent" Type="int" />
           <Property Name="NumberOfPaidEventbaseMessagesSent" Type="int" />
           <Property Name="NumberOfPaidAutochargeMessagesSent" Type="int" />
-          <Property Name="NumberOfPaidMessagesSent" Type="int" />
+          <Property Name="NumberOfPaidMessagesSent" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfPaidOnDemandMessagesFailed" Type="int" />
           <Property Name="NumberOfPaidEventbaseMessagesFailed" Type="int" />
           <Property Name="NumberOfPaidAutochargeMessagesFailed" Type="int" />
-          <Property Name="NumberOfPaidMessagesFailed" Type="int" />
-          <Property Name="SumOfPaidOnDemandMessages" Type="int" />
-          <Property Name="SumOfpaidEventbaseMessages" Type="int" />
-          <Property Name="SumOfPaidAutochargeMessages" Type="int" />
-          <Property Name="SumOfPaidMessages" Type="int" />
+          <Property Name="NumberOfPaidMessagesFailed" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidOnDemandMessages" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfpaidEventbaseMessages" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidAutochargeMessages" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidMessages" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="ServiceId" Type="bigint" />
           <Property Name="TotalPrepaidSubscribers" Type="int" />
           <Property Name="TotalPostpaidSubscribers" Type="int" />
@@ -192,25 +192,25 @@
           <Property Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" Type="int" />
           <Property Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" Type="int" />
           <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="int" />
-          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="int" />
-          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="int" />
+          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
           <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
-          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
           <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
-          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="int" />
           <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="int" />
-          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="int" />
           <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="int" />
-          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="int" />
           <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="int" />
-          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="int" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" Type="int" />
-          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="int" />
+          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="int" StoreGeneratedPattern="Computed" />
           <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="int" />
           <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="int" />
           <Property Name="SumOfSinglechargeInAppPurchases" Type="int" />
@@ -428,6 +428,7 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+          <Property Name="wipe" Type="bit" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -444,6 +445,7 @@
           <Property Name="IsApplicationInformed" Type="bit" Nullable="false" />
           <Property Name="InstallmentId" Type="bigint" />
           <Property Name="IsCalledFromInAppPurchase" Type="bit" Nullable="false" />
+          <Property Name="wipe" Type="bit" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -686,8 +688,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
     FROM [dbo].[vw_Singlecharge] AS [vw_Singlecharge]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AcharModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -761,146 +762,6 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Tag" Type="Int32" Nullable="false" />
           <Property Name="SendTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="DailyStatistic">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="PersianDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfUnsubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPostpaidSubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPrepaidSubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPostpaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPrepaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="TotalSubscribers" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfOnDemandMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfOnDemandPostpaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfOnDemandPrepaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfAutochargeMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfAutochargePostpaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfAutochargePrepaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfEventbaseMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfEventbasePostpaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfEventbasePrepaidMessagesSent" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPostpaidUnsubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPrepaidUnsubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPostpaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPrepaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfOnDemandMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfOnDemandPostpaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfOnDemandPrepaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfAutochargeMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfAutochargePostpaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfAutochargePrepaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfEventbaseMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfOnDemandMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfOnDemandPostpaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfOnDemandPrepaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfAutochargeMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfAutochargePostpaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfAutochargePrepaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfEventbaseMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfEventbasePostpaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfEventbasePrepaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfPostpaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfPrepaidMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfMessagesDeliveryFailed" Type="Int32" />
-          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="Int32" />
-          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="Int32" />
-          <Property Name="NumberOfFreeOnDemandMessagesSent" Type="Int32" />
-          <Property Name="NumberOfFreeEventbaseMessagesSent" Type="Int32" />
-          <Property Name="NumberOfFreeAutochargeMessagesSent" Type="Int32" />
-          <Property Name="NumberOfFreeMessagesSent" Type="Int32" />
-          <Property Name="NumberOfFreeOnDemandMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfFreeEventbaseMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfFreeAutochargeMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfFreeMessagesDelivered" Type="Int32" />
-          <Property Name="NumberOfPaidOnDemandMessagesSent" Type="Int32" />
-          <Property Name="NumberOfPaidEventbaseMessagesSent" Type="Int32" />
-          <Property Name="NumberOfPaidAutochargeMessagesSent" Type="Int32" />
-          <Property Name="NumberOfPaidMessagesSent" Type="Int32" />
-          <Property Name="NumberOfPaidOnDemandMessagesFailed" Type="Int32" />
-          <Property Name="NumberOfPaidEventbaseMessagesFailed" Type="Int32" />
-          <Property Name="NumberOfPaidAutochargeMessagesFailed" Type="Int32" />
-          <Property Name="NumberOfPaidMessagesFailed" Type="Int32" />
-          <Property Name="SumOfPaidOnDemandMessages" Type="Int32" />
-          <Property Name="SumOfpaidEventbaseMessages" Type="Int32" />
-          <Property Name="SumOfPaidAutochargeMessages" Type="Int32" />
-          <Property Name="SumOfPaidMessages" Type="Int32" />
-          <Property Name="ServiceId" Type="Int64" />
-          <Property Name="TotalPrepaidSubscribers" Type="Int32" />
-          <Property Name="TotalPostpaidSubscribers" Type="Int32" />
-          <Property Name="TotalUnSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="Int32" />
-          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="Int32" />
-          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
-          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
-          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="Int32" />
-          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
-          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
-          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" />
-          <Property Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" Type="Int32" />
-          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="Int32" />
-          <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="Int32" />
-          <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="Int32" />
-          <Property Name="SumOfSinglechargeInAppPurchases" Type="Int32" />
-          <Property Name="FtpUserCount" Type="Int32" />
         </EntityType>
         <EntityType Name="EventbaseContent">
           <Key>
@@ -1114,6 +975,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
           <Property Name="InstallmentId" Type="Int64" />
           <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="wipe" Type="Boolean" />
         </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
@@ -1130,6 +992,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
           <Property Name="InstallmentId" Type="Int64" />
           <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="wipe" Type="Boolean" />
         </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
@@ -1286,7 +1149,6 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <EntitySet Name="AutochargeHeaderFooters" EntityType="Self.AutochargeHeaderFooter" />
           <EntitySet Name="AutochargeMessagesBuffers" EntityType="Self.AutochargeMessagesBuffer" />
           <EntitySet Name="AutochargeTimeTables" EntityType="Self.AutochargeTimeTable" />
-          <EntitySet Name="DailyStatistics" EntityType="Self.DailyStatistic" />
           <EntitySet Name="EventbaseContents" EntityType="Self.EventbaseContent" />
           <EntitySet Name="EventbaseMessagesBuffers" EntityType="Self.EventbaseMessagesBuffer" />
           <EntitySet Name="ImiChargeCodes" EntityType="Self.ImiChargeCode" />
@@ -1322,9 +1184,150 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <FunctionImport Name="ResetSinglechargeDailyBalance" />
           <FunctionImport Name="RetryUndeliveredMessages" />
           <FunctionImport Name="SinglechargeLiveStatuses" ReturnType="Collection(String)">
-            <Parameter Name="ServiceCode" Mode="In" Type="String" />
+          <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="DailyStatistics" EntityType="AcharModel.DailyStatistic" />
         </EntityContainer>
+        <EntityType Name="DailyStatistic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PersianDate" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NumberOfSubscriptions" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfUnsubscriptions" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPostpaidMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="TotalSubscribers" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfAutochargePostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfEventbasePostpaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesSent" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfMessagesFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPostpaidMessagesFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargeMessagesFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfAutochargePostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfAutochargePrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbaseMessagesFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfEventbasePostpaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfEventbasePrepaidMessagesFailed" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfOnDemandMessagesDelivered" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDelivered" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDelivered" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDelivered" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesDelivered" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesDelivered" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesDeliveryFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesDeliveryNotReceived" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesDeliveryNotReceived" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesDeliveryNotReceived" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesDeliveryNotReceived" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesDeliveryNotReceived" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesDeliveryNotReceived" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandMessagesThatUserHasNoCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargeMessagesThatUserHasNoCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbaseMessagesThatUserHasNoCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" Type="Int32" />
+          <Property Name="NumberOfPostpaidMessagesThatUserHasNoCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPrepaidMessagesThatUserHasNoCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfMessagesThatUserHasNoCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfFreeOnDemandMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeEventbaseMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeAutochargeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfFreeMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfFreeOnDemandMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeEventbaseMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeAutochargeMessagesDelivered" Type="Int32" />
+          <Property Name="NumberOfFreeMessagesDelivered" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPaidOnDemandMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidEventbaseMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidAutochargeMessagesSent" Type="Int32" />
+          <Property Name="NumberOfPaidMessagesSent" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfPaidOnDemandMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidEventbaseMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidAutochargeMessagesFailed" Type="Int32" />
+          <Property Name="NumberOfPaidMessagesFailed" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidOnDemandMessages" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfpaidEventbaseMessages" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidAutochargeMessages" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidMessages" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="TotalPrepaidSubscribers" Type="Int32" />
+          <Property Name="TotalPostpaidSubscribers" Type="Int32" />
+          <Property Name="TotalUnSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" Type="Int32" />
+          <Property Name="SumOfPaidMessagesForPostPaidSubscribers" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfPaidMessagesForPrePaidSubscribers" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulFullCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="NumberOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulFullCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulIncompleteCharge" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" Type="Int32" />
+          <Property Name="TotalNumberOfSinglechargeInAppPurchases" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesFailed" Type="Int32" />
+          <Property Name="NumberOfSinglechargeInAppPurchasesSucceeded" Type="Int32" />
+          <Property Name="SumOfSinglechargeInAppPurchases" Type="Int32" />
+          <Property Name="FtpUserCount" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1404,147 +1407,6 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
                 <ScalarProperty Name="SendTime" ColumnName="SendTime" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="DailyStatistics">
-            <EntityTypeMapping TypeName="AcharModel.DailyStatistic">
-              <MappingFragment StoreEntitySet="DailyStatistics">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
-                <ScalarProperty Name="NumberOfSubscriptions" ColumnName="NumberOfSubscriptions" />
-                <ScalarProperty Name="NumberOfUnsubscriptions" ColumnName="NumberOfUnsubscriptions" />
-                <ScalarProperty Name="NumberOfPostpaidSubscriptions" ColumnName="NumberOfPostpaidSubscriptions" />
-                <ScalarProperty Name="NumberOfPrepaidSubscriptions" ColumnName="NumberOfPrepaidSubscriptions" />
-                <ScalarProperty Name="NumberOfMessagesSent" ColumnName="NumberOfMessagesSent" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesSent" ColumnName="NumberOfPostpaidMessagesSent" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesSent" ColumnName="NumberOfPrepaidMessagesSent" />
-                <ScalarProperty Name="TotalSubscribers" ColumnName="TotalSubscribers" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesSent" ColumnName="NumberOfOnDemandMessagesSent" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesSent" ColumnName="NumberOfOnDemandPostpaidMessagesSent" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesSent" ColumnName="NumberOfOnDemandPrepaidMessagesSent" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesSent" ColumnName="NumberOfAutochargeMessagesSent" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesSent" ColumnName="NumberOfAutochargePostpaidMessagesSent" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesSent" ColumnName="NumberOfAutochargePrepaidMessagesSent" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesSent" ColumnName="NumberOfEventbaseMessagesSent" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesSent" ColumnName="NumberOfEventbasePostpaidMessagesSent" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesSent" ColumnName="NumberOfEventbasePrepaidMessagesSent" />
-                <ScalarProperty Name="NumberOfPostpaidUnsubscriptions" ColumnName="NumberOfPostpaidUnsubscriptions" />
-                <ScalarProperty Name="NumberOfPrepaidUnsubscriptions" ColumnName="NumberOfPrepaidUnsubscriptions" />
-                <ScalarProperty Name="NumberOfMessagesFailed" ColumnName="NumberOfMessagesFailed" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesFailed" ColumnName="NumberOfPostpaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesFailed" ColumnName="NumberOfPrepaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesFailed" ColumnName="NumberOfOnDemandMessagesFailed" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesFailed" ColumnName="NumberOfOnDemandPostpaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesFailed" ColumnName="NumberOfOnDemandPrepaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesFailed" ColumnName="NumberOfAutochargeMessagesFailed" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesFailed" ColumnName="NumberOfAutochargePostpaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesFailed" ColumnName="NumberOfAutochargePrepaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesFailed" ColumnName="NumberOfEventbaseMessagesFailed" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesFailed" ColumnName="NumberOfEventbasePostpaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesFailed" ColumnName="NumberOfEventbasePrepaidMessagesFailed" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesDelivered" ColumnName="NumberOfOnDemandMessagesDelivered" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDelivered" ColumnName="NumberOfOnDemandPostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDelivered" ColumnName="NumberOfOnDemandPrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesDelivered" ColumnName="NumberOfAutochargeMessagesDelivered" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDelivered" ColumnName="NumberOfAutochargePostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDelivered" ColumnName="NumberOfAutochargePrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesDelivered" ColumnName="NumberOfEventbaseMessagesDelivered" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDelivered" ColumnName="NumberOfEventbasePostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDelivered" ColumnName="NumberOfEventbasePrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesDelivered" ColumnName="NumberOfPostpaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesDelivered" ColumnName="NumberOfPrepaidMessagesDelivered" />
-                <ScalarProperty Name="NumberOfMessagesDelivered" ColumnName="NumberOfMessagesDelivered" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryFailed" ColumnName="NumberOfOnDemandMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryFailed" ColumnName="NumberOfAutochargeMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryFailed" ColumnName="NumberOfEventbaseMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryFailed" ColumnName="NumberOfPostpaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryFailed" ColumnName="NumberOfPrepaidMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfMessagesDeliveryFailed" ColumnName="NumberOfMessagesDeliveryFailed" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargeMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryNotReceived" ColumnName="NumberOfEventbaseMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfPostpaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfPrepaidMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfMessagesDeliveryNotReceived" ColumnName="NumberOfMessagesDeliveryNotReceived" />
-                <ScalarProperty Name="NumberOfOnDemandMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfAutochargeMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargeMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfEventbaseMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbaseMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPostpaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPrepaidMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfMessagesThatUserHasNoCharge" ColumnName="NumberOfMessagesThatUserHasNoCharge" />
-                <ScalarProperty Name="NumberOfFreeOnDemandMessagesSent" ColumnName="NumberOfFreeOnDemandMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeEventbaseMessagesSent" ColumnName="NumberOfFreeEventbaseMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeAutochargeMessagesSent" ColumnName="NumberOfFreeAutochargeMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeMessagesSent" ColumnName="NumberOfFreeMessagesSent" />
-                <ScalarProperty Name="NumberOfFreeOnDemandMessagesDelivered" ColumnName="NumberOfFreeOnDemandMessagesDelivered" />
-                <ScalarProperty Name="NumberOfFreeEventbaseMessagesDelivered" ColumnName="NumberOfFreeEventbaseMessagesDelivered" />
-                <ScalarProperty Name="NumberOfFreeAutochargeMessagesDelivered" ColumnName="NumberOfFreeAutochargeMessagesDelivered" />
-                <ScalarProperty Name="NumberOfFreeMessagesDelivered" ColumnName="NumberOfFreeMessagesDelivered" />
-                <ScalarProperty Name="NumberOfPaidOnDemandMessagesSent" ColumnName="NumberOfPaidOnDemandMessagesSent" />
-                <ScalarProperty Name="NumberOfPaidEventbaseMessagesSent" ColumnName="NumberOfPaidEventbaseMessagesSent" />
-                <ScalarProperty Name="NumberOfPaidAutochargeMessagesSent" ColumnName="NumberOfPaidAutochargeMessagesSent" />
-                <ScalarProperty Name="NumberOfPaidMessagesSent" ColumnName="NumberOfPaidMessagesSent" />
-                <ScalarProperty Name="NumberOfPaidOnDemandMessagesFailed" ColumnName="NumberOfPaidOnDemandMessagesFailed" />
-                <ScalarProperty Name="NumberOfPaidEventbaseMessagesFailed" ColumnName="NumberOfPaidEventbaseMessagesFailed" />
-                <ScalarProperty Name="NumberOfPaidAutochargeMessagesFailed" ColumnName="NumberOfPaidAutochargeMessagesFailed" />
-                <ScalarProperty Name="NumberOfPaidMessagesFailed" ColumnName="NumberOfPaidMessagesFailed" />
-                <ScalarProperty Name="SumOfPaidOnDemandMessages" ColumnName="SumOfPaidOnDemandMessages" />
-                <ScalarProperty Name="SumOfpaidEventbaseMessages" ColumnName="SumOfpaidEventbaseMessages" />
-                <ScalarProperty Name="SumOfPaidAutochargeMessages" ColumnName="SumOfPaidAutochargeMessages" />
-                <ScalarProperty Name="SumOfPaidMessages" ColumnName="SumOfPaidMessages" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
-                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
-                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
-                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
-                <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidFullCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidFullCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulFullCharge" ColumnName="NumberOfSinglechargeSuccessfulFullCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeSuccessfulIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulIncompleteCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidFullCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidFullCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulFullCharge" ColumnName="SumOfSinglechargeSuccessfulFullCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
-                <ScalarProperty Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" ColumnName="NumberOfSinglechargeDistinctNumbersTriedToCharge" />
-                <ScalarProperty Name="TotalNumberOfSinglechargeInAppPurchases" ColumnName="TotalNumberOfSinglechargeInAppPurchases" />
-                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesFailed" ColumnName="NumberOfSinglechargeInAppPurchasesFailed" />
-                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesSucceeded" ColumnName="NumberOfSinglechargeInAppPurchasesSucceeded" />
-                <ScalarProperty Name="SumOfSinglechargeInAppPurchases" ColumnName="SumOfSinglechargeInAppPurchases" />
-                <ScalarProperty Name="FtpUserCount" ColumnName="FtpUserCount" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1761,6 +1623,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <EntitySetMapping Name="Singlecharges">
             <EntityTypeMapping TypeName="AcharModel.Singlecharge">
               <MappingFragment StoreEntitySet="Singlecharge">
+                <ScalarProperty Name="wipe" ColumnName="wipe" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
@@ -1778,6 +1641,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <EntitySetMapping Name="SinglechargeArchives">
             <EntityTypeMapping TypeName="AcharModel.SinglechargeArchive">
               <MappingFragment StoreEntitySet="SinglechargeArchive">
+                <ScalarProperty Name="wipe" ColumnName="wipe" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
@@ -1939,6 +1803,147 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <FunctionImportMapping FunctionImportName="ResetSinglechargeDailyBalance" FunctionName="AcharModel.Store.ResetSinglechargeDailyBalance" />
           <FunctionImportMapping FunctionImportName="RetryUndeliveredMessages" FunctionName="AcharModel.Store.RetryUndeliveredMessages" />
           <FunctionImportMapping FunctionImportName="SinglechargeLiveStatuses" FunctionName="AcharModel.Store.SinglechargeLiveStatuses" />
+          <EntitySetMapping Name="DailyStatistics">
+            <EntityTypeMapping TypeName="AcharModel.DailyStatistic">
+              <MappingFragment StoreEntitySet="DailyStatistics">
+                <ScalarProperty Name="FtpUserCount" ColumnName="FtpUserCount" />
+                <ScalarProperty Name="SumOfSinglechargeInAppPurchases" ColumnName="SumOfSinglechargeInAppPurchases" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesSucceeded" ColumnName="NumberOfSinglechargeInAppPurchasesSucceeded" />
+                <ScalarProperty Name="NumberOfSinglechargeInAppPurchasesFailed" ColumnName="NumberOfSinglechargeInAppPurchasesFailed" />
+                <ScalarProperty Name="TotalNumberOfSinglechargeInAppPurchases" ColumnName="TotalNumberOfSinglechargeInAppPurchases" />
+                <ScalarProperty Name="NumberOfSinglechargeDistinctNumbersTriedToCharge" ColumnName="NumberOfSinglechargeDistinctNumbersTriedToCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulFullCharge" ColumnName="SumOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidIncompleteCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulFullCharge" ColumnName="NumberOfSinglechargeSuccessfulFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPostpaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPostpaidFullCharge" />
+                <ScalarProperty Name="NumberOfSinglechargeSuccessfulPrepaidFullCharge" ColumnName="NumberOfSinglechargeSuccessfulPrepaidFullCharge" />
+                <ScalarProperty Name="SumOfPaidMessagesForPrePaidSubscribers" ColumnName="SumOfPaidMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidMessagesForPostPaidSubscribers" ColumnName="SumOfPaidMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPrePaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessagesForPostPaidSubscribers" ColumnName="SumOfPaidAutochargeMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPrePaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidEventbaseMessagesForPostPaidSubscribers" ColumnName="SumOfPaidEventbaseMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPrePaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPrePaidSubscribers" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessagesForPostPaidSubscribers" ColumnName="SumOfPaidOnDemandMessagesForPostPaidSubscribers" />
+                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
+                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
+                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="SumOfPaidMessages" ColumnName="SumOfPaidMessages" />
+                <ScalarProperty Name="SumOfPaidAutochargeMessages" ColumnName="SumOfPaidAutochargeMessages" />
+                <ScalarProperty Name="SumOfpaidEventbaseMessages" ColumnName="SumOfpaidEventbaseMessages" />
+                <ScalarProperty Name="SumOfPaidOnDemandMessages" ColumnName="SumOfPaidOnDemandMessages" />
+                <ScalarProperty Name="NumberOfPaidMessagesFailed" ColumnName="NumberOfPaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesFailed" ColumnName="NumberOfPaidAutochargeMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesFailed" ColumnName="NumberOfPaidEventbaseMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesFailed" ColumnName="NumberOfPaidOnDemandMessagesFailed" />
+                <ScalarProperty Name="NumberOfPaidMessagesSent" ColumnName="NumberOfPaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidAutochargeMessagesSent" ColumnName="NumberOfPaidAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidEventbaseMessagesSent" ColumnName="NumberOfPaidEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfPaidOnDemandMessagesSent" ColumnName="NumberOfPaidOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeMessagesDelivered" ColumnName="NumberOfFreeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesDelivered" ColumnName="NumberOfFreeAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesDelivered" ColumnName="NumberOfFreeEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesDelivered" ColumnName="NumberOfFreeOnDemandMessagesDelivered" />
+                <ScalarProperty Name="NumberOfFreeMessagesSent" ColumnName="NumberOfFreeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeAutochargeMessagesSent" ColumnName="NumberOfFreeAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeEventbaseMessagesSent" ColumnName="NumberOfFreeEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfFreeOnDemandMessagesSent" ColumnName="NumberOfFreeOnDemandMessagesSent" />
+                <ScalarProperty Name="NumberOfMessagesThatUserHasNoCharge" ColumnName="NumberOfMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbasePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesThatUserHasNoCharge" ColumnName="NumberOfEventbaseMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargePostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesThatUserHasNoCharge" ColumnName="NumberOfAutochargeMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPrepaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandPostpaidMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesThatUserHasNoCharge" ColumnName="NumberOfOnDemandMessagesThatUserHasNoCharge" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryNotReceived" ColumnName="NumberOfMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryNotReceived" ColumnName="NumberOfEventbaseMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryNotReceived" ColumnName="NumberOfAutochargeMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryNotReceived" ColumnName="NumberOfOnDemandMessagesDeliveryNotReceived" />
+                <ScalarProperty Name="NumberOfMessagesDeliveryFailed" ColumnName="NumberOfMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDeliveryFailed" ColumnName="NumberOfPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDeliveryFailed" ColumnName="NumberOfPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDeliveryFailed" ColumnName="NumberOfEventbasePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDeliveryFailed" ColumnName="NumberOfEventbaseMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDeliveryFailed" ColumnName="NumberOfAutochargePostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDeliveryFailed" ColumnName="NumberOfAutochargeMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPrepaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDeliveryFailed" ColumnName="NumberOfOnDemandPostpaidMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDeliveryFailed" ColumnName="NumberOfOnDemandMessagesDeliveryFailed" />
+                <ScalarProperty Name="NumberOfMessagesDelivered" ColumnName="NumberOfMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesDelivered" ColumnName="NumberOfPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesDelivered" ColumnName="NumberOfPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesDelivered" ColumnName="NumberOfEventbasePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesDelivered" ColumnName="NumberOfEventbasePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesDelivered" ColumnName="NumberOfEventbaseMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesDelivered" ColumnName="NumberOfAutochargePrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesDelivered" ColumnName="NumberOfAutochargePostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesDelivered" ColumnName="NumberOfAutochargeMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesDelivered" ColumnName="NumberOfOnDemandPrepaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesDelivered" ColumnName="NumberOfOnDemandPostpaidMessagesDelivered" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesDelivered" ColumnName="NumberOfOnDemandMessagesDelivered" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesFailed" ColumnName="NumberOfEventbasePrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesFailed" ColumnName="NumberOfEventbasePostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesFailed" ColumnName="NumberOfEventbaseMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesFailed" ColumnName="NumberOfAutochargePrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesFailed" ColumnName="NumberOfAutochargePostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesFailed" ColumnName="NumberOfAutochargeMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesFailed" ColumnName="NumberOfOnDemandPrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesFailed" ColumnName="NumberOfOnDemandPostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesFailed" ColumnName="NumberOfOnDemandMessagesFailed" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesFailed" ColumnName="NumberOfPrepaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesFailed" ColumnName="NumberOfPostpaidMessagesFailed" />
+                <ScalarProperty Name="NumberOfMessagesFailed" ColumnName="NumberOfMessagesFailed" />
+                <ScalarProperty Name="NumberOfPrepaidUnsubscriptions" ColumnName="NumberOfPrepaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidUnsubscriptions" ColumnName="NumberOfPostpaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfEventbasePrepaidMessagesSent" ColumnName="NumberOfEventbasePrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbasePostpaidMessagesSent" ColumnName="NumberOfEventbasePostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfEventbaseMessagesSent" ColumnName="NumberOfEventbaseMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargePrepaidMessagesSent" ColumnName="NumberOfAutochargePrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargePostpaidMessagesSent" ColumnName="NumberOfAutochargePostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfAutochargeMessagesSent" ColumnName="NumberOfAutochargeMessagesSent" />
+                <ScalarProperty Name="NumberOfOnDemandPrepaidMessagesSent" ColumnName="NumberOfOnDemandPrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfOnDemandPostpaidMessagesSent" ColumnName="NumberOfOnDemandPostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfOnDemandMessagesSent" ColumnName="NumberOfOnDemandMessagesSent" />
+                <ScalarProperty Name="TotalSubscribers" ColumnName="TotalSubscribers" />
+                <ScalarProperty Name="NumberOfPrepaidMessagesSent" ColumnName="NumberOfPrepaidMessagesSent" />
+                <ScalarProperty Name="NumberOfPostpaidMessagesSent" ColumnName="NumberOfPostpaidMessagesSent" />
+                <ScalarProperty Name="NumberOfMessagesSent" ColumnName="NumberOfMessagesSent" />
+                <ScalarProperty Name="NumberOfPrepaidSubscriptions" ColumnName="NumberOfPrepaidSubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidSubscriptions" ColumnName="NumberOfPostpaidSubscriptions" />
+                <ScalarProperty Name="NumberOfUnsubscriptions" ColumnName="NumberOfUnsubscriptions" />
+                <ScalarProperty Name="NumberOfSubscriptions" ColumnName="NumberOfSubscriptions" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

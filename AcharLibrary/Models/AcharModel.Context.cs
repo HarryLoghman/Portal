@@ -32,7 +32,6 @@ namespace AcharLibrary.Models
         public virtual DbSet<AutochargeHeaderFooter> AutochargeHeaderFooters { get; set; }
         public virtual DbSet<AutochargeMessagesBuffer> AutochargeMessagesBuffers { get; set; }
         public virtual DbSet<AutochargeTimeTable> AutochargeTimeTables { get; set; }
-        public virtual DbSet<DailyStatistic> DailyStatistics { get; set; }
         public virtual DbSet<EventbaseContent> EventbaseContents { get; set; }
         public virtual DbSet<EventbaseMessagesBuffer> EventbaseMessagesBuffers { get; set; }
         public virtual DbSet<ImiChargeCode> ImiChargeCodes { get; set; }
@@ -55,6 +54,7 @@ namespace AcharLibrary.Models
         public virtual DbSet<TimedTempMessagesBuffer> TimedTempMessagesBuffers { get; set; }
         public virtual DbSet<vw_SentMessages> vw_SentMessages { get; set; }
         public virtual DbSet<vw_Singlecharge> vw_Singlecharge { get; set; }
+        public virtual DbSet<DailyStatistic> DailyStatistics { get; set; }
     
         public virtual int ArchiveMessages()
         {
