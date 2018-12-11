@@ -12,7 +12,7 @@ namespace DehnadReceiveProcessorService.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -32,6 +32,30 @@ namespace DehnadReceiveProcessorService.Properties {
             }
             set {
                 this["NumberOfConcurrentMessagesToProcess"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Windows Services\\HandleMoSourcesAndDlls\\Sources")]
+        public string HandleMoSourcePath {
+            get {
+                return ((string)(this["HandleMoSourcePath"]));
+            }
+            set {
+                this["HandleMoSourcePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Windows Services\\HandleMoSourcesAndDlls\\Dlls")]
+        public string HandleMoDllPath {
+            get {
+                return ((string)(this["HandleMoDllPath"]));
+            }
+            set {
+                this["HandleMoDllPath"] = value;
             }
         }
     }

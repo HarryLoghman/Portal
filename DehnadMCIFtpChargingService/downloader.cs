@@ -27,11 +27,12 @@ namespace DehnadMCIFtpChargingService
             try
             {
                 bool saveFailFilesToSingleCharge;
-                if(!bool.TryParse(Properties.Settings.Default.SaveFailFilesToSingleCharge, out saveFailFilesToSingleCharge))
+                if (!bool.TryParse(Properties.Settings.Default.SaveFailFilesToSingleCharge, out saveFailFilesToSingleCharge))
                 {
                     saveFailFilesToSingleCharge = false;
                 }
                 List<FtpFile> newFtpFiles = this.downloadNewFiles(winDirectory, operatorSIDs, downloadAnyway);
+                
                 if (newFtpFiles == null) return;
                 if (newFtpFiles.Count == 0)
                 {
@@ -220,6 +221,7 @@ namespace DehnadMCIFtpChargingService
             }
             catch (Exception e)
             {
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "downloader:updateSingleCharge:" + e.Message);
                 Program.logs.Error("downloader:updateSingleCharge:", e);
                 return;
             }
@@ -245,6 +247,7 @@ namespace DehnadMCIFtpChargingService
             }
             catch (Exception e)
             {
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "downloader:getFtpUrl:" + e.Message);
                 Program.logs.Error("downloader:getFtpUrl:", e);
                 return null;
             }
@@ -272,7 +275,8 @@ namespace DehnadMCIFtpChargingService
                 if (newFtpFiles == null) return newFtpFiles;
                 if (newFtpFiles != null && newFtpFiles.Count > 0)
                 {
-                    Program.logs.Info(newFtpFiles.Count.ToString() + " new files has been detected");
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "MCIFtpDownloader:" + newFtpFiles.Count.ToString() + " new files have been detected for" + winDirectory);
+                    Program.logs.Info(newFtpFiles.Count.ToString() + " new files have been detected");
                 }
                 for (i = 0; i <= newFtpFiles.Count - 1; i++)
                 {
@@ -309,6 +313,7 @@ namespace DehnadMCIFtpChargingService
             }
             catch (Exception e)
             {
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "downloader:downloadNewFiles:" + e.Message);
                 Program.logs.Error("downloader:downloadNewFiles:", e);
                 return null;
             }
@@ -323,17 +328,21 @@ namespace DehnadMCIFtpChargingService
         /// <returns></returns>
         private List<FtpFile> detectNewFtpFiles(string windowsFilePath, string ftpDirectory, string[] operatorSIDs, bool downloadAnyway)
         {
+            FtpWebRequest ftpRequest = null;
+            FtpWebResponse ftpResponse = null;
+            FtpWebResponse response = null;
+            StreamReader streamReader = null;
             try
             {
                 Uri uri = new Uri(ftpDirectory);
                 //Uri uri = new Uri("ftp://172.17.252.201/" + directoryName + "/");
-                FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
+                ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
                 ftpRequest.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
                 ftpRequest.KeepAlive = false;
-                FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-                FtpWebResponse response;
-                StreamReader streamReader = new StreamReader(ftpResponse.GetResponseStream());
+                ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+
+                streamReader = new StreamReader(ftpResponse.GetResponseStream());
                 string fileName = streamReader.ReadLine();
 
                 List<FtpFile> newFtpFiles = new List<FtpFile>();
@@ -387,14 +396,67 @@ namespace DehnadMCIFtpChargingService
                     }
                 }
                 ftpResponse.Close();
-                
+
                 streamReader.Close();
                 Program.logs.Info("detectNewFtpFiles:" + newFtpFiles.Count + " new or modified files have been detected ");
                 return newFtpFiles;
             }
             catch (Exception e)
             {
+                try
+                {
+                    if (streamReader != null)
+                    {
+                        streamReader.Close();
+                        streamReader.Dispose();
+                    }
+                }
+                catch
+                {
+
+                }
+
+                try
+                {
+                    if (response != null)
+                    {
+                        response.Close();
+                        response.Dispose();
+                    }
+                }
+                catch
+                {
+
+                }
+                try
+                {
+                    if (ftpResponse != null)
+                    {
+                        ftpResponse.Close();
+                        ftpResponse.Dispose();
+                    }
+                }
+                catch
+                {
+
+                }
+
+
+
+                try
+                {
+                    if (ftpRequest != null)
+                    {
+                        ftpRequest.Abort();
+                    }
+                }
+                catch
+                {
+
+                }
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "MCIFtpDownloader:" + "downloader:detectNewFilesUri:" + e.Message);
                 Program.logs.Error("downloader:detectNewFilesUri:", e);
+
                 return null;
             }
         }
@@ -417,13 +479,15 @@ namespace DehnadMCIFtpChargingService
                     if (!Directory.Exists(dirPath))
                     {
                         Directory.CreateDirectory(dirPath);
+                        Program.logs.Info("createDirectory:" + dirPath);
                     }
                 }
-                Program.logs.Error("createDirectory:" + dirPath);
+                
                 return true;
             }
             catch (Exception e)
             {
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "createDirectory:" + e.Message);
                 Program.logs.Error("createDirectory:", e);
                 return false;
             }

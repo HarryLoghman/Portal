@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 
 namespace AvvalPodLibrary
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
+        public HandleMo() : base("AvvalPod")
+        {
+
+        }
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();

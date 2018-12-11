@@ -17,13 +17,23 @@ namespace DehnadMCIFtpChargingService
         static void Main()
         {
             System.IO.Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
-            
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
+            if (Environment.UserInteractive)
             {
+                Service service1 = new Service();
+                service1.StartDebugging(null);
+            }
+            else
+            {
+                // Put the body of your old Main method here.  
+                ServiceBase[] ServicesToRun;
+                ServicesToRun = new ServiceBase[]
+                {
                 new Service()
-            };
-            ServiceBase.Run(ServicesToRun);
+                };
+                ServiceBase.Run(ServicesToRun);
+            }
+
+           
         }
     }
 }

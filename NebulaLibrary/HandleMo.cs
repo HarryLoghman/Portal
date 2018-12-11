@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 
 namespace NebulaLibrary
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
+        public HandleMo() : base("Nebula")
+        {
+
+        }
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();
@@ -23,7 +27,7 @@ namespace NebulaLibrary
                 message.ServiceId = service.Id;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                
+
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -98,7 +102,7 @@ namespace NebulaLibrary
 
                 var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-                
+
                 //UNCOMMENT BELOW LINE!!!!
                 //if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
                 //{
@@ -112,7 +116,7 @@ namespace NebulaLibrary
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe") || message.ReceivedFrom.Contains("Unsubscription"))
                     isUserWantsToUnsubscribe = true;
-                
+
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
                     //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)

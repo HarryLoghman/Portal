@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace JabehAbzarLibrary
 {
-    public class HandleMo:SharedShortCodeServiceLibrary.HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public HandleMo() : base("JabehAbzar")
+        {
+
+        }
         public override Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
             return base.ReceivedMessage(message, service);

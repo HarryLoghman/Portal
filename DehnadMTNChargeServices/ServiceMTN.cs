@@ -28,14 +28,14 @@ namespace DehnadMTNChargeServices
         internal static long v_startTimeTicks;
         protected override void OnStart(string[] args)
         {
-            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Service DehnadMTNChargeServices has been started");
+            SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Service DehnadMTNChargeServices has been started");
             singlechargeInstallmentThread = new Thread(SinglechargeInstallmentWorkerThread);
             singlechargeInstallmentThread.IsBackground = true;
             singlechargeInstallmentThread.Start();
         }
         internal void StartDebugging(string[] args)
         {
-            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Service DehnadMTNChargeServices has been started");
+            SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Service DehnadMTNChargeServices has been started");
             this.OnStart(args);
             Console.ReadLine();
             this.OnStop();
@@ -44,7 +44,7 @@ namespace DehnadMTNChargeServices
         {
             try
             {
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Service DehnadMTNChargeServices has been stopped");
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Service DehnadMTNChargeServices has been stopped");
                 shutdownEvent.Set();
                 if (!singlechargeInstallmentThread.Join(3000))
                 {
@@ -62,7 +62,7 @@ namespace DehnadMTNChargeServices
 
         static internal void StopService(string reason)
         {
-            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, reason);
+            SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, reason);
             ServiceController sc = new ServiceController("DehnadMTNChargeServices");
             sc.Stop();
             sc.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 0, 30));
@@ -221,7 +221,7 @@ namespace DehnadMTNChargeServices
                 catch (Exception e)
                 {
                     Program.logs.Error("Exception in SinglechargeInstallmentWorkerThread: ", e);
-                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Exception in SinglechargeInstallmentWorkerThread: (" + e.Message + ")");
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Exception in SinglechargeInstallmentWorkerThread: (" + e.Message + ")");
                     Thread.Sleep(1000);
                 }
             }

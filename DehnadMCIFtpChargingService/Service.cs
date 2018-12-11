@@ -28,6 +28,15 @@ namespace DehnadMCIFtpChargingService
             downloaderThread.Start();
         }
 
+
+        internal void StartDebugging(string[] args)
+        {
+            this.OnStart(args);
+            Console.ReadLine();
+            this.OnStop();
+        }
+
+
         protected override void OnStop()
         {
             try
@@ -107,12 +116,12 @@ namespace DehnadMCIFtpChargingService
                         }
                         catch (Exception ex)
                         {
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "Exception in downloaderFunction reading parameter file: " + ex.Message);
                             Program.logs.Error("Exception in downloaderFunction reading parameter file: ", ex);
                         }
 
                         //check today
                         down.updateSingleCharge();
-
                         int nDaysBefore = 0;
                         if (int.TryParse(Properties.Settings.Default.CheckNDaysBefore, out nDaysBefore))
                         {
@@ -127,7 +136,7 @@ namespace DehnadMCIFtpChargingService
                                 }
                             }
                         }
-                        
+
 
                         Program.logs.Info("downloaderFunction: Ended");
                         int timeInterval;
@@ -142,6 +151,7 @@ namespace DehnadMCIFtpChargingService
                 }
                 catch (Exception e)
                 {
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "Exception in downloaderFunction: " + e.Message);
                     Program.logs.Error("Exception in downloaderFunction: ", e);
                     Thread.Sleep(1000);
                 }

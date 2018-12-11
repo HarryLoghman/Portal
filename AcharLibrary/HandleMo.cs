@@ -9,9 +9,13 @@ using System.Threading.Tasks;
 
 namespace AcharLibrary
 {
-    public class HandleMo:SharedShortCodeServiceLibrary.HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public HandleMo() : base("Achar")
+        {
+
+        }
         public override Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
             return base.ReceivedMessage(message, service);
@@ -27,7 +31,7 @@ namespace AcharLibrary
                 message.ServiceId = service.Id;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                
+
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -102,7 +106,7 @@ namespace AcharLibrary
 
                 var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
                 var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-                
+
                 //UNCOMMENT BELOW LINE!!!!
                 //if ((isUserWantsToUnsubscribe == true || message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
                 //{
@@ -116,7 +120,7 @@ namespace AcharLibrary
                     isUserSendsSubscriptionKeyword = true;
                 else if (message.ReceivedFrom.Contains("Unsubscribe") || message.ReceivedFrom.Contains("Unsubscription"))
                     isUserWantsToUnsubscribe = true;
-                
+
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
                     //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)

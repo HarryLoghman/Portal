@@ -92,7 +92,7 @@ namespace DehnadNotificationService
                     userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() } };
                     user = await SharedLibrary.UsefulWebApis.NotificationBotApi<Models.User>("GetUserWebService", userParams);
                 }
-                if (responseObject.Message.Type == MessageType.TextMessage)
+                if (responseObject.Message.Type == MessageType.Text)
                 {
                     userParams = new Dictionary<string, string>() { { "chatId", responseObject.Message.Chat.Id.ToString() }, { "text", responseObject.Message.Text }, { "channel", "telegram" } };
                     receivedmessageId =  await SharedLibrary.UsefulWebApis.NotificationBotApi<string>("SaveMessageWebService", userParams);
@@ -101,7 +101,7 @@ namespace DehnadNotificationService
                 {
                     responseObject = await BotManager.NewlyStartedUser(user, responseObject);
                 }
-                else if (user.LastStep.Contains("MobileConfirmation") && responseObject.Message.Type == MessageType.ContactMessage)
+                else if (user.LastStep.Contains("MobileConfirmation") && responseObject.Message.Type == MessageType.Contact)
                 {
                     responseObject = await BotManager.ContactReceived(user, responseObject);
                 }
@@ -159,10 +159,10 @@ namespace DehnadNotificationService
                         {
                             using (Stream stream = new MemoryStream(response.photo))
                             {
-                                var file = new FileToSend();
-                                file.Content = stream;
-                                file.Filename = response.photoName;
-                                await Bot.SendPhotoAsync(responseObject.Message.Chat.Id, file, file.Filename);
+                                var file = new Telegram.Bot.Types.InputFiles.InputOnlineFile(stream, response.photoName);
+                                //file.Content = stream;
+                                //file.Filename = response.photoName;
+                                await Bot.SendPhotoAsync(responseObject.Message.Chat.Id, file, file.FileName);
                             }
                         }
                         if (response.keyboard != null && response.keyboard != null)
@@ -175,7 +175,7 @@ namespace DehnadNotificationService
                         else if (response.inlineKeyboard != null)
                             await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: response.inlineKeyboard);
                         else
-                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
+                            await Bot.SendTextMessageAsync(responseObject.Message.Chat.Id, response.Text, replyMarkup: new ReplyKeyboardRemove() {});
                     }
                 }
             }
@@ -254,7 +254,7 @@ namespace DehnadNotificationService
                             //await Bot.SendTextMessageAsync(message.ChatId, message.Content, replyMarkup: response.keyboard);
                         }
                         else
-                            await Bot.SendTextMessageAsync(message.ChatId, message.Content, Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: new ReplyKeyboardRemove() { RemoveKeyboard = true });
+                            await Bot.SendTextMessageAsync(message.ChatId, message.Content, Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: new ReplyKeyboardRemove() {});
                     }
                     messageIdsThatSended.Add(message.Id);
                 }

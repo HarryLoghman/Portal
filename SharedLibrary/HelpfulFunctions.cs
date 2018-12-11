@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SharedLibrary.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
@@ -18,6 +19,7 @@ namespace SharedLibrary
     public class HelpfulFunctions
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static string GetAllTheNumbersFromComplexString(string input)
         {
             return new String(input.Where(Char.IsDigit).ToArray());
@@ -314,6 +316,93 @@ namespace SharedLibrary
             value1 = value1 == 0 ? 1 : value1;
             var percent = (((decimal)value2 - (decimal)value1) / (decimal)value1) * (decimal)100;
             return Convert.ToInt32(percent);
+        }
+        private static string fnc_getNotificationIcon(StandardEventLevel level)
+        {
+            string icon = "";
+            if (level == StandardEventLevel.Critical)
+            {
+                icon = "🆘";
+            }
+            else if (level == StandardEventLevel.Error)
+            {
+                icon = "🔴";
+            }
+            else if (level == StandardEventLevel.Informational)
+            {
+                icon = "✅";
+            }
+            else if (level == StandardEventLevel.Warning)
+            {
+                icon = "⚠";
+            }
+            return icon;
+        }
+        public static void sb_sendNotification_SingleChargeGang(StandardEventLevel level, string message)
+        {
+            string url = "http://84.22.111.11/notif/n6.php";
+            try
+            {
+
+                string icon = fnc_getNotificationIcon(level);
+                Uri uri = new Uri(url + "?msg=" + icon + message, UriKind.Absolute);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                webRequest.Timeout = 60 * 1000;
+
+                //webRequest.Headers.Add("SOAPAction", action);
+                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                webRequest.Accept = "text/xml";
+                webRequest.Method = "Get";
+                webRequest.GetResponse();
+            }
+            catch (Exception e)
+            {
+                logs.Error(e);
+            }
+        }
+        public static void sb_sendNotification_DEmergency(StandardEventLevel level, string message)
+        {
+            string url = "http://84.22.111.11/notif/n3.php";
+            try
+            {
+               string icon = fnc_getNotificationIcon(level);
+               
+                Uri uri = new Uri(url + "?msg=" + icon + message, UriKind.Absolute);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                webRequest.Timeout = 60 * 1000;
+
+                //webRequest.Headers.Add("SOAPAction", action);
+                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                webRequest.Accept = "text/xml";
+                webRequest.Method = "Get";
+                webRequest.GetResponse();
+            }
+            catch (Exception e)
+            {
+                logs.Error(e);
+            }
+        }
+        public static void sb_sendNotification_DLog(StandardEventLevel level, string message)
+        {
+            string url = "http://84.22.111.11/notif/n5.php";
+            try
+            {
+                string icon = fnc_getNotificationIcon(level);
+
+                Uri uri = new Uri(url + "?msg=" + icon + message, UriKind.Absolute);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                webRequest.Timeout = 60 * 1000;
+
+                //webRequest.Headers.Add("SOAPAction", action);
+                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                webRequest.Accept = "text/xml";
+                webRequest.Method = "Get";
+                webRequest.GetResponse();
+            }
+            catch (Exception e)
+            {
+                logs.Error(e);
+            }
         }
     }
 }

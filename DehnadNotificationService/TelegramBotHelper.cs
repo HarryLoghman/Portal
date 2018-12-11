@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace DehnadNotificationService
@@ -69,7 +68,7 @@ namespace DehnadNotificationService
             int i = 0;
             foreach (var item in buttons.Keys)
             {
-                list.Add(new InlineKeyboardCallbackButton(item, buttons[item]));
+                list.Add(new InlineKeyboardButton { Text = item, CallbackData = buttons[item] });
                 i++;
                 if (i >= columnsCount)
                 {

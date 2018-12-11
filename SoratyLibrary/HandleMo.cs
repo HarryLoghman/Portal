@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 
 namespace SoratyLibrary
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
+        public HandleMo() : base("Soraty")
+        {
+
+        }
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static async Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public static async Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             bool isSucceeded = true;
             try

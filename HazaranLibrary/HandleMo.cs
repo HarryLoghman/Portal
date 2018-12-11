@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 
 namespace HazaranLibrary
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
+        public HandleMo() : base("Hazaran")
+        {
+
+        }
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             bool isSucceeded = true;
             try
@@ -21,21 +25,21 @@ namespace HazaranLibrary
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
                 var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
-                
+
                 using (var entity = new HazaranEntities())
                 {
                     int isCampaignActive = 0;
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
-                    
+
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
                     if (isInBlackList == true)
                         isCampaignActive = (int)CampaignStatus.Deactive;
-                    
+
                     List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-                    
+
                     if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                     {
                         message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -171,7 +175,7 @@ namespace HazaranLibrary
                         //        return;
                         //    }
                         //}
-                        
+
                         if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                         {
                             bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);

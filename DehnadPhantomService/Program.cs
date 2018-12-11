@@ -1,10 +1,14 @@
-﻿using System.ServiceProcess;
+﻿using System;
+using System.Diagnostics.Eventing.Reader;
+using System.Net;
+using System.ServiceProcess;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 namespace DehnadPhantomService
 {
     static class Program
     {
+        internal static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -17,5 +21,6 @@ namespace DehnadPhantomService
             };
             ServiceBase.Run(ServicesToRun);
         }
+
     }
 }

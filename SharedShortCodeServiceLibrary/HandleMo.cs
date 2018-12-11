@@ -5,6 +5,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -31,7 +32,18 @@ namespace SharedShortCodeServiceLibrary
             EmptyString = 4096,
             unknown = 0
         }
+        protected virtual string prp_serviceCode { get;}
+        protected virtual string prp_connectionStringeNameInAppConfig { get; }
+
+        public HandleMo(string serviceCode)
+        {
+            this.prp_serviceCode = serviceCode;
+            this.prp_connectionStringeNameInAppConfig = "Shared" + serviceCode + "Entities";
+            this.CompileSource();
+        }
+
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        CompilerResults v_compilerResult;
         protected virtual enumCommand EvaluateCommand(Service service, MessageObject message)
         {
             enumCommand command = enumCommand.unknown;
@@ -92,74 +104,133 @@ namespace SharedShortCodeServiceLibrary
             }
             return command;
         }
+        private string getSourceFromDatabase()
+        {
+            string moduleSource = "";
+            using (var entity = new SharedShortCodeServiceLibrary.SharedModel.ShortCodeServiceEntities(this.prp_connectionStringeNameInAppConfig))
+            {
+                var rows = entity.ServiceCommands.Where(o => o.state == 1).OrderBy(o => o.priority);
+                moduleSource = "using System;" +
+                       "using System.Linq;" +
+                       "namespace evaluatorNameSpace" +
+                       "{" +
+                       "    class runTimeEvaluation " +
+                       "    {" +
+                       "           public static string EvaluateCondition(string Content,string ReceivedFrom,string ShortCode)" +
+                       "        { string strResult =\"\";";
+                foreach (var row in rows)
+                {
+                    moduleSource = moduleSource + " if(" + row.condition + ")strResult+= \"" + row.commandTitle + "|\"; ";
+                }
+                moduleSource = moduleSource + " if(strResult.Length>0) {strResult = strResult.Remove(strResult.Length-1,1);} return strResult;" +
+                 "       }/*evaluate condition*/" +
+                 "   }/*class*/" +
+                 "}/*nameSpace*/";
 
-        protected virtual enumCommand EvaluateCommandFromDatabase(string connectionStringeNameInAppConfig, MessageObject message)
+
+            }
+            return moduleSource;
+        }
+        private void CompileSource()
+        {
+            try
+            {
+                CSharpCodeProvider code = new CSharpCodeProvider();
+                CompilerParameters codeParameters = new CompilerParameters();
+                codeParameters.GenerateExecutable = false;
+                codeParameters.GenerateInMemory = true;
+                //codeParameters.OutputAssembly = "TempModule";
+                codeParameters.ReferencedAssemblies.Add("System.Core.dll");
+
+                string moduleSource = this.getSourceFromDatabase();
+                if (moduleSource == "")
+                {
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "There is no source specified for the " + this.prp_serviceCode);
+
+                }
+                else
+                {
+                    this.v_compilerResult = code.CompileAssemblyFromSource(codeParameters, moduleSource);
+                    if (this.v_compilerResult.Errors.Count > 0)
+                    {
+                        foreach (CompilerError ce in this.v_compilerResult.Errors)
+                        {
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Error in parsing " + ce.ErrorText + " in " + this.prp_serviceCode);
+                            logs.Error("Error in parsing " + ce.ErrorText + " in " + this.prp_serviceCode);
+                        }
+
+                    }
+                }
+                
+            }
+            catch (Exception e)
+            {
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Error in creating Compiler Result for " + this.prp_serviceCode + ":" + e.Message);
+                logs.Error(this.prp_serviceCode, e);
+            }
+            
+        }
+
+        protected virtual enumCommand EvaluateCommandFromDatabase(MessageObject message)
         {
             enumCommand command = enumCommand.unknown;
             try
             {
                 enumCommand commandTemp;
-                CSharpCodeProvider code = new CSharpCodeProvider();
-                CompilerParameters codeParameters = new CompilerParameters();
-                codeParameters.GenerateExecutable = false;
-                codeParameters.GenerateInMemory = true;
-                codeParameters.OutputAssembly = "TempModule";
-                codeParameters.ReferencedAssemblies.Add("System.Core.dll");
 
-                bool evaluateResult;
-                using (var entity = new SharedShortCodeServiceLibrary.SharedModel.ShortCodeServiceEntities(connectionStringeNameInAppConfig))
+                string evaluateResult;
+                
+                if (this.v_compilerResult == null)
                 {
-                    var rows = entity.ServiceCommands.Where(o => o.state == 1).OrderBy(o => o.priority);
-                    foreach (var row in rows)
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Cannot create CompilerResult for " + message.ServiceCode + ". Refer to previous Errors");
+                    return enumCommand.unknown;
+                }
+
+                if (this.v_compilerResult.Errors.Count > 0)
+                {
+                    foreach (CompilerError ce in this.v_compilerResult.Errors)
                     {
-                        string moduleSource =
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Error in parsing " + ce.ErrorText + " in " + message.ServiceCode);
+                        logs.Error("Error in parsing " + ce.ErrorText + " in " + message.ServiceCode);
+                    }
 
-                            "using System;" +
-                            "using System.Linq;" +
-                            "class runTimeEvaluation " +
-                            "   {" +
-                            "       public static bool EvaluateCondition(string Content,string ReceivedFrom,string ShortCode)" +
-                            "       {" +
-                            "           if(" + row.condition + ")return true; " +
-                            "           return false;" +
-                            "       }" +
-                            "   }";
+                }
+                else
+                {
+                    try
+                    {
+                        MethodInfo method = this.v_compilerResult.CompiledAssembly.GetType("evaluatorNameSpace.runTimeEvaluation").GetMethod("EvaluateCondition");
+                        //var obj = assembly.CreateInstance("evaluatorNameSpace.runTimeEvaluation");
+                        evaluateResult = method.Invoke(null, new object[] { message.Content, message.ReceivedFrom, message.ShortCode }).ToString();
 
-                        CompilerResults cr = code.CompileAssemblyFromSource(codeParameters, moduleSource);
-                        if (cr.Errors.Count > 0)
+                        if (evaluateResult != "")
                         {
-                            logs.Error("Error in parsing " + row.commandTitle + "\r\nFirstError:" + cr.Errors[0].ErrorText);
-                        }
-                        else
-                        {
-                            try
+                            string[] evaluateResultArr = evaluateResult.Split('|');
+                            foreach (string result in evaluateResultArr)
                             {
-                                MethodInfo method = cr.CompiledAssembly.GetType("runTimeEvaluation").GetMethod("EvaluateCondition");
-                                evaluateResult = (bool)method.Invoke(null, new object[] { message.Content, message.ReceivedFrom, message.ShortCode });
-                                if (evaluateResult)
+                                if (Enum.TryParse(result, out commandTemp))
                                 {
-                                    logs.Info("EvaluateCommandFromDatabase" + row.commandTitle.ToString());
-                                    if (Enum.TryParse(row.commandTitle, out commandTemp))
-                                    {
-                                        if (command == enumCommand.unknown)
-                                            command = commandTemp;
-                                        else
-                                            command = command | commandTemp;
-                                    }
+                                    if (command == enumCommand.unknown)
+                                        command = commandTemp;
+                                    else
+                                        command = command | commandTemp;
                                 }
+                            }
+                            //logs.Info("EvaluateCommandFromDatabase" + row.commandTitle.ToString());
 
-                            }
-                            catch (Exception e)
-                            {
-                                logs.Error(connectionStringeNameInAppConfig + ",commandTitle:" + row.commandTitle + ",condition:" + row.condition, e);
-                            }
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "EvaluateCommandFromDatabase:" + "Compiler Error1 " + this.prp_serviceCode + ":" + e.Message);
+                        logs.Error(this.prp_connectionStringeNameInAppConfig + " " + this.prp_serviceCode, e);
                     }
                 }
             }
             catch (Exception e)
             {
-                logs.Error(e);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "EvaluateCommandFromDatabase:" + "Compiler Error2 " + this.prp_serviceCode + ":" + e.Message);
+                logs.Error("EvaluateCommandFromDatabase:" + this.prp_connectionStringeNameInAppConfig + " " + this.prp_serviceCode, e);
             }
             return command;
 
@@ -167,15 +238,15 @@ namespace SharedShortCodeServiceLibrary
         public async virtual Task<bool> ReceivedMessage(MessageObject message, Service service)
         {
             bool isSucceeded = true;
-            string connectionStringeNameInAppConfig = "Shared" + service.ServiceCode + "Entities";
+            string connectionStringeNameInAppConfig = this.prp_connectionStringeNameInAppConfig;
             try
             {
 
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
-                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate(connectionStringeNameInAppConfig);
-                using (var entity = new ShortCodeServiceEntities(connectionStringeNameInAppConfig))
+                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate(this.prp_connectionStringeNameInAppConfig);
+                using (var entity = new ShortCodeServiceEntities(this.prp_connectionStringeNameInAppConfig))
                 {
                     int isCampaignActive = 0;
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
@@ -188,7 +259,7 @@ namespace SharedShortCodeServiceLibrary
                     //mycomment : List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                     message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
 
-                    enumCommand command = EvaluateCommandFromDatabase(connectionStringeNameInAppConfig, message);
+                    enumCommand command = EvaluateCommandFromDatabase(message);
                     logs.Info("ReceivedMessage:Command:" + command.ToString() + "," + message.ShortCode + "," + message.MobileNumber);
 
                     if ((command & enumCommand.AppMessage) == enumCommand.AppMessage)
@@ -265,7 +336,9 @@ namespace SharedShortCodeServiceLibrary
                         var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, aggregatorSendsUnSubscriptionKeyword);
 
                         #region received content is sub/unsub/renewal set message.SubUnSubMoMssage and message.SubUnSubType
-                        if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                        if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated 
+                            || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated 
+                            || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                         {
                             if (message.IsReceivedFromIntegratedPanel)
                             {

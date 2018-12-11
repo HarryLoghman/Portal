@@ -9,10 +9,19 @@ using System.Threading.Tasks;
 
 namespace AsemanLibrary
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public HandleMo() : base("Aseman")
+        {
+
+        }
+        public override Task<bool> ReceivedMessage(MessageObject message, Service service)
+        {
+            return base.ReceivedMessage(message, service);
+        }
+
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();
@@ -93,7 +102,7 @@ namespace AsemanLibrary
                 //    var mobile = message.MobileNumber;
                 //    var singleCharge = new Singlecharge();
                 //    var imiChargeCode = new ImiChargeCode();
-                    //singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
+                //singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, message);
                 //    if (singleCharge != null && singleCharge.DateCreated.AddMinutes(5) > DateTime.Now)
                 //    {
                 //        message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);

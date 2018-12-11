@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 
 namespace Tamly500Library
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
+        public HandleMo() : base("Tamly500")
+        {
+
+        }
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             var e = new PortalEntities();
             bool isSucceeded = true;
@@ -79,7 +83,7 @@ namespace Tamly500Library
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
-                else if(message.Content == "30")
+                else if (message.Content == "30")
                 {
 
                 }
@@ -90,7 +94,7 @@ namespace Tamly500Library
                     var logId = MessageHandler.OtpLog(message.MobileNumber, "request", message.Content);
                     var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
                     MessageHandler.OtpLogUpdate(logId, result.Status.ToString());
-                    if(result.Status == "User already subscribed")
+                    if (result.Status == "User already subscribed")
                     {
                         message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestForAlreadySubsceribed").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(message);
@@ -182,7 +186,7 @@ namespace Tamly500Library
                 else if (message.ReceivedFrom.Contains("Unsubscribe") || message.ReceivedFrom.Contains("Unsubscription"))
                     isUserWantsToUnsubscribe = true;
 
-                
+
                 if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                 {
                     if (isUserSendsSubscriptionKeyword == true)
@@ -197,7 +201,7 @@ namespace Tamly500Library
                             }
                         }
                     }
-                    
+
                     if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                     {
                         bool isSubscriberdVerified = Tamly500Library.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);

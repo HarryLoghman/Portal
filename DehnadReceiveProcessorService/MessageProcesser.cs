@@ -645,7 +645,6 @@ namespace DehnadReceiveProcessorService
                 logs.Error("Exception in UnsubscribeUserOnAllServicesForShortCode: " + e);
             }
         }
-
         private static bool ChooseService(MessageObject message, SharedLibrary.Models.Service service)
         {
             bool isSucceeded = true;
@@ -661,7 +660,11 @@ namespace DehnadReceiveProcessorService
                 else if (service.ServiceCode == "MashinBazha")
                     isSucceeded = MashinBazhaLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Soltan")
-                    isSucceeded = SoltanLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_soltanLibrary.ReceivedMessage(message, service).Result;
+                    //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Tabriz2018")
                     isSucceeded = Tabriz2018Library.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "SepidRood")
@@ -673,81 +676,131 @@ namespace DehnadReceiveProcessorService
                 else if (service.ServiceCode == "Boating")
                     isSucceeded = BoatingLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "DonyayeAsatir")
-                    isSucceeded = DonyayeAsatirLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_donyayeAsatirLibrary.ReceivedMessage(message, service).Result;
+                    //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "ShahreKalameh")
-                    isSucceeded = ShahreKalamehLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_shahreKalamehLibrary.ReceivedMessage(message, service).Result;
+                    //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "BimeIran")
                     isSucceeded = BimeIranLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "JabehAbzar")
                 {
-                    JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
-                    isSucceeded = h.ReceivedMessage(message, service).Result;
+                    isSucceeded = SharedVariables.prp_jabehAbzarLibrary.ReceivedMessage(message, service).Result;
+                    //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
                 //isSucceeded = JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "Tamly")
-                    isSucceeded = TamlyLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_tamlyLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Tamly500")
-                    isSucceeded = Tamly500Library.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_tamly500Library.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "ShenoYad")
                     isSucceeded = ShenoYadLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "ShenoYad500")
                 {
-                    ShenoYad500Library.HandleMo h = new ShenoYad500Library.HandleMo();
-                    isSucceeded = h.ReceivedMessage(message, service).Result;
+                    isSucceeded = SharedVariables.prp_shenoYad500Library.ReceivedMessage(message, service).Result;
+                    //ShenoYad500Library.HandleMo h = new ShenoYad500Library.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
                 //isSucceeded = (new ShenoYad500Library.HandleMo()).ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "FitShow")
-                    isSucceeded = FitShowLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_FitshowLibrary.ReceivedMessage(message, service).Result;
+                }
+
                 else if (service.ServiceCode == "Takavar")
-                    isSucceeded = TakavarLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_takavarLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "MenchBaz")
-                    isSucceeded = MenchBazLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_menchBazLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "AvvalPod")
-                    isSucceeded = AvvalPodLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_avvalPodLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "AvvalPod500")
-                    isSucceeded = AvvalPod500Library.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_avvalPod500Library.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "AvvalYad")
-                    isSucceeded = AvvalYadLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_avvalYadLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "BehAmooz500")
-                    isSucceeded = BehAmooz500Library.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_behAmooz500Library.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "IrancellTest")
                     isSucceeded = IrancellTestLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Soraty")
-                    isSucceeded = SoratyLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_soratyBazLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "DefendIran")
                     isSucceeded = DefendIranLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "TahChin")
                     isSucceeded = TahChinLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Nebula")
-                    isSucceeded = NebulaLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_nebulaBazLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Dezhban")
                     isSucceeded = DezhbanLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "MusicYad")
                     isSucceeded = MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Phantom")
-                    isSucceeded = PhantomLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_phantomBazLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Medio")
-                    isSucceeded = MedioLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_medioLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Dambel")
                     isSucceeded = DambelLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Aseman")
-                    isSucceeded = AsemanLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_asemanLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Medad")
                     isSucceeded = MedadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "PorShetab")
                     isSucceeded = PorShetabLibrary.HandleMo.ReceivedMessage(message, service).Result;
                 else if (service.ServiceCode == "TajoTakht")
-                    isSucceeded = TajoTakhtLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_tajoTakhtLibrary.ReceivedMessage(message, service).Result;
+                }
+
                 else if (service.ServiceCode == "LahzeyeAkhar")
-                    isSucceeded = LahzeyeAkharLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_lahzeyeAkharLibrary.ReceivedMessage(message, service).Result;
+                }
+
                 else if (service.ServiceCode == "Hazaran")
-                    isSucceeded = HazaranLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_hazaranLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Halghe")
-                    isSucceeded = HalgheLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_halgheLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Achar")
                 {
-                    AcharLibrary.HandleMo h = new AcharLibrary.HandleMo();
-                    isSucceeded = h.ReceivedMessage(message, service).Result;
+                    isSucceeded = SharedVariables.prp_acharLibrary.ReceivedMessage(message, service).Result;
+                    //AcharLibrary.HandleMo h = new AcharLibrary.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
             }
             catch (Exception e)

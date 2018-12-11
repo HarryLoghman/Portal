@@ -5,5 +5,11 @@
     <Setting Name="NumberOfConcurrentMessagesToProcess" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="HandleMoSourcePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\Windows Services\HandleMoSourcesAndDlls\Sources</Value>
+    </Setting>
+    <Setting Name="HandleMoDllPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\Windows Services\HandleMoSourcesAndDlls\Dlls</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

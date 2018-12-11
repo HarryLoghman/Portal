@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 
 namespace TajoTakhtLibrary
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
+        public HandleMo() : base("TajoTakht")
+        {
+
+        }
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             bool isSucceeded = true;
             try
@@ -28,7 +32,7 @@ namespace TajoTakhtLibrary
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
-                    if(isInBlackList == true)
+                    if (isInBlackList == true)
                         isCampaignActive = (int)CampaignStatus.Deactive;
                     List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);

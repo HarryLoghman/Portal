@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 
 namespace HalgheLibrary
 {
-    public class HandleMo
+    public class HandleMo : SharedShortCodeServiceLibrary.HandleMo
     {
+        public HandleMo() : base("Halghe")
+        {
+
+        }
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessageOld2(MessageObject message, Service service)
         {
             try
             {
@@ -206,28 +210,28 @@ namespace HalgheLibrary
                     //}
                     if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
                     {
-                        if (isUserSendsSubscriptionKeyword == true)
-                        {
-                            var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
-                            var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
-                            if (oldServiceSubscriber != null)
-                            {
-                                if (oldServiceSubscriber.DeactivationDate == null)
-                                {
-                                    await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(oldService.ServiceCode, message.MobileNumber, "-1");
-                                }
-                            }
-                        }
-                        //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                        //if (isUserSendsSubscriptionKeyword == true)
                         //{
-                        //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                        //    if (user != null && user.DeactivationDate == null)
+                        //    var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Tamly");
+                        //    var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                        //    if (oldServiceSubscriber != null)
                         //    {
-                        //        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
-                        //        MessageHandler.InsertMessageToQueue(message);
-                        //        return;
+                        //        if (oldServiceSubscriber.DeactivationDate == null)
+                        //        {
+                        //            await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(oldService.ServiceCode, message.MobileNumber, "-1");
+                        //        }
                         //    }
                         //}
+                        ////if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+                        ////{
+                        ////    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                        ////    if (user != null && user.DeactivationDate == null)
+                        ////    {
+                        ////        message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                        ////        MessageHandler.InsertMessageToQueue(message);
+                        ////        return;
+                        ////    }
+                        ////}
                         if (service.Enable2StepSubscription == true && isUserSendsSubscriptionKeyword == true)
                         {
                             bool isSubscriberdVerified = HalgheLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
@@ -398,7 +402,7 @@ namespace HalgheLibrary
                 }
                 return isSucceeded;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logs.Error("HalgheError:", ex);
                 return false;

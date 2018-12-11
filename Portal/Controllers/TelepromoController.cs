@@ -711,7 +711,6 @@ namespace Portal.Controllers
             return response;
         }
 
-
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage UnSubscribe(string msisdn, string serviceId)
@@ -744,27 +743,41 @@ namespace Portal.Controllers
                     message.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                     var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
                     if (service.ServiceCode == "Soltan")
-                        SoltanLibrary.HandleMo.ReceivedMessage(message, service);
+                    {
+                        SharedVariables.prp_soltanLibrary.ReceivedMessage(message, service);
+                    }
                     else if (service.ServiceCode == "JabehAbzar")
                     {
-                        JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
-                        h.ReceivedMessage(message, service);
+                        SharedVariables.prp_jabehAbzarLibrary.ReceivedMessage(message, service);
+                        //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                        //h.ReceivedMessage(message, service);
                     }
                     //JabehAbzarLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "Tamly")
-                        TamlyLibrary.HandleMo.ReceivedMessage(message, service);
+                    { SharedVariables.prp_tamlyLibrary.ReceivedMessage(message, service); }
                     else if (service.ServiceCode == "DonyayeAsatir")
-                        DonyayeAsatirLibrary.HandleMo.ReceivedMessage(message, service);
+                    {
+                        SharedVariables.prp_donyayeAsatirLibrary.ReceivedMessage(message, service);
+                        //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
+                        //h.ReceivedMessage(message, service);
+                    }
                     else if (service.ServiceCode == "ShenoYad")
                         ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
                     else if (service.ServiceCode == "FitShow")
-                        FitShowLibrary.HandleMo.ReceivedMessage(message, service);
+                    { SharedVariables.prp_FitshowLibrary.ReceivedMessage(message, service); }
                     else if (service.ServiceCode == "Takavar")
-                        TakavarLibrary.HandleMo.ReceivedMessage(message, service);
+                    {
+                        SharedVariables.prp_takavarLibrary.ReceivedMessage(message, service);
+                    }
+
                     else if (service.ServiceCode == "AvvalPod")
-                        AvvalPodLibrary.HandleMo.ReceivedMessage(message, service);
+                    {
+                        SharedVariables.prp_avvalPodLibrary.ReceivedMessage(message, service);
+                    }
                     else if (service.ServiceCode == "AvvalYad")
-                        AvvalYadLibrary.HandleMo.ReceivedMessage(message, service);
+                    {
+                        SharedVariables.prp_avvalYadLibrary.ReceivedMessage(message, service);
+                    }
                     //var recievedMessage = new MessageObject();
                     //recievedMessage.Content = serviceId;
                     //recievedMessage.MobileNumber = mobileNumber;

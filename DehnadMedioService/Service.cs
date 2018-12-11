@@ -303,7 +303,7 @@ namespace DehnadMedioService
                 catch (Exception e)
                 {
                     Program.logs.Error("Exception in SinglechargeInstallmentWorkerThread: ", e);
-                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Exception in SinglechargeInstallmentWorkerThread: (" + e.Message + ")");
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Exception in SinglechargeInstallmentWorkerThread: (" + e.Message + ")");
                     Thread.Sleep(1000);
                 }
 
