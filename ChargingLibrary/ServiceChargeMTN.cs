@@ -15,8 +15,8 @@ namespace ChargingLibrary
     {
 
         public override string[] prp_wipeDescription { get { return new string[] { "SVC0001: Service Error", "POL0904: SP API level request rate control not pass, sla id is 1002.", "POL0910: Minimum Amount per Transaction" }; ; } }
-        public ServiceChargeMTN(int serviceId, int tpsService, string aggregatorServiceId, int maxTries, int cycleNumber, int cyclePrice)
-            : base(serviceId, tpsService, aggregatorServiceId, maxTries, cycleNumber, cyclePrice)
+        public ServiceChargeMTN(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice)
         {
 
         }

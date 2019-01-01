@@ -220,7 +220,7 @@ namespace DehnadReceiveProcessorService
         }
 
         private static PhantomLibrary.HandleMo v_phantomLibrary;
-        public static PhantomLibrary.HandleMo prp_phantomBazLibrary
+        public static PhantomLibrary.HandleMo prp_phantomLibrary
         {
             get
             {

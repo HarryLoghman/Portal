@@ -269,7 +269,7 @@ namespace DehnadPhantomService
                                             continue;
                                         if (servicesIDsArr[i] == "10029")
                                         {
-                                            ServiceChargeMobinOneMapfa sc = new ServiceChargeMobinOneMapfa(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
+                                            ServiceChargeMobinOneMapfa sc = new ServiceChargeMobinOneMapfa(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);

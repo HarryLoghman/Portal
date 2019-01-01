@@ -237,7 +237,8 @@ namespace SharedLibrary
                     var amount = "0";
                     var currency = "RLS";
                     var isFree = "1";
-                    var correlator = shortcode + Guid.NewGuid().ToString().Replace("-", "");
+                    //var correlator = shortcode + Guid.NewGuid().ToString().Replace("-", "");
+                    var correlator = "";
                     var serviceName = "";
                     if (serviceAdditionalInfo["shortCode"] == "3072428")
                     {
@@ -266,7 +267,7 @@ namespace SharedLibrary
                     {
                         foreach (var message in messages)
                         {
-
+                            correlator = fnc_getCorrelator(shortcode, message, true);
                             result["status_code"] = "";
                             result["status_txt"] = "";
                             result["result"] = "";
@@ -953,6 +954,7 @@ namespace SharedLibrary
 
         public static async Task SendMesssagesToHub(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
+            //there is no document to implement correlator
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
@@ -1570,6 +1572,7 @@ namespace SharedLibrary
 
         public static async Task SendMesssagesToPardisPlatform(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
+            //there is no document to implement correlator
             await Task.Delay(10);
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
@@ -2000,6 +2003,7 @@ namespace SharedLibrary
 
         public static async Task SendMesssagesToPardisImi(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
+            //there is no document to implement correlator
             using (dynamic entity = Activator.CreateInstance(entityType))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
@@ -2038,7 +2042,7 @@ namespace SharedLibrary
                     var pardisResponse = pardisClient.SendSMS(SPID, smsList);
                     if (pardisResponse.Rows.Count == 0)
                     {
-                        logs.Info("SendMessagesToPardisImi does not return response there must be somthing wrong with the parameters");
+                        logs.Info("SendMessagesToPardisImi does not return response there must be something wrong with the parameters");
                         foreach (var sms in smsList)
                         {
                             logs.Info("Index: " + sms.Index);
@@ -2090,6 +2094,7 @@ namespace SharedLibrary
         }
         public static async Task SendMesssagesToHamrahvas(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
+            //there is no document to implement correlator
             List<string> mobileNumbers = new List<string>();
             List<string> contents = new List<string>();
             List<string> shortCodes = new List<string>();
@@ -2192,8 +2197,8 @@ namespace SharedLibrary
                             }
 
                             var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-                            string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, serviceId);
-
+                            //string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, serviceId);
+                            string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, fnc_getCorrelator(serviceAdditionalInfo["shortCode"], message, true));
                             var result = new Dictionary<string, string>();
                             result["status"] = "";
                             result["message"] = "";
@@ -2457,7 +2462,7 @@ namespace SharedLibrary
                             smsList.amount[index] = messages[index].Price.ToString();
 
                         var messageId = rnd.Next(1000000, 9999999).ToString();
-                        smsList.requestId[index] = messageId.ToString();
+                        smsList.requestId[index] = fnc_getCorrelator(smsList.shortcode, messages[index], true);
                     }
 
                     using (var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient())
@@ -2469,7 +2474,7 @@ namespace SharedLibrary
                         logs.Info("smsList.shortcode:" + smsList.shortcode);
                         logs.Info("smsList.servicekey:" + smsList.servicekey);
 
-                        for (int i=0; i <= smsList.number.Length - 1; i++)
+                        for (int i = 0; i <= smsList.number.Length - 1; i++)
                         {
                             logs.Info("smsList.number[" + i.ToString() + "]:" + smsList.number[i]
                                 + ",smsList.message[" + i.ToString() + "]:" + smsList.message[i]
@@ -2843,6 +2848,7 @@ namespace SharedLibrary
                                 <code>{1}</code>
                              </loc:charging>", message.Price + "0", message.ImiChargeKey);
                         }
+                        
                         payload += string.Format(@"
                         <loc:message> {0} </loc:message>
                             <loc:receiptRequest>
@@ -2852,7 +2858,7 @@ namespace SharedLibrary
                                     </loc:receiptRequest>
                                   </loc:sendSms>
                                 </soapenv:Body>
-                              </soapenv:Envelope>", message.Content, serviceId);
+                              </soapenv:Envelope>", message.Content, fnc_getCorrelator(shortcode, message, true));
                         using (var client = new HttpClient())
                         {
                             client.DefaultRequestHeaders.Add("serviceKey", aggregatorServiceId);
@@ -3074,7 +3080,7 @@ namespace SharedLibrary
                     var serviceName = serviceAdditionalInfo["serviceName"];
                     var currency = "RLS";
                     var chargeCode = "";
-                    var correlator = shortcode + "-" + serviceAdditionalInfo["serviceCode"];
+                    var correlator = fnc_getCorrelator(shortcode, messages, true);// shortcode + "-" + serviceAdditionalInfo["serviceCode"];
                     var description = "";
                     using (var client = new HttpClient())
                     {
@@ -3263,6 +3269,27 @@ namespace SharedLibrary
             }
 
             return singlecharge;
+        }
+
+        private static string fnc_getCorrelator(string shortCode, dynamic message , bool addShortCode)
+        {
+            if (addShortCode)
+            {
+                if (!shortCode.StartsWith("98"))
+                    shortCode = "98" + shortCode;
+            }
+            return shortCode + "s" + message.DateAddedToQueue.Ticks.ToString();
+        }
+
+        public static void sb_processCorrelator(string correlator,ref string mobileNumber , out string shortCode)
+        {
+            if (mobileNumber.StartsWith("tel:98"))
+                mobileNumber = mobileNumber.Remove(0, 6);
+            if (!mobileNumber.StartsWith("0"))
+                mobileNumber = "0" + mobileNumber;
+            shortCode = (!string.IsNullOrEmpty(correlator) && correlator.Contains("s") ? correlator.Split('s')[0] : null);
+            if (shortCode != null && shortCode.StartsWith("98"))
+                shortCode = shortCode.Remove(0, 2);
         }
     }
 }

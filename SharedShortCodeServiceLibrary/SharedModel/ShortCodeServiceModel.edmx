@@ -537,6 +537,19 @@
           <Property Name="PersianDateAdded" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsLastDayWarningSent" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="SMSResults">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="mobileNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="referenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="result" Type="nvarchar" MaxLength="500" />
+          <Property Name="IsSucceeded" Type="bit" />
+          <Property Name="regDate" Type="datetime" />
+          <Property Name="parentId" Type="bigint" />
+          <Property Name="parentTableName" Type="nvarchar" MaxLength="100" />
+        </EntityType>
         <EntityType Name="SubscribersAdditionalInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -601,6 +614,7 @@
           <EntitySet Name="SinglechargeInstallmentArchive" EntityType="Self.SinglechargeInstallmentArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SingleChargeTiming" EntityType="Self.SingleChargeTiming" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMSResults" EntityType="Self.SMSResults" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -1146,6 +1160,7 @@
           <EntitySet Name="ServiceCommands" EntityType="ShortCodeServiceModel.ServiceCommand" />
           <EntitySet Name="Singlecharges" EntityType="ShortCodeServiceModel.Singlecharge" />
           <EntitySet Name="SinglechargeArchives" EntityType="ShortCodeServiceModel.SinglechargeArchive" />
+          <EntitySet Name="SMSResults" EntityType="ShortCodeServiceModel.SMSResult" />
         </EntityContainer>
         <EntityType Name="MessagesTemplate">
           <Key>
@@ -1206,6 +1221,19 @@
           <Property Name="CycleNumber" Type="Int32" />
           <Property Name="ThreadNumber" Type="Int32" />
           <Property Name="wipe" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SMSResult">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="mobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="referenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="result" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsSucceeded" Type="Boolean" />
+          <Property Name="regDate" Type="DateTime" Precision="3" />
+          <Property Name="parentId" Type="Int64" />
+          <Property Name="parentTableName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1806,6 +1834,20 @@
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMSResults">
+            <EntityTypeMapping TypeName="ShortCodeServiceModel.SMSResult">
+              <MappingFragment StoreEntitySet="SMSResults">
+                <ScalarProperty Name="parentTableName" ColumnName="parentTableName" />
+                <ScalarProperty Name="parentId" ColumnName="parentId" />
+                <ScalarProperty Name="regDate" ColumnName="regDate" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="result" ColumnName="result" />
+                <ScalarProperty Name="referenceId" ColumnName="referenceId" />
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -7,20 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SharedLibrary.Models
+namespace SharedShortCodeServiceLibrary.SharedModel
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class PortalObject
+    public partial class SMSResult
     {
-        public long id { get; set; }
+        public long Id { get; set; }
+        public string mobileNumber { get; set; }
+        public string referenceId { get; set; }
+        public string result { get; set; }
+        public Nullable<bool> IsSucceeded { get; set; }
+        public Nullable<System.DateTime> regDate { get; set; }
         public Nullable<long> parentId { get; set; }
-        public string objectName { get; set; }
-        public string persianName { get; set; }
-        public string tag { get; set; }
-        public string description { get; set; }
-        public string parentLineage { get; set; }
-        public string objectType { get; set; }
+        public string parentTableName { get; set; }
     }
 }

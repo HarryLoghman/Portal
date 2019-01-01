@@ -563,7 +563,7 @@ namespace SharedLibrary
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "Telepromo")
                 {
-                    if(serviceAdditionalInfo["shortCode"]== "3072428"|| serviceAdditionalInfo["shortCode"] == "307251"
+                    if (serviceAdditionalInfo["shortCode"] == "3072428" || serviceAdditionalInfo["shortCode"] == "307251"
                         || serviceAdditionalInfo["shortCode"] == "307251-" || serviceAdditionalInfo["shortCode"] == "307236")
                         TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromoJSON(entityType, chunkedMessages, serviceAdditionalInfo));
                     else TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entityType, chunkedMessages, serviceAdditionalInfo));
@@ -646,7 +646,7 @@ namespace SharedLibrary
             return stringedMobileNumbers;
         }
 
-        public static string CreateMtnSoapEnvelopeString(string agggregatorServiceId, string timeStamp, string mobileNumbers, string shortCode, string messageContent, string innerServiceId)
+        public static string CreateMtnSoapEnvelopeString(string agggregatorServiceId, string timeStamp, string mobileNumbers, string shortCode, string messageContent, string correlator)
         {
             var spId = "980110006379";
             var deliveryUrl = "http://79.175.164.51:200/api/Mtn/Delivery";
@@ -672,7 +672,7 @@ namespace SharedLibrary
         </loc:sendSms>
     </soapenv:Body>
 </soapenv:Envelope>"
-, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent, innerServiceId, spId, deliveryUrl);
+, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent, correlator, spId, deliveryUrl);
             return xmlString;
         }
 
@@ -724,6 +724,25 @@ namespace SharedLibrary
             MMS = 3,
             IVR = 4,
             ThreeG = 5
+        }
+
+        public enum BulkStatus
+        {
+            Enabled,
+            Disabled,
+            Stopped,
+            Paused,
+            Running,
+            FinishedByTime,
+            FinishedAll
+        }
+
+        public enum BulkFileType
+        {
+            file = 0,
+            sqlTable = 1,
+            list = 2,
+            upload = 3
         }
     }
 }

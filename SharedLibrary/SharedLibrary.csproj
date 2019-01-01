@@ -107,6 +107,9 @@
     <Compile Include="Models\BlackList.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Bulk.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\BulkList.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

@@ -41,7 +41,7 @@ namespace DehnadAsemanService
                 autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, readSize)).OfType<AutochargeMessagesBuffer>().ToList();
                 eventbaseMessages = ((IEnumerable)GetUnprocessedMessages(SharedLibrary.MessageHandler.MessageType.EventBase, readSize)).OfType<EventbaseMessagesBuffer>().ToList();
                 onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, readSize)).OfType<OnDemandMessagesBuffer>().ToList();
-
+                
                 if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
                 {
                     TimeSpan retryEndTime = new TimeSpan(23, 30, 0);
@@ -54,6 +54,7 @@ namespace DehnadAsemanService
                         }
                     }
                 }
+                
                 SharedLibrary.MessageHandler.SendSelectedMessages(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 if (DateTime.Now.Hour < 21 && DateTime.Now.Hour > 7)
                 {

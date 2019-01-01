@@ -16,6 +16,7 @@ namespace DehnadAcharService
         private Thread singlechargeInstallmentThread;
         private Thread singlechargeInstallmentBalancerThread;
         private Thread singlechargeQueueThread;
+        
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         public DehnadAcharService()
         {

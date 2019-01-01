@@ -421,6 +421,7 @@
     <Compile Include="Areas\Ashpazkhoone\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Ashpazkhoone\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Ashpazkhoone\AshpazkhooneAreaRegistration.cs" />
+    <Compile Include="Areas\Tools\Controllers\BulksController.cs" />
     <Compile Include="Areas\Tools\Controllers\RolesController.cs" />
     <Compile Include="Areas\Tools\Controllers\SendBulkMessageController.cs" />
     <Compile Include="Areas\Tools\Controllers\UsersController.cs" />
@@ -1681,6 +1682,7 @@
     <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="Areas\Tools\Views\Users\Users_ChangePassword.cshtml" />
     <Content Include="Areas\Tools\Views\Roles\Index.cshtml" />
+    <Content Include="Areas\Tools\Views\Bulks\Index.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />

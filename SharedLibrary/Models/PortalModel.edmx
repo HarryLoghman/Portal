@@ -122,6 +122,32 @@
           <Property Name="DateAdded" Type="datetime" Nullable="false" />
           <Property Name="PersianDateAdded" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="Bulks">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="bulkName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ServiceId" Type="bigint" />
+          <Property Name="tps" Type="int" />
+          <Property Name="startTime" Type="datetime" />
+          <Property Name="endTime" Type="datetime" />
+          <Property Name="message" Type="nvarchar" MaxLength="4000" />
+          <Property Name="readSize" Type="int" />
+          <Property Name="retryCount" Type="int" />
+          <Property Name="retryTimeoutInSeconds" Type="int" />
+          <Property Name="TotalMessages" Type="int" />
+          <Property Name="TotalSuccessfullySent" Type="int" />
+          <Property Name="TotalFailed" Type="int" />
+          <Property Name="TotalRetry" Type="int" />
+          <Property Name="TotalRetryUnique" Type="int" />
+          <Property Name="TotalDelivery" Type="int" />
+          <Property Name="BulkFile" Type="nvarchar" MaxLength="1000" />
+          <Property Name="status" Type="int" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
         <EntityType Name="chargeInfo">
           <Key>
             <PropertyRef Name="serviceId" />
@@ -142,11 +168,15 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="ReferenceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="Correlator" Type="nvarchar" MaxLength="100" />
+          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="Status" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="DeliveryTime" Type="datetime" />
           <Property Name="AggregatorId" Type="bigint" Nullable="false" />
+          <Property Name="Delivered" Type="bit" />
           <Property Name="IsProcessed" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="JhoobinSettings">
@@ -213,10 +243,12 @@
           </Key>
           <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="parentId" Type="bigint" />
+          <Property Name="parentLineage" Type="nvarchar" MaxLength="100" />
           <Property Name="objectName" Type="nvarchar" MaxLength="500" />
           <Property Name="persianName" Type="nvarchar" MaxLength="500" />
           <Property Name="tag" Type="nvarchar" MaxLength="500" />
           <Property Name="description" Type="nvarchar" MaxLength="500" />
+          <Property Name="objectType" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="RealtimeStatisticsFor2GServices">
           <Key>
@@ -445,7 +477,7 @@
           <Property Name="UsedKeyword" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_AllSentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'portal.dbo.vw_AllSentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AllSentMessages">
           <Key>
             <PropertyRef Name="Type" />
@@ -464,7 +496,7 @@ warning 6002: The table/view 'Portal.dbo.vw_AllSentMessages' does not have a pri
           <Property Name="ProcessStatus" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_AspNetRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'portal.dbo.vw_AspNetRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -477,7 +509,7 @@ warning 6002: The table/view 'Portal.dbo.vw_AspNetRoles' does not have a primary
           <Property Name="Aggregators" Type="nvarchar(max)" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_AspNetUserRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'portal.dbo.vw_AspNetUserRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AspNetUserRoles">
           <Key>
             <PropertyRef Name="UserId" />
@@ -489,7 +521,7 @@ warning 6002: The table/view 'Portal.dbo.vw_AspNetUserRoles' does not have a pri
           <Property Name="roleName" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_AspNetUsers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'portal.dbo.vw_AspNetUsers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AspNetUsers">
           <Key>
             <PropertyRef Name="Id" />
@@ -519,7 +551,7 @@ warning 6002: The table/view 'Portal.dbo.vw_AspNetUsers' does not have a primary
           <Property Name="Aggregators" Type="nvarchar(max)" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'portal.dbo.vw_DehnadAllServicesStatistics' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_DehnadAllServicesStatistics">
           <Key>
             <PropertyRef Name="ServiceName" />
@@ -551,7 +583,7 @@ warning 6002: The table/view 'Portal.dbo.vw_DehnadAllServicesStatistics' does no
           <Property Name="SumOfSinglechargeSuccessfulCharge" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'portal.dbo.vw_ReceivedMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ReceivedMessages">
           <Key>
             <PropertyRef Name="Id" />
@@ -576,7 +608,7 @@ warning 6002: The table/view 'Portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="LastRetryDate" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_servicesServicesInfo">
           <Key>
             <PropertyRef Name="TodayTillNowChargeAmount" />
@@ -751,6 +783,7 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="Audit" EntityType="Self.Audit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BulkList" EntityType="Self.BulkList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Bulks" EntityType="Self.Bulks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="chargeInfo" EntityType="Self.chargeInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
@@ -1020,18 +1053,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="IsDone" Type="Boolean" Nullable="false" />
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PersianDateAdded" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Delivery">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DeliveryTime" Type="DateTime" Precision="3" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="JhoobinSetting">
           <Key>
@@ -1381,7 +1402,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="Audits" EntityType="Self.Audit" />
           <EntitySet Name="BlackLists" EntityType="Self.BlackList" />
           <EntitySet Name="BulkLists" EntityType="Self.BulkList" />
-          <EntitySet Name="Deliveries" EntityType="Self.Delivery" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSetting" />
           <EntitySet Name="Operators" EntityType="Self.Operator" />
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlan" />
@@ -1465,6 +1485,8 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           </AssociationSet>
           <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
           <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
+          <EntitySet Name="Bulks" EntityType="PortalModel.Bulk" />
+          <EntitySet Name="Deliveries" EntityType="PortalModel.Delivery" />
           </EntityContainer>
         <EntityType Name="chargeInfo">
           <Key>
@@ -1603,6 +1625,8 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="persianName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="tag" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="parentLineage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="objectType" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Service">
           <Key>
@@ -1740,6 +1764,48 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="chargePrice" Type="Int32" />
           <Property Name="aggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="Bulk">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="bulkName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="tps" Type="Int32" />
+          <Property Name="startTime" Type="DateTime" Precision="3" />
+          <Property Name="endTime" Type="DateTime" Precision="3" />
+          <Property Name="message" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="readSize" Type="Int32" />
+          <Property Name="retryCount" Type="Int32" />
+          <Property Name="retryTimeoutInSeconds" Type="Int32" />
+          <Property Name="TotalMessages" Type="Int32" />
+          <Property Name="TotalSuccessfullySent" Type="Int32" />
+          <Property Name="TotalFailed" Type="Int32" />
+          <Property Name="TotalRetry" Type="Int32" />
+          <Property Name="TotalRetryUnique" Type="Int32" />
+          <Property Name="TotalDelivery" Type="Int32" />
+          <Property Name="BulkFile" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Delivery">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReferenceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Correlator" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DeliveryTime" Type="DateTime" Precision="3" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="Delivered" Type="Boolean" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1836,19 +1902,6 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="IsDone" ColumnName="IsDone" />
                 <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
                 <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Deliveries">
-            <EntityTypeMapping TypeName="PortalModel.Delivery">
-              <MappingFragment StoreEntitySet="Delivery">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="DeliveryTime" ColumnName="DeliveryTime" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2305,6 +2358,8 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySetMapping Name="PortalObjects">
             <EntityTypeMapping TypeName="PortalModel.PortalObject">
               <MappingFragment StoreEntitySet="PortalObjects">
+                <ScalarProperty Name="objectType" ColumnName="objectType" />
+                <ScalarProperty Name="parentLineage" ColumnName="parentLineage" />
                 <ScalarProperty Name="description" ColumnName="description" />
                 <ScalarProperty Name="tag" ColumnName="tag" />
                 <ScalarProperty Name="persianName" ColumnName="persianName" />
@@ -2380,6 +2435,50 @@ warning 6002: The table/view 'Portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="TodayTillNowChargeAmount" ColumnName="TodayTillNowChargeAmount" />
                 <ScalarProperty Name="activeUserCount" ColumnName="activeUserCount" />
                 <ScalarProperty Name="userCount" ColumnName="userCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Bulks">
+            <EntityTypeMapping TypeName="PortalModel.Bulk">
+              <MappingFragment StoreEntitySet="Bulks">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="BulkFile" ColumnName="BulkFile" />
+                <ScalarProperty Name="TotalDelivery" ColumnName="TotalDelivery" />
+                <ScalarProperty Name="TotalRetryUnique" ColumnName="TotalRetryUnique" />
+                <ScalarProperty Name="TotalRetry" ColumnName="TotalRetry" />
+                <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
+                <ScalarProperty Name="TotalSuccessfullySent" ColumnName="TotalSuccessfullySent" />
+                <ScalarProperty Name="TotalMessages" ColumnName="TotalMessages" />
+                <ScalarProperty Name="retryTimeoutInSeconds" ColumnName="retryTimeoutInSeconds" />
+                <ScalarProperty Name="retryCount" ColumnName="retryCount" />
+                <ScalarProperty Name="readSize" ColumnName="readSize" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="tps" ColumnName="tps" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="bulkName" ColumnName="bulkName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Deliveries">
+            <EntityTypeMapping TypeName="PortalModel.Delivery">
+              <MappingFragment StoreEntitySet="Delivery">
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="Delivered" ColumnName="Delivered" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="DeliveryTime" ColumnName="DeliveryTime" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="Correlator" ColumnName="Correlator" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

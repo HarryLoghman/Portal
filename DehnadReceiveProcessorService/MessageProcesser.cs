@@ -762,7 +762,7 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Phantom")
                 {
-                    isSucceeded = SharedVariables.prp_phantomBazLibrary.ReceivedMessage(message, service).Result;
+                    isSucceeded = SharedVariables.prp_phantomLibrary.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "Medio")
                 {

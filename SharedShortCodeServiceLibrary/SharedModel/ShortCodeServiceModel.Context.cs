@@ -15,8 +15,8 @@ namespace SharedShortCodeServiceLibrary.SharedModel
 
     public partial class ShortCodeServiceEntities : DbContext
     {
-        public ShortCodeServiceEntities(string connectionStringNameInAppConfig)
-            : base("name=" + connectionStringNameInAppConfig)
+        public ShortCodeServiceEntities(string connectionStringInAppConfig)
+            : base("name=" + connectionStringInAppConfig)
         {
         }
 
@@ -53,5 +53,6 @@ namespace SharedShortCodeServiceLibrary.SharedModel
         public virtual DbSet<ServiceCommand> ServiceCommands { get; set; }
         public virtual DbSet<Singlecharge> Singlecharges { get; set; }
         public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
+        public virtual DbSet<SMSResult> SMSResults { get; set; }
     }
 }

@@ -340,7 +340,7 @@ namespace SharedLibrary
         }
         public static void sb_sendNotification_SingleChargeGang(StandardEventLevel level, string message)
         {
-            string url = "http://84.22.111.11/notif/n6.php";
+            string url = "http://84.22.102.27/notif/n6.php";
             try
             {
 
@@ -362,7 +362,7 @@ namespace SharedLibrary
         }
         public static void sb_sendNotification_DEmergency(StandardEventLevel level, string message)
         {
-            string url = "http://84.22.111.11/notif/n3.php";
+            string url = "http://84.22.102.27/notif/n3.php";
             try
             {
                string icon = fnc_getNotificationIcon(level);
@@ -384,7 +384,7 @@ namespace SharedLibrary
         }
         public static void sb_sendNotification_DLog(StandardEventLevel level, string message)
         {
-            string url = "http://84.22.111.11/notif/n5.php";
+            string url = "http://84.22.102.27/notif/n5.php";
             try
             {
                 string icon = fnc_getNotificationIcon(level);

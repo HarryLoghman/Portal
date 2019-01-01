@@ -19,14 +19,14 @@ namespace ChargingLibrary
             {
                 return new string[] { "1001", "1006", "1007","1012","1013", "1015", "1016", "1018", "1027", "12","-2"
         , "-30000", "3002", "3004", "-4", "4998","4999","5030","-999" , "Exception"
-        ,"The request channel timed out while waiting for a reply after [%]"/*starts with 'The request channel timed out while waiting for a reply after' */
-        ,"The underlying connection was closed: A connection that was expected to be kept alive was closed by the server[%]"/*starts with 'The underlying connection was closed: A connection that was expected to be kept alive was closed by the server'*/
+        , "The request channel timed out while waiting for a reply after [%]"/*starts with 'The request channel timed out while waiting for a reply after' */
+        , "The underlying connection was closed: A connection that was expected to be kept alive was closed by the server[%]"/*starts with 'The underlying connection was closed: A connection that was expected to be kept alive was closed by the server'*/
         }; ;
             }
         }
         public Aggregator prp_aggregator { get; set; }
-        public ServiceChargeMobinOneMapfa(int serviceId, int tpsService, string aggregatorServiceId, int maxTries, int cycleNumber, int cyclePrice)
-            : base(serviceId, tpsService, aggregatorServiceId, maxTries, cycleNumber, cyclePrice)
+        public ServiceChargeMobinOneMapfa(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice)
         {
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {

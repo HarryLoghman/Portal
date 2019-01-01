@@ -152,6 +152,9 @@
     <Compile Include="SharedModel\SinglechargeWaiting.cs">
       <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="SharedModel\SMSResult.cs">
+      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="SharedModel\SubscribersAdditionalInfo.cs">
       <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
     </Compile>

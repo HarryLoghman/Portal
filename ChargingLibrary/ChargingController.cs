@@ -75,7 +75,7 @@ namespace ChargingLibrary
                 {
                     Program.logs.Error("Connection Limit is Default");
                     Console.WriteLine("Connection Limit to:" + sp.ConnectionLimit.ToString());
-                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default for " + chargingServiceName);
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default for " + chargingServiceName);
 
                 }
                 #endregion
@@ -90,7 +90,7 @@ namespace ChargingLibrary
                 this.v_spSettings.Assign();
                 this.sb_chargeLoop(false, chargingServiceName);
 
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Main cycle of " + chargingServiceName);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Main cycle of " + chargingServiceName);
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace ChargingLibrary
             {
                 Program.logs.Error("Connection Limit is Default");
                 Console.WriteLine("Connection Limit to:" + sp.ConnectionLimit.ToString());
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default for " + chargingServiceName);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Connection Limit is Default for " + chargingServiceName);
             }
 
             this.v_turn = 0;
@@ -121,9 +121,9 @@ namespace ChargingLibrary
             this.v_spSettings.Assign();
             this.sb_chargeLoop(true, chargingServiceName);
 
-            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Wipe of " + chargingServiceName);
+            SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "End of Wipe of " + chargingServiceName);
             Console.WriteLine("Charging is Finished");
-            Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Charging " + chargingServiceName + " is finished");
+            SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "Charging " + chargingServiceName + " is finished");
         }
 
         private void sb_fillChargeList(List<ServiceCharge> chargeServices, bool wipe)
@@ -142,7 +142,7 @@ namespace ChargingLibrary
                     {
                         Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":start of installmentCycleNumber " + chargeServices[i].prp_cycleNumber);
                         Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":installmentList final list count:" + chargeServices[i].prp_rowCount);
-                        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_service.ServiceCode + ":start of installmentCycleNumber " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_service.ServiceCode + ":start of installmentCycleNumber " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
                         this.v_chargeServices.Add(chargeServices[i]);
                     }
                     else
@@ -161,7 +161,7 @@ namespace ChargingLibrary
                     {
                         Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":start of wipe " + chargeServices[i].prp_cycleNumber);
                         Program.logs.Info(chargeServices[i].prp_service.ServiceCode + ":installmentList wipe list count:" + chargeServices[i].prp_rowCount);
-                        Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_service.ServiceCode + ":start of wipe " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, chargeServices[i].prp_service.ServiceCode + ":start of wipe " + chargeServices[i].prp_cycleNumber + " with " + chargeServices[i].prp_rowCount + " rows");
                         this.v_chargeServices.Add(chargeServices[i]);
                     }
                     else
@@ -383,7 +383,7 @@ namespace ChargingLibrary
 
                     }
 
-                    Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, chargingServiceName + " Long Charging:" + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")" + "(Connection Limit:" + connectionLimitStr + ")");
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, chargingServiceName + " Long Charging:" + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")" + "(Connection Limit:" + connectionLimitStr + ")");
 
 
                     this.v_notifTime = DateTime.Now.Ticks;

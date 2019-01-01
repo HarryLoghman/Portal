@@ -36,7 +36,7 @@ namespace Portal.Areas.Tools.Controllers
                 //    .Join(entity.Services, sI => sI.ServiceId, s => s.Id, (s, sI) => new { s, sI }).Select(sc => new { text = sc.sI.Name + " (" + sc.s.ShortCode + ")", value = sc.sI.ServiceCode })
                 //    .Where(o => o.value == "Tamly" || o.value == "Soltan" || o.value == "Fitshow" || o.value == "JabehAbzar" || o.value == "ShenoYad")
                 //    .ToList();
-                var services = entity.Services.Where(o => o.ServiceCode == "Tamly" || o.ServiceCode == "Soltan" || o.ServiceCode == "Fitshow" || o.ServiceCode == "JabehAbzar" || o.ServiceCode == "ShenoYad" || o.ServiceCode == "Nebula" || o.ServiceCode == "Phantom" || o.ServiceCode == "Tamly500" || o.ServiceCode == "Aseman").Select(o => new { text = o.Name, value = o.ServiceCode }).ToList();
+                var services = entity.Services.Where(o => o.ServiceCode == "Tamly" || o.ServiceCode == "Soltan" || o.ServiceCode == "Fitshow" || o.ServiceCode == "JabehAbzar" || o.ServiceCode == "ShenoYad" || o.ServiceCode == "Nebula" || o.ServiceCode == "Phantom" || o.ServiceCode == "Tamly500" || o.ServiceCode == "Aseman").Select(o => new { text = o.Name, value = o.ServiceCode }).OrderBy(o => o.text).ToList();
 
                 return Json(services, JsonRequestBehavior.AllowGet);
             }

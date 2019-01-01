@@ -41,7 +41,7 @@ namespace DehnadDeliveryProcessorService
 
         private void DeliveryProcessorWorkerThread()
         {
-            var deliveryProcessor = new DeliveryProcesser();
+            var deliveryProcessor = new DeliveryProcessor();
             while (!shutdownEvent.WaitOne(0))
             {
                 deliveryProcessor.Process();

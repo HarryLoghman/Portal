@@ -35,7 +35,6 @@ namespace SharedLibrary.Models
         public virtual DbSet<Audit> Audits { get; set; }
         public virtual DbSet<BlackList> BlackLists { get; set; }
         public virtual DbSet<BulkList> BulkLists { get; set; }
-        public virtual DbSet<Delivery> Deliveries { get; set; }
         public virtual DbSet<JhoobinSetting> JhoobinSettings { get; set; }
         public virtual DbSet<Operator> Operators { get; set; }
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
@@ -68,6 +67,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<Aggregator> Aggregators { get; set; }
         public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
         public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
+        public virtual DbSet<Bulk> Bulks { get; set; }
+        public virtual DbSet<Delivery> Deliveries { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

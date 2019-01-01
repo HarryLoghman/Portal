@@ -15,8 +15,8 @@ namespace ChargingLibrary
     {
         int v_isCampaignActive = 0;
 
-        public ServiceChargeMTNPorshetab(int serviceId, int tpsService, string aggregatorServiceId, int maxTries, int cycleNumber, int cyclePrice)
-            : base(serviceId, tpsService, aggregatorServiceId, maxTries, cycleNumber, cyclePrice)
+        public ServiceChargeMTNPorshetab(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice)
         {
 
             using (var entity = new SharedShortCodeServiceLibrary.SharedModel.ShortCodeServiceEntities("Shared" + this.prp_service.ServiceCode + "Entities"))

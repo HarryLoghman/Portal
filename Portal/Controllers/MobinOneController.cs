@@ -51,12 +51,50 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delivery(string requestId, string receiver, string status)
         {
-            var delivery = new DeliveryObject();
-            delivery.ReferenceId = requestId;
-            delivery.Status = status;
-            delivery.AggregatorId = 8;
-            SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+
             var result = "";
+            try
+            {
+                logs.Info("MobinOne Delivery:" + "requestId=" + requestId + ",receiver=" + receiver + ",status=" + status);
+                string shortCode;
+                SharedLibrary.MessageSender.sb_processCorrelator(requestId, ref receiver, out shortCode);
+                var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(receiver);
+                if (MobileNumber == "Invalid Mobile Number")
+                {
+                    result = MobileNumber;
+                }
+
+                var delivery = new SharedLibrary.Models.Delivery();
+                delivery.AggregatorId = 8;
+                delivery.Correlator = requestId;
+                if (status == "DeliveredToTerminal")
+                    delivery.Delivered = true;
+                else delivery.Delivered = false;
+
+                delivery.DeliveryTime = DateTime.Now;
+                delivery.Description = status;
+                delivery.IsProcessed = false;
+                delivery.MobileNumber = MobileNumber;
+                delivery.ReferenceId = null;
+                delivery.ShortCode = shortCode;
+                delivery.Status = status;
+
+                using (var portal = new SharedLibrary.Models.PortalEntities())
+                {
+                    portal.Deliveries.Add(delivery);
+                }
+                //delivery.Delivered
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MobineOne Delivery:", e);
+            }
+
+            //var delivery = new DeliveryObject();
+            //delivery.ReferenceId = requestId;
+            //delivery.Status = status;
+            //delivery.AggregatorId = 8;
+            //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;

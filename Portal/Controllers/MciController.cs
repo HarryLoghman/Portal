@@ -111,7 +111,8 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delivery(string message)
         {
-            try {
+            try
+            {
                 //XmlDocument xml = new XmlDocument();
                 //xml.LoadXml(message);
                 //XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
@@ -138,11 +139,36 @@ namespace Portal.Controllers
             return response;
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage Delivery()
+        {
+            try
+            {
+
+                string message = Request.Content.ReadAsStringAsync().Result;
+                logs.Info("MCI Delivery:" + message);
+                this.sb_deliveryProcess(message);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MCI Delivery : ", e);
+            }
+            var result = "";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage BatchDelivery(string message)
         {
-            try {
+            try
+            {
+
+
                 //XmlDocument xml = new XmlDocument();
                 //xml.LoadXml(message);
                 //XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
@@ -172,6 +198,94 @@ namespace Portal.Controllers
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage BatchDelivery()
+        {
+            try
+            {
+                string message = Request.Content.ReadAsStringAsync().Result;
+                logs.Info("MCI BatchDelivery:" + message);
+                this.sb_deliveryProcess(message);
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MCI BatchDelivery: ", e);
+            }
+            var result = "";
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        private void sb_deliveryProcess(string soapMessage)
+        {
+            try
+            {
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(soapMessage);
+                XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                manager.AddNamespace("xsd", "http://www.w3.org/2001/XMLSchema");
+                manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                manager.AddNamespace("ns", "http://www.csapi.org/schema/parlayx/sms/notification/v2_1/local");
+
+                XmlNodeList correlatorNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:notifySmsDeliveryReceipt/ns:notifySmsDeliveryReceiptCollection/ns:NotifySmsDeliveryReceipt/ns:correlator", manager);
+                XmlNodeList mobileNumberNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:notifySmsDeliveryReceipt/ns:notifySmsDeliveryReceiptCollection/ns:NotifySmsDeliveryReceipt/ns:deliveryStatus/address", manager);
+                XmlNodeList statusNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:notifySmsDeliveryReceipt/ns:notifySmsDeliveryReceiptCollection/ns:NotifySmsDeliveryReceipt/ns:deliveryStatus/deliveryStatus", manager);
+
+                if (correlatorNodesList == null || correlatorNodesList.Count == 0)
+                {
+                    correlatorNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:notifySmsDeliveryReceipt/ns:correlator", manager);
+                    mobileNumberNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:NotifySmsDeliveryReceipt/ns:deliveryStatus/address", manager);
+                    statusNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:NotifySmsDeliveryReceipt/ns:deliveryStatus/deliveryStatus", manager);
+                }
+                XmlNode correlatorNode, mobileNumberNode, statusNode;
+                using (var portal = new SharedLibrary.Models.PortalEntities())
+                {
+
+                    for (int i = 0; i <= correlatorNodesList.Count - 1; i++)
+                    {
+                        correlatorNode = correlatorNodesList[i];
+                        mobileNumberNode = mobileNumberNodesList[i];
+                        statusNode = statusNodesList[i];
+
+                        var correlator = correlatorNode.InnerText.Trim();
+                        var mobilenumber = mobileNumberNode.InnerText.Trim();
+                        var status = statusNode.InnerText.Trim();
+                        string shortCode;
+
+                        SharedLibrary.MessageSender.sb_processCorrelator(correlator, ref mobilenumber, out shortCode);
+
+                        var delivery = new SharedLibrary.Models.Delivery();
+                        delivery.AggregatorId = 12;
+                        delivery.Correlator = correlator;
+                        if (status == "DeliveredToTerminal")
+                            delivery.Delivered = true;
+                        else delivery.Delivered = false;
+
+                        delivery.DeliveryTime = DateTime.Now;
+                        delivery.Description = status;
+                        delivery.IsProcessed = false;
+                        delivery.MobileNumber = mobilenumber;
+                        delivery.ReferenceId = null;
+                        delivery.ShortCode = shortCode;
+                        delivery.Status = status;
+                        portal.Deliveries.Add(delivery);
+                        if (i % 500 == 0) portal.SaveChanges();
+                    }
+
+                    portal.SaveChanges();
+                }
+
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in MCI BatchDelivery: ", e);
+            }
         }
 
         [HttpPost]

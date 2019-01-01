@@ -14,7 +14,7 @@ namespace ChargingLibrary
     public class ServiceCharge
     {
 
-        #region properties
+        #region properties and variables
         public vw_servicesServicesInfo prp_service { get; set; }
         //public int prp_serviceId { get; set; }
         //public string prp_serviceName { get; }
@@ -72,7 +72,7 @@ namespace ChargingLibrary
         public bool prp_wipe { get; set; }
         #endregion
 
-        public ServiceCharge(int serviceId, int tpsService, string aggregatorServiceId, int maxTries, int cycleNumber, int cyclePrice)
+        public ServiceCharge(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
         {
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {
@@ -184,7 +184,7 @@ namespace ChargingLibrary
             catch (Exception e)
             {
                 Program.logs.Error(this.prp_service.ServiceCode + ": cannot start charging", e);
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, this.prp_service.ServiceCode + " : cannot start charging" + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, this.prp_service.ServiceCode + " : cannot start charging" + e.Message);
                 try
                 {
                     cmd.Connection.Close();
@@ -197,7 +197,6 @@ namespace ChargingLibrary
             }
             return canStart;
         }
-
         public virtual void sb_fill(out bool error)
         {
             error = false;
@@ -216,7 +215,7 @@ namespace ChargingLibrary
             {
                 error = true;
                 Program.logs.Error(this.prp_service.ServiceCode + " : fill", e);
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : fill " + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : fill " + e.Message);
             }
         }
 
@@ -238,7 +237,7 @@ namespace ChargingLibrary
             {
                 error = true;
                 Program.logs.Error(this.prp_service.ServiceCode + " : fill wipe", e);
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : fill wipe" + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : fill wipe" + e.Message);
             }
 
         }
@@ -401,7 +400,7 @@ namespace ChargingLibrary
             catch (Exception e)
             {
                 Program.logs.Error(this.prp_service.ServiceCode + " : Exception in insertSingleChargeTiming: ", e);
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : Exception in insertSingleChargeTiming: " + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : Exception in insertSingleChargeTiming: " + e.Message);
             }
         }
 
@@ -478,7 +477,7 @@ namespace ChargingLibrary
             catch (Exception e)
             {
                 Program.logs.Error(this.prp_service.ServiceCode + " : Exception in sb_finishCharge: ", e);
-                Program.sb_sendNotification(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : Exception in sb_finishCharge: " + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : Exception in sb_finishCharge: " + e.Message);
             }
 
         }

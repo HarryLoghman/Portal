@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Net;
 
-namespace ChargingLibrary
+namespace BulkLibrary
 {
     class ServicePointSettings : ConfigurationSection
     {

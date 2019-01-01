@@ -16,10 +16,14 @@ namespace SharedLibrary.Models
     {
         public long Id { get; set; }
         public string ReferenceId { get; set; }
+        public string Correlator { get; set; }
+        public string ShortCode { get; set; }
+        public string MobileNumber { get; set; }
         public string Status { get; set; }
         public string Description { get; set; }
         public Nullable<System.DateTime> DeliveryTime { get; set; }
         public long AggregatorId { get; set; }
+        public Nullable<bool> Delivered { get; set; }
         public bool IsProcessed { get; set; }
     }
 }

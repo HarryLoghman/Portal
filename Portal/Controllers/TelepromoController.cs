@@ -610,10 +610,53 @@ namespace Portal.Controllers
         public HttpResponseMessage DeliveryPost([FromBody]dynamic input)
         {
             dynamic responseJson = new ExpandoObject();
-            responseJson.status = 0;
-            var json = JsonConvert.SerializeObject(responseJson);
+            string msisdn = input.msisdn;
+            string correlator = input.correlator;
+            string deliveryStatus = input.deliverystatus;
+
+            logs.Info("Telepromo DeliveryPost: msisdn=" + input.msisdn + ", correlator=" + input.correlator + ",deliveryStatus=" + input.deliverystatus);
+
+            string shortCode;
+            SharedLibrary.MessageSender.sb_processCorrelator(correlator, ref msisdn, out shortCode);
+            var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+
+            string result = "";
+            if (MobileNumber == "Invalid Mobile Number")
+                result = "-1";
+            else
+            {
+                result = "";
+            }
+            try
+            {
+                
+                var delivery = new SharedLibrary.Models.Delivery();
+                delivery.AggregatorId = 5;
+                delivery.Correlator = correlator;
+                if (deliveryStatus == "deliver to terminal")
+                    delivery.Delivered = true;
+                else delivery.Delivered = false;
+
+                delivery.DeliveryTime = DateTime.Now;
+                delivery.Description = deliveryStatus;
+                delivery.IsProcessed = false;
+                delivery.MobileNumber = MobileNumber;
+                delivery.ReferenceId = null;
+                delivery.ShortCode = shortCode;
+                delivery.Status = deliveryStatus;
+
+                using (var portal = new SharedLibrary.Models.PortalEntities())
+                {
+                    portal.Deliveries.Add(delivery);
+                }
+                //delivery.Delivered
+            }
+            catch(Exception e)
+            {
+                logs.Error("Exception in Telepromo DeliveryPost:", e);
+            }
             var response = Request.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            response.Content = new StringContent(result, Encoding.UTF8, "application/json");
             return response;
         }
 

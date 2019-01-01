@@ -154,7 +154,7 @@ namespace DehnadMTNChargeServices
                                             continue;
                                         if (servicesIDsArr[i] == "10025")
                                         {
-                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i]));
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
@@ -164,7 +164,7 @@ namespace DehnadMTNChargeServices
                                         }
                                         else if (servicesIDsArr[i] == "10036")
                                         {
-                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i])); 
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i])); 
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
@@ -174,7 +174,7 @@ namespace DehnadMTNChargeServices
                                         }
                                         else if (servicesIDsArr[i] == "10028")
                                         {
-                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
@@ -184,7 +184,7 @@ namespace DehnadMTNChargeServices
                                         }
                                         else if (servicesIDsArr[i] == "10039")
                                         {
-                                            ServiceChargeMTNPorshetab sc = new ServiceChargeMTNPorshetab(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), aggregatorServiceId, v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
+                                            ServiceChargeMTNPorshetab sc = new ServiceChargeMTNPorshetab(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);

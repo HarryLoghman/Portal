@@ -78,6 +78,91 @@ namespace Portal.Controllers
             try
             {
                 var deliveryData = Request.Content.ReadAsStringAsync().Result;
+                logs.Info("MTN Delivery:" + deliveryData);
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(deliveryData);
+                XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                manager.AddNamespace("ns1", "http://www.huawei.com.cn/schema/common/v2_1");
+                manager.AddNamespace("ns2", "http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local");
+
+                XmlNode transactionId = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Header/ns1:NotifySOAPHeader/ns1:traceUniqueID", manager);
+                XmlNode deliveryStatusNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/deliveryStatus", manager);
+                XmlNode deliveryMobileNumberNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/address", manager);
+                XmlNode deliveryErrorCodeNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/ErrorCode", manager);
+                XmlNode deliveryErrorSourceNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:deliveryStatus/ErrorSource", manager);
+                XmlNode deliveryCorrelatorNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:notifySmsDeliveryReceipt/ns2:correlator", manager);
+
+                var correlator = "null";
+                var shortCode = "";
+                var mobileNumber = "null";
+                var errorCode = "null";
+                var errorSource = "null";
+                if (deliveryCorrelatorNode != null)
+                {
+                    correlator = deliveryCorrelatorNode.InnerText.Trim().ToString();
+                    //shortcode = (!string.IsNullOrEmpty(correlator) && correlator.Contains("s") ? correlator.Split('s')[0] : null);
+
+                }
+                if (deliveryMobileNumberNode != null)
+                    mobileNumber = deliveryMobileNumberNode.InnerText.Trim().ToString();
+                if (deliveryErrorCodeNode != null)
+                    errorCode = deliveryErrorCodeNode.InnerText.Trim().ToString();
+                if (deliveryErrorSourceNode != null)
+                    errorSource = deliveryErrorSourceNode.InnerText.Trim().ToString();
+                var delivery = new Delivery();
+
+                SharedLibrary.MessageSender.sb_processCorrelator(correlator, ref mobileNumber, out shortCode);
+                //delivery.ReferenceId = transactionId.InnerText.Trim();
+                delivery.AggregatorId = 7;
+                delivery.Correlator = correlator;
+                if (deliveryStatusNode.InnerText.Trim() == "DeliveredToTerminal")
+                    delivery.Delivered = true;
+                else delivery.Delivered = false;
+
+                delivery.DeliveryTime = DateTime.Now;
+                delivery.Description = "ShortCode=" + correlator + ";MobileNumber=" + mobileNumber + ";ErrorCode=" + errorCode + ";ErrorSource=" + errorSource;
+                delivery.IsProcessed = false;
+                delivery.MobileNumber = mobileNumber;
+                delivery.ReferenceId = transactionId.InnerText.Trim();
+                delivery.ShortCode = shortCode;
+                delivery.Status = deliveryStatusNode.InnerText.Trim();
+
+                //delivery.ErrorMessage = "ServiceId=" + correlator + ";MobileNumber=" + mobileNumber + ";ErrorCode=" + errorCode + ";ErrorSource=" + errorSource;
+                //delivery.AggregatorId = 7;
+                //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+                using (var portal = new SharedLibrary.Models.PortalEntities())
+                {
+                    portal.Deliveries.Add(delivery);
+                    portal.SaveChanges();
+
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in Mtn Delivery:", e);
+            }
+            string result = @"
+<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local"">    
+            <soapenv:Header/>    
+<soapenv:Body>       
+<loc:notifySmsDeliveryReceiptResponse/>    
+</soapenv:Body> 
+</soapenv:Envelope>";
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/xml");
+            return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage DeliveryOld()
+        {
+            try
+            {
+                var deliveryData = Request.Content.ReadAsStringAsync().Result;
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(deliveryData);
                 XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
@@ -99,9 +184,9 @@ namespace Portal.Controllers
                 var errorSource = "null";
                 if (delvieryServiceIdNode != null)
                     serviceId = delvieryServiceIdNode.InnerText.Trim().ToString();
-                if(delvieryMobileNumberNode != null)
+                if (delvieryMobileNumberNode != null)
                     mobileNumber = delvieryMobileNumberNode.InnerText.Trim().ToString();
-                if(delvieryErrorCodeNode != null)
+                if (delvieryErrorCodeNode != null)
                     errorCode = delvieryErrorCodeNode.InnerText.Trim().ToString();
                 if (delvieryErrorSourceNode != null)
                     errorSource = delvieryErrorSourceNode.InnerText.Trim().ToString();
