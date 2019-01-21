@@ -31,7 +31,7 @@ namespace Portal.Controllers
             messageObj.MobileNumber = sender;
             messageObj.ShortCode = scode;
             messageObj.Content = text;
-
+            logs.Info("MobinOne Controller Notification : " + sender);
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             if (messageObj.MobileNumber == "Invalid Mobile Number")
                 result = "-1";
@@ -55,7 +55,7 @@ namespace Portal.Controllers
             var result = "";
             try
             {
-                logs.Info("MobinOne Delivery:" + "requestId=" + requestId + ",receiver=" + receiver + ",status=" + status);
+                logs.Info("MobinOne Controller Delivery:" + "requestId=" + requestId + ",receiver=" + receiver + ",status=" + status);
                 string shortCode;
                 SharedLibrary.MessageSender.sb_processCorrelator(requestId, ref receiver, out shortCode);
                 var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(receiver);
@@ -87,7 +87,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in MobineOne Delivery:", e);
+                logs.Error("MobinOne Controller Exception in Delivery:", e);
             }
 
             //var delivery = new DeliveryObject();
@@ -113,6 +113,7 @@ namespace Portal.Controllers
             var keyword = queryString.FirstOrDefault(o => o.Key == "keyword").Value;
             var eventType = queryString.FirstOrDefault(o => o.Key == "event-type").Value;
             var status = queryString.FirstOrDefault(o => o.Key == "status").Value;
+            logs.Info("MobinOne Controller Notification : " + msisdn);
             //var shortcode = queryString.FirstOrDefault(o => o.Key == "shortcode").Value;
 
             message.ShortCode = SharedLibrary.ServiceHandler.GetShortCodeFromOperatorServiceId(sid);
@@ -155,9 +156,9 @@ namespace Portal.Controllers
                 {
                     if (message.ShortCode == "307382")
                     {
-                        using (var entity = new NebulaLibrary.Models.NebulaEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
                         {
-                            var singlecharge = new NebulaLibrary.Models.Singlecharge();
+                            var singlecharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                             singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
                             singlecharge.DateCreated = DateTime.Now;
                             singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);

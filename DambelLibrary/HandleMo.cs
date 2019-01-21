@@ -11,13 +11,13 @@ namespace DambelLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static bool ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, vw_servicesServicesInfo service)
         {
             bool isSucceeded = true;
-            using (var entity = new DambelEntities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
             {
                 var content = message.Content;
-                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
+                var messagesTemplate = SharedLibrary.ServiceHandler.GetServiceMessagesTemplate(service);
                 List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
@@ -36,7 +36,7 @@ namespace DambelLibrary
                 }
                 else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                 {
-                    message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
+                    message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }

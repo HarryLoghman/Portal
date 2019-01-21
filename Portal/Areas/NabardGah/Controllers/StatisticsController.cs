@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using SoltanLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using SharedLibrary.Models;
 using System;
@@ -15,7 +15,7 @@ namespace Portal.Areas.NabardGah.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Soltan/Statistics
-        private SoltanEntities db = new SoltanEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soltan");
 
         public ActionResult Index()
         {

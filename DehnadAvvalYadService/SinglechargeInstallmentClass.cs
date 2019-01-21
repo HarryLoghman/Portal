@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AvvalYadLibrary.Models;
-using AvvalYadLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 
@@ -31,7 +31,7 @@ namespace DehnadAvvalYadService
 
         public static void FakeInstallmentJob()
         {
-            using (var entity = new AvvalYadEntities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             {
                 var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
                 var batchSaveCounter = 0;
@@ -58,7 +58,7 @@ namespace DehnadAvvalYadService
         {
             try
             {
-                using (var entity = new AvvalYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var today = DateTime.Now;
                     entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
@@ -76,7 +76,7 @@ namespace DehnadAvvalYadService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AvvalYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
@@ -106,7 +106,7 @@ namespace DehnadAvvalYadService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AvvalYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
@@ -175,7 +175,7 @@ namespace DehnadAvvalYadService
                         subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null && o.OperatorPlan == 2).ToList();
                     }
                 }
-                using (var entity = new AvvalYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
@@ -287,7 +287,7 @@ namespace DehnadAvvalYadService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new AvvalYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -319,7 +319,8 @@ namespace DehnadAvvalYadService
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                        var response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode,
+                            message, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && installmentCycleNumber == 1)
                             continue;
                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
@@ -335,22 +336,24 @@ namespace DehnadAvvalYadService
                                     response.Description = "Billing  Failed";
                                 }
                                 else
-                                    response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);
-                                    response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, 
+                                        message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         continue; ////// TEMPORARY!!!!!!!
                                         SetMessagePrice(message, chargeCodes, 100);
-                                        response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                         {
                                             if (installmentCycleNumber == 2)
                                                 continue;
                                             SetMessagePrice(message, chargeCodes, 50);
-                                            response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                            response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                                ,message, serviceAdditionalInfo, installment.Id).Result;
                                         }
                                     }
                                 }
@@ -358,16 +361,18 @@ namespace DehnadAvvalYadService
                             else if (message.Price == 300)
                             {
                                 SetMessagePrice(message, chargeCodes, 200);
-                                response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                    ,message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     continue; ////// TEMPORARY!!!!!!!
                                     SetMessagePrice(message, chargeCodes, 100);
-                                    response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode,
+                                        message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         SetMessagePrice(message, chargeCodes, 50);
-                                        response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                     }
                                 }
                             }
@@ -375,11 +380,13 @@ namespace DehnadAvvalYadService
                             {
                                 continue; ////// TEMPORARY!!!!!!!
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                    ,message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
-                                    response = AvvalYadLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        ,message, serviceAdditionalInfo, installment.Id).Result;
                                 }
                             }
                         }

@@ -21,7 +21,7 @@ namespace DehnadPorShetabService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         static SharedLibrary.ThrottleMTN v_throttle;
         static SharedLibrary.ThrottleDedicated v_throttleDedicated;
-
+        static string v_url;
         static bool v_tpsDedicatedChanged;
         public int ProcessInstallment(int installmentCycleNumber, int tpsOperator, int tps, DateTime lastExecutionTime, bool forciblyExecute)
         {
@@ -29,6 +29,7 @@ namespace DehnadPorShetabService
 
             try
             {
+                v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
                 v_throttle = new ThrottleMTN(@"E:\Windows Services\MTNThrottleTPS");
                 v_throttleDedicated = new ThrottleDedicated(@"E:\Windows Services\MTNThrottleTpsOccupied");
 
@@ -37,15 +38,16 @@ namespace DehnadPorShetabService
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 var installmentCount = SharedLibrary.ServiceHandler.GetActiveSubscribersAndChargesCount(Service.v_dbName, serviceCode, Service.maxServiceTries, installmentCycleNumber
                     , Service.maxChargeLimit, DateTime.Now, false, "", lastExecutionTime, forciblyExecute);
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
                 if (installmentCount == 0) return 0;
                 //List<string> installmentList;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
 
 
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
-                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    List<SharedLibrary.Models.ServiceModel.ImiChargeCode> chargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
 
                     logs.Info("start of installmentCycleNumber " + installmentCycleNumber);
                     ////installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
@@ -200,9 +202,9 @@ namespace DehnadPorShetabService
                     int chargedPriceToday = (installmentList[position].pricePaidToday.HasValue ? installmentList[position].pricePaidToday.Value : 0);
 
                     int currentTps = tps;
-                    if (v_tpsDedicatedChanged) { v_tpsDedicatedChanged = false; currentTps = v_throttleDedicated.getMaxTps(tpsOperator, tps); logs.Info(";tpsChanged;tpsChanged;porshetab;" + mobileNumber + ";" + taskCount + ";" + tps + ";" + tpsOperator + ";" + currentTps + ";"); }
+                    if (v_tpsDedicatedChanged) { v_tpsDedicatedChanged = false; currentTps = v_throttleDedicated.getMaxTps(tpsOperator, tps); logs.Info(";tpsChanged;tpsChanged;PorShetab;" + mobileNumber + ";" + taskCount + ";" + tps + ";" + tpsOperator + ";" + currentTps + ";"); }
 
-                    v_throttleDedicated.throttleRequests("porshetab", mobileNumber, Guid.NewGuid().ToString(), currentTps);
+                    v_throttleDedicated.throttleRequests("PorShetab", mobileNumber, Guid.NewGuid().ToString(), currentTps);
 
                     lock (obj) { taskCount = taskCount + 1; }
                     loopNo++;
@@ -214,7 +216,7 @@ namespace DehnadPorShetabService
                         , serviceAdditionalInfo, chargeCodes, installmentCycleNumber, lpNo, threadNo, isCampaignActive, DateTime.Now);
                     });
                     task.ContinueWith(o => { lock (obj) { taskCount = taskCount - 1; income += o.Result; } });
-                    logs.Warn(";porshetab;InstallmentJob;" + mobileNumber);
+                    logs.Warn(";PorShetab;InstallmentJob;" + mobileNumber);
                     task.Start();
                     while (task.Status == TaskStatus.WaitingForActivation || task.Status == TaskStatus.WaitingForChildrenToComplete || task.Status == TaskStatus.WaitingToRun
                          || task.Status == TaskStatus.Created)
@@ -314,15 +316,15 @@ namespace DehnadPorShetabService
                         message.Price = 250;
                     if (priceUserChargedToday + message.Price > maxChargeLimit)
                         return 0;
-                    logs.Warn(";porshetab;processMTNInstallment1;" + mobileNumber);
+                    logs.Warn(";PorShetab;processMTNInstallment1;" + mobileNumber);
                     var response = ChargeMtnSubscriber(timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere
                         , entity, message, false, false, serviceAdditionalInfo["aggregatorServiceId"], installmentCycleNumber, loopNo, taskId, timeLoop);
-                    logs.Warn(";porshetab;processMTNInstallment2;" + mobileNumber);
+                    logs.Warn(";PorShetab;processMTNInstallment2;" + mobileNumber);
                     if (response.IsSucceeded == true)
                     {
                         income += message.Price.GetValueOrDefault();
                     }
-                    if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
+                    if (isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralSuspend)
                     {
                         try
                         {
@@ -337,9 +339,9 @@ namespace DehnadPorShetabService
                                     var price = 0;
                                     if (response.IsSucceeded == true)
                                         price = message.Price.Value;
-                                    logs.Warn(";porshetab;processMTNInstallment3;" + mobileNumber);
-                                    SharedLibrary.UsefulWebApis.DanoopReferralWithWebRequest("http://79.175.164.52/porshetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
-                                    logs.Warn(";porshetab;processMTNInstallment4;" + mobileNumber);
+                                    logs.Warn(";PorShetab;processMTNInstallment3;" + mobileNumber);
+                                    SharedLibrary.UsefulWebApis.DanoopReferralWithWebRequest("http://79.175.164.52/PorShetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                    logs.Warn(";PorShetab;processMTNInstallment4;" + mobileNumber);
                                 }
                             }
 
@@ -389,11 +391,12 @@ namespace DehnadPorShetabService
             else
                 charge = "chargeAmount";
             var mobile = "98" + message.MobileNumber.TrimStart('0');
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             int rialedPrice = message.Price.Value * 10;
             var referenceCode = Guid.NewGuid().ToString();
 
-            var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            var url = v_url;
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
 , timeStamp, mobile, rialedPrice, referenceCode, charge, aggregatorServiceId, spId);
             try
@@ -407,7 +410,7 @@ namespace DehnadPorShetabService
                 while (DateTime.Now > timeLimitToSend)
                 {
 
-                    timeLimitToSend = v_throttle.throttleRequests("porshetab", mobile, guidStr);
+                    timeLimitToSend = v_throttle.throttleRequests("PorShetab", mobile, guidStr);
 
                     payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
                     , timeStamp, mobile, rialedPrice, referenceCode, charge, aggregatorServiceId, spId);
@@ -415,21 +418,21 @@ namespace DehnadPorShetabService
 
                     //request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     if (DateTime.Now > timeLimitToSend)
-                        logs.Warn(";porshetab;TimePassed;" + DateTime.Now.ToString("HH:mm:ss,fff") + ";" + timeLimitToSend.ToString("HH:mm:ss,fff"));
+                        logs.Warn(";PorShetab;TimePassed;" + DateTime.Now.ToString("HH:mm:ss,fff") + ";" + timeLimitToSend.ToString("HH:mm:ss,fff"));
                 }
-                logs.Warn(";porshetab;ChargeMtnSubscriber2;" + mobile);
+                logs.Warn(";PorShetab;ChargeMtnSubscriber2;" + mobile);
                 timeBeforeSendMTNClient = DateTime.Now;
-                //logs.Warn(";****Porshetab;" + mobile + ";" + guidStr + ";" + DateTime.Now.ToString("HH:mm:ss.fff"));
+                //logs.Warn(";****PorShetab;" + mobile + ";" + guidStr + ";" + DateTime.Now.ToString("HH:mm:ss.fff"));
                 bool internalServerError;
                 WebExceptionStatus status;
                 string httpResult;
                 httpResult = SharedLibrary.UsefulWebApis.sendPostWithWebRequest(url, payload, out internalServerError, out status);
-                logs.Warn(";porshetab;ChargeMtnSubscriber3;" + mobile);
+                logs.Warn(";PorShetab;ChargeMtnSubscriber3;" + mobile);
                 timeAfterSendMTNClient = DateTime.Now;
 
                 if (status == WebExceptionStatus.Success || internalServerError)
                 {
-                    logs.Warn(";porshetab;ChargeMtnSubscriber4;" + mobile);
+                    logs.Warn(";PorShetab;ChargeMtnSubscriber4;" + mobile);
                     timeBeforeReadStringClient = DateTime.Now;
                     //string httpResult = response.Content.ReadAsStringAsync().Result;
                     timeAfterReadStringClient = DateTime.Now;
@@ -559,7 +562,7 @@ namespace DehnadPorShetabService
                 timingTable.timeAfterEntity = timeAfterEntity;
                 entity.SingleChargeTimings.Add(timingTable);
                 entity.SaveChanges();
-                logs.Warn(";porshetab;ChargeMtnSubscriber5;" + mobile);
+                logs.Warn(";PorShetab;ChargeMtnSubscriber5;" + mobile);
             }
             catch (Exception e)
             {

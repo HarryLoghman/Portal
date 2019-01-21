@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using NebulaLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,7 +14,7 @@ namespace DehnadNebulaService
         {
             try
             {
-                using (var entity = new NebulaEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -24,7 +24,7 @@ namespace DehnadNebulaService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    NebulaLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode,Properties.Settings.Default.ServiceCode , eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)
@@ -55,7 +55,7 @@ namespace DehnadNebulaService
                                 mobileNumbers = item.MobileNumbersList.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                             //var existingSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null).Select(o => o.MobileNumber).ToList();
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
-                            var imiChargeObject = NebulaLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
+                            var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode ,0, null);
                             var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                             var rnd = new Random();
@@ -80,7 +80,7 @@ namespace DehnadNebulaService
                                 TaskList.Add(ProcessSubscribersListChunk(chunkedmobileNumbersList, item.Message, imiChargeObject, service.Id, aggregatorId, i, contentId));
                             }
                             Task.WaitAll(TaskList.ToArray());
-                            NebulaLibrary.MessageHandler.CreateMonitoringItem(contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
+                            SharedShortCodeServiceLibrary.MessageHandler.CreateMonitoringItem(Properties.Settings.Default.ServiceCode , contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
                         }
                         catch (Exception e)
                         {
@@ -98,7 +98,7 @@ namespace DehnadNebulaService
             }
         }
 
-        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent, ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
+        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent, SharedLibrary.Models.ServiceModel.ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
         {
             logs.Info("ProcessSubscribersListChunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -113,7 +113,7 @@ namespace DehnadNebulaService
                 {
                     if (counter > 1000)
                     {
-                        NebulaLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode , messages);
                         messages.Clear();
                         counter = 1;
                     }
@@ -134,7 +134,7 @@ namespace DehnadNebulaService
                     messages.Add(message);
                     counter++;
                 }
-                NebulaLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode , messages);
             }
             catch (Exception e)
             {

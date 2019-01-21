@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using AcharLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using System;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Portal.Areas.Achar.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Achar/Monitoring
-        private AcharEntities db = new AcharEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Achar");
 
         public ActionResult Index()
         {

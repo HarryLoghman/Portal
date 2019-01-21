@@ -63,54 +63,15 @@ namespace Portal.Controllers
                             }
                             else
                             {
-                                if (message.ServiceCode == "Soltan")
+                                List<string> services = new List<string> { "Soltan", "DonyayeAsatir", "ShahreKalameh" };
+                                if (services.Any(o => o == service.ServiceCode))
                                 {
-                                    var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                    var singlecharge = SharedShortCodeServiceLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
                                     if (singlecharge == null)
                                         result.status = "Error in Charging";
                                     else
                                     {
-                                        using (var entity = new SoltanLibrary.Models.SoltanEntities())
-                                        {
-                                            entity.Singlecharges.Attach(singlecharge);
-                                            singlecharge.IsCalledFromInAppPurchase = true;
-                                            entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
-                                            entity.SaveChanges();
-                                        }
-                                        if (singlecharge.IsSucceeded == true)
-                                            result.status = "Success";
-                                        else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
-                                            result.status = "Insufficient Balance";
-                                    }
-                                }
-                                else if (message.ServiceCode == "DonyayeAsatir")
-                                {
-                                    var singlecharge = DonyayeAsatirLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
-                                    if (singlecharge == null)
-                                        result.status = "Error in Charging";
-                                    else
-                                    {
-                                        using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
-                                        {
-                                            entity.Singlecharges.Attach(singlecharge);
-                                            singlecharge.IsCalledFromInAppPurchase = true;
-                                            entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
-                                            entity.SaveChanges();
-                                        }
-                                        if (singlecharge.IsSucceeded == true)
-                                            result.status = "Success";
-                                        else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
-                                            result.status = "Insufficient Balance";
-                                    }
-                                }
-                                else if (message.ServiceCode == "ShahreKalameh")
-                                {
-                                    var singlecharge = ShahreKalamehLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
-                                    if (singlecharge == null)
-                                        result.status = "Error in Charging";
-                                    else
-                                    {
-                                        using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                                         {
                                             entity.Singlecharges.Attach(singlecharge);
                                             singlecharge.IsCalledFromInAppPurchase = true;
@@ -125,6 +86,68 @@ namespace Portal.Controllers
                                             result.status = "Unknown error";
                                     }
                                 }
+                                //if (message.ServiceCode == "Soltan")
+                                //{
+                                //    var singlecharge = SoltanLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                //    if (singlecharge == null)
+                                //        result.status = "Error in Charging";
+                                //    else
+                                //    {
+                                //        using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                                //        {
+                                //            entity.Singlecharges.Attach(singlecharge);
+                                //            singlecharge.IsCalledFromInAppPurchase = true;
+                                //            entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                //            entity.SaveChanges();
+                                //        }
+                                //        if (singlecharge.IsSucceeded == true)
+                                //            result.status = "Success";
+                                //        else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                //            result.status = "Insufficient Balance";
+                                //    }
+                                //}
+                                //else if (message.ServiceCode == "DonyayeAsatir")
+                                //{
+                                //    var singlecharge = DonyayeAsatirLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                //    if (singlecharge == null)
+                                //        result.status = "Error in Charging";
+                                //    else
+                                //    {
+                                //        using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                                //        {
+                                //            entity.Singlecharges.Attach(singlecharge);
+                                //            singlecharge.IsCalledFromInAppPurchase = true;
+                                //            entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                //            entity.SaveChanges();
+                                //        }
+                                //        if (singlecharge.IsSucceeded == true)
+                                //            result.status = "Success";
+                                //        else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                //            result.status = "Insufficient Balance";
+                                //    }
+                                //}
+                                //else if (message.ServiceCode == "ShahreKalameh")
+                                //{
+                                //    var singlecharge = ShahreKalamehLibrary.HandleMo.ReceivedMessageForSingleCharge(message, service);
+                                //    if (singlecharge == null)
+                                //        result.status = "Error in Charging";
+                                //    else
+                                //    {
+                                //        using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                                //        {
+                                //            entity.Singlecharges.Attach(singlecharge);
+                                //            singlecharge.IsCalledFromInAppPurchase = true;
+                                //            entity.Entry(singlecharge).State = System.Data.Entity.EntityState.Modified;
+                                //            entity.SaveChanges();
+                                //        }
+                                //        if (singlecharge.IsSucceeded == true)
+                                //            result.status = "Success";
+                                //        else if (singlecharge.IsSucceeded == false && singlecharge.Description.Contains("Insufficient Balance"))
+                                //            result = "Insufficient Balance";
+                                //        else
+                                //            result.status = "Unknown error";
+                                //    }
+                                //}
                                 else
                                     result = "General Error in AppChargeUser";
                             }
@@ -246,16 +269,16 @@ namespace Portal.Controllers
                     var daysLeft = 0;
                     if (messageObj.ServiceCode == "Soltan")
                     {
-                        using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soltan"))
                         {
                             var now = DateTime.Now;
                             var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) <= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                            daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days; 
+                            daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
                         }
                     }
                     else if (messageObj.ServiceCode == "DonyayeAsatir")
                     {
-                        using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("DonyayeAsatir"))
                         {
                             var now = DateTime.Now;
                             var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) <= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
@@ -264,7 +287,7 @@ namespace Portal.Controllers
                     }
                     else if (messageObj.ServiceCode == "ShahreKalameh")
                     {
-                        using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShahreKalameh"))
                         {
                             var now = DateTime.Now;
                             var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) <= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();

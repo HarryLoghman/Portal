@@ -41,7 +41,7 @@ namespace Portal.Controllers
                         messageObj.Content = HttpUtility.UrlDecode(item["loc:message"].InnerText);
                         messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                        logs.Info("MO:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
+                        logs.Info("MCI Controller MO:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
                     }
                 }
                 else
@@ -54,12 +54,12 @@ namespace Portal.Controllers
                     messageObj.Content = HttpUtility.UrlDecode(contentNode.InnerText);
                     messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                     SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                    logs.Info("MO:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
+                    logs.Info("MCI Controller MO:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
                 }
             }
             catch (Exception e)
             {
-                logs.Error("Exception in Mo: ", e);
+                logs.Error("MCI Controller Exception in Mo: ", e);
             }
             var result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 200, "Success");
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -94,12 +94,12 @@ namespace Portal.Controllers
                     messageObj.Content = HttpUtility.UrlDecode(contentNode.InnerText);
                     messageObj.ReceivedFrom = ip;
                     SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                    logs.Info("BatchMo:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
+                    logs.Info("MCI Controller BatchMo:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content + "," + messageObj.ReceivedFrom);
                 }
             }
             catch (Exception e)
             {
-                logs.Error("Exception in BatchMo: ", e);
+                logs.Error("MCI Controller Exception in BatchMo: ", e);
             }
             var result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 200, "Success");
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -131,7 +131,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in Delivery: ", e);
+                logs.Error("MCI Controller Exception in Delivery: ", e);
             }
             var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -147,12 +147,12 @@ namespace Portal.Controllers
             {
 
                 string message = Request.Content.ReadAsStringAsync().Result;
-                logs.Info("MCI Delivery:" + message);
+                logs.Info("MCI Controller Delivery:" + message);
                 this.sb_deliveryProcess(message);
             }
             catch (Exception e)
             {
-                logs.Error("Exception in MCI Delivery : ", e);
+                logs.Error("MCI Controller Exception in Delivery : ", e);
             }
             var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -192,7 +192,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in BatchDelivery: ", e);
+                logs.Error("MCI Controller Exception in BatchDelivery: ", e);
             }
             var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -208,12 +208,12 @@ namespace Portal.Controllers
             try
             {
                 string message = Request.Content.ReadAsStringAsync().Result;
-                logs.Info("MCI BatchDelivery:" + message);
+                logs.Info("MCI Controller BatchDelivery:" + message);
                 this.sb_deliveryProcess(message);
             }
             catch (Exception e)
             {
-                logs.Error("Exception in MCI BatchDelivery: ", e);
+                logs.Error("MCI Controller Exception in BatchDelivery: ", e);
             }
             var result = "";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -240,8 +240,8 @@ namespace Portal.Controllers
                 if (correlatorNodesList == null || correlatorNodesList.Count == 0)
                 {
                     correlatorNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:notifySmsDeliveryReceipt/ns:correlator", manager);
-                    mobileNumberNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:NotifySmsDeliveryReceipt/ns:deliveryStatus/address", manager);
-                    statusNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:NotifySmsDeliveryReceipt/ns:deliveryStatus/deliveryStatus", manager);
+                    mobileNumberNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:notifySmsDeliveryReceipt/ns:deliveryStatus/address", manager);
+                    statusNodesList = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/ns:notifySmsDeliveryReceipt/ns:deliveryStatus/deliveryStatus", manager);
                 }
                 XmlNode correlatorNode, mobileNumberNode, statusNode;
                 using (var portal = new SharedLibrary.Models.PortalEntities())
@@ -284,7 +284,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in MCI BatchDelivery: ", e);
+                logs.Error("MCI Controller Exception in sb_deliveryProcess: ", e);
             }
         }
 
@@ -324,14 +324,14 @@ namespace Portal.Controllers
                             messageObj.ReceivedFrom += "-IMI-Notify-Unsubscription";
                         SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                     }
-                    logs.Info("Notify:" + msisdn + "," + sid + "," + shortcode + "," + keyword + "," + event_type);
+                    logs.Info("MCI Controller Notify:" + msisdn + "," + sid + "," + shortcode + "," + keyword + "," + event_type);
                 }
 
                 result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 200, "Success");
             }
             catch (Exception e)
             {
-                logs.Error("Exception in Notify: " + e);
+                logs.Error("MCI Controller Exception in Notify: " + e);
                 result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 400, "Error");
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);

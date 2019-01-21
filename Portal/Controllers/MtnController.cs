@@ -78,7 +78,7 @@ namespace Portal.Controllers
             try
             {
                 var deliveryData = Request.Content.ReadAsStringAsync().Result;
-                logs.Info("MTN Delivery:" + deliveryData);
+                logs.Info("MTN Controller Delivery:" + deliveryData);
                 XmlDocument xml = new XmlDocument();
                 xml.LoadXml(deliveryData);
                 XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
@@ -141,7 +141,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in Mtn Delivery:", e);
+                logs.Error("MTN Controller Exception in Delivery:", e);
             }
             string result = @"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local"">    
@@ -199,7 +199,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in Mtn Delivery:", e);
+                logs.Error("MTN Controller Exception in Delivery:", e);
             }
             string result = @"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification/v2_2/local"">    
@@ -221,7 +221,7 @@ namespace Portal.Controllers
             string result = "";
             var spId = "980110006379";
             var endpointUrl = "http://79.175.164.51:200/api/mtn/SubUnsubNotify";
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             string payload = string.Format(@"
 <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification_manager/v2_3/local"">
 <soapenv:Header>        <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">
@@ -232,7 +232,8 @@ namespace Portal.Controllers
 , serviceId, timeStamp, correlatorId, shortCode, spId, endpointUrl);
             try
             {
-                string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/startSmsNotificationRequest";
+                //string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/startSmsNotificationRequest";
+                string url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNSmsNotification);
                 var request = new HttpRequestMessage(HttpMethod.Post, url);
                 request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                 using (var client = new HttpClient())
@@ -250,7 +251,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in startSmsNotificationRequest: " + e);
+                logs.Error("MTN Controller Exception in startSmsNotificationRequest: " + e);
                 result = "Exception in startSmsNotificationRequest:" + e.Message;
             }
 
@@ -265,12 +266,13 @@ namespace Portal.Controllers
         {
             string result = "";
             var spId = "980110006379";
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/notification_manager/v2_3/local"">     <soapenv:Header>        <v2:RequestSOAPHeader>           <v2:spId>{3}</v2:spId>     <v2:serviceId>{0}</v2:serviceId>           <v2:timeStamp>{1}</v2:timeStamp>        </v2:RequestSOAPHeader>     </soapenv:Header>     <soapenv:Body>        <loc:stopSmsNotification>          <loc:correlator>{2}</loc:correlator>        </loc:stopSmsNotification>     </soapenv:Body>   </soapenv:Envelope>  "
 , serviceId, timeStamp, correlatorId, spId);
             try
             {
-                string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/stopSmsNotificationRequest";
+                //string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/stopSmsNotificationRequest";
+                string url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNSmsStopNotification);
                 var request = new HttpRequestMessage(HttpMethod.Post, url);
                 request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                 using (var client = new HttpClient())
@@ -288,7 +290,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in stopSmsNotificationRequest: " + e);
+                logs.Error("MTN Controller Exception in stopSmsNotificationRequest: " + e);
                 result = "Exception in stopSmsNotificationRequest:" + e.Message;
             }
 
@@ -303,12 +305,13 @@ namespace Portal.Controllers
         {
             string result = "";
             var spId = "980110006379";
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/receive/v2_2/local"">     <soapenv:Header>        <v2:RequestSOAPHeader>           <v2:spId>{3}</v2:spId>           <v2:serviceId>{0}</v2:serviceId>           <v2:timeStamp>{1}</v2:timeStamp>        </v2:RequestSOAPHeader>     </soapenv:Header>     <soapenv:Body>        <loc:getReceivedSms>            <loc:registrationIdentifier>{2}</loc:registrationIdentifier>        </loc:getReceivedSms>     </soapenv:Body>  </soapenv:Envelope> "
 , serviceId, timeStamp, shortCode, spId);
             try
             {
-                string url = "http://92.42.55.180:8310/ReceiveSmsService/services/ReceiveSms/getReceivedSmsRequest";
+                //string url = "http://92.42.55.180:8310/ReceiveSmsService/services/ReceiveSms/getReceivedSmsRequest";
+                string url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNGetReceivedSms);
                 var request = new HttpRequestMessage(HttpMethod.Post, url);
                 request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                 using (var client = new HttpClient())
@@ -345,7 +348,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Exception in getReceivedSms: " + e);
+                logs.Error("MTN Controller Exception in getReceivedSms: " + e);
                 result = "Exception in getReceivedSms:" + e.Message;
             }
 
@@ -361,18 +364,18 @@ namespace Portal.Controllers
             string result = "";
             try
             {
-                using (var entity = new IrancellTestLibrary.Models.IrancellTestEntities())
-                {
-                    //var singleCharge = new IrancellTestLibrary.Models.Singlecharge();
-                    //MessageObject message = new MessageObject();
-                    //message.MobileNumber = mobileNumber;
-                    //message.Price = price;
-                    //singleCharge = await SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singleCharge, message, isRefund, isInAppPurchase, );
+                //using (var entity = new IrancellTestLibrary.Models.IrancellTestEntities())
+                //{
+                //    //var singleCharge = new IrancellTestLibrary.Models.Singlecharge();
+                //    //MessageObject message = new MessageObject();
+                //    //message.MobileNumber = mobileNumber;
+                //    //message.Price = price;
+                //    //singleCharge = await SharedLibrary.MessageSender.ChargeMtnSubscriber(entity, singleCharge, message, isRefund, isInAppPurchase, );
 
-                    //result = "isSuccessed: " + singleCharge.IsSucceeded + Environment.NewLine;
-                    //result += "Description: " + singleCharge.Description + Environment.NewLine;
-                    //result += "ReferenceId: " + singleCharge.ReferenceId + Environment.NewLine; 
-                }
+                //    //result = "isSuccessed: " + singleCharge.IsSucceeded + Environment.NewLine;
+                //    //result += "Description: " + singleCharge.Description + Environment.NewLine;
+                //    //result += "ReferenceId: " + singleCharge.ReferenceId + Environment.NewLine; 
+                //}
             }
             catch (Exception e)
             {
@@ -389,7 +392,7 @@ namespace Portal.Controllers
         public HttpResponseMessage SyncOrderRelationRequest()
         {
             var syncData = Request.Content.ReadAsStringAsync().Result;
-            logs.Info(syncData);
+            logs.Info("MTN Controller "+ syncData);
             string result = @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/data/sync/v1_0/local"">     <soapenv:Header/>     <soapenv:Body>        <loc:syncOrderRelationResponse>           <loc:result>0</loc:result>           <loc:resultDescription>OK</loc:resultDescription>                 </loc:syncOrderRelationResponse>     </soapenv:Body>  </soapenv:Envelope>";
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/xml");

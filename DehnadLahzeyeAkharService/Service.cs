@@ -193,8 +193,8 @@ namespace DehnadLahzeyeAkharService
         private void SinglechargeInstallmentWorkerThread()
         {
             var singlechargeInstallment = new SinglechargeInstallmentClass();
-            var entityType = typeof(LahzeyeAkharLibrary.Models.LahzeyeAkharEntities);
-            var cycleType = typeof(LahzeyeAkharLibrary.Models.InstallmentCycle);
+            var entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
+            var cycleType = typeof(SharedLibrary.Models.ServiceModel.InstallmentCycle);
             int installmentCycleNumber = 1;
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("9:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
@@ -218,7 +218,7 @@ namespace DehnadLahzeyeAkharService
                 bool isInMaintenanceTime = false;
                 try
                 {
-                    using (var entity = new LahzeyeAkharLibrary.Models.LahzeyeAkharEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
                         if (isInMaintenace != null)

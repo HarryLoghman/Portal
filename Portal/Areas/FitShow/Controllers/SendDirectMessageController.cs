@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using FitShowLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,7 +14,7 @@ namespace Portal.Areas.FitShow.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: FitShow/SendDirectMessage
-        private FitShowEntities db = new FitShowEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db= new SharedLibrary.Models.ServiceModel.SharedServiceEntities("FitShow");
 
         public ActionResult Index()
         {
@@ -52,8 +52,8 @@ namespace Portal.Areas.FitShow.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = FitShowLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            FitShowLibrary.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode , messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode , messageObject);
             return Content("Ok");
         }
     }

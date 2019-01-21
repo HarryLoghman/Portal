@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PhantomLibrary.Models;
-using PhantomLibrary;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
 using SharedLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 
 namespace DehnadPhantomService
 {
@@ -26,7 +26,7 @@ namespace DehnadPhantomService
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
 
-                using (var entity = new PhantomEntities())
+                using (var entity = new SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 240;
@@ -80,7 +80,7 @@ namespace DehnadPhantomService
                     return income;
                 }
                 int isCampaignActive = 0;
-                using (var entity = new PhantomEntities())
+                using (var entity = new SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -119,7 +119,7 @@ namespace DehnadPhantomService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new PhantomEntities())
+                using (var entity = new SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
@@ -193,7 +193,7 @@ namespace DehnadPhantomService
         public static async Task<dynamic> MapfaStaticPriceSinglecharge(MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             var startTime = DateTime.Now;
-            using (var entity = new PhantomEntities())
+            using (var entity = new SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 var singlecharge = new Singlecharge();

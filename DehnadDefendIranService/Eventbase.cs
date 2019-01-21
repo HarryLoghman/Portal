@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using DefendIranLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 
 namespace DehnadDefendIranService
 {
@@ -12,7 +12,7 @@ namespace DehnadDefendIranService
         {
             try
             {
-                using (var entity = new DefendIranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -22,7 +22,8 @@ namespace DehnadDefendIranService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    DefendIranLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode, Properties.Settings.Default.ServiceCode
+                        , eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)

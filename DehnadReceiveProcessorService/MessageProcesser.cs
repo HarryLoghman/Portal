@@ -602,7 +602,8 @@ namespace DehnadReceiveProcessorService
                         if (serviceId == 0)
                             serviceId = entity.ServiceInfoes.FirstOrDefault(o => o.ShortCode == message.ShortCode).ServiceId;
                     }
-                    var service = entity.Services.FirstOrDefault(o => o.Id == serviceId);
+                    //var service = entity.Services.FirstOrDefault(o => o.Id == serviceId);
+                    var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceId);
                     if (service != null)
                     {
                         message.ServiceId = service.Id;
@@ -627,14 +628,14 @@ namespace DehnadReceiveProcessorService
                     var userSubscribedServices = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && serviceIds.Contains(o.ServiceId) && o.DeactivationDate == null).Select(o => o.ServiceId).ToList();
                     if (userSubscribedServices == null)
                     {
-                        var service = entity.Services.FirstOrDefault(o => o.Id == serviceIds.FirstOrDefault());
+                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceIds.FirstOrDefault());
                         ChooseService(message, service);
                     }
                     else
                     {
                         foreach (var serviceId in userSubscribedServices)
                         {
-                            var service = entity.Services.FirstOrDefault(o => o.Id == serviceId);
+                            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceId);
                             ChooseService(message, service);
                         }
                     }
@@ -645,36 +646,36 @@ namespace DehnadReceiveProcessorService
                 logs.Error("Exception in UnsubscribeUserOnAllServicesForShortCode: " + e);
             }
         }
-        private static bool ChooseService(MessageObject message, SharedLibrary.Models.Service service)
+        private static bool ChooseService(MessageObject message, SharedLibrary.Models.vw_servicesServicesInfo service)
         {
             bool isSucceeded = true;
             //logs.Info(service.ServiceCode);
             try
             {
-                if (service.ServiceCode == "MyLeague")
-                    isSucceeded = MyLeagueLibrary.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "Danestaneh")
-                    isSucceeded = DanestanehLibrary.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "Mobiliga")
-                    isSucceeded = MobiligaLibrary.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "MashinBazha")
-                    isSucceeded = MashinBazhaLibrary.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "Soltan")
+                //if (service.ServiceCode == "MyLeague")
+                //    isSucceeded = MyLeagueLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "Danestaneh")
+                //    isSucceeded = DanestanehLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "Mobiliga")
+                //    isSucceeded = MobiligaLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "MashinBazha")
+                //    isSucceeded = MashinBazhaLibrary.HandleMo.ReceivedMessage(message, service);
+                if (service.ServiceCode == "Soltan")
                 {
                     isSucceeded = SharedVariables.prp_soltanLibrary.ReceivedMessage(message, service).Result;
                     //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
                     //isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
-                else if (service.ServiceCode == "Tabriz2018")
-                    isSucceeded = Tabriz2018Library.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "SepidRood")
-                    isSucceeded = SepidRoodLibrary.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "Tirandazi")
-                    isSucceeded = TirandaziLibrary.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "BimeKarbala")
-                    isSucceeded = BimeKarbalaLibrary.HandleMo.ReceivedMessage(message, service);
-                else if (service.ServiceCode == "Boating")
-                    isSucceeded = BoatingLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "Tabriz2018")
+                //    isSucceeded = Tabriz2018Library.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "SepidRood")
+                //    isSucceeded = SepidRoodLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "Tirandazi")
+                //    isSucceeded = TirandaziLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "BimeKarbala")
+                //    isSucceeded = BimeKarbalaLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "Boating")
+                //    isSucceeded = BoatingLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "DonyayeAsatir")
                 {
                     isSucceeded = SharedVariables.prp_donyayeAsatirLibrary.ReceivedMessage(message, service).Result;
@@ -687,8 +688,8 @@ namespace DehnadReceiveProcessorService
                     //JabehAbzarLibrary.HandleMo h = new JabehAbzarLibrary.HandleMo();
                     //isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
-                else if (service.ServiceCode == "BimeIran")
-                    isSucceeded = BimeIranLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "BimeIran")
+                //    isSucceeded = BimeIranLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "JabehAbzar")
                 {
                     isSucceeded = SharedVariables.prp_jabehAbzarLibrary.ReceivedMessage(message, service).Result;
@@ -705,7 +706,9 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = SharedVariables.prp_tamly500Library.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "ShenoYad")
-                    isSucceeded = ShenoYadLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_shenoYadLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "ShenoYad500")
                 {
                     isSucceeded = SharedVariables.prp_shenoYad500Library.ReceivedMessage(message, service).Result;
@@ -742,22 +745,28 @@ namespace DehnadReceiveProcessorService
                 {
                     isSucceeded = SharedVariables.prp_behAmooz500Library.ReceivedMessage(message, service).Result;
                 }
-                else if (service.ServiceCode == "IrancellTest")
-                    isSucceeded = IrancellTestLibrary.HandleMo.ReceivedMessage(message, service);
+                //else if (service.ServiceCode == "IrancellTest")
+                //{
+                //    isSucceeded = IrancellTestLibrary.HandleMo.ReceivedMessage(message, service).res;
+                //}
                 else if (service.ServiceCode == "Soraty")
                 {
                     isSucceeded = SharedVariables.prp_soratyBazLibrary.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "DefendIran")
-                    isSucceeded = DefendIranLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_defendIranLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "TahChin")
                     isSucceeded = TahChinLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Nebula")
                 {
-                    isSucceeded = SharedVariables.prp_nebulaBazLibrary.ReceivedMessage(message, service).Result;
+                    isSucceeded = SharedVariables.prp_nebulaLibrary.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "Dezhban")
-                    isSucceeded = DezhbanLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_dezhbanLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "MusicYad")
                     isSucceeded = MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
                 else if (service.ServiceCode == "Phantom")
@@ -814,80 +823,87 @@ namespace DehnadReceiveProcessorService
         {
             try
             {
-                if (serviceCode == "MyLeague")
-                    MyLeagueLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Danestaneh")
-                    DanestanehLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Mobiliga")
-                    MobiligaLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "MashinBazha")
-                    MashinBazhaLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Soltan")
-                    SoltanLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Tabriz2018")
-                    Tabriz2018Library.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "SepidRood")
-                    SepidRoodLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Tirandazi")
-                    TirandaziLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "BimeKarbala")
-                    BimeKarbalaLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Boating")
-                    BoatingLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "DonyayeAsatir")
-                    DonyayeAsatirLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "ShahreKalameh")
-                    ShahreKalamehLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "BimeIran")
-                    BimeIranLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "JabehAbzar")
-                    JabehAbzarLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Tamly")
-                    TamlyLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "ShenoYad")
-                    ShenoYadLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "FitShow")
-                    FitShowLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Takavar")
-                    TakavarLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "MenchBaz")
-                    MenchBazLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "AvvalPod")
-                    AvvalPodLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "AvvalYad")
-                    AvvalYadLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "IrancellTest")
-                    IrancellTestLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Soraty")
-                    SoratyLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "DefendIran")
-                    DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "TahChin")
-                    TahChinLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Nebula")
-                    NebulaLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Dezhban")
-                    DezhbanLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "MusicYad")
-                    MusicYadLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Phantom")
-                    PhantomLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Medio")
-                    MedioLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Dambel")
-                    DambelLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Aseman")
-                    AsemanLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Medad")
-                    MedadLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "PorShetab")
-                    PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "TajoTakht")
-                    TajoTakhtLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "LahzeyeAkhar")
-                    LahzeyeAkharLibrary.MessageHandler.InsertMessageToQueue(message);
-                else if (serviceCode == "Hazaran")
-                    HazaranLibrary.MessageHandler.InsertMessageToQueue(message);
+                List<string> serviceCodes = new List<string> { "MyLeague", "Danestaneh" , "Mobiliga" , "MashinBazha" , "Soltan"
+                ,"Tabriz2018" ,"SepidRood", "Tirandazi" , "BimeKarbala" ,"Boating" ,"DonyayeAsatir" ,"ShahreKalameh" ,"BimeIran"
+                ,"JabehAbzar" , "Tamly" , "ShenoYad" , "FitShow","Takavar","MenchBaz","AvvalPod","AvvalYad","IrancellTest"
+                ,"Soraty" ,"DefendIran","TahChin","Nebula" ,"Dezhban","MusicYad" ,"Phantom" ,"Medio" , "Dambel" , "Aseman"
+                ,"Medad","PorShetab","TajoTakht","LahzeyeAkhar","Hazaran"};
+                if (serviceCodes.Any(o => o == serviceCode))
+                    SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(serviceCode, message);
+                //if (serviceCode == "MyLeague")
+                //    MyLeagueLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Danestaneh")
+                //    DanestanehLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Mobiliga")
+                //    MobiligaLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "MashinBazha")
+                //    MashinBazhaLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Soltan")
+                //    SoltanLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Tabriz2018")
+                //    Tabriz2018Library.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "SepidRood")
+                //    SepidRoodLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Tirandazi")
+                //    TirandaziLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "BimeKarbala")
+                //    BimeKarbalaLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Boating")
+                //    BoatingLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "DonyayeAsatir")
+                //    DonyayeAsatirLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "ShahreKalameh")
+                //    ShahreKalamehLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "BimeIran")
+                //    BimeIranLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "JabehAbzar")
+                //    JabehAbzarLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Tamly")
+                //    TamlyLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "ShenoYad")
+                //    ShenoYadLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "FitShow")
+                //    FitShowLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Takavar")
+                //    TakavarLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "MenchBaz")
+                //    MenchBazLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "AvvalPod")
+                //    AvvalPodLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "AvvalYad")
+                //    AvvalYadLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "IrancellTest")
+                //    IrancellTestLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Soraty")
+                //    SoratyLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "DefendIran")
+                //    DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "TahChin")
+                //    TahChinLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Nebula")
+                //    NebulaLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Dezhban")
+                //    DezhbanLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "MusicYad")
+                //    MusicYadLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Phantom")
+                //    PhantomLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Medio")
+                //    MedioLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Dambel")
+                //    DambelLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Aseman")
+                //    AsemanLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Medad")
+                //    MedadLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "PorShetab")
+                //    PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "TajoTakht")
+                //    TajoTakhtLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "LahzeyeAkhar")
+                //    LahzeyeAkharLibrary.MessageHandler.InsertMessageToQueue(message);
+                //else if (serviceCode == "Hazaran")
+                //    HazaranLibrary.MessageHandler.InsertMessageToQueue(message);
             }
             catch (Exception e)
             {

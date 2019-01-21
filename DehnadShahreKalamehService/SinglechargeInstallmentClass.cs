@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShahreKalamehLibrary.Models;
-using ShahreKalamehLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 
@@ -35,7 +35,7 @@ namespace DehnadShahreKalamehService
         {
             try
             {
-                using (var entity = new ShahreKalamehEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var today = DateTime.Now;
                     entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
@@ -53,7 +53,7 @@ namespace DehnadShahreKalamehService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new ShahreKalamehEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
@@ -83,7 +83,7 @@ namespace DehnadShahreKalamehService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new ShahreKalamehEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
@@ -129,7 +129,7 @@ namespace DehnadShahreKalamehService
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("ShahreKalameh", aggregatorName);
                 List<SinglechargeInstallment> installmentList;
                 List<ImiChargeCode> chargeCodes;
-                using (var entity = new ShahreKalamehEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
@@ -212,7 +212,7 @@ namespace DehnadShahreKalamehService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new ShahreKalamehEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -247,7 +247,8 @@ namespace DehnadShahreKalamehService
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = ShahreKalamehLibrary.MessageHandler.SendSinglechargeMesssageToHub(message, serviceAdditionalInfo, installment.Id).Result;
+                        var response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToHub(Properties.Settings.Default.ServiceCode 
+                            , message, serviceAdditionalInfo, installment.Id).Result;
 
                         
                         if (response.IsSucceeded == true)

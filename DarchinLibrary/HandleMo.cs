@@ -11,7 +11,7 @@ namespace DarchinLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static void ReceivedMessage(MessageObject message, Service service)
+        public async static void ReceivedMessage(MessageObject message, vw_servicesServicesInfo service)
         {
             //System.Diagnostics.Debugger.Launch();
             using (var entity = new DarchinEntities())

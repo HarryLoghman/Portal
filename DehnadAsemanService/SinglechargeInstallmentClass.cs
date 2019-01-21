@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AsemanLibrary.Models;
-using AsemanLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 
@@ -32,7 +32,7 @@ namespace DehnadAsemanService
         {
             try
             {
-                using (var entity = new AsemanEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Aseman"))
                 {
                     var today = DateTime.Now;
                     entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
@@ -50,7 +50,7 @@ namespace DehnadAsemanService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AsemanEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
@@ -80,7 +80,7 @@ namespace DehnadAsemanService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AsemanEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Aseman"))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
@@ -149,7 +149,7 @@ namespace DehnadAsemanService
                         subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null && o.OperatorPlan == 2).ToList();
                     }
                 }
-                using (var entity = new AsemanEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
@@ -261,7 +261,7 @@ namespace DehnadAsemanService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new AsemanEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -293,7 +293,8 @@ namespace DehnadAsemanService
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                        var response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                            , message, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && installmentCycleNumber == 1)
                             continue;
                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
@@ -309,22 +310,26 @@ namespace DehnadAsemanService
                                     response.Description = "Billing  Failed";
                                 }
                                 else
-                                    response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        , message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);
-                                    response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        , message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         continue; ////// TEMPORARY!!!!!!!
                                         SetMessagePrice(message, chargeCodes, 100);
-                                        response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                            , message, serviceAdditionalInfo, installment.Id).Result;
                                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                         {
                                             if (installmentCycleNumber == 2)
                                                 continue;
                                             SetMessagePrice(message, chargeCodes, 50);
-                                            response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                            response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                                , message, serviceAdditionalInfo, installment.Id).Result;
                                         }
                                     }
                                 }
@@ -332,16 +337,19 @@ namespace DehnadAsemanService
                             else if (message.Price == 300)
                             {
                                 SetMessagePrice(message, chargeCodes, 200);
-                                response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                    , message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     continue; ////// TEMPORARY!!!!!!!
                                     SetMessagePrice(message, chargeCodes, 100);
-                                    response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        , message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         SetMessagePrice(message, chargeCodes, 50);
-                                        response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                            , message, serviceAdditionalInfo, installment.Id).Result;
                                     }
                                 }
                             }
@@ -349,11 +357,13 @@ namespace DehnadAsemanService
                             {
                                 continue; ////// TEMPORARY!!!!!!!
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                    , message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
-                                    response = AsemanLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        , message, serviceAdditionalInfo, installment.Id).Result;
                                 }
                             }
                         }

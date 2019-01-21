@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
-using ShahreKalamehLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 
 namespace DehnadShahreKalamehService
@@ -16,7 +16,7 @@ namespace DehnadShahreKalamehService
         {
             try
             {
-                using (var entity = new ShahreKalamehEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
                     if (unInformed == null)
@@ -38,7 +38,7 @@ namespace DehnadShahreKalamehService
                 logs.Error("Exception in Infrom method: ", e);
             }
         }
-        private async Task CallApplicationUrlToInformSinglecharge(ShahreKalamehEntities entity, Singlecharge singlechargeItem, int package)
+        private async Task CallApplicationUrlToInformSinglecharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, Singlecharge singlechargeItem, int package)
         {
             try
             {

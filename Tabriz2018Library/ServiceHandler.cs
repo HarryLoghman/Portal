@@ -122,7 +122,8 @@ namespace Tabriz2018Library
             return false;
         }
 
-        public static void InfromMapfaIntegratedPanel(HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, MessageObject message, Service service, string keyword)
+        public static void InfromMapfaIntegratedPanel(HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState
+            , MessageObject message, vw_servicesServicesInfo service, string keyword)
         {
             try
             {
@@ -161,7 +162,7 @@ namespace Tabriz2018Library
             }
         }
 
-        public static bool CheckIfUserSendsSubscriptionKeyword(string content, Service service)
+        public static bool CheckIfUserSendsSubscriptionKeyword(string content, vw_servicesServicesInfo service)
         {
             var serviceKeywords = service.OnKeywords.Split(',');
             foreach (var keyword in serviceKeywords)

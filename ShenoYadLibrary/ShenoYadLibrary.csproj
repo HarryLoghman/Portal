@@ -56,124 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContentManager.cs" />
-    <Compile Include="HandleMo.cs" />
-    <Compile Include="MessageHandler.cs" />
-    <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeContentsSendedToUser.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeHeaderFooter.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeMessagesBuffer.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeTimeTable.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DailyStatistic.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseMessagesBuffer.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ImiChargeCode.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\InstallmentCycle.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesArchive.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesMonitoring.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OnDemandMessagesBuffer.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Otp.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PointsTable.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServiceOffReason.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServicesRealtimeStatistic.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Setting.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ShenoYadModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ShenoYadModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ShenoYadModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ShenoYadModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ShenoYadModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Singlecharge.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeArchive.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeInstallment.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeInstallmentArchive.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeLiveStatu.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeWaiting.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersAdditionalInfo.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TimedTempMessagesBuffer.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_SentMessages.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_Singlecharge.cs">
-      <DependentUpon>ShenoYadModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceHandler.cs" />
-    <Compile Include="Subscribers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Models\ShenoYadModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ShenoYadModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Models\ShenoYadModel.edmx.diagram">
-      <DependentUpon>ShenoYadModel.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -181,21 +67,16 @@
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\ShenoYadModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ShenoYadModel.edmx</DependentUpon>
-      <LastGenOutput>ShenoYadModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\ShenoYadModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ShenoYadModel.edmx</DependentUpon>
-      <LastGenOutput>ShenoYadModel.cs</LastGenOutput>
-    </Content>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

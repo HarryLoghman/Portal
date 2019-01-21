@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SharedLibrary.Models;
-using DonyayeAsatirLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 
 namespace DehnadDonyayeAsatirService
@@ -27,7 +27,7 @@ namespace DehnadDonyayeAsatirService
         {
             try
             {
-                using (var entity = new DonyayeAsatirEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
 
@@ -61,7 +61,7 @@ namespace DehnadDonyayeAsatirService
         {
             try
             {
-                using (var entity = new DonyayeAsatirEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
 

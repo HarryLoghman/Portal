@@ -11,14 +11,14 @@ namespace TahChinLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static bool ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, vw_servicesServicesInfo service)
         {
             bool isSucceeded = true;
-            using (var entity = new TahChinEntities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
             {
                 var content = message.Content;
-                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
-                List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                var messagesTemplate = SharedShortCodeServiceLibrary.ServiceHandler.GetServiceMessagesTemplate(service.ServiceCode);
+                List<SharedLibrary.Models.ServiceModel.ImiChargeCode> imiChargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -36,7 +36,7 @@ namespace TahChinLibrary
                 }
                 else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                 {
-                    message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
+                    message = SharedShortCodeServiceLibrary.MessageHandler.SendServiceSubscriptionHelp(service.ServiceCode, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
@@ -58,7 +58,7 @@ namespace TahChinLibrary
                         var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                         if (user != null && user.DeactivationDate == null)
                         {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                            message = SharedShortCodeServiceLibrary.MessageHandler.SendServiceHelp(service.ServiceCode, message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
                             return isSucceeded;
                         }
@@ -104,7 +104,7 @@ namespace TahChinLibrary
                     else
                         message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
 
-                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+                    message.Content = SharedShortCodeServiceLibrary.MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, 0);
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
@@ -124,7 +124,7 @@ namespace TahChinLibrary
                     return isSucceeded;
                 }
                 message.Content = content;
-                ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+                SharedShortCodeServiceLibrary.ContentManager.HandleContent(service.ServiceCode, message, service, subscriber, messagesTemplate, imiChargeCodes);
             }
             return isSucceeded;
         }

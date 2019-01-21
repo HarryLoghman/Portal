@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
-using DefendIranLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 
 namespace DehnadDefendIranService
@@ -16,7 +16,7 @@ namespace DehnadDefendIranService
         {
             try
             {
-                using (var entity = new DefendIranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
                     if (unInformed == null)
@@ -38,7 +38,7 @@ namespace DehnadDefendIranService
                 logs.Error("Exception in Infrom method: ", e);
             }
         }
-        private async Task CallApplicationUrlToInformSinglecharge(DefendIranEntities entity, Singlecharge singlechargeItem, int package)
+        private async Task CallApplicationUrlToInformSinglecharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, SharedLibrary.Models.ServiceModel.Singlecharge singlechargeItem, int package)
         {
             try
             {

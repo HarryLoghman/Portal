@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DefendIranLibrary.Models;
-using DefendIranLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 
 namespace DehnadDefendIranService
@@ -34,7 +34,7 @@ namespace DehnadDefendIranService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new DefendIranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -76,7 +76,7 @@ namespace DehnadDefendIranService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new DefendIranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -94,9 +94,10 @@ namespace DehnadDefendIranService
                     {
                         var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "RenewalSinglechargeMessage").Content;
-                        var imiChargeObject = DefendIranLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode
+                            ,0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
-                        DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode , message);
                         item.IsRenewalMessageSent = true;
                         entity.Entry(item).State = EntityState.Modified;
                         if(batchSaveCounter > 500)
@@ -122,7 +123,7 @@ namespace DehnadDefendIranService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new DefendIranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -145,9 +146,10 @@ namespace DehnadDefendIranService
                         }
                         var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "OneDayRemainedTillSinglecharge").Content;
-                        var imiChargeObject = DefendIranLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode
+                            ,0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
-                        DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode , message);
                         item.IsLastDayWarningSent = true;
                         entity.Entry(item).State = EntityState.Modified;
                         batchSaveCounter += 1;
@@ -167,7 +169,7 @@ namespace DehnadDefendIranService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new DefendIranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -226,7 +228,7 @@ namespace DehnadDefendIranService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new DefendIranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();

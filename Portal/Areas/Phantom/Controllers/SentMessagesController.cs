@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using PhantomLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,7 +14,7 @@ namespace Portal.Areas.Phantom.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Phantom/SentMessages
-        private PhantomEntities db = new PhantomEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Phantom");
 
         public ActionResult Index()
         {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using AvvalYadLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 
 namespace DehnadAvvalYadService
 {
@@ -12,7 +12,7 @@ namespace DehnadAvvalYadService
         {
             try
             {
-                using (var entity = new AvvalYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -22,7 +22,8 @@ namespace DehnadAvvalYadService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode);
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    AvvalYadLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode, Properties.Settings.Default.ServiceCode
+                        ,eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)

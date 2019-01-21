@@ -19,21 +19,24 @@ namespace DehnadPorShetabService
     public class SinglechargeInstallmentClass
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static int maxChargeLimit = 500;
+        public static int maxChargeLimit = 300;
+        static string v_url;
         public int ProcessInstallment(int installmentCycleNumber)
         {
             var income = 0;
             try
             {
+                v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
                 string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
                 List<string> installmentList;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
-                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    List<SharedLibrary.Models.ServiceModel.ImiChargeCode> chargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
@@ -178,7 +181,7 @@ namespace DehnadPorShetabService
                         {
                             income += message.Price.GetValueOrDefault();
                         }
-                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
+                        if (isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralSuspend)
                         {
                             try
                             {
@@ -195,7 +198,7 @@ namespace DehnadPorShetabService
                                             var price = 0;
                                             if (response.IsSucceeded == true)
                                                 price = message.Price.Value;
-                                            await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
+                                            await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
                                         }
                                     }
                                 //}
@@ -233,10 +236,11 @@ namespace DehnadPorShetabService
             else
                 charge = "chargeAmount";
             var mobile = "98" + message.MobileNumber.TrimStart('0');
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             int rialedPrice = message.Price.Value * 10;
             var referenceCode = Guid.NewGuid().ToString();
-            var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            var url = v_url;
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
 , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
             try

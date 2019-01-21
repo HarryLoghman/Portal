@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using HalgheLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using SharedLibrary.Models;
 using System;
@@ -15,7 +15,7 @@ namespace Portal.Areas.Halghe.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Halghe/Statistics
-        private HalgheEntities db = new HalgheEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db= new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Halghe");
 
         public ActionResult Index()
         {

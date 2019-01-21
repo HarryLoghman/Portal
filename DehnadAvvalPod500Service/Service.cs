@@ -141,12 +141,12 @@ namespace DehnadAvvalPod500Service
 
         private void EventbaseWorkerThread()
         {
-            var eventbase = new Eventbase();
-            while (!shutdownEvent.WaitOne(0))
-            {
-                //eventbase.InsertEventbaseMessagesToQueue();
-                Thread.Sleep(1000);
-            }
+            //var eventbase = new Eventbase();
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    //eventbase.InsertEventbaseMessagesToQueue();
+            //    Thread.Sleep(1000);
+            //}
         }
 
         private void SendMessageWorkerThread()
@@ -216,7 +216,7 @@ namespace DehnadAvvalPod500Service
                 bool isInMaintenanceTime = false;
                 try
                 {
-                    using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
                         if (isInMaintenace != null)
@@ -311,7 +311,7 @@ namespace DehnadAvvalPod500Service
             try
             {
                 var today = DateTime.Now;
-                using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var cycle = entity.InstallmentCycles.FirstOrDefault(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.CycleNumber == cycleNumber);
                     if (cycle != null)
@@ -321,7 +321,7 @@ namespace DehnadAvvalPod500Service
                     }
                     else
                     {
-                        var installmentCycle = new AvvalPod500Library.Models.InstallmentCycle();
+                        var installmentCycle = new SharedLibrary.Models.ServiceModel.InstallmentCycle();
                         installmentCycle.CycleNumber = cycleNumber;
                         installmentCycle.DateCreated = DateTime.Now;
                         installmentCycle.Duration = duration;

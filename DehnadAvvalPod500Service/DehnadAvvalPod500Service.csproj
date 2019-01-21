@@ -71,7 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Autocharge.cs" />
-    <Compile Include="Eventbase.cs" />
     <Compile Include="InformApplication.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -116,13 +115,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvvalPod500Library\AvvalPod500Library.csproj">
-      <Project>{11f5a255-33f1-3544-2c12-48224341251b}</Project>
-      <Name>AvvalPod500Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

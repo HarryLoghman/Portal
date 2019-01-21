@@ -8,7 +8,7 @@ namespace PorShetabLibrary
 {
     public static class publicVariables
     {
-        public static System.Data.SqlClient.SqlConnection GetConnectionPorshetab()
+        public static System.Data.SqlClient.SqlConnection GetConnectionPorShetab()
         {
             System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
             System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder builder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
-using SoltanLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 
 namespace DehnadSoltanService
@@ -16,7 +16,7 @@ namespace DehnadSoltanService
         {
             try
             {
-                using (var entity = new SoltanEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
@@ -41,7 +41,7 @@ namespace DehnadSoltanService
                 logs.Error("Exception in Infrom method: ", e);
             }
         }
-        private async Task CallApplicationUrlToInformSinglecharge(SoltanEntities entity, Singlecharge singlechargeItem, int package)
+        private async Task CallApplicationUrlToInformSinglecharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, Singlecharge singlechargeItem, int package)
         {
             try
             {

@@ -14,7 +14,7 @@ namespace DehnadMobinOneMapfaTestService
         {
             try
             {
-                using (var entity = new MobinOneMapfaTestEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -24,7 +24,7 @@ namespace DehnadMobinOneMapfaTestService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    MobinOneMapfaTestLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode, Properties.Settings.Default.ServiceCode, eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)
@@ -56,7 +56,7 @@ namespace DehnadMobinOneMapfaTestService
                                 mobileNumbers = item.MobileNumbersList.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                             //var existingSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null).Select(o => o.MobileNumber).ToList();
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
-                            var imiChargeObject = MobinOneMapfaTestLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
+                            var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode , 0, null);
                             var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                             var rnd = new Random();
@@ -81,7 +81,7 @@ namespace DehnadMobinOneMapfaTestService
                                 TaskList.Add(ProcessSubscribersListChunk(chunkedmobileNumbersList, item.Message, imiChargeObject, service.Id, aggregatorId, i, contentId));
                             }
                             Task.WaitAll(TaskList.ToArray());
-                            MobinOneMapfaTestLibrary.MessageHandler.CreateMonitoringItem(contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
+                            SharedShortCodeServiceLibrary.MessageHandler.CreateMonitoringItem(Properties.Settings.Default.ServiceCode , contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
                         }
                         catch (Exception e)
                         {
@@ -99,7 +99,8 @@ namespace DehnadMobinOneMapfaTestService
             }
         }
 
-        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent, ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
+        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent
+            , SharedLibrary.Models.ServiceModel.ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
         {
             logs.Info("ProcessSubscribersListChunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -114,7 +115,7 @@ namespace DehnadMobinOneMapfaTestService
                 {
                     if (counter > 1000)
                     {
-                        MobinOneMapfaTestLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode , messages);
                         messages.Clear();
                         counter = 1;
                     }
@@ -135,7 +136,7 @@ namespace DehnadMobinOneMapfaTestService
                     messages.Add(message);
                     counter++;
                 }
-                MobinOneMapfaTestLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode , messages);
             }
             catch (Exception e)
             {

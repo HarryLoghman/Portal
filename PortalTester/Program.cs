@@ -46,7 +46,8 @@ namespace PortalTester
 
         public static async Task<string> TelepromoOtpRequest(string mobile)
         {
-            var url = "http://10.20.9.135:8600/samsson-sdp/pin/generate?";
+            //var url = "http://10.20.9.135:8600/samsson-sdp/pin/generate?";
+            var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.otpRequest);
             var sc = "Dehnad";
             var username = "Dehnad";
             var password = "dehnad@123";
@@ -85,7 +86,8 @@ namespace PortalTester
         {
             Console.WriteLine("enter tamly500 confirm code");
             var confirmcode = Console.ReadLine();
-            var url = "http://10.20.9.135:8600/samsson-sdp/pin/confirm?";
+            //var url = "http://10.20.9.135:8600/samsson-sdp/pin/confirm?";
+            var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.otpConfirm);
             var sc = "Dehnad";
             var username = "Dehnad";
             var password = "dehnad@123";

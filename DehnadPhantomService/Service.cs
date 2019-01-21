@@ -361,7 +361,7 @@ namespace DehnadPhantomService
                 bool isInMaintenanceTime = false;
                 try
                 {
-                    using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
                         if (isInMaintenace != null)
@@ -504,7 +504,7 @@ namespace DehnadPhantomService
             try
             {
                 var today = DateTime.Now;
-                using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var cycle = entity.InstallmentCycles.FirstOrDefault(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.CycleNumber == cycleNumber);
                     if (cycle != null)
@@ -514,7 +514,7 @@ namespace DehnadPhantomService
                     }
                     else
                     {
-                        var installmentCycle = new PhantomLibrary.Models.InstallmentCycle();
+                        var installmentCycle = new SharedLibrary.Models.ServiceModel.InstallmentCycle();
                         installmentCycle.CycleNumber = cycleNumber;
                         installmentCycle.DateCreated = DateTime.Now;
                         installmentCycle.Duration = duration;

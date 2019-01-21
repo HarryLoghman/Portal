@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TajoTakhtLibrary.Models;
-using TajoTakhtLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -25,10 +25,11 @@ namespace DehnadTajoTakhtService
                 var serviceCode = Properties.Settings.Default.ServiceCode;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
-                Type entityType = typeof(TajoTakhtEntities);
+                Type entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
                 Type singleChargeType = typeof(Singlecharge);
 
-                using (var entity = new TajoTakhtEntities())
+                vw_servicesServicesInfo service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
@@ -81,7 +82,7 @@ namespace DehnadTajoTakhtService
                     return income;
                 }
                 int isCampaignActive = 0;
-                using (var entity = new TajoTakhtEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -120,7 +121,7 @@ namespace DehnadTajoTakhtService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new TajoTakhtEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
@@ -192,7 +193,7 @@ namespace DehnadTajoTakhtService
         public static async Task<dynamic> MapfaStaticPriceSinglecharge(MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             var startTime = DateTime.Now;
-            using (var entity = new TajoTakhtEntities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 var singlecharge = new Singlecharge();

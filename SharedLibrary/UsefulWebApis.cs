@@ -34,7 +34,8 @@ namespace SharedLibrary
                 };
 
                     var content = new FormUrlEncodedContent(values);
-                    var url = "http://79.175.164.51:8093/api/App/OtpCharge";
+                    //var url = "http://79.175.164.51:8093/api/App/OtpCharge";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.dehnadAppPortal, HelpfulFunctions.enumServersActions.otpRequest);
                     var response = await client.PostAsync(url, content);
                     var responseString = await response.Content.ReadAsStringAsync();
                     logs.Error("MyError2:" + responseString);
@@ -69,7 +70,8 @@ namespace SharedLibrary
                 };
 
                     var content = new FormUrlEncodedContent(values);
-                    var url = "http://79.175.164.51:8093/api/App/OtpConfirm";
+                    //var url = "http://79.175.164.51:8093/api/App/OtpConfirm";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.dehnadAppPortal, HelpfulFunctions.enumServersActions.otpConfirm);
                     var response = await client.PostAsync(url, content);
                     var responseString = await response.Content.ReadAsStringAsync();
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
@@ -226,7 +228,8 @@ namespace SharedLibrary
                 using (var client = new HttpClient())
                 {
                     var content = new FormUrlEncodedContent(parameters);
-                    var url = "http://79.175.164.51:8093/api/Bot/" + methodName;
+                    //var url = "http://79.175.164.51:8093/api/Bot/" + methodName;
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.dehnadAppPortal, HelpfulFunctions.enumServersActions.dehnadBot); 
                     var response = await client.PostAsync(url, content);
                     if (!response.IsSuccessStatusCode)
                         return null;

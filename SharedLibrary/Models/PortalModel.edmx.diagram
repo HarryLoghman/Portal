@@ -58,9 +58,11 @@
         <AssociationConnector Association="PortalModel.C_FK_Aggregators_Operators" />
         <AssociationConnector Association="PortalModel.C_FK_ServiceInfo_Aggregators" />
         <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="19.375" PointY="6.875" />
-        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="4.2502872926417208" PointY="23.946179281895134" />
         <EntityTypeShape EntityType="PortalModel.Bulk" Width="1.5" PointX="6.59111453527171" PointY="12.436101934144322" />
         <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="5.8722458285615993" PointY="9.61557810456286" />
+        <EntityTypeShape EntityType="PortalModel.ServersAction" Width="1.5" PointX="11.524026464449253" PointY="6.6001200408675338" />
+        <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="9.5970189057276674" PointY="25.809127476908792" />
+        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="8.1388353761932049" PointY="4.7055581680990564" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

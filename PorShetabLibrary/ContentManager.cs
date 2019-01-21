@@ -127,7 +127,7 @@ namespace PorShetabLibrary
                             {
                                 subId = sub.SpecialUniqueId;
                                 var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                 string n = result.n.ToString();
                                 string m = result.m.ToString();
                                 message.Content = messagesTemplate.Where(o => o.Title == "CampaignSubscriberStatus").Select(o => o.Content).FirstOrDefault();
@@ -161,7 +161,7 @@ namespace PorShetabLibrary
                             if (sub != null)
                             {
                                 var sha = SharedLibrary.Security.GetSha256Hash("score" + message.MobileNumber);
-                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/score.php", string.Format("number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/score.php", string.Format("number={1}&kc={2}", subId, message.MobileNumber, sha));
                                 if (result.status.ToString() == "ok")
                                 {
                                     message.Content = messagesTemplate.Where(o => o.Title == "SubscriberScore").Select(o => o.Content).FirstOrDefault();
@@ -184,7 +184,7 @@ namespace PorShetabLibrary
                         if (sub != null)
                         {
                             var sha = SharedLibrary.Security.GetSha256Hash("score" + message.MobileNumber);
-                            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/score.php", string.Format("number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/score.php", string.Format("number={1}&kc={2}", subId, message.MobileNumber, sha));
                             if (result.status.ToString() == "ok")
                             {
                                 message.Content = message.Content.Replace("{SCORE}", result.description.ToString());
@@ -207,7 +207,7 @@ namespace PorShetabLibrary
                             {
                                 subId = sub.SpecialUniqueId;
                                 var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
-                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                                dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                 var chargesList = new List<string>();
                                 foreach (var item in result.charges)
                                 {

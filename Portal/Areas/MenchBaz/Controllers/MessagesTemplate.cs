@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using MenchBazLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -15,7 +15,7 @@ namespace Portal.Areas.MenchBaz.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: MenchBaz/messagesTemplate
-        private MenchBazEntities db = new MenchBazEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("MenchBaz");
 
         public ActionResult Index()
         {

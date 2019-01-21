@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
-using ShenoYadLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 
 namespace DehnadShenoYadService
@@ -16,7 +16,7 @@ namespace DehnadShenoYadService
         {
             try
             {
-                using (var entity = new ShenoYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var unInformed = entity.Singlecharges.Where(o => o.IsApplicationInformed == false && o.IsSucceeded == true && o.IsCalledFromInAppPurchase == false).Take(100).ToList();
                     if (unInformed == null)
@@ -38,7 +38,7 @@ namespace DehnadShenoYadService
                 logs.Error("Exception in Infrom method: ", e);
             }
         }
-        private async Task CallApplicationUrlToInformSinglecharge(ShenoYadEntities entity, Singlecharge singlechargeItem, int package)
+        private async Task CallApplicationUrlToInformSinglecharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, Singlecharge singlechargeItem, int package)
         {
             try
             {

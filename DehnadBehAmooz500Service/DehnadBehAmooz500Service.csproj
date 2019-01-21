@@ -116,13 +116,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BehAmooz500Library\BehAmooz500Library.csproj">
-      <Project>{c1134245-33f5-c521-2122-4bcb334d234a}</Project>
-      <Name>BehAmooz500Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

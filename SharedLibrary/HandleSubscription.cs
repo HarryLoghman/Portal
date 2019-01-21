@@ -12,7 +12,7 @@ namespace SharedLibrary
     public class HandleSubscription
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, Service service, bool isUserWantsToUnsubscribe)
+        public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, vw_servicesServicesInfo service, bool isUserWantsToUnsubscribe)
         {
             var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
@@ -25,7 +25,7 @@ namespace SharedLibrary
             return serviceStatusForSubscriberState;
         }
 
-        public static ServiceStatusForSubscriberState Subscribe(MessageObject message, Service service, ServiceInfo serviceInfo)
+        public static ServiceStatusForSubscriberState Subscribe(MessageObject message, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -64,7 +64,8 @@ namespace SharedLibrary
         }
 
 
-        private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(MessageObject message, Subscriber subscriber, string onKeyword, Service service, ServiceInfo serviceInfo)
+        private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(MessageObject message, Subscriber subscriber
+            , string onKeyword, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
         {
             try
             {
@@ -135,7 +136,7 @@ namespace SharedLibrary
             }
         }
 
-        private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, Service service, ServiceInfo serviceInfo)
+        private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
         {
             var newSubscriber = new Subscriber();
             try
@@ -320,7 +321,7 @@ namespace SharedLibrary
             return unqiueId;
         }
 
-        public static void AddSubscriberToSubscriberPointsTable(Subscriber newSubscriber, Service service)
+        public static void AddSubscriberToSubscriberPointsTable(Subscriber newSubscriber, vw_servicesServicesInfo service)
         {
             try
             {
@@ -340,7 +341,7 @@ namespace SharedLibrary
             }
         }
 
-        public static void AddToSubscriberHistory(MessageObject message, Service service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent, ServiceInfo serviceInfo)
+        public static void AddToSubscriberHistory(MessageObject message, vw_servicesServicesInfo service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent, ServiceInfo serviceInfo)
         {
             try
             {
@@ -494,7 +495,7 @@ namespace SharedLibrary
             return result;
         }
 
-        public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, Service service, ServiceInfo serviceInfo)
+        public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -510,7 +511,7 @@ namespace SharedLibrary
             return serviceStatusForSubscriberState;
         }
 
-        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, Service service, Subscriber subscriber, ServiceInfo serviceInfo)
+        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, ServiceInfo serviceInfo)
         {
             try
             {

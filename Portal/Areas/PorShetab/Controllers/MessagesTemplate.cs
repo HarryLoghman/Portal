@@ -16,7 +16,7 @@ namespace Portal.Areas.PorShetab.Controllers
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: PorShetab/messagesTemplate
         private PorShetabEntities db = new PorShetabEntities();
-
+        
         public ActionResult Index()
         {
             ViewBag.ServiceName = "پرشتاب";

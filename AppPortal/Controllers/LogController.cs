@@ -51,7 +51,7 @@ namespace Portal.Controllers
                 else
                 {
                     if (serviceCode == "Aseman")
-                        using (var entity = new AsemanLibrary.Models.AsemanEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Aseman"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -60,7 +60,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "BehAmooz500")
-                        using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("BehAmooz500"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -77,17 +77,17 @@ namespace Portal.Controllers
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT CONVERT(date,DateCreated) as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
                             data = JsonConvert.SerializeObject(data);
                         }
-                    else if (serviceCode == "Darchin")
-                        using (var entity = new DarchinLibrary.Models.DarchinEntities())
-                        {
-                            if (isShamsi)
-                                data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
-                            else
-                                data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT CONVERT(date,DateCreated) as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
-                            data = JsonConvert.SerializeObject(data);
-                        }
+                    //else if (serviceCode == "Darchin")
+                        //using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                        //{
+                        //    if (isShamsi)
+                        //        data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
+                        //    else
+                        //        data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT CONVERT(date,DateCreated) as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
+                        //    data = JsonConvert.SerializeObject(data);
+                        //}
                     else if (serviceCode == "DefendIran")
-                        using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("DefendIran"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -96,7 +96,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Dezhban")
-                        using (var entity = new DezhbanLibrary.Models.DezhbanEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Dezhban"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -105,7 +105,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "DonyayeAsatir")
-                        using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("DonyayeAsatir"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -114,7 +114,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "FitShow")
-                        using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("FitShow"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -123,7 +123,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "JabehAbzar")
-                        using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("JabehAbzar"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -141,7 +141,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Medio")
-                        using (var entity = new MedioLibrary.Models.MedioEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Medio"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -150,7 +150,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "MenchBaz")
-                        using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("MenchBaz"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -168,7 +168,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Nebula")
-                        using (var entity = new NebulaLibrary.Models.NebulaEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -177,7 +177,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Phantom")
-                        using (var entity = new PhantomLibrary.Models.PhantomEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Phantom"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -186,7 +186,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "ShahreKalameh")
-                        using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShahreKalameh"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -195,7 +195,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "ShenoYad500")
-                        using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad500"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -204,7 +204,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "ShenoYad")
-                        using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -213,7 +213,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Soltan")
-                        using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soltan"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -222,7 +222,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Soraty")
-                        using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soraty"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -240,7 +240,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Takavar")
-                        using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Takavar"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -249,7 +249,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Tamly500")
-                        using (var entity = new Tamly500Library.Models.Tamly500Entities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Tamly500"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));
@@ -258,7 +258,7 @@ namespace Portal.Controllers
                             data = JsonConvert.SerializeObject(data);
                         }
                     else if (serviceCode == "Tamly")
-                        using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Tamly"))
                         {
                             if (isShamsi)
                                 data = RawSql.DynamicSqlQuery(entity.Database, @"SELECT Portal.dbo.ShamsiDate(CONVERT(date,DateCreated), 'Saal4-Maah2-Rooz2') as DateCreated, Description as Description, COUNT(*) as Count FROM " + entity.Database.Connection.Database + @".[dbo].vw_Singlecharge WHERE CONVERT(date,DateCreated) >= @from AND CONVERT(date,DateCreated) <= @to AND Price > 0 GROUP BY CONVERT(date,DateCreated), Description ORDER BY CONVERT(date,DateCreated), COUNT(*)", new SqlParameter("@from", from), new SqlParameter("@to", to));

@@ -14,19 +14,6 @@ namespace SharedLibrary
     public class ServiceHandler
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static Dictionary<string, string> GetAdditionalServiceInfoForSendingMessage(string serviceCode)
-        {
-            var sendInfoDic = new Dictionary<string, string>();
-            using (var entity = new PortalEntities())
-            {
-                var service = entity.Services.FirstOrDefault(o => o.ServiceCode == serviceCode);
-                var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.ServiceId == service.Id);
-                var aggregatorInfo = entity.Aggregators.FirstOrDefault(o => o.Id == serviceInfo.AggregatorId);
-
-                return GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorInfo.AggregatorName);
-            }
-        }
-
         public static Dictionary<string, string> GetAdditionalServiceInfoForSendingMessage(string serviceCode, string aggregatorName)
         {
             var sendInfoDic = new Dictionary<string, string>();
@@ -55,23 +42,6 @@ namespace SharedLibrary
             {
                 return portalEntity.ParidsShortCodes.Where(o => o.ServiceId == serviceId).ToList();
             }
-        }
-
-        public static Dictionary<string, string> GetAdditionalServiceInfoForSendingMessage(long serviceId, string aggregatorName)
-        {
-            var sendInfoDic = new Dictionary<string, string>();
-            using (var entity = new PortalEntities())
-            {
-                var aggregatorInfo = entity.Aggregators.FirstOrDefault(o => o.AggregatorName == aggregatorName);
-                sendInfoDic["username"] = aggregatorInfo.AggregatorUsername;
-                sendInfoDic["password"] = aggregatorInfo.AggregatorPassword;
-                var serviceInfo = entity.ServiceInfoes.FirstOrDefault(o => o.AggregatorId == aggregatorInfo.Id && o.ServiceId == serviceId);
-                sendInfoDic["shortCode"] = serviceInfo.ShortCode;
-                sendInfoDic["serviceId"] = serviceId.ToString();
-                sendInfoDic["aggregatorId"] = serviceInfo.AggregatorId.ToString();
-                sendInfoDic["aggregatorServiceId"] = serviceInfo.AggregatorServiceId.ToString();
-            }
-            return sendInfoDic;
         }
 
         public static ServiceInfo GetServiceInfoFromAggregatorServiceId(string aggregatorServiceId)
@@ -115,7 +85,7 @@ namespace SharedLibrary
             }
         }
 
-        public static bool CheckIfUserSendsSubscriptionKeyword(string content, Service service)
+        public static bool CheckIfUserSendsSubscriptionKeyword(string content, vw_servicesServicesInfo service)
         {
             var serviceKeywords = service.OnKeywords.Split(',');
             foreach (var keyword in serviceKeywords)
@@ -136,11 +106,11 @@ namespace SharedLibrary
             return false;
         }
 
-        public static Service GetServiceFromServiceCode(string serviceCode)
+        public static vw_servicesServicesInfo GetServiceFromServiceCode(string serviceCode)
         {
             using (var entity = new PortalEntities())
             {
-                var service = entity.Services.FirstOrDefault(o => o.ServiceCode == serviceCode);
+                var service = entity.vw_servicesServicesInfo.FirstOrDefault(o => o.ServiceCode == serviceCode);
                 if (service != null)
                     return service;
                 else
@@ -148,11 +118,11 @@ namespace SharedLibrary
             }
         }
 
-        public static Service GetServiceFromServiceId(long serviceId)
+        public static vw_servicesServicesInfo GetServiceFromServiceId(long serviceId)
         {
             using (var entity = new PortalEntities())
             {
-                var service = entity.Services.FirstOrDefault(o => o.Id == serviceId);
+                var service = entity.vw_servicesServicesInfo.FirstOrDefault(o => o.Id == serviceId);
                 if (service != null)
                     return service;
                 else
@@ -348,161 +318,22 @@ namespace SharedLibrary
             return arr;
         }
 
-        public static dynamic ChargeMtnSubscriber(
-           DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-           dynamic entity, dynamic singlecharge, dynamic timingTable, ThrottleMTN v_throttle, string serviceName
-            , MessageObject message, bool isRefund, bool isInAppPurchase
-           , string aggregatorServiceId, int installmentCycleNumber, int loopNo, int threadNumber
-           , DateTime timeLoop, long installmentId = 0)
+       
+        public static Models.ServiceModel.Singlecharge GetOTPRequestId(Models.ServiceModel.SharedServiceEntities entity, MessageObject message)
         {
-
-            DateTime timeStartChargeMtnSubscriber = DateTime.Now;
-            Nullable<DateTime> timeAfterXML = null;
-            Nullable<DateTime> timeBeforeHTTPClient = null;
-            Nullable<DateTime> timeBeforeSendMTNClient = null;
-            Nullable<DateTime> timeAfterSendMTNClient = null;
-            Nullable<DateTime> timeBeforeReadStringClient = null;
-            Nullable<DateTime> timeAfterReadStringClient = null;
-            string guidStr = Guid.NewGuid().ToString();
-            bool internalServerError;
-            WebExceptionStatus status;
-            string httpResult;
-
-            var startTime = DateTime.Now;
-            string charge = "";
-            var spId = "980110006379";
-            var mobile = "98" + message.MobileNumber.TrimStart('0');
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-            int rialedPrice = message.Price.Value * 10;
-            var referenceCode = Guid.NewGuid().ToString();
-
-            if (isRefund == true)
-                charge = "refundAmount";
-            else
-                charge = "chargeAmount";
-
-            var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
-            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
-, timeStamp, mobile, rialedPrice, referenceCode, charge, aggregatorServiceId, spId);
             try
             {
-                //timeBeforeHTTPClient = DateTime.Now;
-
-                DateTime timeLimitToSend = DateTime.Now.AddSeconds(-1);
-
-                while (DateTime.Now > timeLimitToSend)
-                {
-                    timeLimitToSend = v_throttle.throttleRequests(serviceName, mobile, guidStr);
-
-                    payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
-                    , timeStamp, mobile, rialedPrice, referenceCode, charge, aggregatorServiceId, spId);
-                    if (DateTime.Now > timeLimitToSend)
-                        logs.Info("TimePassed:" + DateTime.Now.ToString("HH:mm:ss,fff") + "-" + timeLimitToSend.ToString("HH:mm:ss,fff"));
-                }
-
-                timeBeforeSendMTNClient = DateTime.Now;
-
-                httpResult = SharedLibrary.UsefulWebApis.sendPostWithWebRequest(url, payload, out internalServerError, out status);
-                timeAfterSendMTNClient = DateTime.Now;
-                singlecharge.MobileNumber = message.MobileNumber;
-                singlecharge.ThreadNumber = threadNumber;
-                singlecharge.CycleNumber = installmentCycleNumber;
-                singlecharge.ReferenceId = referenceCode;
-
-                if (status == WebExceptionStatus.Success || internalServerError)
-                {
-
-                    timeBeforeReadStringClient = DateTime.Now;
-                    //string httpResult = response.Content.ReadAsStringAsync().Result;
-                    timeAfterReadStringClient = DateTime.Now;
-
-                    XmlDocument xml = new XmlDocument();
-                    xml.LoadXml(httpResult);
-                    XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
-                    manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
-                    manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                    manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local");
-                    XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns1:chargeAmountResponse", manager);
-                    if (successNode != null)
-                    {
-                        singlecharge.IsSucceeded = true;
-                    }
-                    else
-                    {
-                        singlecharge.IsSucceeded = false;
-
-                        manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
-                        XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
-                        foreach (XmlNode fault in faultNode)
-                        {
-                            XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
-                            XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
-                            singlecharge.Description = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
-                        }
-                    }
-                }
+                var singlecharge = entity.Singlecharges.Where(o => o.MobileNumber == message.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                if (singlecharge != null)
+                    return singlecharge;
                 else
-                {
-                    singlecharge.IsSucceeded = false;
-                    singlecharge.Description = status.ToString();
-                }
-                timeAfterXML = DateTime.Now;
-
-
+                    return null;  
             }
             catch (Exception e)
             {
-                logs.Info(payload);
-                logs.Error("Exception in ChargeMtnSubscriber: " + e);
+                logs.Error("Exception in GetOTPRequestId: ", e);
             }
-            try
-            {
-                if (HelpfulFunctions.IsPropertyExist(singlecharge, "IsSucceeded") != true)
-                    singlecharge.IsSucceeded = false;
-                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
-                    singlecharge.ReferenceId = "Exception occurred!";
-                singlecharge.DateCreated = DateTime.Now;
-                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                if (isRefund == true)
-                    singlecharge.Price = message.Price.GetValueOrDefault() * -1;
-                else
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                singlecharge.IsApplicationInformed = false;
-                if (installmentId != 0)
-                    singlecharge.InstallmentId = installmentId;
-
-                singlecharge.IsCalledFromInAppPurchase = isInAppPurchase;
-
-                var endTime = DateTime.Now;
-                var duration = endTime - startTime;
-                singlecharge.ProcessTimeInMilliSecond = (int)duration.TotalMilliseconds;
-                entity.Singlecharges.Add(singlecharge);
-
-                timingTable.cycleNumber = installmentCycleNumber;
-                timingTable.loopNo = loopNo;
-                timingTable.threadNumber = threadNumber;
-                timingTable.mobileNumber = message.MobileNumber;
-                timingTable.guid = guidStr;
-                timingTable.timeAfterReadStringClient = timeAfterReadStringClient;
-                timingTable.timeAfterSendMTNClient = timeAfterSendMTNClient;
-                timingTable.timeAfterXML = timeAfterXML;
-                timingTable.timeBeforeHTTPClient = timeBeforeHTTPClient;
-                timingTable.timeBeforeReadStringClient = timeBeforeReadStringClient;
-                timingTable.timeBeforeSendMTNClient = timeBeforeSendMTNClient;
-                timingTable.timeCreate = timeLoop;
-                timingTable.timeFinish = singlecharge.DateCreated;
-                timingTable.timeStartChargeMtnSubscriber = timeStartChargeMtnSubscriber;
-                timingTable.timeStartProcessMtnInstallment = timeStartProcessMtnInstallment;
-                timingTable.timeAfterWhere = timeAfterWhere;
-                timingTable.timeAfterEntity = timeAfterEntity;
-                entity.SingleChargeTimings.Add(timingTable);
-                entity.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in ChargeMtnSubscriber on saving values to db: " + e);
-            }
-            return singlecharge;
+            return null;
         }
 
         public static int GetServiceActiveMobileNumbersCountFromServiceCode(string serviceCode)
@@ -571,23 +402,6 @@ namespace SharedLibrary
             }
         }
 
-        public static List<Subscriber> GetServiceActiveSubscribersFromServiceId(long serviceId)
-        {
-            List<Subscriber> subscriberList = new List<Subscriber>();
-            using (var entity = new PortalEntities())
-            {
-                try
-                {
-                    subscriberList = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
-                }
-                catch (System.Exception e)
-                {
-                    logs.Error("Error in GetServiceActiveSubscribersFromServiceId: " + e);
-                }
-                return subscriberList;
-            }
-        }
-
         public static List<ServiceInfo> GetAllServicesByAggregatorId(long aggregatorId)
         {
             List<ServiceInfo> serviceInfoList = new List<ServiceInfo>();
@@ -612,7 +426,7 @@ namespace SharedLibrary
             {
                 try
                 {
-                    aggregatorName = entity.vw_servicesServicesInfo.Where(o => o.ServiceCode == serviceCode).Select(o => o.aggregatorName).FirstOrDefault();   
+                    aggregatorName = entity.vw_servicesServicesInfo.Where(o => o.ServiceCode == serviceCode).Select(o => o.aggregatorName).FirstOrDefault();
                 }
                 catch (System.Exception e)
                 {
@@ -632,30 +446,6 @@ namespace SharedLibrary
             return false;
         }
 
-        public static List<Service> GetServicesThatUserSubscribedOnShortCode(string mobileNumber, string shortCode)
-        {
-            List<Service> servicesThatUserSubscribedOnShortCode = new List<Service>();
-            using (var entity = new PortalEntities())
-            {
-                try
-                {
-                    servicesThatUserSubscribedOnShortCode = (from s in entity.Services
-                                                             join sub in entity.Subscribers on s.Id equals sub.ServiceId
-                                                             join sInfo in entity.ServiceInfoes on s.Id equals sInfo.ServiceId
-                                                             where sub.MobileNumber == mobileNumber && sub.DeactivationDate == null && sInfo.ShortCode == shortCode
-                                                             select new { ServiceId = s.Id, ServiceOnKeywords = s.OnKeywords, ServiceName = s.Name })
-                                                   .AsEnumerable()
-                                                   .Select(o => new Service { Id = o.ServiceId, Name = o.ServiceName, OnKeywords = o.ServiceOnKeywords })
-                                                   .ToList();
-                }
-                catch (System.Exception e)
-                {
-                    logs.Error("Error in GetServicesThatUserSubscriberd: " + e);
-                }
-                return servicesThatUserSubscribedOnShortCode;
-            }
-        }
-
         public static JhoobinSetting GetJhoobinSettings()
         {
             JhoobinSetting settings = new JhoobinSetting();
@@ -673,17 +463,17 @@ namespace SharedLibrary
             }
         }
 
-        public static dynamic GetServiceImiChargeCodes(dynamic entity)
+        public static List<SharedLibrary.Models.ServiceModel.ImiChargeCode> GetServiceImiChargeCodes(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity)
         {
             try
             {
-                return ((IEnumerable<dynamic>)entity.ImiChargeCodes).ToList();
+                return entity.ImiChargeCodes.ToList();
             }
             catch (System.Exception e)
             {
                 logs.Error("Error in GetServiceImiChargeCodes: " + e);
             }
-            return new List<dynamic>();
+            return null;
         }
 
         public static ServiceInfo GetServiceInfoFromServiceId(long serviceId)
@@ -710,23 +500,6 @@ namespace SharedLibrary
             return onKeywords[0];
         }
 
-        public static string GetSubscriberOnKeyword(long subscriberId)
-        {
-            using (var entity = new PortalEntities())
-            {
-                try
-                {
-                    var onKeyword = entity.Subscribers.FirstOrDefault(o => o.Id == subscriberId).OnKeyword;
-                    return onKeyword;
-                }
-                catch (System.Exception e)
-                {
-                    logs.Error("Error in GetServiceInfoFromServiceId: " + e);
-                    return null;
-                }
-            }
-        }
-
         public static string[] ServiceOffKeywords()
         {
             var offContents = new string[]
@@ -735,6 +508,19 @@ namespace SharedLibrary
                 "خاموش",
             };
             return offContents;
+        }
+
+        public static List<Models.ServiceModel.MessagesTemplate> GetServiceMessagesTemplate(vw_servicesServicesInfo service)
+        {
+            using (var entity = new Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
+            {
+                return GetServiceMessagesTemplate(entity);
+            }
+        }
+        public static List<Models.ServiceModel.MessagesTemplate> GetServiceMessagesTemplate(Models.ServiceModel.SharedServiceEntities entity)
+        {
+            return entity.MessagesTemplates.ToList();
+
         }
     }
 }

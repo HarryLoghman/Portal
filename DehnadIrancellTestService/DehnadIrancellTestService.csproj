@@ -116,13 +116,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IrancellTestLibrary\IrancellTestLibrary.csproj">
-      <Project>{d112bf46-33f5-c224-2122-4bc23f4d2122}</Project>
-      <Name>IrancellTestLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

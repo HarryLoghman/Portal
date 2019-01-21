@@ -173,7 +173,7 @@ namespace DarchinLibrary
             }
         }
 
-        public static bool CheckIfUserSendsSubscriptionKeyword(string content, Service service)
+        public static bool CheckIfUserSendsSubscriptionKeyword(string content, vw_servicesServicesInfo service)
         {
             var serviceKeywords = service.OnKeywords.Split(',');
             foreach (var keyword in serviceKeywords)

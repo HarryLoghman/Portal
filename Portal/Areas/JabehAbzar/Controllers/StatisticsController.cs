@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using JabehAbzarLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using SharedLibrary.Models;
 using System;
@@ -15,7 +15,7 @@ namespace Portal.Areas.JabehAbzar.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: JabehAbzar/Statistics
-        private JabehAbzarEntities db = new JabehAbzarEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db  = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("JabehAbzar");
 
         public ActionResult Index()
         {

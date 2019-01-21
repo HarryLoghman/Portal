@@ -445,7 +445,7 @@ namespace SharedLibrary
                 smph.Release();
                 TimeSpan ts;
                 ts = (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond)) - DateTime.Now.Date;
-                //if (serviceName == "porshetab")
+                //if (serviceName == "PorShetab")
                 //    logs.Warn(";" + serviceName + ";" + mobileNumber + ";" + guid + ";" + new DateTime((long.Parse(str.Split(',')[0])) * TimeSpan.TicksPerMillisecond).ToString("HH:mm:ss,fff") + ";" + str.Split(',')[1] + ";" + ts.ToString("c"));
                 return (new DateTime(long.Parse(str.Split(',')[0]) * TimeSpan.TicksPerMillisecond)).AddMilliseconds(this.v_gap);
             }

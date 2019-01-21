@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using SharedLibrary.Models;
-using SharedShortCodeServiceLibrary.SharedModel;
 using System.Net.Http;
 using System.Xml;
 using System.Xml.Linq;
 using static SharedShortCodeServiceLibrary.HandleMo;
+using SharedLibrary.Models.ServiceModel;
 
 namespace SharedShortCodeServiceLibrary
 {
@@ -20,7 +20,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var otpLog = new Otp()
                     {
@@ -44,7 +44,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var otp = entity.Otps.FirstOrDefault(o => o.Id == otpId);
                     if (otp != null)
@@ -61,7 +61,7 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static MessageObject SetImiChargeInfo(ShortCodeServiceEntities entity, ImiChargeCode imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
+        public static MessageObject SetImiChargeInfo(SharedServiceEntities entity, ImiChargeCode imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
         {
             if (subscriberState == null && price > 0)
                 imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price);
@@ -107,7 +107,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static void InsertMessageToQueue(string connectionStringNameInAppConfig, MessageObject message)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
                 if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
@@ -136,6 +136,14 @@ namespace SharedShortCodeServiceLibrary
             return message;
         }
 
+        public static MessageObject SendServiceSubscriptionHelp(string connectionStringNameInAppConfig, MessageObject message
+            , List<SharedLibrary.Models.ServiceModel.MessagesTemplate> messagesTemplate)
+        {
+            message = SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message.Content = messagesTemplate.Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
+            return message;
+        }
+
         public static MessageObject SendServiceHelp(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
             message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -145,7 +153,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static void InsertBulkMessagesToQueue(string connectionStringNameInAppConfig, List<MessageObject> messages)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 int counter = 0;
@@ -181,7 +189,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var autochargeHeaderAndFooter = entity.AutochargeHeaderFooters.FirstOrDefault();
                     if (autochargeHeaderAndFooter != null)
@@ -209,7 +217,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static void SetOffReason(string connectionStringNameInAppConfig, Subscriber subscriber, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 var offReason = new ServiceOffReason();
                 offReason.SubscriberId = subscriber.Id;
@@ -306,6 +314,96 @@ namespace SharedShortCodeServiceLibrary
             return messageBuffer;
         }
 
+        public static async Task<Singlecharge> SendSinglechargeMesssageToTelepromo(string connectionStringInAppConfig,  MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        {
+            var singlecharge = new Singlecharge();
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
+                //var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/charge?";
+                var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.charge);
+                var sc = "Dehnad";
+                var username = serviceAdditionalInfo["username"];
+                var password = serviceAdditionalInfo["password"];
+                var from = "98" + serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+                using (var client = new HttpClient())
+                {
+                    var to = "98" + message.MobileNumber.TrimStart('0');
+                    var messageContent = "InAppPurchase";
+                    var messageId = Guid.NewGuid().ToString();
+                    var urlWithParameters = url + String.Format("sc={0}&username={1}&password={2}&from={3}&serviceId={4}&to={5}&message={6}&messageId={7}"
+                                                            , sc, username, password, from, serviceId, to, messageContent, messageId);
+                    urlWithParameters += String.Format("&chargingCode={0}", message.ImiChargeKey);
+                    var result = new Dictionary<string, string>();
+                    result["status"] = "";
+                    result["message"] = "";
+                    result = await SendSingleMessageToTelepromo(client, urlWithParameters);
+                    if (result["status"] == "0" && result["message"].Contains("description=ACCEPTED"))
+                        singlecharge.IsSucceeded = true;
+                    else
+                        singlecharge.IsSucceeded = false;
+
+                    singlecharge.Description = result["message"];
+                    singlecharge.ReferenceId = messageId;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToTelepromo: " + e);
+            }
+            try
+            {
+                if (singlecharge.IsSucceeded == null)
+                    singlecharge.IsSucceeded = false;
+                if (singlecharge.ReferenceId == null)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                if (installmentId != 0)
+                    singlecharge.InstallmentId = installmentId;
+
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(connectionStringInAppConfig))
+                {
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToTelepromo on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+
+        public static async Task<Dictionary<string, string>> SendSingleMessageToTelepromo(HttpClient client, string url)
+        {
+            var result = new Dictionary<string, string>();
+            result["status"] = "";
+            result["message"] = "";
+            try
+            {
+                using (var response = client.GetAsync(new Uri(url)).Result)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string httpResult = response.Content.ReadAsStringAsync().Result;
+                        XDocument xmlResult = XDocument.Parse(httpResult);
+                        result["status"] = xmlResult.Root.Descendants("status").Select(e => e.Value).FirstOrDefault();
+                        result["message"] = xmlResult.Root.Descendants("message").Select(e => e.Value).FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSingleMessageToTelepromo: " + e);
+            }
+            return result;
+        }
+
         public static AutochargeMessagesBuffer CreateAutochargeMessageBuffer(MessageObject message)
         {
             if (message.AggregatorId == 0)
@@ -335,7 +433,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static ImiChargeCode GetImiChargeObjectFromPrice(string connectionStringNameInAppConfig, int price, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 ImiChargeCode imiChargeCode;
                 if (subscriberState == null && price > 0)
@@ -354,7 +452,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static string GetImiChargeKeyFromPrice(string connectionStringNameInAppConfig, int price)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 var imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
                 return imiChargeCode.ChargeKey;
@@ -375,19 +473,19 @@ namespace SharedShortCodeServiceLibrary
             InsertMessageToQueue(connectionStringNameInAppConfig, message);
         }
 
-        public static List<OnDemandMessagesBuffer> GetUnprocessedOnDemandMessages(ShortCodeServiceEntities entity, int readSize)
+        public static List<OnDemandMessagesBuffer> GetUnprocessedOnDemandMessages(SharedServiceEntities entity, int readSize)
         {
             var today = DateTime.Now.Date;
             return entity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend).Take(readSize).ToList();
         }
 
-        public static List<EventbaseMessagesBuffer> GetUnprocessedEventbaseMessages(ShortCodeServiceEntities entity, int readSize)
+        public static List<EventbaseMessagesBuffer> GetUnprocessedEventbaseMessages(SharedServiceEntities entity, int readSize)
         {
             var today = DateTime.Now.Date;
             return entity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
         }
 
-        public static List<AutochargeMessagesBuffer> GetUnprocessedAutochargeMessages(ShortCodeServiceEntities entity, int readSize)
+        public static List<AutochargeMessagesBuffer> GetUnprocessedAutochargeMessages(SharedServiceEntities entity, int readSize)
         {
             var today = DateTime.Now.Date;
             return entity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today).Take(readSize).ToList();
@@ -395,7 +493,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static void SetEventbaseStatus(string connectionStringNameInAppConfig, long eventbaseId)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.Id == eventbaseId);
                 if (eventbaseContent != null)
@@ -434,7 +532,7 @@ namespace SharedShortCodeServiceLibrary
                 return;
             }
             logs.Info("Eventbase subscribers count:" + subscribers.Count());
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 var messages = new List<MessageObject>();
                 var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(connectionStringNameInAppConfig, eventbaseContent.Price, null);
@@ -456,7 +554,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static void CreateMonitoringItem(string connectionStringNameInAppConfig, long? contentId, SharedLibrary.MessageHandler.MessageType messageType, int totalMessages, int? tag)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 var monitoringItem = new MessagesMonitoring();
                 monitoringItem.ContentId = contentId;
@@ -518,6 +616,183 @@ namespace SharedShortCodeServiceLibrary
                     break;
             }
             return content;
+        }
+
+        public static async Task<Singlecharge> SendSinglechargeMesssageToHub(string connectionStringNameInAppConfig, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        {
+            var singlecharge = new Singlecharge();
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                var aggregatorUsername = serviceAdditionalInfo["username"];
+                var aggregatorPassword = serviceAdditionalInfo["password"];
+                var from = serviceAdditionalInfo["shortCode"];
+                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
+
+                XmlDocument doc = new XmlDocument();
+                XmlElement root = doc.CreateElement("xmsrequest");
+                XmlElement userid = doc.CreateElement("userid");
+                XmlElement password = doc.CreateElement("password");
+                XmlElement action = doc.CreateElement("action");
+                XmlElement body = doc.CreateElement("body");
+                XmlElement serviceid = doc.CreateElement("serviceid");
+                serviceid.InnerText = serviceId;
+                body.AppendChild(serviceid);
+
+                XmlElement recipient = doc.CreateElement("recipient");
+                body.AppendChild(recipient);
+
+                XmlAttribute mobile = doc.CreateAttribute("mobile");
+                recipient.Attributes.Append(mobile);
+                mobile.InnerText = message.MobileNumber;
+
+                XmlAttribute originator = doc.CreateAttribute("originator");
+                originator.InnerText = from;
+                recipient.Attributes.Append(originator);
+
+                XmlAttribute cost = doc.CreateAttribute("cost");
+                cost.InnerText = (message.Price * 10).ToString();
+                recipient.Attributes.Append(cost);
+
+                //XmlAttribute type1 = doc.CreateAttribute("type");
+                //type1.InnerText = "250";
+                //recipient.Attributes.Append(type1);
+
+                userid.InnerText = aggregatorUsername;
+                password.InnerText = aggregatorPassword;
+                action.InnerText = "singlecharge";
+                //
+                doc.AppendChild(root);
+                root.AppendChild(userid);
+                root.AppendChild(password);
+                root.AppendChild(action);
+                root.AppendChild(body);
+                //
+                string stringedXml = doc.OuterXml;
+                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
+                logs.Info(stringedXml);
+                string response = hubClient.XmsRequest(stringedXml).ToString();
+                logs.Info(response);
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(response);
+                XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
+                foreach (XmlNode error in OK)
+                {
+                    if (error.InnerText != "" && error.InnerText != "ok")
+                    {
+                        logs.Error("Error in Singlecharge using Hub");
+                    }
+                    else
+                    {
+                        var i = 0;
+                        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
+                        foreach (XmlNode xn in xnList)
+                        {
+                            string responseCode = (xn.Attributes["status"].Value).ToString();
+                            if (responseCode == "40")
+                            {
+                                singlecharge.IsSucceeded = false;
+                                singlecharge.Description = responseCode;
+                                singlecharge.ReferenceId = xn.InnerText;
+                            }
+                            else
+                            {
+                                singlecharge.IsSucceeded = false;
+                                singlecharge.Description = responseCode;
+                                //singlecharge.ReferenceId = xn.InnerText;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToHub: " + e);
+            }
+            try
+            {
+                if (singlecharge.IsSucceeded == null)
+                    singlecharge.IsSucceeded = false;
+                if (singlecharge.ReferenceId == null)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                if (installmentId != 0)
+                    singlecharge.InstallmentId = installmentId;
+
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
+                {
+                    entity.Singlecharges.Add(singlecharge);
+                    entity.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SendSinglechargeMesssageToHub on saving values to db: " + e);
+            }
+            return singlecharge;
+        }
+        public enum MessageType
+        {
+            OnDemand = 1,
+            EventBase = 2,
+            AutoCharge = 3,
+        }
+
+        public enum ProcessStatus
+        {
+            InQueue = 1,
+            TryingToSend = 2,
+            Success = 3,
+            Failed = 4,
+            Finished = 5,
+            Paused = 6,
+        }
+
+        public enum MobileOperators
+        {
+            Mci = 1,
+            Irancell = 2,
+            Rightel = 3,
+            TCT = 4
+        }
+
+        public enum OperatorPlan
+        {
+            Unspecified = 0,
+            Postpaid = 1,
+            Prepaid = 2
+        }
+
+        public enum MapfaChannels
+        {
+            SMS = 1,
+            USSD = 2,
+            MMS = 3,
+            IVR = 4,
+            ThreeG = 5
+        }
+
+        public enum BulkStatus
+        {
+            Enabled,
+            Disabled,
+            Stopped,
+            Paused,
+            Running,
+            FinishedByTime,
+            FinishedAll
+        }
+
+        public enum BulkFileType
+        {
+            file = 0,
+            sqlTable = 1,
+            list = 2,
+            upload = 3
         }
     }
 }

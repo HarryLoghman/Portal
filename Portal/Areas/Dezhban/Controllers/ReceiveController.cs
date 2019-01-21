@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using DezhbanLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using SharedLibrary.Models;
 using Kendo.Mvc.UI;

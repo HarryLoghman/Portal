@@ -60,7 +60,7 @@ namespace DehnadPorShetabService
         private void EventbaseStatistic()
         {
             try
-            {
+           {
                 using (var entity = new PorShetabEntities())
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;

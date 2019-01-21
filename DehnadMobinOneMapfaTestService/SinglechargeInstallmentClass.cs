@@ -26,11 +26,12 @@ namespace DehnadMobinOneMapfaTestService
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
 
-                using (var entity = new MobinOneMapfaTestEntities())
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
-                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    List<SharedLibrary.Models.ServiceModel.ImiChargeCode> chargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);

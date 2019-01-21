@@ -40,6 +40,9 @@
     <Reference Include="log4net">
       <HintPath>..\..\..\Portal\DehnadPorShetabService\bin\Debug\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -58,135 +61,15 @@
     <Compile Include="HandleMo.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sender.cs" />
     <Compile Include="ServiceHandler.cs" />
-    <Compile Include="SharedModel\AutochargeContent.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\AutochargeContentsSendedToUser.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\AutochargeHeaderFooter.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\AutochargeMessagesBuffer.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\AutochargeTimeTable.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\DailyStatistic.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\EventbaseContent.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\EventbaseMessagesBuffer.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\ImiChargeCode.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\InstallmentCycle.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\MessagesArchive.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\MessagesMonitoring.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\MessagesTemplate.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\OnDemandMessagesBuffer.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\Otp.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\PointsTable.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\ServiceCommand.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\ServiceOffReason.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\ServicesRealtimeStatistic.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\Setting.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\ShortCodeServiceModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ShortCodeServiceModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\ShortCodeServiceModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\ShortCodeServiceModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ShortCodeServiceModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\Singlecharge.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\SinglechargeArchive.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\SinglechargeInstallment.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\SinglechargeInstallmentArchive.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\SingleChargeTiming.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\SinglechargeWaiting.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\SMSResult.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\SubscribersAdditionalInfo.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SharedModel\TimedTempMessagesBuffer.cs">
-      <DependentUpon>ShortCodeServiceModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Subscribers.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EntityDeploy Include="SharedModel\ShortCodeServiceModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ShortCodeServiceModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.Config" />
-    <None Include="packages.config" />
-    <None Include="SharedModel\ShortCodeServiceModel.edmx.diagram">
-      <DependentUpon>ShortCodeServiceModel.edmx</DependentUpon>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SharedModel\ShortCodeServiceModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ShortCodeServiceModel.Context.cs</LastGenOutput>
-      <DependentUpon>ShortCodeServiceModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="SharedModel\ShortCodeServiceModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ShortCodeServiceModel.edmx</DependentUpon>
-      <LastGenOutput>ShortCodeServiceModel.cs</LastGenOutput>
-    </Content>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

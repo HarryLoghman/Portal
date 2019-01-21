@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using AvvalYadLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using SharedLibrary.Models;
 using System;
@@ -15,7 +15,7 @@ namespace Portal.Areas.AvvalYad.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: AvvalYad/Statistics
-        private AvvalYadEntities db = new AvvalYadEntities();
+        private SharedServiceEntities db = new SharedServiceEntities("AvvalYad");
 
         public ActionResult Index()
         {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AvvalPodLibrary.Models;
-using AvvalPodLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 
@@ -32,7 +32,7 @@ namespace DehnadAvvalPodService
         {
             try
             {
-                using (var entity = new AvvalPodEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var today = DateTime.Now;
                     entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
@@ -50,7 +50,7 @@ namespace DehnadAvvalPodService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AvvalPodEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
@@ -80,7 +80,7 @@ namespace DehnadAvvalPodService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AvvalPodEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
@@ -149,7 +149,7 @@ namespace DehnadAvvalPodService
                         subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null && o.OperatorPlan == 2).ToList();
                     }
                 }
-                using (var entity = new AvvalPodEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
@@ -261,7 +261,7 @@ namespace DehnadAvvalPodService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new AvvalPodEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -293,7 +293,8 @@ namespace DehnadAvvalPodService
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                        var response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                            , message, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && installmentCycleNumber == 1)
                             continue;
                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
@@ -309,22 +310,26 @@ namespace DehnadAvvalPodService
                                     response.Description = "Billing  Failed";
                                 }
                                 else
-                                    response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        ,message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);
-                                    response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        ,message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         continue; ////// TEMPORARY!!!!!!!
                                         SetMessagePrice(message, chargeCodes, 100);
-                                        response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                            ,message, serviceAdditionalInfo, installment.Id).Result;
                                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                         {
                                             if (installmentCycleNumber == 2)
                                                 continue;
                                             SetMessagePrice(message, chargeCodes, 50);
-                                            response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                            response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                                ,message, serviceAdditionalInfo, installment.Id).Result;
                                         }
                                     }
                                 }
@@ -332,16 +337,19 @@ namespace DehnadAvvalPodService
                             else if (message.Price == 300)
                             {
                                 SetMessagePrice(message, chargeCodes, 200);
-                                response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                    ,message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     continue; ////// TEMPORARY!!!!!!!
                                     SetMessagePrice(message, chargeCodes, 100);
-                                    response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        ,message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         SetMessagePrice(message, chargeCodes, 50);
-                                        response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                            ,message, serviceAdditionalInfo, installment.Id).Result;
                                     }
                                 }
                             }
@@ -349,11 +357,13 @@ namespace DehnadAvvalPodService
                             {
                                 continue; ////// TEMPORARY!!!!!!!
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                    ,message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
-                                    response = AvvalPodLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode
+                                        ,message, serviceAdditionalInfo, installment.Id).Result;
                                 }
                             }
                         }

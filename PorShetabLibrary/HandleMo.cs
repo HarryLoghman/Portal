@@ -13,10 +13,10 @@ namespace PorShetabLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static async Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public static async Task<bool> ReceivedMessage(MessageObject message, vw_servicesServicesInfo service)
         {
             bool isSucceeded = true;
-            using (var entity = new PorShetabEntities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
             {
                 var content = message.Content;
                 int isCampaignActive = 0;
@@ -30,8 +30,8 @@ namespace PorShetabLibrary
                 var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
                 if (isInBlackList == true)
                     isCampaignActive = (int)CampaignStatus.MatchAndReferalDeactive;
-                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
-                List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                var messagesTemplate = SharedLibrary.ServiceHandler.GetServiceMessagesTemplate(service);
+                List<SharedLibrary.Models.ServiceModel.ImiChargeCode> imiChargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
                 if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                 {
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
@@ -49,7 +49,7 @@ namespace PorShetabLibrary
                 }
                 else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                 {
-                    message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
+                    message = SharedShortCodeServiceLibrary.MessageHandler.SendServiceSubscriptionHelp(service.ServiceCode, message, messagesTemplate);
                     MessageHandler.InsertMessageToQueue(message);
                     return isSucceeded;
                 }
@@ -57,7 +57,7 @@ namespace PorShetabLibrary
                 {
                     var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
                     var sha = SharedLibrary.Security.GetSha256Hash("parent" + message.MobileNumber);
-                    dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
+                    dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
                     message.Content = "";
                     if (result.status.ToString() == "ok")
@@ -86,7 +86,7 @@ namespace PorShetabLibrary
                         var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                         if (user != null && user.DeactivationDate == null)
                         {
-                            message = MessageHandler.SendServiceHelp(message, messagesTemplate);
+                            message = SharedShortCodeServiceLibrary.MessageHandler.SendServiceHelp(service.ServiceCode , message, messagesTemplate);
                             MessageHandler.InsertMessageToQueue(message);
                             return isSucceeded;
                         }
@@ -121,7 +121,7 @@ namespace PorShetabLibrary
                             var subId = specialUniqueId;
                             var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
 
-                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/sub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                             if (result.description == "success")
                             {
                             }
@@ -129,7 +129,7 @@ namespace PorShetabLibrary
                         else if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend || isCampaignActive == (int)CampaignStatus.MatchActiveAndReferalDeactive)
                         {
                             var sha = SharedLibrary.Security.GetSha256Hash("match" + message.MobileNumber);
-                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
+                            var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/sub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
                             if (result.description == "success")
                             {
                             }
@@ -138,13 +138,13 @@ namespace PorShetabLibrary
                     else if ((isCampaignActive == (int)CampaignStatus.MatchActiveAndReferalDeactive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend) && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                     {
                         var sha = SharedLibrary.Security.GetSha256Hash("match" + message.MobileNumber);
-                        var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/unsub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
+                        var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/PorShetab/unsub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
                         if (result.description == "success")
                         {
                         }
                     }
 
-                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                    message.Content = SharedShortCodeServiceLibrary.MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
                     if (message.Content.Contains("{REFERRALCODE}"))
                     {
                         var subId = "1";
@@ -173,7 +173,7 @@ namespace PorShetabLibrary
                     return isSucceeded;
                 }
                 message.Content = content;
-                ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+                SharedShortCodeServiceLibrary.ContentManager.HandleContent(service.ServiceCode, message, service, subscriber, messagesTemplate, imiChargeCodes);
             }
             return isSucceeded;
         }

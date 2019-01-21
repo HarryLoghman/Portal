@@ -26,12 +26,12 @@ namespace ChargingLibrary.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WipeDescriptionPorshetab {
+        public string WipeDescriptionPorShetab {
             get {
-                return ((string)(this["WipeDescriptionPorshetab"]));
+                return ((string)(this["WipeDescriptionPorShetab"]));
             }
             set {
-                this["WipeDescriptionPorshetab"] = value;
+                this["WipeDescriptionPorShetab"] = value;
             }
         }
     }

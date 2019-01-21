@@ -1,11 +1,11 @@
 ﻿using SharedLibrary.Models;
-using SharedShortCodeServiceLibrary.SharedModel;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Text.RegularExpressions;
 using System.Data.Entity;
 using static SharedShortCodeServiceLibrary.HandleMo;
+using SharedLibrary.Models.ServiceModel;
 
 namespace SharedShortCodeServiceLibrary
 {
@@ -17,7 +17,7 @@ namespace SharedShortCodeServiceLibrary
             bool succeed = false;
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var singlechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber).ToList();
                     foreach (var item in singlechargeQueue)
@@ -43,7 +43,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     //var chargeCode = Convert.ToInt32(content);
                     //var imichargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.ChargeCode == chargeCode);
@@ -67,11 +67,11 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static async void HandleContent(string connectionStringNameInAppConfig, MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate, List<ImiChargeCode> imiChargeCodes)
+        public static async void HandleContent(string connectionStringNameInAppConfig, MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate, List<ImiChargeCode> imiChargeCodes)
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     int isCampaignActive = 0;
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
@@ -242,11 +242,50 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
+        public static Singlecharge HandleSinglechargeContent(string connectionStringInAppConfig , MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        {
+            Singlecharge singlecharge = new Singlecharge();
+            message = MessageHandler.SetImiChargeInfo(connectionStringInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            try
+            {
+                var content = Convert.ToInt32(message.Content);
+                bool chargecodeFound = false;
+                var imiChargeCodes = ServiceHandler.GetImiChargeCodes(connectionStringInAppConfig);
+                foreach (var imiChargecode in imiChargeCodes)
+                {
+                    if (imiChargecode.ChargeCode == content)
+                    {
+                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soltan", "Telepromo");
+                        message = MessageHandler.SetImiChargeInfo(connectionStringInAppConfig, message, imiChargecode.Price, 0, null);
+                        chargecodeFound = true;
+                        singlecharge = MessageHandler.SendSinglechargeMesssageToTelepromo(connectionStringInAppConfig, message, serviceAdditionalInfo).Result;
+                        break;
+                    }
+                }
+                if (chargecodeFound == false)
+                {
+                    message = MessageHandler.SendServiceHelp(connectionStringInAppConfig, message, messagesTemplate);
+                    MessageHandler.InsertMessageToQueue(connectionStringInAppConfig, message);
+                }
+                if (singlecharge.IsSucceeded == true)
+                {
+                    message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";
+                    message = MessageHandler.SetImiChargeInfo(connectionStringInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    MessageHandler.InsertMessageToQueue(connectionStringInAppConfig, message);
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in ContentManager: ", e);
+            }
+            return singlecharge;
+        }
+
         private static bool IsUserAlreadyChargedThisMonth(string connectionStringNameInAppConfig, string mobileNumber)
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var lastMonth = DateTime.Today.AddDays(-30);
                     var isUserAlreadychargedThisMonth = entity.Singlecharges.FirstOrDefault(o => o.MobileNumber == mobileNumber && (DbFunctions.TruncateTime(o.DateCreated) <= DateTime.Now.Date && DbFunctions.TruncateTime(o.DateCreated) >= lastMonth));
@@ -265,7 +304,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var isUserAlreadyInSinglechargeQueue = entity.SinglechargeWaitings.Where(o => o.MobileNumber == mobileNumber);
                     if (isUserAlreadyInSinglechargeQueue == null)

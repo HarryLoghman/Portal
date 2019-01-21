@@ -130,7 +130,8 @@ namespace DehnadReceiveProcessorService
                 var date = DateTime.Now.ToString("yyyyMMdd");
                 bool isSucceed = false;
                 int numberOfTries = 1;
-                string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                //string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                string uri = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.ftp);
                 var fileName = date + "-" + serviceInfo.AggregatorServiceId.ToString() + ".txt.bz2";
                 var imiBz2FileUri = filePath + fileName;
                 if (File.Exists(imiBz2FileUri))
@@ -219,7 +220,8 @@ namespace DehnadReceiveProcessorService
                 var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
                 bool isSucceed = false;
                 int numberOfTries = 1;
-                string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                //string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                string uri = String.Format(SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.ftp), date, serviceInfo.AggregatorServiceId);
                 var fileName = date + "-" + serviceInfo.AggregatorServiceId.ToString() + ".txt.bz2";
                 var imiBz2FileUri = filePath + fileName;
                 if (File.Exists(imiBz2FileUri))
@@ -266,7 +268,7 @@ namespace DehnadReceiveProcessorService
             {
                 if (serviceCode == "Aseman")
                 {
-                    using (var entity = new AsemanLibrary.Models.AsemanEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Aseman"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -287,7 +289,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new AsemanLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -310,7 +312,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "MenchBaz")
                 {
-                    using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("MenchBaz"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -331,7 +333,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new MenchBazLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -354,7 +356,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "ShenoYad")
                 {
-                    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -375,7 +377,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -398,7 +400,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "ShenoYad500")
                 {
-                    using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad500"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -419,7 +421,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new ShenoYad500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -442,7 +444,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Tamly")
                 {
-                    using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Tamly"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -463,7 +465,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -486,7 +488,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Tamly500")
                 {
-                    using (var entity = new Tamly500Library.Models.Tamly500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Tamly500"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -507,7 +509,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new Tamly500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -530,7 +532,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "JabehAbzar")
                 {
-                    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("JabehAbzar"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -551,7 +553,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -574,7 +576,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "FitShow")
                 {
-                    using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("FitShow"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -595,7 +597,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new FitShowLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -618,7 +620,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Takavar")
                 {
-                    using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Takavar"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -639,7 +641,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new TakavarLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -662,7 +664,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "DonyayeAsatir")
                 {
-                    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("DonyayeAsatir"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -683,7 +685,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -706,7 +708,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Soltan")
                 {
-                    using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soltan"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -727,7 +729,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new SoltanLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -750,7 +752,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "AvvalPod500")
                 {
-                    using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("AvvalPod500"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -771,7 +773,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new AvvalPod500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -794,7 +796,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "BehAmooz500")
                 {
-                    using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("BehAmooz500"))
                     {
                         entity.Database.CommandTimeout = 240;
                         var i = 0;
@@ -815,7 +817,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new BehAmooz500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -849,7 +851,7 @@ namespace DehnadReceiveProcessorService
             {
                 if (serviceCode == "Aseman")
                 {
-                    using (var entity = new AsemanLibrary.Models.AsemanEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Aseman"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -863,7 +865,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new AsemanLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -885,7 +887,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "MenchBaz")
                 {
-                    using (var entity = new MenchBazLibrary.Models.MenchBazEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("MenchBaz"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -899,7 +901,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new MenchBazLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -921,7 +923,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "ShenoYad")
                 {
-                    using (var entity = new ShenoYadLibrary.Models.ShenoYadEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -935,7 +937,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new ShenoYadLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -957,7 +959,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "ShenoYad500")
                 {
-                    using (var entity = new ShenoYad500Library.Models.ShenoYad500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad500"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -971,7 +973,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new ShenoYad500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -993,7 +995,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Tamly")
                 {
-                    using (var entity = new TamlyLibrary.Models.TamlyEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Tamly"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1007,7 +1009,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new TamlyLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1029,7 +1031,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Tamly500")
                 {
-                    using (var entity = new Tamly500Library.Models.Tamly500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Tamly500"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1043,7 +1045,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new Tamly500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1065,7 +1067,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "JabehAbzar")
                 {
-                    using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("JabehAbzar"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1079,7 +1081,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new JabehAbzarLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1101,7 +1103,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "FitShow")
                 {
-                    using (var entity = new FitShowLibrary.Models.FitShowEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("FitShow"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1115,7 +1117,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new FitShowLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1137,7 +1139,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Takavar")
                 {
-                    using (var entity = new TakavarLibrary.Models.TakavarEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Takavar"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1151,7 +1153,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new TakavarLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1173,7 +1175,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "DonyayeAsatir")
                 {
-                    using (var entity = new DonyayeAsatirLibrary.Models.DonyayeAsatirEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("DonyayeAsatir"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1187,7 +1189,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new DonyayeAsatirLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1209,7 +1211,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Soltan")
                 {
-                    using (var entity = new SoltanLibrary.Models.SoltanEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soltan"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1223,7 +1225,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new SoltanLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1245,7 +1247,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "AvvalPod500")
                 {
-                    using (var entity = new AvvalPod500Library.Models.AvvalPod500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("AvvalPod500"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1259,7 +1261,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new AvvalPod500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1281,7 +1283,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "BehAmooz500")
                 {
-                    using (var entity = new BehAmooz500Library.Models.BehAmooz500Entities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("BehAmooz500"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1295,7 +1297,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new BehAmooz500Library.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1317,7 +1319,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "Soraty")
                 {
-                    using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soraty"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1331,7 +1333,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new SoratyLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1353,7 +1355,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "ShahreKalameh")
                 {
-                    using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShahreKalameh"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1367,7 +1369,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new ShahreKalamehLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1389,7 +1391,7 @@ namespace DehnadReceiveProcessorService
                 }
                 else if (serviceCode == "DefendIran")
                 {
-                    using (var entity = new DefendIranLibrary.Models.DefendIranEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("DefendIran"))
                     {
                         foreach (var data in imiDataList)
                         {
@@ -1403,7 +1405,7 @@ namespace DehnadReceiveProcessorService
                                     continue;
                                 else if (data.basePricePoint == 0)
                                     continue;
-                                var singleCharge = new DefendIranLibrary.Models.Singlecharge();
+                                var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
                                 if (data.status != 0)
                                     singleCharge.IsSucceeded = false;
                                 else
@@ -1434,22 +1436,22 @@ namespace DehnadReceiveProcessorService
         {
             try
             {
-                TelepromoGetIncome(typeof(MenchBazLibrary.Models.MenchBazEntities), "MenchBaz");
-                TelepromoGetIncome(typeof(ShenoYadLibrary.Models.ShenoYadEntities), "ShenoYad");
-                TelepromoGetIncome(typeof(TamlyLibrary.Models.TamlyEntities), "Tamly");
-                TelepromoGetIncome(typeof(JabehAbzarLibrary.Models.JabehAbzarEntities), "JabehAbzar");
-                TelepromoGetIncome(typeof(FitShowLibrary.Models.FitShowEntities), "FitShow");
-                TelepromoGetIncome(typeof(TakavarLibrary.Models.TakavarEntities), "Takavar");
-                TelepromoGetIncome(typeof(DonyayeAsatirLibrary.Models.DonyayeAsatirEntities), "DonyayeAsatir");
-                TelepromoGetIncome(typeof(SoltanLibrary.Models.SoltanEntities), "Soltan");
-                TelepromoGetIncome(typeof(AvvalPodLibrary.Models.AvvalPodEntities), "AvvalPod");
-                TelepromoGetIncome(typeof(AvvalYadLibrary.Models.AvvalYadEntities), "AvvalYad");
-                TelepromoGetIncome(typeof(DezhbanLibrary.Models.DezhbanEntities), "Dezhban");
-                TelepromoGetIncome(typeof(AvvalPod500Library.Models.AvvalPod500Entities), "AvvalPod500");
-                TelepromoGetIncome(typeof(BehAmooz500Library.Models.BehAmooz500Entities), "BehAmooz500");
-                TelepromoGetIncome(typeof(ShenoYad500Library.Models.ShenoYad500Entities), "ShenoYad500");
-                TelepromoGetIncome(typeof(Tamly500Library.Models.Tamly500Entities), "Tamly500");
-                TelepromoGetIncome(typeof(AsemanLibrary.Models.AsemanEntities), "Aseman");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "MenchBaz");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "ShenoYad");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "Tamly");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "JabehAbzar");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "FitShow");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "Takavar");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "DonyayeAsatir");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "Soltan");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "AvvalPod");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "AvvalYad");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "Dezhban");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "AvvalPod500");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "BehAmooz500");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "ShenoYad500");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "Tamly500");
+                TelepromoGetIncome(typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities), "Aseman");
             }
             catch (Exception e)
             {
@@ -1476,7 +1478,8 @@ namespace DehnadReceiveProcessorService
                             var date = report.Date.ToString("yyyyMMdd");
                             bool isSucceed = false;
                             int numberOfTries = 1;
-                            string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                            //string uri = String.Format("http://10.20.9.135:8600/ftp/{0}-{1}.txt.bz2", date, serviceInfo.AggregatorServiceId);
+                            string uri = String.Format(SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo,SharedLibrary.HelpfulFunctions.enumServersActions.ftp), date, serviceInfo.AggregatorServiceId);
                             var fileName = date + "-" + serviceInfo.AggregatorServiceId.ToString() + ".txt.bz2";
                             var imiBz2FileUri = filePath + fileName;
                             if (File.Exists(imiBz2FileUri))
@@ -1752,7 +1755,7 @@ namespace DehnadReceiveProcessorService
         //        }
         //        else if (serviceCode == "JabehAbzar")
         //        {
-        //            using (var entity = new JabehAbzarLibrary.Models.JabehAbzarEntities())
+        //            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("JabehAbzar"))
         //            {
         //                foreach (var item in imiDataList)
         //                {

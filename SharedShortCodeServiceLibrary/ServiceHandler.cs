@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using SharedLibrary.Models;
-using SharedShortCodeServiceLibrary.SharedModel;
+using SharedLibrary.Models.ServiceModel;
 
 namespace SharedShortCodeServiceLibrary
 {
     public class ServiceHandler
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static AutochargeContent SelectAutochargeContentByOrder(string connectionStringNameInAppConfig, ShortCodeServiceEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContentByOrder(string connectionStringNameInAppConfig, SharedServiceEntities entity, long subscriberId)
         {
             AutochargeContent autochargeContent = null;
             var lastContentSubscriberReceived = entity.AutochargeContentsSendedToUsers.Where(o => o.SubscriberId == subscriberId).OrderByDescending(o => o.Id).FirstOrDefault();
@@ -32,7 +32,7 @@ namespace SharedShortCodeServiceLibrary
             return autochargeContent;
         }
 
-        public static Singlecharge GetOTPRequestId(ShortCodeServiceEntities entity, MessageObject message)
+        public static Singlecharge GetOTPRequestId(SharedServiceEntities entity, MessageObject message)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig + "Entities"))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig + "Entities"))
                 {
                     var lastContent = new AutochargeContentsSendedToUser();
                     lastContent.SubscriberId = subscriberId;
@@ -73,7 +73,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig + "Entities"))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig + "Entities"))
                 {
                     var lastContent = new AutochargeContentsSendedToUser();
                     lastContent.SubscriberId = subscriberId;
@@ -122,7 +122,7 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static AutochargeContent SelectAutochargeContentByDate(string connectionStringNameInAppConfig, ShortCodeServiceEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContentByDate(string connectionStringNameInAppConfig, SharedServiceEntities entity, long subscriberId)
         {
             var today = DateTime.Now.Date;
             var autochargesAlreadyInQueue = entity.AutochargeMessagesBuffers.Where(o => DbFunctions.TruncateTime(o.DateAddedToQueue) == today).Select(o => o.Id).ToList();
@@ -136,7 +136,7 @@ namespace SharedShortCodeServiceLibrary
             return autochargeContent;
         }
 
-        public static AutochargeContent SelectAutochargeContent(string connectionStringNameInAppConfig, ShortCodeServiceEntities entity, long subscriberId)
+        public static AutochargeContent SelectAutochargeContent(string connectionStringNameInAppConfig, SharedServiceEntities entity, long subscriberId)
         {
             var today = DateTime.Now.Date;
             var autochargesAlreadyInQueue = entity.AutochargeMessagesBuffers.Where(o => DbFunctions.TruncateTime(o.DateAddedToQueue) == today).Select(o => o.Id).ToList();
@@ -155,7 +155,7 @@ namespace SharedShortCodeServiceLibrary
             bool succeed = false;
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var userinstallments = entity.SinglechargeInstallments.Where(o => o.MobileNumber == mobileNumber && o.IsUserCanceledTheInstallment == false).ToList();
                     foreach (var installment in userinstallments)
@@ -182,7 +182,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static List<MessagesTemplate> GetServiceMessagesTemplate(string connectionStringNameInAppConfig)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 return entity.MessagesTemplates.ToList();
             }
@@ -200,13 +200,13 @@ namespace SharedShortCodeServiceLibrary
 
         public static List<ImiChargeCode> GetImiChargeCodes(string connectionStringNameInAppConfig)
         {
-            using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 return entity.ImiChargeCodes.ToList();
             }
         }
 
-        public static bool CheckIfUserSendsSubscriptionKeyword(string content, Service service)
+        public static bool CheckIfUserSendsSubscriptionKeyword(string content, vw_servicesServicesInfo service)
         {
             var serviceKeywords = service.OnKeywords.Split(',');
             foreach (var keyword in serviceKeywords)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using AcharLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,7 +14,7 @@ namespace Portal.Areas.Achar.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Achar/messagesTemplate
-        private AcharEntities db = new AcharEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Achar");
 
         public ActionResult Index()
         {
@@ -36,7 +36,7 @@ namespace Portal.Areas.Achar.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult MessagesTemplate_Update([DataSourceRequest]DataSourceRequest request, [Bind(Exclude = "Title,PersianTitle")] MessagesTemplate messagesTemplate)
+        public ActionResult MessagesTemplate_Update([DataSourceRequest]DataSourceRequest request, [Bind(Exclude = "Title,PersianTitle")] SharedLibrary.Models.ServiceModel.MessagesTemplate messagesTemplate)
         {
             if (ModelState.IsValid)
             {

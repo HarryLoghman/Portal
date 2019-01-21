@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using ShenoYad500Library.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,7 +14,7 @@ namespace Portal.Areas.ShenoYad500.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: ShenoYad500/SendDirectMessage
-        private ShenoYad500Entities db = new ShenoYad500Entities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db= new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad500");
 
         public ActionResult Index()
         {
@@ -52,8 +52,8 @@ namespace Portal.Areas.ShenoYad500.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = ShenoYad500Library.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            ShenoYad500Library.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode , messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode ,messageObject);
             return Content("Ok");
         }
     }

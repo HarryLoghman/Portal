@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using AcharLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 
 namespace DehnadAcharService
 {
@@ -14,7 +15,7 @@ namespace DehnadAcharService
         {
             try
             {
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -24,7 +25,8 @@ namespace DehnadAcharService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    AcharLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode 
+                        ,Properties.Settings.Default.ServiceCode, eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)
@@ -55,7 +57,7 @@ namespace DehnadAcharService
                                 mobileNumbers = item.MobileNumbersList.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                             //var existingSubscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null).Select(o => o.MobileNumber).ToList();
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
-                            var imiChargeObject = AcharLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
+                            var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode , 0, null);
                             var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                             var rnd = new Random();
@@ -80,7 +82,7 @@ namespace DehnadAcharService
                                 TaskList.Add(ProcessSubscribersListChunk(chunkedmobileNumbersList, item.Message, imiChargeObject, service.Id, aggregatorId, i, contentId));
                             }
                             Task.WaitAll(TaskList.ToArray());
-                            AcharLibrary.MessageHandler.CreateMonitoringItem(contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
+                            SharedShortCodeServiceLibrary.MessageHandler.CreateMonitoringItem(Properties.Settings.Default.ServiceCode , contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
                         }
                         catch (Exception e)
                         {
@@ -98,7 +100,8 @@ namespace DehnadAcharService
             }
         }
 
-        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent, ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
+        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent
+            , SharedLibrary.Models.ServiceModel.ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
         {
             logs.Info("ProcessSubscribersListChunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -113,7 +116,7 @@ namespace DehnadAcharService
                 {
                     if (counter > 1000)
                     {
-                        AcharLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode , messages);
                         messages.Clear();
                         counter = 1;
                     }
@@ -134,7 +137,7 @@ namespace DehnadAcharService
                     messages.Add(message);
                     counter++;
                 }
-                AcharLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode, messages);
             }
             catch (Exception e)
             {

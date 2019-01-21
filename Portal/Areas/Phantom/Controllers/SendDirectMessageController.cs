@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using PhantomLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,14 +14,14 @@ namespace Portal.Areas.Phantom.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Phantom/SendDirectMessage
-        private PhantomEntities db = new PhantomEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Phantom");
 
         public ActionResult Index()
         {
             ViewBag.ServiceName = "فانتوم";
             return View();
         }
-        
+
 
         protected override void Dispose(bool disposing)
         {
@@ -52,8 +52,8 @@ namespace Portal.Areas.Phantom.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = PhantomLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            PhantomLibrary.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode, messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode, messageObject);
             return Content("Ok");
         }
     }

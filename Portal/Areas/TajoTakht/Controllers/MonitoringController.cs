@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using TajoTakhtLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using System;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Portal.Areas.TajoTakht.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: TajoTakht/Monitoring
-        private TajoTakhtEntities db = new TajoTakhtEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("TajoTakht");
 
         public ActionResult Index()
         {

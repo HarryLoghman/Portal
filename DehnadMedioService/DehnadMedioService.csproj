@@ -121,13 +121,13 @@
       <Project>{a8445fdb-2782-4cf8-90aa-42c6bb9d0cc1}</Project>
       <Name>ChargingLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MedioLibrary\MedioLibrary.csproj">
-      <Project>{1232d11f-151b-a5b5-1311-4bc28b33144f}</Project>
-      <Name>MedioLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

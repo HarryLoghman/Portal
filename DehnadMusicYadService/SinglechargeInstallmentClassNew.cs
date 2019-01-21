@@ -22,7 +22,7 @@ namespace DehnadMusicYadService
 
         static SharedLibrary.ThrottleMTN v_throttle;
         static SharedLibrary.ThrottleDedicated v_throttleDedicated;
-
+        static string v_url;
         static bool v_tpsDedicatedChanged;
         public int ProcessInstallment(int installmentCycleNumber, int tpsOperator, int tps, DateTime lastExecutionTime, bool forciblyExecute)
         {
@@ -30,6 +30,7 @@ namespace DehnadMusicYadService
 
             try
             {
+                v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
                 v_throttle = new ThrottleMTN(@"E:\Windows Services\MTNThrottleTPS");
                 v_throttleDedicated = new ThrottleDedicated(@"E:\Windows Services\MTNThrottleTpsOccupied");
 
@@ -39,14 +40,15 @@ namespace DehnadMusicYadService
                 var installmentCount = SharedLibrary.ServiceHandler.GetActiveSubscribersAndChargesCount(Service.v_dbName, serviceCode, Service.maxServiceTries, installmentCycleNumber
                     , Service.maxChargeLimit, DateTime.Now, false, "", lastExecutionTime, forciblyExecute);
                 if (installmentCount == 0) return 0;
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
                 //List<string> installmentList;
-                using (var entity = new MusicYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
 
 
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 120;
-                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    List<SharedLibrary.Models.ServiceModel.ImiChargeCode> chargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
 
                     logs.Info("start of installmentCycleNumber " + installmentCycleNumber);
                     ////installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
@@ -361,11 +363,12 @@ namespace DehnadMusicYadService
             else
                 charge = "chargeAmount";
             var mobile = "98" + message.MobileNumber.TrimStart('0');
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             int rialedPrice = message.Price.Value * 10;
             var referenceCode = Guid.NewGuid().ToString();
 
-            var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            var url = v_url;
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
 , timeStamp, mobile, rialedPrice, referenceCode, charge, aggregatorServiceId, spId);
             try

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using AcharLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,7 +14,7 @@ namespace Portal.Areas.Achar.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Achar/SendDirectMessage
-        private AcharEntities db = new AcharEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Achar");
 
         public ActionResult Index()
         {
@@ -52,8 +52,8 @@ namespace Portal.Areas.Achar.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = AcharLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            AcharLibrary.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode , messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode , messageObject);
             return Content("Ok");
         }
     }

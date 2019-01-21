@@ -120,7 +120,7 @@ namespace DambelLibrary
             return message;
         }
 
-        public static MessageObject SendServiceHelp(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        public static MessageObject SendServiceHelp(MessageObject message, List<SharedLibrary.Models.ServiceModel.MessagesTemplate> messagesTemplate)
         {
             message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "ServiceHelp").Select(o => o.Content).FirstOrDefault();
@@ -183,7 +183,7 @@ namespace DambelLibrary
             return autochargeContent;
         }
 
-        public static MessageObject UserHasActiveSinglecharge(MessageObject message, List<MessagesTemplate> messagesTemplate)
+        public static MessageObject UserHasActiveSinglecharge(MessageObject message, List<SharedLibrary.Models.ServiceModel.MessagesTemplate> messagesTemplate)
         {
             message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
             message.Content = messagesTemplate.Where(o => o.Title == "UserHasActiveSinglecharge").Select(o => o.Content).FirstOrDefault();
@@ -889,7 +889,8 @@ namespace DambelLibrary
                 if (messagesCount == 0)
                     return;
                 //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/send?";
-                var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/send?";
+                //var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/send?";
+				var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -957,7 +958,8 @@ namespace DambelLibrary
             try
             {
                 //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
-                var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/charge?";
+                //var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/charge?";
+				var url= SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.charge);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -1091,7 +1093,7 @@ namespace DambelLibrary
             logs.Info(" Send function ended ");
         }
 
-        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState)
+        public static string PrepareSubscriptionMessage(List<SharedLibrary.Models.ServiceModel.MessagesTemplate> messagesTemplate, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState)
         {
             string content = null;
             switch (serviceStatusForSubscriberState)

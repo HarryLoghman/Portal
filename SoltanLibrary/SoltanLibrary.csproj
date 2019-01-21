@@ -56,127 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContentManager.cs" />
-    <Compile Include="HandleMo.cs" />
-    <Compile Include="MessageHandler.cs" />
-    <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeContentsSendedToUser.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeHeaderFooter.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeTimeTable.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DailyStatistic.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ImiChargeCode.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\InstallmentCycle.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesArchive.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesMonitoring.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OnDemandMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Otp.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PointsTable.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServiceOffReason.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServicesRealtimeStatistic.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Setting.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Singlecharge.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeArchive.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeInstallment.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeInstallmentArchive.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeLiveStatuses_Result.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeLiveStatuses_Result1.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeWaiting.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SoltanModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SoltanModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SoltanModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SoltanModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersAdditionalInfo.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TimedTempMessagesBuffer.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_SentMessages.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_Singlecharge.cs">
-      <DependentUpon>SoltanModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceHandler.cs" />
-    <Compile Include="Subscribers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Models\SoltanModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SoltanModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Models\SoltanModel.edmx.diagram">
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -193,16 +76,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\SoltanModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
-      <LastGenOutput>SoltanModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\SoltanModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>SoltanModel.edmx</DependentUpon>
-      <LastGenOutput>SoltanModel.cs</LastGenOutput>
-    </Content>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

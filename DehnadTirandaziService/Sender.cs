@@ -32,9 +32,9 @@ namespace DehnadTirandaziService
 
                 Type entityType = typeof(TirandaziEntities);
 
-                autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
-                eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
-                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
+                autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessagesOld(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
+                eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessagesOld(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
+                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessagesOld(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
 
                 if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
                 {
@@ -51,10 +51,10 @@ namespace DehnadTirandaziService
 
                 if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
                 {
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    SharedLibrary.MessageHandler.SendSelectedMessagesOld(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    SharedLibrary.MessageHandler.SendSelectedMessagesOld(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 }
-                SharedLibrary.MessageHandler.SendSelectedMessages(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                SharedLibrary.MessageHandler.SendSelectedMessagesOld(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
             }
             catch (Exception e)
             {

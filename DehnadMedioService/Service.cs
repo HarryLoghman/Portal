@@ -313,8 +313,8 @@ namespace DehnadMedioService
         {
             var singlechargeInstallment = new SinglechargeInstallmentClass();
             int installmentCycleNumber = 1;
-            var entityType = typeof(MedioLibrary.Models.MedioEntities);
-            var cycleType = typeof(MedioLibrary.Models.InstallmentCycle);
+            var entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
+            var cycleType = typeof(SharedLibrary.Models.ServiceModel.InstallmentCycle);
             TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
             if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("9:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
                 installmentCycleNumber = 2;
@@ -357,7 +357,7 @@ namespace DehnadMedioService
                 bool isInMaintenanceTime = false;
                 try
                 {
-                    using (var entity = new MedioLibrary.Models.MedioEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
                         if (isInMaintenace != null)

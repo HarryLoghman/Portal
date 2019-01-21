@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using ShenoYad500Library.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using System;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Portal.Areas.ShenoYad500.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: ShenoYad500/Monitoring
-        private ShenoYad500Entities db = new ShenoYad500Entities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db= new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShenoYad500");
 
         public ActionResult Index()
         {

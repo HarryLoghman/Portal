@@ -66,9 +66,11 @@ namespace SharedLibrary.Models
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Aggregator> Aggregators { get; set; }
         public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
-        public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
         public virtual DbSet<Bulk> Bulks { get; set; }
         public virtual DbSet<Delivery> Deliveries { get; set; }
+        public virtual DbSet<ServersAction> ServersActions { get; set; }
+        public virtual DbSet<ServersIP> ServersIPs { get; set; }
+        public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

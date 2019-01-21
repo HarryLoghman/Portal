@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using AvvalPodLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 
 namespace DehnadAvvalPodService
 {
@@ -12,7 +12,7 @@ namespace DehnadAvvalPodService
         {
             try
             {
-                using (var entity = new AvvalPodEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -22,7 +22,7 @@ namespace DehnadAvvalPodService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode);
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    AvvalPodLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode,Properties.Settings.Default.ServiceCode, eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)

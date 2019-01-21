@@ -217,7 +217,7 @@ namespace DehnadHazaranService
                 bool isInMaintenanceTime = false;
                 try
                 {
-                    using (var entity = new HazaranLibrary.Models.HazaranEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
                         if (isInMaintenace != null)
@@ -312,7 +312,7 @@ namespace DehnadHazaranService
             try
             {
                 var today = DateTime.Now;
-                using (var entity = new HazaranLibrary.Models.HazaranEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Hazaran"))
                 {
                     var cycle = entity.InstallmentCycles.FirstOrDefault(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.CycleNumber == cycleNumber);
                     if (cycle != null)
@@ -322,7 +322,7 @@ namespace DehnadHazaranService
                     }
                     else
                     {
-                        var installmentCycle = new HazaranLibrary.Models.InstallmentCycle();
+                        var installmentCycle = new SharedLibrary.Models.ServiceModel.InstallmentCycle();
                         installmentCycle.CycleNumber = cycleNumber;
                         installmentCycle.DateCreated = DateTime.Now;
                         installmentCycle.Duration = duration;

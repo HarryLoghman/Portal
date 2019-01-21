@@ -56,115 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContentManager.cs" />
-    <Compile Include="HandleMo.cs" />
-    <Compile Include="MessageHandler.cs" />
-    <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeContentsSendedToUser.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeHeaderFooter.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeMessagesBuffer.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeTimeTable.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DailyStatistic.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseMessagesBuffer.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ImiChargeCode.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\InstallmentCycle.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MenchBazModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MenchBazModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MenchBazModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MenchBazModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MenchBazModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesArchive.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesMonitoring.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OnDemandMessagesBuffer.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Otp.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PointsTable.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServiceOffReason.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Setting.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Singlecharge.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeArchive.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeInstallment.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeWaiting.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersAdditionalInfo.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TimedTempMessagesBuffer.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_SentMessages.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_Singlecharge.cs">
-      <DependentUpon>MenchBazModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceHandler.cs" />
-    <Compile Include="Subscribers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Models\MenchBazModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>MenchBazModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Models\MenchBazModel.edmx.diagram">
-      <DependentUpon>MenchBazModel.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -181,16 +76,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\MenchBazModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MenchBazModel.edmx</DependentUpon>
-      <LastGenOutput>MenchBazModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\MenchBazModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MenchBazModel.edmx</DependentUpon>
-      <LastGenOutput>MenchBazModel.cs</LastGenOutput>
-    </Content>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

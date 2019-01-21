@@ -29,8 +29,9 @@ namespace Portal.Controllers
             {
                 result.time = 0;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Tamly500", "Telepromo");
-                var telepromoIp = SharedLibrary.MessageSender.telepromoIp;
-                var url = telepromoIp + "/samsson-sdp/transfer/send?";
+                //var telepromoIp = SharedLibrary.MessageSender.telepromoIp;
+                //var url = telepromoIp + "/samsson-sdp/transfer/send?";
+                var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.sendmessage);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -90,8 +91,9 @@ namespace Portal.Controllers
             {
                 result.time = 0;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Tamly500", "Telepromo");
-                var telepromoIp = SharedLibrary.MessageSender.telepromoIp;
-                var url = telepromoIp + "/samsson-sdp/pin/generate?";
+                //var telepromoIp = SharedLibrary.MessageSender.telepromoIp;
+                //var url = telepromoIp + "/samsson-sdp/pin/generate?";
+                var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpRequest);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -148,8 +150,9 @@ namespace Portal.Controllers
             {
                 result.time = 0;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soraty", "MciDirect");
-                var mciIp = SharedLibrary.MessageSender.mciIp;
-                var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
+                //var mciIp = SharedLibrary.MessageSender.mciIp;
+                //var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
+                var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.sendmessage);
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
@@ -233,16 +236,17 @@ namespace Portal.Controllers
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
-                var mciIp = SharedLibrary.MessageSender.mciIp;
-                var url = mciIp + "/apigw/charging/pushotp";
+                //var mciIp = SharedLibrary.MessageSender.mciIp;
+                //var url = mciIp + "/apigw/charging/pushotp";
+                var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpRequest);
                 var message = new SharedLibrary.Models.MessageObject();
                 message.Price = 0;
                 message.MobileNumber = "09900000000";
                 message.Content = "ping";
-                using (var entity = new SoratyLibrary.Models.SoratyEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soraty"))
                 {
-                    var imiChargeCode = new SoratyLibrary.Models.ImiChargeCode();
-                    message = SoratyLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                    var imiChargeCode = new SharedLibrary.Models.ServiceModel.ImiChargeCode();
+                    message = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 }
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var rnd = new Random();
@@ -358,10 +362,10 @@ namespace Portal.Controllers
                 message.Price = 0;
                 message.MobileNumber = "09900000000";
                 message.Content = "ping";
-                using (var entity = new NebulaLibrary.Models.NebulaEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
                 {
-                    var imiChargeCode = new NebulaLibrary.Models.ImiChargeCode();
-                    message = NebulaLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                    var imiChargeCode = new SharedLibrary.Models.ServiceModel.ImiChargeCode();
+                    message = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 }
                 var mobile = "98" + message.MobileNumber.TrimStart('0');
                 var stringedPrice = "";
@@ -533,13 +537,23 @@ namespace Portal.Controllers
             {
                 result.time = 0;
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("TahChin", "MTN");
-                var url = SharedLibrary.MessageSender.irancellIp + "/SendSmsService/services/SendSms";
+                //var url = SharedLibrary.MessageSender.irancellIp + "/SendSmsService/services/SendSms";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.sendmessage);
                 var username = serviceAdditionalInfo["username"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
                 using (var client = new HttpClient())
                 {
-                    var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-                    string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, "09350000000", serviceAdditionalInfo["shortCode"], "ping", serviceId);
+                    //var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+
+                    //MessageObject message = new MessageObject();
+                    //message.MobileNumber = "09350000000";
+                    //message.DateAddedToQueue = DateTime.Now;
+
+                    string mobileNumber = "09350000000";
+                    DateTime dateAdded = DateTime.Now;
+                    string payload = "";
+                    //string payload = SharedLibrary.Aggregators.AggregatorMTN.CreateBodyStringForMessage(serviceAdditionalInfo["aggregatorServiceId"]
+                    //    , serviceAdditionalInfo["shortCode"], mobileNumber, "PING", dateAdded);
                     var now = DateTime.Now;
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
@@ -584,10 +598,11 @@ namespace Portal.Controllers
                 var spId = "980110006379";
                 var charge = "chargeAmount";
                 var mobile = "98" + "09350000000".TrimStart('0');
-                var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+                var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
                 int rialedPrice = 0;
                 var referenceCode = Guid.NewGuid().ToString();
-                var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+                //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+                var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
                 string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
     , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
 

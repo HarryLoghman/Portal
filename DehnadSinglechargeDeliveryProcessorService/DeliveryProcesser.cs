@@ -77,7 +77,7 @@ namespace DehnadSinglechargeDeliveryProcessorService
         {
             try
             {
-                using (var entity = new ShahreKalamehLibrary.Models.ShahreKalamehEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ShahreKalameh"))
                 {
                     var singlecharge = entity.Singlecharges.FirstOrDefault(o => o.ReferenceId == deliveredSinglecharge.ReferenceId);
                     if (singlecharge != null)

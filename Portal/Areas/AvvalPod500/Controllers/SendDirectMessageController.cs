@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using AvvalPod500Library.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,14 +14,14 @@ namespace Portal.Areas.AvvalPod500.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: AvvalPod500/SendDirectMessage
-        private AvvalPod500Entities db = new AvvalPod500Entities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("AvvalPod500");
 
         public ActionResult Index()
         {
             ViewBag.ServiceName = "اول پاد 500";
             return View();
         }
-        
+
 
         protected override void Dispose(bool disposing)
         {
@@ -50,10 +50,10 @@ namespace Portal.Areas.AvvalPod500.Controllers
             messageObject.SubscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(messageObject.MobileNumber, messageObject.ServiceId);
             if ((messageObject.SubscriberId == null || messageObject.SubscriberId == 0) && messageObject.Point != 0)
             {
-                return Content("Cant add point to unsubscribed");
+                return Content("Can't add point to unsubscribed");
             }
-            messageObject = AvvalPod500Library.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            AvvalPod500Library.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode, messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode, messageObject);
             return Content("Ok");
         }
     }

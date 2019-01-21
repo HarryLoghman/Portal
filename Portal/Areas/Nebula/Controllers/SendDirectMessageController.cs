@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using NebulaLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,14 +14,14 @@ namespace Portal.Areas.Nebula.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Nebula/SendDirectMessage
-        private NebulaEntities db = new NebulaEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula");
 
         public ActionResult Index()
         {
             ViewBag.ServiceName = "نبولا";
             return View();
         }
-        
+
 
         protected override void Dispose(bool disposing)
         {
@@ -52,8 +52,8 @@ namespace Portal.Areas.Nebula.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = NebulaLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            NebulaLibrary.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode, messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode, messageObject);
             return Content("Ok");
         }
     }

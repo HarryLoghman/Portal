@@ -184,7 +184,7 @@ namespace DehnadMTNChargeServices
                                         }
                                         else if (servicesIDsArr[i] == "10039")
                                         {
-                                            ServiceChargeMTNPorshetab sc = new ServiceChargeMTNPorshetab(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
+                                            ServiceChargeMTNPorShetab sc = new ServiceChargeMTNPorShetab(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);

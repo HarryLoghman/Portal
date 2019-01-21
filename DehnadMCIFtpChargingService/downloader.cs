@@ -47,8 +47,8 @@ namespace DehnadMCIFtpChargingService
                 int chargeCount = 0;
                 ChargeInfo charge = new ChargeInfo();
                 List<string> props;
-                SharedShortCodeServiceLibrary.SharedModel.Singlecharge singleCharge;
-                SharedShortCodeServiceLibrary.SharedModel.SinglechargeArchive singleChargeArchive;
+                SharedLibrary.Models.ServiceModel.Singlecharge singleCharge;
+                SharedLibrary.Models.ServiceModel.SinglechargeArchive singleChargeArchive;
                 SharedLibrary.Models.MCISingleChargeFtpFile portalFtpFiles;
                 bool saveSingleCharge;
                 using (var portal = new SharedLibrary.Models.PortalEntities())
@@ -90,14 +90,14 @@ namespace DehnadMCIFtpChargingService
                                             Program.logs.Error("UpdateSingleCharge: no service is found with operatorServiceId" + charge.sid);
                                             continue;
                                         }
-                                        using (SharedShortCodeServiceLibrary.SharedModel.ShortCodeServiceEntities serviceDB = new SharedShortCodeServiceLibrary.SharedModel.ShortCodeServiceEntities("Shared" + serviceCode + "Entities"))
+                                        using (SharedLibrary.Models.ServiceModel.SharedServiceEntities serviceDB = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Shared" + serviceCode + "Entities"))
                                         {
                                             if (winDirectory == DateTime.Today.ToString("yyyyMMdd"))
                                             {
                                                 singleCharge = serviceDB.Singlecharges.Where(o => o.ReferenceId == charge.trans_id && o.Description == "NewMethod").FirstOrDefault();
                                                 if (singleCharge == null)
                                                 {
-                                                    singleCharge = new SharedShortCodeServiceLibrary.SharedModel.Singlecharge();
+                                                    singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
 
                                                     if (charge.status != 0)
                                                         singleCharge.IsSucceeded = false;
@@ -139,7 +139,7 @@ namespace DehnadMCIFtpChargingService
                                                 singleChargeArchive = serviceDB.SinglechargeArchives.Where(o => o.ReferenceId == charge.trans_id && o.Description == "NewMethod").FirstOrDefault();
                                                 if (singleChargeArchive == null)
                                                 {
-                                                    singleChargeArchive = new SharedShortCodeServiceLibrary.SharedModel.SinglechargeArchive();
+                                                    singleChargeArchive = new SharedLibrary.Models.ServiceModel.SinglechargeArchive();
 
                                                     if (charge.status != 0)
                                                         singleChargeArchive.IsSucceeded = false;

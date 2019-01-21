@@ -205,16 +205,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Antlr3.Runtime.dll" />
-    <Content Include="bin\BimeKarbalaLibrary.dll" />
-    <Content Include="bin\BimeKarbalaLibrary.pdb" />
-    <Content Include="bin\DanestanehLibrary.dll" />
-    <Content Include="bin\DanestanehLibrary.pdb" />
     <Content Include="bin\EntityFramework.dll" />
     <Content Include="bin\EntityFramework.SqlServer.dll" />
     <Content Include="bin\Kendo.Mvc.dll" />
     <Content Include="bin\log4net.dll" />
-    <Content Include="bin\MashinBazhaLibrary.dll" />
-    <Content Include="bin\MashinBazhaLibrary.pdb" />
     <Content Include="bin\Microsoft.AspNet.Identity.Core.dll" />
     <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.dll" />
     <Content Include="bin\Microsoft.AspNet.Identity.Owin.dll" />
@@ -228,25 +222,12 @@
     <Content Include="bin\Microsoft.Owin.Security.OAuth.dll" />
     <Content Include="bin\Microsoft.Owin.Security.Twitter.dll" />
     <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
-    <Content Include="bin\MobiligaLibrary.dll" />
-    <Content Include="bin\MobiligaLibrary.pdb" />
-    <Content Include="bin\MyLeagueLibrary.dll" />
-    <Content Include="bin\MyLeagueLibrary.pdb" />
     <Content Include="bin\Newtonsoft.Json.dll" />
     <Content Include="bin\Owin.dll" />
     <Content Include="bin\Portal.dll" />
     <Content Include="bin\Portal.dll.config" />
     <Content Include="bin\Portal.pdb" />
-    <Content Include="bin\SepidRoodLibrary.dll" />
-    <Content Include="bin\SepidRoodLibrary.pdb" />
     <Content Include="bin\SharedLibrary.dll" />
-    <Content Include="bin\SharedLibrary.pdb" />
-    <Content Include="bin\SoltanLibrary.dll" />
-    <Content Include="bin\SoltanLibrary.pdb" />
-    <Content Include="bin\Tabriz2018Library.dll" />
-    <Content Include="bin\Tabriz2018Library.pdb" />
-    <Content Include="bin\TirandaziLibrary.dll" />
-    <Content Include="bin\TirandaziLibrary.pdb" />
     <Content Include="bin\WebGrease.dll" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -1125,85 +1106,13 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AcharLibrary\AcharLibrary.csproj">
-      <Project>{42513ea5-5bd7-4436-8c9a-f273d15cb4f9}</Project>
-      <Name>AcharLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AsemanLibrary\AsemanLibrary.csproj">
-      <Project>{14344114-121b-1513-431d-4b42fb131141}</Project>
-      <Name>AsemanLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvvalPod500Library\AvvalPod500Library.csproj">
-      <Project>{11f5a255-33f1-3544-2c12-48224341251b}</Project>
-      <Name>AvvalPod500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
-      <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
-      <Name>AvvalPodLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvvalYadLibrary\AvvalYadLibrary.csproj">
-      <Project>{c113b241-33f5-c224-2122-4bc23f4d235f}</Project>
-      <Name>AvvalYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BehAmooz500Library\BehAmooz500Library.csproj">
-      <Project>{c1134245-33f5-c521-2122-4bcb334d234a}</Project>
-      <Name>BehAmooz500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BimeKarbalaLibrary\BimeKarbalaLibrary.csproj">
-      <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
-      <Name>BimeKarbalaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BoatingLibrary\BoatingLibrary.csproj">
-      <Project>{11bd1312-2d38-42ff-944d-02b5ce3457c1}</Project>
-      <Name>BoatingLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DambelLibrary\DambelLibrary.csproj">
       <Project>{1434b114-121b-1513-431d-4bc287131142}</Project>
       <Name>DambelLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
-      <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
-      <Name>DanestanehLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DarchinLibrary\DarchinLibrary.csproj">
-      <Project>{2234d11f-151b-8515-1312-43c28733114b}</Project>
-      <Name>DarchinLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DefendIranLibrary\DefendIranLibrary.csproj">
-      <Project>{d124b1f6-3bf5-2124-537f-1bc43b41256d}</Project>
-      <Name>DefendIranLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DehnadHalgheService\DehnadHalgheService.csproj">
-      <Project>{33d53a12-e468-49d5-aade-48b148b1b46e}</Project>
-      <Name>DehnadHalgheService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DehnadNotificationService\DehnadNotificationService.csproj">
       <Project>{1df14122-4d21-8222-4d51-34141b3539c1}</Project>
       <Name>DehnadNotificationService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DezhbanLibrary\DezhbanLibrary.csproj">
-      <Project>{211d214a-3b15-2126-337d-3bcb3b5424fa}</Project>
-      <Name>DezhbanLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
-      <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
-      <Name>DonyayeAsatirLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FitShowLibrary\FitShowLibrary.csproj">
-      <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
-      <Name>FitShowLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HalgheLibrary\HalgheLibrary.csproj">
-      <Project>{cfb68ea5-0d44-4c0c-9a04-7a1b84b29bf1}</Project>
-      <Name>HalgheLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
-      <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
-      <Name>HazaranLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
-      <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
-      <Name>JabehAbzarLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JhoobinDambelLibrary\JhoobinDambelLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb441}</Project>
@@ -1229,105 +1138,29 @@
       <Project>{54314515-1421-1533-4351-5134db5bb446}</Project>
       <Name>JhoobinTahChinLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LahzeyeAkharLibrary\LahzeyeAkharLibrary.csproj">
-      <Project>{15344255-1b21-1533-4331-4864db1bb442}</Project>
-      <Name>LahzeyeAkharLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
-      <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
-      <Name>MashinBazhaLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MedadLibrary\MedadLibrary.csproj">
       <Project>{14344213-121b-1513-433d-4142db121245}</Project>
       <Name>MedadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MedioLibrary\MedioLibrary.csproj">
-      <Project>{1232d11f-151b-a5b5-1311-4bc28b33144f}</Project>
-      <Name>MedioLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
-      <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>
-      <Name>MenchBazLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
-      <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>
-      <Name>MobiligaLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MusicYadLibrary\MusicYadLibrary.csproj">
       <Project>{4211b11c-3511-a1b6-431d-fbc23b13d4b2}</Project>
       <Name>MusicYadLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MyLeagueLibrary\MyLeagueLibrary.csproj">
-      <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
-      <Name>MyLeagueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NebulaLibrary\NebulaLibrary.csproj">
-      <Project>{41b321f6-3bf5-2126-337d-3bcb3b411264}</Project>
-      <Name>NebulaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PhantomLibrary\PhantomLibrary.csproj">
-      <Project>{b232d11f-151b-a5b6-131d-4bc28b1314c8}</Project>
-      <Name>PhantomLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PorShetabLibrary\PorShetabLibrary.csproj">
       <Project>{25344214-1b11-1513-4331-4842db123241}</Project>
       <Name>PorShetabLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
-      <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
-      <Name>SepidRoodLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ShahreKalamehLibrary\ShahreKalamehLibrary.csproj">
-      <Project>{23bd342d-2d3f-4cf2-944d-02b5ce34242d}</Project>
-      <Name>ShahreKalamehLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShenoYad500Library\ShenoYad500Library.csproj">
-      <Project>{1c2c541d-aa02-1ec1-acfc-45d23145b565}</Project>
-      <Name>ShenoYad500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ShenoYadLibrary\ShenoYadLibrary.csproj">
-      <Project>{2c2c445d-3e02-4eb1-acfc-45d2aab5556b}</Project>
-      <Name>ShenoYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
-      <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
-      <Name>SoltanLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SoratyLibrary\SoratyLibrary.csproj">
-      <Project>{d124b1f6-3bf5-2124-5172-1bc23f4d216c}</Project>
-      <Name>SoratyLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
-      <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
-      <Name>Tabriz2018Library</Name>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\TahChinLibrary\TahChinLibrary.csproj">
       <Project>{b12311f6-3bf5-2126-337f-3bc43b41256f}</Project>
       <Name>TahChinLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TajoTakhtLibrary\TajoTakhtLibrary.csproj">
-      <Project>{25344215-1b21-1513-4331-4844db1b344f}</Project>
-      <Name>TajoTakhtLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TakavarLibrary\TakavarLibrary.csproj">
-      <Project>{52c36255-330f-25b1-abf2-4dd22ab523a1}</Project>
-      <Name>TakavarLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tamly500Library\Tamly500Library.csproj">
-      <Project>{312d1145-de02-4eb1-1cbd-75b1a4b5436f}</Project>
-      <Name>Tamly500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TamlyLibrary\TamlyLibrary.csproj">
-      <Project>{412d2155-de02-4eb1-acfd-75d3aab55364}</Project>
-      <Name>TamlyLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TirandaziLibrary\TirandaziLibrary.csproj">
-      <Project>{45c21d1f-2d58-42ff-984d-02b5ce55243f}</Project>
-      <Name>TirandaziLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

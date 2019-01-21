@@ -1,6 +1,6 @@
 ﻿using System;
 using SharedLibrary.Models;
-using MenchBazLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -39,7 +39,7 @@ namespace DehnadMenchBazService
                 var SendEndTime = sendTime + TimeSpan.Parse("00:00:05");
                 if (currentTime > sendTime && currentTime < SendEndTime)
                 {
-                    using (var entity = new MenchBazEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                     {
                         entity.ChangeMessageStatus((int)SharedLibrary.MessageHandler.MessageType.AutoCharge, null, item.Tag, currentPersianDate, (int)SharedLibrary.MessageHandler.ProcessStatus.InQueue, (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, null);
                     }
@@ -57,7 +57,7 @@ namespace DehnadMenchBazService
             //    var serviceCode = Properties.Settings.Default.ServiceCode;
             //    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode);
             //    var subscribers = SharedLibrary.ServiceHandler.GetServiceActiveSubscribersFromServiceId(serviceId.Value);
-            //    using (var entity = new MenchBazEntities())
+            //    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             //    {
             //        entity.Configuration.AutoDetectChangesEnabled = false;
             //        var autochargeTimeTable = GetAutochargeTimeTable();
@@ -115,7 +115,7 @@ namespace DehnadMenchBazService
             var autochargeTimeTable = new List<AutochargeTimeTable>();
             try
             {
-                using (var entity = new MenchBazEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     autochargeTimeTable = entity.AutochargeTimeTables.ToList();

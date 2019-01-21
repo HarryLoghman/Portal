@@ -218,15 +218,6 @@
     <Compile Include="Areas\AvvalYad\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\AvvalYad\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\AvvalYad\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\BimeIran\BimeIranAreaRegistration.cs" />
-    <Compile Include="Areas\BimeIran\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\BimeIran\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\BimeIran\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\BimeIran\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\BimeIran\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\BimeIran\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\BimeIran\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\BimeKarbala\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\Halghe\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Halghe\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Halghe\Controllers\MonitoringController.cs" />
@@ -324,7 +315,6 @@
     <Compile Include="Areas\Medad\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Medad\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Medad\MedadAreaRegistration.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\AvvalPod\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\AvvalPod\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\AvvalPod\Controllers\MonitoringController.cs" />
@@ -341,14 +331,6 @@
     <Compile Include="Areas\DefendIran\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\DefendIran\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\DefendIran\DefendIranAreaRegistration.cs" />
-    <Compile Include="Areas\Darchin\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Darchin\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\Darchin\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\Darchin\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\Darchin\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\Darchin\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\Darchin\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\Darchin\DarchinAreaRegistration.cs" />
     <Compile Include="Areas\Medio\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\Medio\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\Medio\Controllers\MonitoringController.cs" />
@@ -459,51 +441,6 @@
     <Compile Include="Areas\Takavar\Controllers\SentMessagesController.cs" />
     <Compile Include="Areas\Takavar\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Takavar\TakavarAreaRegistration.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\CarBrandsListController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\PointsController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\MashinBazha\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\MashinBazha\MyLeagueAreaRegistration.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\MobilesListController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\PointsController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\Mobiliga\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\Mobiliga\MyLeagueAreaRegistration.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\PointsController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\Danestaneh\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\Danestaneh\MyLeagueAreaRegistration.cs" />
-    <Compile Include="Areas\BimeKarbala\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\BimeKarbala\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\BimeKarbala\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\BimeKarbala\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\BimeKarbala\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\BimeKarbala\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\BimeKarbala\BimeKarbalaAreaRegistration.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\SendDirectMessageController.cs" />
     <Compile Include="Areas\JabehAbzar\Controllers\EventbaseContentsController.cs" />
     <Compile Include="Areas\JabehAbzar\Controllers\MessagesTemplate.cs" />
     <Compile Include="Areas\JabehAbzar\Controllers\MonitoringController.cs" />
@@ -554,74 +491,6 @@
     <Compile Include="Areas\DonyayeAsatir\DonyayeAsatirAreaRegistration.cs" />
     <Compile Include="Areas\Statistics\Controllers\SubscribersLogController.cs" />
     <Compile Include="Areas\Statistics\StatisticsAreaRegistration.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\PointsController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\Tabriz2018\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\Tabriz2018\Tabriz2018AreaRegistration.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\NabardGah\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\Boating\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\Boating\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\Boating\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Boating\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\Boating\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\Boating\Controllers\PointsController.cs" />
-    <Compile Include="Areas\Boating\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\Boating\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\Boating\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\Boating\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\Boating\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\Boating\BoatingAreaRegistration.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\PointsController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\SendDirectMessageController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\Tirandazi\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\Tirandazi\TirandaziAreaRegistration.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\PointsController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\SepidRood\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\SepidRood\SepidRoodAreaRegistration.cs" />
-    <Compile Include="Areas\NabardGah\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\NabardGah\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\NabardGah\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\NabardGah\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\NabardGah\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\NabardGah\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\NabardGah\NabardGahAreaRegistration.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\SentMessagesController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\ReceiveController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\SettingsController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\LeagueListController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\AutochargeContentsController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\AutochargeTimeTableController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\EventbaseContentsController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\MessagesTemplate.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\StatisticsController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\MonitoringController.cs" />
-    <Compile Include="Areas\MyLeague\Controllers\PointsController.cs" />
-    <Compile Include="Areas\MyLeague\MyLeagueAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\AppController.cs" />
@@ -646,16 +515,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Antlr3.Runtime.dll" />
-    <Content Include="bin\BimeKarbalaLibrary.dll" />
-    <Content Include="bin\BimeKarbalaLibrary.pdb" />
-    <Content Include="bin\DanestanehLibrary.dll" />
-    <Content Include="bin\DanestanehLibrary.pdb" />
     <Content Include="bin\EntityFramework.dll" />
     <Content Include="bin\EntityFramework.SqlServer.dll" />
     <Content Include="bin\Kendo.Mvc.dll" />
     <Content Include="bin\log4net.dll" />
-    <Content Include="bin\MashinBazhaLibrary.dll" />
-    <Content Include="bin\MashinBazhaLibrary.pdb" />
     <Content Include="bin\Microsoft.AspNet.Identity.Core.dll" />
     <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.dll" />
     <Content Include="bin\Microsoft.AspNet.Identity.Owin.dll" />
@@ -669,25 +532,13 @@
     <Content Include="bin\Microsoft.Owin.Security.OAuth.dll" />
     <Content Include="bin\Microsoft.Owin.Security.Twitter.dll" />
     <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
-    <Content Include="bin\MobiligaLibrary.dll" />
-    <Content Include="bin\MobiligaLibrary.pdb" />
-    <Content Include="bin\MyLeagueLibrary.dll" />
-    <Content Include="bin\MyLeagueLibrary.pdb" />
     <Content Include="bin\Newtonsoft.Json.dll" />
     <Content Include="bin\Owin.dll" />
     <Content Include="bin\Portal.dll" />
     <Content Include="bin\Portal.dll.config" />
     <Content Include="bin\Portal.pdb" />
-    <Content Include="bin\SepidRoodLibrary.dll" />
-    <Content Include="bin\SepidRoodLibrary.pdb" />
     <Content Include="bin\SharedLibrary.dll" />
     <Content Include="bin\SharedLibrary.pdb" />
-    <Content Include="bin\SoltanLibrary.dll" />
-    <Content Include="bin\SoltanLibrary.pdb" />
-    <Content Include="bin\Tabriz2018Library.dll" />
-    <Content Include="bin\Tabriz2018Library.pdb" />
-    <Content Include="bin\TirandaziLibrary.dll" />
-    <Content Include="bin\TirandaziLibrary.pdb" />
     <Content Include="bin\WebGrease.dll" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -1141,141 +992,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\BMITRABD.TTF" />
     <Content Include="Properties\DataSources\System.Data.DataTable.datasource" />
-    <Content Include="Areas\MyLeague\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\MyLeague\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\Points\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\MyLeague\Views\web.config" />
-    <Content Include="Areas\MyLeague\Views\LeagueList\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\Points\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\web.config" />
-    <Content Include="Areas\Mobiliga\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\Points\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\web.config" />
-    <Content Include="Areas\Mobiliga\Views\MobilesList\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\CarBrandsList\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\Points\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\web.config" />
-    <Content Include="Areas\NabardGah\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\NabardGah\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\NabardGah\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\NabardGah\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\NabardGah\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\NabardGah\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\NabardGah\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\NabardGah\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\NabardGah\Views\web.config" />
-    <Content Include="Areas\SepidRood\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\SepidRood\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\Points\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\SepidRood\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\SepidRood\Views\web.config" />
-    <Content Include="Areas\Tirandazi\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\Points\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\web.config" />
-    <Content Include="Areas\BimeKarbala\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\web.config" />
-    <Content Include="Areas\SepidRood\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\BimeKarbala\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\Danestaneh\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\MashinBazha\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\Mobiliga\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\MyLeague\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\NabardGah\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\Tirandazi\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Boating\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\Points\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Boating\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\Boating\Views\web.config" />
-    <Content Include="Areas\Tabriz2018\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\AutochargeContents\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\AutochargeTimeTable\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\Points\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\Settings\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\Tabriz2018\Views\web.config" />
     <Content Include="Areas\Statistics\Views\SubscribersLog\Index.cshtml" />
     <Content Include="Areas\Statistics\Views\web.config" />
     <Content Include="Areas\Statistics\Views\_ViewStart.cshtml" />
@@ -1319,16 +1035,6 @@
     <Content Include="Areas\Tamly\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Tamly\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\Tamly\Views\web.config" />
-    <Content Include="Areas\BimeIran\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\BimeIran\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\BimeIran\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\BimeIran\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\BimeIran\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\BimeIran\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\BimeIran\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\BimeIran\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\BimeIran\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\BimeIran\Views\web.config" />
     <Content Include="Areas\ShenoYad\Views\_ViewStart.cshtml" />
     <Content Include="Areas\ShenoYad\Views\EventbaseContents\Index.cshtml" />
     <Content Include="Areas\ShenoYad\Views\MessagesTemplate\Index.cshtml" />
@@ -1513,16 +1219,6 @@
     <Content Include="Areas\AvvalPod500\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\AvvalPod500\Views\Statistics\Index.cshtml" />
     <Content Include="Areas\AvvalPod500\Views\web.config" />
-    <Content Include="Areas\Darchin\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Darchin\Views\EventbaseContents\Index.cshtml" />
-    <Content Include="Areas\Darchin\Views\MessagesTemplate\Index.cshtml" />
-    <Content Include="Areas\Darchin\Views\Monitoring\Index.cshtml" />
-    <Content Include="Areas\Darchin\Views\Receive\Index.cshtml" />
-    <Content Include="Areas\Darchin\Views\SendDirectMessage\Index.cshtml" />
-    <Content Include="Areas\Darchin\Views\SentMessages\Index.cshtml" />
-    <Content Include="Areas\Darchin\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Darchin\Views\Statistics\Index.cshtml" />
-    <Content Include="Areas\Darchin\Views\web.config" />
     <Content Include="Areas\Dambel\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Dambel\Views\EventbaseContents\Index.cshtml" />
     <Content Include="Areas\Dambel\Views\MessagesTemplate\Index.cshtml" />
@@ -2082,12 +1778,7 @@
     <Folder Include="Areas\AvvalPod\Models\" />
     <Folder Include="Areas\AvvalYad\Models\" />
     <Folder Include="Areas\BehAmooz500\Models\" />
-    <Folder Include="Areas\BimeIran\Models\" />
-    <Folder Include="Areas\BimeKarbala\Models\" />
-    <Folder Include="Areas\Boating\Models\" />
     <Folder Include="Areas\Dambel\Models\" />
-    <Folder Include="Areas\Danestaneh\Models\" />
-    <Folder Include="Areas\Darchin\Models\" />
     <Folder Include="Areas\DefendIran\Models\" />
     <Folder Include="Areas\Dezhban\Models\" />
     <Folder Include="Areas\DonyayeAsatir\Models\" />
@@ -2102,29 +1793,22 @@
     <Folder Include="Areas\JhoobinPorShetab\Models\" />
     <Folder Include="Areas\JhoobinTahChin\Models\" />
     <Folder Include="Areas\LahzeyeAkhar\Models\" />
-    <Folder Include="Areas\MashinBazha\Models\" />
     <Folder Include="Areas\Medad\Models\" />
     <Folder Include="Areas\Medio\Models\" />
     <Folder Include="Areas\MenchBaz\Models\" />
-    <Folder Include="Areas\Mobiliga\Models\" />
     <Folder Include="Areas\MusicYad\Models\" />
-    <Folder Include="Areas\MyLeague\Models\" />
-    <Folder Include="Areas\NabardGah\Models\" />
     <Folder Include="Areas\Nebula\Models\" />
     <Folder Include="Areas\Phantom\Models\" />
     <Folder Include="Areas\PorShetab\Models\" />
-    <Folder Include="Areas\SepidRood\Models\" />
     <Folder Include="Areas\ShahreKalameh\Models\" />
     <Folder Include="Areas\ShenoYad500\Models\" />
     <Folder Include="Areas\ShenoYad\Models\" />
     <Folder Include="Areas\Soraty\Models\" />
     <Folder Include="Areas\Statistics\Models\" />
-    <Folder Include="Areas\Tabriz2018\Models\" />
     <Folder Include="Areas\TahChin\Models\" />
     <Folder Include="Areas\TajoTakht\Models\" />
     <Folder Include="Areas\Takavar\Models\" />
     <Folder Include="Areas\Tamly\Models\" />
-    <Folder Include="Areas\Tirandazi\Models\" />
     <Folder Include="Areas\Tools\Models\" />
     <Folder Include="bin\bg-BG\" />
     <Folder Include="bin\cs-CZ\" />
@@ -2155,85 +1839,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AcharLibrary\AcharLibrary.csproj">
-      <Project>{42513ea5-5bd7-4436-8c9a-f273d15cb4f9}</Project>
-      <Name>AcharLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AsemanLibrary\AsemanLibrary.csproj">
-      <Project>{14344114-121b-1513-431d-4b42fb131141}</Project>
-      <Name>AsemanLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvvalPod500Library\AvvalPod500Library.csproj">
-      <Project>{11f5a255-33f1-3544-2c12-48224341251b}</Project>
-      <Name>AvvalPod500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvvalPodLibrary\AvvalPodLibrary.csproj">
-      <Project>{c125a251-33f1-c524-2b22-4bd25f4d2312}</Project>
-      <Name>AvvalPodLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvvalYadLibrary\AvvalYadLibrary.csproj">
-      <Project>{c113b241-33f5-c224-2122-4bc23f4d235f}</Project>
-      <Name>AvvalYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BehAmooz500Library\BehAmooz500Library.csproj">
-      <Project>{c1134245-33f5-c521-2122-4bcb334d234a}</Project>
-      <Name>BehAmooz500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BimeIranLibrary\BimeIranLibrary.csproj">
-      <Project>{b23e2145-de02-4eb1-a4fd-75d3aab55361}</Project>
-      <Name>BimeIranLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BimeKarbalaLibrary\BimeKarbalaLibrary.csproj">
-      <Project>{21df1d13-2d38-42ff-984d-02b5ce4424d4}</Project>
-      <Name>BimeKarbalaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BoatingLibrary\BoatingLibrary.csproj">
-      <Project>{11bd1312-2d38-42ff-944d-02b5ce3457c1}</Project>
-      <Name>BoatingLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DambelLibrary\DambelLibrary.csproj">
       <Project>{1434b114-121b-1513-431d-4bc287131142}</Project>
       <Name>DambelLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DanestanehLibrary\DanestanehLibrary.csproj">
-      <Project>{23b71226-2c58-42eb-984d-0a57cd55842a}</Project>
-      <Name>DanestanehLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DarchinLibrary\DarchinLibrary.csproj">
-      <Project>{2234d11f-151b-8515-1312-43c28733114b}</Project>
-      <Name>DarchinLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DefendIranLibrary\DefendIranLibrary.csproj">
-      <Project>{d124b1f6-3bf5-2124-537f-1bc43b41256d}</Project>
-      <Name>DefendIranLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DezhbanLibrary\DezhbanLibrary.csproj">
-      <Project>{211d214a-3b15-2126-337d-3bcb3b5424fa}</Project>
-      <Name>DezhbanLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DonyayeAsatirLibrary\DonyayeAsatirLibrary.csproj">
-      <Project>{22cd1452-2d3f-4cf2-944d-02b5ce34f4d2}</Project>
-      <Name>DonyayeAsatirLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FitShowLibrary\FitShowLibrary.csproj">
-      <Project>{4d21455d-3e0f-2eb1-acfc-45d2aab5124c}</Project>
-      <Name>FitShowLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HalgheLibrary\HalgheLibrary.csproj">
-      <Project>{cfb68ea5-0d44-4c0c-9a04-7a1b84b29bf1}</Project>
-      <Name>HalgheLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HazaranLibrary\HazaranLibrary.csproj">
-      <Project>{14324215-1c21-1533-4331-5134db5bb44f}</Project>
-      <Name>HazaranLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IrancellTestLibrary\IrancellTestLibrary.csproj">
-      <Project>{d112bf46-33f5-c224-2122-4bc23f4d2122}</Project>
-      <Name>IrancellTestLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JabehAbzarLibrary\JabehAbzarLibrary.csproj">
-      <Project>{5d2c145c-de02-4eb1-acfc-45d2aab5536f}</Project>
-      <Name>JabehAbzarLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\JhoobinDambelLibrary\JhoobinDambelLibrary.csproj">
       <Project>{54314515-1421-1533-4351-5134db5bb441}</Project>
@@ -2259,57 +1867,17 @@
       <Project>{54314515-1421-1533-4351-5134db5bb446}</Project>
       <Name>JhoobinTahChinLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LahzeyeAkharLibrary\LahzeyeAkharLibrary.csproj">
-      <Project>{15344255-1b21-1533-4331-4864db1bb442}</Project>
-      <Name>LahzeyeAkharLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MashinBazhaLibrary\MashinBazhaLibrary.csproj">
-      <Project>{11d7b226-1d58-42eb-984d-0a52ce554431}</Project>
-      <Name>MashinBazhaLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MedadLibrary\MedadLibrary.csproj">
       <Project>{14344213-121b-1513-433d-4142db121245}</Project>
       <Name>MedadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MedioLibrary\MedioLibrary.csproj">
-      <Project>{1232d11f-151b-a5b5-1311-4bc28b33144f}</Project>
-      <Name>MedioLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MenchBazLibrary\MenchBazLibrary.csproj">
-      <Project>{b233a221-33d1-b521-2b42-4dd22a4523b4}</Project>
-      <Name>MenchBazLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MobiligaLibrary\MobiligaLibrary.csproj">
-      <Project>{23b71226-1d58-42eb-984d-0a57cd55842f}</Project>
-      <Name>MobiligaLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MusicYadLibrary\MusicYadLibrary.csproj">
       <Project>{4211b11c-3511-a1b6-431d-fbc23b13d4b2}</Project>
       <Name>MusicYadLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MyLeagueLibrary\MyLeagueLibrary.csproj">
-      <Project>{3097aecb-b184-4e33-8e50-605c31f7a8e8}</Project>
-      <Name>MyLeagueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NebulaLibrary\NebulaLibrary.csproj">
-      <Project>{41b321f6-3bf5-2126-337d-3bcb3b411264}</Project>
-      <Name>NebulaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PhantomLibrary\PhantomLibrary.csproj">
-      <Project>{b232d11f-151b-a5b6-131d-4bc28b1314c8}</Project>
-      <Name>PhantomLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PorShetabLibrary\PorShetabLibrary.csproj">
       <Project>{25344214-1b11-1513-4331-4842db123241}</Project>
       <Name>PorShetabLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SepidRoodLibrary\SepidRoodLibrary.csproj">
-      <Project>{21b32522-2d58-42ff-984d-0a52ce55142c}</Project>
-      <Name>SepidRoodLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ShahreKalamehLibrary\ShahreKalamehLibrary.csproj">
-      <Project>{23bd342d-2d3f-4cf2-944d-02b5ce34242d}</Project>
-      <Name>ShahreKalamehLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
@@ -2319,49 +1887,9 @@
       <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
       <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShenoYad500Library\ShenoYad500Library.csproj">
-      <Project>{1c2c541d-aa02-1ec1-acfc-45d23145b565}</Project>
-      <Name>ShenoYad500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ShenoYadLibrary\ShenoYadLibrary.csproj">
-      <Project>{2c2c445d-3e02-4eb1-acfc-45d2aab5556b}</Project>
-      <Name>ShenoYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SoltanLibrary\SoltanLibrary.csproj">
-      <Project>{bad74526-1c58-42eb-984d-0a52ce35412d}</Project>
-      <Name>SoltanLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SoratyLibrary\SoratyLibrary.csproj">
-      <Project>{d124b1f6-3bf5-2124-5172-1bc23f4d216c}</Project>
-      <Name>SoratyLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tabriz2018Library\Tabriz2018Library.csproj">
-      <Project>{5bd34522-2d58-42eb-984d-0a52ce35443a}</Project>
-      <Name>Tabriz2018Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TahChinLibrary\TahChinLibrary.csproj">
       <Project>{b12311f6-3bf5-2126-337f-3bc43b41256f}</Project>
       <Name>TahChinLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TajoTakhtLibrary\TajoTakhtLibrary.csproj">
-      <Project>{25344215-1b21-1513-4331-4844db1b344f}</Project>
-      <Name>TajoTakhtLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TakavarLibrary\TakavarLibrary.csproj">
-      <Project>{52c36255-330f-25b1-abf2-4dd22ab523a1}</Project>
-      <Name>TakavarLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tamly500Library\Tamly500Library.csproj">
-      <Project>{312d1145-de02-4eb1-1cbd-75b1a4b5436f}</Project>
-      <Name>Tamly500Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TamlyLibrary\TamlyLibrary.csproj">
-      <Project>{412d2155-de02-4eb1-acfd-75d3aab55364}</Project>
-      <Name>TamlyLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TirandaziLibrary\TirandaziLibrary.csproj">
-      <Project>{45c21d1f-2d58-42ff-984d-02b5ce55243f}</Project>
-      <Name>TirandaziLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

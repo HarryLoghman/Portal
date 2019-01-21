@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using SoratyLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using System;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Portal.Areas.Soraty.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Soraty/Monitoring
-        private SoratyEntities db = new SoratyEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soraty");
 
         public ActionResult Index()
         {

@@ -211,7 +211,7 @@ namespace Portal.Controllers
                 message.IsReceivedFromIntegratedPanel = false;
                 message.Content = keyword;
                 message.ServiceId = serviceInfo.ServiceId;
-                logs.Info("Notify:" + message.MobileNumber + ", " + message.ShortCode + "," + message.IsReceivedFromIntegratedPanel + "," + message.Content
+                logs.Info("Telepromo Controller Notify:" + message.MobileNumber + ", " + message.ShortCode + "," + message.IsReceivedFromIntegratedPanel + "," + message.Content
                     + "," + message.ServiceId);
                 if (type == "SUBSCRIBE")
                 {
@@ -257,7 +257,6 @@ namespace Portal.Controllers
         public HttpResponseMessage NotifyPost([FromBody]dynamic input)
         {
             //logs.Info("NotifyPost");
-
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string serviceId = input.serviceid;
@@ -274,7 +273,7 @@ namespace Portal.Controllers
             string status = input.status;
             //string validity = input.validity; //no map field in db
             //string nextRenewalDate = input.next_renewal_date; //no map field in db
-            logs.Info("NotifyPost:" + input.msisdn + ", " + input.shortcode + "," + input.keyword + "," + input.status);
+            logs.Info("Telepromo Controller NotifyPost:" + input.msisdn + ", " + input.shortcode + "," + input.keyword + "," + input.status);
 
             if (status != "0" && status != "5")
             {
@@ -522,7 +521,7 @@ namespace Portal.Controllers
             messageObj.MobileNumber = da;
             messageObj.ShortCode = oa;
             messageObj.Content = txt;
-            logs.Info("message:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content);
+            logs.Info("Telepromo Controller message:" + messageObj.MobileNumber + "," + messageObj.ShortCode + "," + messageObj.Content);
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -547,11 +546,10 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage MessagePost([FromBody] dynamic input)
         {
-
             dynamic responseJson = new ExpandoObject();
             string msisdn = input.msisdn;
             string shortCode = input.shortcode;
-            logs.Info("MessagePost:" + input.msisdn + ", " + input.shortcode + "," + input.message + "," + input.partnername);
+            logs.Info("Telepromo Controller MessagePost:" + input.msisdn + ", " + input.shortcode + "," + input.message + "," + input.partnername);
             string message = HttpUtility.UrlDecode(input.message.Value.ToString());
             string partnerName = input.partnername;
             //string transId = input.trans_id;//no map field in db
@@ -594,6 +592,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delivery(string refId, string deliveryStatus)
         {
+            logs.Info("TelepromoController Delivery : " + refId);
             //var delivery = new DeliveryObject();
             //delivery.ReferenceId = refId;
             //delivery.Status = deliveryStatus;
@@ -614,7 +613,7 @@ namespace Portal.Controllers
             string correlator = input.correlator;
             string deliveryStatus = input.deliverystatus;
 
-            logs.Info("Telepromo DeliveryPost: msisdn=" + input.msisdn + ", correlator=" + input.correlator + ",deliveryStatus=" + input.deliverystatus);
+            logs.Info("Telepromo Controller DeliveryPost: msisdn=" + input.msisdn + ", correlator=" + input.correlator + ",deliveryStatus=" + input.deliverystatus);
 
             string shortCode;
             SharedLibrary.MessageSender.sb_processCorrelator(correlator, ref msisdn, out shortCode);
@@ -653,7 +652,7 @@ namespace Portal.Controllers
             }
             catch(Exception e)
             {
-                logs.Error("Exception in Telepromo DeliveryPost:", e);
+                logs.Error("Telepromo Controller Exception in DeliveryPost:", e);
             }
             var response = Request.CreateResponse(HttpStatusCode.OK);
             response.Content = new StringContent(result, Encoding.UTF8, "application/json");
@@ -664,6 +663,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Services(string status, string msisdn, string serviceId = null)
         {
+            logs.Info("TelepromoController Services : " + msisdn);
             List<dynamic> history = new List<dynamic>();
             using (var entity = new PortalEntities())
             {
@@ -758,6 +758,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage UnSubscribe(string msisdn, string serviceId)
         {
+            logs.Info("TelepromoController unsubscribe : " + msisdn);
             dynamic responseJson = new ExpandoObject();
             Subscriber subscriber;
             var mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
@@ -805,7 +806,9 @@ namespace Portal.Controllers
                         //h.ReceivedMessage(message, service);
                     }
                     else if (service.ServiceCode == "ShenoYad")
-                        ShenoYadLibrary.HandleMo.ReceivedMessage(message, service);
+                    {
+                        SharedVariables.prp_shenoYadLibrary.ReceivedMessage(message, service);
+                    }
                     else if (service.ServiceCode == "FitShow")
                     { SharedVariables.prp_FitshowLibrary.ReceivedMessage(message, service); }
                     else if (service.ServiceCode == "Takavar")
@@ -854,6 +857,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Subscribe(string msisdn, string serviceId)
         {
+            logs.Info("TelepromoController Subscribe : " + msisdn);
             dynamic responseJson = new ExpandoObject();
             using (var entity = new PortalEntities())
             {
@@ -919,6 +923,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage History(string msisdn, long fromDate = 0, long toDate = 0, string serviceId = null)
         {
+            logs.Info("TelepromoController History : " + msisdn);
             dynamic responseJson = new ExpandoObject();
             List<dynamic> history = new List<dynamic>();
             using (var entity = new PortalEntities())
@@ -995,6 +1000,7 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Events(string msisdn, string serviceId = null)
         {
+            logs.Info("TelepromoController Events : " + msisdn);
             dynamic responseJson = new ExpandoObject();
             List<dynamic> eventsList = new List<dynamic>();
             using (var entity = new PortalEntities())
@@ -1041,7 +1047,10 @@ namespace Portal.Controllers
             messageObj.ShortCode = input.shortcode;
             messageObj.Content = input.message;
             messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-
+            string recievedPayload = Request.Content.ReadAsStringAsync().Result;
+            //logs.Info("Telepromo Controller PardisMessagePayload:" + recievedPayload);
+            logs.Info("Telepromo Controller pardisMessage:MobileNumber:" + messageObj.MobileNumber + ",ShortCode:" + messageObj.ShortCode + ",Content:" + messageObj.Content
+                + ",ReceivedFrom:" + messageObj.ReceivedFrom + ",action:" + input.action + ",actor:" + input.actor);
             if (input.action == "subscribe" || input.action == "unsubscribe")
             {
                 if (input.action == "subscribe")
@@ -1070,6 +1079,14 @@ namespace Portal.Controllers
         public HttpResponseMessage PardisDelivery([FromBody]dynamic input)
         {
             var result = "";
+            try
+            {
+                logs.Info("Telepromo Controller PardisDelivery:messageid:" + input.messageid + ",part:" + input.part + ",DeliveryStatus:" + input.DeliveryStatus + ",msisdn:" + input.msisdn + ",shortcode:" + input.shortcode);
+            }
+            catch(Exception e)
+            {
+                logs.Error("Telepromo Controller Exception:", e);
+            }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;

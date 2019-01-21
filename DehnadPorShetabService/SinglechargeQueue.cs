@@ -34,7 +34,8 @@ namespace DehnadPorShetabService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new PorShetabEntities())
+                
+                using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();

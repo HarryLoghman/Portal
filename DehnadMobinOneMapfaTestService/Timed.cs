@@ -28,7 +28,7 @@ namespace DehnadMobinOneMapfaTestService
                         var message = SharedLibrary.MessageHandler.CreateMessageFromMessageBuffer(messageItem.SubscriberId, messageItem.MobileNumber, messageItem.ServiceId, messageItem.Content, messageItem.ContentId, (SharedLibrary.MessageHandler.MessageType)messageItem.MessageType, (SharedLibrary.MessageHandler.ProcessStatus)messageItem.ProcessStatus, messageItem.ImiMessageType, messageItem.ImiChargeCode, messageItem.ImiChargeKey, messageItem.AggregatorId, messageItem.MessagePoint.GetValueOrDefault(), messageItem.Tag, 0, "0", messageItem.Price.GetValueOrDefault());
                         messages.Add(message);
                     }
-                    MobinOneMapfaTestLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                    SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode , messages);
                     entity.TimedTempMessagesBuffers.RemoveRange(tempMessageBuffer);
                     entity.SaveChanges();
                 }

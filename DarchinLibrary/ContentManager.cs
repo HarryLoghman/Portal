@@ -68,7 +68,7 @@ namespace DarchinLibrary
             }
         }
 
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static void HandleContent(MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
         {
             try
             {

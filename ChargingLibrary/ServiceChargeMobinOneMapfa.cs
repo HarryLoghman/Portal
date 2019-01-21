@@ -7,11 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using SharedLibrary;
 using SharedLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 
 namespace ChargingLibrary
 {
     public class ServiceChargeMobinOneMapfa : ServiceCharge
     {
+        string v_url;
+       
         int isCampaignActive;
         public override string[] prp_wipeDescription
         {
@@ -35,12 +38,13 @@ namespace ChargingLibrary
                     throw new Exception("There is no aggregator with id =" + this.prp_service.AggregatorId + " in " + this.prp_service.ServiceCode);
             }
             isCampaignActive = 0;
-            using (var entity = new SharedShortCodeServiceLibrary.SharedModel.ShortCodeServiceEntities("Shared" + this.prp_service.databaseName + "Entities"))
+            using (var entity = new SharedServiceEntities("Shared" + this.prp_service.databaseName + "Entities"))
             {
                 var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                 if (campaign != null)
                     isCampaignActive = Convert.ToInt32(campaign.Value);
             }
+            this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.mobinOneMapfa, HelpfulFunctions.enumServersActions.charge);
         }
 
         public override void sb_charge(ServiceHandler.SubscribersAndCharges subscriber, int installmentCycleNumber, int loopNo
@@ -110,7 +114,7 @@ namespace ChargingLibrary
                 singleChargeReq.timeStartChargeMtnSubscriber = timeStartChargeMtnSubscriber;
                 singleChargeReq.timeStartProcessMtnInstallment = null;
                 singleChargeReq.webStatus = WebExceptionStatus.UnknownError;
-                singleChargeReq.url = "http://10.20.9.8:9005/charging_websrv/services/Charging";
+                singleChargeReq.url = this.v_url;
 
                 var serivceId = this.prp_service.Id;
                 var paridsShortCodes = SharedLibrary.ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);

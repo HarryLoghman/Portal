@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AcharLibrary.Models;
-using AcharLibrary;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 using System.Threading;
 
@@ -32,7 +31,7 @@ namespace DehnadAcharService
         {
             try
             {
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var today = DateTime.Now;
                     entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
@@ -50,7 +49,7 @@ namespace DehnadAcharService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
@@ -80,7 +79,7 @@ namespace DehnadAcharService
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
@@ -123,7 +122,7 @@ namespace DehnadAcharService
             {
                 logs.Info("InstallmentJob start!");
                 string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
-                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Achar", aggregatorName);
+                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(Properties.Settings.Default.ServiceCode, aggregatorName);
                 List<SinglechargeInstallment> installmentList;
                 List<SharedLibrary.Models.Subscriber> subscribers = new List<SharedLibrary.Models.Subscriber>();
                 List<ImiChargeCode> chargeCodes;
@@ -135,7 +134,7 @@ namespace DehnadAcharService
                     {
                         portalEntity.Configuration.AutoDetectChangesEnabled = false;
                         logs.Info("installmentCycleNumber 1 getting the postpaid subscribers list");
-                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Achar");
+                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(Properties.Settings.Default.ServiceCode);
                         subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null && o.OperatorPlan == 1).ToList();
                     }
                 }
@@ -145,11 +144,11 @@ namespace DehnadAcharService
                     {
                         portalEntity.Configuration.AutoDetectChangesEnabled = false;
                         logs.Info("installmentCycleNumber 2 getting the prepaid subscribers list");
-                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode("Achar");
+                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(Properties.Settings.Default.ServiceCode);
                         subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null && o.OperatorPlan == 2).ToList();
                     }
                 }
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
@@ -261,7 +260,7 @@ namespace DehnadAcharService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -293,7 +292,8 @@ namespace DehnadAcharService
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(message.ServiceCode);
+                        var response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && installmentCycleNumber == 1)
                             continue;
                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
@@ -309,22 +309,22 @@ namespace DehnadAcharService
                                     response.Description = "Billing  Failed";
                                 }
                                 else
-                                    response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);
-                                    response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         continue; ////// TEMPORARY!!!!!!!
                                         SetMessagePrice(message, chargeCodes, 100);
-                                        response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                         {
                                             if (installmentCycleNumber == 2)
                                                 continue;
                                             SetMessagePrice(message, chargeCodes, 50);
-                                            response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                            response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                         }
                                     }
                                 }
@@ -332,16 +332,16 @@ namespace DehnadAcharService
                             else if (message.Price == 300)
                             {
                                 SetMessagePrice(message, chargeCodes, 200);
-                                response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     continue; ////// TEMPORARY!!!!!!!
                                     SetMessagePrice(message, chargeCodes, 100);
-                                    response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         SetMessagePrice(message, chargeCodes, 50);
-                                        response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                     }
                                 }
                             }
@@ -349,11 +349,11 @@ namespace DehnadAcharService
                             {
                                 continue; ////// TEMPORARY!!!!!!!
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
-                                    response = AcharLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode, message, serviceAdditionalInfo, installment.Id).Result;
                                 }
                             }
                         }

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AcharLibrary.Models;
-using AcharLibrary;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 
 namespace DehnadAcharService
@@ -34,7 +33,7 @@ namespace DehnadAcharService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -76,13 +75,13 @@ namespace DehnadAcharService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
                     var QueueList = entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 29) < now && now < DbFunctions.AddDays(o.DateCreated, 30) && o.IsUserCanceledTheInstallment == false && o.IsRenewalMessageSent != true).ToList();
-                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Achar");
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(Properties.Settings.Default.ServiceCode);
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
                     {
@@ -94,9 +93,9 @@ namespace DehnadAcharService
                     {
                         var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "RenewalSinglechargeMessage").Content;
-                        var imiChargeObject = AcharLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
-                        AcharLibrary.MessageHandler.InsertMessageToQueue(message);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode, message);
                         item.IsRenewalMessageSent = true;
                         entity.Entry(item).State = EntityState.Modified;
                         if (batchSaveCounter > 500)
@@ -122,13 +121,13 @@ namespace DehnadAcharService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
                     var QueueList = entity.SinglechargeWaitings.Where(o => DbFunctions.AddDays(o.DateAdded, 2) < now && o.IsLastDayWarningSent == false).ToList();
-                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Achar");
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(Properties.Settings.Default.ServiceCode);
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
                     {
@@ -145,9 +144,9 @@ namespace DehnadAcharService
                         }
                         var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "OneDayRemainedTillSinglecharge").Content;
-                        var imiChargeObject = AcharLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
-                        AcharLibrary.MessageHandler.InsertMessageToQueue(message);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode , message);
                         item.IsLastDayWarningSent = true;
                         entity.Entry(item).State = EntityState.Modified;
                         batchSaveCounter += 1;
@@ -167,13 +166,13 @@ namespace DehnadAcharService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
                     var QueueList = entity.SinglechargeInstallments.Where(o => now > DbFunctions.AddDays(o.DateCreated, 30) && o.DateCreated > DbFunctions.AddDays(now, -32) && o.IsUserCanceledTheInstallment != true && o.IsRenewd != true).ToList();
-                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Achar");
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(Properties.Settings.Default.ServiceCode);
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
                     {
@@ -225,13 +224,13 @@ namespace DehnadAcharService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new AcharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
                     var now = DateTime.Now;
                     var QueueList = entity.SinglechargeWaitings/*.Where(o => DbFunctions.AddHours(o.DateAdded, 2) <= now)*/.ToList();
-                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId("Achar");
+                    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(Properties.Settings.Default.ServiceCode);
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(serviceId.GetValueOrDefault());
                     if (serviceInfo == null)
                     {

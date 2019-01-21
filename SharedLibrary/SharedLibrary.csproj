@@ -77,6 +77,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aggregators\Aggregator.cs" />
+    <Compile Include="Aggregators\AggregatorMCI.cs" />
+    <Compile Include="Aggregators\AggregatorMobinOne.cs" />
+    <Compile Include="Aggregators\AggregatorMobinOneMapfa.cs" />
+    <Compile Include="Aggregators\AggregatorMTN.cs" />
+    <Compile Include="Aggregators\AggregatorTelepromo.cs" />
+    <Compile Include="Aggregators\AggregatorTelepromoMapfa.cs" />
+    <Compile Include="Aggregators\WebRequestParameter.cs" />
+    <Compile Include="Aggregators\WebRequestParameterMessage.cs" />
+    <Compile Include="Aggregators\WebRequestProcess.cs" />
     <Compile Include="Date.cs" />
     <Compile Include="HandleSubscription.cs" />
     <Compile Include="HelpfulFunctions.cs" />
@@ -183,6 +193,12 @@
     <Compile Include="Models\Referral.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServersAction.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServersIP.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Service.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -194,6 +210,105 @@
     </Compile>
     <Compile Include="Models\ServiceKeyword.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\AutochargeContent.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\AutochargeContentsSendedToUser.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\AutochargeHeaderFooter.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\AutochargeMessagesBuffer.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\AutochargeTimeTable.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\DailyStatistic.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\EventbaseContent.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\EventbaseMessagesBuffer.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\ImiChargeCode.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\InstallmentCycle.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\MessagesArchive.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\MessagesMonitoring.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\MessagesTemplate.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\OnDemandMessagesBuffer.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\Otp.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\PointsTable.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\ServiceCommand.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\ServiceOffReason.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\ServicesRealtimeStatistic.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\Setting.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SharedServiceModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SharedServiceModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SharedServiceModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SharedServiceModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SharedServiceModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\Singlecharge.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SinglechargeArchive.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SinglechargeInstallment.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SinglechargeWaiting.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SubscribersAdditionalInfo.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\TimedTempMessagesBuffer.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\vw_SentMessages.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\vw_Singlecharge.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SinglechargeDelivery.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
@@ -284,6 +399,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="ServiceHandler.cs" />
+    <Compile Include="SharedVariables.cs" />
     <Compile Include="ThrottleDedicated.cs" />
     <Compile Include="ThrottleMTN.cs" />
     <Compile Include="UsefulWebApis.cs" />
@@ -299,6 +415,13 @@
     </EntityDeploy>
     <None Include="Models\PortalModel.edmx.diagram">
       <DependentUpon>PortalModel.edmx</DependentUpon>
+    </None>
+    <EntityDeploy Include="Models\ServiceModel\SharedServiceModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SharedServiceModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Models\ServiceModel\SharedServiceModel.edmx.diagram">
+      <DependentUpon>SharedServiceModel.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\System.Data.DataTable.datasource" />
@@ -447,7 +570,18 @@
       <DependentUpon>PortalModel.edmx</DependentUpon>
       <LastGenOutput>PortalModel.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\ServiceModel\SharedServiceModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SharedServiceModel.edmx</DependentUpon>
+      <LastGenOutput>SharedServiceModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\ServiceModel\SharedServiceModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SharedServiceModel.edmx</DependentUpon>
+      <LastGenOutput>SharedServiceModel.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

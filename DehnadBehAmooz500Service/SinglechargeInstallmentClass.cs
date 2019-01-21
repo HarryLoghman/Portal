@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BehAmooz500Library.Models;
-using BehAmooz500Library;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 using System.Threading;
 
@@ -31,7 +30,7 @@ namespace DehnadBehAmooz500Service
 
         public static void FakeInstallmentJob()
         {
-            using (var entity = new BehAmooz500Entities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             {
                 var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsExceededDailyChargeLimit == false && o.IsUserCanceledTheInstallment == false).ToList();
                 var batchSaveCounter = 0;
@@ -58,7 +57,7 @@ namespace DehnadBehAmooz500Service
         {
             try
             {
-                using (var entity = new BehAmooz500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var today = DateTime.Now;
                     entity.SinglechargeInstallments.Where(o => DbFunctions.AddDays(o.DateCreated, 30) < today).ToList().ForEach(o => o.IsFullyPaid = true);
@@ -76,7 +75,7 @@ namespace DehnadBehAmooz500Service
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new BehAmooz500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var userDailyBalnace = entity.SinglechargeInstallments.Where(o => o.IsUserDailyChargeBalanced == true).ToList();
@@ -106,7 +105,7 @@ namespace DehnadBehAmooz500Service
             try
             {
                 int batchSaveCounter = 0;
-                using (var entity = new BehAmooz500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var installmentList = entity.SinglechargeInstallments.Where(o => o.IsFullyPaid == false && o.IsUserDailyChargeBalanced == false && o.IsUserCanceledTheInstallment == false).ToList();
@@ -175,7 +174,7 @@ namespace DehnadBehAmooz500Service
                         subscribers = portalEntity.Subscribers.Where(o => o.ServiceId == service.Id && o.DeactivationDate == null && o.OperatorPlan == 2).ToList();
                     }
                 }
-                using (var entity = new BehAmooz500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     chargeCodes = entity.ImiChargeCodes.Where(o => o.Price <= maxChargeLimit).ToList();
@@ -287,7 +286,7 @@ namespace DehnadBehAmooz500Service
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new BehAmooz500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -319,7 +318,7 @@ namespace DehnadBehAmooz500Service
                         message.ShortCode = serviceAdditionalInfo["shortCode"];
 
                         message = ChooseSinglechargePrice(message, chargeCodes, priceUserChargedToday);
-                        var response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                        var response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                         if (response.IsSucceeded == false && installmentCycleNumber == 1)
                             continue;
                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
@@ -335,22 +334,23 @@ namespace DehnadBehAmooz500Service
                                     response.Description = "Billing  Failed";
                                 }
                                 else
-                                    response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode,
+                                        message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 200);
-                                    response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         continue; ////// TEMPORARY!!!!!!!
                                         SetMessagePrice(message, chargeCodes, 100);
-                                        response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                         if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                         {
                                             if (installmentCycleNumber == 2)
                                                 continue;
                                             SetMessagePrice(message, chargeCodes, 50);
-                                            response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                            response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                         }
                                     }
                                 }
@@ -358,16 +358,16 @@ namespace DehnadBehAmooz500Service
                             else if (message.Price == 300)
                             {
                                 SetMessagePrice(message, chargeCodes, 200);
-                                response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     continue; ////// TEMPORARY!!!!!!!
                                     SetMessagePrice(message, chargeCodes, 100);
-                                    response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                     if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                     {
                                         SetMessagePrice(message, chargeCodes, 50);
-                                        response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                        response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                     }
                                 }
                             }
@@ -375,11 +375,11 @@ namespace DehnadBehAmooz500Service
                             {
                                 continue; ////// TEMPORARY!!!!!!!
                                 SetMessagePrice(message, chargeCodes, 100);
-                                response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                 if (response.IsSucceeded == false && response.Description.Contains("Billing  Failed"))
                                 {
                                     SetMessagePrice(message, chargeCodes, 50);
-                                    response = BehAmooz500Library.MessageHandler.SendSinglechargeMesssageToTelepromo(message, serviceAdditionalInfo, installment.Id).Result;
+                                    response = SharedShortCodeServiceLibrary.MessageHandler.SendSinglechargeMesssageToTelepromo(Properties.Settings.Default.ServiceCode , message, serviceAdditionalInfo, installment.Id).Result;
                                 }
                             }
                         }

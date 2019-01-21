@@ -11,30 +11,37 @@ namespace BulkLibrary
 {
     public class SenderMTN : Sender
     {
+        string v_url;
+        string v_urlDelivery;
         public SenderMTN(SharedLibrary.Models.vw_servicesServicesInfo service) : base(service)
         {
-
+            this.v_url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
+            this.v_urlDelivery = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMTNDelivery);
         }
         public override void sb_send(EventbaseMessagesBufferExtended eventbase)
         {
-            this.sb_sendMTN(eventbase);
+            
+            this.sb_sendToMTN(eventbase);
         }
 
-        internal virtual void sb_sendMTN(EventbaseMessagesBufferExtended eventbase)
+        internal virtual void sb_sendToMTN(EventbaseMessagesBufferExtended eventbase)
         {
 
             System.Threading.Interlocked.Increment(ref BulkSenderController.v_taskCount);
-            this.sb_sendMessageToMtnSubscriberWithOutThread(eventbase);
+            this.sb_sendMessageToMtnWithOutThread(eventbase);
         }
 
-        internal virtual void sb_sendMessageToMtnSubscriberWithOutThread(EventbaseMessagesBufferExtended eventbase)
+        internal virtual void sb_sendMessageToMtnWithOutThread(EventbaseMessagesBufferExtended eventbase)
         {
             //PorShetabLibrary.Models.Singlecharge singlecharge;
             #region prepare Request
-            var url = "http://92.42.55.180:8310" + "/SendSmsService/services/SendSms";
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-            string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(this.prp_service.AggregatorServiceId
-                , timeStamp, eventbase.MobileNumber, this.prp_service.ShortCode, eventbase.Content, this.prp_service.Id.ToString());
+            //var url = "http://92.42.55.180:8310" + "/SendSmsService/services/SendSms";
+            var url = this.v_url;
+            var urlDelivery = this.v_urlDelivery;
+            //var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            string payload = SharedLibrary.Aggregators.MTN.CreateBodyStringForMessage(this.prp_service.AggregatorServiceId
+                ,this.prp_service.ShortCode
+                , eventbase.MobileNumber, eventbase.Content, eventbase.DateAddedToQueue);
             #endregion
 
             try
@@ -61,14 +68,15 @@ namespace BulkLibrary
 
             try
             {
-                Uri uri = new Uri(eventbase.prp_url, UriKind.Absolute);
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
-                webRequest.Timeout = 60 * 1000;
+                HttpWebRequest webRequest = SharedLibrary.Aggregators.MTN.CreateWebRequestWithoutBody(eventbase.prp_url);
+                //Uri uri = new Uri(eventbase.prp_url, UriKind.Absolute);
+                //HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                //webRequest.Timeout = 60 * 1000;
 
-                //webRequest.Headers.Add("SOAPAction", action);
-                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
-                webRequest.Accept = "text/xml";
-                webRequest.Method = "POST";
+                ////webRequest.Headers.Add("SOAPAction", action);
+                //webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                //webRequest.Accept = "text/xml";
+                //webRequest.Method = "POST";
 
                 webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, eventbase });
             }
@@ -159,7 +167,7 @@ namespace BulkLibrary
                 if (response.StatusCode == HttpStatusCode.OK)
                     isSucceeded = true;
                 response.Close();
-                response.StatusCode.ToString();
+                //response.StatusCode.ToString();
                 parseResult = this.parseMTN_XMLResult(result);
 
                 if (isSucceeded)

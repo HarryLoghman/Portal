@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedLibrary.Models;
-using DefendIranLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Linq;
 using System.Collections;
 
@@ -30,11 +30,11 @@ namespace DehnadDefendIranService
                 var take = threadsNo["take"];
                 var skip = threadsNo["skip"];
 
-                Type entityType = typeof(DefendIranEntities);
+                Type entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
 
-                autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
-                eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
-                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
+                autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessagesOld(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
+                eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessagesOld(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
+                onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessagesOld(entityType, SharedLibrary.MessageHandler.MessageType.OnDemand, 200)).OfType<OnDemandMessagesBuffer>().ToList();
 
                 if (retryNotDelieveredMessages && autochargeMessages.Count == 0 && eventbaseMessages.Count == 0)
                 {
@@ -42,7 +42,7 @@ namespace DehnadDefendIranService
                     var now = DateTime.Now.TimeOfDay;
                     if (now < retryEndTime)
                     {
-                        using (var entity = new DefendIranEntities())
+                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                         {
                             entity.RetryUndeliveredMessages();
                         }
@@ -51,10 +51,10 @@ namespace DehnadDefendIranService
 
                 if (DateTime.Now.Hour < 23 && DateTime.Now.Hour > 7)
                 {
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
-                    SharedLibrary.MessageHandler.SendSelectedMessages(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    SharedLibrary.MessageHandler.SendSelectedMessagesOld(entityType, autochargeMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                    SharedLibrary.MessageHandler.SendSelectedMessagesOld(entityType, eventbaseMessages, skip, take, serviceAdditionalInfo, aggregatorName);
                 }
-                SharedLibrary.MessageHandler.SendSelectedMessages(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
+                SharedLibrary.MessageHandler.SendSelectedMessagesOld(entityType, onDemandMessages, skip, take, serviceAdditionalInfo, aggregatorName);
             }
             catch (Exception e)
             {

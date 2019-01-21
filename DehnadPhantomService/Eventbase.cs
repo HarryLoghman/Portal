@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using PhantomLibrary.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using SharedLibrary.Models.ServiceModel;
+
 
 namespace DehnadPhantomService
 {
@@ -14,7 +15,7 @@ namespace DehnadPhantomService
         {
             try
             {
-                using (var entity = new PhantomEntities())
+                using (var entity = new SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -24,7 +25,7 @@ namespace DehnadPhantomService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    PhantomLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode, Properties.Settings.Default.ServiceCode, eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)
@@ -58,7 +59,7 @@ namespace DehnadPhantomService
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
                             //mobileNumbers = finalMobileNumbers;
                             //finalMobileNumbers.RemoveAll(o => o.Contains("09122137327"));
-                            var imiChargeObject = PhantomLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
+                            var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode ,0, null);
                             var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                             var rnd = new Random();
@@ -83,7 +84,7 @@ namespace DehnadPhantomService
                                 TaskList.Add(ProcessSubscribersListChunk(chunkedmobileNumbersList, item.Message, imiChargeObject, service.Id, aggregatorId, i, contentId));
                             }
                             Task.WaitAll(TaskList.ToArray());
-                            PhantomLibrary.MessageHandler.CreateMonitoringItem(contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
+                            SharedShortCodeServiceLibrary.MessageHandler.CreateMonitoringItem(Properties.Settings.Default.ServiceCode ,contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
                         }
                         catch (Exception e)
                         {
@@ -116,7 +117,7 @@ namespace DehnadPhantomService
                 {
                     if (counter > 1000)
                     {
-                        PhantomLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode ,messages);
                         messages.Clear();
                         counter = 1;
                     }
@@ -137,7 +138,7 @@ namespace DehnadPhantomService
                     messages.Add(message);
                     counter++;
                 }
-                PhantomLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode , messages);
             }
             catch (Exception e)
             {

@@ -13,12 +13,12 @@ namespace ChargingLibrary
 {
     public class ServiceChargeMTN : ServiceCharge
     {
-
+        string v_url;
         public override string[] prp_wipeDescription { get { return new string[] { "SVC0001: Service Error", "POL0904: SP API level request rate control not pass, sla id is 1002.", "POL0910: Minimum Amount per Transaction" }; ; } }
         public ServiceChargeMTN(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
             : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice)
         {
-
+            this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
         }
 
         public override void sb_charge(ServiceHandler.SubscribersAndCharges subscriber
@@ -59,18 +59,34 @@ namespace ChargingLibrary
             }
 
             #region prepare Request
+            //var startTime = DateTime.Now;
+            //string referenceCode;
             var startTime = DateTime.Now;
             string charge = "chargeAmount";
             var spId = "980110006379";
 
             var mobile = "98" + message.MobileNumber.TrimStart('0');
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             int rialedPrice = message.Price.Value * 10;
             var referenceCode = Guid.NewGuid().ToString();
 
-            var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
 , timeStamp, mobile, rialedPrice, referenceCode, charge, this.prp_service.AggregatorServiceId, spId);
+            ////string charge = "chargeAmount";
+            ////var spId = "980110006379";
+
+            ////var mobile = "98" + message.MobileNumber.TrimStart('0');
+            ////var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            ////int rialedPrice = message.Price.Value * 10;
+            ////var referenceCode = Guid.NewGuid().ToString();
+
+            ////var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            ////            string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
+            ////, timeStamp, mobile, rialedPrice, referenceCode, charge, this.prp_service.AggregatorServiceId, spId);
+            //string payload = SharedLibrary.Aggregators.MTN.CreateBodyStringForCharging(this.prp_service.AggregatorServiceId
+            //    , message.MobileNumber,message.Price,message.ShortCode, out referenceCode);
             #endregion
 
             DateTime dateCreated = DateTime.Now;
@@ -105,7 +121,7 @@ namespace ChargingLibrary
                 singleChargeReq.timeStartChargeMtnSubscriber = timeStartChargeMtnSubscriber;
                 singleChargeReq.timeStartProcessMtnInstallment = null;
                 singleChargeReq.webStatus = WebExceptionStatus.UnknownError;
-                singleChargeReq.url = url;
+                singleChargeReq.url = this.v_url;
 
                 sendPostAsync(singleChargeReq);
 
@@ -364,11 +380,12 @@ namespace ChargingLibrary
             var spId = "980110006379";
 
             var mobile = "98" + message.MobileNumber.TrimStart('0');
-            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
             int rialedPrice = message.Price.Value * 10;
             var referenceCode = Guid.NewGuid().ToString();
 
-            var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+            var url = this.v_url;
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
 , timeStamp, mobile, rialedPrice, referenceCode, charge, this.prp_service.AggregatorServiceId, spId);
             #endregion

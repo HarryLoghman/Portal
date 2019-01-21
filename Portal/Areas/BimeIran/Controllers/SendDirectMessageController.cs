@@ -52,8 +52,8 @@ namespace Portal.Areas.BimeIran.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = BimeIranLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            BimeIranLibrary.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode,messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode, messageObject);
             return Content("Ok");
         }
     }

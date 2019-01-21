@@ -39,6 +39,7 @@ namespace Portal.Controllers
                 messageObj.MobileNumber = messageObj.From;
                 messageObj.ShortCode = messageObj.To;
             }
+            logs.Info("ReceiveController : " + messageObj.MobileNumber);
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -82,6 +83,7 @@ namespace Portal.Controllers
                 messageObj.MobileNumber = messageObj.From;
                 messageObj.ShortCode = messageObj.To;
             }
+            logs.Info("ReceiveController WebMessage : " + messageObj.MobileNumber);
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -116,6 +118,7 @@ namespace Portal.Controllers
             messageObj.Content = txt;
 
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            logs.Info("ReceiveController TelepromoMessage : " + messageObj.MobileNumber);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
                 result = "-1";
@@ -146,6 +149,7 @@ namespace Portal.Controllers
                 messageObj.MobileNumber = messageObj.From;
                 messageObj.ShortCode = messageObj.To;
             }
+            logs.Info("ReceiveController  ReceiveMessage : " + messageObj.MobileNumber);
             messageObj.ShortCode = "307229";
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
             if (messageObj.MobileNumber == "Invalid Mobile Number")
@@ -194,7 +198,7 @@ namespace Portal.Controllers
         {
             var result = "1";
             ServiceInfo serviceInfo = null;
-            Service service = null;
+            vw_servicesServicesInfo service = null;
             bool IsNotified = true;
             if (pardisImiMciServiceIds.ContainsKey(integratedPanelObj.ServiceID))
             {
@@ -235,6 +239,7 @@ namespace Portal.Controllers
                             recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
                             recievedMessage.IsReceivedFromIntegratedPanel = true;
                         }
+                        logs.Info("ReceiveController PardisIntegratedPanel1 : " + recievedMessage.MobileNumber);
                         SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
                         result = "1";
                     }
@@ -259,6 +264,7 @@ namespace Portal.Controllers
                         recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-NotifySubscription" : null;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
                         result = "1";
+                        logs.Info("ReceiveController PardisIntegratedPanel2 : " + recievedMessage.MobileNumber);
                     }
                 }
             }

@@ -22,11 +22,11 @@ namespace SharedLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int retryCountMax = 15;
         public static int retryPauseBeforeSendByMinute = -1;
-        public static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
-        public static string telepromoIpJSON = "http://10.20.9.187:8700";
-        public static string telepromoPardisIp = "http://10.20.9.188:9090";
-        public static string irancellIp = "http://92.42.55.180:8310";
-        public static string mciIp = "http://172.17.251.18:8090";
+        //public static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
+        //public static string telepromoIpJSON = "http://10.20.9.187:8700";
+        //public static string telepromoPardisIp = "http://10.20.9.188:9090";
+        //public static string irancellIp = "http://92.42.55.180:8310";
+        //public static string mciIp = "http://172.17.251.18:8090";
 
         public static async Task<dynamic> OTPRequestGeneral(string aggregatorName, dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
@@ -135,7 +135,8 @@ namespace SharedLibrary
                     if (messagesCount == 0)
                         return;
 
-                    var url = telepromoIp + "/samsson-sdp/transfer/send?";
+                    //var url = telepromoIp + "/samsson-sdp/transfer/send?";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.sendmessage);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -226,10 +227,11 @@ namespace SharedLibrary
                     if (messagesCount == 0)
                         return;
 
-                    var url = telepromoIpJSON + "/samsson-gateway/sendmessage/";
+                    //var url = telepromoIpJSON + "/samsson-gateway/sendmessage/";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.sendmessage);
                     var username = "dehnad";
                     var password = "D4@Hn!";
-                    var serviceId = serviceAdditionalInfo["OperatorServiceId"];
+                    var operatorServiceId = serviceAdditionalInfo["OperatorServiceId"];
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     //var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                     //var description = "deliverychannel:WAP|discoverychannel:WAP|origin:"+shortcode+ "|contentid:"+message.MessageType
@@ -280,32 +282,36 @@ namespace SharedLibrary
                                 continue;
                             }
 
-                            var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                            //var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                             var description = "deliverychannel:WAP|discoverychannel:WAP|origin:" + shortcode + "|contentid:" + message.MessageType;
-                            var messageContent = message.Content;
+                            //var messageContent = message.Content;
 
-                            Dictionary<string, string> dic = new Dictionary<string, string>()
-                            {
-                                { "username" , username }
-                                ,{ "password" , password }
-                                ,{"serviceid" , serviceId.ToString() }
-                                ,{"shortcode" , shortcode }
-                                ,{ "msisdn" , mobileNumber }
-                                ,{"description" , description }
-                                , {"chargecode" ,chargeCode }
-                                ,{ "amount" , amount }
-                                ,{"currency" , currency }
-                                ,{"message",  messageContent }
-                                ,{"is_free",isFree }
-                                ,{"correlator" , correlator }
-                                ,{ "servicename" , serviceName }
-                            };
-                            //json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"serviceid\":\"" + serviceId.ToString() + "\""
-                            //    + ",\"shortcode\":\"" + shortcode + "\",\"msisdn\":\"" + mobileNumber + "\",\"description\":\"" + description + "\""
-                            //    + ",\"chargecode\":\"" + chargeCode + "\",\"amount\":\"" + amount + "\",\"currency\":\"" + currency + "\""
-                            //    + ",\"message\":\"" + messageContent + "\",\"is_free\":\"" + isFree + "\",\"correlator\":\"" + correlator + "\""
-                            //    + ",\"servicename\":\"" + serviceName + "\"" + "}";
-                            json = JsonConvert.SerializeObject(dic);
+                            //Dictionary<string, string> dic = new Dictionary<string, string>()
+                            //{
+                            //    { "username" , username }
+                            //    ,{ "password" , password }
+                            //    ,{"serviceid" , serviceId.ToString() }
+                            //    ,{"shortcode" , shortcode }
+                            //    ,{ "msisdn" , mobileNumber }
+                            //    ,{"description" , description }
+                            //    ,{"chargecode" ,chargeCode }
+                            //    ,{"amount" , amount }
+                            //    ,{"currency" , currency }
+                            //    ,{"message",  messageContent }
+                            //    ,{"is_free",isFree }
+                            //    ,{"correlator" , correlator }
+                            //    ,{ "servicename" , serviceName }
+                            //};
+                            ////json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"serviceid\":\"" + serviceId.ToString() + "\""
+                            ////    + ",\"shortcode\":\"" + shortcode + "\",\"msisdn\":\"" + mobileNumber + "\",\"description\":\"" + description + "\""
+                            ////    + ",\"chargecode\":\"" + chargeCode + "\",\"amount\":\"" + amount + "\",\"currency\":\"" + currency + "\""
+                            ////    + ",\"message\":\"" + messageContent + "\",\"is_free\":\"" + isFree + "\",\"correlator\":\"" + correlator + "\""
+                            ////    + ",\"servicename\":\"" + serviceName + "\"" + "}";
+                            //json = JsonConvert.SerializeObject(dic);
+
+                            json = MessageHandler.CreateTelepromoJsonString(username, password
+                                , operatorServiceId, shortcode, message, description, chargeCode, amount, currency, isFree
+                                , serviceName);
 
                             var request = new HttpRequestMessage(HttpMethod.Post, url);
                             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -379,7 +385,8 @@ namespace SharedLibrary
                     if (messagesCount == 0)
                         return;
 
-                    var url = telepromoIp + "/samsson-sdp/jtransfer/qsend?";
+                    //var url = telepromoIp + "/samsson-sdp/jtransfer/qsend?";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.bulk);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -482,7 +489,8 @@ namespace SharedLibrary
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
-                    var url = telepromoIp + "/samsson-sdp/transfer/charge?";
+                    //var url = telepromoIp + "/samsson-sdp/transfer/charge?";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.charge);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -544,7 +552,8 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
-                var url = telepromoIp + "/samsson-sdp/pin/generate?";
+                //var url = telepromoIp + "/samsson-sdp/pin/generate?";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpRequest);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -613,8 +622,8 @@ namespace SharedLibrary
 
             try
             {
-                var url = telepromoIpJSON + "/samsson-gateway/otp-generation/";
-
+                //var url = telepromoIpJSON + "/samsson-gateway/otp-generation/";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.otpRequest);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var username = "dehnad";
                 var password = "D4@Hn!";
@@ -753,7 +762,8 @@ namespace SharedLibrary
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
             {
-                var url = telepromoIp + "/samsson-sdp/pin/confirm?";
+                //var url = telepromoIp + "/samsson-sdp/pin/confirm?";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpConfirm);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -807,8 +817,8 @@ namespace SharedLibrary
 
             try
             {
-                var url = telepromoIpJSON + "/samsson-gateway/otp-confirmation/";
-
+                //var url = telepromoIpJSON + "/samsson-gateway/otp-confirmation/";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.otpConfirm);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var username = "dehnad";
                 var password = "D4@Hn!";
@@ -1920,14 +1930,16 @@ namespace SharedLibrary
                         HttpResponseMessage response = null;
                         if (message.Price >= 0)
                         {
-                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}", singlecharge.UserToken, packageName, sku, message.Price);
+                            //url = string.Format("https://samssonsdp.com/api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}", singlecharge.UserToken, packageName, sku, message.Price);
+                            url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.charge), singlecharge.UserToken, packageName, sku, message.Price);
                             singlecharge.ReferenceId = "Charging";
                             logs.Info("samssonsinglecharge url: " + url);
                             response = await client.PostAsync(url, content);
                         }
                         else
                         {
-                            url = string.Format("https://samssonsdp.com/api/v1/GuestMode/cancel/{0}/{1}/{2}/", singlecharge.UserToken, packageName, sku);
+                            //url = string.Format("https://samssonsdp.com/api/v1/GuestMode/cancel/{0}/{1}/{2}/", singlecharge.UserToken, packageName, sku);
+                            url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.chargeCancel), singlecharge.UserToken, packageName, sku);
                             singlecharge.ReferenceId = "Unsubscribe";
                             message.Price = 0;
                             isCancel = true;
@@ -2172,83 +2184,86 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task SendMesssagesToMtn(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task SendMesssagesToMtnOld(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
         {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                try
-                {
-                    var messagesCount = messages.Count;
-                    if (messagesCount == 0)
-                        return;
-                    var url = irancellIp + "/SendSmsService/services/SendSms";
-                    var username = serviceAdditionalInfo["username"];
-                    var serviceId = serviceAdditionalInfo["serviceId"];
-                    using (var client = new HttpClient())
-                    {
-                        foreach (var message in messages)
-                        {
-                            if (message.RetryCount != null && message.RetryCount > retryCountMax)
-                            {
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                entity.Entry(message).State = EntityState.Modified;
-                                continue;
-                            }
+            //using (dynamic entity = Activator.CreateInstance(entityType))
+            //{
+            //    entity.Configuration.AutoDetectChangesEnabled = false;
+            //    try
+            //    {
+            //        var messagesCount = messages.Count;
+            //        if (messagesCount == 0)
+            //            return;
+            //        //var url = irancellIp + "/SendSmsService/services/SendSms";
+            //        var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.sendmessage);
+            //        var username = serviceAdditionalInfo["username"];
+            //        var serviceId = serviceAdditionalInfo["serviceId"];
+            //        using (var client = new HttpClient())
+            //        {
+            //            foreach (var message in messages)
+            //            {
+            //                if (message.RetryCount != null && message.RetryCount > retryCountMax)
+            //                {
+            //                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+            //                    entity.Entry(message).State = EntityState.Modified;
+            //                    continue;
+            //                }
 
-                            var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-                            //string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, serviceId);
-                            string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, fnc_getCorrelator(serviceAdditionalInfo["shortCode"], message, true));
-                            var result = new Dictionary<string, string>();
-                            result["status"] = "";
-                            result["message"] = "";
-                            try
-                            {
-                                result = await SendSingleMessageToMtn(client, url, payload);
-                            }
-                            catch (Exception e)
-                            {
-                                logs.Error("Exception in SendSingleMessageToMtn: " + e);
-                            }
+            //                //var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+            //                //string payload = SharedLibrary.MessageHandler.CreateMtnSoapEnvelopeString(serviceAdditionalInfo["aggregatorServiceId"], timeStamp, message.MobileNumber, serviceAdditionalInfo["shortCode"], message.Content, serviceId);
+            //                string payload = SharedLibrary.Aggregators.MTN.CreateBodyStringForMessage(
+            //                    serviceAdditionalInfo["aggregatorServiceId"], serviceAdditionalInfo["shortCode"], message.MobileNumber
+            //                    , message.Content, message.DateAddedToQueue);
+            //                var result = new Dictionary<string, string>();
+            //                result["status"] = "";
+            //                result["message"] = "";
+            //                try
+            //                {
+            //                    result = await SendSingleMessageToMtn(client, url, payload);
+            //                }
+            //                catch (Exception e)
+            //                {
+            //                    logs.Error("Exception in SendSingleMessageToMtn: " + e);
+            //                }
 
 
-                            if (result["status"] == "OK")
-                            {
-                                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                                message.ReferenceId = result["message"];
-                                message.SentDate = DateTime.Now;
-                                message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                if (message.MessagePoint > 0)
-                                    SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
-                                entity.Entry(message).State = EntityState.Modified;
-                            }
-                            else
-                            {
-                                logs.Info("SendMesssagesToMtn Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
-                                if (message.RetryCount > retryCountMax)
-                                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                message.DateLastTried = DateTime.Now;
-                                message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
-                                entity.Entry(message).State = EntityState.Modified;
-                            }
-                        }
-                        entity.SaveChanges();
-                    }
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SendMessagesToMtn: " + e);
-                    foreach (var message in messages)
-                    {
-                        if (message.RetryCount > retryCountMax)
-                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                        message.DateLastTried = DateTime.Now;
-                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
-                        entity.Entry(message).State = EntityState.Modified;
-                    }
-                    entity.SaveChanges();
-                }
-            }
+            //                if (result["status"] == "OK")
+            //                {
+            //                    message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
+            //                    message.ReferenceId = result["message"];
+            //                    message.SentDate = DateTime.Now;
+            //                    message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            //                    if (message.MessagePoint > 0)
+            //                        SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
+            //                    entity.Entry(message).State = EntityState.Modified;
+            //                }
+            //                else
+            //                {
+            //                    logs.Info("SendMesssagesToMtn Message was not sended with status of: " + result["status"] + " - description: " + result["message"]);
+            //                    if (message.RetryCount > retryCountMax)
+            //                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+            //                    message.DateLastTried = DateTime.Now;
+            //                    message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+            //                    entity.Entry(message).State = EntityState.Modified;
+            //                }
+            //            }
+            //            entity.SaveChanges();
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        logs.Error("Exception in SendMessagesToMtn: " + e);
+            //        foreach (var message in messages)
+            //        {
+            //            if (message.RetryCount > retryCountMax)
+            //                message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
+            //            message.DateLastTried = DateTime.Now;
+            //            message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
+            //            entity.Entry(message).State = EntityState.Modified;
+            //        }
+            //        entity.SaveChanges();
+            //    }
+            //}
         }
 
         public static async Task<Dictionary<string, string>> SendSingleMessageToMtn(HttpClient client, string url, string payload)
@@ -2317,10 +2332,11 @@ namespace SharedLibrary
                 else
                     charge = "chargeAmount";
                 var mobile = "98" + message.MobileNumber.TrimStart('0');
-                var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
+                var timeStamp = SharedLibrary.Aggregators.AggregatorMTN.MTNTimestamp(DateTime.Now);
                 int rialedPrice = message.Price.Value * 10;
                 var referenceCode = Guid.NewGuid().ToString();
-                var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+                //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
                 string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
         , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
                 try
@@ -2467,26 +2483,26 @@ namespace SharedLibrary
 
                     using (var mobineOneClient = new MobinOneServiceReference.tpsPortTypeClient())
                     {
-                        logs.Info("SendMesssagesToMobinOne5:beforesendsms");
-                        logs.Info("smsList.type:" + smsList.type);
-                        logs.Info("smsList.username:" + smsList.username);
-                        logs.Info("smsList.pass:" + smsList.password);
-                        logs.Info("smsList.shortcode:" + smsList.shortcode);
-                        logs.Info("smsList.servicekey:" + smsList.servicekey);
+                        //logs.Info("SendMesssagesToMobinOne5:beforesendsms");
+                        //logs.Info("smsList.type:" + smsList.type);
+                        //logs.Info("smsList.username:" + smsList.username);
+                        //logs.Info("smsList.pass:" + smsList.password);
+                        //logs.Info("smsList.shortcode:" + smsList.shortcode);
+                        //logs.Info("smsList.servicekey:" + smsList.servicekey);
 
-                        for (int i = 0; i <= smsList.number.Length - 1; i++)
-                        {
-                            logs.Info("smsList.number[" + i.ToString() + "]:" + smsList.number[i]
-                                + ",smsList.message[" + i.ToString() + "]:" + smsList.message[i]
-                                + ",smsList.chargeCode[" + i.ToString() + "]:" + smsList.chargecode[i]
-                                + ",smsList.price[" + i.ToString() + "]:" + smsList.amount[i]
-                                + ",smsList.requestId[" + i.ToString() + "]:" + smsList.requestId[i]);
-                        }
+                        //for (int i = 0; i <= smsList.number.Length - 1; i++)
+                        //{
+                        //    logs.Info("smsList.number[" + i.ToString() + "]:" + smsList.number[i]
+                        //        + ",smsList.message[" + i.ToString() + "]:" + smsList.message[i]
+                        //        + ",smsList.chargeCode[" + i.ToString() + "]:" + smsList.chargecode[i]
+                        //        + ",smsList.price[" + i.ToString() + "]:" + smsList.amount[i]
+                        //        + ",smsList.requestId[" + i.ToString() + "]:" + smsList.requestId[i]);
+                        //}
                         var result = mobineOneClient.sendSms(smsList);
                         logs.Info("response:" + result);
                         if (result.Length == 0)
                         {
-                            logs.Info("SendMesssagesToMobinOne does not return response there must be somthing wrong with the parameters");
+                            logs.Info("SendMesssagesToMobinOne does not return response there must be something wrong with the parameters");
                             foreach (var message in messages)
                             {
                                 if (message.RetryCount > retryCountMax)
@@ -2709,7 +2725,8 @@ namespace SharedLibrary
                         };
 
                         var content = new FormUrlEncodedContent(values);
-                        var url = string.Format("https://www.tci.ir/api/v1/GuestMode/AddPhone/{0}", message.MobileNumber);
+                        //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/AddPhone/{0}", message.MobileNumber);
+                        var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpRequest), message.MobileNumber);
                         var response = await client.PostAsync(url, content);
                         if (response.IsSuccessStatusCode)
                         {
@@ -2774,7 +2791,8 @@ namespace SharedLibrary
                         };
 
                         var content = new FormUrlEncodedContent(values);
-                        var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
+                        //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
+                        var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpConfirm), message.Token, message.ConfirmCode);
                         var response = await client.PostAsync(url, content);
                         var responseString = await response.Content.ReadAsStringAsync();
                         logs.Info(responseString);
@@ -2826,39 +2844,53 @@ namespace SharedLibrary
                     var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                     var serviceId = serviceAdditionalInfo["serviceId"];
 
-                    var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
-
+                    //var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.sendmessage);
+                    var urlMCIDelivery = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.dehandReceivePortalOnTohid, HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
                     foreach (var message in messages)
                     {
                         var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
 
-                        string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v4_0/local"">
-                           <soapenv:Header/>
-                           <soapenv:Body>
-                              <loc:sendSms>
-                        <loc:addresses>{0}</loc:addresses>
-                                 <loc:senderName>{1}</loc:senderName>", mobileNumber, shortcode);
-                        if (message.Price != 0)
-                        {
-                            payload += string.Format(@"
-                            <loc:charging>
-                                <description></description>
-                                <currency>RLS</currency>
-                                <amount>{0}</amount>
-                                <code>{1}</code>
-                             </loc:charging>", message.Price + "0", message.ImiChargeKey);
-                        }
-                        
-                        payload += string.Format(@"
-                        <loc:message> {0} </loc:message>
-                            <loc:receiptRequest>
-                                         <endpoint>http://10.20.96.65:8090/api/Mci/Delivery</endpoint>
-                                    <interfaceName>SMS</interfaceName>
-                                    <correlator>{1}</correlator>
-                                    </loc:receiptRequest>
-                                  </loc:sendSms>
-                                </soapenv:Body>
-                              </soapenv:Envelope>", message.Content, fnc_getCorrelator(shortcode, message, true));
+                        //string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v4_0/local"">
+                        //   <soapenv:Header/>
+                        //   <soapenv:Body>
+                        //      <loc:sendSms>
+                        //<loc:addresses>{0}</loc:addresses>
+                        //         <loc:senderName>{1}</loc:senderName>", mobileNumber, shortcode);
+                        //if (message.Price != 0)
+                        //{
+                        //    payload += string.Format(@"
+                        //    <loc:charging>
+                        //        <description></description>
+                        //        <currency>RLS</currency>
+                        //        <amount>{0}</amount>
+                        //        <code>{1}</code>
+                        //     </loc:charging>", message.Price + "0", message.ImiChargeKey);
+                        //}
+
+                        ////payload += string.Format(@"
+                        ////<loc:message> {0} </loc:message>
+                        ////    <loc:receiptRequest>
+                        ////                 <endpoint>http://10.20.96.65:8090/api/Mci/Delivery</endpoint>
+                        ////            <interfaceName>SMS</interfaceName>
+                        ////            <correlator>{1}</correlator>
+                        ////            </loc:receiptRequest>
+                        ////          </loc:sendSms>
+                        ////        </soapenv:Body>
+                        ////      </soapenv:Envelope>", message.Content, fnc_getCorrelator(shortcode, message, true));
+
+                        //payload += string.Format(@"
+                        //<loc:message> {0} </loc:message>
+                        //    <loc:receiptRequest>
+                        //                 <endpoint>{2}</endpoint>
+                        //            <interfaceName>SMS</interfaceName>
+                        //            <correlator>{1}</correlator>
+                        //            </loc:receiptRequest>
+                        //          </loc:sendSms>
+                        //        </soapenv:Body>
+                        //      </soapenv:Envelope>", message.Content, fnc_getCorrelator(shortcode, message, true), urlMCIDelivery);
+                        string payload = MessageHandler.CreateMCISoapEnvelopeString(message, shortcode
+                            , message.Price, message.ImiChargeKey, urlMCIDelivery);
                         using (var client = new HttpClient())
                         {
                             client.DefaultRequestHeaders.Add("serviceKey", aggregatorServiceId);
@@ -2945,7 +2977,8 @@ namespace SharedLibrary
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
-                var url = mciIp + "/apigw/charging/pushotp";
+                //var url = mciIp + "/apigw/charging/pushotp";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpRequest);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var rnd = new Random();
                 var refrenceCode = rnd.Next(100000000, 999999999).ToString();
@@ -2964,8 +2997,12 @@ namespace SharedLibrary
                                 ""description"": ""otp""
                             }}
                     }}", aggregatorServiceId, mobileNumber, refrenceCode, shortcode, message.ImiChargeKey, serviceAdditionalInfo["serviceName"]);
+
                 using (var client = new HttpClient())
                 {
+                    logs.Info("MCI Direct OTP Charge : " + url + ":" + json);
+
+
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
                     var result = await client.PostAsync(url, content);
                     var responseString = await result.Content.ReadAsStringAsync();
@@ -3017,7 +3054,8 @@ namespace SharedLibrary
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
-                var url = mciIp + "/apigw/charging/chargeotp";
+                //var url = mciIp + "/apigw/charging/chargeotp";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpConfirm);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 string otpIds = singlecharge.ReferenceId;
                 var optIdsSplitted = otpIds.Split('_');
@@ -3071,7 +3109,8 @@ namespace SharedLibrary
                     if (messagesCount == 0)
                         return;
 
-                    var url = telepromoPardisIp + "/samsson-gateway/sendmessagepardis/";
+                    //var url = telepromoPardisIp + "/samsson-gateway/sendmessagepardis/";
+                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.sendmessage);
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
@@ -3080,12 +3119,15 @@ namespace SharedLibrary
                     var serviceName = serviceAdditionalInfo["serviceName"];
                     var currency = "RLS";
                     var chargeCode = "";
-                    var correlator = fnc_getCorrelator(shortcode, messages, true);// shortcode + "-" + serviceAdditionalInfo["serviceCode"];
+
+
+
                     var description = "";
                     using (var client = new HttpClient())
                     {
                         foreach (var message in messages)
                         {
+                            var correlator = fnc_getCorrelator(shortcode, message, true);// shortcode + "-" + serviceAdditionalInfo["serviceCode"];
                             if (message.RetryCount != null && message.RetryCount >= retryCountMax)
                             {
                                 message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
@@ -3168,7 +3210,8 @@ namespace SharedLibrary
             singlecharge.MobileNumber = message.MobileNumber;
             try
             {
-                var url = telepromoPardisIp + "/samsson-gateway/otp-generationpardis/";
+                //var url = telepromoPardisIp + "/samsson-gateway/otp-generationpardis/";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.otpRequest);
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
@@ -3231,7 +3274,8 @@ namespace SharedLibrary
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
             {
-                var url = telepromoPardisIp + "/samsson-gateway/otp-confirmationpardis/";
+                //var url = telepromoPardisIp + "/samsson-gateway/otp-confirmationpardis/";
+                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.otpConfirm);
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];
@@ -3271,17 +3315,21 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        private static string fnc_getCorrelator(string shortCode, dynamic message , bool addShortCode)
+        public static string fnc_getCorrelator( string shortCode , long ticks, bool addShortCode)
         {
+            if (string.IsNullOrEmpty(shortCode))
+            {
+                throw new ArgumentException("ShortCode is not specified");
+            }
             if (addShortCode)
             {
                 if (!shortCode.StartsWith("98"))
                     shortCode = "98" + shortCode;
             }
-            return shortCode + "s" + message.DateAddedToQueue.Ticks.ToString();
+            return shortCode + "s" + ticks.ToString();
         }
 
-        public static void sb_processCorrelator(string correlator,ref string mobileNumber , out string shortCode)
+        public static void sb_processCorrelator(string correlator, ref string mobileNumber, out string shortCode)
         {
             if (mobileNumber.StartsWith("tel:98"))
                 mobileNumber = mobileNumber.Remove(0, 6);
@@ -3291,5 +3339,7 @@ namespace SharedLibrary
             if (shortCode != null && shortCode.StartsWith("98"))
                 shortCode = shortCode.Remove(0, 2);
         }
+
+
     }
 }

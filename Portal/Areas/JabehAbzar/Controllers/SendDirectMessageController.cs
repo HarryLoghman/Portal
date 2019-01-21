@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using JabehAbzarLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,7 +14,7 @@ namespace Portal.Areas.JabehAbzar.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: JabehAbzar/SendDirectMessage
-        private JabehAbzarEntities db = new JabehAbzarEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db  = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("JabehAbzar");
 
         public ActionResult Index()
         {
@@ -52,8 +52,8 @@ namespace Portal.Areas.JabehAbzar.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = JabehAbzarLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            JabehAbzarLibrary.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode,messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode , messageObject);
             return Content("Ok");
         }
     }

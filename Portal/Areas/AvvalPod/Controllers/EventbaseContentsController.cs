@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using AvvalPodLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using System;
 using System.Data.Entity;
@@ -14,7 +14,7 @@ namespace Portal.Areas.AvvalPod.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: AvvalPod/EventbaseContents
-        private AvvalPodEntities db = new AvvalPodEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("AvvalPod");
 
         public ActionResult Index()
         {

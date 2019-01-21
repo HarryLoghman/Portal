@@ -118,10 +118,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PorShetabModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\PorShetabModel.Designer.cs">
+    <Compile Include="Models\PorshetabModel1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>PorShetabModel.edmx</DependentUpon>
+      <DependentUpon>PorshetabModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ServiceOffReason.cs">
       <DependentUpon>PorShetabModel.tt</DependentUpon>
@@ -165,16 +165,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="publicVariables.cs" />
     <Compile Include="ServiceHandler.cs" />
+    <Compile Include="SharedVariables.cs" />
     <Compile Include="Subscribers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Models\PorShetabModel.edmx">
+    <EntityDeploy Include="Models\PorshetabModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>PorShetabModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>PorshetabModel1.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="Models\PorShetabModel.edmx.diagram">
-      <DependentUpon>PorShetabModel.edmx</DependentUpon>
+    <None Include="Models\PorshetabModel.edmx.diagram">
+      <DependentUpon>PorshetabModel.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
@@ -183,6 +184,10 @@
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -190,12 +195,12 @@
   <ItemGroup>
     <Content Include="Models\PorShetabModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PorShetabModel.edmx</DependentUpon>
+      <DependentUpon>PorshetabModel.edmx</DependentUpon>
       <LastGenOutput>PorShetabModel.Context.cs</LastGenOutput>
     </Content>
     <Content Include="Models\PorShetabModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PorShetabModel.edmx</DependentUpon>
+      <DependentUpon>PorshetabModel.edmx</DependentUpon>
       <LastGenOutput>PorShetabModel.cs</LastGenOutput>
     </Content>
   </ItemGroup>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using SharedLibrary.Models;
-using SharedShortCodeServiceLibrary.SharedModel;
+using SharedLibrary.Models.ServiceModel;
 
 namespace SharedShortCodeServiceLibrary
 {
@@ -21,7 +21,7 @@ namespace SharedShortCodeServiceLibrary
                 var pointsTable = GetPointsTableValues(connectionStringNameInAppConfig);
                 var subscriptionPoint = pointsTable.Where(o => o.Title == "SubscriptionPoint").FirstOrDefault();
                 SharedLibrary.MessageHandler.SetSubscriberPoint(mobileNumber, serviceId, subscriptionPoint.Point);
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);
                     subscriberAdditionalInfo.IsSubscriberReceivedSubscriptionPoint = true;
@@ -35,37 +35,13 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static void AddSubscriptionOffReasonPoint(string connectionStringNameInAppConfig, Subscriber subscriber, long serviceId)
-        {
-            try
-            {
-                var subscriberAdditionalInfo = GetSubscriberAdditionalInfo(connectionStringNameInAppConfig, subscriber.Id);
-                if (subscriberAdditionalInfo.IsSubscriberReceivedOffReasonPoint == true)
-                    return;
-                var pointsTable = GetPointsTableValues(connectionStringNameInAppConfig);
-                var subscribtionPoint = pointsTable.Where(o => o.Title == "OffReasonPoint").FirstOrDefault();
-                SharedLibrary.MessageHandler.SetSubscriberPoint(subscriber.MobileNumber, serviceId, subscribtionPoint.Point);
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
-                {
-                    entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);
-                    subscriberAdditionalInfo.IsSubscriberReceivedOffReasonPoint = true;
-                    entity.Entry(subscriberAdditionalInfo).State = System.Data.Entity.EntityState.Modified;
-                    entity.SaveChanges();
-                }
-
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in AddSubscriptionOffReasonPoint: " + e);
-            }
-        }
 
         public static List<PointsTable> GetPointsTableValues(string connectionStringNameInAppConfig)
         {
             var pointsTable = new List<PointsTable>();
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     pointsTable = entity.PointsTables.ToList();
                 }
@@ -82,7 +58,7 @@ namespace SharedShortCodeServiceLibrary
             var subscriberAdditionalInfo = new SubscribersAdditionalInfo();
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
                 }
@@ -98,7 +74,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(mobileNumber, serviceId);
                     var subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
@@ -121,7 +97,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
+                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
                     var subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
                     subscriberAdditionalInfo.IsSubscriberSendedOffReason = value;
@@ -135,23 +111,5 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static bool GetIsSubscriberSendedOffReason(string connectionStringNameInAppConfig, long subscriberId)
-        {
-            bool result = false;
-            try
-            {
-                using (var entity = new ShortCodeServiceEntities(connectionStringNameInAppConfig))
-                {
-                    var isSubscriberSendedOffReason = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId).IsSubscriberSendedOffReason;
-                    if (isSubscriberSendedOffReason == true)
-                        result = true;
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Error in GetIsSubscriberSendedOffReason: " + e);
-            }
-            return result;
-        }
     }
 }

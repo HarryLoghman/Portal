@@ -337,6 +337,30 @@
           <Property Name="DateInvited" Type="datetime" Nullable="false" />
           <Property Name="PersianDateInvited" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
+        <EntityType Name="ServersActions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="serverId" Type="int" Nullable="false" />
+          <Property Name="Action" Type="nvarchar" MaxLength="100" />
+          <Property Name="URL" Type="nvarchar" MaxLength="500" />
+          <Property Name="priority" Type="int" />
+          <Property Name="state" Type="int" />
+          <Property Name="description" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="ServersIPs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ServerName" Type="nvarchar" MaxLength="100" />
+          <Property Name="IP" Type="nvarchar" MaxLength="100" />
+          <Property Name="ports" Type="nvarchar" MaxLength="100" />
+          <Property Name="priority" Type="int" />
+          <Property Name="state" Type="int" />
+          <Property Name="description" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
         <EntityType Name="serviceCyclesNew">
           <Key>
             <PropertyRef Name="id" />
@@ -361,6 +385,7 @@
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="AggregatorServiceId" Type="nvarchar" MaxLength="50" />
           <Property Name="OperatorServiceId" Type="varchar" MaxLength="50" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="100" />
           <Property Name="databaseName" Type="nvarchar" MaxLength="100" />
           <Property Name="chargePrice" Type="int" />
         </EntityType>
@@ -636,6 +661,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
           <Property Name="AggregatorServiceId" Type="nvarchar" MaxLength="50" />
           <Property Name="OperatorServiceId" Type="varchar" MaxLength="50" />
+          <Property Name="ServiceName" Type="nvarchar" MaxLength="100" />
           <Property Name="databaseName" Type="nvarchar" MaxLength="100" />
           <Property Name="chargePrice" Type="int" />
           <Property Name="aggregatorName" Type="nvarchar" MaxLength="100" />
@@ -798,6 +824,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Referral" EntityType="Self.Referral" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServersActions" EntityType="Self.ServersActions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServersIPs" EntityType="Self.ServersIPs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="serviceCyclesNew" EntityType="Self.serviceCyclesNew" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceInfo" EntityType="Self.ServiceInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServiceKeywords" EntityType="Self.ServiceKeywords" Schema="dbo" store:Type="Tables" />
@@ -914,6 +942,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
     [vw_servicesServicesInfo].[ShortCode] AS [ShortCode], 
     [vw_servicesServicesInfo].[AggregatorServiceId] AS [AggregatorServiceId], 
     [vw_servicesServicesInfo].[OperatorServiceId] AS [OperatorServiceId], 
+    [vw_servicesServicesInfo].[ServiceName] AS [ServiceName], 
     [vw_servicesServicesInfo].[databaseName] AS [databaseName], 
     [vw_servicesServicesInfo].[chargePrice] AS [chargePrice], 
     [vw_servicesServicesInfo].[aggregatorName] AS [aggregatorName]
@@ -1191,6 +1220,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="chargePrice" Type="Int32" />
           <NavigationProperty Name="Service" Relationship="PortalModel.C_FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Service" />
           <NavigationProperty Name="Aggregator" Relationship="PortalModel.C_FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregator" />
+          <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ServiceKeyword">
           <Key>
@@ -1484,9 +1514,11 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
           </AssociationSet>
           <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
-          <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
           <EntitySet Name="Bulks" EntityType="PortalModel.Bulk" />
           <EntitySet Name="Deliveries" EntityType="PortalModel.Delivery" />
+          <EntitySet Name="ServersActions" EntityType="PortalModel.ServersAction" />
+          <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
+          <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
           </EntityContainer>
         <EntityType Name="chargeInfo">
           <Key>
@@ -1733,37 +1765,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="cycleChargePrices" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="state" Type="Int32" />
         </EntityType>
-        <EntityType Name="vw_servicesServicesInfo">
-          <Key>
-            <PropertyRef Name="TodayTillNowChargeAmount" />
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="ServiceCode" />
-            <PropertyRef Name="DateCreated" />
-            <PropertyRef Name="OnKeywords" />
-            <PropertyRef Name="IsServiceActive" />
-          </Key>
-          <Property Name="userCount" Type="Int32" />
-          <Property Name="activeUserCount" Type="Int32" />
-          <Property Name="TodayTillNowChargeAmount" Type="Int32" Nullable="false" />
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
-          <Property Name="Enable2StepSubscription" Type="Boolean" />
-          <Property Name="oldServiceCodes" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="referralUrl" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceInfoId" Type="Int64" />
-          <Property Name="AggregatorId" Type="Int64" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="chargePrice" Type="Int32" />
-          <Property Name="aggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="Bulk">
           <Key>
             <PropertyRef Name="Id" />
@@ -1805,6 +1806,62 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="AggregatorId" Type="Int64" Nullable="false" />
           <Property Name="Delivered" Type="Boolean" />
           <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServersAction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="serverId" Type="Int32" Nullable="false" />
+          <Property Name="Action" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="URL" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="priority" Type="Int32" />
+          <Property Name="state" Type="Int32" />
+          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ServersIP">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServerName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ports" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="priority" Type="Int32" />
+          <Property Name="state" Type="Int32" />
+          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_servicesServicesInfo">
+          <Key>
+            <PropertyRef Name="TodayTillNowChargeAmount" />
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="ServiceCode" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="OnKeywords" />
+            <PropertyRef Name="IsServiceActive" />
+          </Key>
+          <Property Name="userCount" Type="Int32" />
+          <Property Name="activeUserCount" Type="Int32" />
+          <Property Name="TodayTillNowChargeAmount" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
+          <Property Name="Enable2StepSubscription" Type="Boolean" />
+          <Property Name="oldServiceCodes" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="referralUrl" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceInfoId" Type="Int64" />
+          <Property Name="AggregatorId" Type="Int64" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="chargePrice" Type="Int32" />
+          <Property Name="aggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -2039,6 +2096,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySetMapping Name="ServiceInfoes">
             <EntityTypeMapping TypeName="PortalModel.ServiceInfo">
               <MappingFragment StoreEntitySet="ServiceInfo">
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
@@ -2412,32 +2470,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vw_servicesServicesInfo">
-            <EntityTypeMapping TypeName="PortalModel.vw_servicesServicesInfo">
-              <MappingFragment StoreEntitySet="vw_servicesServicesInfo">
-                <ScalarProperty Name="aggregatorName" ColumnName="aggregatorName" />
-                <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
-                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
-                <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
-                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="ServiceInfoId" ColumnName="ServiceInfoId" />
-                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
-                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
-                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
-                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
-                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="TodayTillNowChargeAmount" ColumnName="TodayTillNowChargeAmount" />
-                <ScalarProperty Name="activeUserCount" ColumnName="activeUserCount" />
-                <ScalarProperty Name="userCount" ColumnName="userCount" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Bulks">
             <EntityTypeMapping TypeName="PortalModel.Bulk">
               <MappingFragment StoreEntitySet="Bulks">
@@ -2482,7 +2514,60 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          <EntitySetMapping Name="ServersActions">
+            <EntityTypeMapping TypeName="PortalModel.ServersAction">
+              <MappingFragment StoreEntitySet="ServersActions">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="priority" ColumnName="priority" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="serverId" ColumnName="serverId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServersIPs">
+            <EntityTypeMapping TypeName="PortalModel.ServersIP">
+              <MappingFragment StoreEntitySet="ServersIPs">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="priority" ColumnName="priority" />
+                <ScalarProperty Name="ports" ColumnName="ports" />
+                <ScalarProperty Name="IP" ColumnName="IP" />
+                <ScalarProperty Name="ServerName" ColumnName="ServerName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_servicesServicesInfo">
+            <EntityTypeMapping TypeName="PortalModel.vw_servicesServicesInfo">
+              <MappingFragment StoreEntitySet="vw_servicesServicesInfo">
+                <ScalarProperty Name="aggregatorName" ColumnName="aggregatorName" />
+                <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
+                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
+                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="ServiceInfoId" ColumnName="ServiceInfoId" />
+                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
+                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
+                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
+                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TodayTillNowChargeAmount" ColumnName="TodayTillNowChargeAmount" />
+                <ScalarProperty Name="activeUserCount" ColumnName="activeUserCount" />
+                <ScalarProperty Name="userCount" ColumnName="userCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

@@ -13,7 +13,7 @@ namespace BimeKarbalaLibrary
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static void HandleContent(MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
         {
             try
             {

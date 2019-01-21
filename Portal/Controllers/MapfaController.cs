@@ -24,6 +24,10 @@ namespace Portal.Controllers
             messageObj.ShortCode = messageObj.To;
             messageObj.Content = messageObj.Text;
             messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+            string recievedPayload = Request.Content.ReadAsStringAsync().Result;
+            logs.Info("MapfaController PardisMessagePayload:" + recievedPayload);
+            logs.Info("MapfaController pardisMessage:MobileNumber:" + messageObj.From + ",ShortCode:" + messageObj.To + ",Content:" + messageObj.Text
+                + ",ReceivedFrom:" + messageObj.ReceivedFrom);
             string result = "";
             if (messageObj.MobileNumber == "Invalid Mobile Number")
                 result = "-1";

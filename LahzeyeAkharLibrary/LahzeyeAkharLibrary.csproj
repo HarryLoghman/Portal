@@ -56,124 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContentManager.cs" />
-    <Compile Include="HandleMo.cs" />
-    <Compile Include="MessageHandler.cs" />
-    <Compile Include="Models\AutochargeContent.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeContentsSendedToUser.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeHeaderFooter.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeMessagesBuffer.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AutochargeTimeTable.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DailyStatistic.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseContent.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventbaseMessagesBuffer.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ImiChargeCode.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\InstallmentCycle.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\LahzeyeAkharModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LahzeyeAkharModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\LahzeyeAkharModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\LahzeyeAkharModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LahzeyeAkharModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesArchive.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesMonitoring.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MessagesTemplate.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OnDemandMessagesBuffer.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Otp.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PointsTable.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServiceOffReason.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServicesRealtimeStatistic.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Setting.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Singlecharge.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeArchive.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeInstallment.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeInstallmentArchive.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeLiveStatu.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SinglechargeWaiting.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SubscribersAdditionalInfo.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TimedTempMessagesBuffer.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_SentMessages.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_Singlecharge.cs">
-      <DependentUpon>LahzeyeAkharModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceHandler.cs" />
-    <Compile Include="Subscribers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Models\LahzeyeAkharModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>LahzeyeAkharModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Models\LahzeyeAkharModel.edmx.diagram">
-      <DependentUpon>LahzeyeAkharModel.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -190,16 +76,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\LahzeyeAkharModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>LahzeyeAkharModel.edmx</DependentUpon>
-      <LastGenOutput>LahzeyeAkharModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\LahzeyeAkharModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>LahzeyeAkharModel.edmx</DependentUpon>
-      <LastGenOutput>LahzeyeAkharModel.cs</LastGenOutput>
-    </Content>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

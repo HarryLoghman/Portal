@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AvvalPod500Library.Models;
-using AvvalPod500Library;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -23,10 +23,11 @@ namespace DehnadAvvalPod500Service
             {
                 string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode);
                 var serviceCode = Properties.Settings.Default.ServiceCode;
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
 
-                using (var entity = new AvvalPod500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 240;
@@ -80,7 +81,7 @@ namespace DehnadAvvalPod500Service
                     return income;
                 }
                 int isCampaignActive = 0;
-                using (var entity = new AvvalPod500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -119,7 +120,7 @@ namespace DehnadAvvalPod500Service
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new AvvalPod500Entities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
@@ -163,14 +164,15 @@ namespace DehnadAvvalPod500Service
         public static async Task<dynamic> TelepromoMapfaSinglecharge(SharedLibrary.Models.MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             var startTime = DateTime.Now;
-            using (var entity = new AvvalPod500Entities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 var singlecharge = new Singlecharge();
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
                 {
-                    var url = SharedLibrary.MessageSender.telepromoPardisIp + "/samsson-gateway/chargingpardis/";
+                    //var url = SharedLibrary.MessageSender.telepromoPardisIp + "/samsson-gateway/chargingpardis/";
+                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.TelepromoMapfa, SharedLibrary.HelpfulFunctions.enumServersActions.charge);
                     var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
                     var paridsShortCodes = SharedLibrary.ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
                     var shortCode = "98" + paridsShortCodes.FirstOrDefault().ShortCode;
@@ -203,7 +205,7 @@ namespace DehnadAvvalPod500Service
                         }
                         singlecharge.ReferenceId = jsonResponse.data.ToString();
                         singlecharge.Description = jsonResponse.status_code.ToString() + "-" + jsonResponse.status_txt.ToString() + "-" + jsonResponse.data.ToString();
-                    }   
+                    }
                 }
                 catch (Exception e)
                 {

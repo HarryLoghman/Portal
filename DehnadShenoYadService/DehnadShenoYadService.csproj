@@ -120,9 +120,9 @@
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShenoYadLibrary\ShenoYadLibrary.csproj">
-      <Project>{2c2c445d-3e02-4eb1-acfc-45d2aab5556b}</Project>
-      <Name>ShenoYadLibrary</Name>
+    <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
+      <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
+      <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

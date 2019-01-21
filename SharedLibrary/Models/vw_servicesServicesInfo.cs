@@ -31,6 +31,7 @@ namespace SharedLibrary.Models
         public string ShortCode { get; set; }
         public string AggregatorServiceId { get; set; }
         public string OperatorServiceId { get; set; }
+        public string ServiceName { get; set; }
         public string databaseName { get; set; }
         public Nullable<int> chargePrice { get; set; }
         public string aggregatorName { get; set; }

@@ -1,6 +1,6 @@
 ﻿using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using BehAmooz500Library.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using System;
 using System.Data.Entity;
@@ -14,7 +14,7 @@ namespace Portal.Areas.BehAmooz500.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: BehAmooz500/EventbaseContents
-        private BehAmooz500Entities db = new BehAmooz500Entities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("BehAmooz500");
 
         public ActionResult Index()
         {

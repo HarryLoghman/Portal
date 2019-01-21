@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Net;
 using System.IO;
+using Newtonsoft.Json;
+using SharedLibrary.Models.ServiceModel;
 
 namespace SharedLibrary
 {
@@ -121,90 +123,6 @@ namespace SharedLibrary
             return content;
         }
 
-        public static void InsertMessageToQueue(Type entityType, MessageObject message, Type autocharge, Type eventBase, Type onDemand)
-        {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
-                if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
-                {
-                    var messageBuffer = Convert.ChangeType(CreateMessageBuffer(autocharge, message), autocharge);
-                    entity.AutochargeMessagesBuffers.Add(messageBuffer);
-                }
-                else if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase)
-                {
-                    var messageBuffer = Convert.ChangeType(CreateMessageBuffer(eventBase, message), eventBase);
-                    entity.EventbaseMessagesBuffers.Add(messageBuffer);
-                }
-                else
-                {
-                    var messageBuffer = Convert.ChangeType(CreateMessageBuffer(onDemand, message), onDemand);
-                    entity.OnDemandMessagesBuffers.Add(messageBuffer);
-                }
-                entity.SaveChanges();
-            }
-        }
-
-        public static void InsertBulkMessagesToQueue(Type entityType, List<MessageObject> messages, Type autocharge, Type eventBase, Type onDemand)
-        {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                int counter = 0;
-                foreach (var message in messages)
-                {
-                    if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
-                    {
-                        var messageBuffer = Convert.ChangeType(CreateMessageBuffer(autocharge, message), autocharge);
-                        entity.AutochargeMessagesBuffers.Add(messageBuffer);
-                    }
-                    else if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase)
-                    {
-                        var messageBuffer = Convert.ChangeType(CreateMessageBuffer(eventBase, message), eventBase);
-                        entity.EventbaseMessagesBuffers.Add(messageBuffer);
-                    }
-                    else
-                    {
-                        var messageBuffer = Convert.ChangeType(CreateMessageBuffer(onDemand, message), onDemand);
-                        entity.OnDemandMessagesBuffers.Add(messageBuffer);
-                    }
-                    if (counter > 1000)
-                    {
-                        counter = 0;
-                        entity.SaveChanges();
-                    }
-                    counter++;
-                }
-                entity.SaveChanges();
-            }
-        }
-
-        public static dynamic CreateMessageBuffer(Type messageType, MessageObject message)
-        {
-            if (message.AggregatorId == 0)
-                message.AggregatorId = SharedLibrary.MessageHandler.GetAggregatorId(message);
-
-            dynamic messageBuffer = Activator.CreateInstance(messageType);
-            messageBuffer.Content = message.Content;
-            messageBuffer.ContentId = message.ContentId;
-            messageBuffer.ImiChargeCode = message.ImiChargeCode;
-            messageBuffer.ImiChargeKey = message.ImiChargeKey;
-            messageBuffer.ImiMessageType = message.ImiMessageType;
-            messageBuffer.MobileNumber = message.MobileNumber;
-            messageBuffer.MessagePoint = message.Point;
-            messageBuffer.MessageType = message.MessageType;
-            messageBuffer.ProcessStatus = message.ProcessStatus;
-            messageBuffer.ServiceId = message.ServiceId;
-            messageBuffer.DateAddedToQueue = DateTime.Now;
-            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
-            messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
-            messageBuffer.AggregatorId = message.AggregatorId;
-            messageBuffer.Tag = message.Tag;
-            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
-            messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-            messageBuffer.Price = message.Price;
-            return messageBuffer;
-        }
-
         public static string HandleSpecialStrings(string content, int point, string mobileNumber, long serviceId)
         {
             using (var entity = new PortalEntities())
@@ -246,34 +164,11 @@ namespace SharedLibrary
             return result;
         }
 
-        public static string PrepareGeneralOffMessage(MessageObject message, List<Service> servicesThatUserSubscribedOnShortCode)
+        public static MessageObject InvalidContentWhenNotSubscribed(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            if (servicesThatUserSubscribedOnShortCode.Count == 0)
-                message.Content = "کاربر گرامی شما عضو هیچ سرویسی بر روی سرشماره " + message.ShortCode + " نمی باشید.";
-            if (servicesThatUserSubscribedOnShortCode.Count == 1)
-            {
-                var offKeyword = SharedLibrary.ServiceHandler.getFirstOnKeywordOfService(servicesThatUserSubscribedOnShortCode[0].OnKeywords) + " off";
-                message.Content = "کاربر گرامی شما عضو سرویس " + servicesThatUserSubscribedOnShortCode[0].Name + " می باشید." + Environment.NewLine + "برای غیر فعال سازی سرویس کلمه " + offKeyword + " را به شماره " + message.ShortCode + " ارسال نمایید.";
-            }
-            else
-            {
-                message.Content = "کاربر گرامی شما عضو سرویس های";
-                foreach (var service in servicesThatUserSubscribedOnShortCode)
-                {
-                    message.Content += " " + service.Name + "،";
-                }
-                message.Content = message.Content.TrimEnd('،');
-                message.Content += " می باشید." + Environment.NewLine + "برای غیر فعال سازی سرویس";
-                foreach (var service in servicesThatUserSubscribedOnShortCode)
-                {
-                    var offKeyword = SharedLibrary.ServiceHandler.getFirstOnKeywordOfService(service.OnKeywords) + " off";
-                    message.Content += " " + service.Name + " کلمه " + offKeyword + "، ";
-                }
-                message.Content = message.Content.TrimEnd(' ');
-                message.Content = message.Content.TrimEnd('،');
-                message.Content += " را به شماره " + message.ShortCode + " ارسال نمایید.";
-            }
-            return message.Content;
+            message = MessageHandler.SetImiChargeInfo(entity, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
+            return message;
         }
 
         public static long GetServiceIdFromUserMessage(string content, string shortCode)
@@ -452,35 +347,20 @@ namespace SharedLibrary
             }
         }
 
-        public static dynamic GetOTPRequestId(dynamic entity, MessageObject message)
+        public static MessageObject SetImiChargeInfo(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message
+            , int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
         {
-            try
-            {
-                var singlecharge = ((IEnumerable<dynamic>)entity.Singlecharges).Where(o => o.MobileNumber == message.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation").OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                if (singlecharge != null)
-                    return singlecharge;
-                else
-                    return null;
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in GetOTPRequestId: ", e);
-            }
-            return null;
-        }
-
-        public static MessageObject SetImiChargeInfo(dynamic entity, dynamic imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
-        {
+            SharedLibrary.Models.ServiceModel.ImiChargeCode imiChargeCode = new Models.ServiceModel.ImiChargeCode();
             if (subscriberState == null && price > 0)
-                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price);
+                imiChargeCode = (entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price);
             else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
-                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Register");
+                imiChargeCode = (entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Register");
             else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
-                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
+                imiChargeCode = (entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
             else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
+                imiChargeCode = (entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
             else
-                imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Free");
+                imiChargeCode = (entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Free");
 
             if (imiChargeCode != null)
             {
@@ -492,42 +372,199 @@ namespace SharedLibrary
             return message;
         }
 
-        public static MessageObject SendServiceSubscriptionHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        public static long OtpLog(vw_servicesServicesInfo service,  string mobileNumber, string otpType, string userMessage)
         {
-            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
+            try
+            {
+                using (var entity = new Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
+                {
+                    var otpLog = new Models.ServiceModel.Otp()
+                    {
+                        MobileNumber = mobileNumber,
+                        UserMessage = userMessage,
+                        Type = otpType,
+                        DateCreated = DateTime.Now,
+                    };
+                    entity.Otps.Add(otpLog);
+                    entity.SaveChanges();
+                    return otpLog.Id;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in OtpLog: ", e);
+            }
+            return 0;
+        }
+
+        public static void OtpLogUpdate(vw_servicesServicesInfo service,  long otpId, string returnValue)
+        {
+            try
+            {
+                using (var entity = new Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
+                {
+                    var otp = entity.Otps.FirstOrDefault(o => o.Id == otpId);
+                    if (otp != null)
+                    {
+                        otp.ReturnValue = returnValue;
+                        entity.Entry(otp).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in OtpLogUpdate: ", e);
+            }
+        }
+        public static MessageObject SendServiceSubscriptionHelp(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message
+            , List<SharedLibrary.Models.ServiceModel.MessagesTemplate> messagesTemplate)
+        {
+            message = SetImiChargeInfo(entity, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message.Content = messagesTemplate.Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
-        public static MessageObject SendServiceOTPHelp(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        public static void InsertMessageToQueue(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message)
         {
-            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "SendServiceOTPHelp").Select(o => o.Content).FirstOrDefault();
-            return message;
+                message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
+                if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
+                {
+                    var messageBuffer = CreateAutochargeMessageBuffer(message);
+                    entity.AutochargeMessagesBuffers.Add(messageBuffer);
+                }
+                else if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase)
+                {
+                    var messageBuffer = CreateEventbaseMessageBuffer(message);
+                    entity.EventbaseMessagesBuffers.Add(messageBuffer);
+                }
+                else
+                {
+                    var messageBuffer = CreateOnDemandMessageBuffer(message);
+                    entity.OnDemandMessagesBuffers.Add(messageBuffer);
+                }
+                entity.SaveChanges();
+            
         }
 
-        public static MessageObject SendServiceOTPRequestExists(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        public static Models.ServiceModel.OnDemandMessagesBuffer CreateOnDemandMessageBuffer(MessageObject message)
         {
-            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
-            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "SendServiceOTPRequestExists").Select(o => o.Content).FirstOrDefault();
-            return message;
+            if (message.AggregatorId == 0)
+                message.AggregatorId = SharedLibrary.MessageHandler.GetAggregatorId(message);
+
+            var messageBuffer = new Models.ServiceModel.OnDemandMessagesBuffer();
+            messageBuffer.Content = message.Content;
+            messageBuffer.ContentId = message.ContentId;
+            messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
+            messageBuffer.ImiMessageType = message.ImiMessageType;
+            messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
+            messageBuffer.MessageType = message.MessageType;
+            messageBuffer.ProcessStatus = message.ProcessStatus;
+            messageBuffer.ServiceId = message.ServiceId;
+            messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
+            messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
+            return messageBuffer;
         }
 
-        public static MessageObject EmptyContentWhenNotSubscribed(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        public static Models.ServiceModel.EventbaseMessagesBuffer CreateEventbaseMessageBuffer(MessageObject message)
         {
-            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
-            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "EmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
-            return message;
+            if (message.AggregatorId == 0)
+                message.AggregatorId = SharedLibrary.MessageHandler.GetAggregatorId(message);
+
+            var messageBuffer = new Models.ServiceModel.EventbaseMessagesBuffer();
+            messageBuffer.Content = message.Content;
+            messageBuffer.ContentId = message.ContentId;
+            messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
+            messageBuffer.ImiMessageType = message.ImiMessageType;
+            messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
+            messageBuffer.MessageType = message.MessageType;
+            messageBuffer.ProcessStatus = message.ProcessStatus;
+            messageBuffer.ServiceId = message.ServiceId;
+            messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
+            messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
+            return messageBuffer;
         }
 
-        public static MessageObject EmptyContentWhenSubscribed(dynamic entity, dynamic imiChargeCodes, MessageObject message, dynamic messagesTemplate)
+        public static Models.ServiceModel.AutochargeMessagesBuffer CreateAutochargeMessageBuffer(MessageObject message)
         {
-            message = SetImiChargeInfo(entity, imiChargeCodes, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
-            message.Content = ((IEnumerable<dynamic>)messagesTemplate).Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
-            return message;
+            if (message.AggregatorId == 0)
+                message.AggregatorId = SharedLibrary.MessageHandler.GetAggregatorId(message);
+
+            var messageBuffer = new Models.ServiceModel.AutochargeMessagesBuffer();
+            messageBuffer.Content = message.Content;
+            messageBuffer.ContentId = message.ContentId;
+            messageBuffer.ImiChargeCode = message.ImiChargeCode;
+            messageBuffer.ImiChargeKey = message.ImiChargeKey;
+            messageBuffer.ImiMessageType = message.ImiMessageType;
+            messageBuffer.MobileNumber = message.MobileNumber;
+            messageBuffer.MessagePoint = message.Point;
+            messageBuffer.MessageType = message.MessageType;
+            messageBuffer.ProcessStatus = message.ProcessStatus;
+            messageBuffer.ServiceId = message.ServiceId;
+            messageBuffer.DateAddedToQueue = DateTime.Now;
+            messageBuffer.SubUnSubMoMssage = (message.SubUnSubMoMssage == null || message.SubUnSubMoMssage == "") ? "0" : message.SubUnSubMoMssage;
+            messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
+            messageBuffer.AggregatorId = message.AggregatorId;
+            messageBuffer.Tag = message.Tag;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+            messageBuffer.Price = message.Price;
+            return messageBuffer;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceEntity"></param>
+        /// <param name="messageType"></param>
+        /// <param name="readSize">0 means all</param>
+        /// <returns></returns>
+        public static IEnumerable GetUnprocessedMessages(SharedLibrary.Models.ServiceModel.SharedServiceEntities serviceEntity
+            , MessageType messageType, int readSize)
+        {
+            var today = DateTime.Now.Date;
+            var maxRetryCount = SharedLibrary.MessageSender.retryCountMax;
+            var retryPauseBeforeSendByMinute = SharedLibrary.MessageSender.retryPauseBeforeSendByMinute;
+            var retryTimeOut = DateTime.Now.AddMinutes(retryPauseBeforeSendByMinute);
+            serviceEntity.Configuration.AutoDetectChangesEnabled = false;
+
+            if (readSize != 0)
+            {
+                if (messageType == MessageType.AutoCharge)
+                    return serviceEntity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).Take(readSize).ToList();
+                else if (messageType == MessageType.EventBase)
+                    return serviceEntity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).Take(readSize).ToList();
+                else if (messageType == MessageType.OnDemand)
+                    return serviceEntity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).Take(readSize).ToList();
+            }
+            else
+            {
+                if (messageType == MessageType.AutoCharge)
+                    return serviceEntity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).ToList();
+                else if (messageType == MessageType.EventBase)
+                    return serviceEntity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).ToList();
+                else if (messageType == MessageType.OnDemand)
+                    return serviceEntity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).ToList();
+            }
+            return null;
         }
 
-        public static dynamic GetUnprocessedMessages(Type entityType, MessageType messageType, int readSize)
+        public static dynamic GetUnprocessedMessagesOld(Type entityType, MessageType messageType, int readSize)
         {
             var today = DateTime.Now.Date;
             var maxRetryCount = SharedLibrary.MessageSender.retryCountMax;
@@ -547,8 +584,36 @@ namespace SharedLibrary
                     return new List<dynamic>();
             }
         }
+        public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
+            , List<SharedLibrary.Models.ServiceModel.AutochargeMessagesBuffer> messages)
+        {
+            Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
+            foreach (var message in messages)
+                agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.AutoCharge
+                    , SharedLibrary.MessageSender.retryCountMax
+                    , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
+        }
+        public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
+            , List<SharedLibrary.Models.ServiceModel.EventbaseMessagesBuffer> messages)
+        {
+            Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
+            foreach (var message in messages)
+                agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.EventBase
+                    , SharedLibrary.MessageSender.retryCountMax
+                    , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
+        }
 
-        public static void SendSelectedMessages(Type entityType, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
+        public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
+            , List<SharedLibrary.Models.ServiceModel.OnDemandMessagesBuffer> messages)
+        {
+            Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
+            foreach (var message in messages)
+                agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.OnDemand
+                    , SharedLibrary.MessageSender.retryCountMax
+                    , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
+        }
+
+        public static void SendSelectedMessagesOld(Type entityType, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
         {
             if (((IEnumerable<dynamic>)messages).Count() == 0)
                 return;
@@ -561,27 +626,27 @@ namespace SharedLibrary
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHamrahvas(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisImi")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisImi(entityType, chunkedMessages, serviceAdditionalInfo));
-                else if (aggregatorName == "Telepromo")
-                {
-                    if (serviceAdditionalInfo["shortCode"] == "3072428" || serviceAdditionalInfo["shortCode"] == "307251"
-                        || serviceAdditionalInfo["shortCode"] == "307251-" || serviceAdditionalInfo["shortCode"] == "307236")
-                        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromoJSON(entityType, chunkedMessages, serviceAdditionalInfo));
-                    else TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entityType, chunkedMessages, serviceAdditionalInfo));
-                }
+                //else if (aggregatorName == "Telepromo")
+                //{
+                //    if (serviceAdditionalInfo["shortCode"] == "3072428" || serviceAdditionalInfo["shortCode"] == "307251"
+                //        || serviceAdditionalInfo["shortCode"] == "307251-" || serviceAdditionalInfo["shortCode"] == "307236")
+                //        TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromoJSON(entityType, chunkedMessages, serviceAdditionalInfo));
+                //    else TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromo(entityType, chunkedMessages, serviceAdditionalInfo));
+                //}
                 else if (aggregatorName == "Hub")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToHub(entityType, chunkedMessages, serviceAdditionalInfo));
                 else if (aggregatorName == "PardisPlatform")
                     TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entityType, chunkedMessages, serviceAdditionalInfo));
-                else if (aggregatorName == "MobinOneMapfa")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entityType, chunkedMessages, serviceAdditionalInfo));
-                else if (aggregatorName == "MTN")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMtn(entityType, chunkedMessages, serviceAdditionalInfo));
-                else if (aggregatorName == "MobinOne")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMobinOne(entityType, chunkedMessages, serviceAdditionalInfo));
-                else if (aggregatorName == "MciDirect")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMci(entityType, chunkedMessages, serviceAdditionalInfo));
-                else if (aggregatorName == "TelepromoMapfa")
-                    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromoMapfa(entityType, chunkedMessages, serviceAdditionalInfo));
+                //else if (aggregatorName == "MobinOneMapfa")
+                //    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToPardisPlatform(entityType, chunkedMessages, serviceAdditionalInfo));
+                //else if (aggregatorName == "MTN")
+                //    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMtn(entityType, chunkedMessages, serviceAdditionalInfo));
+                //else if (aggregatorName == "MobinOne")
+                //    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMobinOne(entityType, chunkedMessages, serviceAdditionalInfo));
+                //else if (aggregatorName == "MciDirect")
+                //    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToMci(entityType, chunkedMessages, serviceAdditionalInfo));
+                //else if (aggregatorName == "TelepromoMapfa")
+                //    TaskList.Add(SharedLibrary.MessageSender.SendMesssagesToTelepromoMapfa(entityType, chunkedMessages, serviceAdditionalInfo));
             }
             Task.WaitAll(TaskList.ToArray());
         }
@@ -632,58 +697,79 @@ namespace SharedLibrary
             return new Dictionary<string, int[]>() { { "take", take }, { "skip", skip } };
         }
 
-        public static string PrepareMTNMobileNumbers(List<string> mobileNumbers)
+        public static string CreateMCISoapEnvelopeString(dynamic message, string shortCode
+            , int price, string imiChargeKey, string urlDelivery)
         {
-            string stringedMobileNumbers = "tel:";
-            for (var i = 0; i < mobileNumbers.Count; i++)
-            {
-                if (mobileNumbers[i].Length == 11)
-                    stringedMobileNumbers += "98" + mobileNumbers[i].TrimStart('0') + ",";
-                else
-                    stringedMobileNumbers += mobileNumbers[i] + ",";
-            }
-            stringedMobileNumbers = stringedMobileNumbers.TrimEnd(',');
-            return stringedMobileNumbers;
-        }
+            string correlator = MessageSender.fnc_getCorrelator(shortCode, message, true);
+            string mobileNumber = message.MobileNumber;
+            string messageContent = message.Content;
 
-        public static string CreateMtnSoapEnvelopeString(string agggregatorServiceId, string timeStamp, string mobileNumbers, string shortCode, string messageContent, string correlator)
-        {
-            var spId = "980110006379";
-            var deliveryUrl = "http://79.175.164.51:200/api/Mtn/Delivery";
-            string xmlString = string.Format(@"
-<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:v2=""http://www.huawei.com.cn/schema/common/v2_1"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v2_2/local"">
-    <soapenv:Header>
-        <v2:RequestSOAPHeader>
-            <v2:spId>{6}</v2:spId>
-            <v2:serviceId>{0}</v2:serviceId>
-            <v2:timeStamp>{1}</v2:timeStamp>
-        </v2:RequestSOAPHeader>
-    </soapenv:Header>
-    <soapenv:Body>
-        <loc:sendSms>
-            <loc:addresses>{2}</loc:addresses>
-            <loc:senderName>{3}</loc:senderName>
-            <loc:message>{4}</loc:message>
-            <loc:receiptRequest>
-                <endpoint>{7}</endpoint>
-                <interfaceName>SmsNotification</interfaceName>
-                <correlator>{5}</correlator>
-            </loc:receiptRequest>
-        </loc:sendSms>
-    </soapenv:Body>
-</soapenv:Envelope>"
-, agggregatorServiceId, timeStamp, mobileNumbers, shortCode, messageContent, correlator, spId, deliveryUrl);
+            if (!shortCode.StartsWith("98"))
+                shortCode = "98" + shortCode;
+            if (!mobileNumber.StartsWith("98"))
+                mobileNumber = "98" + mobileNumber.TrimStart('0');
+            string xmlString = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v4_0/local"">
+                           <soapenv:Header/>
+                           <soapenv:Body>
+                              <loc:sendSms>
+                        <loc:addresses>{0}</loc:addresses>
+                                 <loc:senderName>{1}</loc:senderName>", mobileNumber, shortCode);
+            if (price != 0)
+            {
+                xmlString += string.Format(@"
+                            <loc:charging>
+                                <description></description>
+                                <currency>RLS</currency>
+                                <amount>{0}</amount>
+                                <code>{1}</code>
+                             </loc:charging>", price + "0", imiChargeKey);
+            }
+            xmlString += string.Format(@"
+                        <loc:message> {0} </loc:message>
+                            <loc:receiptRequest>
+                                         <endpoint>{2}</endpoint>
+                                    <interfaceName>SMS</interfaceName>
+                                    <correlator>{1}</correlator>
+                                    </loc:receiptRequest>
+                                  </loc:sendSms>
+                                </soapenv:Body>
+                              </soapenv:Envelope>", messageContent, correlator, urlDelivery);
             return xmlString;
         }
 
-        public static void InsertSoapEnvelopeIntoWebRequest(XmlDocument soapEnvelopeXml, HttpWebRequest webRequest)
+        public static string CreateTelepromoJsonString(string username, string password
+            , string operatorServiceId, string shortCode, dynamic message, string description
+            , string chargeCode, string amount, string currency
+            , string isFree, string serviceName)
         {
-            using (Stream stream = webRequest.GetRequestStream())
-            {
-                soapEnvelopeXml.Save(stream);
-            }
-        }
+            string mobileNumber = message.MobileNumber;
+            string messageContent = message.Content;
+            string correlator = MessageSender.fnc_getCorrelator(shortCode, message.DateAddedToQueue.Ticks, true);
 
+            if (!shortCode.StartsWith("98"))
+                shortCode = "98" + shortCode;
+            if (!mobileNumber.StartsWith("98"))
+                mobileNumber = "98" + mobileNumber.TrimStart('0');
+
+            Dictionary<string, string> dic = new Dictionary<string, string>()
+                            {
+                                { "username" , username }
+                                ,{ "password" , password }
+                                ,{"serviceid" , operatorServiceId }
+                                ,{"shortcode" , shortCode }
+                                ,{ "msisdn" , mobileNumber }
+                                ,{"description" , description }
+                                ,{"chargecode" ,chargeCode }
+                                ,{"amount" , amount }
+                                ,{"currency" , currency }
+                                ,{"message",  messageContent }
+                                ,{"is_free",isFree }
+                                ,{"correlator" , correlator }
+                                ,{ "servicename" , serviceName }
+                            };
+            string json = JsonConvert.SerializeObject(dic);
+            return json;
+        }
 
         public enum MessageType
         {

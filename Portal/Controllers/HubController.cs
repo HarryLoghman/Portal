@@ -28,6 +28,7 @@ namespace Portal.Controllers
             messageObj.MobileNumber = from;
             messageObj.Content = text;
             messageObj.ShortCode = to;
+            logs.Info("Hub Controller Message : " + messageObj.MobileNumber);
             if (messageObj.Content.Contains("Renewal"))
             {
                 //if (DateTime.Now.Hour < 14)
@@ -151,7 +152,7 @@ namespace Portal.Controllers
             messageObj.MobileNumber = from;
             messageObj.Content = text;
             messageObj.ShortCode = to;
-
+            logs.Info("Hub Controller Notification : " + messageObj.MobileNumber);
             if (messageObj.Content.Contains("Renewal"))
             {
                 //if (messageObj.ShortCode == "405505")
@@ -278,6 +279,7 @@ namespace Portal.Controllers
             messageObj.MobileNumber = from;
             messageObj.Content = text;
             messageObj.ShortCode = to;
+            logs.Info("Hub Controller Message2 : " + messageObj.MobileNumber);
             if (messageObj.Content.Contains("Renewal"))
             {
                 //if (messageObj.ShortCode == "405505")
@@ -402,6 +404,7 @@ namespace Portal.Controllers
             singlechargeDelivery.Status = StatusId;
             singlechargeDelivery.Description = description;
             singlechargeDelivery.IsProcessed = false;
+            logs.Info("Hub Controller SinglechargeDelivery : " + Recipient);
             using (var entity = new PortalEntities())
             {
                 entity.SinglechargeDeliveries.Add(singlechargeDelivery);

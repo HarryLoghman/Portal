@@ -21,7 +21,7 @@ namespace DehnadPorShetabService
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         DateTime v_lastExecutionTime;
         int v_cycleNumber = -1;
-        public static string v_dbName = "porshetab";
+        public static string v_dbName = "PorShetab";
         public static int maxChargeLimit = 500;
         public static int maxServiceTries = 4;
         

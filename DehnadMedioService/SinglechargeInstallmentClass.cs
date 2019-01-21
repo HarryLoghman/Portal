@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MedioLibrary.Models;
-using MedioLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -26,11 +26,12 @@ namespace DehnadMedioService
                 var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
                 List<string> installmentList;
 
-                using (var entity = new MedioEntities())
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     entity.Database.CommandTimeout = 240;
-                    List<ImiChargeCode> chargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    List<SharedLibrary.Models.ServiceModel.ImiChargeCode> chargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
                     for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
                     {
                         logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
@@ -79,7 +80,7 @@ namespace DehnadMedioService
                     return income;
                 }
                 int isCampaignActive = 0;
-                using (var entity = new MedioEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -118,7 +119,7 @@ namespace DehnadMedioService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new MedioEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     foreach (var installment in chunkedSingleChargeInstallment)
                     {
@@ -192,7 +193,7 @@ namespace DehnadMedioService
         public static async Task<dynamic> MapfaStaticPriceSinglecharge(MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             var startTime = DateTime.Now;
-            using (var entity = new MedioEntities())
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 var singlecharge = new Singlecharge();

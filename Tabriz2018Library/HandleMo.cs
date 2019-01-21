@@ -9,7 +9,7 @@ namespace Tabriz2018Library
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static bool ReceivedMessage(MessageObject message, Service service)
+        public static bool ReceivedMessage(MessageObject message, vw_servicesServicesInfo service)
         {
             bool isSucceeded = true;
             //System.Diagnostics.Debugger.Launch();

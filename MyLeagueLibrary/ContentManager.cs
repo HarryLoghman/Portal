@@ -11,7 +11,7 @@ namespace MyLeagueLibrary
 {
     public class ContentManager
     {
-        public static void HandleContent(MessageObject message, Service service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
+        public static void HandleContent(MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
         {
             message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
             var leagueList = GetLeagueList();

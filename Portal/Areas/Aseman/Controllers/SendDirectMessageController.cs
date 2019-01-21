@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using AsemanLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -14,14 +14,14 @@ namespace Portal.Areas.Aseman.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // GET: Aseman/SendDirectMessage
-        private AsemanEntities db = new AsemanEntities();
+        private SharedLibrary.Models.ServiceModel.SharedServiceEntities db = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Aseman");
 
         public ActionResult Index()
         {
             ViewBag.ServiceName = "آسمان";
             return View();
         }
-        
+
 
         protected override void Dispose(bool disposing)
         {
@@ -52,8 +52,8 @@ namespace Portal.Areas.Aseman.Controllers
             {
                 return Content("Cant add point to unsubscribed");
             }
-            messageObject = AsemanLibrary.MessageHandler.SetImiChargeInfo(messageObject, price, 0, null);
-            AsemanLibrary.MessageHandler.InsertMessageToQueue(messageObject);
+            messageObject = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(service.ServiceCode, messageObject, price, 0, null);
+            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(service.ServiceCode, messageObject);
             return Content("Ok");
         }
     }

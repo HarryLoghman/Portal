@@ -12,7 +12,7 @@ namespace JhoobinMedadLibrary
     public class HandleMo
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public async static Task<bool> ReceivedMessage(MessageObject message, Service service)
+        public async static Task<bool> ReceivedMessage(MessageObject message, vw_servicesServicesInfo service)
         {
             bool isSucceeded = true;
             try
@@ -20,17 +20,17 @@ namespace JhoobinMedadLibrary
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
-                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
-                using (var entity = new JhoobinMedadEntities())
+                var messagesTemplate = SharedLibrary.ServiceHandler.GetServiceMessagesTemplate(service);
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
                 {
                     int isCampaignActive = 0;
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
-                    if(isInBlackList == true)
+                    if (isInBlackList == true)
                         isCampaignActive = (int)CampaignStatus.Deactive;
-                    List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
+                    List<SharedLibrary.Models.ServiceModel.ImiChargeCode> imiChargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
                     message = MessageHandler.SetImiChargeInfo(message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                     if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
                     {
@@ -49,7 +49,7 @@ namespace JhoobinMedadLibrary
                     }
                     else if (message.Content.ToLower() == "sendservicesubscriptionhelp")
                     {
-                        message = SharedLibrary.MessageHandler.SendServiceSubscriptionHelp(entity, imiChargeCodes, message, messagesTemplate);
+                        message = SharedShortCodeServiceLibrary.MessageHandler.SendServiceSubscriptionHelp(service.ServiceCode, message, messagesTemplate);
                         MessageHandler.InsertMessageToQueue(message);
                         return isSucceeded;
                     }
@@ -166,7 +166,7 @@ namespace JhoobinMedadLibrary
                             bool isSubscriberdVerified = SharedLibrary.ServiceHandler.IsUserVerifedTheSubscription(message.MobileNumber, message.ServiceId, content);
                             if (isSubscriberdVerified == false)
                             {
-                                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                                message = SharedShortCodeServiceLibrary.MessageHandler.InvalidContentWhenNotSubscribed(service.ServiceCode, message, messagesTemplate);
                                 message.Content = messagesTemplate.Where(o => o.Title == "SendVerifySubscriptionMessage").Select(o => o.Content).FirstOrDefault();
                                 MessageHandler.InsertMessageToQueue(message);
                                 return isSucceeded;
@@ -266,7 +266,7 @@ namespace JhoobinMedadLibrary
                             }
                         }
 
-                        message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                        message.Content = SharedShortCodeServiceLibrary.MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
                         if (message.Content.Contains("{REFERRALCODE}"))
                         {
                             var subId = "1";
@@ -298,9 +298,9 @@ namespace JhoobinMedadLibrary
                         else
                         {
                             if (message.Content == null || message.Content == "" || message.Content == " ")
-                                message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                                message = SharedShortCodeServiceLibrary.MessageHandler.EmptyContentWhenNotSubscribed(service.ServiceCode, message, messagesTemplate);
                             else
-                                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                                message = SharedShortCodeServiceLibrary.MessageHandler.InvalidContentWhenNotSubscribed(service.ServiceCode, message, messagesTemplate);
                         }
                         MessageHandler.InsertMessageToQueue(message);
                         return isSucceeded;
@@ -318,15 +318,15 @@ namespace JhoobinMedadLibrary
                         else
                         {
                             if (message.Content == null || message.Content == "" || message.Content == " ")
-                                message = SharedLibrary.MessageHandler.EmptyContentWhenNotSubscribed(entity, imiChargeCodes, message, messagesTemplate);
+                                message = SharedShortCodeServiceLibrary.MessageHandler.EmptyContentWhenNotSubscribed(service.ServiceCode, message, messagesTemplate);
                             else
-                                message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+                                message = SharedShortCodeServiceLibrary.MessageHandler.InvalidContentWhenNotSubscribed(service.ServiceCode, message, messagesTemplate);
                         }
                         MessageHandler.InsertMessageToQueue(message);
                         return isSucceeded;
                     }
                     message.Content = content;
-                    ContentManager.HandleContent(message, service, subscriber, messagesTemplate);
+                    SharedShortCodeServiceLibrary.ContentManager.HandleContent(service.ServiceCode, message, service, subscriber, messagesTemplate, imiChargeCodes);
                 }
             }
             catch (Exception e)
@@ -336,101 +336,101 @@ namespace JhoobinMedadLibrary
             return isSucceeded;
         }
 
-        public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)
-        {
-            //System.Diagnostics.Debugger.Launch();
-            var content = message.Content;
-            var singlecharge = new Singlecharge();
-            if (message.Content.All(char.IsDigit))
-            {
-                var price = Convert.ToInt32(message.Content);
-                var imiObject = MessageHandler.GetImiChargeObjectFromPrice(price, null);
-                message.Content = imiObject.ChargeCode.ToString();
-            }
-            var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
-            var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
-            var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-            if (subscriber == null)
-                isUserSendsSubscriptionKeyword = true;
-            if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
-            {
-                //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
-                //{
-                //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                //    if (user != null && user.DeactivationDate == null)
-                //    {
-                //        message.Content = content;
-                //        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
-                //        return singlecharge;
-                //    }
-                //}
-                var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
-                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                {
-                    if (message.IsReceivedFromIntegratedPanel)
-                    {
-                        message.SubUnSubMoMssage = "ارسال درخواست از طریق پنل تجمیعی غیر فعال سازی";
-                        message.SubUnSubType = 2;
-                    }
-                    else
-                    {
-                        message.SubUnSubMoMssage = message.Content;
-                        message.SubUnSubType = 1;
-                    }
-                }
-                var subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
-                {
-                    Subscribers.CreateSubscriberAdditionalInfo(message.MobileNumber, service.Id);
-                    Subscribers.AddSubscriptionPointIfItsFirstTime(message.MobileNumber, service.Id);
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                }
-                else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
-                {
-                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                }
-                else
-                {
-                    message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                    //Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
-                }
-                //message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
-                //MessageHandler.InsertMessageToQueue(message);
-                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
-                {
-                    message.Content = content;
-                    singlecharge = ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
-                }
-                return singlecharge;
-            }
-            subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+        //public static Singlecharge ReceivedMessageForSingleCharge(MessageObject message, Service service)
+        //{
+        //    //System.Diagnostics.Debugger.Launch();
+        //    var content = message.Content;
+        //    var singlecharge = new Singlecharge();
+        //    if (message.Content.All(char.IsDigit))
+        //    {
+        //        var price = Convert.ToInt32(message.Content);
+        //        var imiObject = MessageHandler.GetImiChargeObjectFromPrice(price, null);
+        //        message.Content = imiObject.ChargeCode.ToString();
+        //    }
+        //    var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate();
+        //    var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
+        //    var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
+        //    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+        //    if (subscriber == null)
+        //        isUserSendsSubscriptionKeyword = true;
+        //    if (isUserSendsSubscriptionKeyword == true || isUserWantsToUnsubscribe == true)
+        //    {
+        //        //if (isUserSendsSubscriptionKeyword == true && isUserWantsToUnsubscribe == false)
+        //        //{
+        //        //    var user = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+        //        //    if (user != null && user.DeactivationDate == null)
+        //        //    {
+        //        //        message.Content = content;
+        //        //        singlecharge = ContentManager.HandleSinglechargeContent(message, service, user, messagesTemplate);
+        //        //        return singlecharge;
+        //        //    }
+        //        //}
+        //        var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
+        //        if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+        //        {
+        //            if (message.IsReceivedFromIntegratedPanel)
+        //            {
+        //                message.SubUnSubMoMssage = "ارسال درخواست از طریق پنل تجمیعی غیر فعال سازی";
+        //                message.SubUnSubType = 2;
+        //            }
+        //            else
+        //            {
+        //                message.SubUnSubMoMssage = message.Content;
+        //                message.SubUnSubType = 1;
+        //            }
+        //        }
+        //        var subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+        //        if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+        //        {
+        //            Subscribers.CreateSubscriberAdditionalInfo(message.MobileNumber, service.Id);
+        //            Subscribers.AddSubscriptionPointIfItsFirstTime(message.MobileNumber, service.Id);
+        //            message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+        //        }
+        //        else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+        //        {
+        //            var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
+        //            message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+        //        }
+        //        else
+        //        {
+        //            message = MessageHandler.SetImiChargeInfo(message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+        //            var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
+        //            //Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
+        //        }
+        //        //message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
+        //        //MessageHandler.InsertMessageToQueue(message);
+        //        if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+        //        {
+        //            message.Content = content;
+        //            singlecharge = ContentManager.HandleSinglechargeContent(message, service, subsciber, messagesTemplate);
+        //        }
+        //        return singlecharge;
+        //    }
+        //    subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
-            if (subscriber == null)
-            {
-                if (message.Content == null || message.Content == "" || message.Content == " ")
-                    message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
-                else
-                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                MessageHandler.InsertMessageToQueue(message);
-                return null;
-            }
-            message.SubscriberId = subscriber.Id;
-            if (subscriber.DeactivationDate != null)
-            {
-                if (message.Content == null || message.Content == "" || message.Content == " ")
-                    message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
-                else
-                    message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
-                MessageHandler.InsertMessageToQueue(message);
-                return null;
-            }
-            message.Content = content;
-            singlecharge = ContentManager.HandleSinglechargeContent(message, service, subscriber, messagesTemplate);
-            return singlecharge;
-        }
+        //    if (subscriber == null)
+        //    {
+        //        if (message.Content == null || message.Content == "" || message.Content == " ")
+        //            message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+        //        else
+        //            message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+        //        MessageHandler.InsertMessageToQueue(message);
+        //        return null;
+        //    }
+        //    message.SubscriberId = subscriber.Id;
+        //    if (subscriber.DeactivationDate != null)
+        //    {
+        //        if (message.Content == null || message.Content == "" || message.Content == " ")
+        //            message = MessageHandler.EmptyContentWhenNotSubscribed(message, messagesTemplate);
+        //        else
+        //            message = MessageHandler.InvalidContentWhenNotSubscribed(message, messagesTemplate);
+        //        MessageHandler.InsertMessageToQueue(message);
+        //        return null;
+        //    }
+        //    message.Content = content;
+        //    singlecharge = ContentManager.HandleSinglechargeContent(message, service, subscriber, messagesTemplate);
+        //    return singlecharge;
+        //}
     }
     public enum CampaignStatus
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using SharedLibrary.Models;
-using LahzeyeAkharLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -14,7 +14,7 @@ namespace DehnadLahzeyeAkharService
         {
             try
             {
-                using (var entity = new LahzeyeAkharEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var eventbaseContent = entity.EventbaseContents.FirstOrDefault(o => o.IsAddingMessagesToSendQueue == true && o.IsAddedToSendQueueFinished == false);
@@ -24,7 +24,8 @@ namespace DehnadLahzeyeAkharService
                         return;
                     var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                     var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
-                    LahzeyeAkharLibrary.MessageHandler.AddEventbaseMessagesToQueue(eventbaseContent, aggregatorId);
+                    SharedShortCodeServiceLibrary.MessageHandler.AddEventbaseMessagesToQueue(Properties.Settings.Default.ServiceCode
+                        , Properties.Settings.Default.ServiceCode, eventbaseContent, aggregatorId);
                 }
             }
             catch (Exception e)
@@ -58,7 +59,7 @@ namespace DehnadLahzeyeAkharService
                             //var finalMobileNumbers = mobileNumbers.Where(o => !existingSubscribers.Any(e => o.Contains(e))).ToList();
                             //mobileNumbers = finalMobileNumbers;
                             //finalMobileNumbers.RemoveAll(o => o.Contains("09122137327"));
-                            var imiChargeObject = LahzeyeAkharLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, null);
+                            var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode ,0, null);
                             var aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
                             var aggregatorId = SharedLibrary.MessageHandler.GetAggregatorIdFromConfig(aggregatorName);
                             var rnd = new Random();
@@ -83,7 +84,7 @@ namespace DehnadLahzeyeAkharService
                                 TaskList.Add(ProcessSubscribersListChunk(chunkedmobileNumbersList, item.Message, imiChargeObject, service.Id, aggregatorId, i, contentId));
                             }
                             Task.WaitAll(TaskList.ToArray());
-                            LahzeyeAkharLibrary.MessageHandler.CreateMonitoringItem(contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
+                            SharedShortCodeServiceLibrary.MessageHandler.CreateMonitoringItem(Properties.Settings.Default.ServiceCode, contentId, SharedLibrary.MessageHandler.MessageType.EventBase, mobileNumbers.Count(), null);
                         }
                         catch (Exception e)
                         {
@@ -101,7 +102,7 @@ namespace DehnadLahzeyeAkharService
             }
         }
 
-        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent, ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
+        public static async Task ProcessSubscribersListChunk(List<string> chunkedMobileNumbersList, string eventbaseContent, SharedLibrary.Models.ServiceModel.ImiChargeCode imiChargeObject, long serviceId, long aggregatorId, int taskId, long contentId)
         {
             logs.Info("ProcessSubscribersListChunk started: task: " + taskId);
             var today = DateTime.Now.Date;
@@ -116,7 +117,7 @@ namespace DehnadLahzeyeAkharService
                 {
                     if (counter > 1000)
                     {
-                        LahzeyeAkharLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode, messages);
                         messages.Clear();
                         counter = 1;
                     }
@@ -137,7 +138,7 @@ namespace DehnadLahzeyeAkharService
                     messages.Add(message);
                     counter++;
                 }
-                LahzeyeAkharLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode, messages);
             }
             catch (Exception e)
             {
