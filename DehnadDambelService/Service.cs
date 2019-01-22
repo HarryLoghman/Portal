@@ -213,7 +213,7 @@ namespace DehnadDambelService
             ////else
             ////    installmentCycleNumber = 1;
             //int tps;
-            //var entityType = typeof(DambelLibrary.Models.DambelEntities);
+            //var entityType = typeof(DambelLibrary.Models.SharedLibrary.Models.ServiceModel.SharedServiceEntities);
             //var cycleType = typeof(DambelLibrary.Models.InstallmentCycle);
 
             //while (!shutdownEvent.WaitOne(0))
@@ -221,7 +221,7 @@ namespace DehnadDambelService
             //    bool isInMaintenanceTime = false;
             //    try
             //    {
-            //        using (var entity = new DambelLibrary.Models.DambelEntities())
+            //        using (var entity = new DambelLibrary.Models.SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
             //        {
             //            var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
             //            if (isInMaintenace != null)

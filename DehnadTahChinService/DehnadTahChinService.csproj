@@ -128,10 +128,6 @@
       <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
       <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TahChinLibrary\TahChinLibrary.csproj">
-      <Project>{b12311f6-3bf5-2126-337f-3bc43b41256f}</Project>
-      <Name>TahChinLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

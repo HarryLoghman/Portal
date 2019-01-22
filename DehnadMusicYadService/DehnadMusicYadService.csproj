@@ -117,10 +117,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MusicYadLibrary\MusicYadLibrary.csproj">
-      <Project>{4211b11c-3511-a1b6-431d-fbc23b13d4b2}</Project>
-      <Name>MusicYadLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>

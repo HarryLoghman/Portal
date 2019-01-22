@@ -117,10 +117,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DambelLibrary\DambelLibrary.csproj">
-      <Project>{1434b114-121b-1513-431d-4bc287131142}</Project>
-      <Name>DambelLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedLibrary.Models;
-using DambelLibrary.Models;
+using SharedLibrary.Models.ServiceModel;
 using System.Linq;
 using System.Collections;
 
@@ -13,7 +13,7 @@ namespace DehnadDambelService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public void SendHandler()
         {
-            base.SendHandler(DambelLibrary.SharedVariables.prp_serviceEntity, new TimeSpan(7, 0, 0), new TimeSpan(23, 0, 0));
+            base.SendHandler(Properties.Settings.Default.ServiceCode, new TimeSpan(7, 0, 0), new TimeSpan(23, 0, 0));
         }
         //public void SendHandler()
         //{
@@ -34,7 +34,7 @@ namespace DehnadDambelService
         //        var take = threadsNo["take"];
         //        var skip = threadsNo["skip"];
 
-        //        Type entityType = typeof(DambelEntities);
+        //        Type entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
 
         //        autochargeMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.AutoCharge, 200)).OfType<AutochargeMessagesBuffer>().ToList();
         //        eventbaseMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(entityType, SharedLibrary.MessageHandler.MessageType.EventBase, 200)).OfType<EventbaseMessagesBuffer>().ToList();
@@ -46,7 +46,7 @@ namespace DehnadDambelService
         //            var now = DateTime.Now.TimeOfDay;
         //            if (now < retryEndTime)
         //            {
-        //                using (var entity = new DambelEntities())
+        //                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
         //                {
         //                    entity.RetryUndeliveredMessages();
         //                }

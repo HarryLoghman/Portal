@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PorShetabLibrary.Models;
-using PorShetabLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -95,7 +95,7 @@ namespace DehnadPorShetabService
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 int isCampaignActive = 0;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -135,7 +135,7 @@ namespace DehnadPorShetabService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -181,7 +181,7 @@ namespace DehnadPorShetabService
                         {
                             income += message.Price.GetValueOrDefault();
                         }
-                        if (isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralSuspend)
+                        if (isCampaignActive == (int)CampaignStatus.MatchActiveReferralActive || isCampaignActive == (int)CampaignStatus.MatchActiveReferralSuspend)
                         {
                             try
                             {
@@ -222,7 +222,7 @@ namespace DehnadPorShetabService
             return income;
         }
 
-        public static async Task<Singlecharge> ChargeMtnSubscriber(PorShetabEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int threadNumber, long installmentId = 0)
+        public static async Task<Singlecharge> ChargeMtnSubscriber(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int threadNumber, long installmentId = 0)
         {
             var startTime = DateTime.Now;
             string charge = "";

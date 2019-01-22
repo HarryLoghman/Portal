@@ -14,16 +14,20 @@ namespace ChargingLibrary
     public class ServiceChargeMTNPorShetab : ServiceChargeMTN
     {
         int v_isCampaignActive = 0;
+        int v_isMatchActive = 0;
 
         public ServiceChargeMTNPorShetab(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
             : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice)
         {
 
-            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Shared" + this.prp_service.ServiceCode + "Entities"))
+            using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(this.prp_service.ServiceCode))
             {
                 var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                 if (campaign != null)
                     v_isCampaignActive = Convert.ToInt32(campaign.Value);
+                var match = entity.Settings.FirstOrDefault(o => o.Name == "match");
+                if (match != null)
+                    v_isMatchActive = Convert.ToInt32(match.Value);
             }
         }
 
@@ -33,7 +37,7 @@ namespace ChargingLibrary
         {
             try
             {
-                if (v_isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralActive || v_isCampaignActive == (int)PorShetabLibrary.CampaignStatus.MatchActiveReferralSuspend)
+                if (v_isMatchActive == (int)CampaignStatus.Active && (v_isCampaignActive == (int)CampaignStatus.Deactive || v_isCampaignActive == (int)CampaignStatus.Suspend))
                 {
 
                     var sub = SharedLibrary.HandleSubscription.GetSubscriber(chargeRequest.mobileNumber, this.prp_service.Id);

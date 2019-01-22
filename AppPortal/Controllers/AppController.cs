@@ -1107,7 +1107,7 @@ namespace Portal.Controllers
                             }
                             else if (messageObj.ServiceCode == "TahChin")
                             {
-                                using (var entity = new TahChinLibrary.Models.TahChinEntities())
+                                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("TahChin"))
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
@@ -1125,7 +1125,7 @@ namespace Portal.Controllers
                             }
                             else if (messageObj.ServiceCode == "MusicYad")
                             {
-                                using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
+                                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("MusicYad"))
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
@@ -1143,7 +1143,7 @@ namespace Portal.Controllers
                             }
                             else if (messageObj.ServiceCode == "Dambel")
                             {
-                                using (var entity = new DambelLibrary.Models.DambelEntities())
+                                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Dambel"))
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
@@ -1161,7 +1161,7 @@ namespace Portal.Controllers
                             }
                             else if (messageObj.ServiceCode == "Medad")
                             {
-                                using (var entity = new MedadLibrary.Models.MedadEntities())
+                                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Medad"))
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();
@@ -1179,7 +1179,7 @@ namespace Portal.Controllers
                             }
                             else if (messageObj.ServiceCode.ToLower() == "PorShetab")
                             {
-                                using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+                                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("PorShetab"))
                                 {
                                     var now = DateTime.Now;
                                     var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now).OrderByDescending(o => o.DateCreated).FirstOrDefault();

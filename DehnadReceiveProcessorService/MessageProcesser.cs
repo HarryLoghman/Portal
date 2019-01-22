@@ -758,7 +758,9 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = SharedVariables.prp_defendIranLibrary.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "TahChin")
-                    isSucceeded = TahChinLibrary.HandleMo.ReceivedMessage(message, service);
+                {
+                    isSucceeded = SharedVariables.prp_tahChinLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Nebula")
                 {
                     isSucceeded = SharedVariables.prp_nebulaLibrary.ReceivedMessage(message, service).Result;
@@ -768,7 +770,9 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = SharedVariables.prp_dezhbanLibrary.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "MusicYad")
-                    isSucceeded = MusicYadLibrary.HandleMo.ReceivedMessage(message, service);
+                {
+                    isSucceeded = SharedVariables.prp_musicYadLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Phantom")
                 {
                     isSucceeded = SharedVariables.prp_phantomLibrary.ReceivedMessage(message, service).Result;
@@ -778,15 +782,21 @@ namespace DehnadReceiveProcessorService
                     isSucceeded = SharedVariables.prp_medioLibrary.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "Dambel")
-                    isSucceeded = DambelLibrary.HandleMo.ReceivedMessage(message, service);
+                {
+                    isSucceeded = SharedVariables.prp_dambelLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "Aseman")
                 {
                     isSucceeded = SharedVariables.prp_asemanLibrary.ReceivedMessage(message, service).Result;
                 }
                 else if (service.ServiceCode == "Medad")
-                    isSucceeded = MedadLibrary.HandleMo.ReceivedMessage(message, service);
+                {
+                    isSucceeded = SharedVariables.prp_medadLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "PorShetab")
-                    isSucceeded = PorShetabLibrary.HandleMo.ReceivedMessage(message, service).Result;
+                {
+                    isSucceeded = SharedVariables.prp_porShetabLibrary.ReceivedMessage(message, service).Result;
+                }
                 else if (service.ServiceCode == "TajoTakht")
                 {
                     isSucceeded = SharedVariables.prp_tajoTakhtLibrary.ReceivedMessage(message, service).Result;

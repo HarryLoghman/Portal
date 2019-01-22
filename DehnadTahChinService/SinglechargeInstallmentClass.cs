@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TahChinLibrary.Models;
-using TahChinLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -128,7 +128,7 @@ namespace DehnadTahChinService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new TahChinEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -188,7 +188,7 @@ namespace DehnadTahChinService
             return income;
         }
 
-        public static async Task<Singlecharge> ChargeMtnSubscriber(TahChinEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<Singlecharge> ChargeMtnSubscriber(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             string charge = "";
             var spId = "980110006379";

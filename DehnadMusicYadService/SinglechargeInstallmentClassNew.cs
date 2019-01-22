@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MusicYadLibrary.Models;
-using MusicYadLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -164,7 +164,7 @@ namespace DehnadMusicYadService
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 int isCampaignActive = 0;
-                using (var entity = new MusicYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -285,7 +285,7 @@ namespace DehnadMusicYadService
 
             try
             {
-                using (var entity = new MusicYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     DateTime timeAfterEntity = DateTime.Now;
                     entity.Configuration.AutoDetectChangesEnabled = false;
@@ -338,7 +338,7 @@ namespace DehnadMusicYadService
 
         public static Singlecharge ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-            MusicYadEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
+            SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
             , string aggregatorServiceId, int installmentCycleNumber, int loopNo, int threadNumber
             , DateTime timeLoop, long installmentId = 0)
         {

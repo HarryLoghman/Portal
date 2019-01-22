@@ -16,11 +16,7 @@ namespace SharedLibrary.Aggregators
         public AggregatorTelepromoMapfa()
             : this(false)
         {
-            using (var portal = new SharedLibrary.Models.PortalEntities())
-            {
-                var servicesShortCodes = portal.vw_servicesServicesInfo.Where(o => o.aggregatorName == "TelepromoMapfa").Select(o => o.ShortCode).ToList();
-                v_pardisShortCodes = portal.ParidsShortCodes.Where(o => servicesShortCodes.Contains(o.ShortCode)).ToList();
-            }
+
         }
 
         public AggregatorTelepromoMapfa(bool addErrorDescription)
@@ -28,6 +24,15 @@ namespace SharedLibrary.Aggregators
         {
             this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.TelepromoMapfa, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
             this.prp_url_delivery = "";
+
+            using (var portal = new SharedLibrary.Models.PortalEntities())
+            {
+                var agg = portal.Aggregators.Where(o => o.AggregatorName == "TelepromoMapfa").FirstOrDefault();
+                this.prp_userName = agg.AggregatorUsername;
+                this.prp_password = agg.AggregatorPassword;
+                var servicesShortCodes = portal.vw_servicesServicesInfo.Where(o => o.aggregatorName == "TelepromoMapfa").Select(o => o.ShortCode).ToList();
+                v_pardisShortCodes = portal.ParidsShortCodes.Where(o => servicesShortCodes.Contains(o.ShortCode)).ToList();
+            }
         }
 
         protected override HttpWebRequest fnc_createWebRequestHeader(SharedLibrary.Models.vw_servicesServicesInfo service, string url)
@@ -42,6 +47,7 @@ namespace SharedLibrary.Aggregators
             webRequest.ContentType = "application/json;charset=\"utf-8\"";
             webRequest.Accept = "application/json";
             webRequest.Method = "POST";
+            SharedVariables.logs.Info(url);
             return webRequest;
         }
 
@@ -64,7 +70,8 @@ namespace SharedLibrary.Aggregators
                 amount = (price * 10).ToString();
                 isFree = false;
             }
-            var pardisServiceId = v_pardisShortCodes.Where(o => o.ShortCode == shortCode && o.Price == 0).Select(o => o.PardisServiceId).FirstOrDefault();
+            var pardisServiceId = v_pardisShortCodes.Where(o => o.ShortCode == service.ShortCode && o.Price == 0 && o.ServiceId == service.Id).Select(o => o.PardisServiceId).FirstOrDefault();
+            //var aggregatorServiceId = service.AggregatorServiceId;
             var description = "";
             Dictionary<string, string> dic = new Dictionary<string, string>()
                             {
@@ -83,6 +90,7 @@ namespace SharedLibrary.Aggregators
                                 ,{ "message",messageContent}
                             };
             string json = JsonConvert.SerializeObject(dic);
+            SharedVariables.logs.Info(json);
             return json;
         }
 
@@ -92,7 +100,7 @@ namespace SharedLibrary.Aggregators
             isSucceeded = false;
             var resultArr = new Dictionary<string, string>();
             dynamic jsonResponse = JsonConvert.DeserializeObject<dynamic>(result);
-            if (jsonResponse.data.ToString().Length > 4)
+            if (jsonResponse.status_txt == "OK" && jsonResponse.status_code == "0")
             {
                 isSucceeded = true;
                 resultDescription = result;

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PorShetabLibrary.Models;
-using PorShetabLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using SharedLibrary.Models;
 
@@ -17,7 +17,7 @@ namespace DehnadPorShetabService
         {
             try
             {
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var tempMessageBuffer = entity.TimedTempMessagesBuffers.Where(o => o.DateAddedToQueue < DbFunctions.AddMinutes(o.DateAddedToQueue, 1));
                     if (tempMessageBuffer == null)
@@ -28,7 +28,7 @@ namespace DehnadPorShetabService
                         var message = SharedLibrary.MessageHandler.CreateMessageFromMessageBuffer(messageItem.SubscriberId, messageItem.MobileNumber, messageItem.ServiceId, messageItem.Content, messageItem.ContentId, (SharedLibrary.MessageHandler.MessageType)messageItem.MessageType, (SharedLibrary.MessageHandler.ProcessStatus)messageItem.ProcessStatus, messageItem.ImiMessageType, messageItem.ImiChargeCode, messageItem.ImiChargeKey, messageItem.AggregatorId, messageItem.MessagePoint.GetValueOrDefault(), messageItem.Tag, 0, "0", messageItem.Price.GetValueOrDefault());
                         messages.Add(message);
                     }
-                    PorShetabLibrary.MessageHandler.InsertBulkMessagesToQueue(messages);
+                    SharedShortCodeServiceLibrary.MessageHandler.InsertBulkMessagesToQueue(Properties.Settings.Default.ServiceCode,messages);
                     entity.TimedTempMessagesBuffers.RemoveRange(tempMessageBuffer);
                     entity.SaveChanges();
                 }
@@ -38,5 +38,12 @@ namespace DehnadPorShetabService
                 logs.Error("Error in ProcessTempMessageBufferTable: ", e);
             }
         }
+    }
+    public enum CampaignStatus
+    {
+        MatchAndReferalDeactive = 0,
+        MatchActiveAndReferalDeactive = 1,
+        MatchActiveReferralActive = 2,
+        MatchActiveReferralSuspend = 3
     }
 }

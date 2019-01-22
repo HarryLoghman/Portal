@@ -493,6 +493,29 @@
           <Property Name="IsRenewd" Type="bit" />
           <Property Name="PriceBalancedForInAppRequest" Type="int" />
         </EntityType>
+        <EntityType Name="SingleChargeTiming">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="cycleNumber" Type="int" />
+          <Property Name="loopNo" Type="int" />
+          <Property Name="threadNumber" Type="int" />
+          <Property Name="mobileNumber" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="guid" Type="varchar" MaxLength="100" />
+          <Property Name="timeCreate" Type="datetime" />
+          <Property Name="timeStartProcessMtnInstallment" Type="datetime" />
+          <Property Name="timeAfterEntity" Type="datetime" />
+          <Property Name="timeAfterWhere" Type="datetime" />
+          <Property Name="timeStartChargeMtnSubscriber" Type="datetime" />
+          <Property Name="timeBeforeHTTPClient" Type="datetime" />
+          <Property Name="timeBeforeSendMTNClient" Type="datetime" />
+          <Property Name="timeAfterSendMTNClient" Type="datetime" />
+          <Property Name="timeBeforeReadStringClient" Type="datetime" />
+          <Property Name="timeAfterReadStringClient" Type="datetime" />
+          <Property Name="timeAfterXML" Type="datetime" />
+          <Property Name="timeFinish" Type="datetime" />
+        </EntityType>
         <EntityType Name="SinglechargeWaiting">
           <Key>
             <PropertyRef Name="Id" />
@@ -644,6 +667,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SingleChargeTiming" EntityType="Self.SingleChargeTiming" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeWaiting" EntityType="Self.SinglechargeWaiting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubscribersAdditionalInfo" EntityType="Self.SubscribersAdditionalInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TimedTempMessagesBuffer" EntityType="Self.TimedTempMessagesBuffer" Schema="dbo" store:Type="Tables" />
@@ -943,6 +967,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <EntitySet Name="vw_Singlecharge" EntityType="SharedServiceModel.vw_Singlecharge" />
           <EntitySet Name="SinglechargeInstallments" EntityType="SharedServiceModel.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeArchives" EntityType="SharedServiceModel.SinglechargeArchive" />
+          <EntitySet Name="SingleChargeTimings" EntityType="SharedServiceModel.SingleChargeTiming" />
         </EntityContainer>
         <EntityType Name="vw_SentMessages">
           <Key>
@@ -1341,6 +1366,29 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <Property Name="CycleNumber" Type="Int32" />
           <Property Name="ThreadNumber" Type="Int32" />
           <Property Name="wipe" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SingleChargeTiming">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="cycleNumber" Type="Int32" />
+          <Property Name="loopNo" Type="Int32" />
+          <Property Name="threadNumber" Type="Int32" />
+          <Property Name="mobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="guid" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="timeCreate" Type="DateTime" Precision="3" />
+          <Property Name="timeStartProcessMtnInstallment" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterEntity" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterWhere" Type="DateTime" Precision="3" />
+          <Property Name="timeStartChargeMtnSubscriber" Type="DateTime" Precision="3" />
+          <Property Name="timeBeforeHTTPClient" Type="DateTime" Precision="3" />
+          <Property Name="timeBeforeSendMTNClient" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterSendMTNClient" Type="DateTime" Precision="3" />
+          <Property Name="timeBeforeReadStringClient" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterReadStringClient" Type="DateTime" Precision="3" />
+          <Property Name="timeAfterXML" Type="DateTime" Precision="3" />
+          <Property Name="timeFinish" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1962,6 +2010,30 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SingleChargeTimings">
+            <EntityTypeMapping TypeName="SharedServiceModel.SingleChargeTiming">
+              <MappingFragment StoreEntitySet="SingleChargeTiming">
+                <ScalarProperty Name="timeFinish" ColumnName="timeFinish" />
+                <ScalarProperty Name="timeAfterXML" ColumnName="timeAfterXML" />
+                <ScalarProperty Name="timeAfterReadStringClient" ColumnName="timeAfterReadStringClient" />
+                <ScalarProperty Name="timeBeforeReadStringClient" ColumnName="timeBeforeReadStringClient" />
+                <ScalarProperty Name="timeAfterSendMTNClient" ColumnName="timeAfterSendMTNClient" />
+                <ScalarProperty Name="timeBeforeSendMTNClient" ColumnName="timeBeforeSendMTNClient" />
+                <ScalarProperty Name="timeBeforeHTTPClient" ColumnName="timeBeforeHTTPClient" />
+                <ScalarProperty Name="timeStartChargeMtnSubscriber" ColumnName="timeStartChargeMtnSubscriber" />
+                <ScalarProperty Name="timeAfterWhere" ColumnName="timeAfterWhere" />
+                <ScalarProperty Name="timeAfterEntity" ColumnName="timeAfterEntity" />
+                <ScalarProperty Name="timeStartProcessMtnInstallment" ColumnName="timeStartProcessMtnInstallment" />
+                <ScalarProperty Name="timeCreate" ColumnName="timeCreate" />
+                <ScalarProperty Name="guid" ColumnName="guid" />
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
+                <ScalarProperty Name="threadNumber" ColumnName="threadNumber" />
+                <ScalarProperty Name="loopNo" ColumnName="loopNo" />
+                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using SharedLibrary.Models;
 using System.Linq;
 using System.Collections;
-using PorShetabLibrary;
+
 using SharedLibrary.Models.ServiceModel;
 
 namespace DehnadPorShetabService
@@ -14,7 +14,7 @@ namespace DehnadPorShetabService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public void SendHandler()
         {
-            base.SendHandler(PorShetabLibrary.SharedVariables.prp_serviceEntity, new TimeSpan(7, 0, 0), new TimeSpan(23, 0, 0));
+            base.SendHandler(Properties.Settings.Default.ServiceCode, new TimeSpan(7, 0, 0), new TimeSpan(23, 0, 0));
         }
         //public void SendHandler()
         //{

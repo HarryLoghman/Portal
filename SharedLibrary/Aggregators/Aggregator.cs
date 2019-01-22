@@ -92,7 +92,7 @@ namespace SharedLibrary.Aggregators
                             using (StreamReader rd = new StreamReader(webException.Response.GetResponseStream()))
                             {
                                 bool isSucceeded;
-                                parameter.prp_result = this.fnc_sendMessage_parseResult(parameter.prp_service, rd.ReadToEnd(), out isSucceeded);
+                                parameter.prp_result = ex.Message + ":" + this.fnc_sendMessage_parseResult(parameter.prp_service, rd.ReadToEnd(), out isSucceeded);
                             }
                             webException.Response.Close();
                         }
@@ -136,6 +136,7 @@ namespace SharedLibrary.Aggregators
 
         internal virtual void sb_saveResponseToDB(WebRequestParameter parameter)
         {
+            
             if (ev_requestFinished != null)
             {
                 this.ev_requestFinished(this, null);
@@ -160,7 +161,6 @@ namespace SharedLibrary.Aggregators
                         default:
                             return;
                     }
-
                     DateTime now = DateTime.Now;
                     SqlCommand cmd = new SqlCommand();
                     cmd.Connection = new SqlConnection(parameterMessage.prp_cnnStrService);
@@ -181,7 +181,7 @@ namespace SharedLibrary.Aggregators
                         {
                             processStatus = SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         }
-                        cmd.CommandText = "update " + parameter.prp_service.databaseName + ".dbo.EventbaseMessagesBuffer "
+                        cmd.CommandText = "update " + parameter.prp_service.databaseName + ".dbo." + tableName + " "
                           + "set DateLastTried='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                           + ",RetryCount=IsNull(RetryCount,0)+1"
                           + ",SendResult=" + (string.IsNullOrEmpty(parameterMessage.prp_result) ? "Null" : "'" + parameterMessage.prp_result + "'")

@@ -56,6 +56,7 @@ namespace SharedLibrary.Models.ServiceModel
         public virtual DbSet<vw_Singlecharge> vw_Singlecharge { get; set; }
         public virtual DbSet<SinglechargeInstallment> SinglechargeInstallments { get; set; }
         public virtual DbSet<SinglechargeArchive> SinglechargeArchives { get; set; }
+        public virtual DbSet<SingleChargeTiming> SingleChargeTimings { get; set; }
     
         public virtual int RetryUndeliveredMessages()
         {

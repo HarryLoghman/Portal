@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TahChinLibrary.Models;
-using TahChinLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -163,7 +163,7 @@ namespace DehnadTahChinService
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 int isCampaignActive = 0;
-                using (var entity = new TahChinEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -284,7 +284,7 @@ namespace DehnadTahChinService
 
             try
             {
-                using (var entity = new TahChinEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     DateTime timeAfterEntity = DateTime.Now;
                     entity.Configuration.AutoDetectChangesEnabled = false;
@@ -337,7 +337,7 @@ namespace DehnadTahChinService
 
         public static Singlecharge ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-            TahChinEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
+            SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
             , string aggregatorServiceId, int installmentCycleNumber, int loopNo, int threadNumber
             , DateTime timeLoop, long installmentId = 0)
         {

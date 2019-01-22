@@ -351,12 +351,12 @@ namespace SharedLibrary
             return message;
         }
 
-        public static void InstallmentCycleToDb(Type entityType, Type installmentCycleType, int cycleNumber, long duration, int income)
+        public static void InstallmentCycleToDb(string serviceCode, Type entityType, Type installmentCycleType, int cycleNumber, long duration, int income)
         {
             try
             {
                 var today = DateTime.Now;
-                using (dynamic entity = Activator.CreateInstance(entityType))
+                using (dynamic entity = Activator.CreateInstance(entityType, serviceCode))
                 {
                     var cycle = ((IEnumerable<dynamic>)entity.InstallmentCycles).FirstOrDefault(o => o.DateCreated.Date == today.Date && o.CycleNumber == cycleNumber);
                     if (cycle != null)

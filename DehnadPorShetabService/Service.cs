@@ -210,7 +210,7 @@ namespace DehnadPorShetabService
             ////else
             ////    installmentCycleNumber = 1;
             //int tps;
-            //var entityType = typeof(PorShetabLibrary.Models.PorShetabEntities);
+            //var entityType = typeof(PorShetabLibrary.Models.SharedLibrary.Models.ServiceModel.SharedServiceEntities);
             //var cycleType = typeof(PorShetabLibrary.Models.InstallmentCycle);
 
             //while (!shutdownEvent.WaitOne(0))
@@ -219,7 +219,7 @@ namespace DehnadPorShetabService
             //    bool isInMaintenanceTime = false;
             //    try
             //    {
-            //        using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+            //        using (var entity = new PorShetabLibrary.Models.SharedLibrary.Models.ServiceModel.SharedServiceEntities())
             //        {
             //            var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
             //            if (isInMaintenace != null)

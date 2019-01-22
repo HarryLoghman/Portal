@@ -229,6 +229,56 @@ namespace DehnadReceiveProcessorService
             }
         }
 
+        private static SharedShortCodeServiceLibrary.HandleMo v_dambelLibrary;
+        public static SharedShortCodeServiceLibrary.HandleMo prp_dambelLibrary
+        {
+            get
+            {
+                if (v_dambelLibrary == null) v_dambelLibrary = new SharedShortCodeServiceLibrary.HandleMo("Dambel");
+                return v_dambelLibrary;
+            }
+        }
+
+        private static SharedShortCodeServiceLibrary.HandleMo v_medadLibrary;
+        public static SharedShortCodeServiceLibrary.HandleMo prp_medadLibrary
+        {
+            get
+            {
+                if (v_medadLibrary == null) v_medadLibrary = new SharedShortCodeServiceLibrary.HandleMo("Medad");
+                return v_medadLibrary;
+            }
+        }
+
+        private static SharedShortCodeServiceLibrary.HandleMo v_musicYadLibrary;
+        public static SharedShortCodeServiceLibrary.HandleMo prp_musicYadLibrary
+        {
+            get
+            {
+                if (v_musicYadLibrary == null) v_musicYadLibrary = new SharedShortCodeServiceLibrary.HandleMo("MusicYad");
+                return v_musicYadLibrary;
+            }
+        }
+
+        private static SharedShortCodeServiceLibrary.HandleMo v_porShetabLibrary;
+        public static SharedShortCodeServiceLibrary.HandleMo prp_porShetabLibrary
+        {
+            get
+            {
+                if (v_porShetabLibrary == null) v_porShetabLibrary = new SharedShortCodeServiceLibrary.HandleMo("PorShetab");
+                return v_porShetabLibrary;
+            }
+        }
+
+        private static SharedShortCodeServiceLibrary.HandleMo v_tahChinLibrary;
+        public static SharedShortCodeServiceLibrary.HandleMo prp_tahChinLibrary
+        {
+            get
+            {
+                if (v_tahChinLibrary == null) v_tahChinLibrary = new SharedShortCodeServiceLibrary.HandleMo("TahChin");
+                return v_tahChinLibrary;
+            }
+        }
+
         private static SharedShortCodeServiceLibrary.HandleMo v_nebulaLibrary;
 
         public static SharedShortCodeServiceLibrary.HandleMo prp_nebulaLibrary

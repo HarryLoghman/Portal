@@ -1106,10 +1106,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DambelLibrary\DambelLibrary.csproj">
-      <Project>{1434b114-121b-1513-431d-4bc287131142}</Project>
-      <Name>DambelLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DehnadNotificationService\DehnadNotificationService.csproj">
       <Project>{1df14122-4d21-8222-4d51-34141b3539c1}</Project>
       <Name>DehnadNotificationService</Name>
@@ -1138,18 +1134,6 @@
       <Project>{54314515-1421-1533-4351-5134db5bb446}</Project>
       <Name>JhoobinTahChinLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MedadLibrary\MedadLibrary.csproj">
-      <Project>{14344213-121b-1513-433d-4142db121245}</Project>
-      <Name>MedadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MusicYadLibrary\MusicYadLibrary.csproj">
-      <Project>{4211b11c-3511-a1b6-431d-fbc23b13d4b2}</Project>
-      <Name>MusicYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PorShetabLibrary\PorShetabLibrary.csproj">
-      <Project>{25344214-1b11-1513-4331-4842db123241}</Project>
-      <Name>PorShetabLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>
@@ -1157,10 +1141,6 @@
     <ProjectReference Include="..\SharedShortCodeServiceLibrary\SharedShortCodeServiceLibrary.csproj">
       <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
       <Name>SharedShortCodeServiceLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TahChinLibrary\TahChinLibrary.csproj">
-      <Project>{b12311f6-3bf5-2126-337f-3bc43b41256f}</Project>
-      <Name>TahChinLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

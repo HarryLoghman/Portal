@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DambelLibrary.Models;
-using DambelLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -162,7 +162,7 @@ namespace DehnadDambelService
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 int isCampaignActive = 0;
-                using (var entity = new DambelEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -282,7 +282,7 @@ namespace DehnadDambelService
 
             try
             {
-                using (var entity = new DambelEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     DateTime timeAfterEntity = DateTime.Now;
                     entity.Configuration.AutoDetectChangesEnabled = false;
@@ -335,7 +335,7 @@ namespace DehnadDambelService
 
         public static Singlecharge ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-            DambelEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
+            SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
             , string aggregatorServiceId, int installmentCycleNumber, int loopNo, int threadNumber
             , DateTime timeLoop, long installmentId = 0)
         {

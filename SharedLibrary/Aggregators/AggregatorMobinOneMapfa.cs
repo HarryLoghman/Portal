@@ -15,11 +15,6 @@ namespace SharedLibrary.Aggregators
         public AggregatorMobinOneMapfa()
                : this(false)
         {
-            using (var portal = new SharedLibrary.Models.PortalEntities())
-            {
-                var servicesShortCodes = portal.vw_servicesServicesInfo.Where(o => o.aggregatorName == "MobinOneMapfa").Select(o => o.ShortCode).ToList();
-                v_pardisShortCodes = portal.ParidsShortCodes.Where(o => servicesShortCodes.Contains(o.ShortCode)).ToList();
-            }
         }
 
         public AggregatorMobinOneMapfa(bool addErrorDescription)
@@ -27,6 +22,15 @@ namespace SharedLibrary.Aggregators
         {
             this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.mobinOneMapfa, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
             this.prp_url_delivery = "";
+            using (var portal = new SharedLibrary.Models.PortalEntities())
+            {
+                var agg = portal.Aggregators.Where(o => o.AggregatorName == "MobinOneMapfa").FirstOrDefault();
+                this.prp_userName = agg.AggregatorUsername;
+                this.prp_password = agg.AggregatorPassword;
+
+                var servicesShortCodes = portal.vw_servicesServicesInfo.Where(o => o.aggregatorName == "MobinOneMapfa").Select(o => o.ShortCode).ToList();
+                v_pardisShortCodes = portal.ParidsShortCodes.Where(o => servicesShortCodes.Contains(o.ShortCode)).ToList();
+            }
         }
 
         protected override HttpWebRequest fnc_createWebRequestHeader(SharedLibrary.Models.vw_servicesServicesInfo service, string url)
@@ -69,7 +73,7 @@ namespace SharedLibrary.Aggregators
                 domain = "alladmin";
             }
 
-            var pardisServiceId = v_pardisShortCodes.Where(o => o.ShortCode == shortCode && o.Price == 0).Select(o => o.PardisServiceId).FirstOrDefault();
+            var pardisServiceId = v_pardisShortCodes.Where(o => o.ShortCode == service.ShortCode && o.Price == 0).Select(o => o.PardisServiceId).FirstOrDefault();
             string xmlString = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
             "<s:Body xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
             "<ServiceSend xmlns=\"http://Srv/\">" +

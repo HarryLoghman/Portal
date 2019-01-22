@@ -23,6 +23,12 @@ namespace SharedLibrary.Aggregators
         {
             this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
             this.prp_url_delivery = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.dehandReceivePortalOnTohid, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
+            using (var portal = new SharedLibrary.Models.PortalEntities())
+            {
+                var agg = portal.Aggregators.Where(o => o.AggregatorName == "MciDirect").FirstOrDefault();
+                this.prp_userName = agg.AggregatorUsername;
+                this.prp_password = agg.AggregatorPassword;
+            }
         }
 
         protected override HttpWebRequest fnc_createWebRequestHeader(SharedLibrary.Models.vw_servicesServicesInfo service, string url)

@@ -119,10 +119,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PorShetabLibrary\PorShetabLibrary.csproj">
-      <Project>{25344214-1b11-1513-4331-4842db123241}</Project>
-      <Name>PorShetabLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>

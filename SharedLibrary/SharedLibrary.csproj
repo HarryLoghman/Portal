@@ -295,6 +295,9 @@
     <Compile Include="Models\ServiceModel\SinglechargeInstallment.cs">
       <DependentUpon>SharedServiceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ServiceModel\SingleChargeTiming.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ServiceModel\SinglechargeWaiting.cs">
       <DependentUpon>SharedServiceModel.tt</DependentUpon>
     </Compile>

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DambelLibrary.Models;
-using DambelLibrary;
+using SharedLibrary.Models.ServiceModel;
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -121,7 +120,7 @@ namespace DehnadDambelService
             await Task.Delay(10); // for making it async
             try
             {
-                using (var entity = new DambelEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     foreach (var installment in chunkedSingleChargeInstallment)
@@ -180,7 +179,7 @@ namespace DehnadDambelService
             return income;
         }
 
-        public static async Task<Singlecharge> ChargeMtnSubscriber(DambelEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
+        public static async Task<Singlecharge> ChargeMtnSubscriber(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
         {
             string charge = "";
             var spId = "980110006379";

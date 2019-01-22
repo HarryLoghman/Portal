@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PorShetabLibrary.Models;
-using PorShetabLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 
 namespace DehnadPorShetabService
@@ -35,7 +35,7 @@ namespace DehnadPorShetabService
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
                 
-                using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -77,7 +77,7 @@ namespace DehnadPorShetabService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -95,9 +95,9 @@ namespace DehnadPorShetabService
                     {
                         var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "RenewalSinglechargeMessage").Content;
-                        var imiChargeObject = PorShetabLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode , 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
-                        PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode,message);
                         item.IsRenewalMessageSent = true;
                         entity.Entry(item).State = EntityState.Modified;
                         if (batchSaveCounter > 500)
@@ -123,7 +123,7 @@ namespace DehnadPorShetabService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -146,9 +146,9 @@ namespace DehnadPorShetabService
                         }
                         var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "OneDayRemainedTillSinglecharge").Content;
-                        var imiChargeObject = PorShetabLibrary.MessageHandler.GetImiChargeObjectFromPrice(0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode,0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
-                        PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
+                        SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode , message);
                         item.IsLastDayWarningSent = true;
                         entity.Entry(item).State = EntityState.Modified;
                         batchSaveCounter += 1;
@@ -168,7 +168,7 @@ namespace DehnadPorShetabService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     entity.Configuration.AutoDetectChangesEnabled = false;
                     var chargeCodes = entity.ImiChargeCodes.ToList();
@@ -226,7 +226,7 @@ namespace DehnadPorShetabService
             {
                 var today = DateTime.Now;
                 int batchSaveCounter = 0;
-                using (var entity = new PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
 
                     var chargeCodes = entity.ImiChargeCodes.ToList();

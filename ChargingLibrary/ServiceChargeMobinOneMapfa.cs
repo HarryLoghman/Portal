@@ -38,7 +38,7 @@ namespace ChargingLibrary
                     throw new Exception("There is no aggregator with id =" + this.prp_service.AggregatorId + " in " + this.prp_service.ServiceCode);
             }
             isCampaignActive = 0;
-            using (var entity = new SharedServiceEntities("Shared" + this.prp_service.databaseName + "Entities"))
+            using (var entity = new SharedServiceEntities(this.prp_service.databaseName))
             {
                 var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                 if (campaign != null)

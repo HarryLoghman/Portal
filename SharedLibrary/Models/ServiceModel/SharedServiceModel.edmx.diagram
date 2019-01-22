@@ -33,6 +33,7 @@
         <EntityTypeShape EntityType="SharedServiceModel.vw_Singlecharge" Width="1.5" PointX="17.375" PointY="0.75" />
         <EntityTypeShape EntityType="SharedServiceModel.SinglechargeInstallment" Width="1.5" PointX="17.375" PointY="5.75" />
         <EntityTypeShape EntityType="SharedServiceModel.SinglechargeArchive" Width="1.5" PointX="17.375" PointY="10.75" />
+        <EntityTypeShape EntityType="SharedServiceModel.SingleChargeTiming" Width="1.5" PointX="17.375" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

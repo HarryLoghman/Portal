@@ -96,10 +96,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShahreKalamehLibrary\ShahreKalamehLibrary.csproj">
-      <Project>{23bd342d-2d3f-4cf2-944d-02b5ce34242d}</Project>
-      <Name>ShahreKalamehLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>

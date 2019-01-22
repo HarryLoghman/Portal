@@ -33,11 +33,11 @@ namespace DehnadNotificationService
         {
             try
             {
-                using (var entity = new TahChinLibrary.Models.TahChinEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("TahChin"))
                     OverChargeNotify("TahChin", entity, 300);
-                using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("MusicYad"))
                     OverChargeNotify("MusicYad", entity, 300);
-                using (var entity = new DambelLibrary.Models.DambelEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Dambel"))
                     OverChargeNotify("Dambel", entity, 300);
                 using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Phantom"))
                     OverChargeNotify("Phantom", entity, 500);
@@ -45,9 +45,9 @@ namespace DehnadNotificationService
                     OverChargeNotify("Medio", entity, 400);
                 //using (var entity = new DarchinLibrary.Models.DarchinEntities())
                 //    OverChargeNotify("Darchin", entity, 7000);
-                using (var entity = new MedadLibrary.Models.MedadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Medad"))
                     OverChargeNotify("Medad", entity, 300);
-                using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("PorShetab"))
                     OverChargeNotify("PorShetab", entity, 500);
             }
             catch (Exception e)
@@ -65,17 +65,17 @@ namespace DehnadNotificationService
             {
                 if (serviceCode.ToLower() == "tahchin")
                 {
-                    using (var entity = new TahChinLibrary.Models.TahChinEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("TahChin"))
                         result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
                 }
                 else if (serviceCode.ToLower() == "musicyad")
                 {
-                    using (var entity = new MusicYadLibrary.Models.MusicYadEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("MusicYad"))
                         result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
                 }
                 else if (serviceCode.ToLower() == "dambel")
                 {
-                    using (var entity = new DambelLibrary.Models.DambelEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Dambel"))
                         result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
                 }
                 else if (serviceCode.ToLower() == "phantom")
@@ -95,12 +95,12 @@ namespace DehnadNotificationService
                 }
                 else if (serviceCode.ToLower() == "medad")
                 {
-                    using (var entity = new MedadLibrary.Models.MedadEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Medad"))
                         result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
                 }
                 else if (serviceCode.ToLower() == "porshetab")
                 {
-                    using (var entity = new PorShetabLibrary.Models.PorShetabEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("PorShetab"))
                         result = SharedLibrary.Notify.GetSuccessfulIncomeByDate(entity, DateTime.Now);
                 }
             }

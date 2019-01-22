@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MedadLibrary.Models;
-using MedadLibrary;
+using SharedLibrary.Models.ServiceModel;
+
 using System.Data.Entity;
 using System.Threading;
 using System.Collections;
@@ -124,7 +124,7 @@ namespace DehnadMedadService
                 logs.Info("installmentList count:" + installmentList.Count);
 
                 int isCampaignActive = 0;
-                using (var entity = new MedadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
@@ -141,7 +141,9 @@ namespace DehnadMedadService
                 System.Data.SqlClient.SqlConnection cnn = new System.Data.SqlClient.SqlConnection();
                 try
                 {
-                    cnn = MedadLibrary.publicVariables.GetConnection();
+                    System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder builder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder();
+                    builder.ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MedadEntities"].ConnectionString;
+                    cnn.ConnectionString = builder.ProviderConnectionString;
                     cnn.Open();
                 }
                 catch (Exception e)
@@ -248,7 +250,7 @@ namespace DehnadMedadService
 
             try
             {
-                using (var entity = new MedadEntities())
+                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                 {
                     DateTime timeAfterEntity = DateTime.Now;
                     entity.Configuration.AutoDetectChangesEnabled = false;
@@ -300,7 +302,7 @@ namespace DehnadMedadService
 
         public static async Task<Singlecharge> ChargeMtnSubscriber(
             DateTime timeStartProcessMtnInstallment, DateTime timeAfterEntity, DateTime timeAfterWhere,
-            MedadEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
+            SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message, bool isRefund, bool isInAppPurchase
             , Dictionary<string, string> serviceAdditionalInfo, int installmentCycleNumber, int loopNo, int threadNumber
             , DateTime timeLoop, long installmentId = 0)
         {

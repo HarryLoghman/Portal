@@ -205,15 +205,15 @@ namespace DehnadMedadService
             else
                 installmentCycleNumber = 1;
 
-            var entityType = typeof(MedadLibrary.Models.MedadEntities);
-            var cycleType = typeof(MedadLibrary.Models.InstallmentCycle);
+            var entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
+            var cycleType = typeof(SharedLibrary.Models.ServiceModel.InstallmentCycle);
 
             while (!shutdownEvent.WaitOne(0))
             {
                 bool isInMaintenanceTime = false;
                 try
                 {
-                    using (var entity = new MedadLibrary.Models.MedadEntities())
+                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
                     {
                         var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
                         if (isInMaintenace != null)
@@ -232,7 +232,7 @@ namespace DehnadMedadService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("10:30:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
@@ -240,7 +240,7 @@ namespace DehnadMedadService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
@@ -248,7 +248,7 @@ namespace DehnadMedadService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
@@ -256,7 +256,7 @@ namespace DehnadMedadService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
@@ -264,7 +264,7 @@ namespace DehnadMedadService
                             var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
                             var endTime = DateTime.Now;
                             var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
                             installmentCycleNumber++;
                         }
                         else

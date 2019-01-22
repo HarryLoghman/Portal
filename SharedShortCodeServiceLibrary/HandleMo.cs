@@ -26,10 +26,11 @@ namespace SharedShortCodeServiceLibrary
             UserSubscription = 64,
             AggregatorSubscription = 128,
             AggregatorUnsubscription = 256,
-            DoNothingReturnTrue = 512,
-            DoNothingReturnFalse = 1024,
-            DoNothing = 2048,
-            EmptyString = 4096,
+            MatchParentIntroduction = 512,
+            DoNothingReturnTrue = 1024,
+            DoNothingReturnFalse = 2048,
+            DoNothing = 4096,
+            EmptyString = 8192,
             unknown = 0
         }
         protected virtual string prp_serviceCode { get; }
@@ -38,7 +39,7 @@ namespace SharedShortCodeServiceLibrary
         public HandleMo(string serviceCode)
         {
             this.prp_serviceCode = serviceCode;
-            this.prp_connectionStringeNameInAppConfig =  serviceCode;
+            this.prp_connectionStringeNameInAppConfig = serviceCode;
             this.CompileSource();
         }
 
@@ -46,6 +47,12 @@ namespace SharedShortCodeServiceLibrary
         CompilerResults v_compilerResult;
         protected virtual enumCommand EvaluateCommand(vw_servicesServicesInfo service, MessageObject message)
         {
+            string aggregatorIntegratedPanelKeyword = "IMI";
+            if (service.aggregatorName.ToLower() == "mtn")
+            {
+                aggregatorIntegratedPanelKeyword = "notify";
+            }
+
             enumCommand command = enumCommand.unknown;
             if (message.ReceivedFrom.Contains("FromApp") && !message.Content.All(char.IsDigit))
             {
@@ -72,12 +79,13 @@ namespace SharedShortCodeServiceLibrary
                 command = (command == enumCommand.unknown ? enumCommand.OTPConfirm : command | enumCommand.OTPConfirm);
                 //command = enumCommand.OTPConfirm;
             }
-            if (SharedLibrary.ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content) && !message.ReceivedFrom.Contains("IMI"))
+
+            if (SharedLibrary.ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content) && !message.ReceivedFrom.Contains(aggregatorIntegratedPanelKeyword))
             {
                 command = (command == enumCommand.unknown ? enumCommand.UserUnsubscription : command | enumCommand.UserUnsubscription);
                 //command = enumCommand.UserUnsubscription;
             }
-            if (SharedLibrary.ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service) && !message.ReceivedFrom.Contains("IMI"))
+            if (SharedLibrary.ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service) && !message.ReceivedFrom.Contains(aggregatorIntegratedPanelKeyword))
             {
                 command = (command == enumCommand.unknown ? enumCommand.UserSubscription : command | enumCommand.UserSubscription);
                 //command = enumCommand.UserUnsubscription;
@@ -153,18 +161,18 @@ namespace SharedShortCodeServiceLibrary
                 var subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
                 {
-                    Subscribers.CreateSubscriberAdditionalInfo(service.ServiceCode , message.MobileNumber, service.Id);
-                    Subscribers.AddSubscriptionPointIfItsFirstTime(service.ServiceCode , message.MobileNumber, service.Id);
-                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode,message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                    Subscribers.CreateSubscriberAdditionalInfo(service.ServiceCode, message.MobileNumber, service.Id);
+                    Subscribers.AddSubscriptionPointIfItsFirstTime(service.ServiceCode, message.MobileNumber, service.Id);
+                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                 }
                 else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
                 {
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode , message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
                 }
                 else
                 {
-                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode , message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
                     var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     //Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
                 }
@@ -173,7 +181,7 @@ namespace SharedShortCodeServiceLibrary
                 if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
                 {
                     message.Content = content;
-                    singlecharge = ContentManager.HandleSinglechargeContent(service.ServiceCode , message, service, subsciber, messagesTemplate);
+                    singlecharge = ContentManager.HandleSinglechargeContent(service.ServiceCode, message, service, subsciber, messagesTemplate);
                 }
                 return singlecharge;
             }
@@ -181,22 +189,22 @@ namespace SharedShortCodeServiceLibrary
 
             if (subscriber == null)
             {
-                message = MessageHandler.InvalidContentWhenNotSubscribed(service.ServiceCode , message, messagesTemplate);
-                MessageHandler.InsertMessageToQueue(service.ServiceCode , message);
+                message = MessageHandler.InvalidContentWhenNotSubscribed(service.ServiceCode, message, messagesTemplate);
+                MessageHandler.InsertMessageToQueue(service.ServiceCode, message);
                 return null;
             }
             message.SubscriberId = subscriber.Id;
             if (subscriber.DeactivationDate != null)
             {
-                message = MessageHandler.InvalidContentWhenNotSubscribed(service.ServiceCode,message, messagesTemplate);
-                MessageHandler.InsertMessageToQueue(service.ServiceCode,message);
+                message = MessageHandler.InvalidContentWhenNotSubscribed(service.ServiceCode, message, messagesTemplate);
+                MessageHandler.InsertMessageToQueue(service.ServiceCode, message);
                 return null;
             }
             message.Content = content;
-            singlecharge = ContentManager.HandleSinglechargeContent(service.ServiceCode , message, service, subscriber, messagesTemplate);
+            singlecharge = ContentManager.HandleSinglechargeContent(service.ServiceCode, message, service, subscriber, messagesTemplate);
             return singlecharge;
         }
-        
+
 
         private string getSourceFromDatabase()
         {
@@ -333,6 +341,9 @@ namespace SharedShortCodeServiceLibrary
         {
             bool isSucceeded = true;
             string connectionStringeNameInAppConfig = this.prp_connectionStringeNameInAppConfig;
+            bool mtnAggregator = false;
+            if (service.aggregatorName.ToLower() == "mtn")
+                mtnAggregator = true;
             try
             {
 
@@ -346,6 +357,14 @@ namespace SharedShortCodeServiceLibrary
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
                     if (campaign != null)
                         isCampaignActive = Convert.ToInt32(campaign.Value);
+
+                    int isMatchActive = 0;
+                    var match = entity.Settings.FirstOrDefault(o => o.Name == "match");
+                    if (match != null)
+                    {
+                        isMatchActive = Convert.ToInt32(match.Value);
+                    }
+
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
                     if (isInBlackList == true)
                         isCampaignActive = (int)CampaignStatus.Deactive;
@@ -389,6 +408,11 @@ namespace SharedShortCodeServiceLibrary
                     {
                         return isSucceeded;
                     }
+                    if ((command & enumCommand.MatchParentIntroduction) == enumCommand.MatchParentIntroduction
+                        && isCampaignActive == (int)CampaignStatus.Active && isMatchActive == (int)CampaignStatus.Active)
+                    {
+                        return this.MatchParentIntroduction(connectionStringeNameInAppConfig, service, message, messagesTemplate).Result;
+                    }
                     if ((command & enumCommand.DoNothing) == enumCommand.DoNothing)
                     {
 
@@ -401,6 +425,7 @@ namespace SharedShortCodeServiceLibrary
                     {
                         return true;
                     }
+
 
                     if ((message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
                     {
@@ -447,7 +472,8 @@ namespace SharedShortCodeServiceLibrary
                         }
                         #endregion
                         message = this.SetMessageDueToSubscriberStatus(connectionStringeNameInAppConfig, service, message, serviceStatusForSubscriberState, content);
-                        this.CampaignManagment(connectionStringeNameInAppConfig, service, message, subscriber, messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                        this.CampaignManagment(connectionStringeNameInAppConfig, service, message, subscriber, messagesTemplate, serviceStatusForSubscriberState
+                            , isCampaignActive, isMatchActive);
                         this.PrepareSubscriptionMessage(connectionStringeNameInAppConfig, entity, service, message, messagesTemplate
                             , serviceStatusForSubscriberState, isCampaignActive);
 
@@ -474,7 +500,8 @@ namespace SharedShortCodeServiceLibrary
                             else
                                 message = SharedShortCodeServiceLibrary.MessageHandler.InvalidContentWhenNotSubscribed(connectionStringeNameInAppConfig, message, messagesTemplate);
                         }
-                        MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                        if (!mtnAggregator)
+                            MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
                         return isSucceeded;
                     }
                     #endregion
@@ -512,6 +539,7 @@ namespace SharedShortCodeServiceLibrary
             }
             return isSucceeded;
         }
+
         protected virtual bool AppMessage(string connectionStringeNameInAppConfig, MessageObject message)
         {
             bool isSucceeded = true;
@@ -637,11 +665,31 @@ namespace SharedShortCodeServiceLibrary
             return message;
         }
 
+        protected virtual async Task<bool> MatchParentIntroduction(string connectionStringInappConfig
+            , vw_servicesServicesInfo service, MessageObject message, List<MessagesTemplate> messagesTemplate)
+        {
+            bool isSucceeded = true;
+            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+            var sha = SharedLibrary.Security.GetSha256Hash("parent" + message.MobileNumber);
+            //dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
+            dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
+
+            message = MessageHandler.SetImiChargeInfo(connectionStringInappConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message.Content = "";
+            if (result.status.ToString() == "ok")
+                message.Content = messagesTemplate.Where(o => o.Title == "ParentReferralCodeExists").Select(o => o.Content).FirstOrDefault();
+            else
+                message.Content = messagesTemplate.Where(o => o.Title == "ParentReferralCodeNotExists").Select(o => o.Content).FirstOrDefault();
+            if (message.Content != "")
+                MessageHandler.InsertMessageToQueue(connectionStringInappConfig, message);
+            return isSucceeded;
+        }
+
         protected virtual async void CampaignManagment(string connectionStringeNameInAppConfig
             , vw_servicesServicesInfo service, MessageObject message
             , Subscriber subscriber, List<MessagesTemplate> messagesTemplate
             , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState
-            , int isCampaignActive)
+            , int isCampaignActive, int isMatchActive)
         {
             #region campaignActive and user is active or renewal
             if (isCampaignActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
@@ -689,6 +737,17 @@ namespace SharedShortCodeServiceLibrary
                             }
                         }
                     }
+                }
+            }
+            #endregion
+            #region matchActive and user is active or renewal
+            else if (isMatchActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
+            {
+                var sha = SharedLibrary.Security.GetSha256Hash("match" + message.MobileNumber);
+                //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
+                var result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "sub.php", string.Format("number={0}&kc={3}", message.MobileNumber, sha));
+                if (result.description == "success")
+                {
                 }
             }
             #endregion
