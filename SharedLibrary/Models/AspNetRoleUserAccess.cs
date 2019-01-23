@@ -12,11 +12,10 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class C__MigrationHistory
+    public partial class AspNetRoleUserAccess
     {
-        public string MigrationId { get; set; }
-        public string ContextKey { get; set; }
-        public byte[] Model { get; set; }
-        public string ProductVersion { get; set; }
+        public string roleId { get; set; }
+        public string userId { get; set; }
+        public long applicationId { get; set; }
     }
 }

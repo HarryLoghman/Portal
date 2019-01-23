@@ -1106,33 +1106,12 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\index.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\DehnadNotificationService\DehnadNotificationService.csproj">
       <Project>{1df14122-4d21-8222-4d51-34141b3539c1}</Project>
       <Name>DehnadNotificationService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JhoobinDambelLibrary\JhoobinDambelLibrary.csproj">
-      <Project>{54314515-1421-1533-4351-5134db5bb441}</Project>
-      <Name>JhoobinDambelLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JhoobinMedadLibrary\JhoobinMedadLibrary.csproj">
-      <Project>{54314515-1421-1533-4351-5134db5bb442}</Project>
-      <Name>JhoobinMedadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JhoobinMusicYadLibrary\JhoobinMusicYadLibrary.csproj">
-      <Project>{54314515-1421-1533-4351-5134db5bb443}</Project>
-      <Name>JhoobinMusicYadLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JhoobinPinLibrary\JhoobinPinLibrary.csproj">
-      <Project>{54314515-1421-1533-4351-5134db5bb444}</Project>
-      <Name>JhoobinPinLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JhoobinPorShetabLibrary\JhoobinPorShetabLibrary.csproj">
-      <Project>{54314515-1421-1533-4351-5134db5bb445}</Project>
-      <Name>JhoobinPorShetabLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JhoobinTahChinLibrary\JhoobinTahChinLibrary.csproj">
-      <Project>{54314515-1421-1533-4351-5134db5bb446}</Project>
-      <Name>JhoobinTahChinLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
@@ -1142,9 +1121,6 @@
       <Project>{de3508ce-6d92-450b-a431-4a8f42fcfb3e}</Project>
       <Name>SharedShortCodeServiceLibrary</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

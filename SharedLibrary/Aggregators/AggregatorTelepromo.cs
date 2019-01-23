@@ -71,7 +71,7 @@ namespace SharedLibrary.Aggregators
                                 ,{"message",  messageContent }
                                 ,{"is_free","1" }
                                 ,{"correlator" , correlator }
-                                ,{ "servicename" , service.ServiceName }
+                                ,{ "servicename" , service.serviceName }
                             };
             string json = JsonConvert.SerializeObject(dic);
             return json;

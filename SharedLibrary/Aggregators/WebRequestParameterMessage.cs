@@ -33,7 +33,7 @@ namespace SharedLibrary.Aggregators
 
         
         internal string prp_messageContent { get; set; }
-        internal override void sb_save()
+        public override void sb_save()
         {
             try
             {
@@ -100,7 +100,7 @@ namespace SharedLibrary.Aggregators
             }
         }
 
-        internal override string fnc_parseResult(string result, out bool isSucceeded)
+        public override string fnc_parseResult(string result, out bool isSucceeded)
         {
             return base.fnc_parseResult(result, out isSucceeded);
         }

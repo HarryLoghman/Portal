@@ -20,11 +20,11 @@ namespace SharedLibrary.Models
         public string ShortCode { get; set; }
         public string AggregatorServiceId { get; set; }
         public string OperatorServiceId { get; set; }
+        public string serviceName { get; set; }
         public string databaseName { get; set; }
         public Nullable<int> chargePrice { get; set; }
-        public string ServiceName { get; set; }
     
-        public virtual Service Service { get; set; }
         public virtual Aggregator Aggregator { get; set; }
+        public virtual Service Service { get; set; }
     }
 }

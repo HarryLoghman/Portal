@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharedLibrary.Aggregators
 {
-    class WebRequestParameter
+    public class WebRequestParameter
     {
         public WebRequestParameter(enum_webRequestParameterType webRequestType, string bodyString , SharedLibrary.Models.vw_servicesServicesInfo service
             ,log4net.ILog logs)
@@ -20,34 +20,34 @@ namespace SharedLibrary.Aggregators
             this.prp_service = service;
         }
 
-        internal enum_webRequestParameterType prp_webRequestType { get; }
-        internal SharedLibrary.Models.vw_servicesServicesInfo prp_service { get; }
-        internal string prp_result { get; set; }
-        internal bool prp_isSucceeded { get; set; }
+        public enum_webRequestParameterType prp_webRequestType { get; }
+        public SharedLibrary.Models.vw_servicesServicesInfo prp_service { get; }
+        public string prp_result { get; set; }
+        public bool prp_isSucceeded { get; set; }
 
-        internal string prp_bodyString { get; }
-        internal string prp_cnnStrService
+        public string prp_bodyString { get; }
+        public string prp_cnnStrService
         {
             get
             {
                 return "Data source =.; initial catalog = " + this.prp_databaseName + "; integrated security = True; max pool size=4000; multipleactiveresultsets=True;connection timeout=180 ;";
             }
         }
-        internal log4net.ILog prp_logs { get; }
+        public log4net.ILog prp_logs { get; }
 
-        internal string prp_databaseName
+        public string prp_databaseName
         {
             get
             {
                 return this.prp_service.databaseName;
             }
         }
-        internal virtual void sb_save()
+        public virtual void sb_save()
         {
             
         }
 
-        internal virtual string fnc_parseResult(string result, out bool isSucceeded)
+        public virtual string fnc_parseResult(string result, out bool isSucceeded)
         {
             isSucceeded = false;
             return "";
@@ -55,7 +55,7 @@ namespace SharedLibrary.Aggregators
 
     }
 
-    enum enum_webRequestParameterType
+    public enum enum_webRequestParameterType
     {
         message,
         charge

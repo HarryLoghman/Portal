@@ -20,13 +20,16 @@ namespace SharedShortCodeServiceLibrary
                     return;
                 var pointsTable = GetPointsTableValues(connectionStringNameInAppConfig);
                 var subscriptionPoint = pointsTable.Where(o => o.Title == "SubscriptionPoint").FirstOrDefault();
-                SharedLibrary.MessageHandler.SetSubscriberPoint(mobileNumber, serviceId, subscriptionPoint.Point);
-                using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
+                if (subscriptionPoint != null)
                 {
-                    entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);
-                    subscriberAdditionalInfo.IsSubscriberReceivedSubscriptionPoint = true;
-                    entity.Entry(subscriberAdditionalInfo).State = System.Data.Entity.EntityState.Modified;
-                    entity.SaveChanges();
+                    SharedLibrary.MessageHandler.SetSubscriberPoint(mobileNumber, serviceId, subscriptionPoint.Point);
+                    using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
+                    {
+                        entity.SubscribersAdditionalInfoes.Attach(subscriberAdditionalInfo);
+                        subscriberAdditionalInfo.IsSubscriberReceivedSubscriptionPoint = true;
+                        entity.Entry(subscriberAdditionalInfo).State = System.Data.Entity.EntityState.Modified;
+                        entity.SaveChanges();
+                    }
                 }
             }
             catch (Exception e)
@@ -48,7 +51,7 @@ namespace SharedShortCodeServiceLibrary
             }
             catch (Exception e)
             {
-                logs.Error("Error in AddSubscriptionPointIfItsFirstTime: " + e);
+                logs.Error("Error in GetPointsTableValues: " + e);
             }
             return pointsTable;
         }

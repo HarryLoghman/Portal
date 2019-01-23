@@ -14,9 +14,6 @@ namespace SharedLibrary.Models
     
     public partial class vw_servicesServicesInfo
     {
-        public Nullable<int> userCount { get; set; }
-        public Nullable<int> activeUserCount { get; set; }
-        public int TodayTillNowChargeAmount { get; set; }
         public long Id { get; set; }
         public string Name { get; set; }
         public string ServiceCode { get; set; }
@@ -31,7 +28,7 @@ namespace SharedLibrary.Models
         public string ShortCode { get; set; }
         public string AggregatorServiceId { get; set; }
         public string OperatorServiceId { get; set; }
-        public string ServiceName { get; set; }
+        public string serviceName { get; set; }
         public string databaseName { get; set; }
         public Nullable<int> chargePrice { get; set; }
         public string aggregatorName { get; set; }

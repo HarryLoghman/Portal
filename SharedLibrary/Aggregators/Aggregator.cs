@@ -16,7 +16,8 @@ namespace SharedLibrary.Aggregators
         internal virtual string prp_userName { get; set; }
         internal virtual string prp_password { get; set; }
         public Dictionary<string, string> prp_aggregatorErrors { get; set; }
-        public event EventHandler ev_requestFinished;
+        public delegate void hanlder_requestFinished(Aggregator agg, WebRequestParameter parameter);
+        public event hanlder_requestFinished ev_requestFinished;
 
         public string prp_url_sendMessage { get; set; }
         public string prp_url_delivery { get; set; }
@@ -137,10 +138,7 @@ namespace SharedLibrary.Aggregators
         internal virtual void sb_saveResponseToDB(WebRequestParameter parameter)
         {
             
-            if (ev_requestFinished != null)
-            {
-                this.ev_requestFinished(this, null);
-            }
+            
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
                 WebRequestParameterMessage parameterMessage = (WebRequestParameterMessage)parameter;
@@ -211,6 +209,10 @@ namespace SharedLibrary.Aggregators
 
                 }
             }
+            if (ev_requestFinished != null)
+            {
+                this.ev_requestFinished(this, parameter);
+            }
         }
         protected virtual string fnc_getAggregatorErrorDescription(string errorNameOrId)
         {
@@ -238,7 +240,7 @@ namespace SharedLibrary.Aggregators
         #region sendMessage
        
 
-        internal void sb_sendMessage(SharedLibrary.Models.vw_servicesServicesInfo service, long id, string mobileNumber, SharedLibrary.MessageHandler.MessageType messageType, int maxTries
+        public void sb_sendMessage(SharedLibrary.Models.vw_servicesServicesInfo service, long id, string mobileNumber, SharedLibrary.MessageHandler.MessageType messageType, int maxTries
             , string messageContent, DateTime dateTimeCorrelator
             , int? price, string chargeKey)
         {
@@ -249,7 +251,7 @@ namespace SharedLibrary.Aggregators
                 , price, chargeKey);
             WebRequestParameterMessage parameter = new WebRequestParameterMessage(id, mobileNumber, maxTries, dateTimeCorrelator, messageContent
                 , enum_webRequestParameterType.message, messageType, requestBody, service, SharedVariables.logs);
-
+            
             //parameter.prp_bodyString = requestBody;
             this.prp_webRequestProcess.SendRequest(webRequest, requestBody, parameter, this);
 

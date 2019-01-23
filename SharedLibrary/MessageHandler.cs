@@ -372,7 +372,7 @@ namespace SharedLibrary
             return message;
         }
 
-        public static long OtpLog(vw_servicesServicesInfo service,  string mobileNumber, string otpType, string userMessage)
+        public static long OtpLog(vw_servicesServicesInfo service, string mobileNumber, string otpType, string userMessage)
         {
             try
             {
@@ -397,7 +397,7 @@ namespace SharedLibrary
             return 0;
         }
 
-        public static void OtpLogUpdate(vw_servicesServicesInfo service,  long otpId, string returnValue)
+        public static void OtpLogUpdate(vw_servicesServicesInfo service, long otpId, string returnValue)
         {
             try
             {
@@ -427,24 +427,24 @@ namespace SharedLibrary
 
         public static void InsertMessageToQueue(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity, MessageObject message)
         {
-                message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
-                if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
-                {
-                    var messageBuffer = CreateAutochargeMessageBuffer(message);
-                    entity.AutochargeMessagesBuffers.Add(messageBuffer);
-                }
-                else if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase)
-                {
-                    var messageBuffer = CreateEventbaseMessageBuffer(message);
-                    entity.EventbaseMessagesBuffers.Add(messageBuffer);
-                }
-                else
-                {
-                    var messageBuffer = CreateOnDemandMessageBuffer(message);
-                    entity.OnDemandMessagesBuffers.Add(messageBuffer);
-                }
-                entity.SaveChanges();
-            
+            message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
+            if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
+            {
+                var messageBuffer = CreateAutochargeMessageBuffer(message);
+                entity.AutochargeMessagesBuffers.Add(messageBuffer);
+            }
+            else if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase)
+            {
+                var messageBuffer = CreateEventbaseMessageBuffer(message);
+                entity.EventbaseMessagesBuffers.Add(messageBuffer);
+            }
+            else
+            {
+                var messageBuffer = CreateOnDemandMessageBuffer(message);
+                entity.OnDemandMessagesBuffers.Add(messageBuffer);
+            }
+            entity.SaveChanges();
+
         }
 
         public static Models.ServiceModel.OnDemandMessagesBuffer CreateOnDemandMessageBuffer(MessageObject message)
@@ -546,20 +546,42 @@ namespace SharedLibrary
             if (readSize != 0)
             {
                 if (messageType == MessageType.AutoCharge)
-                    return serviceEntity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).Take(readSize).ToList();
+                    return serviceEntity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend
+                    /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/
+                    && (o.RetryCount == null || o.RetryCount <= maxRetryCount)
+                    && (o.DateLastTried == null || o.DateLastTried < retryTimeOut)
+                    && o.bulkId == null ).Take(readSize).ToList();
                 else if (messageType == MessageType.EventBase)
-                    return serviceEntity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).Take(readSize).ToList();
+                    return serviceEntity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend 
+                    /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ 
+                    && (o.RetryCount == null || o.RetryCount <= maxRetryCount) 
+                    && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) 
+                    && o.bulkId == null ).Take(readSize).ToList();
                 else if (messageType == MessageType.OnDemand)
-                    return serviceEntity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).Take(readSize).ToList();
+                    return serviceEntity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend 
+                    && (o.RetryCount == null || o.RetryCount <= maxRetryCount) 
+                    && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) 
+                    && o.bulkId == null ).Take(readSize).ToList();
             }
             else
             {
                 if (messageType == MessageType.AutoCharge)
-                    return serviceEntity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).ToList();
+                    return serviceEntity.AutochargeMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend 
+                    /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ 
+                    && (o.RetryCount == null || o.RetryCount <= maxRetryCount) 
+                    && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) 
+                    && o.bulkId == null ).ToList();
                 else if (messageType == MessageType.EventBase)
-                    return serviceEntity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).ToList();
+                    return serviceEntity.EventbaseMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend 
+                    /*&& DbFunctions.TruncateTime(o.DateAddedToQueue).Value == today*/ 
+                    && (o.RetryCount == null || o.RetryCount <= maxRetryCount) 
+                    && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) 
+                    && o.bulkId == null ).ToList();
                 else if (messageType == MessageType.OnDemand)
-                    return serviceEntity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend && (o.RetryCount == null || o.RetryCount <= maxRetryCount) && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && o.bulkId == null).ToList();
+                    return serviceEntity.OnDemandMessagesBuffers.Where(o => o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend 
+                    && (o.RetryCount == null || o.RetryCount <= maxRetryCount) 
+                    && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) 
+                    && o.bulkId == null ).ToList();
             }
             return null;
         }

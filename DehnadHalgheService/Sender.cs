@@ -13,9 +13,13 @@ namespace DehnadHalgheService
     class Sender : SharedShortCodeServiceLibrary.Sender
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public void SendHandler()
+        public Sender() : base(Properties.Settings.Default.ServiceCode)
         {
-            base.SendHandler(Properties.Settings.Default.ServiceCode, new TimeSpan(8, 0, 0), new TimeSpan(20, 0, 0));
+
+        }
+        public override void SendHandler()
+        {
+            base.SendHandler(new TimeSpan(8, 0, 0), new TimeSpan(20, 0, 0));
         }
         //public void SendHandler()
         //{

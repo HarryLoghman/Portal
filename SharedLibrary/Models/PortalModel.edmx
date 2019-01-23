@@ -5,16 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="PortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="__MigrationHistory">
-          <Key>
-            <PropertyRef Name="MigrationId" />
-            <PropertyRef Name="ContextKey" />
-          </Key>
-          <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
-          <Property Name="Model" Type="varbinary(max)" Nullable="false" />
-          <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
-        </EntityType>
         <EntityType Name="Aggregators">
           <Key>
             <PropertyRef Name="Id" />
@@ -32,6 +22,16 @@
           </Key>
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetRoleUserAccess">
+          <Key>
+            <PropertyRef Name="roleId" />
+            <PropertyRef Name="userId" />
+            <PropertyRef Name="applicationId" />
+          </Key>
+          <Property Name="roleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="userId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="applicationId" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="AspNetUserClaims">
           <Key>
@@ -122,32 +122,6 @@
           <Property Name="DateAdded" Type="datetime" Nullable="false" />
           <Property Name="PersianDateAdded" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <EntityType Name="Bulks">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="bulkName" Type="nvarchar" MaxLength="100" />
-          <Property Name="ServiceId" Type="bigint" />
-          <Property Name="tps" Type="int" />
-          <Property Name="startTime" Type="datetime" />
-          <Property Name="endTime" Type="datetime" />
-          <Property Name="message" Type="nvarchar" MaxLength="4000" />
-          <Property Name="readSize" Type="int" />
-          <Property Name="retryCount" Type="int" />
-          <Property Name="retryTimeoutInSeconds" Type="int" />
-          <Property Name="TotalMessages" Type="int" />
-          <Property Name="TotalSuccessfullySent" Type="int" />
-          <Property Name="TotalFailed" Type="int" />
-          <Property Name="TotalRetry" Type="int" />
-          <Property Name="TotalRetryUnique" Type="int" />
-          <Property Name="TotalDelivery" Type="int" />
-          <Property Name="BulkFile" Type="nvarchar" MaxLength="1000" />
-          <Property Name="status" Type="int" />
-          <Property Name="DateCreated" Type="datetime" />
-          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" />
-          <Property Name="Tag" Type="int" />
-        </EntityType>
         <EntityType Name="chargeInfo">
           <Key>
             <PropertyRef Name="serviceId" />
@@ -236,19 +210,6 @@
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="PardisServiceId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Price" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="PortalObjects">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="parentId" Type="bigint" />
-          <Property Name="parentLineage" Type="nvarchar" MaxLength="100" />
-          <Property Name="objectName" Type="nvarchar" MaxLength="500" />
-          <Property Name="persianName" Type="nvarchar" MaxLength="500" />
-          <Property Name="tag" Type="nvarchar" MaxLength="500" />
-          <Property Name="description" Type="nvarchar" MaxLength="500" />
-          <Property Name="objectType" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="RealtimeStatisticsFor2GServices">
           <Key>
@@ -385,7 +346,7 @@
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="AggregatorServiceId" Type="nvarchar" MaxLength="50" />
           <Property Name="OperatorServiceId" Type="varchar" MaxLength="50" />
-          <Property Name="ServiceName" Type="nvarchar" MaxLength="100" />
+          <Property Name="serviceName" Type="nvarchar" MaxLength="100" />
           <Property Name="databaseName" Type="nvarchar" MaxLength="100" />
           <Property Name="chargePrice" Type="int" />
         </EntityType>
@@ -500,25 +461,6 @@
           <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ServiceId" Type="bigint" Nullable="false" />
           <Property Name="UsedKeyword" Type="nvarchar" MaxLength="50" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'portal.dbo.vw_AllSentMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vw_AllSentMessages">
-          <Key>
-            <PropertyRef Name="Type" />
-            <PropertyRef Name="ServiceName" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ProcessStatus" />
-          </Key>
-          <Property Name="Type" Type="varchar" MaxLength="2" Nullable="false" />
-          <Property Name="ServiceName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="PersianDate" Type="nvarchar" MaxLength="10" />
-          <Property Name="Time" Type="nvarchar" MaxLength="21" />
-          <Property Name="Content" Type="nvarchar(max)" />
-          <Property Name="ProcessStatus" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'portal.dbo.vw_AspNetRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -636,7 +578,6 @@ warning 6002: The table/view 'portal.dbo.vw_ReceivedMessages' does not have a pr
 warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_servicesServicesInfo">
           <Key>
-            <PropertyRef Name="TodayTillNowChargeAmount" />
             <PropertyRef Name="Id" />
             <PropertyRef Name="Name" />
             <PropertyRef Name="ServiceCode" />
@@ -644,9 +585,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             <PropertyRef Name="OnKeywords" />
             <PropertyRef Name="IsServiceActive" />
           </Key>
-          <Property Name="userCount" Type="int" />
-          <Property Name="activeUserCount" Type="int" />
-          <Property Name="TodayTillNowChargeAmount" Type="int" Nullable="false" />
           <Property Name="Id" Type="bigint" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ServiceCode" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -661,7 +599,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="ShortCode" Type="nvarchar" MaxLength="50" />
           <Property Name="AggregatorServiceId" Type="nvarchar" MaxLength="50" />
           <Property Name="OperatorServiceId" Type="varchar" MaxLength="50" />
-          <Property Name="ServiceName" Type="nvarchar" MaxLength="100" />
+          <Property Name="serviceName" Type="nvarchar" MaxLength="100" />
           <Property Name="databaseName" Type="nvarchar" MaxLength="100" />
           <Property Name="chargePrice" Type="int" />
           <Property Name="aggregatorName" Type="nvarchar" MaxLength="100" />
@@ -798,9 +736,9 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Parameter Name="chargePriceFrom" Type="datetime" Mode="In" />
         </Function>
         <EntityContainer Name="PortalModelStoreContainer">
-          <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Aggregators" EntityType="Self.Aggregators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetRoleUserAccess" EntityType="Self.AspNetRoleUserAccess" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
@@ -809,7 +747,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="Audit" EntityType="Self.Audit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BulkList" EntityType="Self.BulkList" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Bulks" EntityType="Self.Bulks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="chargeInfo" EntityType="Self.chargeInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
@@ -818,7 +755,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ParidsShortCodes" EntityType="Self.ParidsShortCodes" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="PortalObjects" EntityType="Self.PortalObjects" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="Self.RealtimeStatisticsFor2GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
@@ -836,18 +772,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoints" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TempReferralData" EntityType="Self.TempReferralData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VerifySubscribers" EntityType="Self.VerifySubscribers" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="vw_AllSentMessages" EntityType="Self.vw_AllSentMessages" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vw_AllSentMessages].[Type] AS [Type], 
-    [vw_AllSentMessages].[ServiceName] AS [ServiceName], 
-    [vw_AllSentMessages].[MobileNumber] AS [MobileNumber], 
-    [vw_AllSentMessages].[ShortCode] AS [ShortCode], 
-    [vw_AllSentMessages].[PersianDate] AS [PersianDate], 
-    [vw_AllSentMessages].[Time] AS [Time], 
-    [vw_AllSentMessages].[Content] AS [Content], 
-    [vw_AllSentMessages].[ProcessStatus] AS [ProcessStatus]
-    FROM [dbo].[vw_AllSentMessages] AS [vw_AllSentMessages]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="vw_AspNetRoles" EntityType="Self.vw_AspNetRoles" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [vw_AspNetRoles].[Id] AS [Id], 
@@ -925,9 +849,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           </EntitySet>
           <EntitySet Name="vw_servicesServicesInfo" EntityType="Self.vw_servicesServicesInfo" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
-    [vw_servicesServicesInfo].[userCount] AS [userCount], 
-    [vw_servicesServicesInfo].[activeUserCount] AS [activeUserCount], 
-    [vw_servicesServicesInfo].[TodayTillNowChargeAmount] AS [TodayTillNowChargeAmount], 
     [vw_servicesServicesInfo].[Id] AS [Id], 
     [vw_servicesServicesInfo].[Name] AS [Name], 
     [vw_servicesServicesInfo].[ServiceCode] AS [ServiceCode], 
@@ -942,7 +863,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
     [vw_servicesServicesInfo].[ShortCode] AS [ShortCode], 
     [vw_servicesServicesInfo].[AggregatorServiceId] AS [AggregatorServiceId], 
     [vw_servicesServicesInfo].[OperatorServiceId] AS [OperatorServiceId], 
-    [vw_servicesServicesInfo].[ServiceName] AS [ServiceName], 
+    [vw_servicesServicesInfo].[serviceName] AS [serviceName], 
     [vw_servicesServicesInfo].[databaseName] AS [databaseName], 
     [vw_servicesServicesInfo].[chargePrice] AS [chargePrice], 
     [vw_servicesServicesInfo].[aggregatorName] AS [aggregatorName]
@@ -989,481 +910,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PortalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="C__MigrationHistory">
-          <Key>
-            <PropertyRef Name="MigrationId" />
-            <PropertyRef Name="ContextKey" />
-          </Key>
-          <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
-          <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="AspNetRole">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
-        </EntityType>
-        <EntityType Name="AspNetUserClaim">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
-        </EntityType>
-        <EntityType Name="AspNetUserLogin">
-          <Key>
-            <PropertyRef Name="LoginProvider" />
-            <PropertyRef Name="ProviderKey" />
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="LoginProvider" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProviderKey" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
-        </EntityType>
-        <EntityType Name="AspNetUser">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Lastname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
-          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
-          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
-          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
-          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
-          <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
-          <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
-        </EntityType>
-        <EntityType Name="Audit">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Action" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Ip" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="BlackList">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
-          <Property Name="ServiceId" Type="Int64" />
-          <Property Name="DateAdded" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="BulkList">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumbersList" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ServiceCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="IsDone" Type="Boolean" Nullable="false" />
-          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateAdded" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-        </EntityType>
-        <EntityType Name="JhoobinSetting">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Cookie" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="SubscriptionsViewState" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="AccessToken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Operator">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="OperatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="tps" Type="Int32" />
-          <NavigationProperty Name="Aggregators" Relationship="PortalModel.C_FK_Aggregators_Operators" FromRole="Operator" ToRole="Aggregator" />
-        </EntityType>
-        <EntityType Name="OperatorsPlan">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="OperatorPlanName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="OperatorsPrefix">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OperatorId" Type="Int32" Nullable="false" />
-          <Property Name="OperatorPlan" Type="Int32" Nullable="false" />
-          <Property Name="Prefix" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Province" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ParidsShortCode">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PardisServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="RealtimeStatisticsFor2GServices">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDate" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
-          <Property Name="PrepaidSubscriptions" Type="Int32" />
-          <Property Name="PostPaidSubscriptions" Type="Int32" />
-          <Property Name="PrepaidUnsubscriptions" Type="Int32" />
-          <Property Name="PostPaidUnsubscriptions" Type="Int32" />
-        </EntityType>
-        <EntityType Name="RealtimeStatisticsFor3GServices">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDate" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="TotalSubscriptions" Type="Int32" />
-          <Property Name="TotalUnsubscriptions" Type="Int32" />
-          <Property Name="TodayGenuineSubscriptions" Type="Int32" />
-          <Property Name="ActivationRateByMinute" Type="Int32" />
-          <Property Name="ActivationRateByHour" Type="Int32" />
-          <Property Name="DeactivationRateByMinute" Type="Int32" />
-          <Property Name="DeactivationRateByHour" Type="Int32" />
-          <Property Name="GeniuneActivationRateByMinute" Type="Int32" />
-          <Property Name="GeniueActivationRateByHour" Type="Int32" />
-          <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
-          <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="TotalUnsubcribriptions" Type="Int32" />
-          <Property Name="AllDeactivedSubscribers" Type="Int32" />
-          <Property Name="ActiveSubscribersFromHistory" Type="Int32" />
-          <Property Name="ActiveSubscribersFromHistoryUnique" Type="Int32" />
-          <Property Name="DeactivedSubscribersFromHistory" Type="Int32" />
-          <Property Name="DeactivedSubscribersFromHistoryUnqiue" Type="Int32" />
-        </EntityType>
-        <EntityType Name="ReceievedMessage">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="ReceivedMessagesArchive">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="ServiceInfo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="chargePrice" Type="Int32" />
-          <NavigationProperty Name="Service" Relationship="PortalModel.C_FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Service" />
-          <NavigationProperty Name="Aggregator" Relationship="PortalModel.C_FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregator" />
-          <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ServiceKeyword">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Keyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="SinglechargeDelivery">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ReferenceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="DateReceived" Type="DateTime" Nullable="false" Precision="3" />
-        </EntityType>
-        <EntityType Name="Subscriber">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="ActivationDate" Type="DateTime" Precision="3" />
-          <Property Name="DeactivationDate" Type="DateTime" Precision="3" />
-          <Property Name="OnMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OnKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="OffMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OffKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="PersianActivationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="PersianDeactivationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MobileOperator" Type="Int64" Nullable="false" />
-          <Property Name="OperatorPlan" Type="Int64" Nullable="false" />
-          <Property Name="SubscriberUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="SpecialUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Service" Relationship="PortalModel.FK_Subscribers_Services" FromRole="Subscriber" ToRole="Service" />
-        </EntityType>
-        <EntityType Name="SubscribersHistory">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorServiceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceStatusForSubscriber" Type="Int32" />
-          <Property Name="Date" Type="DateTime" Precision="0" />
-          <Property Name="Time" Type="Time" Precision="7" />
-          <Property Name="WhoChangedSubscriberStatus" Type="Int32" />
-          <Property Name="InvalidContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorId" Type="Int64" />
-          <Property Name="AggregatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DateTime" Type="DateTime" Precision="3" />
-          <Property Name="PersianDateTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UnsubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="SubscribersPoint">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="Point" Type="Int32" Nullable="false" />
-          <Property Name="BundledServiceId" Type="Int64" />
-          <Property Name="WeeklyPoint" Type="Int32" />
-          <NavigationProperty Name="Service" Relationship="PortalModel.C_FK_SubscribersPoints_Services" FromRole="SubscribersPoint" ToRole="Service" />
-        </EntityType>
-        <EntityType Name="TempReferralData">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InviterUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="InviteeMobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
-          <Property Name="ServiceId" Type="Int64" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="VerifySubscriber">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="UsedKeyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="vw_AllSentMessages">
-          <Key>
-            <PropertyRef Name="Type" />
-            <PropertyRef Name="ServiceName" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ProcessStatus" />
-          </Key>
-          <Property Name="Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ServiceName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PersianDate" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Time" Type="String" MaxLength="21" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessStatus" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vw_DehnadAllServicesStatistics">
-          <Key>
-            <PropertyRef Name="ServiceName" />
-            <PropertyRef Name="Date" />
-            <PropertyRef Name="PersianDate" />
-            <PropertyRef Name="NumberOfSubscriptions" />
-            <PropertyRef Name="NumberOfUnsubscriptions" />
-            <PropertyRef Name="NumberOfPostpaidSubscriptions" />
-            <PropertyRef Name="NumberOfPrepaidSubscriptions" />
-            <PropertyRef Name="NumberOfPostpaidUnsubscriptions" />
-            <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
-            <PropertyRef Name="TotalSubscribers" />
-          </Key>
-          <Property Name="ServiceName" Type="String" MaxLength="6" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="PersianDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfUnsubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPostpaidSubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPrepaidSubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPostpaidUnsubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="NumberOfPrepaidUnsubscriptions" Type="Int32" Nullable="false" />
-          <Property Name="TotalSubscribers" Type="Int32" Nullable="false" />
-          <Property Name="TotalPrepaidSubscribers" Type="Int32" />
-          <Property Name="TotalPostpaidSubscribers" Type="Int32" />
-          <Property Name="TotalUnSubscribers" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
-          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
-        </EntityType>
-        <EntityType Name="vw_ReceivedMessages">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ReceivedTime" />
-            <PropertyRef Name="IsProcessed" />
-            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
-        </EntityType>
-        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaim" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserClaims">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogin" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserLogins">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="AspNetUserRoles">
-          <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
-        </Association>
         <EntityContainer Name="PortalEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
-          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
-          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
-          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
-          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
-          <EntitySet Name="Audits" EntityType="Self.Audit" />
-          <EntitySet Name="BlackLists" EntityType="Self.BlackList" />
-          <EntitySet Name="BulkLists" EntityType="Self.BulkList" />
-          <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSetting" />
-          <EntitySet Name="Operators" EntityType="Self.Operator" />
-          <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlan" />
-          <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefix" />
-          <EntitySet Name="ParidsShortCodes" EntityType="Self.ParidsShortCode" />
-          <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="Self.RealtimeStatisticsFor2GServices" />
-          <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" />
-          <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessage" />
-          <EntitySet Name="ReceivedMessagesArchives" EntityType="Self.ReceivedMessagesArchive" />
-          <EntitySet Name="ServiceInfoes" EntityType="Self.ServiceInfo" />
-          <EntitySet Name="ServiceKeywords" EntityType="Self.ServiceKeyword" />
-          <EntitySet Name="SinglechargeDeliveries" EntityType="Self.SinglechargeDelivery" />
-          <EntitySet Name="Subscribers" EntityType="Self.Subscriber" />
-          <EntitySet Name="SubscribersHistories" EntityType="Self.SubscribersHistory" />
-          <EntitySet Name="SubscribersPoints" EntityType="Self.SubscribersPoint" />
-          <EntitySet Name="TempReferralDatas" EntityType="Self.TempReferralData" />
-          <EntitySet Name="VerifySubscribers" EntityType="Self.VerifySubscriber" />
-          <EntitySet Name="vw_AllSentMessages" EntityType="Self.vw_AllSentMessages" />
-          <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="Self.vw_DehnadAllServicesStatistics" />
-          <EntitySet Name="vw_ReceivedMessages" EntityType="Self.vw_ReceivedMessages" />
-          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
-          </AssociationSet>
-          <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-          </AssociationSet>
           <FunctionImport Name="ArchiveReceivedMessages" />
           <FunctionImport Name="sp_DehnadAll2GServicesStatistics">
           <Parameter Name="ServiceCode" Mode="In" Type="String" />
@@ -1471,13 +918,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <FunctionImport Name="sp_DehnadAll3GServicesStatistics">
           <Parameter Name="ServiceCode" Mode="In" Type="String" />
           </FunctionImport>
-          <EntitySet Name="chargeInfoes" EntityType="PortalModel.chargeInfo" />
-          <EntitySet Name="Referrals" EntityType="PortalModel.Referral" />
-          <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
-          <EntitySet Name="vw_AspNetUsers" EntityType="PortalModel.vw_AspNetUsers" />
-          <EntitySet Name="AspNetUsersRolesServiceAccesses" EntityType="PortalModel.AspNetUsersRolesServiceAccess" />
-          <EntitySet Name="vw_AspNetUserRoles" EntityType="PortalModel.vw_AspNetUserRoles" />
-          <EntitySet Name="vw_AspNetRoles" EntityType="PortalModel.vw_AspNetRoles" />
           <FunctionImport Name="GetUserLog" ReturnType="Collection(PortalModel.GetUserLog_Result)">
             <Parameter Name="userId" Mode="In" Type="String" />
             <Parameter Name="MobileNumber" Mode="In" Type="String" />
@@ -1490,8 +930,49 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             <Parameter Name="mobileNumber" Mode="In" Type="String" />
             <Parameter Name="chargePriceFrom" Mode="In" Type="DateTime" />
           </FunctionImport>
-          <EntitySet Name="PortalObjects" EntityType="PortalModel.PortalObject" />
+          <EntitySet Name="Aggregators" EntityType="PortalModel.Aggregator" />
+          <EntitySet Name="AspNetRoles" EntityType="PortalModel.AspNetRole" />
+          <EntitySet Name="AspNetRoleUserAccesses" EntityType="PortalModel.AspNetRoleUserAccess" />
+          <EntitySet Name="AspNetUserClaims" EntityType="PortalModel.AspNetUserClaim" />
+          <EntitySet Name="AspNetUserLogins" EntityType="PortalModel.AspNetUserLogin" />
+          <EntitySet Name="AspNetUsers" EntityType="PortalModel.AspNetUser" />
+          <EntitySet Name="AspNetUsersRolesServiceAccesses" EntityType="PortalModel.AspNetUsersRolesServiceAccess" />
+          <EntitySet Name="BlackLists" EntityType="PortalModel.BlackList" />
+          <EntitySet Name="Operators" EntityType="PortalModel.Operator" />
+          <EntitySet Name="OperatorsPlans" EntityType="PortalModel.OperatorsPlan" />
+          <EntitySet Name="OperatorsPrefixs" EntityType="PortalModel.OperatorsPrefix" />
+          <EntitySet Name="ParidsShortCodes" EntityType="PortalModel.ParidsShortCode" />
+          <EntitySet Name="ReceievedMessages" EntityType="PortalModel.ReceievedMessage" />
+          <EntitySet Name="Referrals" EntityType="PortalModel.Referral" />
+          <EntitySet Name="ServersActions" EntityType="PortalModel.ServersAction" />
+          <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
+          <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
+          <EntitySet Name="ServiceInfoes" EntityType="PortalModel.ServiceInfo" />
+          <EntitySet Name="ServiceKeywords" EntityType="PortalModel.ServiceKeyword" />
           <EntitySet Name="Services" EntityType="PortalModel.Service" />
+          <EntitySet Name="SinglechargeDeliveries" EntityType="PortalModel.SinglechargeDelivery" />
+          <EntitySet Name="Subscribers" EntityType="PortalModel.Subscriber" />
+          <EntitySet Name="SubscribersPoints" EntityType="PortalModel.SubscribersPoint" />
+          <EntitySet Name="TempReferralDatas" EntityType="PortalModel.TempReferralData" />
+          <EntitySet Name="VerifySubscribers" EntityType="PortalModel.VerifySubscriber" />
+          <EntitySet Name="vw_ReceivedMessages" EntityType="PortalModel.vw_ReceivedMessages" />
+          <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
+          <AssociationSet Name="C_FK_Aggregators_Operators" Association="PortalModel.C_FK_Aggregators_Operators">
+            <End Role="Operator" EntitySet="Operators" />
+            <End Role="Aggregator" EntitySet="Aggregators" />
+          </AssociationSet>
+          <AssociationSet Name="C_FK_ServiceInfo_Aggregators" Association="PortalModel.C_FK_ServiceInfo_Aggregators">
+            <End Role="Aggregator" EntitySet="Aggregators" />
+            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="PortalModel.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="PortalModel.C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
           <AssociationSet Name="C_FK_ServiceShortCodes_Services" Association="PortalModel.C_FK_ServiceShortCodes_Services">
             <End Role="Service" EntitySet="Services" />
             <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
@@ -1504,119 +985,25 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             <End Role="Service" EntitySet="Services" />
             <End Role="Subscriber" EntitySet="Subscribers" />
           </AssociationSet>
-          <EntitySet Name="Aggregators" EntityType="PortalModel.Aggregator" />
-          <AssociationSet Name="C_FK_Aggregators_Operators" Association="PortalModel.C_FK_Aggregators_Operators">
-            <End Role="Operator" EntitySet="Operators" />
-            <End Role="Aggregator" EntitySet="Aggregators" />
+          <AssociationSet Name="AspNetUserRoles" Association="PortalModel.AspNetUserRoles">
+            <End Role="AspNetRole" EntitySet="AspNetRoles" />
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
           </AssociationSet>
-          <AssociationSet Name="C_FK_ServiceInfo_Aggregators" Association="PortalModel.C_FK_ServiceInfo_Aggregators">
-            <End Role="Aggregator" EntitySet="Aggregators" />
-            <End Role="ServiceInfo" EntitySet="ServiceInfoes" />
-          </AssociationSet>
-          <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
-          <EntitySet Name="Bulks" EntityType="PortalModel.Bulk" />
+          <EntitySet Name="JhoobinSettings" EntityType="PortalModel.JhoobinSetting" />
+          <EntitySet Name="SubscribersHistories" EntityType="PortalModel.SubscribersHistory" />
           <EntitySet Name="Deliveries" EntityType="PortalModel.Delivery" />
-          <EntitySet Name="ServersActions" EntityType="PortalModel.ServersAction" />
-          <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
-          <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
+          <EntitySet Name="BulkLists" EntityType="PortalModel.BulkList" />
+          <EntitySet Name="ReceivedMessagesArchives" EntityType="PortalModel.ReceivedMessagesArchive" />
+          <EntitySet Name="vw_AspNetRoles" EntityType="PortalModel.vw_AspNetRoles" />
+          <EntitySet Name="vw_AspNetUserRoles" EntityType="PortalModel.vw_AspNetUserRoles" />
+          <EntitySet Name="vw_AspNetUsers" EntityType="PortalModel.vw_AspNetUsers" />
+          <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="PortalModel.vw_DehnadAllServicesStatistics" />
+          <EntitySet Name="Audits" EntityType="PortalModel.Audit" />
+          <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
+          <EntitySet Name="chargeInfoes" EntityType="PortalModel.chargeInfo" />
+          <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="PortalModel.RealtimeStatisticsFor2GServices" />
+          <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="PortalModel.RealtimeStatisticsFor3GServices" />
           </EntityContainer>
-        <EntityType Name="chargeInfo">
-          <Key>
-            <PropertyRef Name="serviceId" />
-            <PropertyRef Name="dateCharge" />
-            <PropertyRef Name="mobileNumber" />
-          </Key>
-          <Property Name="serviceId" Type="Int64" Nullable="false" />
-          <Property Name="dateCharge" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="mobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="pricePaiedToday" Type="Int32" />
-          <Property Name="pricePaiedYesterday" Type="Int32" />
-          <Property Name="subscriberActivationDate" Type="DateTime" Precision="3" />
-          <Property Name="tryCount" Type="Int32" />
-          <Property Name="cycles" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="Referral">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InviterUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="InviteeUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="DateInvited" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateInvited" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="MCISingleChargeFtpFile">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="serverIP" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ftpDirectory" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="fileName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="processDateTime" Type="DateTime" Precision="3" />
-          <Property Name="processLines" Type="Int32" />
-          <Property Name="chargeCount" Type="Int32" />
-        </EntityType>
-        <EntityType Name="vw_AspNetUsers">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="EmailConfirmed" />
-            <PropertyRef Name="PhoneNumberConfirmed" />
-            <PropertyRef Name="TwoFactorEnabled" />
-            <PropertyRef Name="LockoutEnabled" />
-            <PropertyRef Name="AccessFailedCount" />
-            <PropertyRef Name="UserName" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Lastname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
-          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
-          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
-          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
-          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="roles" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Services" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Aggregators" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="AspNetUsersRolesServiceAccess">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="userId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="roleId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="serviceId" Type="Int64" />
-          <Property Name="aggregatorId" Type="Int64" />
-        </EntityType>
-        <EntityType Name="vw_AspNetUserRoles">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="roleName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="vw_AspNetRoles">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="Name" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="users" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Services" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Aggregators" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
           <Property Type="String" Name="ServiceName" Nullable="false" MaxLength="50" />
@@ -1647,18 +1034,226 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Type="String" Name="ShortCode" Nullable="false" />
           <Property Type="String" Name="mobileNumber" Nullable="false" />
         </ComplexType>
-        <EntityType Name="PortalObject">
+        <EntityType Name="Aggregator">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OperatorId" Type="Int64" Nullable="false" />
+          <Property Name="AggregatorName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorUsername" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="tps" Type="Int32" />
+          <NavigationProperty Name="Operator" Relationship="PortalModel.C_FK_Aggregators_Operators" FromRole="Aggregator" ToRole="Operator" />
+          <NavigationProperty Name="ServiceInfoes" Relationship="PortalModel.C_FK_ServiceInfo_Aggregators" FromRole="Aggregator" ToRole="ServiceInfo" />
+        </EntityType>
+        <EntityType Name="AspNetRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="PortalModel.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
+        </EntityType>
+        <EntityType Name="AspNetRoleUserAccess">
+          <Key>
+            <PropertyRef Name="roleId" />
+            <PropertyRef Name="userId" />
+            <PropertyRef Name="applicationId" />
+          </Key>
+          <Property Name="roleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="userId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="applicationId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserClaim">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="PortalModel.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaim" ToRole="AspNetUser" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogin">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="PortalModel.C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogin" ToRole="AspNetUser" />
+        </EntityType>
+        <EntityType Name="AspNetUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Lastname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="PortalModel.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="PortalModel.C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
+          <NavigationProperty Name="AspNetRoles" Relationship="PortalModel.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
+        </EntityType>
+        <EntityType Name="AspNetUsersRolesServiceAccess">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="parentId" Type="Int64" />
-          <Property Name="objectName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="persianName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="tag" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="parentLineage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="objectType" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="roleId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="serviceId" Type="Int64" />
+          <Property Name="aggregatorId" Type="Int64" />
+        </EntityType>
+        <EntityType Name="BlackList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="DateAdded" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Operator">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="OperatorName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="tps" Type="Int32" />
+          <NavigationProperty Name="Aggregators" Relationship="PortalModel.C_FK_Aggregators_Operators" FromRole="Operator" ToRole="Aggregator" />
+        </EntityType>
+        <EntityType Name="OperatorsPlan">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="OperatorPlanName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OperatorsPrefix">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OperatorId" Type="Int32" Nullable="false" />
+          <Property Name="OperatorPlan" Type="Int32" Nullable="false" />
+          <Property Name="Prefix" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Province" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ParidsShortCode">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PardisServiceId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ReceievedMessage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromWeb" Type="Boolean" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Referral">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InviterUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="InviteeUniqueId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="DateInvited" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateInvited" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ServersAction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="serverId" Type="Int32" Nullable="false" />
+          <Property Name="Action" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="URL" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="priority" Type="Int32" />
+          <Property Name="state" Type="Int32" />
+          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ServersIP">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServerName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ports" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="priority" Type="Int32" />
+          <Property Name="state" Type="Int32" />
+          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="serviceCyclesNew">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="daysOfWeekOrDate" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="cycleNumber" Type="Int32" Nullable="false" />
+          <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="servicesIDs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="minTPSs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="cycleChargePrices" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="state" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ServiceInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AggregatorId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="serviceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="chargePrice" Type="Int32" />
+          <NavigationProperty Name="Aggregator" Relationship="PortalModel.C_FK_ServiceInfo_Aggregators" FromRole="ServiceInfo" ToRole="Aggregator" />
+          <NavigationProperty Name="Service" Relationship="PortalModel.C_FK_ServiceShortCodes_Services" FromRole="ServiceInfo" ToRole="Service" />
+        </EntityType>
+        <EntityType Name="ServiceKeyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Keyword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Service">
           <Key>
@@ -1678,6 +1273,171 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <NavigationProperty Name="SubscribersPoints" Relationship="PortalModel.C_FK_SubscribersPoints_Services" FromRole="Service" ToRole="SubscribersPoint" />
           <NavigationProperty Name="Subscribers" Relationship="PortalModel.FK_Subscribers_Services" FromRole="Service" ToRole="Subscriber" />
         </EntityType>
+        <EntityType Name="SinglechargeDelivery">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReferenceId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="DateReceived" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Subscriber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ActivationDate" Type="DateTime" Precision="3" />
+          <Property Name="DeactivationDate" Type="DateTime" Precision="3" />
+          <Property Name="OnMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OnKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="OffMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OffKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PersianActivationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PersianDeactivationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileOperator" Type="Int64" Nullable="false" />
+          <Property Name="OperatorPlan" Type="Int64" Nullable="false" />
+          <Property Name="SubscriberUniqueId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SpecialUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Service" Relationship="PortalModel.FK_Subscribers_Services" FromRole="Subscriber" ToRole="Service" />
+        </EntityType>
+        <EntityType Name="SubscribersPoint">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="Point" Type="Int32" Nullable="false" />
+          <Property Name="BundledServiceId" Type="Int64" />
+          <Property Name="WeeklyPoint" Type="Int32" />
+          <NavigationProperty Name="Service" Relationship="PortalModel.C_FK_SubscribersPoints_Services" FromRole="SubscribersPoint" ToRole="Service" />
+        </EntityType>
+        <EntityType Name="TempReferralData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InviterUniqueId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InviteeMobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="VerifySubscriber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="UsedKeyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_ReceivedMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ShortCode" />
+            <PropertyRef Name="ReceivedTime" />
+            <PropertyRef Name="IsProcessed" />
+            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromWeb" Type="Boolean" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="vw_servicesServicesInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="ServiceCode" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="OnKeywords" />
+            <PropertyRef Name="IsServiceActive" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
+          <Property Name="Enable2StepSubscription" Type="Boolean" />
+          <Property Name="oldServiceCodes" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="referralUrl" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceInfoId" Type="Int64" />
+          <Property Name="AggregatorId" Type="Int64" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="serviceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="chargePrice" Type="Int32" />
+          <Property Name="aggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="C_FK_Aggregators_Operators">
+          <End Type="PortalModel.Operator" Role="Operator" Multiplicity="1" />
+          <End Type="PortalModel.Aggregator" Role="Aggregator" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operator">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Aggregator">
+              <PropertyRef Name="OperatorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="C_FK_ServiceInfo_Aggregators">
+          <End Type="PortalModel.Aggregator" Role="Aggregator" Multiplicity="1" />
+          <End Type="PortalModel.ServiceInfo" Role="ServiceInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Aggregator">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ServiceInfo">
+              <PropertyRef Name="AggregatorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Type="PortalModel.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="PortalModel.AspNetUserClaim" Role="AspNetUserClaim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaim">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="C_FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Type="PortalModel.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="PortalModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogin">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="C_FK_ServiceShortCodes_Services">
           <End Type="PortalModel.Service" Role="Service" Multiplicity="1" />
           <End Type="PortalModel.ServiceInfo" Role="ServiceInfo" Multiplicity="*" />
@@ -1714,82 +1474,42 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Aggregator">
+        <Association Name="AspNetUserRoles">
+          <End Type="PortalModel.AspNetRole" Role="AspNetRole" Multiplicity="*" />
+          <End Type="PortalModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
+        </Association>
+        <EntityType Name="JhoobinSetting">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OperatorId" Type="Int64" Nullable="false" />
-          <Property Name="AggregatorName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorUsername" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="tps" Type="Int32" />
-          <NavigationProperty Name="Operator" Relationship="PortalModel.C_FK_Aggregators_Operators" FromRole="Aggregator" ToRole="Operator" />
-          <NavigationProperty Name="ServiceInfoes" Relationship="PortalModel.C_FK_ServiceInfo_Aggregators" FromRole="Aggregator" ToRole="ServiceInfo" />
+          <Property Name="Cookie" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SubscriptionsViewState" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AccessToken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
-        <Association Name="C_FK_Aggregators_Operators">
-          <End Type="PortalModel.Operator" Role="Operator" Multiplicity="1" />
-          <End Type="PortalModel.Aggregator" Role="Aggregator" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Operator">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Aggregator">
-              <PropertyRef Name="OperatorId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="C_FK_ServiceInfo_Aggregators">
-          <End Type="PortalModel.Aggregator" Role="Aggregator" Multiplicity="1" />
-          <End Type="PortalModel.ServiceInfo" Role="ServiceInfo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Aggregator">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ServiceInfo">
-              <PropertyRef Name="AggregatorId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="serviceCyclesNew">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="daysOfWeekOrDate" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="cycleNumber" Type="Int32" Nullable="false" />
-          <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="servicesIDs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="minTPSs" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="cycleChargePrices" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="state" Type="Int32" />
-        </EntityType>
-        <EntityType Name="Bulk">
+        <EntityType Name="SubscribersHistory">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="bulkName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ServiceId" Type="Int64" />
-          <Property Name="tps" Type="Int32" />
-          <Property Name="startTime" Type="DateTime" Precision="3" />
-          <Property Name="endTime" Type="DateTime" Precision="3" />
-          <Property Name="message" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <Property Name="readSize" Type="Int32" />
-          <Property Name="retryCount" Type="Int32" />
-          <Property Name="retryTimeoutInSeconds" Type="Int32" />
-          <Property Name="TotalMessages" Type="Int32" />
-          <Property Name="TotalSuccessfullySent" Type="Int32" />
-          <Property Name="TotalFailed" Type="Int32" />
-          <Property Name="TotalRetry" Type="Int32" />
-          <Property Name="TotalRetryUnique" Type="Int32" />
-          <Property Name="TotalDelivery" Type="Int32" />
-          <Property Name="BulkFile" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="Int32" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Tag" Type="Int32" />
+          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorServiceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceStatusForSubscriber" Type="Int32" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <Property Name="Time" Type="Time" Precision="7" />
+          <Property Name="WhoChangedSubscriberStatus" Type="Int32" />
+          <Property Name="InvalidContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AggregatorId" Type="Int64" />
+          <Property Name="AggregatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateTime" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UnsubscriptionKeyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserMessageOff" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Delivery">
           <Key>
@@ -1807,61 +1527,195 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="Delivered" Type="Boolean" />
           <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
         </EntityType>
-        <EntityType Name="ServersAction">
+        <EntityType Name="BulkList">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="serverId" Type="Int32" Nullable="false" />
-          <Property Name="Action" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="URL" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="priority" Type="Int32" />
-          <Property Name="state" Type="Int32" />
-          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumbersList" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDone" Type="Boolean" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="ServersIP">
+        <EntityType Name="ReceivedMessagesArchive">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ServerName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ports" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="priority" Type="Int32" />
-          <Property Name="state" Type="Int32" />
-          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromWeb" Type="Boolean" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="vw_servicesServicesInfo">
+        <EntityType Name="vw_AspNetRoles">
           <Key>
-            <PropertyRef Name="TodayTillNowChargeAmount" />
             <PropertyRef Name="Id" />
             <PropertyRef Name="Name" />
-            <PropertyRef Name="ServiceCode" />
-            <PropertyRef Name="DateCreated" />
-            <PropertyRef Name="OnKeywords" />
-            <PropertyRef Name="IsServiceActive" />
           </Key>
-          <Property Name="userCount" Type="Int32" />
-          <Property Name="activeUserCount" Type="Int32" />
-          <Property Name="TodayTillNowChargeAmount" Type="Int32" Nullable="false" />
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="users" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Services" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Aggregators" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_AspNetUserRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="roleName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="EmailConfirmed" />
+            <PropertyRef Name="PhoneNumberConfirmed" />
+            <PropertyRef Name="TwoFactorEnabled" />
+            <PropertyRef Name="LockoutEnabled" />
+            <PropertyRef Name="AccessFailedCount" />
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Lastname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="roles" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Services" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Aggregators" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_DehnadAllServicesStatistics">
+          <Key>
+            <PropertyRef Name="ServiceName" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="PersianDate" />
+            <PropertyRef Name="NumberOfSubscriptions" />
+            <PropertyRef Name="NumberOfUnsubscriptions" />
+            <PropertyRef Name="NumberOfPostpaidSubscriptions" />
+            <PropertyRef Name="NumberOfPrepaidSubscriptions" />
+            <PropertyRef Name="NumberOfPostpaidUnsubscriptions" />
+            <PropertyRef Name="NumberOfPrepaidUnsubscriptions" />
+            <PropertyRef Name="TotalSubscribers" />
+          </Key>
+          <Property Name="ServiceName" Type="String" Nullable="false" MaxLength="6" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PersianDate" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NumberOfSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidSubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPostpaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPrepaidUnsubscriptions" Type="Int32" Nullable="false" />
+          <Property Name="TotalSubscribers" Type="Int32" Nullable="false" />
+          <Property Name="TotalPrepaidSubscribers" Type="Int32" />
+          <Property Name="TotalPostpaidSubscribers" Type="Int32" />
+          <Property Name="TotalUnSubscribers" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPrepaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulPostpaidCharge" Type="Int32" />
+          <Property Name="SumOfSinglechargeSuccessfulCharge" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Audit">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="OnKeywords" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="IsServiceActive" Type="Boolean" Nullable="false" />
-          <Property Name="Enable2StepSubscription" Type="Boolean" />
-          <Property Name="oldServiceCodes" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="referralUrl" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceInfoId" Type="Int64" />
-          <Property Name="AggregatorId" Type="Int64" />
-          <Property Name="ShortCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AggregatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OperatorServiceId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ServiceName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="databaseName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="chargePrice" Type="Int32" />
-          <Property Name="aggregatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Action" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Ip" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="MCISingleChargeFtpFile">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="serverIP" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ftpDirectory" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="fileName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="processDateTime" Type="DateTime" Precision="3" />
+          <Property Name="processLines" Type="Int32" />
+          <Property Name="chargeCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="chargeInfo">
+          <Key>
+            <PropertyRef Name="serviceId" />
+            <PropertyRef Name="dateCharge" />
+            <PropertyRef Name="mobileNumber" />
+          </Key>
+          <Property Name="serviceId" Type="Int64" Nullable="false" />
+          <Property Name="dateCharge" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="mobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="pricePaiedToday" Type="Int32" />
+          <Property Name="pricePaiedYesterday" Type="Int32" />
+          <Property Name="subscriberActivationDate" Type="DateTime" Precision="3" />
+          <Property Name="tryCount" Type="Int32" />
+          <Property Name="cycles" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RealtimeStatisticsFor2GServices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDate" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
+          <Property Name="PrepaidSubscriptions" Type="Int32" />
+          <Property Name="PostPaidSubscriptions" Type="Int32" />
+          <Property Name="PrepaidUnsubscriptions" Type="Int32" />
+          <Property Name="PostPaidUnsubscriptions" Type="Int32" />
+        </EntityType>
+        <EntityType Name="RealtimeStatisticsFor3GServices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDate" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="TotalSubscriptions" Type="Int32" />
+          <Property Name="TotalUnsubscriptions" Type="Int32" />
+          <Property Name="TodayGenuineSubscriptions" Type="Int32" />
+          <Property Name="ActivationRateByMinute" Type="Int32" />
+          <Property Name="ActivationRateByHour" Type="Int32" />
+          <Property Name="DeactivationRateByMinute" Type="Int32" />
+          <Property Name="DeactivationRateByHour" Type="Int32" />
+          <Property Name="GeniuneActivationRateByMinute" Type="Int32" />
+          <Property Name="GeniueActivationRateByHour" Type="Int32" />
+          <Property Name="LastUpdateTime" Type="DateTime" Precision="3" />
+          <Property Name="ServiceName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="TotalUnsubcribriptions" Type="Int32" />
+          <Property Name="AllDeactivedSubscribers" Type="Int32" />
+          <Property Name="ActiveSubscribersFromHistory" Type="Int32" />
+          <Property Name="ActiveSubscribersFromHistoryUnique" Type="Int32" />
+          <Property Name="DeactivedSubscribersFromHistory" Type="Int32" />
+          <Property Name="DeactivedSubscribersFromHistoryUnqiue" Type="Int32" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -1869,509 +1723,9 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="PortalModelStoreContainer" CdmEntityContainer="PortalEntities">
-          <EntitySetMapping Name="C__MigrationHistory">
-            <EntityTypeMapping TypeName="PortalModel.C__MigrationHistory">
-              <MappingFragment StoreEntitySet="__MigrationHistory">
-                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
-                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
-                <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetRoles">
-            <EntityTypeMapping TypeName="PortalModel.AspNetRole">
-              <MappingFragment StoreEntitySet="AspNetRoles">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUserClaims">
-            <EntityTypeMapping TypeName="PortalModel.AspNetUserClaim">
-              <MappingFragment StoreEntitySet="AspNetUserClaims">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
-                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUserLogins">
-            <EntityTypeMapping TypeName="PortalModel.AspNetUserLogin">
-              <MappingFragment StoreEntitySet="AspNetUserLogins">
-                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
-                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUsers">
-            <EntityTypeMapping TypeName="PortalModel.AspNetUser">
-              <MappingFragment StoreEntitySet="AspNetUsers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
-                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
-                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
-                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
-                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Audits">
-            <EntityTypeMapping TypeName="PortalModel.Audit">
-              <MappingFragment StoreEntitySet="Audit">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="Action" ColumnName="Action" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Ip" ColumnName="Ip" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BlackLists">
-            <EntityTypeMapping TypeName="PortalModel.BlackList">
-              <MappingFragment StoreEntitySet="BlackList">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BulkLists">
-            <EntityTypeMapping TypeName="PortalModel.BulkList">
-              <MappingFragment StoreEntitySet="BulkList">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumbersList" ColumnName="MobileNumbersList" />
-                <ScalarProperty Name="Message" ColumnName="Message" />
-                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
-                <ScalarProperty Name="IsDone" ColumnName="IsDone" />
-                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
-                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="JhoobinSettings">
-            <EntityTypeMapping TypeName="PortalModel.JhoobinSetting">
-              <MappingFragment StoreEntitySet="JhoobinSettings">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Cookie" ColumnName="Cookie" />
-                <ScalarProperty Name="SubscriptionsViewState" ColumnName="SubscriptionsViewState" />
-                <ScalarProperty Name="AccessToken" ColumnName="AccessToken" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Operators">
-            <EntityTypeMapping TypeName="PortalModel.Operator">
-              <MappingFragment StoreEntitySet="Operators">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
-                <ScalarProperty Name="tps" ColumnName="tps" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="OperatorsPlans">
-            <EntityTypeMapping TypeName="PortalModel.OperatorsPlan">
-              <MappingFragment StoreEntitySet="OperatorsPlans">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OperatorPlanName" ColumnName="OperatorPlanName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="OperatorsPrefixs">
-            <EntityTypeMapping TypeName="PortalModel.OperatorsPrefix">
-              <MappingFragment StoreEntitySet="OperatorsPrefixs">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
-                <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
-                <ScalarProperty Name="Prefix" ColumnName="Prefix" />
-                <ScalarProperty Name="Province" ColumnName="Province" />
-                <ScalarProperty Name="City" ColumnName="City" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ParidsShortCodes">
-            <EntityTypeMapping TypeName="PortalModel.ParidsShortCode">
-              <MappingFragment StoreEntitySet="ParidsShortCodes">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="PardisServiceId" ColumnName="PardisServiceId" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RealtimeStatisticsFor2GServices">
-            <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor2GServices">
-              <MappingFragment StoreEntitySet="RealtimeStatisticsFor2GServices">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
-                <ScalarProperty Name="PrepaidSubscriptions" ColumnName="PrepaidSubscriptions" />
-                <ScalarProperty Name="PostPaidSubscriptions" ColumnName="PostPaidSubscriptions" />
-                <ScalarProperty Name="PrepaidUnsubscriptions" ColumnName="PrepaidUnsubscriptions" />
-                <ScalarProperty Name="PostPaidUnsubscriptions" ColumnName="PostPaidUnsubscriptions" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RealtimeStatisticsFor3GServices">
-            <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor3GServices">
-              <MappingFragment StoreEntitySet="RealtimeStatisticsFor3GServices">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="TotalSubscriptions" ColumnName="TotalSubscriptions" />
-                <ScalarProperty Name="TotalUnsubscriptions" ColumnName="TotalUnsubscriptions" />
-                <ScalarProperty Name="TodayGenuineSubscriptions" ColumnName="TodayGenuineSubscriptions" />
-                <ScalarProperty Name="ActivationRateByMinute" ColumnName="ActivationRateByMinute" />
-                <ScalarProperty Name="ActivationRateByHour" ColumnName="ActivationRateByHour" />
-                <ScalarProperty Name="DeactivationRateByMinute" ColumnName="DeactivationRateByMinute" />
-                <ScalarProperty Name="DeactivationRateByHour" ColumnName="DeactivationRateByHour" />
-                <ScalarProperty Name="GeniuneActivationRateByMinute" ColumnName="GeniuneActivationRateByMinute" />
-                <ScalarProperty Name="GeniueActivationRateByHour" ColumnName="GeniueActivationRateByHour" />
-                <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="TotalUnsubcribriptions" ColumnName="TotalUnsubcribriptions" />
-                <ScalarProperty Name="AllDeactivedSubscribers" ColumnName="AllDeactivedSubscribers" />
-                <ScalarProperty Name="ActiveSubscribersFromHistory" ColumnName="ActiveSubscribersFromHistory" />
-                <ScalarProperty Name="ActiveSubscribersFromHistoryUnique" ColumnName="ActiveSubscribersFromHistoryUnique" />
-                <ScalarProperty Name="DeactivedSubscribersFromHistory" ColumnName="DeactivedSubscribersFromHistory" />
-                <ScalarProperty Name="DeactivedSubscribersFromHistoryUnqiue" ColumnName="DeactivedSubscribersFromHistoryUnqiue" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ReceievedMessages">
-            <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
-              <MappingFragment StoreEntitySet="ReceievedMessages">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ReceivedMessagesArchives">
-            <EntityTypeMapping TypeName="PortalModel.ReceivedMessagesArchive">
-              <MappingFragment StoreEntitySet="ReceivedMessagesArchive">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ServiceInfoes">
-            <EntityTypeMapping TypeName="PortalModel.ServiceInfo">
-              <MappingFragment StoreEntitySet="ServiceInfo">
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
-                <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
-                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
-                <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ServiceKeywords">
-            <EntityTypeMapping TypeName="PortalModel.ServiceKeyword">
-              <MappingFragment StoreEntitySet="ServiceKeywords">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SinglechargeDeliveries">
-            <EntityTypeMapping TypeName="PortalModel.SinglechargeDelivery">
-              <MappingFragment StoreEntitySet="SinglechargeDelivery">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Subscribers">
-            <EntityTypeMapping TypeName="PortalModel.Subscriber">
-              <MappingFragment StoreEntitySet="Subscribers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="ActivationDate" ColumnName="ActivationDate" />
-                <ScalarProperty Name="DeactivationDate" ColumnName="DeactivationDate" />
-                <ScalarProperty Name="OnMethod" ColumnName="OnMethod" />
-                <ScalarProperty Name="OnKeyword" ColumnName="OnKeyword" />
-                <ScalarProperty Name="OffMethod" ColumnName="OffMethod" />
-                <ScalarProperty Name="OffKeyword" ColumnName="OffKeyword" />
-                <ScalarProperty Name="PersianActivationDate" ColumnName="PersianActivationDate" />
-                <ScalarProperty Name="PersianDeactivationDate" ColumnName="PersianDeactivationDate" />
-                <ScalarProperty Name="MobileOperator" ColumnName="MobileOperator" />
-                <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
-                <ScalarProperty Name="SubscriberUniqueId" ColumnName="SubscriberUniqueId" />
-                <ScalarProperty Name="SpecialUniqueId" ColumnName="SpecialUniqueId" />
-                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
-                <ScalarProperty Name="UserMessageOff" ColumnName="UserMessageOff" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SubscribersHistories">
-            <EntityTypeMapping TypeName="PortalModel.SubscribersHistory">
-              <MappingFragment StoreEntitySet="SubscribersHistory">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="ServiceStatusForSubscriber" ColumnName="ServiceStatusForSubscriber" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="WhoChangedSubscriberStatus" ColumnName="WhoChangedSubscriberStatus" />
-                <ScalarProperty Name="InvalidContent" ColumnName="InvalidContent" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="AggregatorName" ColumnName="AggregatorName" />
-                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
-                <ScalarProperty Name="PersianDateTime" ColumnName="PersianDateTime" />
-                <ScalarProperty Name="SubscriptionKeyword" ColumnName="SubscriptionKeyword" />
-                <ScalarProperty Name="UnsubscriptionKeyword" ColumnName="UnsubscriptionKeyword" />
-                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
-                <ScalarProperty Name="UserMessageOff" ColumnName="UserMessageOff" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SubscribersPoints">
-            <EntityTypeMapping TypeName="PortalModel.SubscribersPoint">
-              <MappingFragment StoreEntitySet="SubscribersPoints">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="Point" ColumnName="Point" />
-                <ScalarProperty Name="BundledServiceId" ColumnName="BundledServiceId" />
-                <ScalarProperty Name="WeeklyPoint" ColumnName="WeeklyPoint" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TempReferralDatas">
-            <EntityTypeMapping TypeName="PortalModel.TempReferralData">
-              <MappingFragment StoreEntitySet="TempReferralData">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
-                <ScalarProperty Name="InviteeMobileNumber" ColumnName="InviteeMobileNumber" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="VerifySubscribers">
-            <EntityTypeMapping TypeName="PortalModel.VerifySubscriber">
-              <MappingFragment StoreEntitySet="VerifySubscribers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="UsedKeyword" ColumnName="UsedKeyword" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_AllSentMessages">
-            <EntityTypeMapping TypeName="PortalModel.vw_AllSentMessages">
-              <MappingFragment StoreEntitySet="vw_AllSentMessages">
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="ProcessStatus" ColumnName="ProcessStatus" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_DehnadAllServicesStatistics">
-            <EntityTypeMapping TypeName="PortalModel.vw_DehnadAllServicesStatistics">
-              <MappingFragment StoreEntitySet="vw_DehnadAllServicesStatistics">
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
-                <ScalarProperty Name="NumberOfSubscriptions" ColumnName="NumberOfSubscriptions" />
-                <ScalarProperty Name="NumberOfUnsubscriptions" ColumnName="NumberOfUnsubscriptions" />
-                <ScalarProperty Name="NumberOfPostpaidSubscriptions" ColumnName="NumberOfPostpaidSubscriptions" />
-                <ScalarProperty Name="NumberOfPrepaidSubscriptions" ColumnName="NumberOfPrepaidSubscriptions" />
-                <ScalarProperty Name="NumberOfPostpaidUnsubscriptions" ColumnName="NumberOfPostpaidUnsubscriptions" />
-                <ScalarProperty Name="NumberOfPrepaidUnsubscriptions" ColumnName="NumberOfPrepaidUnsubscriptions" />
-                <ScalarProperty Name="TotalSubscribers" ColumnName="TotalSubscribers" />
-                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
-                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
-                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
-                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_ReceivedMessages">
-            <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
-              <MappingFragment StoreEntitySet="vw_ReceivedMessages">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="AspNetUserRoles" TypeName="PortalModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
-            <EndProperty Name="AspNetRoles">
-              <ScalarProperty Name="Id" ColumnName="RoleId" />
-            </EndProperty>
-            <EndProperty Name="AspNetUsers">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-          </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="ArchiveReceivedMessages" FunctionName="PortalModel.Store.ArchiveReceivedMessages" />
           <FunctionImportMapping FunctionImportName="sp_DehnadAll2GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll2GServicesStatistics" />
           <FunctionImportMapping FunctionImportName="sp_DehnadAll3GServicesStatistics" FunctionName="PortalModel.Store.sp_DehnadAll3GServicesStatistics" />
-          <EntitySetMapping Name="chargeInfoes">
-            <EntityTypeMapping TypeName="PortalModel.chargeInfo">
-              <MappingFragment StoreEntitySet="chargeInfo">
-                <ScalarProperty Name="cycles" ColumnName="cycles" />
-                <ScalarProperty Name="tryCount" ColumnName="tryCount" />
-                <ScalarProperty Name="subscriberActivationDate" ColumnName="subscriberActivationDate" />
-                <ScalarProperty Name="pricePaiedYesterday" ColumnName="pricePaiedYesterday" />
-                <ScalarProperty Name="pricePaiedToday" ColumnName="pricePaiedToday" />
-                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
-                <ScalarProperty Name="dateCharge" ColumnName="dateCharge" />
-                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Referrals">
-            <EntityTypeMapping TypeName="PortalModel.Referral">
-              <MappingFragment StoreEntitySet="Referral">
-                <ScalarProperty Name="PersianDateInvited" ColumnName="PersianDateInvited" />
-                <ScalarProperty Name="DateInvited" ColumnName="DateInvited" />
-                <ScalarProperty Name="InviteeUniqueId" ColumnName="InviteeUniqueId" />
-                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MCISingleChargeFtpFiles">
-            <EntityTypeMapping TypeName="PortalModel.MCISingleChargeFtpFile">
-              <MappingFragment StoreEntitySet="MCISingleChargeFtpFiles">
-                <ScalarProperty Name="chargeCount" ColumnName="chargeCount" />
-                <ScalarProperty Name="processLines" ColumnName="processLines" />
-                <ScalarProperty Name="processDateTime" ColumnName="processDateTime" />
-                <ScalarProperty Name="identifier" ColumnName="identifier" />
-                <ScalarProperty Name="fileName" ColumnName="fileName" />
-                <ScalarProperty Name="ftpDirectory" ColumnName="ftpDirectory" />
-                <ScalarProperty Name="serverIP" ColumnName="serverIP" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_AspNetUsers">
-            <EntityTypeMapping TypeName="PortalModel.vw_AspNetUsers">
-              <MappingFragment StoreEntitySet="vw_AspNetUsers">
-                <ScalarProperty Name="Aggregators" ColumnName="Aggregators" />
-                <ScalarProperty Name="Services" ColumnName="Services" />
-                <ScalarProperty Name="roles" ColumnName="roles" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
-                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
-                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
-                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
-                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUsersRolesServiceAccesses">
-            <EntityTypeMapping TypeName="PortalModel.AspNetUsersRolesServiceAccess">
-              <MappingFragment StoreEntitySet="AspNetUsersRolesServiceAccess">
-                <ScalarProperty Name="aggregatorId" ColumnName="aggregatorId" />
-                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
-                <ScalarProperty Name="roleId" ColumnName="roleId" />
-                <ScalarProperty Name="userId" ColumnName="userId" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_AspNetUserRoles">
-            <EntityTypeMapping TypeName="PortalModel.vw_AspNetUserRoles">
-              <MappingFragment StoreEntitySet="vw_AspNetUserRoles">
-                <ScalarProperty Name="roleName" ColumnName="roleName" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_AspNetRoles">
-            <EntityTypeMapping TypeName="PortalModel.vw_AspNetRoles">
-              <MappingFragment StoreEntitySet="vw_AspNetRoles">
-                <ScalarProperty Name="Aggregators" ColumnName="Aggregators" />
-                <ScalarProperty Name="Services" ColumnName="Services" />
-                <ScalarProperty Name="users" ColumnName="users" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="GetUserLog" FunctionName="PortalModel.Store.GetUserLog">
             <ResultMapping>
               <ComplexTypeMapping TypeName="PortalModel.GetUserLog_Result">
@@ -2413,36 +1767,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <EntitySetMapping Name="PortalObjects">
-            <EntityTypeMapping TypeName="PortalModel.PortalObject">
-              <MappingFragment StoreEntitySet="PortalObjects">
-                <ScalarProperty Name="objectType" ColumnName="objectType" />
-                <ScalarProperty Name="parentLineage" ColumnName="parentLineage" />
-                <ScalarProperty Name="description" ColumnName="description" />
-                <ScalarProperty Name="tag" ColumnName="tag" />
-                <ScalarProperty Name="persianName" ColumnName="persianName" />
-                <ScalarProperty Name="objectName" ColumnName="objectName" />
-                <ScalarProperty Name="parentId" ColumnName="parentId" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Services">
-            <EntityTypeMapping TypeName="PortalModel.Service">
-              <MappingFragment StoreEntitySet="Services">
-                <ScalarProperty Name="tps" ColumnName="tps" />
-                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
-                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
-                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
-                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
-                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Aggregators">
             <EntityTypeMapping TypeName="PortalModel.Aggregator">
               <MappingFragment StoreEntitySet="Aggregators">
@@ -2455,61 +1779,149 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="serviceCyclesNews">
-            <EntityTypeMapping TypeName="PortalModel.serviceCyclesNew">
-              <MappingFragment StoreEntitySet="serviceCyclesNew">
-                <ScalarProperty Name="state" ColumnName="state" />
-                <ScalarProperty Name="cycleChargePrices" ColumnName="cycleChargePrices" />
-                <ScalarProperty Name="minTPSs" ColumnName="minTPSs" />
-                <ScalarProperty Name="servicesIDs" ColumnName="servicesIDs" />
-                <ScalarProperty Name="endTime" ColumnName="endTime" />
-                <ScalarProperty Name="startTime" ColumnName="startTime" />
-                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
-                <ScalarProperty Name="daysOfWeekOrDate" ColumnName="daysOfWeekOrDate" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Bulks">
-            <EntityTypeMapping TypeName="PortalModel.Bulk">
-              <MappingFragment StoreEntitySet="Bulks">
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="BulkFile" ColumnName="BulkFile" />
-                <ScalarProperty Name="TotalDelivery" ColumnName="TotalDelivery" />
-                <ScalarProperty Name="TotalRetryUnique" ColumnName="TotalRetryUnique" />
-                <ScalarProperty Name="TotalRetry" ColumnName="TotalRetry" />
-                <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
-                <ScalarProperty Name="TotalSuccessfullySent" ColumnName="TotalSuccessfullySent" />
-                <ScalarProperty Name="TotalMessages" ColumnName="TotalMessages" />
-                <ScalarProperty Name="retryTimeoutInSeconds" ColumnName="retryTimeoutInSeconds" />
-                <ScalarProperty Name="retryCount" ColumnName="retryCount" />
-                <ScalarProperty Name="readSize" ColumnName="readSize" />
-                <ScalarProperty Name="message" ColumnName="message" />
-                <ScalarProperty Name="endTime" ColumnName="endTime" />
-                <ScalarProperty Name="startTime" ColumnName="startTime" />
-                <ScalarProperty Name="tps" ColumnName="tps" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="bulkName" ColumnName="bulkName" />
+          <EntitySetMapping Name="AspNetRoles">
+            <EntityTypeMapping TypeName="PortalModel.AspNetRole">
+              <MappingFragment StoreEntitySet="AspNetRoles">
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Deliveries">
-            <EntityTypeMapping TypeName="PortalModel.Delivery">
-              <MappingFragment StoreEntitySet="Delivery">
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="Delivered" ColumnName="Delivered" />
-                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
-                <ScalarProperty Name="DeliveryTime" ColumnName="DeliveryTime" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
+          <EntitySetMapping Name="AspNetRoleUserAccesses">
+            <EntityTypeMapping TypeName="PortalModel.AspNetRoleUserAccess">
+              <MappingFragment StoreEntitySet="AspNetRoleUserAccess">
+                <ScalarProperty Name="applicationId" ColumnName="applicationId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="roleId" ColumnName="roleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserClaims">
+            <EntityTypeMapping TypeName="PortalModel.AspNetUserClaim">
+              <MappingFragment StoreEntitySet="AspNetUserClaims">
+                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserLogins">
+            <EntityTypeMapping TypeName="PortalModel.AspNetUserLogin">
+              <MappingFragment StoreEntitySet="AspNetUserLogins">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="PortalModel.AspNetUser">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsersRolesServiceAccesses">
+            <EntityTypeMapping TypeName="PortalModel.AspNetUsersRolesServiceAccess">
+              <MappingFragment StoreEntitySet="AspNetUsersRolesServiceAccess">
+                <ScalarProperty Name="aggregatorId" ColumnName="aggregatorId" />
+                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
+                <ScalarProperty Name="roleId" ColumnName="roleId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BlackLists">
+            <EntityTypeMapping TypeName="PortalModel.BlackList">
+              <MappingFragment StoreEntitySet="BlackList">
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Operators">
+            <EntityTypeMapping TypeName="PortalModel.Operator">
+              <MappingFragment StoreEntitySet="Operators">
+                <ScalarProperty Name="tps" ColumnName="tps" />
+                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperatorsPlans">
+            <EntityTypeMapping TypeName="PortalModel.OperatorsPlan">
+              <MappingFragment StoreEntitySet="OperatorsPlans">
+                <ScalarProperty Name="OperatorPlanName" ColumnName="OperatorPlanName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperatorsPrefixs">
+            <EntityTypeMapping TypeName="PortalModel.OperatorsPrefix">
+              <MappingFragment StoreEntitySet="OperatorsPrefixs">
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="Prefix" ColumnName="Prefix" />
+                <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
+                <ScalarProperty Name="OperatorId" ColumnName="OperatorId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ParidsShortCodes">
+            <EntityTypeMapping TypeName="PortalModel.ParidsShortCode">
+              <MappingFragment StoreEntitySet="ParidsShortCodes">
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PardisServiceId" ColumnName="PardisServiceId" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="Correlator" ColumnName="Correlator" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReceievedMessages">
+            <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
+              <MappingFragment StoreEntitySet="ReceievedMessages">
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
+                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Referrals">
+            <EntityTypeMapping TypeName="PortalModel.Referral">
+              <MappingFragment StoreEntitySet="Referral">
+                <ScalarProperty Name="PersianDateInvited" ColumnName="PersianDateInvited" />
+                <ScalarProperty Name="DateInvited" ColumnName="DateInvited" />
+                <ScalarProperty Name="InviteeUniqueId" ColumnName="InviteeUniqueId" />
+                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2540,13 +1952,157 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="serviceCyclesNews">
+            <EntityTypeMapping TypeName="PortalModel.serviceCyclesNew">
+              <MappingFragment StoreEntitySet="serviceCyclesNew">
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="cycleChargePrices" ColumnName="cycleChargePrices" />
+                <ScalarProperty Name="minTPSs" ColumnName="minTPSs" />
+                <ScalarProperty Name="servicesIDs" ColumnName="servicesIDs" />
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
+                <ScalarProperty Name="daysOfWeekOrDate" ColumnName="daysOfWeekOrDate" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceInfoes">
+            <EntityTypeMapping TypeName="PortalModel.ServiceInfo">
+              <MappingFragment StoreEntitySet="ServiceInfo">
+                <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
+                <ScalarProperty Name="databaseName" ColumnName="databaseName" />
+                <ScalarProperty Name="serviceName" ColumnName="serviceName" />
+                <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
+                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceKeywords">
+            <EntityTypeMapping TypeName="PortalModel.ServiceKeyword">
+              <MappingFragment StoreEntitySet="ServiceKeywords">
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Services">
+            <EntityTypeMapping TypeName="PortalModel.Service">
+              <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="tps" ColumnName="tps" />
+                <ScalarProperty Name="referralUrl" ColumnName="referralUrl" />
+                <ScalarProperty Name="oldServiceCodes" ColumnName="oldServiceCodes" />
+                <ScalarProperty Name="Enable2StepSubscription" ColumnName="Enable2StepSubscription" />
+                <ScalarProperty Name="IsServiceActive" ColumnName="IsServiceActive" />
+                <ScalarProperty Name="OnKeywords" ColumnName="OnKeywords" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SinglechargeDeliveries">
+            <EntityTypeMapping TypeName="PortalModel.SinglechargeDelivery">
+              <MappingFragment StoreEntitySet="SinglechargeDelivery">
+                <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Subscribers">
+            <EntityTypeMapping TypeName="PortalModel.Subscriber">
+              <MappingFragment StoreEntitySet="Subscribers">
+                <ScalarProperty Name="UserMessageOff" ColumnName="UserMessageOff" />
+                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
+                <ScalarProperty Name="SpecialUniqueId" ColumnName="SpecialUniqueId" />
+                <ScalarProperty Name="SubscriberUniqueId" ColumnName="SubscriberUniqueId" />
+                <ScalarProperty Name="OperatorPlan" ColumnName="OperatorPlan" />
+                <ScalarProperty Name="MobileOperator" ColumnName="MobileOperator" />
+                <ScalarProperty Name="PersianDeactivationDate" ColumnName="PersianDeactivationDate" />
+                <ScalarProperty Name="PersianActivationDate" ColumnName="PersianActivationDate" />
+                <ScalarProperty Name="OffKeyword" ColumnName="OffKeyword" />
+                <ScalarProperty Name="OffMethod" ColumnName="OffMethod" />
+                <ScalarProperty Name="OnKeyword" ColumnName="OnKeyword" />
+                <ScalarProperty Name="OnMethod" ColumnName="OnMethod" />
+                <ScalarProperty Name="DeactivationDate" ColumnName="DeactivationDate" />
+                <ScalarProperty Name="ActivationDate" ColumnName="ActivationDate" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersPoints">
+            <EntityTypeMapping TypeName="PortalModel.SubscribersPoint">
+              <MappingFragment StoreEntitySet="SubscribersPoints">
+                <ScalarProperty Name="WeeklyPoint" ColumnName="WeeklyPoint" />
+                <ScalarProperty Name="BundledServiceId" ColumnName="BundledServiceId" />
+                <ScalarProperty Name="Point" ColumnName="Point" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TempReferralDatas">
+            <EntityTypeMapping TypeName="PortalModel.TempReferralData">
+              <MappingFragment StoreEntitySet="TempReferralData">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="InviteeMobileNumber" ColumnName="InviteeMobileNumber" />
+                <ScalarProperty Name="InviterUniqueId" ColumnName="InviterUniqueId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VerifySubscribers">
+            <EntityTypeMapping TypeName="PortalModel.VerifySubscriber">
+              <MappingFragment StoreEntitySet="VerifySubscribers">
+                <ScalarProperty Name="UsedKeyword" ColumnName="UsedKeyword" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_ReceivedMessages">
+            <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
+              <MappingFragment StoreEntitySet="vw_ReceivedMessages">
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
+                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="vw_servicesServicesInfo">
             <EntityTypeMapping TypeName="PortalModel.vw_servicesServicesInfo">
               <MappingFragment StoreEntitySet="vw_servicesServicesInfo">
                 <ScalarProperty Name="aggregatorName" ColumnName="aggregatorName" />
                 <ScalarProperty Name="chargePrice" ColumnName="chargePrice" />
                 <ScalarProperty Name="databaseName" ColumnName="databaseName" />
-                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="serviceName" ColumnName="serviceName" />
                 <ScalarProperty Name="OperatorServiceId" ColumnName="OperatorServiceId" />
                 <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
@@ -2561,9 +2117,248 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="TodayTillNowChargeAmount" ColumnName="TodayTillNowChargeAmount" />
-                <ScalarProperty Name="activeUserCount" ColumnName="activeUserCount" />
-                <ScalarProperty Name="userCount" ColumnName="userCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="AspNetUserRoles" TypeName="PortalModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
+            <EndProperty Name="AspNetUser">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="AspNetRole">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="JhoobinSettings">
+            <EntityTypeMapping TypeName="PortalModel.JhoobinSetting">
+              <MappingFragment StoreEntitySet="JhoobinSettings">
+                <ScalarProperty Name="AccessToken" ColumnName="AccessToken" />
+                <ScalarProperty Name="SubscriptionsViewState" ColumnName="SubscriptionsViewState" />
+                <ScalarProperty Name="Cookie" ColumnName="Cookie" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubscribersHistories">
+            <EntityTypeMapping TypeName="PortalModel.SubscribersHistory">
+              <MappingFragment StoreEntitySet="SubscribersHistory">
+                <ScalarProperty Name="UserMessageOff" ColumnName="UserMessageOff" />
+                <ScalarProperty Name="UserMessage" ColumnName="UserMessage" />
+                <ScalarProperty Name="UnsubscriptionKeyword" ColumnName="UnsubscriptionKeyword" />
+                <ScalarProperty Name="SubscriptionKeyword" ColumnName="SubscriptionKeyword" />
+                <ScalarProperty Name="PersianDateTime" ColumnName="PersianDateTime" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="AggregatorName" ColumnName="AggregatorName" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="InvalidContent" ColumnName="InvalidContent" />
+                <ScalarProperty Name="WhoChangedSubscriberStatus" ColumnName="WhoChangedSubscriberStatus" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ServiceStatusForSubscriber" ColumnName="ServiceStatusForSubscriber" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="AggregatorServiceId" ColumnName="AggregatorServiceId" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Deliveries">
+            <EntityTypeMapping TypeName="PortalModel.Delivery">
+              <MappingFragment StoreEntitySet="Delivery">
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="Delivered" ColumnName="Delivered" />
+                <ScalarProperty Name="AggregatorId" ColumnName="AggregatorId" />
+                <ScalarProperty Name="DeliveryTime" ColumnName="DeliveryTime" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="Correlator" ColumnName="Correlator" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BulkLists">
+            <EntityTypeMapping TypeName="PortalModel.BulkList">
+              <MappingFragment StoreEntitySet="BulkList">
+                <ScalarProperty Name="PersianDateAdded" ColumnName="PersianDateAdded" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="IsDone" ColumnName="IsDone" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="MobileNumbersList" ColumnName="MobileNumbersList" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReceivedMessagesArchives">
+            <EntityTypeMapping TypeName="PortalModel.ReceivedMessagesArchive">
+              <MappingFragment StoreEntitySet="ReceivedMessagesArchive">
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
+                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_AspNetRoles">
+            <EntityTypeMapping TypeName="PortalModel.vw_AspNetRoles">
+              <MappingFragment StoreEntitySet="vw_AspNetRoles">
+                <ScalarProperty Name="Aggregators" ColumnName="Aggregators" />
+                <ScalarProperty Name="Services" ColumnName="Services" />
+                <ScalarProperty Name="users" ColumnName="users" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_AspNetUserRoles">
+            <EntityTypeMapping TypeName="PortalModel.vw_AspNetUserRoles">
+              <MappingFragment StoreEntitySet="vw_AspNetUserRoles">
+                <ScalarProperty Name="roleName" ColumnName="roleName" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_AspNetUsers">
+            <EntityTypeMapping TypeName="PortalModel.vw_AspNetUsers">
+              <MappingFragment StoreEntitySet="vw_AspNetUsers">
+                <ScalarProperty Name="Aggregators" ColumnName="Aggregators" />
+                <ScalarProperty Name="Services" ColumnName="Services" />
+                <ScalarProperty Name="roles" ColumnName="roles" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_DehnadAllServicesStatistics">
+            <EntityTypeMapping TypeName="PortalModel.vw_DehnadAllServicesStatistics">
+              <MappingFragment StoreEntitySet="vw_DehnadAllServicesStatistics">
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulCharge" ColumnName="SumOfSinglechargeSuccessfulCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPostpaidCharge" ColumnName="SumOfSinglechargeSuccessfulPostpaidCharge" />
+                <ScalarProperty Name="SumOfSinglechargeSuccessfulPrepaidCharge" ColumnName="SumOfSinglechargeSuccessfulPrepaidCharge" />
+                <ScalarProperty Name="TotalUnSubscribers" ColumnName="TotalUnSubscribers" />
+                <ScalarProperty Name="TotalPostpaidSubscribers" ColumnName="TotalPostpaidSubscribers" />
+                <ScalarProperty Name="TotalPrepaidSubscribers" ColumnName="TotalPrepaidSubscribers" />
+                <ScalarProperty Name="TotalSubscribers" ColumnName="TotalSubscribers" />
+                <ScalarProperty Name="NumberOfPrepaidUnsubscriptions" ColumnName="NumberOfPrepaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidUnsubscriptions" ColumnName="NumberOfPostpaidUnsubscriptions" />
+                <ScalarProperty Name="NumberOfPrepaidSubscriptions" ColumnName="NumberOfPrepaidSubscriptions" />
+                <ScalarProperty Name="NumberOfPostpaidSubscriptions" ColumnName="NumberOfPostpaidSubscriptions" />
+                <ScalarProperty Name="NumberOfUnsubscriptions" ColumnName="NumberOfUnsubscriptions" />
+                <ScalarProperty Name="NumberOfSubscriptions" ColumnName="NumberOfSubscriptions" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Audits">
+            <EntityTypeMapping TypeName="PortalModel.Audit">
+              <MappingFragment StoreEntitySet="Audit">
+                <ScalarProperty Name="Ip" ColumnName="Ip" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MCISingleChargeFtpFiles">
+            <EntityTypeMapping TypeName="PortalModel.MCISingleChargeFtpFile">
+              <MappingFragment StoreEntitySet="MCISingleChargeFtpFiles">
+                <ScalarProperty Name="chargeCount" ColumnName="chargeCount" />
+                <ScalarProperty Name="processLines" ColumnName="processLines" />
+                <ScalarProperty Name="processDateTime" ColumnName="processDateTime" />
+                <ScalarProperty Name="identifier" ColumnName="identifier" />
+                <ScalarProperty Name="fileName" ColumnName="fileName" />
+                <ScalarProperty Name="ftpDirectory" ColumnName="ftpDirectory" />
+                <ScalarProperty Name="serverIP" ColumnName="serverIP" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="chargeInfoes">
+            <EntityTypeMapping TypeName="PortalModel.chargeInfo">
+              <MappingFragment StoreEntitySet="chargeInfo">
+                <ScalarProperty Name="cycles" ColumnName="cycles" />
+                <ScalarProperty Name="tryCount" ColumnName="tryCount" />
+                <ScalarProperty Name="subscriberActivationDate" ColumnName="subscriberActivationDate" />
+                <ScalarProperty Name="pricePaiedYesterday" ColumnName="pricePaiedYesterday" />
+                <ScalarProperty Name="pricePaiedToday" ColumnName="pricePaiedToday" />
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
+                <ScalarProperty Name="dateCharge" ColumnName="dateCharge" />
+                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RealtimeStatisticsFor2GServices">
+            <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor2GServices">
+              <MappingFragment StoreEntitySet="RealtimeStatisticsFor2GServices">
+                <ScalarProperty Name="PostPaidUnsubscriptions" ColumnName="PostPaidUnsubscriptions" />
+                <ScalarProperty Name="PrepaidUnsubscriptions" ColumnName="PrepaidUnsubscriptions" />
+                <ScalarProperty Name="PostPaidSubscriptions" ColumnName="PostPaidSubscriptions" />
+                <ScalarProperty Name="PrepaidSubscriptions" ColumnName="PrepaidSubscriptions" />
+                <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RealtimeStatisticsFor3GServices">
+            <EntityTypeMapping TypeName="PortalModel.RealtimeStatisticsFor3GServices">
+              <MappingFragment StoreEntitySet="RealtimeStatisticsFor3GServices">
+                <ScalarProperty Name="DeactivedSubscribersFromHistoryUnqiue" ColumnName="DeactivedSubscribersFromHistoryUnqiue" />
+                <ScalarProperty Name="DeactivedSubscribersFromHistory" ColumnName="DeactivedSubscribersFromHistory" />
+                <ScalarProperty Name="ActiveSubscribersFromHistoryUnique" ColumnName="ActiveSubscribersFromHistoryUnique" />
+                <ScalarProperty Name="ActiveSubscribersFromHistory" ColumnName="ActiveSubscribersFromHistory" />
+                <ScalarProperty Name="AllDeactivedSubscribers" ColumnName="AllDeactivedSubscribers" />
+                <ScalarProperty Name="TotalUnsubcribriptions" ColumnName="TotalUnsubcribriptions" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
+                <ScalarProperty Name="GeniueActivationRateByHour" ColumnName="GeniueActivationRateByHour" />
+                <ScalarProperty Name="GeniuneActivationRateByMinute" ColumnName="GeniuneActivationRateByMinute" />
+                <ScalarProperty Name="DeactivationRateByHour" ColumnName="DeactivationRateByHour" />
+                <ScalarProperty Name="DeactivationRateByMinute" ColumnName="DeactivationRateByMinute" />
+                <ScalarProperty Name="ActivationRateByHour" ColumnName="ActivationRateByHour" />
+                <ScalarProperty Name="ActivationRateByMinute" ColumnName="ActivationRateByMinute" />
+                <ScalarProperty Name="TodayGenuineSubscriptions" ColumnName="TodayGenuineSubscriptions" />
+                <ScalarProperty Name="TotalUnsubscriptions" ColumnName="TotalUnsubscriptions" />
+                <ScalarProperty Name="TotalSubscriptions" ColumnName="TotalSubscriptions" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="PersianDate" ColumnName="PersianDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

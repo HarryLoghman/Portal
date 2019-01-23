@@ -99,6 +99,9 @@
     <Compile Include="Models\AspNetRole.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AspNetRoleUserAccess.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AspNetUser.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -117,16 +120,10 @@
     <Compile Include="Models\BlackList.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Bulk.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\BulkList.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\chargeInfo.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\C__MigrationHistory.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Delivery.cs">
@@ -174,9 +171,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PortalModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PortalObject.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\RealtimeStatisticsFor2GServices.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
@@ -333,9 +327,6 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VerifySubscriber.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vw_AllSentMessages.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_AspNetRoles.cs">

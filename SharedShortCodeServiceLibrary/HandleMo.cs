@@ -34,12 +34,12 @@ namespace SharedShortCodeServiceLibrary
             unknown = 0
         }
         protected virtual string prp_serviceCode { get; }
-        protected virtual string prp_connectionStringeNameInAppConfig { get; }
+        protected virtual string prp_connectionStringNameInAppConfig { get; }
 
         public HandleMo(string serviceCode)
         {
             this.prp_serviceCode = serviceCode;
-            this.prp_connectionStringeNameInAppConfig = serviceCode;
+            this.prp_connectionStringNameInAppConfig = serviceCode;
             this.CompileSource();
         }
 
@@ -209,7 +209,7 @@ namespace SharedShortCodeServiceLibrary
         private string getSourceFromDatabase()
         {
             string moduleSource = "";
-            using (var entity = new SharedServiceEntities(this.prp_connectionStringeNameInAppConfig))
+            using (var entity = new SharedServiceEntities(this.prp_connectionStringNameInAppConfig))
             {
                 var rows = entity.ServiceCommands.Where(o => o.state == 1).OrderBy(o => o.priority);
                 moduleSource = "using System;" +
@@ -325,14 +325,14 @@ namespace SharedShortCodeServiceLibrary
                     catch (Exception e)
                     {
                         SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "EvaluateCommandFromDatabase:" + "Compiler Error1 " + this.prp_serviceCode + ":" + e.Message);
-                        logs.Error(this.prp_connectionStringeNameInAppConfig + " " + this.prp_serviceCode, e);
+                        logs.Error(this.prp_connectionStringNameInAppConfig + " " + this.prp_serviceCode, e);
                     }
                 }
             }
             catch (Exception e)
             {
                 SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "EvaluateCommandFromDatabase:" + "Compiler Error2 " + this.prp_serviceCode + ":" + e.Message);
-                logs.Error("EvaluateCommandFromDatabase:" + this.prp_connectionStringeNameInAppConfig + " " + this.prp_serviceCode, e);
+                logs.Error("EvaluateCommandFromDatabase:" + this.prp_connectionStringNameInAppConfig + " " + this.prp_serviceCode, e);
             }
             return command;
 
@@ -340,7 +340,7 @@ namespace SharedShortCodeServiceLibrary
         public async virtual Task<bool> ReceivedMessage(MessageObject message, vw_servicesServicesInfo service)
         {
             bool isSucceeded = true;
-            string connectionStringeNameInAppConfig = this.prp_connectionStringeNameInAppConfig;
+            string connectionStringeNameInAppConfig = this.prp_connectionStringNameInAppConfig;
             bool mtnAggregator = false;
             if (service.aggregatorName.ToLower() == "mtn")
                 mtnAggregator = true;
@@ -350,8 +350,8 @@ namespace SharedShortCodeServiceLibrary
                 var content = message.Content;
                 message.ServiceCode = service.ServiceCode;
                 message.ServiceId = service.Id;
-                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate(this.prp_connectionStringeNameInAppConfig);
-                using (var entity = new SharedServiceEntities(this.prp_connectionStringeNameInAppConfig))
+                var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate(this.prp_connectionStringNameInAppConfig);
+                using (var entity = new SharedServiceEntities(this.prp_connectionStringNameInAppConfig))
                 {
                     int isCampaignActive = 0;
                     var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
@@ -751,7 +751,7 @@ namespace SharedShortCodeServiceLibrary
                 }
             }
             #endregion
-            #region campaignActive or suspend and user is deactivated
+            #region campaign is Active or suspended and user is deactivated
             else if ((isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend) && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
             {
                 var subId = "1";

@@ -11,9 +11,13 @@ namespace DehnadAvvalPod500Service
     class Sender : SharedShortCodeServiceLibrary.Sender
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public Sender() : base(Properties.Settings.Default.ServiceCode)
+        {
+
+        }
         public void SendHandler()
         {
-            base.SendHandler(Properties.Settings.Default.ServiceCode, new TimeSpan(7, 0, 0), new TimeSpan(21, 0, 0));
+            base.SendHandler(new TimeSpan(7, 0, 0), new TimeSpan(21, 0, 0));
         }
         //public void SendHandler()
         //{
