@@ -142,7 +142,7 @@ namespace JhoobinPorShetabLibrary
                             if (sub != null && sub.SpecialUniqueId != null)
                             {
                                 subId = sub.SpecialUniqueId;
-                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
                                 dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/JhoobinPorShetab/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                 string n = result.n.ToString();
                                 string m = result.m.ToString();
@@ -177,7 +177,7 @@ namespace JhoobinPorShetabLibrary
                             if (sub != null && sub.SpecialUniqueId != null)
                             {
                                 subId = sub.SpecialUniqueId;
-                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
                                 dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/JhoobinPorShetab/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                 var chargesList = new List<string>();
                                 foreach (var item in result.charges)

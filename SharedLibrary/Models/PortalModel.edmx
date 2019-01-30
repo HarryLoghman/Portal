@@ -298,6 +298,21 @@
           <Property Name="DateInvited" Type="datetime" Nullable="false" />
           <Property Name="PersianDateInvited" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
+        <EntityType Name="RequestsLogs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="sourceIP" Type="nvarchar" MaxLength="50" />
+          <Property Name="sourceIPInt" Type="bigint" />
+          <Property Name="requestParams" Type="nvarchar" MaxLength="200" />
+          <Property Name="destinationIP" Type="nvarchar" MaxLength="50" />
+          <Property Name="methodName" Type="nvarchar" MaxLength="100" />
+          <Property Name="regDate" Type="datetime" />
+          <Property Name="x_forwarder" Type="nvarchar" MaxLength="500" />
+          <Property Name="isProcessed" Type="bit" />
+          <Property Name="description" Type="nvarchar" MaxLength="500" />
+        </EntityType>
         <EntityType Name="ServersActions">
           <Key>
             <PropertyRef Name="Id" />
@@ -735,6 +750,16 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Parameter Name="mobileNumber" Type="nvarchar" Mode="In" />
           <Parameter Name="chargePriceFrom" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="sp_RequestsRulesChecker" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="requestId" Type="bigint" Mode="In" />
+          <Parameter Name="regdate" Type="datetime" Mode="In" />
+          <Parameter Name="sourceIP" Type="nvarchar" Mode="In" />
+          <Parameter Name="requestParams" Type="nvarchar" Mode="In" />
+          <Parameter Name="destinationIP" Type="nvarchar" Mode="In" />
+          <Parameter Name="methodName" Type="nvarchar" Mode="In" />
+          <Parameter Name="action" Type="int" Mode="InOut" />
+          <Parameter Name="actionMessage" Type="nvarchar(max)" Mode="InOut" />
+        </Function>
         <EntityContainer Name="PortalModelStoreContainer">
           <EntitySet Name="Aggregators" EntityType="Self.Aggregators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
@@ -760,6 +785,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Referral" EntityType="Self.Referral" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RequestsLogs" EntityType="Self.RequestsLogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServersActions" EntityType="Self.ServersActions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServersIPs" EntityType="Self.ServersIPs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="serviceCyclesNew" EntityType="Self.serviceCyclesNew" Schema="dbo" store:Type="Tables" />
@@ -1003,6 +1029,17 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="chargeInfoes" EntityType="PortalModel.chargeInfo" />
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="PortalModel.RealtimeStatisticsFor2GServices" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="PortalModel.RealtimeStatisticsFor3GServices" />
+          <EntitySet Name="RequestsLogs" EntityType="PortalModel.RequestsLog" />
+          <FunctionImport Name="sp_RequestsRulesChecker">
+            <Parameter Name="requestId" Mode="In" Type="Int64" />
+            <Parameter Name="regdate" Mode="In" Type="DateTime" />
+            <Parameter Name="sourceIP" Mode="In" Type="String" />
+            <Parameter Name="requestParams" Mode="In" Type="String" />
+            <Parameter Name="destinationIP" Mode="In" Type="String" />
+            <Parameter Name="methodName" Mode="In" Type="String" />
+            <Parameter Name="action" Mode="InOut" Type="Int32" />
+            <Parameter Name="actionMessage" Mode="InOut" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1717,6 +1754,38 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="DeactivedSubscribersFromHistory" Type="Int32" />
           <Property Name="DeactivedSubscribersFromHistoryUnqiue" Type="Int32" />
         </EntityType>
+        <ComplexType Name="sp_getServerTPS_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="sourceIPStart" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="sourceIPEnd" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="sourceServerId" Nullable="true" />
+          <Property Type="String" Name="sourceIdentifier" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="destinationIP" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="destinationMask" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="destinationServerId" Nullable="true" />
+          <Property Type="String" Name="methodName" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="TPS" Nullable="true" />
+          <Property Type="Int32" Name="TPSType" Nullable="true" />
+          <Property Type="DateTime" Name="startDate" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="endDate" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="state" Nullable="true" />
+          <Property Type="Int32" Name="action" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="RequestsLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="sourceIP" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="sourceIPInt" Type="Int64" />
+          <Property Name="requestParams" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="destinationIP" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="methodName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="regDate" Type="DateTime" Precision="3" />
+          <Property Name="x_forwarder" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="isProcessed" Type="Boolean" />
+          <Property Name="description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2362,6 +2431,23 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="RequestsLogs">
+            <EntityTypeMapping TypeName="PortalModel.RequestsLog">
+              <MappingFragment StoreEntitySet="RequestsLogs">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="isProcessed" ColumnName="isProcessed" />
+                <ScalarProperty Name="x_forwarder" ColumnName="x_forwarder" />
+                <ScalarProperty Name="regDate" ColumnName="regDate" />
+                <ScalarProperty Name="methodName" ColumnName="methodName" />
+                <ScalarProperty Name="destinationIP" ColumnName="destinationIP" />
+                <ScalarProperty Name="requestParams" ColumnName="requestParams" />
+                <ScalarProperty Name="sourceIPInt" ColumnName="sourceIPInt" />
+                <ScalarProperty Name="sourceIP" ColumnName="sourceIP" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_RequestsRulesChecker" FunctionName="PortalModel.Store.sp_RequestsRulesChecker" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

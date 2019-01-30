@@ -59,7 +59,7 @@ namespace SharedLibrary.Aggregators
 
 
             if (!shortCode.StartsWith("98"))
-                shortCode = "98" + shortCode;
+                shortCode = "98" + shortCode.Replace("-", "");
             if (!mobileNumber.StartsWith("98"))
                 mobileNumber = "98" + mobileNumber.TrimStart('0');
 
@@ -135,7 +135,7 @@ namespace SharedLibrary.Aggregators
                         {
                             resultDescription = returnText + this.fnc_getAggregatorErrorDescription(returnText);
                             isSucceeded = false;
-                            SharedVariables.logs.Error("AggregatorMobinOne " + service.ServiceCode + " fnc_sendMessage_parseResult contains " + returnPartsArr.Length + " item the result is :" + returnText);
+                            SharedVariables.logs.Error("AggregatorMobinOne " + service.ServiceCode + " fnc_sendMessage_parseResult contains " + returnPartsArr.Length + " item(s). The result is :" + returnText);
                         }
                         else
                         {

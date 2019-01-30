@@ -22,7 +22,7 @@ namespace SharedLibrary.Aggregators
             : base(addErrorDescription)
         {
             this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
-            this.prp_url_delivery = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.dehandReceivePortalOnTohid, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
+            this.prp_url_delivery = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.dehnadReceivePortalOnTohid, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {
                 var agg = portal.Aggregators.Where(o => o.AggregatorName == "MciDirect").FirstOrDefault();
@@ -62,7 +62,7 @@ namespace SharedLibrary.Aggregators
 
 
             if (!shortCode.StartsWith("98"))
-                shortCode = "98" + shortCode;
+                shortCode = "98" + shortCode.Replace("-", "");
             if (!mobileNumber.StartsWith("98"))
                 mobileNumber = "98" + mobileNumber.TrimStart('0');
             string xmlString = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v4_0/local"">

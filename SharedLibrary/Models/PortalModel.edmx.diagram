@@ -46,7 +46,7 @@
         <AssociationConnector Association="PortalModel.FK_Subscribers_Services" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" />
         <EntityTypeShape EntityType="PortalModel.JhoobinSetting" Width="1.5" PointX="3.84083016581872" PointY="4.8248460613306827" />
-        <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="3.1523962389456095" PointY="31.8843593447862" />
+        <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="15.75" PointY="25.875" />
         <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="9.0135259986918079" PointY="2.8820888264486979" />
         <EntityTypeShape EntityType="PortalModel.BulkList" Width="1.5" PointX="3.2055172991033256" PointY="24.159378361031123" />
         <EntityTypeShape EntityType="PortalModel.ReceivedMessagesArchive" Width="1.5" PointX="4.9428305201897542" PointY="14.117859072106825" />
@@ -57,8 +57,9 @@
         <EntityTypeShape EntityType="PortalModel.Audit" Width="1.5" PointX="11.601640021242965" PointY="4.7023775450430705" />
         <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="3.4603026525398262" PointY="4.9834689521153779" />
         <EntityTypeShape EntityType="PortalModel.chargeInfo" Width="1.5" PointX="5.8031085216454734" PointY="4.3657436093155964" />
-        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor2GServices" Width="1.5" PointX="5.7107336119332972" PointY="28.960475160256248" />
-        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor3GServices" Width="1.5" PointX="1.4621757294340878" PointY="23.449373345565689" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor2GServices" Width="1.5" PointX="6" PointY="31.375" />
+        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor3GServices" Width="1.5" PointX="1.4621757294340878" PointY="23.449373345565689" />
+        <EntityTypeShape EntityType="PortalModel.RequestsLog" Width="1.5" PointX="2.9920811871961139" PointY="27.061741632903807" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         

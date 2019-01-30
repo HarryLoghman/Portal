@@ -45,6 +45,8 @@ namespace SharedLibrary.Models
         public string UserMessageOff { get; set; }
 
         public DateTime? DateAddedToQueue { get; set; }
+
+        public string ExtraParameter { get; set; }
         
     }
 

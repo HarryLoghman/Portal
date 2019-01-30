@@ -27,22 +27,49 @@ namespace Portal.Controllers
         public HttpResponseMessage Message(string sender, string scode, string text)
         {
             string result = "";
-            var messageObj = new MessageObject();
-            messageObj.MobileNumber = sender;
-            messageObj.ShortCode = scode;
-            messageObj.Content = text;
-            logs.Info("MobinOne Controller Notification : " + sender);
-            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-            if (messageObj.MobileNumber == "Invalid Mobile Number")
-                result = "-1";
-            else
+            bool resultOk = true;
+            try
             {
-                messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
-                messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
-                result = "1";
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                    , new Dictionary<string, string>() { { "shortcode", scode}
+                    ,{ "mobile", sender}}
+                    , null, "Portal:MobinOneController:Message");
+                if (!string.IsNullOrEmpty(tpsRatePassed))
+                {
+                    result = tpsRatePassed;
+                    resultOk = false;
+                }
+                else
+                {
+                    var messageObj = new MessageObject();
+                    messageObj.MobileNumber = sender;
+                    messageObj.ShortCode = scode;
+                    messageObj.Content = text;
+                    logs.Info("MobinOne Controller Notification : " + sender);
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                    if (messageObj.MobileNumber == "Invalid Mobile Number")
+                        result = "-1";
+                    else
+                    {
+                        messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
+                        messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                        SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
+                        result = "1";
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                //logs.Error("Portal:MobinOneController:Message", e);
+                //result = e.Message;
+                logs.Error("Portal:MobinOneController:Message", e);
+                resultOk = false;
+                //result = e.Message;
+                result = "Exception has been occured!!! Contact Administrator";
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
         }
@@ -53,41 +80,58 @@ namespace Portal.Controllers
         {
 
             var result = "";
+            bool resultOk = true;
             try
             {
-                logs.Info("MobinOne Controller Delivery:" + "requestId=" + requestId + ",receiver=" + receiver + ",status=" + status);
-                string shortCode;
-                SharedLibrary.MessageSender.sb_processCorrelator(requestId, ref receiver, out shortCode);
-                var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(receiver);
-                if (MobileNumber == "Invalid Mobile Number")
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                    , new Dictionary<string, string>() { { "mobile", receiver}}
+                    , null, "Portal:MobinOneController:Delivery");
+                if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
-                    result = MobileNumber;
+                    result = tpsRatePassed;
+                    resultOk = false;
                 }
-
-                var delivery = new SharedLibrary.Models.Delivery();
-                delivery.AggregatorId = 8;
-                delivery.Correlator = requestId;
-                if (status == "DeliveredToTerminal")
-                    delivery.Delivered = true;
-                else delivery.Delivered = false;
-
-                delivery.DeliveryTime = DateTime.Now;
-                delivery.Description = status;
-                delivery.IsProcessed = false;
-                delivery.MobileNumber = MobileNumber;
-                delivery.ReferenceId = null;
-                delivery.ShortCode = shortCode;
-                delivery.Status = status;
-
-                using (var portal = new SharedLibrary.Models.PortalEntities())
+                else
                 {
-                    portal.Deliveries.Add(delivery);
+                    logs.Info("MobinOne Controller Delivery:" + "requestId=" + requestId + ",receiver=" + receiver + ",status=" + status);
+                    string shortCode;
+                    SharedLibrary.MessageSender.sb_processCorrelator(requestId, ref receiver, out shortCode);
+                    var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(receiver);
+                    if (MobileNumber == "Invalid Mobile Number")
+                    {
+                        result = MobileNumber;
+                    }
+
+                    var delivery = new SharedLibrary.Models.Delivery();
+                    delivery.AggregatorId = 8;
+                    delivery.Correlator = requestId;
+                    if (status == "DeliveredToTerminal")
+                        delivery.Delivered = true;
+                    else delivery.Delivered = false;
+
+                    delivery.DeliveryTime = DateTime.Now;
+                    delivery.Description = status;
+                    delivery.IsProcessed = false;
+                    delivery.MobileNumber = MobileNumber;
+                    delivery.ReferenceId = null;
+                    delivery.ShortCode = shortCode;
+                    delivery.Status = status;
+
+                    using (var portal = new SharedLibrary.Models.PortalEntities())
+                    {
+                        portal.Deliveries.Add(delivery);
+                    }
+                    //delivery.Delivered
                 }
-                //delivery.Delivered
             }
             catch (Exception e)
             {
-                logs.Error("MobinOne Controller Exception in Delivery:", e);
+                //logs.Error("Portal:MobinOneController:Delivery:", e);
+                //result = e.Message;
+                logs.Error("Portal:MobinOneController:Delivery", e);
+                resultOk = false;
+                //result = e.Message;
+                result = "Exception has been occured!!! Contact Administrator";
             }
 
             //var delivery = new DeliveryObject();
@@ -96,6 +140,8 @@ namespace Portal.Controllers
             //delivery.AggregatorId = 8;
             //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
 
@@ -106,79 +152,109 @@ namespace Portal.Controllers
         public HttpResponseMessage Notification()
         {
             var result = "1";
-            var message = new MessageObject();
-            var queryString = this.Request.GetQueryNameValuePairs();
-            var sid = queryString.FirstOrDefault(o => o.Key == "sid").Value;
-            var msisdn = queryString.FirstOrDefault(o => o.Key == "msisdn").Value;
-            var keyword = queryString.FirstOrDefault(o => o.Key == "keyword").Value;
-            var eventType = queryString.FirstOrDefault(o => o.Key == "event-type").Value;
-            var status = queryString.FirstOrDefault(o => o.Key == "status").Value;
-            logs.Info("MobinOne Controller Notification : " + msisdn);
-            //var shortcode = queryString.FirstOrDefault(o => o.Key == "shortcode").Value;
-
-            message.ShortCode = SharedLibrary.ServiceHandler.GetShortCodeFromOperatorServiceId(sid);
-            if (message.ShortCode != null)
+            bool resultOk = true;
+            try
             {
-                if (eventType == "1.2")
+                var queryString = this.Request.GetQueryNameValuePairs();
+                var sid = queryString.FirstOrDefault(o => o.Key == "sid").Value;
+                var msisdn = queryString.FirstOrDefault(o => o.Key == "msisdn").Value;
+                var keyword = queryString.FirstOrDefault(o => o.Key == "keyword").Value;
+                var eventType = queryString.FirstOrDefault(o => o.Key == "event-type").Value;
+                var status = queryString.FirstOrDefault(o => o.Key == "status").Value;
+
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                    , new Dictionary<string, string>() { { "serviceid", sid}
+                    ,{ "mobile", msisdn}}
+                    , null
+                    , "Portal:MobinOneController:Notification");
+                if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
-                    message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-                    if (message.MobileNumber == "Invalid Mobile Number")
-                        result = "-1";
-                    else
-                    {
-                        var recievedMessage = new MessageObject();
-                        recievedMessage.Content = keyword;
-                        recievedMessage.MobileNumber = message.MobileNumber;
-                        recievedMessage.ShortCode = message.ShortCode;
-                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
-                        recievedMessage.IsReceivedFromIntegratedPanel = false;
-                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
-                        result = "1";
-                    }
+                    result = tpsRatePassed;
+                    resultOk = false;
                 }
-                else if (eventType == "1.1")
+                else
                 {
-                    message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-                    if (message.MobileNumber == "Invalid Mobile Number")
-                        result = "-1";
-                    else
+                    var message = new MessageObject();
+
+                    logs.Info("MobinOne Controller Notification : " + msisdn);
+                    //var shortcode = queryString.FirstOrDefault(o => o.Key == "shortcode").Value;
+
+                    message.ShortCode = SharedLibrary.ServiceHandler.GetShortCodeFromOperatorServiceId(sid);
+                    if (message.ShortCode != null)
                     {
-                        var recievedMessage = new MessageObject();
-                        recievedMessage.Content = keyword;
-                        recievedMessage.MobileNumber = message.MobileNumber;
-                        recievedMessage.ShortCode = message.ShortCode;
-                        recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
-                        SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
-                        result = "1";
-                    }
-                }
-                else if (eventType == "1.5")
-                {
-                    if (message.ShortCode == "307382")
-                    {
-                        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
+                        if (eventType == "1.2")
                         {
-                            var singlecharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
-                            singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-                            singlecharge.DateCreated = DateTime.Now;
-                            singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                            singlecharge.Price = 300;
-                            if (status == "0")
-                                singlecharge.IsSucceeded = true;
+                            message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                            if (message.MobileNumber == "Invalid Mobile Number")
+                                result = "-1";
                             else
-                                singlecharge.IsSucceeded = false;
-                            singlecharge.IsApplicationInformed = false;
-                            singlecharge.IsCalledFromInAppPurchase = false;
-                            var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                            if (installment != null)
-                                singlecharge.InstallmentId = installment.Id;
-                            entity.Singlecharges.Add(singlecharge);
-                            entity.SaveChanges();
+                            {
+                                var recievedMessage = new MessageObject();
+                                recievedMessage.Content = keyword;
+                                recievedMessage.MobileNumber = message.MobileNumber;
+                                recievedMessage.ShortCode = message.ShortCode;
+                                recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Unsubscribe" : null;
+                                recievedMessage.IsReceivedFromIntegratedPanel = false;
+                                SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                                result = "1";
+                            }
+                        }
+                        else if (eventType == "1.1")
+                        {
+                            message.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                            if (message.MobileNumber == "Invalid Mobile Number")
+                                result = "-1";
+                            else
+                            {
+                                var recievedMessage = new MessageObject();
+                                recievedMessage.Content = keyword;
+                                recievedMessage.MobileNumber = message.MobileNumber;
+                                recievedMessage.ShortCode = message.ShortCode;
+                                recievedMessage.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-FromIMI-Register" : null;
+                                SharedLibrary.MessageHandler.SaveReceivedMessage(recievedMessage);
+                                result = "1";
+                            }
+                        }
+                        else if (eventType == "1.5")
+                        {
+                            if (message.ShortCode == "307382")
+                            {
+                                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
+                                {
+                                    var singlecharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
+                                    singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                                    singlecharge.DateCreated = DateTime.Now;
+                                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                                    singlecharge.Price = 300;
+                                    if (status == "0")
+                                        singlecharge.IsSucceeded = true;
+                                    else
+                                        singlecharge.IsSucceeded = false;
+                                    singlecharge.IsApplicationInformed = false;
+                                    singlecharge.IsCalledFromInAppPurchase = false;
+                                    var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                    if (installment != null)
+                                        singlecharge.InstallmentId = installment.Id;
+                                    entity.Singlecharges.Add(singlecharge);
+                                    entity.SaveChanges();
+                                }
+                            }
                         }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                //logs.Error("Portal:MobinOneController:Delivery:", e);
+                //result = e.Message;
+                logs.Error("Portal:MobinOneController:Notification", e);
+                resultOk = false;
+                //result = e.Message;
+                result = "Exception has been occured!!! Contact Administrator";
+            }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
             return response;
         }

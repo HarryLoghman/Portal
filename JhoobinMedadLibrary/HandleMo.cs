@@ -227,7 +227,7 @@ namespace JhoobinMedadLibrary
                             var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
                             if (sub != null)
                                 subId = sub.SpecialUniqueId;
-                            var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                            var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
                             var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/JhoobinMedad/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha));
                             if (result.description == "success")
                             {
@@ -261,7 +261,7 @@ namespace JhoobinMedadLibrary
                             if (sub != null && sub.SpecialUniqueId != null)
                             {
                                 subId = sub.SpecialUniqueId;
-                                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
                                 var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/JhoobinMedad/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                             }
                         }

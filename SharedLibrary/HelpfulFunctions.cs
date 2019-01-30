@@ -434,7 +434,7 @@ namespace SharedLibrary
             dehnadNotification = 9,
             dehnadAppPortal = 10,
             dehnadReceivePortal = 11,
-            dehandReceivePortalOnTohid = 12,
+            dehnadReceivePortalOnTohid = 12,
 
         }
 
@@ -459,6 +459,20 @@ namespace SharedLibrary
             dehnadMCIDelivery = 16,
             dehnadBot = 17,
         }
+        public static List<Models.ServersIP> fnc_getLocalServers()
+        {
+            using (var portal = new PortalEntities())
+            {
+                var serverIPEntity = portal.ServersIPs.Where(o => (
+                o.ServerName == enumServers.dehnadAppPortal.ToString()
+                || o.ServerName == enumServers.dehnadNotification.ToString()
+                || o.ServerName == enumServers.dehnadReceivePortal.ToString()
+                || o.ServerName == enumServers.dehnadReceivePortalOnTohid.ToString())
+                && o.state == 1 && !string.IsNullOrEmpty(o.IP)).OrderBy(o => o.priority).ToList();
+                return serverIPEntity;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -534,7 +548,7 @@ namespace SharedLibrary
                             case enumServers.dehnadReceivePortal:
                                 serverIP = dehnadReceivePortalIP;
                                 break;
-                            case enumServers.dehandReceivePortalOnTohid:
+                            case enumServers.dehnadReceivePortalOnTohid:
                                 serverIP = dehnadReceivePortalOnTohidIP;
                                 break;
                             default:
@@ -689,7 +703,7 @@ namespace SharedLibrary
                                 }
                                 break;
 
-                            case enumServers.dehandReceivePortalOnTohid:
+                            case enumServers.dehnadReceivePortalOnTohid:
                                 switch (action)
                                 {
                                     case enumServersActions.dehnadMCIDelivery:
@@ -727,5 +741,9 @@ namespace SharedLibrary
 
         //}
 
+        public static string test()
+        {
+            return "testlo";
+        }
     }
 }

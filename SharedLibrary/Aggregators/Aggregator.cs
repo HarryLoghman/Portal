@@ -137,28 +137,29 @@ namespace SharedLibrary.Aggregators
 
         internal virtual void sb_saveResponseToDB(WebRequestParameter parameter)
         {
-            
-            
+
+
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
                 WebRequestParameterMessage parameterMessage = (WebRequestParameterMessage)parameter;
+                string tableName = "";
+                switch (parameterMessage.prp_messageType)
+                {
+                    case SharedLibrary.MessageHandler.MessageType.OnDemand:
+                        tableName = "OnDemandMessagesBuffer";
+                        break;
+                    case SharedLibrary.MessageHandler.MessageType.EventBase:
+                        tableName = "EventbaseMessagesBuffer";
+                        break;
+                    case SharedLibrary.MessageHandler.MessageType.AutoCharge:
+                        tableName = "AutochargeMessagesBuffer";
+                        break;
+                    default:
+                        return;
+                }
                 try
                 {
-                    string tableName = "";
-                    switch (parameterMessage.prp_messageType)
-                    {
-                        case SharedLibrary.MessageHandler.MessageType.OnDemand:
-                            tableName = "OnDemandMessagesBuffer";
-                            break;
-                        case SharedLibrary.MessageHandler.MessageType.EventBase:
-                            tableName = "EventbaseMessagesBuffer";
-                            break;
-                        case SharedLibrary.MessageHandler.MessageType.AutoCharge:
-                            tableName = "AutochargeMessagesBuffer";
-                            break;
-                        default:
-                            return;
-                    }
+
                     DateTime now = DateTime.Now;
                     SqlCommand cmd = new SqlCommand();
                     cmd.Connection = new SqlConnection(parameterMessage.prp_cnnStrService);
@@ -170,7 +171,7 @@ namespace SharedLibrary.Aggregators
                              + ",SentDate='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                              + ",PersianSentDate='" + SharedLibrary.Date.GetPersianDateTime(now) + "'"
                              + ",SendResult=" + (string.IsNullOrEmpty(parameterMessage.prp_result) ? "Null" : "'" + parameterMessage.prp_result + "'")
-                             + "where id = " + parameterMessage.prp_id.ToString();
+                             + " where id = " + parameterMessage.prp_id.ToString();
                     }
                     else
                     {
@@ -185,8 +186,7 @@ namespace SharedLibrary.Aggregators
                           + ",SendResult=" + (string.IsNullOrEmpty(parameterMessage.prp_result) ? "Null" : "'" + parameterMessage.prp_result + "'")
                           + (processStatus == SharedLibrary.MessageHandler.ProcessStatus.Failed ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
                           //+ (parameterMessage.prp_retryCount > parameterMessage.prp_maxTries ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
-
-                          + "where id = " + parameterMessage.prp_id.ToString();
+                          + " where id = " + parameterMessage.prp_id.ToString();
 
                     }
                     SharedVariables.logs.Info(parameter.prp_service.ServiceCode + " : " + cmd.CommandText);
@@ -200,8 +200,8 @@ namespace SharedLibrary.Aggregators
                 }
                 catch (Exception ex1)
                 {
-                    SharedVariables.logs.Error(parameter.prp_service.ServiceCode + " : Exception in saving to EventbaseMessagesBuffer: ", ex1);
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "Sending Bulk : " + parameter.prp_service.ServiceCode + " Exception in save to EventbaseMessagesBuffer(" + ex1.Message + ")");
+                    SharedVariables.logs.Error(parameter.prp_service.ServiceCode + " : Exception in saving to " + tableName + ": ", ex1);
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "sb_saveResponseToDB : " + parameter.prp_service.ServiceCode + " Exception in saving to " + tableName + "(" + ex1.Message + ")");
                     //Program.logs.Error("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
                     //Program.logs.Warn("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
                     //Program.logs.Info("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
@@ -238,7 +238,7 @@ namespace SharedLibrary.Aggregators
 
         #endregion
         #region sendMessage
-       
+
 
         public void sb_sendMessage(SharedLibrary.Models.vw_servicesServicesInfo service, long id, string mobileNumber, SharedLibrary.MessageHandler.MessageType messageType, int maxTries
             , string messageContent, DateTime dateTimeCorrelator
@@ -251,7 +251,7 @@ namespace SharedLibrary.Aggregators
                 , price, chargeKey);
             WebRequestParameterMessage parameter = new WebRequestParameterMessage(id, mobileNumber, maxTries, dateTimeCorrelator, messageContent
                 , enum_webRequestParameterType.message, messageType, requestBody, service, SharedVariables.logs);
-            
+
             //parameter.prp_bodyString = requestBody;
             this.prp_webRequestProcess.SendRequest(webRequest, requestBody, parameter, this);
 

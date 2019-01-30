@@ -205,7 +205,7 @@ namespace ChargingLibrary
                         {
                             if (sub.SpecialUniqueId != null)
                             {
-                                var sha = SharedLibrary.Security.GetSha256Hash(sub.SpecialUniqueId + chargeRequest.mobileNumber);
+                                var sha = SharedLibrary.Encrypt.GetSha256Hash(sub.SpecialUniqueId + chargeRequest.mobileNumber);
                                 var price = 0;
                                 if (chargeRequest.isSucceeded == true)
                                     price = chargeRequest.Price.Value;

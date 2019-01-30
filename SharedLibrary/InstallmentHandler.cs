@@ -140,7 +140,7 @@ namespace SharedLibrary
                                     {
                                         if (sub.SpecialUniqueId != null)
                                         {
-                                            var sha = SharedLibrary.Security.GetSha256Hash(sub.SpecialUniqueId + message.MobileNumber);
+                                            var sha = SharedLibrary.Encrypt.GetSha256Hash(sub.SpecialUniqueId + message.MobileNumber);
                                             var price = 0;
                                             if (response.IsSucceeded == true)
                                                 price = message.Price.Value;

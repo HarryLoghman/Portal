@@ -55,7 +55,7 @@ namespace SharedLibrary.Aggregators
         internal override string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service, SharedLibrary.MessageHandler.MessageType messageType, string mobileNumber, string messageContent, DateTime dateTimeCorrelator
             , int? price, string imiChargeKey)
         {
-            string shortCode = service.ShortCode;
+            string shortCode = service.ShortCode.Replace("-", "");
             //DateTime dateTimeCorrelator = request.prp_dateTimeCorrelator;
             //string mobileNumber = request.prp_mobileNumber;
             string aggregatorServiceId = service.AggregatorServiceId;

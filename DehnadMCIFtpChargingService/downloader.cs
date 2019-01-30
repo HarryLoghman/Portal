@@ -32,7 +32,7 @@ namespace DehnadMCIFtpChargingService
                     saveFailFilesToSingleCharge = false;
                 }
                 List<FtpFile> newFtpFiles = this.downloadNewFiles(winDirectory, operatorSIDs, downloadAnyway);
-                
+
                 if (newFtpFiles == null) return;
                 if (newFtpFiles.Count == 0)
                 {
@@ -90,7 +90,7 @@ namespace DehnadMCIFtpChargingService
                                             Program.logs.Error("UpdateSingleCharge: no service is found with operatorServiceId" + charge.sid);
                                             continue;
                                         }
-                                        using (SharedLibrary.Models.ServiceModel.SharedServiceEntities serviceDB = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Shared" + serviceCode + "Entities"))
+                                        using (SharedLibrary.Models.ServiceModel.SharedServiceEntities serviceDB = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
                                         {
                                             if (winDirectory == DateTime.Today.ToString("yyyyMMdd"))
                                             {
@@ -482,7 +482,7 @@ namespace DehnadMCIFtpChargingService
                         Program.logs.Info("createDirectory:" + dirPath);
                     }
                 }
-                
+
                 return true;
             }
             catch (Exception e)

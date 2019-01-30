@@ -55,7 +55,7 @@ namespace SharedLibrary.Aggregators
         {
             string shortCode = service.ShortCode;
             if (!shortCode.StartsWith("98"))
-                shortCode = "98" + shortCode;
+                shortCode = "98" + shortCode.Replace("-", "");
             if (!mobileNumber.StartsWith("98"))
                 mobileNumber = "98" + mobileNumber.TrimStart('0');
 

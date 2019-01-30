@@ -62,7 +62,7 @@ namespace SharedLibrary.Aggregators
                          + ",ReferenceId=" + (string.IsNullOrEmpty(this.prp_referenceId) ? "Null" : "'" + this.prp_referenceId.ToLower() + "'")
                          + ",SentDate='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                          + ",PersianSentDate='" + SharedLibrary.Date.GetPersianDateTime(now) + "'"
-                         + "where id = " + this.prp_id.ToString();
+                         + " where id = " + this.prp_id.ToString();
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace SharedLibrary.Aggregators
                       + ",RetryCount=IsNull(RetryCount,0)+1"
                       + (processStatus == SharedLibrary.MessageHandler.ProcessStatus.Failed ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
                       + (this.prp_retryCount > this.prp_maxTries ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
-                      + "where id = " + this.prp_id.ToString();
+                      + " where id = " + this.prp_id.ToString();
 
                 }
                 this.prp_logs.Info(cmd.CommandText);

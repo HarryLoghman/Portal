@@ -670,7 +670,7 @@ namespace SharedShortCodeServiceLibrary
         {
             bool isSucceeded = true;
             var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
-            var sha = SharedLibrary.Security.GetSha256Hash("parent" + message.MobileNumber);
+            var sha = SharedLibrary.Encrypt.GetSha256Hash("parent" + message.MobileNumber);
             //dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
             dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
 
@@ -708,7 +708,7 @@ namespace SharedShortCodeServiceLibrary
                 var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
                 if (sub != null)
                     subId = sub.SpecialUniqueId;
-                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
                 if (!string.IsNullOrEmpty(service.referralUrl))
                 {
                     //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha)); 
@@ -743,7 +743,7 @@ namespace SharedShortCodeServiceLibrary
             #region matchActive and user is active or renewal
             else if (isMatchActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
             {
-                var sha = SharedLibrary.Security.GetSha256Hash("match" + message.MobileNumber);
+                var sha = SharedLibrary.Encrypt.GetSha256Hash("match" + message.MobileNumber);
                 //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
                 var result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "sub.php", string.Format("number={0}&kc={3}", message.MobileNumber, sha));
                 if (result.description == "success")
@@ -759,7 +759,7 @@ namespace SharedShortCodeServiceLibrary
                 if (sub != null && sub.SpecialUniqueId != null)
                 {
                     subId = sub.SpecialUniqueId;
-                    var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                    var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
 
                     //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
 
@@ -1089,7 +1089,7 @@ namespace SharedShortCodeServiceLibrary
         //                var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
         //                if (sub != null)
         //                    subId = sub.SpecialUniqueId;
-        //                var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+        //                var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
         //                if (!string.IsNullOrEmpty(service.referralUrl))
         //                {
         //                    //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/sub.php", string.Format("code={0}&number={1}&parent_code={2}&kc={3}", subId, message.MobileNumber, parentId, sha)); 
@@ -1129,7 +1129,7 @@ namespace SharedShortCodeServiceLibrary
         //                if (sub != null && sub.SpecialUniqueId != null)
         //                {
         //                    subId = sub.SpecialUniqueId;
-        //                    var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+        //                    var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
 
         //                    //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/unsub.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
 

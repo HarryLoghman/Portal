@@ -2846,7 +2846,7 @@ namespace SharedLibrary
 
                     //var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
                     var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.sendmessage);
-                    var urlMCIDelivery = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.dehandReceivePortalOnTohid, HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
+                    var urlMCIDelivery = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.dehnadReceivePortalOnTohid, HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
                     foreach (var message in messages)
                     {
                         var mobileNumber = "98" + message.MobileNumber.TrimStart('0');

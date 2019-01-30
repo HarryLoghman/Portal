@@ -68,6 +68,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<chargeInfo> chargeInfoes { get; set; }
         public virtual DbSet<RealtimeStatisticsFor2GServices> RealtimeStatisticsFor2GServices { get; set; }
         public virtual DbSet<RealtimeStatisticsFor3GServices> RealtimeStatisticsFor3GServices { get; set; }
+        public virtual DbSet<RequestsLog> RequestsLogs { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {
@@ -129,6 +130,35 @@ namespace SharedLibrary.Models
                 new ObjectParameter("chargePriceFrom", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_getSubscriberServices_Result>("sp_getSubscriberServices", userIdParameter, mobileNumberParameter, chargePriceFromParameter);
+        }
+    
+        public virtual int sp_RequestsRulesChecker(Nullable<long> requestId, Nullable<System.DateTime> regdate, string sourceIP, string requestParams, string destinationIP, string methodName, ObjectParameter action, ObjectParameter actionMessage)
+        {
+            var requestIdParameter = requestId.HasValue ?
+                new ObjectParameter("requestId", requestId) :
+                new ObjectParameter("requestId", typeof(long));
+    
+            var regdateParameter = regdate.HasValue ?
+                new ObjectParameter("regdate", regdate) :
+                new ObjectParameter("regdate", typeof(System.DateTime));
+    
+            var sourceIPParameter = sourceIP != null ?
+                new ObjectParameter("sourceIP", sourceIP) :
+                new ObjectParameter("sourceIP", typeof(string));
+    
+            var requestParamsParameter = requestParams != null ?
+                new ObjectParameter("requestParams", requestParams) :
+                new ObjectParameter("requestParams", typeof(string));
+    
+            var destinationIPParameter = destinationIP != null ?
+                new ObjectParameter("destinationIP", destinationIP) :
+                new ObjectParameter("destinationIP", typeof(string));
+    
+            var methodNameParameter = methodName != null ?
+                new ObjectParameter("methodName", methodName) :
+                new ObjectParameter("methodName", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_RequestsRulesChecker", requestIdParameter, regdateParameter, sourceIPParameter, requestParamsParameter, destinationIPParameter, methodNameParameter, action, actionMessage);
         }
     }
 }

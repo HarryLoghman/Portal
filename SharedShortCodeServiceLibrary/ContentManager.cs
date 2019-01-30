@@ -113,7 +113,7 @@ namespace SharedShortCodeServiceLibrary
                                     if (sub != null && sub.SpecialUniqueId != null)
                                     {
                                         subId = sub.SpecialUniqueId;
-                                        var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                        var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
                                         //dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                         dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "status.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                         string n = result.n.ToString();
@@ -149,7 +149,7 @@ namespace SharedShortCodeServiceLibrary
                                     if (sub != null && sub.SpecialUniqueId != null)
                                     {
                                         subId = sub.SpecialUniqueId;
-                                        var sha = SharedLibrary.Security.GetSha256Hash(subId + message.MobileNumber);
+                                        var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
                                         //dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/ashpazkhoone/getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                         dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "getCharge.php", string.Format("code={0}&number={1}&kc={2}", subId, message.MobileNumber, sha));
                                         var chargesList = new List<string>();
