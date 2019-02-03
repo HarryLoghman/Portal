@@ -1322,12 +1322,17 @@ namespace Portal.Controllers
         public HttpResponseMessage PardisMessage([FromBody]dynamic input)
         {
             string result = "";
+            var messageObj = new MessageObject();
+            messageObj.MobileNumber = input.msisdn;
+            messageObj.ShortCode = input.shortcode;
+            messageObj.Content = input.message;
+            messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
             bool resultOk = true;
             try
             {
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
-                    , new Dictionary<string, string>() { { "shortcode", input.shortcode}
-                        ,{ "mobile", input.msisdn}}
+                    , new Dictionary<string, string>() { { "shortcode", messageObj.MobileNumber}
+                        ,{ "mobile", messageObj.MobileNumber}}
                     , null, "Portal:TelepromoController:PardisMessage");
                 if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
@@ -1336,11 +1341,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    var messageObj = new MessageObject();
-                    messageObj.MobileNumber = input.msisdn;
-                    messageObj.ShortCode = input.shortcode;
-                    messageObj.Content = input.message;
-                    messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
+                 
                     string recievedPayload = Request.Content.ReadAsStringAsync().Result;
                     //logs.Info("Telepromo Controller PardisMessagePayload:" + recievedPayload);
                     logs.Info("Telepromo Controller pardisMessage:MobileNumber:" + messageObj.MobileNumber + ",ShortCode:" + messageObj.ShortCode + ",Content:" + messageObj.Content

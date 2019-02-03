@@ -145,7 +145,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    DehnadNotificationService.ServiceChecker.StartService(serviceName);
+                    //DehnadNotificationService.ServiceChecker.StartService(serviceName);
                 }
             }
             catch (Exception e)
@@ -180,7 +180,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    DehnadNotificationService.ServiceChecker.StopService(serviceName);
+                    //DehnadNotificationService.ServiceChecker.StopService(serviceName);
                 }
             }
             catch (Exception e)
@@ -215,7 +215,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    DehnadNotificationService.ServiceChecker.RestartService(serviceName);
+                    //DehnadNotificationService.ServiceChecker.RestartService(serviceName);
                 }
             }
             catch (Exception e)
@@ -250,7 +250,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    DehnadNotificationService.ServiceChecker.KillProcess(processName);
+                    //DehnadNotificationService.ServiceChecker.KillProcess(processName);
                 }
             }
             catch (Exception e)

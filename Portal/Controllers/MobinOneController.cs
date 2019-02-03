@@ -84,7 +84,7 @@ namespace Portal.Controllers
             try
             {
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
-                    , new Dictionary<string, string>() { { "mobile", receiver}}
+                    , new Dictionary<string, string>() { { "mobile", receiver } }
                     , null, "Portal:MobinOneController:Delivery");
                 if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
@@ -155,16 +155,23 @@ namespace Portal.Controllers
             bool resultOk = true;
             try
             {
+
                 var queryString = this.Request.GetQueryNameValuePairs();
                 var sid = queryString.FirstOrDefault(o => o.Key == "sid").Value;
                 var msisdn = queryString.FirstOrDefault(o => o.Key == "msisdn").Value;
                 var keyword = queryString.FirstOrDefault(o => o.Key == "keyword").Value;
                 var eventType = queryString.FirstOrDefault(o => o.Key == "event-type").Value;
                 var status = queryString.FirstOrDefault(o => o.Key == "status").Value;
+                var dateTimeStr = queryString.FirstOrDefault(o => o.Key == "datetime").Value;
+                var chargeCode = queryString.FirstOrDefault(o => o.Key == "chargecode").Value;
+                var basePrice = queryString.FirstOrDefault(o => o.Key == "base-price-point").Value;
+                var billedPrice = queryString.FirstOrDefault(o => o.Key == "billed-price-point").Value;
+                var channel = queryString.FirstOrDefault(o => o.Key == "channel ").Value;
 
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
                     , new Dictionary<string, string>() { { "serviceid", sid}
-                    ,{ "mobile", msisdn}}
+                    ,{ "mobile", msisdn}
+                    ,{ "eventType",eventType} }
                     , null
                     , "Portal:MobinOneController:Notification");
                 if (!string.IsNullOrEmpty(tpsRatePassed))
@@ -217,28 +224,73 @@ namespace Portal.Controllers
                         }
                         else if (eventType == "1.5")
                         {
-                            if (message.ShortCode == "307382")
+                            using (var portal = new SharedLibrary.Models.PortalEntities())
                             {
-                                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
+                                var service = portal.vw_servicesServicesInfo.Where(o => o.ShortCode == message.ShortCode).FirstOrDefault();
+                                if (service != null)
                                 {
-                                    var singlecharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
-                                    singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-                                    singlecharge.DateCreated = DateTime.Now;
-                                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                    singlecharge.Price = 300;
-                                    if (status == "0")
-                                        singlecharge.IsSucceeded = true;
-                                    else
-                                        singlecharge.IsSucceeded = false;
-                                    singlecharge.IsApplicationInformed = false;
-                                    singlecharge.IsCalledFromInAppPurchase = false;
-                                    var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                                    if (installment != null)
-                                        singlecharge.InstallmentId = installment.Id;
-                                    entity.Singlecharges.Add(singlecharge);
-                                    entity.SaveChanges();
+                                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
+                                    {
+                                        var singlecharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
+                                        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                                        DateTime dateTime = DateTime.Now;
+                                        if (string.IsNullOrEmpty(dateTimeStr) || !DateTime.TryParse(dateTimeStr, out dateTime))
+                                        {
+                                            dateTime = DateTime.Now;
+                                        }
+                                        logs.Error("1");
+                                        singlecharge.DateCreated = dateTime;
+                                        //singlecharge.chargeCode = chargeCode;
+                                        //singlecharge.basePrice = basePrice;
+                                        int? price;
+                                        int temp = 0;
+                                        if (string.IsNullOrEmpty(billedPrice) || !int.TryParse(billedPrice, out temp))
+                                        {
+                                            price = service.chargePrice;
+                                        }
+                                        else price = temp;
+                                        logs.Error("2");
+                                        singlecharge.Price = price.Value / 10;
+                                        if (status == "0")
+                                            singlecharge.IsSucceeded = true;
+                                        else
+                                            singlecharge.IsSucceeded = false;
+                                        singlecharge.IsApplicationInformed = false;
+                                        singlecharge.IsCalledFromInAppPurchase = false;
+                                        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(dateTime);
+                                        singlecharge.Description = "notification";
+                                        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                        if (installment != null)
+                                            singlecharge.InstallmentId = installment.Id;
+                                        entity.Singlecharges.Add(singlecharge);
+                                        logs.Error("3");
+                                        entity.SaveChanges();
+                                        logs.Error("4");
+                                    }
                                 }
                             }
+                            //if (message.ShortCode == "307382")
+                            //{
+                            //    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
+                            //    {
+                            //        var singlecharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
+                            //        singlecharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                            //        singlecharge.DateCreated = DateTime.Now;
+                            //        singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                            //        singlecharge.Price = 300;
+                            //        if (status == "0")
+                            //            singlecharge.IsSucceeded = true;
+                            //        else
+                            //            singlecharge.IsSucceeded = false;
+                            //        singlecharge.IsApplicationInformed = false;
+                            //        singlecharge.IsCalledFromInAppPurchase = false;
+                            //        var installment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == message.MobileNumber && o.IsUserCanceledTheInstallment == false).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                            //        if (installment != null)
+                            //            singlecharge.InstallmentId = installment.Id;
+                            //        entity.Singlecharges.Add(singlecharge);
+                            //        entity.SaveChanges();
+                            //    }
+                            //}
                         }
                     }
                 }

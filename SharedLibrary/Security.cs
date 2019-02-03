@@ -28,7 +28,7 @@ namespace SharedLibrary
             string requestParamsStr = null;
             if (requestParams != null)
                 requestParamsStr = string.Join(";", requestParams.Select(x => x.Key + ":" + x.Value).ToArray());
-            SharedVariables.logs.Error(requestParamsStr);
+            //SharedVariables.logs.Error(requestParamsStr);
             using (var portal = new Models.PortalEntities())
             {
                 var requestLog = new Models.RequestsLog();
