@@ -505,52 +505,52 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static void AddEventbaseMessagesToQueue(string connectionStringNameInAppConfig, string serviceCode, EventbaseContent eventbaseContent, long aggregatorId)
-        {
-            //var serviceCode = "Tamly500";
-            var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode);
-            if (serviceId == null)
-            {
-                logs.Info("There is no service with code of : " + serviceCode);
-                return;
-            }
-            var messagePoint = eventbaseContent.Point;
-            var today = DateTime.Now.Date;
-            var dateDiffrence = DateTime.Now.AddDays(-eventbaseContent.SubscriberNotSendedMoInDays).Date;
+        //public static void AddEventbaseMessagesToQueue(string connectionStringNameInAppConfig, string serviceCode, EventbaseContent eventbaseContent, long aggregatorId)
+        //{
+        //    //var serviceCode = "Tamly500";
+        //    var serviceId = SharedLibrary.ServiceHandler.GetServiceId(serviceCode);
+        //    if (serviceId == null)
+        //    {
+        //        logs.Info("There is no service with code of : " + serviceCode);
+        //        return;
+        //    }
+        //    var messagePoint = eventbaseContent.Point;
+        //    var today = DateTime.Now.Date;
+        //    var dateDiffrence = DateTime.Now.AddDays(-eventbaseContent.SubscriberNotSendedMoInDays).Date;
 
-            IEnumerable<Subscriber> subscribers;
-            using (var entity = new PortalEntities())
-            {
-                if (eventbaseContent.SubscriberNotSendedMoInDays == 0)
-                    subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
-                else
-                    subscribers = (from s in entity.Subscribers join r in entity.ReceivedMessagesArchives on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
-            }
-            if (subscribers == null)
-            {
-                logs.Info("There is no subscribers for service with code of: " + serviceCode);
-                return;
-            }
-            logs.Info("Eventbase subscribers count:" + subscribers.Count());
-            using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
-            {
-                var messages = new List<MessageObject>();
-                var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(connectionStringNameInAppConfig, eventbaseContent.Price, null);
-                foreach (var subscriber in subscribers)
-                {
-                    var content = eventbaseContent.Content;
-                    content = HandleSpecialStrings(content, eventbaseContent.Point, subscriber.MobileNumber, serviceId.Value);
-                    var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, eventbaseContent.Id, SharedLibrary.MessageHandler.MessageType.EventBase, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, eventbaseContent.Point, null, eventbaseContent.Price);
-                    messages.Add(message);
-                }
-                logs.Info("Evenbase messages count:" + messages.Count());
-                InsertBulkMessagesToQueue(connectionStringNameInAppConfig, messages);
-                eventbaseContent.IsAddedToSendQueueFinished = true;
-                entity.Entry(eventbaseContent).State = EntityState.Modified;
-                CreateMonitoringItem(connectionStringNameInAppConfig, eventbaseContent.Id, SharedLibrary.MessageHandler.MessageType.EventBase, subscribers.Count(), null);
-                entity.SaveChanges();
-            }
-        }
+        //    IEnumerable<Subscriber> subscribers;
+        //    using (var entity = new PortalEntities())
+        //    {
+        //        if (eventbaseContent.SubscriberNotSendedMoInDays == 0)
+        //            subscribers = entity.Subscribers.Where(o => o.ServiceId == serviceId && o.DeactivationDate == null).ToList();
+        //        else
+        //            subscribers = (from s in entity.Subscribers join r in entity.ReceivedMessagesArchives on s.MobileNumber equals r.MobileNumber where s.ServiceId == serviceId && s.DeactivationDate == null && (DbFunctions.TruncateTime(r.ReceivedTime).Value >= dateDiffrence && DbFunctions.TruncateTime(r.ReceivedTime).Value <= today) select new { MobileNumber = s.MobileNumber, Id = s.Id, ServiceId = s.ServiceId, OperatorPlan = s.OperatorPlan, MobileOperator = s.MobileOperator }).Distinct().AsEnumerable().Select(x => new Subscriber { Id = x.Id, MobileNumber = x.MobileNumber, ServiceId = x.ServiceId, OperatorPlan = x.OperatorPlan, MobileOperator = x.MobileOperator }).ToList();
+        //    }
+        //    if (subscribers == null)
+        //    {
+        //        logs.Info("There is no subscribers for service with code of: " + serviceCode);
+        //        return;
+        //    }
+        //    logs.Info("Eventbase subscribers count:" + subscribers.Count());
+        //    using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
+        //    {
+        //        var messages = new List<MessageObject>();
+        //        var imiChargeObject = MessageHandler.GetImiChargeObjectFromPrice(connectionStringNameInAppConfig, eventbaseContent.Price, null);
+        //        foreach (var subscriber in subscribers)
+        //        {
+        //            var content = eventbaseContent.Content;
+        //            content = HandleSpecialStrings(content, eventbaseContent.Point, subscriber.MobileNumber, serviceId.Value);
+        //            var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, eventbaseContent.Id, SharedLibrary.MessageHandler.MessageType.EventBase, SharedLibrary.MessageHandler.ProcessStatus.InQueue, 0, imiChargeObject, aggregatorId, eventbaseContent.Point, null, eventbaseContent.Price);
+        //            messages.Add(message);
+        //        }
+        //        logs.Info("Evenbase messages count:" + messages.Count());
+        //        InsertBulkMessagesToQueue(connectionStringNameInAppConfig, messages);
+        //        eventbaseContent.IsAddedToSendQueueFinished = true;
+        //        entity.Entry(eventbaseContent).State = EntityState.Modified;
+        //        CreateMonitoringItem(connectionStringNameInAppConfig, eventbaseContent.Id, SharedLibrary.MessageHandler.MessageType.EventBase, subscribers.Count(), null);
+        //        entity.SaveChanges();
+        //    }
+        //}
 
         public static void CreateMonitoringItem(string connectionStringNameInAppConfig, long? contentId, SharedLibrary.MessageHandler.MessageType messageType, int totalMessages, int? tag)
         {

@@ -24,7 +24,7 @@ namespace SharedLibrary.Models
         public bool IsReceivedFromIntegratedPanel { get; set; }
         public string PersianReceivedTime { get; set; }
         public string ReceivedFrom { get; set; }
-        public Nullable<bool> IsReceivedFromWeb { get; set; }
+        public Nullable<int> ReceivedFromSource { get; set; }
         public Nullable<int> RetryCount { get; set; }
         public Nullable<System.DateTime> LastRetryDate { get; set; }
     }

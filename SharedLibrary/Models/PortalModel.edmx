@@ -266,27 +266,10 @@
           <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsReceivedFromWeb" Type="bit" />
+          <Property Name="ReceivedFromSource" Type="int" />
           <Property Name="RetryCount" Type="int" />
           <Property Name="LastRetryDate" Type="datetime" />
-        </EntityType>
-        <EntityType Name="ReceivedMessagesArchive">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ReceivedTime" Type="datetime" Nullable="false" />
-          <Property Name="MessageId" Type="nvarchar" MaxLength="100" />
-          <Property Name="IsProcessed" Type="bit" Nullable="false" />
-          <Property Name="Content" Type="nvarchar(max)" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
-          <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsReceivedFromWeb" Type="bit" />
-          <Property Name="RetryCount" Type="int" />
-          <Property Name="LastRetryDate" Type="datetime" />
+          <Property Name="description" Type="nvarchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="Referral">
           <Key>
@@ -585,7 +568,7 @@ warning 6002: The table/view 'portal.dbo.vw_ReceivedMessages' does not have a pr
           <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
           <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
           <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsReceivedFromWeb" Type="bit" />
+          <Property Name="ReceivedFromSource" Type="int" />
           <Property Name="RetryCount" Type="int" />
           <Property Name="LastRetryDate" Type="datetime" />
         </EntityType>
@@ -783,7 +766,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="Self.RealtimeStatisticsFor2GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Referral" EntityType="Self.Referral" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestsLogs" EntityType="Self.RequestsLogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServersActions" EntityType="Self.ServersActions" Schema="dbo" store:Type="Tables" />
@@ -868,7 +850,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
     [vw_ReceivedMessages].[IsReceivedFromIntegratedPanel] AS [IsReceivedFromIntegratedPanel], 
     [vw_ReceivedMessages].[PersianReceivedTime] AS [PersianReceivedTime], 
     [vw_ReceivedMessages].[ReceivedFrom] AS [ReceivedFrom], 
-    [vw_ReceivedMessages].[IsReceivedFromWeb] AS [IsReceivedFromWeb], 
+    [vw_ReceivedMessages].[ReceivedFromSource] AS [ReceivedFromSource], 
     [vw_ReceivedMessages].[RetryCount] AS [RetryCount], 
     [vw_ReceivedMessages].[LastRetryDate] AS [LastRetryDate]
     FROM [dbo].[vw_ReceivedMessages] AS [vw_ReceivedMessages]</DefiningQuery>
@@ -968,7 +950,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="OperatorsPlans" EntityType="PortalModel.OperatorsPlan" />
           <EntitySet Name="OperatorsPrefixs" EntityType="PortalModel.OperatorsPrefix" />
           <EntitySet Name="ParidsShortCodes" EntityType="PortalModel.ParidsShortCode" />
-          <EntitySet Name="ReceievedMessages" EntityType="PortalModel.ReceievedMessage" />
           <EntitySet Name="Referrals" EntityType="PortalModel.Referral" />
           <EntitySet Name="ServersActions" EntityType="PortalModel.ServersAction" />
           <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
@@ -981,7 +962,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="SubscribersPoints" EntityType="PortalModel.SubscribersPoint" />
           <EntitySet Name="TempReferralDatas" EntityType="PortalModel.TempReferralData" />
           <EntitySet Name="VerifySubscribers" EntityType="PortalModel.VerifySubscriber" />
-          <EntitySet Name="vw_ReceivedMessages" EntityType="PortalModel.vw_ReceivedMessages" />
           <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
           <AssociationSet Name="C_FK_Aggregators_Operators" Association="PortalModel.C_FK_Aggregators_Operators">
             <End Role="Operator" EntitySet="Operators" />
@@ -1019,7 +999,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="SubscribersHistories" EntityType="PortalModel.SubscribersHistory" />
           <EntitySet Name="Deliveries" EntityType="PortalModel.Delivery" />
           <EntitySet Name="BulkLists" EntityType="PortalModel.BulkList" />
-          <EntitySet Name="ReceivedMessagesArchives" EntityType="PortalModel.ReceivedMessagesArchive" />
           <EntitySet Name="vw_AspNetRoles" EntityType="PortalModel.vw_AspNetRoles" />
           <EntitySet Name="vw_AspNetUserRoles" EntityType="PortalModel.vw_AspNetUserRoles" />
           <EntitySet Name="vw_AspNetUsers" EntityType="PortalModel.vw_AspNetUsers" />
@@ -1040,6 +1019,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             <Parameter Name="action" Mode="InOut" Type="Int32" />
             <Parameter Name="actionMessage" Mode="InOut" Type="String" />
           </FunctionImport>
+          <EntitySet Name="ReceievedMessages" EntityType="PortalModel.ReceievedMessage" />
+          <EntitySet Name="vw_ReceivedMessages" EntityType="PortalModel.vw_ReceivedMessages" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1201,24 +1182,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="PardisServiceId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Price" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityType Name="ReceievedMessage">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
-        </EntityType>
         <EntityType Name="Referral">
           <Key>
             <PropertyRef Name="Id" />
@@ -1375,29 +1338,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ServiceId" Type="Int64" Nullable="false" />
           <Property Name="UsedKeyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="vw_ReceivedMessages">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="ShortCode" />
-            <PropertyRef Name="ReceivedTime" />
-            <PropertyRef Name="IsProcessed" />
-            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="vw_servicesServicesInfo">
           <Key>
@@ -1575,24 +1515,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="IsDone" Type="Boolean" Nullable="false" />
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PersianDateAdded" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="ReceivedMessagesArchive">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
-          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsReceivedFromWeb" Type="Boolean" />
-          <Property Name="RetryCount" Type="Int32" />
-          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="vw_AspNetRoles">
           <Key>
@@ -1786,6 +1708,48 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="isProcessed" Type="Boolean" />
           <Property Name="description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="ReceievedMessage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFromSource" Type="Int32" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
+          <Property Name="description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_ReceivedMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="ShortCode" />
+            <PropertyRef Name="ReceivedTime" />
+            <PropertyRef Name="IsProcessed" />
+            <PropertyRef Name="IsReceivedFromIntegratedPanel" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFromSource" Type="Int32" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1965,25 +1929,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ReceievedMessages">
-            <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
-              <MappingFragment StoreEntitySet="ReceievedMessages">
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Referrals">
             <EntityTypeMapping TypeName="PortalModel.Referral">
               <MappingFragment StoreEntitySet="Referral">
@@ -2146,25 +2091,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vw_ReceivedMessages">
-            <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
-              <MappingFragment StoreEntitySet="vw_ReceivedMessages">
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="vw_servicesServicesInfo">
             <EntityTypeMapping TypeName="PortalModel.vw_servicesServicesInfo">
               <MappingFragment StoreEntitySet="vw_servicesServicesInfo">
@@ -2258,25 +2184,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
                 <ScalarProperty Name="Message" ColumnName="Message" />
                 <ScalarProperty Name="MobileNumbersList" ColumnName="MobileNumbersList" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ReceivedMessagesArchives">
-            <EntityTypeMapping TypeName="PortalModel.ReceivedMessagesArchive">
-              <MappingFragment StoreEntitySet="ReceivedMessagesArchive">
-                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
-                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
-                <ScalarProperty Name="IsReceivedFromWeb" ColumnName="IsReceivedFromWeb" />
-                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
-                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
-                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
-                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
-                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2448,6 +2355,45 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="sp_RequestsRulesChecker" FunctionName="PortalModel.Store.sp_RequestsRulesChecker" />
+          <EntitySetMapping Name="ReceievedMessages">
+            <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
+              <MappingFragment StoreEntitySet="ReceievedMessages">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="ReceivedFromSource" ColumnName="ReceivedFromSource" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
+                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_ReceivedMessages">
+            <EntityTypeMapping TypeName="PortalModel.vw_ReceivedMessages">
+              <MappingFragment StoreEntitySet="vw_ReceivedMessages">
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="ReceivedFromSource" ColumnName="ReceivedFromSource" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
+                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

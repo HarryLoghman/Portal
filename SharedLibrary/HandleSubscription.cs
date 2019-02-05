@@ -79,7 +79,7 @@ namespace SharedLibrary
                     subscriber.PersianDeactivationDate = null;
                     subscriber.OnKeyword = onKeyword;
                     subscriber.SpecialUniqueId = null;
-                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                    if (message.IsReceivedFromIntegratedPanel != true && (!message.ReceivedFromSource.HasValue || message.ReceivedFromSource.Value == 0))
                         subscriber.OnMethod = "keyword";
                     else if (message.IsReceivedFromIntegratedPanel == true)
                         subscriber.OnMethod = "Integrated Panel";
@@ -145,7 +145,7 @@ namespace SharedLibrary
                 {
                     newSubscriber.MobileNumber = message.MobileNumber;
                     newSubscriber.OnKeyword = message.Content;
-                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                    if (message.IsReceivedFromIntegratedPanel != true && (!message.ReceivedFromSource.HasValue || message.ReceivedFromSource.Value == 0))
                         newSubscriber.OnMethod = "keyword";
                     else if (message.IsReceivedFromIntegratedPanel == true)
                         newSubscriber.OnMethod = "Integrated Panel";
@@ -247,7 +247,7 @@ namespace SharedLibrary
                     #region find uniqueID for user
                     while (isUniqueIdAssigned == false)
                     {
-                      
+
                         var unqiueId = random.Next(10000000, 99999999).ToString();
                         var subscriber = entity.Subscribers.FirstOrDefault(o => o.SpecialUniqueId == unqiueId && o.ServiceId == serviceId);
                         if (subscriber == null)
@@ -363,7 +363,7 @@ namespace SharedLibrary
                     subscriberHistory.ServiceStatusForSubscriber = state;
                     subscriberHistory.ShortCode = message.ShortCode;
                     subscriberHistory.Time = DateTime.Now.TimeOfDay;
-                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                    if (message.IsReceivedFromIntegratedPanel != true && (!message.ReceivedFromSource.HasValue || message.ReceivedFromSource.Value == 0))
                         subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.User;
                     else if (message.IsReceivedFromIntegratedPanel == true)
                         subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.IntegratedPanel;
@@ -522,7 +522,7 @@ namespace SharedLibrary
                     subscriber.OffKeyword = message.Content;
                     subscriber.UserMessageOff = subscriber.UserMessage;
                     message.UserMessageOff = subscriber.UserMessageOff;
-                    if (message.IsReceivedFromIntegratedPanel != true && message.IsReceivedFromWeb != true)
+                    if (message.IsReceivedFromIntegratedPanel != true && (!message.ReceivedFromSource.HasValue || message.ReceivedFromSource == 0))
                         subscriber.OffMethod = "keyword";
                     else if (message.IsReceivedFromIntegratedPanel == true)
                         subscriber.OffMethod = "Integrated Panel";

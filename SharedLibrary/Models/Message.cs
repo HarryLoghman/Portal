@@ -34,7 +34,7 @@ namespace SharedLibrary.Models
         public int? Price { get; set; }
         public string From { get; set; }
         public string To { get; set; }
-        public bool? IsReceivedFromWeb { get; set; }
+        public int? ReceivedFromSource { get; set; }
         public string ServiceCode { get; set; }
         public string AccessKey { get; set; }
         public string ConfirmCode { get; set; }

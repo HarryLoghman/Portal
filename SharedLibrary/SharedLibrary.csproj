@@ -182,9 +182,6 @@
     <Compile Include="Models\ReceievedMessage.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ReceivedMessagesArchive.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Referral.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

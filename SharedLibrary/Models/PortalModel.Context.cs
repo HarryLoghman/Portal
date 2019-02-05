@@ -39,7 +39,6 @@ namespace SharedLibrary.Models
         public virtual DbSet<OperatorsPlan> OperatorsPlans { get; set; }
         public virtual DbSet<OperatorsPrefix> OperatorsPrefixs { get; set; }
         public virtual DbSet<ParidsShortCode> ParidsShortCodes { get; set; }
-        public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
         public virtual DbSet<Referral> Referrals { get; set; }
         public virtual DbSet<ServersAction> ServersActions { get; set; }
         public virtual DbSet<ServersIP> ServersIPs { get; set; }
@@ -52,13 +51,11 @@ namespace SharedLibrary.Models
         public virtual DbSet<SubscribersPoint> SubscribersPoints { get; set; }
         public virtual DbSet<TempReferralData> TempReferralDatas { get; set; }
         public virtual DbSet<VerifySubscriber> VerifySubscribers { get; set; }
-        public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
         public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
         public virtual DbSet<JhoobinSetting> JhoobinSettings { get; set; }
         public virtual DbSet<SubscribersHistory> SubscribersHistories { get; set; }
         public virtual DbSet<Delivery> Deliveries { get; set; }
         public virtual DbSet<BulkList> BulkLists { get; set; }
-        public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
         public virtual DbSet<vw_AspNetRoles> vw_AspNetRoles { get; set; }
         public virtual DbSet<vw_AspNetUserRoles> vw_AspNetUserRoles { get; set; }
         public virtual DbSet<vw_AspNetUsers> vw_AspNetUsers { get; set; }
@@ -69,6 +66,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<RealtimeStatisticsFor2GServices> RealtimeStatisticsFor2GServices { get; set; }
         public virtual DbSet<RealtimeStatisticsFor3GServices> RealtimeStatisticsFor3GServices { get; set; }
         public virtual DbSet<RequestsLog> RequestsLogs { get; set; }
+        public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
+        public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

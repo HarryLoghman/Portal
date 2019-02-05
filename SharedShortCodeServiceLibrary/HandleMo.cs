@@ -576,7 +576,10 @@ namespace SharedShortCodeServiceLibrary
                 message.Content = "25000";
             var logId = MessageHandler.OtpLog(connectionStringeNameInAppConfig, message.MobileNumber, "request", message.Content);
             var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
-            MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result.Status.ToString());
+            if (!(result is string) && result != null)
+                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result.Status.ToString());
+            else
+                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result);
             if (result.Status == "User already subscribed")
             {
                 message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestForAlreadySubsceribed").Select(o => o.Content).FirstOrDefault();
@@ -616,7 +619,10 @@ namespace SharedShortCodeServiceLibrary
             var confirmCode = message.Content;
             var logId = MessageHandler.OtpLog(connectionStringeNameInAppConfig, message.MobileNumber, "confirm", confirmCode);
             var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
-            MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result.Status.ToString());
+            if (!(result is string) && result != null)
+                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result.Status.ToString());
+            else
+                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result);
             if (result.Status == "Error" || result.Status == "Exception")
                 isSucceeded = false;
             else if (result.Status.ToString().Contains("NOT FOUND IN LAST 5MINS") || result.Status == "No Otp Request Found")

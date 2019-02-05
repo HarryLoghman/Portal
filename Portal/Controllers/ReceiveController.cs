@@ -135,7 +135,7 @@ namespace Portal.Controllers
                     {
                         messageObj.ShortCode = SharedLibrary.MessageHandler.ValidateShortCode(messageObj.ShortCode);
                         messageObj.ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : null;
-                        messageObj.IsReceivedFromWeb = true;
+                        messageObj.ReceivedFromSource = 1;
                         SharedLibrary.MessageHandler.SaveReceivedMessage(messageObj);
                         result = "1";
                     }

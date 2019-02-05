@@ -10,33 +10,31 @@
         
 =======
 
-        <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="5.508711986946274" PointY="16.571319066254105" />
-        <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="0.88675088476704" PointY="0.60732758073477422" />
-        <EntityTypeShape EntityType="PortalModel.AspNetRoleUserAccess" Width="1.5" PointX="1.0300351721374481" PointY="15.030964262332285" />
-        <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="7.3644049555828817" PointY="29.181939824103349" />
-        <EntityTypeShape EntityType="PortalModel.AspNetUserLogin" Width="1.5" PointX="3.9036697521357189" PointY="26.991952938489593" />
-        <EntityTypeShape EntityType="PortalModel.AspNetUser" Width="1.5" PointX="0.076257443091020657" PointY="27.5560248622466" />
-        <EntityTypeShape EntityType="PortalModel.AspNetUsersRolesServiceAccess" Width="1.5" PointX="11.848188394609927" PointY="31.529039129395521" />
-        <EntityTypeShape EntityType="PortalModel.BlackList" Width="1.5" PointX="7.9265123139724665" PointY="12.848046532295665" />
-        <EntityTypeShape EntityType="PortalModel.Operator" Width="1.5" PointX="2.3956118479350637" PointY="13.797499126660405" />
-        <EntityTypeShape EntityType="PortalModel.OperatorsPlan" Width="1.5" PointX="7.9126499369333736" PointY="9.91786893173953" />
-        <EntityTypeShape EntityType="PortalModel.OperatorsPrefix" Width="1.5" PointX="1.4170985582364251" PointY="9.8650525705260463" />
-        <EntityTypeShape EntityType="PortalModel.ParidsShortCode" Width="1.5" PointX="3.06184841089968" PointY="2.48030968125924" />
-        <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="3.2142218440837329" PointY="31.864671632584496" />
-        <EntityTypeShape EntityType="PortalModel.Referral" Width="1.5" PointX="2.431094299271281" PointY="27.479034853856561" />
-        <EntityTypeShape EntityType="PortalModel.ServersAction" Width="1.5" PointX="6.0003969138490021" PointY="28.291926933588424" />
-        <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="8.0263588409993609" PointY="15.557917676660194" />
-        <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="7.7461631501774129" PointY="7.7414682394552363" />
-        <EntityTypeShape EntityType="PortalModel.ServiceInfo" Width="1.5" PointX="11.083644853478132" PointY="17.52933741432118" />
-        <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="8.0229730997341555" PointY="0.73861049150052038" />
-        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="5.5724221512546865" PointY="16.398022286779259" />
-        <EntityTypeShape EntityType="PortalModel.SinglechargeDelivery" Width="1.5" PointX="0.25889819686249743" PointY="30.79546053651509" />
-        <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="9.896286192301794" PointY="3.7991854864168846" />
-        <EntityTypeShape EntityType="PortalModel.SubscribersPoint" Width="1.5" PointX="7.219382518538918" PointY="11.610783090633705" />
-        <EntityTypeShape EntityType="PortalModel.TempReferralData" Width="1.5" PointX="10.487076132785099" PointY="15.033544785824393" />
-        <EntityTypeShape EntityType="PortalModel.VerifySubscriber" Width="1.5" PointX="0.42764041965251809" PointY="12.029517611502445" />
-        <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="6.1505287187874922" PointY="24.67783866481755" />
-        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="2.8421379415514592" PointY="25.594693434235964" />
+        <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="3.75" PointY="0.75" />
+        <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="8.75" PointY="3.375" />
+        <EntityTypeShape EntityType="PortalModel.AspNetRoleUserAccess" Width="1.5" PointX="5.75" PointY="1.625" />
+        <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="13.25" PointY="4.5" />
+        <EntityTypeShape EntityType="PortalModel.AspNetUserLogin" Width="1.5" PointX="13.25" PointY="2" />
+        <EntityTypeShape EntityType="PortalModel.AspNetUser" Width="1.5" PointX="11" PointY="2" />
+        <EntityTypeShape EntityType="PortalModel.AspNetUsersRolesServiceAccess" Width="1.5" PointX="8.75" PointY="7.625" />
+        <EntityTypeShape EntityType="PortalModel.BlackList" Width="1.5" PointX="5.75" PointY="10.625" />
+        <EntityTypeShape EntityType="PortalModel.Operator" Width="1.5" PointX="1.5" PointY="1.625" />
+        <EntityTypeShape EntityType="PortalModel.OperatorsPlan" Width="1.5" PointX="7.75" PointY="10.625" />
+        <EntityTypeShape EntityType="PortalModel.OperatorsPrefix" Width="1.5" PointX="9.75" PointY="10.625" />
+        <EntityTypeShape EntityType="PortalModel.ParidsShortCode" Width="1.5" PointX="10.75" PointY="7.625" />
+        <EntityTypeShape EntityType="PortalModel.Referral" Width="1.5" PointX="0.75" PointY="12.625" />
+        <EntityTypeShape EntityType="PortalModel.ServersAction" Width="1.5" PointX="2.75" PointY="12.625" />
+        <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="11.75" PointY="10.625" />
+        <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="4.75" PointY="13.625" />
+        <EntityTypeShape EntityType="PortalModel.ServiceInfo" Width="1.5" PointX="6" PointY="6.5" />
+        <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="12.75" PointY="7.625" />
+        <EntityTypeShape EntityType="PortalModel.Service" Width="1.5" PointX="0.75" PointY="6.25" />
+        <EntityTypeShape EntityType="PortalModel.SinglechargeDelivery" Width="1.5" PointX="6.75" PointY="13.625" />
+        <EntityTypeShape EntityType="PortalModel.Subscriber" Width="1.5" PointX="3" PointY="4.25" />
+        <EntityTypeShape EntityType="PortalModel.SubscribersPoint" Width="1.5" PointX="3" PointY="9.5" />
+        <EntityTypeShape EntityType="PortalModel.TempReferralData" Width="1.5" PointX="8.75" PointY="13.625" />
+        <EntityTypeShape EntityType="PortalModel.VerifySubscriber" Width="1.5" PointX="13.75" PointY="10.625" />
+        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="13.75" PointY="13.625" />
         <AssociationConnector Association="PortalModel.C_FK_Aggregators_Operators" />
         <AssociationConnector Association="PortalModel.C_FK_ServiceInfo_Aggregators" />
         <AssociationConnector Association="PortalModel.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
@@ -45,21 +43,22 @@
         <AssociationConnector Association="PortalModel.C_FK_SubscribersPoints_Services" />
         <AssociationConnector Association="PortalModel.FK_Subscribers_Services" />
         <AssociationConnector Association="PortalModel.AspNetUserRoles" />
-        <EntityTypeShape EntityType="PortalModel.JhoobinSetting" Width="1.5" PointX="3.84083016581872" PointY="4.8248460613306827" />
-        <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="15.75" PointY="25.875" />
-        <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="9.0135259986918079" PointY="2.8820888264486979" />
-        <EntityTypeShape EntityType="PortalModel.BulkList" Width="1.5" PointX="3.2055172991033256" PointY="24.159378361031123" />
-        <EntityTypeShape EntityType="PortalModel.ReceivedMessagesArchive" Width="1.5" PointX="4.9428305201897542" PointY="14.117859072106825" />
-        <EntityTypeShape EntityType="PortalModel.vw_AspNetRoles" Width="1.5" PointX="2.0956235109342369" PointY="16.645435504915863" />
-        <EntityTypeShape EntityType="PortalModel.vw_AspNetUserRoles" Width="1.5" PointX="2.5873461731650615" PointY="23.8537008128379" />
-        <EntityTypeShape EntityType="PortalModel.vw_AspNetUsers" Width="1.5" PointX="0.73974482004518849" PointY="3.608028756272061" />
-        <EntityTypeShape EntityType="PortalModel.vw_DehnadAllServicesStatistics" Width="1.5" PointX="8.7950443498767186" PointY="5.64968776965965" />
-        <EntityTypeShape EntityType="PortalModel.Audit" Width="1.5" PointX="11.601640021242965" PointY="4.7023775450430705" />
-        <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="3.4603026525398262" PointY="4.9834689521153779" />
-        <EntityTypeShape EntityType="PortalModel.chargeInfo" Width="1.5" PointX="5.8031085216454734" PointY="4.3657436093155964" />
-        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor2GServices" Width="1.5" PointX="6" PointY="31.375" />
-        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor3GServices" Width="1.5" PointX="1.4621757294340878" PointY="23.449373345565689" />
-        <EntityTypeShape EntityType="PortalModel.RequestsLog" Width="1.5" PointX="2.9920811871961139" PointY="27.061741632903807" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.JhoobinSetting" Width="1.5" PointX="14.75" PointY="7.625" />
+        <EntityTypeShape EntityType="PortalModel.SubscribersHistory" Width="1.5" PointX="15.75" PointY="1.625" />
+        <EntityTypeShape EntityType="PortalModel.Delivery" Width="1.5" PointX="0.75" PointY="16.625" />
+        <EntityTypeShape EntityType="PortalModel.BulkList" Width="1.5" PointX="15.75" PointY="10.625" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetRoles" Width="1.5" PointX="15.75" PointY="14.625" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetUserRoles" Width="1.5" PointX="2.75" PointY="17.625" />
+        <EntityTypeShape EntityType="PortalModel.vw_AspNetUsers" Width="1.5" PointX="4.75" PointY="17.625" />
+        <EntityTypeShape EntityType="PortalModel.vw_DehnadAllServicesStatistics" Width="1.5" PointX="6.75" PointY="17.625" />
+        <EntityTypeShape EntityType="PortalModel.Audit" Width="1.5" PointX="15.75" PointY="17.625" />
+        <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="17.75" PointY="1.625" />
+        <EntityTypeShape EntityType="PortalModel.chargeInfo" Width="1.5" PointX="17.75" PointY="5.625" />
+        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor2GServices" Width="1.5" PointX="17.75" PointY="9.625" />
+        <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor3GServices" Width="1.5" PointX="17.75" PointY="13.625" />
+        <EntityTypeShape EntityType="PortalModel.RequestsLog" Width="1.5" PointX="8.75" PointY="19.625" />
+        <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="8.0733395088805544" PointY="24.375777553941951" />
+        <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="9.45256776802827" PointY="5.19994774702934" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         

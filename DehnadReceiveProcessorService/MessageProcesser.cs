@@ -506,7 +506,7 @@ namespace DehnadReceiveProcessorService
             message.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
             message.IsReceivedFromIntegratedPanel = receivedMessage.IsReceivedFromIntegratedPanel;
             message.ReceivedFrom = receivedMessage.ReceivedFrom;
-            message.IsReceivedFromWeb = receivedMessage.IsReceivedFromWeb;
+            message.ReceivedFromSource = receivedMessage.ReceivedFromSource;
 
             using (var entity = new PortalEntities())
             {
