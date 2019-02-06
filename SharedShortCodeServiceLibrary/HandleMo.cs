@@ -568,48 +568,63 @@ namespace SharedShortCodeServiceLibrary
             return isSucceeded;
         }
 
-        protected async virtual Task<bool> OTPRequest(string connectionStringeNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate
+        protected async virtual Task<bool> OTPRequest(string connectionStringeNameInAppConfig, MessageObject message
+            , List<MessagesTemplate> messagesTemplate
             , vw_servicesServicesInfo service, int isCampaignActive)
         {
+            
             bool isSucceeded = true;
             if (message.Content.Contains("25000"))
                 message.Content = "25000";
+            if (string.IsNullOrEmpty(message.ReceivedFrom))
+                message.ReceivedFrom = "OtpCharge";
+            else if (!message.ReceivedFrom.ToLower().Contains("-otpcharge"))
+                message.ReceivedFrom = message.ReceivedFrom + "-OtpCharge";
+            
             var logId = MessageHandler.OtpLog(connectionStringeNameInAppConfig, message.MobileNumber, "request", message.Content);
             var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
             if (!(result is string) && result != null)
+            {
                 MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result.Status.ToString());
-            else
-                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result);
-            if (result.Status == "User already subscribed")
-            {
-                message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestForAlreadySubsceribed").Select(o => o.Content).FirstOrDefault();
-                MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
-            }
-            else if (result.Status == "Otp request already exists for this subscriber")
-            {
-                message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestExistsForThisSubscriber").Select(o => o.Content).FirstOrDefault();
-                MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
-            }
-            else if (result.Status != "SUCCESS-Pending Confirmation")
-            {
-                if (result.Status == "Error" || result.Status == "Exception")
-                    isSucceeded = false;
+                if (result.Status == "User already subscribed")
+                {
+                    message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestForAlreadySubsceribed").Select(o => o.Content).FirstOrDefault();
+                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                }
+                else if (result.Status == "Otp request already exists for this subscriber")
+                {
+                    message.Content = messagesTemplate.Where(o => o.Title == "OtpRequestExistsForThisSubscriber").Select(o => o.Content).FirstOrDefault();
+                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                }
+                else if (result.Status != "SUCCESS-Pending Confirmation")
+                {
+                    if (result.Status == "Error" || result.Status == "Exception")
+                        isSucceeded = false;
+                    else
+                    {
+                        message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
+                        MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                    }
+
+                }
                 else
                 {
-                    message.Content = "لطفا بعد از 5 دقیقه دوباره تلاش کنید.";
-                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                    if (isCampaignActive == (int)CampaignStatus.Active)
+                    {
+                        SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
+                        message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                        MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                    }
                 }
-
             }
             else
             {
-                if (isCampaignActive == (int)CampaignStatus.Active)
-                {
-                    SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
-                    message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
-                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
-                }
+                //there is a reasonable error
+                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result);
+                isSucceeded = true;
+                message.description = result;
             }
+            
             return isSucceeded;
         }
 
@@ -619,24 +634,38 @@ namespace SharedShortCodeServiceLibrary
             var confirmCode = message.Content;
             var logId = MessageHandler.OtpLog(connectionStringeNameInAppConfig, message.MobileNumber, "confirm", confirmCode);
             var result = await SharedLibrary.UsefulWebApis.MciOtpSendConfirmCode(message.ServiceCode, message.MobileNumber, confirmCode);
+
+            if (string.IsNullOrEmpty(message.ReceivedFrom))
+                message.ReceivedFrom = "OtpConfirm";
+            else if (!message.ReceivedFrom.ToLower().Contains("-otpconfirm"))
+                message.ReceivedFrom = message.ReceivedFrom + "-OtpConfirm";
+            
             if (!(result is string) && result != null)
+            {
                 MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result.Status.ToString());
-            else
-                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result);
-            if (result.Status == "Error" || result.Status == "Exception")
-                isSucceeded = false;
-            else if (result.Status.ToString().Contains("NOT FOUND IN LAST 5MINS") || result.Status == "No Otp Request Found")
-            {
-                var logId2 = MessageHandler.OtpLog(connectionStringeNameInAppConfig, message.MobileNumber, "request", message.Content);
-                var result2 = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
-                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId2, result2.Status.ToString());
-                message.Content = messagesTemplate.Where(o => o.Title == "WrongOtpConfirm").Select(o => o.Content).FirstOrDefault();
-                MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                if (result.Status == "Error" || result.Status == "Exception")
+                    isSucceeded = false;
+                else if (result.Status.ToString().Contains("NOT FOUND IN LAST 5MINS") || result.Status == "No Otp Request Found")
+                {
+                    var logId2 = MessageHandler.OtpLog(connectionStringeNameInAppConfig, message.MobileNumber, "request", message.Content);
+                    var result2 = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
+                    MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId2, result2.Status.ToString());
+                    message.Content = messagesTemplate.Where(o => o.Title == "WrongOtpConfirm").Select(o => o.Content).FirstOrDefault();
+                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                }
+                else if (result.Status.ToString().Contains("PIN DOES NOT MATCH"))
+                {
+                    message.Content = messagesTemplate.Where(o => o.Title == "WrongOtpConfirm").Select(o => o.Content).FirstOrDefault();
+                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                }
             }
-            else if (result.Status.ToString().Contains("PIN DOES NOT MATCH"))
+            else
             {
-                message.Content = messagesTemplate.Where(o => o.Title == "WrongOtpConfirm").Select(o => o.Content).FirstOrDefault();
-                MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                //there is a reasonable error
+                MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result);
+                message.description = result;
+                isSucceeded = true;
+
             }
             return isSucceeded;
         }

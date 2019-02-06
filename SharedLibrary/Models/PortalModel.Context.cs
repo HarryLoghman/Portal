@@ -68,6 +68,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<RequestsLog> RequestsLogs { get; set; }
         public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
+        public virtual DbSet<App> Apps { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

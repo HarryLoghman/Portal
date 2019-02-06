@@ -97,6 +97,9 @@
     <Compile Include="Models\Aggregator.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\App.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AspNetRole.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

@@ -24,6 +24,8 @@ namespace Portal.Controllers
         private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe", "Achar" };
         private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
 
+        #region OTP Request
+        //for old apps, old landings and localcall
         [HttpPost]
         [AllowAnonymous]
         public async Task<HttpResponseMessage> OtpCharge([FromBody]MessageObject messageObj)
@@ -35,6 +37,14 @@ namespace Portal.Controllers
             bool localCall = false;
             try
             {
+                if (messageObj.Number != null)
+                {
+                    messageObj.MobileNumber = messageObj.Number;
+                    result.Number = messageObj.MobileNumber;
+                }
+                else
+                    result.MobileNumber = messageObj.MobileNumber;
+
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
                         , new Dictionary<string, string>() { { "servicecode",messageObj.ServiceCode }
                                                             ,{ "content",messageObj.Content}
@@ -91,245 +101,13 @@ namespace Portal.Controllers
                                 , "OTPCharge: Wrong Hash sent from " + HttpContext.Current.Request.UserHostAddress + " parameterEncrypted=" + messageObj.ExtraParameter);
                     }
                 }
-                if (messageObj.Number != null)
-                {
-                    messageObj.MobileNumber = messageObj.Number;
-                    result.Number = messageObj.MobileNumber;
-                }
-                else
-                    result.MobileNumber = messageObj.MobileNumber;
+
                 logs.Info(messageObj.AccessKey + "-" + hash);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
                 else if (resultOk)
                 {
-                    if (messageObj.Price == null)
-                        messageObj.Price = 0;
-                    if (messageObj.ServiceCode == "NabardGah")
-                        messageObj.ServiceCode = "Soltan";
-                    else if (messageObj.ServiceCode == "ShenoYad")
-                        messageObj.ServiceCode = "ShenoYad500";
-                    else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 7) // Hub use price 5 and 6 for sub and unsub
-                        result.Status = "This ServiceCode does not have permission for OTP operation";
-                    else
-                    {
-                        messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
-                        if (messageObj.Number != null)
-                        {
-                            messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
-                            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
-                        }
-                        else
-                            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-                        if (messageObj.MobileNumber == "Invalid Mobile Number")
-                            result.Status = "Invalid Mobile Number";
-                        else if (messageObj.MobileNumber == "Invalid Number")
-                            result.Status = "Invalid Number";
-                        else
-                        {
-                            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
-
-                            if (service == null)
-                                result.Status = "Invalid serviceCode";
-                            else
-                            {
-
-                                var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-
-                                using (var entity = new PortalEntities())
-                                {
-                                    if (messageObj.Content != null || (string.IsNullOrEmpty(messageObj.Content) && !localCall))
-                                    {
-                                        var mo = new ReceievedMessage()
-                                        {
-                                            MobileNumber = messageObj.MobileNumber,
-                                            ShortCode = serviceInfo.ShortCode,
-                                            ReceivedTime = DateTime.Now,
-                                            PersianReceivedTime = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
-                                            Content = (messageObj.Content == null) ? " " : messageObj.Content,
-                                            IsProcessed = true,
-                                            IsReceivedFromIntegratedPanel = false,
-                                            ReceivedFromSource = (int)messageSourceType,
-                                            ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-OtpCharge" : null
-                                        };
-                                        entity.ReceievedMessages.Add(mo);
-                                        entity.SaveChanges();
-
-
-                                    }
-                                    List<string> servicesCodes = entity.vw_servicesServicesInfo.Select(o => o.ServiceCode).ToList();
-                                    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, service.Id);
-                                    //if (messageObj.Price.Value == 0 && subscriber != null && subscriber.DeactivationDate == null)
-                                    //    result.Status = "User already subscribed";
-                                    //else
-                                    //{
-                                    var minuetesBackward = DateTime.Now.AddMinutes(-5);
-                                    //List<string> servicesNames = new List<string> { "Phantom", "TajoTakht", "Hazaran", "LahzeyeAkhar","Soltan"
-                                    //,"MenchBaz","DonyayeAsatir","Aseman","AvvalPod","AvvalPod500","AvvalYad","BehAmooz500"
-                                    //,"FitShow","JabehAbzar","ShenoYad","ShenoYad500","Takavar","Tamly","Tamly500","Halghe","Dezhban","ShahreKalameh"
-                                    //,"Soraty","DefendIran","SepidRood","Nebula","Medio","Achar"};
-                                    if (service.ServiceCode == "Darchin")
-                                    {
-                                        //using (var entity = new DarchinLibrary.Models.DarchinEntities())
-                                        //{
-                                        //    if (messageObj.Price.Value < 0)
-                                        //    {
-                                        //        messageObj.Content = "Unsubscribe";
-                                        //    }
-                                        //    else if (messageObj.Price != 7000)
-                                        //        messageObj.Price = null;
-                                        //    if (messageObj.Price == null)
-                                        //        result.Status = "Invalid Price";
-                                        //    else
-                                        //    {
-                                        //        var singleCharge = new DarchinLibrary.Models.Singlecharge();
-                                        //        //string aggregatorName = "SamssonTci";
-                                        //        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
-                                        //        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        //        if (messageObj.Price >= 0)
-                                        //            singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo);
-                                        //        else
-                                        //        {
-                                        //            var activeTokens = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                                        //            if (activeTokens != null)
-                                        //            {
-                                        //                messageObj.Token = activeTokens.UserToken;
-                                        //                singleCharge = await SharedLibrary.MessageSender.SamssonTciSinglecharge(typeof(DarchinLibrary.Models.DarchinEntities), typeof(DarchinLibrary.Models.Singlecharge), messageObj, serviceAdditionalInfo, true);
-                                        //            }
-                                        //            else
-                                        //                singleCharge.Description = "User Does Not Exists";
-                                        //            DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
-                                        //        }
-                                        //        result.Status = singleCharge.Description;
-                                        //        result.Token = singleCharge.ReferenceId;
-                                        //    }
-                                        //}
-                                    }
-                                    else if (!servicesCodes.Any(o => o == service.ServiceCode))
-                                    {
-                                        result.Status = "Service does not defined";
-                                    }
-                                    else
-                                    {
-                                        using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
-                                        {
-                                            var imiChargeCode = new SharedLibrary.Models.ServiceModel.ImiChargeCode();
-                                            if (messageObj.Price.Value == 0)
-                                                messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entityService, messageObj, messageObj.Price.Value, 0
-                                                    , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                            //messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                                            else if (messageObj.Price.Value == -1)
-                                            {
-                                                messageObj.Price = 0;
-                                                messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entityService, messageObj, messageObj.Price.Value, 0
-                                                    , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                                //messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
-                                            }
-                                            else
-                                            {
-                                                messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entityService, messageObj, messageObj.Price.Value, 0, null);
-                                                //messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
-                                            }
-                                            if (messageObj.Price == null)
-                                                result.Status = "Invalid Price";
-                                            else
-                                            {
-
-                                                var otpMessage = "webservice";
-                                                if (messageObj.Content != null)
-                                                    otpMessage = otpMessage + "-" + messageObj.Content;
-                                                var logId = SharedLibrary.MessageHandler.OtpLog(service, messageObj.MobileNumber, "request", otpMessage);
-                                                var isOtpExists = entityService.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
-                                                if (isOtpExists != null && messageObj.Price.Value == 0)
-                                                {
-                                                    result.Status = "Otp request already exists for this subscriber";
-                                                }
-                                                else
-                                                {
-                                                    var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
-                                                    //string aggregatorName = "MobinOneMapfa";
-                                                    string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
-                                                    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                    singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entityService, singleCharge, messageObj, serviceAdditionalInfo);
-                                                    result.Status = singleCharge.Description;
-
-                                                    //only for fitshow and soraty
-                                                    if (result.Status == "SUCCESS-Pending Confirmation" && (service.ServiceCode == "FitShow" || service.ServiceCode == "Soraty"))
-                                                    {
-                                                        /******************old Code for fitShow!!!!!!!!!!!!!! it uses soraty functions
-                                                        if (result.Status == "SUCCESS-Pending Confirmation")
-                                                        {
-
-                                                            var messagesTemplate = SoratyLibrary.ServiceHandler.GetServiceMessagesTemplate();
-                                                            int isCampaignActive = 0;
-                                                            var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
-                                                            if (campaign != null)
-                                                                isCampaignActive = Convert.ToInt32(campaign.Value);
-                                                            var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
-                                                            if (isInBlackList == true)
-                                                                isCampaignActive = 0;
-                                                            if (isCampaignActive == 1)
-                                                            {
-                                                                SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
-                                                                messageObj.ShortCode = serviceInfo.ShortCode;
-                                                                messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
-                                                                messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
-                                                                messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
-                                                                SoratyLibrary.MessageHandler.InsertMessageToQueue(messageObj);
-                                                            }
-                                                        }
-                                                        ***************************/
-                                                        /******************old Code for fitShow!!!!!!!!!!!!!! it uses soraty functions
-                                                        var messagesTemplate = SoratyLibrary.ServiceHandler.GetServiceMessagesTemplate();
-                                                        int isCampaignActive = 0;
-                                                        var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
-                                                        if (campaign != null)
-                                                            isCampaignActive = Convert.ToInt32(campaign.Value);
-                                                        var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
-                                                        if (isInBlackList == true)
-                                                            isCampaignActive = 0;
-                                                        if (isCampaignActive == 1)
-                                                        {
-                                                            SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
-                                                            messageObj.ShortCode = serviceInfo.ShortCode;
-                                                            messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
-                                                            messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
-                                                            messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
-                                                            SoratyLibrary.MessageHandler.InsertMessageToQueue(messageObj);
-                                                        }
-                                                        ********************************/
-                                                        var messagesTemplate = entityService.MessagesTemplates.ToList();
-                                                        int isCampaignActive = 0;
-                                                        var campaign = entityService.Settings.FirstOrDefault(o => o.Name == "campaign");
-                                                        if (campaign != null)
-                                                            isCampaignActive = Convert.ToInt32(campaign.Value);
-                                                        var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
-                                                        if (isInBlackList == true)
-                                                            isCampaignActive = 0;
-                                                        if (isCampaignActive == 1)
-                                                        {
-                                                            SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
-                                                            messageObj.ShortCode = serviceInfo.ShortCode;
-                                                            messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
-                                                            messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
-                                                            messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
-                                                            SharedLibrary.MessageHandler.InsertMessageToQueue(entityService, messageObj);
-                                                        }
-                                                    }
-                                                }
-                                                SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, result.Status.ToString());
-                                            }
-                                        }
-                                    }
-
-
-
-
-                                    //}
-                                }
-                            }
-                        }
-                    }
+                    result = await this.fnc_processOTPRequest(messageObj, localCall, messageSourceType);
                 }
             }
             catch (Exception e)
@@ -348,6 +126,307 @@ namespace Portal.Controllers
             return response;
         }
 
+        //for new apps and landings
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> RequestOTPForApps([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            bool resultOk = true;
+            bool localCall = false;
+
+            logs.Info("AppPortal:AppController:RequestOTPForApps,Start," + messageObj.ServiceCode + "," + messageObj.MobileNumber);
+            try
+            {
+                if (messageObj.Number != null)
+                {
+                    messageObj.MobileNumber = messageObj.Number;
+                    result.Number = messageObj.MobileNumber;
+                }
+                else
+                    result.MobileNumber = messageObj.MobileNumber;
+
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                            , new Dictionary<string, string>() { { "servicecode",messageObj.ServiceCode }
+                                                            ,{ "content",messageObj.Content}
+                                                            ,{ "mobile",messageObj.MobileNumber}}
+                            , null
+                            , "AppPortal:AppController:RequestOTPForApps");
+                if (!string.IsNullOrEmpty(tpsRatePassed))
+                {
+                    result = tpsRatePassed;
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                if (string.IsNullOrEmpty(messageObj.appName))
+                {
+                    result = "AppName is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+                if (string.IsNullOrEmpty(messageObj.cipherParameter))
+                {
+                    result = "cipherParameter is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+                if (string.IsNullOrEmpty(messageObj.ExtraParameter))
+                {
+                    result = "ExtraParameter is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                string errorType, errorDescription;
+                if (!SharedLibrary.Encrypt.fnc_detectApp(messageObj.appName, messageObj.ExtraParameter
+                    , messageObj.cipherParameter, out errorType, out errorDescription))
+                {
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
+                    logs.Error("AppPortal:AppController:RequestOTPForApps,DetectApp," + errorType + "," + errorDescription);
+                    result = errorType;
+                    resultOk = false;
+                }
+                if (!resultOk)
+                    goto endSection;
+                string hash = "";
+
+                SharedLibrary.MessageHandler.MessageSourceType messageSourceType = SharedLibrary.MessageHandler.MessageSourceType.app;
+                hash = SharedLibrary.Encrypt.GetSha256Hash("RequestOTPForApps" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+
+
+
+
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else
+                {
+
+                    result = await this.fnc_processOTPRequest(messageObj, localCall, messageSourceType);
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                logs.Error("AppPortal:AppController:RequestOTPForApps", e);
+                resultOk = false;
+                //result = e.Message;
+                result = "Exception has been occured!!! Contact Administrator";
+            }
+            endSection: var json = JsonConvert.SerializeObject(result);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            logs.Info("AppController:RequestOTPForApps,End," + messageObj.ServiceCode + "," + messageObj.MobileNumber);
+            return response;
+        }
+
+        private async Task<dynamic> fnc_processOTPRequest(MessageObject messageObj, bool localCall
+            , SharedLibrary.MessageHandler.MessageSourceType messageSourceType)
+        {
+            dynamic result = new ExpandoObject();
+            if (messageObj.Price == null)
+                messageObj.Price = 0;
+            if (messageObj.ServiceCode == "NabardGah")
+                messageObj.ServiceCode = "Soltan";
+            else if (messageObj.ServiceCode == "ShenoYad")
+                messageObj.ServiceCode = "ShenoYad500";
+            else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 7) // Hub use price 5 and 6 for sub and unsub
+                result.Status = "This ServiceCode does not have permission for OTP operation";
+            else
+            {
+                messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
+                if (messageObj.Number != null)
+                {
+                    messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+                }
+                else
+                    messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+                if (messageObj.MobileNumber == "Invalid Mobile Number")
+                    result.Status = "Invalid Mobile Number";
+                else if (messageObj.MobileNumber == "Invalid Number")
+                    result.Status = "Invalid Number";
+                else
+                {
+                    var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+
+                    if (service == null)
+                        result.Status = "Invalid serviceCode";
+                    else
+                    {
+
+                        var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+
+                        using (var entity = new PortalEntities())
+                        {
+                            if (messageObj.Content != null || (string.IsNullOrEmpty(messageObj.Content) && !localCall))
+                            {
+                                var mo = new ReceievedMessage()
+                                {
+                                    MobileNumber = messageObj.MobileNumber,
+                                    ShortCode = serviceInfo.ShortCode,
+                                    ReceivedTime = DateTime.Now,
+                                    PersianReceivedTime = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
+                                    Content = (messageObj.Content == null) ? " " : messageObj.Content,
+                                    IsProcessed = true,
+                                    IsReceivedFromIntegratedPanel = false,
+                                    ReceivedFromSource = (int)messageSourceType,
+                                    ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-OtpCharge" : null
+                                };
+                                entity.ReceievedMessages.Add(mo);
+                                entity.SaveChanges();
+
+
+                            }
+                            List<string> servicesCodes = entity.vw_servicesServicesInfo.Select(o => o.ServiceCode).ToList();
+                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, service.Id);
+                            //if (messageObj.Price.Value == 0 && subscriber != null && subscriber.DeactivationDate == null)
+                            //    result.Status = "User already subscribed";
+                            //else
+                            //{
+                            var minuetesBackward = DateTime.Now.AddMinutes(-5);
+                            //List<string> servicesNames = new List<string> { "Phantom", "TajoTakht", "Hazaran", "LahzeyeAkhar","Soltan"
+                            //,"MenchBaz","DonyayeAsatir","Aseman","AvvalPod","AvvalPod500","AvvalYad","BehAmooz500"
+                            //,"FitShow","JabehAbzar","ShenoYad","ShenoYad500","Takavar","Tamly","Tamly500","Halghe","Dezhban","ShahreKalameh"
+                            //,"Soraty","DefendIran","SepidRood","Nebula","Medio","Achar"};
+                            if (service.ServiceCode == "Darchin")
+                            {
+
+                            }
+                            else if (!servicesCodes.Any(o => o == service.ServiceCode))
+                            {
+                                result.Status = "Service does not defined";
+                            }
+                            else
+                            {
+                                using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
+                                {
+                                    var imiChargeCode = new SharedLibrary.Models.ServiceModel.ImiChargeCode();
+                                    if (messageObj.Price.Value == 0)
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entityService, messageObj, messageObj.Price.Value, 0
+                                            , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    //messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                                    else if (messageObj.Price.Value == -1)
+                                    {
+                                        messageObj.Price = 0;
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entityService, messageObj, messageObj.Price.Value, 0
+                                            , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                        //messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                                    }
+                                    else
+                                    {
+                                        messageObj = SharedLibrary.MessageHandler.SetImiChargeInfo(entityService, messageObj, messageObj.Price.Value, 0, null);
+                                        //messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
+                                    }
+                                    if (messageObj.Price == null)
+                                        result.Status = "Invalid Price";
+                                    else
+                                    {
+
+                                        var otpMessage = "webservice";
+                                        if (messageObj.Content != null)
+                                            otpMessage = otpMessage + "-" + messageObj.Content;
+                                        var logId = SharedLibrary.MessageHandler.OtpLog(service, messageObj.MobileNumber, "request", otpMessage);
+                                        var isOtpExists = entityService.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                        if (isOtpExists != null && messageObj.Price.Value == 0)
+                                        {
+                                            result.Status = "Otp request already exists for this subscriber";
+                                        }
+                                        else
+                                        {
+                                            var singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
+                                            //string aggregatorName = "MobinOneMapfa";
+                                            string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
+                                            var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                            singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entityService, singleCharge, messageObj, serviceAdditionalInfo);
+                                            result.Status = singleCharge.Description;
+
+                                            //only for fitshow and soraty
+                                            if (result.Status == "SUCCESS-Pending Confirmation" && (service.ServiceCode == "FitShow" || service.ServiceCode == "Soraty"))
+                                            {
+                                                /******************old Code for fitShow!!!!!!!!!!!!!! it uses soraty functions
+                                                if (result.Status == "SUCCESS-Pending Confirmation")
+                                                {
+
+                                                    var messagesTemplate = SoratyLibrary.ServiceHandler.GetServiceMessagesTemplate();
+                                                    int isCampaignActive = 0;
+                                                    var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                                                    if (campaign != null)
+                                                        isCampaignActive = Convert.ToInt32(campaign.Value);
+                                                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
+                                                    if (isInBlackList == true)
+                                                        isCampaignActive = 0;
+                                                    if (isCampaignActive == 1)
+                                                    {
+                                                        SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
+                                                        messageObj.ShortCode = serviceInfo.ShortCode;
+                                                        messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                                                        messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                                                        messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                                                        SoratyLibrary.MessageHandler.InsertMessageToQueue(messageObj);
+                                                    }
+                                                }
+                                                ***************************/
+                                                /******************old Code for fitShow!!!!!!!!!!!!!! it uses soraty functions
+                                                var messagesTemplate = SoratyLibrary.ServiceHandler.GetServiceMessagesTemplate();
+                                                int isCampaignActive = 0;
+                                                var campaign = entity.Settings.FirstOrDefault(o => o.Name == "campaign");
+                                                if (campaign != null)
+                                                    isCampaignActive = Convert.ToInt32(campaign.Value);
+                                                var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
+                                                if (isInBlackList == true)
+                                                    isCampaignActive = 0;
+                                                if (isCampaignActive == 1)
+                                                {
+                                                    SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
+                                                    messageObj.ShortCode = serviceInfo.ShortCode;
+                                                    messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                                                    messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                                                    messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                                                    SoratyLibrary.MessageHandler.InsertMessageToQueue(messageObj);
+                                                }
+                                                ********************************/
+                                                var messagesTemplate = entityService.MessagesTemplates.ToList();
+                                                int isCampaignActive = 0;
+                                                var campaign = entityService.Settings.FirstOrDefault(o => o.Name == "campaign");
+                                                if (campaign != null)
+                                                    isCampaignActive = Convert.ToInt32(campaign.Value);
+                                                var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(messageObj.MobileNumber, service.Id);
+                                                if (isInBlackList == true)
+                                                    isCampaignActive = 0;
+                                                if (isCampaignActive == 1)
+                                                {
+                                                    SharedLibrary.HandleSubscription.AddToTempReferral(messageObj.MobileNumber, service.Id, messageObj.Content);
+                                                    messageObj.ShortCode = serviceInfo.ShortCode;
+                                                    messageObj.MessageType = (int)SharedLibrary.MessageHandler.MessageType.OnDemand;
+                                                    messageObj.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                                                    messageObj.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
+                                                    SharedLibrary.MessageHandler.InsertMessageToQueue(entityService, messageObj);
+                                                }
+                                            }
+                                        }
+                                        SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, result.Status.ToString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region otpConfirm
+        /// <summary>
+        /// for old apps,old landings and localCall
+        /// </summary>
+        /// <param name="messageObj"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<HttpResponseMessage> OtpConfirm([FromBody]MessageObject messageObj)
@@ -422,202 +501,9 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else if (resultOk)
                 {
-
-                    if (messageObj.ServiceCode == "NabardGah")
-                        messageObj.ServiceCode = "Soltan";
-                    else if (messageObj.ServiceCode == "ShenoYad")
-                        messageObj.ServiceCode = "ShenoYad500";
-
-                    messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
-                    if (messageObj.Number != null)
-                    {
-                        messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
-                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
-                    }
-                    else
-                        messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-
-                    if (messageObj.MobileNumber == "Invalid Mobile Number")
-                        result.Status = "Invalid Mobile Number";
-                    else if (messageObj.MobileNumber == "Invalid Number")
-                        result.Status = "Invalid Number";
-                    else
-                    {
-
-                        var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
-                        if (service == null)
-                            result.Status = "Invalid Service Code";
-                        else
-                        {
-                            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
-                            messageObj.ShortCode = serviceInfo.ShortCode;
-                            messageObj.ReceiveTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                            messageObj.ReceivedFromSource = (int)messageSourceType;
-                            string errorType, errorDescription;
-                            ReceievedMessage messageEntity = null;
-                            if (messageObj.Content != null || (string.IsNullOrEmpty(messageObj.Content) && !localCall))
-                            {
-                                messageEntity = new ReceievedMessage()
-                                {
-                                    MobileNumber = messageObj.MobileNumber,
-                                    ShortCode = messageObj.ShortCode,
-                                    ReceivedTime = DateTime.Parse(messageObj.ReceiveTime),
-                                    PersianReceivedTime = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
-                                    Content = (messageObj.Content == null) ? " " : messageObj.Content,
-                                    IsProcessed = true,
-                                    IsReceivedFromIntegratedPanel = false,
-                                    ReceivedFromSource = messageObj.ReceivedFromSource,
-                                    ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-OtpConfirm" : null
-                                };
-                            }
-                            using (var entity = new PortalEntities())
-                            {
-                                if (this.fnc_checkOTPConfirmSourceType(messageObj, localCall, out errorType, out errorDescription))
-                                {
-
-                                    //if (messageObj.Content != null)
-                                    //{
-
-
-
-                                    //}
-                                    List<string> servicesCodes = entity.vw_servicesServicesInfo.Select(o => o.ServiceCode).ToList();
-                                    //List<string> servicesNames = new List<string> { "Phantom", "TajoTakht", "Hazaran", "LahzeyeAkhar","Soltan"
-                                    //    ,"MenchBaz","DonyayeAsatir","Aseman","AvvalPod","AvvalPod500","AvvalYad","BehAmooz500"
-                                    //    ,"FitShow","JabehAbzar","ShenoYad","ShenoYad500","Takavar","Tamly","Tamly500","Halghe","Dezhban","ShahreKalameh"
-                                    //    ,"Soraty","DefendIran","SepidRood","Nebula","Medio","Achar"};
-
-                                    if (service.ServiceCode == "Darchin")
-                                    {
-                                        //using (var entity = new DarchinLibrary.Models.DarchinEntities())
-                                        //{
-                                        //    var singleCharge = DarchinLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
-                                        //    if (singleCharge == null)
-                                        //        result.Status = "No Otp Request Found";
-                                        //    else
-                                        //    {
-                                        //        messageObj.Price = singleCharge.Price;
-                                        //        messageObj.Token = singleCharge.ReferenceId;
-                                        //        var token = singleCharge.ReferenceId;
-                                        //        //string aggregatorName = "SamssonTci";
-                                        //        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
-                                        //        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                        //        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                        //        if (singleCharge.Description == "SUCCESS")
-                                        //        {
-                                        //            messageObj.Content = "Register";
-                                        //            DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
-                                        //        }
-                                        //        result.Status = singleCharge.Description;
-                                        //        result.Token = token;
-                                        //    }
-                                        //}
-                                    }
-                                    else if (!servicesCodes.Any(o => o == service.ServiceCode))
-                                    {
-                                        result.Status = "Service is not defined";
-                                    }
-                                    else
-                                    {
-                                        using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
-                                        {
-                                            var logId = SharedLibrary.MessageHandler.OtpLog(service, messageObj.MobileNumber, "confirm", "webservice-" + messageObj.ConfirmCode);
-                                            var singleCharge = SharedLibrary.ServiceHandler.GetOTPRequestId(entityService, messageObj);
-                                            if (singleCharge == null)
-                                                result.Status = "No Otp Request Found";
-                                            else
-                                            {
-                                                //string aggregatorName = "MobinOneMapfa";
-                                                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
-                                                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                                singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entityService, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                                result.Status = singleCharge.Description;
-                                            }
-                                            SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, result.Status.ToString());
-                                        }
-
-                                    }
-                                    //!!!!!!!!!!!!!!!!!!!!!oldcode
-                                    //if (service.ServiceCode == "AvvalPod")
-                                    // {
-                                    //     using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
-                                    //     {
-                                    //         var singleCharge = AvvalPodLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
-                                    //         if (singleCharge == null)
-                                    //             result.Status = "No Otp Request Found";
-                                    //         else
-                                    //         {
-                                    //             //string aggregatorName = "Telepromo";
-                                    //             string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
-                                    //             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                    //             singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                    //             result.Status = singleCharge.Description;
-                                    //         }
-                                    //     }
-                                    // }
-                                    //!!!!!!!!!!!!!!!!!!!!!oldcode
-                                    //if (service.ServiceCode == "AvvalYad")
-                                    // {
-                                    //     using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
-                                    //     {
-                                    //         var singleCharge = AvvalYadLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
-                                    //         if (singleCharge == null)
-                                    //             result.Status = "No Otp Request Found";
-                                    //         else
-                                    //         {
-                                    //             //string aggregatorName = "Telepromo";
-                                    //             string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
-                                    //             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                    //             singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                    //             result.Status = singleCharge.Description;
-                                    //         }
-                                    //     }
-                                    // }
-                                    //!!!!!!!!!!!!!!!!!!!!!oldcode
-                                    //if (service.ServiceCode == "SepidRood")
-                                    //   {
-                                    //       using (var entity = new SepidRoodLibrary.Models.SepidRoodEntities())
-                                    //       {
-                                    //           var singleCharge = new SepidRoodLibrary.Models.Singlecharge();
-                                    //           singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
-                                    //           if (singleCharge == null)
-                                    //               result.Status = "No Otp Request Found";
-                                    //           else
-                                    //           {
-                                    //               //string aggregatorName = "PardisImi";
-                                    //               string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
-                                    //               var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
-                                    //               singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                    //               result.Status = singleCharge.Description;
-                                    //           }
-                                    //       }
-                                    //   }
-
-
-                                    //else
-                                    //    result.Status = "Service does not defined";
-                                }
-
-                                else
-                                {
-                                    //this.fnc_checkOTPConfirmSourceType(messageObj, out errorType, out errorDescription)==false;
-
-                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + ":" + errorDescription);
-                                    resultOk = false;
-                                    result = "Exception has been occured!!! Contact Administrator";
-                                    if (messageEntity != null)
-                                        messageEntity.description = (errorType + "-" + errorDescription).Substring(0, Math.Min((errorType + "-" + errorDescription).Length, 200));
-
-                                }
-                                if (messageEntity != null)
-                                {
-                                    entity.ReceievedMessages.Add(messageEntity);
-                                    entity.SaveChanges();
-                                }
-                            }
-
-                        }
-                    }
+                    result = await this.fnc_processOTPConfirm(messageObj, localCall, messageSourceType);
+                    if (result is string && result == "Exception has been occured!!! Contact Administrator")
+                        resultOk = false;
                 }
             }
             catch (Exception e)
@@ -634,6 +520,306 @@ namespace Portal.Controllers
             response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
             logs.Info("AppController:OtpConfirm,End," + messageObj.ServiceCode + "," + messageObj.MobileNumber);
             return response;
+        }
+
+        /// <summary>
+        /// new apps and new landings
+        /// </summary>
+        /// <param name="messageObj"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<HttpResponseMessage> Confirm4DigitsOTPForApps([FromBody]MessageObject messageObj)
+        {
+            logs.Info("AppController:Confirm4DigitsOTPForApps,Start," + messageObj.ServiceCode + "," + messageObj.MobileNumber);
+            dynamic result = new ExpandoObject();
+            bool resultOk = true;
+            bool localCall = false;
+            try
+            {
+                if (messageObj.Number != null)
+                {
+                    messageObj.MobileNumber = messageObj.Number;
+                    result.Number = messageObj.MobileNumber;
+                }
+                else
+                    result.MobileNumber = messageObj.MobileNumber;
+
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                       , new Dictionary<string, string>() { { "servicecode",messageObj.ServiceCode }
+                                                            ,{ "content",messageObj.Content}
+                                                            ,{ "mobile",messageObj.MobileNumber}}, null, "AppPortal:AppController:Confirm4DigitsOTPForApps");
+                if (!string.IsNullOrEmpty(tpsRatePassed))
+                {
+                    result = tpsRatePassed;
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                if (string.IsNullOrEmpty(messageObj.appName))
+                {
+                    result = "AppName is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+                if (string.IsNullOrEmpty(messageObj.cipherParameter))
+                {
+                    result = "cipherParameter is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+                if (string.IsNullOrEmpty(messageObj.ExtraParameter))
+                {
+                    result = "ExtraParameter is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                string errorType, errorDescription;
+                if (!SharedLibrary.Encrypt.fnc_detectApp(messageObj.appName, messageObj.ExtraParameter
+                    , messageObj.cipherParameter, out errorType, out errorDescription))
+                {
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
+                    logs.Error("AppPortal:AppController:Confirm4DigitsOTPForApps,DetectApp," + errorType + "," + errorDescription);
+                    result = errorType;
+                    resultOk = false;
+                }
+                if (!resultOk)
+                    goto endSection;
+
+                string hash = "";
+                hash = SharedLibrary.Encrypt.GetSha256Hash("Confirm4DigitsOTPForApps" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                SharedLibrary.MessageHandler.MessageSourceType messageSourceType = SharedLibrary.MessageHandler.MessageSourceType.app;
+
+                //var hash = SharedLibrary.Encrypt.GetSha256Hash("OtpConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else if (resultOk)
+                {
+
+                    result = await this.fnc_processOTPConfirm(messageObj, localCall, messageSourceType);
+                    if (result is string && result == "Exception has been occured!!! Contact Administrator")
+                        resultOk = false;
+
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("AppPortal:AppController:Confirm4DigitsOTPForApps:", e);
+                //result = e.Message;
+                resultOk = false;
+                result = "Exception has been occured!!! Contact Administrator";
+            }
+            endSection: var json = JsonConvert.SerializeObject(result);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            logs.Info("AppController:Confirm4DigitsOTPForApps,End," + messageObj.ServiceCode + "," + messageObj.MobileNumber);
+            return response;
+        }
+
+        private async Task<dynamic> fnc_processOTPConfirm(MessageObject messageObj, bool localCall
+            , SharedLibrary.MessageHandler.MessageSourceType messageSourceType)
+        {
+
+            dynamic result = new ExpandoObject();
+            if (messageObj.ServiceCode == "NabardGah")
+                messageObj.ServiceCode = "Soltan";
+            else if (messageObj.ServiceCode == "ShenoYad")
+                messageObj.ServiceCode = "ShenoYad500";
+
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
+            if (messageObj.Number != null)
+            {
+                messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
+                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+            }
+            else
+                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                result.Status = "Invalid Mobile Number";
+            else if (messageObj.MobileNumber == "Invalid Number")
+                result.Status = "Invalid Number";
+            else
+            {
+
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                if (service == null)
+                    result.Status = "Invalid Service Code";
+                else
+                {
+                    var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
+                    messageObj.ShortCode = serviceInfo.ShortCode;
+                    messageObj.ReceiveTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    messageObj.ReceivedFromSource = (int)messageSourceType;
+                    string errorType, errorDescription;
+                    ReceievedMessage messageEntity = null;
+                    if (messageObj.Content != null || (string.IsNullOrEmpty(messageObj.Content) && !localCall))
+                    {
+                        messageEntity = new ReceievedMessage()
+                        {
+                            MobileNumber = messageObj.MobileNumber,
+                            ShortCode = messageObj.ShortCode,
+                            ReceivedTime = DateTime.Parse(messageObj.ReceiveTime),
+                            PersianReceivedTime = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
+                            Content = (messageObj.Content == null) ? " " : messageObj.Content,
+                            IsProcessed = true,
+                            IsReceivedFromIntegratedPanel = false,
+                            ReceivedFromSource = messageObj.ReceivedFromSource,
+                            ReceivedFrom = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress + "-OtpConfirm" : null
+                        };
+                    }
+                    using (var entity = new PortalEntities())
+                    {
+                        if (this.fnc_checkOTPConfirmSourceType(messageObj, localCall, out errorType, out errorDescription))
+                        {
+
+                            //if (messageObj.Content != null)
+                            //{
+
+
+
+                            //}
+                            List<string> servicesCodes = entity.vw_servicesServicesInfo.Select(o => o.ServiceCode).ToList();
+                            //List<string> servicesNames = new List<string> { "Phantom", "TajoTakht", "Hazaran", "LahzeyeAkhar","Soltan"
+                            //    ,"MenchBaz","DonyayeAsatir","Aseman","AvvalPod","AvvalPod500","AvvalYad","BehAmooz500"
+                            //    ,"FitShow","JabehAbzar","ShenoYad","ShenoYad500","Takavar","Tamly","Tamly500","Halghe","Dezhban","ShahreKalameh"
+                            //    ,"Soraty","DefendIran","SepidRood","Nebula","Medio","Achar"};
+
+                            if (service.ServiceCode == "Darchin")
+                            {
+                                //using (var entity = new DarchinLibrary.Models.DarchinEntities())
+                                //{
+                                //    var singleCharge = DarchinLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
+                                //    if (singleCharge == null)
+                                //        result.Status = "No Otp Request Found";
+                                //    else
+                                //    {
+                                //        messageObj.Price = singleCharge.Price;
+                                //        messageObj.Token = singleCharge.ReferenceId;
+                                //        var token = singleCharge.ReferenceId;
+                                //        //string aggregatorName = "SamssonTci";
+                                //        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
+                                //        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                //        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, typeof(DarchinLibrary.Models.DarchinEntities), singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                //        if (singleCharge.Description == "SUCCESS")
+                                //        {
+                                //            messageObj.Content = "Register";
+                                //            DarchinLibrary.HandleMo.ReceivedMessage(messageObj, service);
+                                //        }
+                                //        result.Status = singleCharge.Description;
+                                //        result.Token = token;
+                                //    }
+                                //}
+                            }
+                            else if (!servicesCodes.Any(o => o == service.ServiceCode))
+                            {
+                                result.Status = "Service is not defined";
+                            }
+                            else
+                            {
+                                using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
+                                {
+                                    var logId = SharedLibrary.MessageHandler.OtpLog(service, messageObj.MobileNumber, "confirm", "webservice-" + messageObj.ConfirmCode);
+                                    var singleCharge = SharedLibrary.ServiceHandler.GetOTPRequestId(entityService, messageObj);
+                                    if (singleCharge == null)
+                                        result.Status = "No Otp Request Found";
+                                    else
+                                    {
+                                        //string aggregatorName = "MobinOneMapfa";
+                                        string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
+                                        var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                                        singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entityService, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                                        result.Status = singleCharge.Description;
+                                    }
+                                    SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, result.Status.ToString());
+                                }
+
+                            }
+                            //!!!!!!!!!!!!!!!!!!!!!oldcode
+                            //if (service.ServiceCode == "AvvalPod")
+                            // {
+                            //     using (var entity = new AvvalPodLibrary.Models.AvvalPodEntities())
+                            //     {
+                            //         var singleCharge = AvvalPodLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
+                            //         if (singleCharge == null)
+                            //             result.Status = "No Otp Request Found";
+                            //         else
+                            //         {
+                            //             //string aggregatorName = "Telepromo";
+                            //             string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
+                            //             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                            //             singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                            //             result.Status = singleCharge.Description;
+                            //         }
+                            //     }
+                            // }
+                            //!!!!!!!!!!!!!!!!!!!!!oldcode
+                            //if (service.ServiceCode == "AvvalYad")
+                            // {
+                            //     using (var entity = new AvvalYadLibrary.Models.AvvalYadEntities())
+                            //     {
+                            //         var singleCharge = AvvalYadLibrary.ServiceHandler.GetOTPRequestId(entity, messageObj);
+                            //         if (singleCharge == null)
+                            //             result.Status = "No Otp Request Found";
+                            //         else
+                            //         {
+                            //             //string aggregatorName = "Telepromo";
+                            //             string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
+                            //             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                            //             singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                            //             result.Status = singleCharge.Description;
+                            //         }
+                            //     }
+                            // }
+                            //!!!!!!!!!!!!!!!!!!!!!oldcode
+                            //if (service.ServiceCode == "SepidRood")
+                            //   {
+                            //       using (var entity = new SepidRoodLibrary.Models.SepidRoodEntities())
+                            //       {
+                            //           var singleCharge = new SepidRoodLibrary.Models.Singlecharge();
+                            //           singleCharge = SharedLibrary.MessageHandler.GetOTPRequestId(entity, messageObj);
+                            //           if (singleCharge == null)
+                            //               result.Status = "No Otp Request Found";
+                            //           else
+                            //           {
+                            //               //string aggregatorName = "PardisImi";
+                            //               string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
+                            //               var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
+                            //               singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entity, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
+                            //               result.Status = singleCharge.Description;
+                            //           }
+                            //       }
+                            //   }
+
+
+                            //else
+                            //    result.Status = "Service does not defined";
+                        }
+
+                        else
+                        {
+                            //this.fnc_checkOTPConfirmSourceType(messageObj, out errorType, out errorDescription)==false;
+
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + ":" + errorDescription);
+                            //resultOk = false;
+                            result = "Exception has been occured!!! Contact Administrator";
+                            if (messageEntity != null)
+                                messageEntity.description = (errorType + "-" + errorDescription).Substring(0, Math.Min((errorType + "-" + errorDescription).Length, 200));
+
+                        }
+                        if (messageEntity != null)
+                        {
+                            entity.ReceievedMessages.Add(messageEntity);
+                            entity.SaveChanges();
+                        }
+                    }
+
+                }
+            }
+            return result;
         }
         /// <summary>
         /// 
@@ -680,7 +866,7 @@ namespace Portal.Controllers
                         DateTime receivedTime;
                         if (!DateTime.TryParse(messageObject.ReceiveTime, out receivedTime))
                         {
-                            errorType = "ReceivedTime cannot be parsed to SateTime type";
+                            errorType = "ReceivedTime cannot be parsed to DateTime type";
                             errorDescription = messageObject.ReceiveTime;
                             return false;
                         }
@@ -753,6 +939,67 @@ namespace Portal.Controllers
                 return false;
             }
         }
+        #endregion
+
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAppCipherText(string appName, string extraParameter)
+        {
+
+            dynamic result = new ExpandoObject();
+            bool resultOk = true;
+
+            try
+            {
+
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                       , new Dictionary<string, string>() { { "appname", appName } }, null, "AppPortal:AppController:GetAppCipherText");
+                if (!string.IsNullOrEmpty(tpsRatePassed))
+                {
+                    result = tpsRatePassed;
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                if (string.IsNullOrEmpty(appName))
+                {
+                    result = "AppName is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+                if (string.IsNullOrEmpty(extraParameter))
+                {
+                    result = "ExtraParameter is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                string errorType, errorDescription;
+                string cipherText = SharedLibrary.Encrypt.fnc_enryptAppParameter(appName, extraParameter, out errorType, out errorDescription);
+                if (!string.IsNullOrEmpty(errorType))
+                {
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
+                    logs.Error("AppPortal:AppController:GetAppCipherText" + errorType + "," + errorDescription);
+                    result = errorType;
+                    resultOk = false;
+                }
+
+            }
+            catch (Exception e)
+            {
+                logs.Error("AppPortal:AppController:GetAppCipherText:", e);
+                //result = e.Message;
+                resultOk = false;
+                result = "Exception has been occured!!! Contact Administrator";
+            }
+            endSection: var json = JsonConvert.SerializeObject(result);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+
+            return response;
+        }
         [HttpPost]
         [AllowAnonymous]
         public async Task<HttpResponseMessage> WebMessage([FromBody]MessageObject messageObj)
@@ -778,8 +1025,11 @@ namespace Portal.Controllers
                 {
 
                     var hash = SharedLibrary.Encrypt.GetSha256Hash("WebMessage" + messageObj.ServiceCode + messageObj.MobileNumber);
-                    if (messageObj.AccessKey != hash)
+                    var hashNew = SharedLibrary.Encrypt.GetSha256Hash("WebMessage" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                    if (messageObj.AccessKey != hash && messageObj.AccessKey != hashNew)
+                    {
                         result.Status = "You do not have permission";
+                    }
                     else if (messageObj.Content == null)
                         result.Status = "Content cannot be null";
                     else if (messageObj.ServiceCode == null)
@@ -855,8 +1105,11 @@ namespace Portal.Controllers
 
 
                     var hash = SharedLibrary.Encrypt.GetSha256Hash("Register" + messageObj.ServiceCode + messageObj.Number);
-                    if (messageObj.AccessKey != hash)
+                    var hashNew = SharedLibrary.Encrypt.GetSha256Hash("Register" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                    if (messageObj.AccessKey != hash && messageObj.AccessKey != hashNew)
+                    {
                         result.Status = "You do not have permission";
+                    }
                     else
                     {
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
@@ -926,8 +1179,11 @@ namespace Portal.Controllers
                 else
                 {
                     var hash = SharedLibrary.Encrypt.GetSha256Hash("Deregister" + messageObj.ServiceCode + messageObj.Token);
-                    if (messageObj.AccessKey != hash)
+                    var hashNew = SharedLibrary.Encrypt.GetSha256Hash("Deregister" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                    if (messageObj.AccessKey != hash && messageObj.AccessKey != hashNew)
+                    {
                         result.Status = "You do not have permission";
+                    }
                     else
                     {
                         var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
@@ -997,8 +1253,11 @@ namespace Portal.Controllers
                 {
                     result.Status = "error";
                     var hash = SharedLibrary.Encrypt.GetSha256Hash("AppMessage" + messageObj.ServiceCode + messageObj.MobileNumber + messageObj.Content.Substring(0, 3));
-                    if (messageObj.AccessKey != hash)
+                    var hashNew = SharedLibrary.Encrypt.GetSha256Hash("AppMessage" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                    if (messageObj.AccessKey != hash && messageObj.AccessKey != hashNew)
+                    {
                         result.Status = "You do not have permission";
+                    }
                     else
                     {
                         if (messageObj.ServiceCode == "NabardGah")
@@ -1067,8 +1326,11 @@ namespace Portal.Controllers
                         result.MobileNumber = messageObj.MobileNumber;
 
                     var hash = SharedLibrary.Encrypt.GetSha256Hash("IsUserSubscribed" + messageObj.ServiceCode + messageObj.MobileNumber);
-                    if (messageObj.AccessKey != hash)
+                    var hashNew = SharedLibrary.Encrypt.GetSha256Hash("IsUserSubscribed" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                    if (messageObj.AccessKey != hash && messageObj.AccessKey != hashNew)
+                    {
                         result.Status = "You do not have permission";
+                    }
                     else
                     {
                         messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
@@ -1142,8 +1404,11 @@ namespace Portal.Controllers
                 else
                 {
                     var hash = SharedLibrary.Encrypt.GetSha256Hash("Verification" + messageObj.ServiceCode + messageObj.MobileNumber);
-                    if (messageObj.AccessKey != hash)
+                    var hashNew = SharedLibrary.Encrypt.GetSha256Hash("Verification" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                    if (messageObj.AccessKey != hash && messageObj.AccessKey != hashNew)
+                    {
                         result.Status = "You do not have permission";
+                    }
                     else
                     {
                         if (messageObj.ServiceCode == "NabardGah")
@@ -1268,8 +1533,11 @@ namespace Portal.Controllers
                 else
                 {
                     var hash = SharedLibrary.Encrypt.GetSha256Hash("SubscriberStatus" + messageObj.ServiceCode + messageObj.MobileNumber);
-                    if (messageObj.AccessKey != hash)
+                    var hashNew = SharedLibrary.Encrypt.GetSha256Hash("SubscriberStatus" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                    if (messageObj.AccessKey != hash && messageObj.AccessKey != hashNew)
+                    {
                         result.Status = "You do not have permission";
+                    }
                     else
                     {
                         if (messageObj.ServiceCode == "NabardGah")

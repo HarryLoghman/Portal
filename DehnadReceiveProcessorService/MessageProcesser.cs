@@ -535,7 +535,11 @@ namespace DehnadReceiveProcessorService
                         receivedMessage.IsProcessed = true;
                 }
                 else
+                {
+                    receivedMessage.description = message.description;
+                    receivedMessage.ReceivedFrom = message.ReceivedFrom;
                     receivedMessage.IsProcessed = true;
+                }
                 entity.Entry(receivedMessage).State = System.Data.Entity.EntityState.Modified;
                 entity.SaveChanges();
             }

@@ -31,6 +31,7 @@ namespace SharedLibrary
             //SharedVariables.logs.Error(requestParamsStr);
             using (var portal = new Models.PortalEntities())
             {
+                //SharedVariables.logs.Error(string.IsNullOrEmpty(requestParamsStr) ? null : requestParamsStr.Substring(0, Math.Min(requestParamsStr.Length, 200)));
                 var requestLog = new Models.RequestsLog();
                 requestLog.destinationIP = destinationIP;
                 requestLog.methodName = methodName;

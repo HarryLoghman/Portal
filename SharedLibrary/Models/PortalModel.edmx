@@ -16,6 +16,19 @@
           <Property Name="AggregatorPassword" Type="nvarchar" MaxLength="100" />
           <Property Name="tps" Type="int" />
         </EntityType>
+        <EntityType Name="Apps">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="appName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="keySize" Type="int" Nullable="false" />
+          <Property Name="IV" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="keyVector" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="enryptAlghorithm" Type="nvarchar" MaxLength="100" />
+          <Property Name="description" Type="nvarchar" MaxLength="500" />
+          <Property Name="state" Type="int" />
+        </EntityType>
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -745,6 +758,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
         </Function>
         <EntityContainer Name="PortalModelStoreContainer">
           <EntitySet Name="Aggregators" EntityType="Self.Aggregators" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Apps" EntityType="Self.Apps" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoleUserAccess" EntityType="Self.AspNetRoleUserAccess" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -1021,6 +1035,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           </FunctionImport>
           <EntitySet Name="ReceievedMessages" EntityType="PortalModel.ReceievedMessage" />
           <EntitySet Name="vw_ReceivedMessages" EntityType="PortalModel.vw_ReceivedMessages" />
+          <EntitySet Name="Apps" EntityType="PortalModel.App" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1750,6 +1765,19 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="RetryCount" Type="Int32" />
           <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="App">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="appName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="keySize" Type="Int32" Nullable="false" />
+          <Property Name="IV" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="keyVector" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="enryptAlghorithm" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="state" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2390,6 +2418,20 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
                 <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Apps">
+            <EntityTypeMapping TypeName="PortalModel.App">
+              <MappingFragment StoreEntitySet="Apps">
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="enryptAlghorithm" ColumnName="enryptAlghorithm" />
+                <ScalarProperty Name="keyVector" ColumnName="keyVector" />
+                <ScalarProperty Name="IV" ColumnName="IV" />
+                <ScalarProperty Name="keySize" ColumnName="keySize" />
+                <ScalarProperty Name="appName" ColumnName="appName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -58,7 +58,8 @@
         <EntityTypeShape EntityType="PortalModel.RealtimeStatisticsFor3GServices" Width="1.5" PointX="17.75" PointY="13.625" />
         <EntityTypeShape EntityType="PortalModel.RequestsLog" Width="1.5" PointX="8.75" PointY="19.625" />
         <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="8.0733395088805544" PointY="24.375777553941951" />
-        <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="9.45256776802827" PointY="5.19994774702934" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="9.45256776802827" PointY="5.19994774702934" />
+        <EntityTypeShape EntityType="PortalModel.App" Width="1.5" PointX="8.770198483378719" PointY="21.162791306694405" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         

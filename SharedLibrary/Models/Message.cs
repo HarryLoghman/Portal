@@ -48,6 +48,13 @@ namespace SharedLibrary.Models
 
         public string ExtraParameter { get; set; }
         
+        public string description { get; set; }
+
+        /// <summary>
+        /// for detecting app calling our methods
+        /// </summary>
+        public string appName { get; set; }
+        public string cipherParameter { get; set; }
     }
 
 }
