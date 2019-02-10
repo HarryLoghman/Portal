@@ -18,12 +18,19 @@ namespace Portal.Controllers
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin", "Halghe" };
-        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe", "Achar" };
-        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe", "Achar" };
-        private List<string> TimeBasedServices = new List<string>() { "ShahreKalameh", "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "AvvalPod", "TahChin", "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin", "Dambel", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin", "Halghe", "Achar" };
-        private List<string> PriceBasedServices = new List<string>() { /*"Soltan",*/ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran", "AvvalYad", "BehAmooz500", "Darchin" };
-
+        private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran"
+            , "AvvalYad", "BehAmooz500", "Darchin", "Halghe","Hoshang" };
+        private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly"
+            , "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin"
+            , "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin"
+            , "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin"
+            , "Halghe", "Achar","Hoshang" };
+        private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir"
+            , "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin"
+            , "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin"
+            , "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin"
+            , "Halghe", "Achar","Hoshang" };
+        
         #region OTP Request
         //for old apps, old landings and localcall
         [HttpPost]
@@ -107,7 +114,8 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else if (resultOk)
                 {
-                    result = await this.fnc_processOTPRequest(messageObj, localCall, messageSourceType);
+                    string status = await this.fnc_processOTPRequest(messageObj, localCall, messageSourceType);
+                    result.Status = status;
                 }
             }
             catch (Exception e)
@@ -202,8 +210,8 @@ namespace Portal.Controllers
                 else
                 {
 
-                    result = await this.fnc_processOTPRequest(messageObj, localCall, messageSourceType);
-
+                    string status = await this.fnc_processOTPRequest(messageObj, localCall, messageSourceType);
+                    result.Status = status;
                 }
 
             }
@@ -223,10 +231,10 @@ namespace Portal.Controllers
             return response;
         }
 
-        private async Task<dynamic> fnc_processOTPRequest(MessageObject messageObj, bool localCall
+        private async Task<string> fnc_processOTPRequest(MessageObject messageObj, bool localCall
             , SharedLibrary.MessageHandler.MessageSourceType messageSourceType)
         {
-            dynamic result = new ExpandoObject();
+            string status = "";
             if (messageObj.Price == null)
                 messageObj.Price = 0;
             if (messageObj.ServiceCode == "NabardGah")
@@ -234,7 +242,7 @@ namespace Portal.Controllers
             else if (messageObj.ServiceCode == "ShenoYad")
                 messageObj.ServiceCode = "ShenoYad500";
             else if (!OtpAllowedServiceCodes.Contains(messageObj.ServiceCode) && messageObj.Price.Value > 7) // Hub use price 5 and 6 for sub and unsub
-                result.Status = "This ServiceCode does not have permission for OTP operation";
+                status = "This ServiceCode does not have permission for OTP operation";
             else
             {
                 messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
@@ -246,15 +254,15 @@ namespace Portal.Controllers
                 else
                     messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
                 if (messageObj.MobileNumber == "Invalid Mobile Number")
-                    result.Status = "Invalid Mobile Number";
+                    status = "Invalid Mobile Number";
                 else if (messageObj.MobileNumber == "Invalid Number")
-                    result.Status = "Invalid Number";
+                    status = "Invalid Number";
                 else
                 {
                     var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
 
                     if (service == null)
-                        result.Status = "Invalid serviceCode";
+                        status = "Invalid serviceCode";
                     else
                     {
 
@@ -298,7 +306,7 @@ namespace Portal.Controllers
                             }
                             else if (!servicesCodes.Any(o => o == service.ServiceCode))
                             {
-                                result.Status = "Service does not defined";
+                                status = "Service does not defined";
                             }
                             else
                             {
@@ -322,7 +330,7 @@ namespace Portal.Controllers
                                         //messageObj = PhantomLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, messageObj, messageObj.Price.Value, 0, null);
                                     }
                                     if (messageObj.Price == null)
-                                        result.Status = "Invalid Price";
+                                        status = "Invalid Price";
                                     else
                                     {
 
@@ -333,7 +341,7 @@ namespace Portal.Controllers
                                         var isOtpExists = entityService.Singlecharges.Where(o => o.MobileNumber == messageObj.MobileNumber && o.Price == 0 && o.Description == "SUCCESS-Pending Confirmation" && o.DateCreated > minuetesBackward).OrderByDescending(o => o.DateCreated).FirstOrDefault();
                                         if (isOtpExists != null && messageObj.Price.Value == 0)
                                         {
-                                            result.Status = "Otp request already exists for this subscriber";
+                                            status = "Otp request already exists for this subscriber";
                                         }
                                         else
                                         {
@@ -342,10 +350,10 @@ namespace Portal.Controllers
                                             string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                             var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                             singleCharge = await SharedLibrary.MessageSender.OTPRequestGeneral(aggregatorName, entityService, singleCharge, messageObj, serviceAdditionalInfo);
-                                            result.Status = singleCharge.Description;
+                                            status = singleCharge.Description;
 
                                             //only for fitshow and soraty
-                                            if (result.Status == "SUCCESS-Pending Confirmation" && (service.ServiceCode == "FitShow" || service.ServiceCode == "Soraty"))
+                                            if (status == "SUCCESS-Pending Confirmation" && (service.ServiceCode == "FitShow" || service.ServiceCode == "Soraty"))
                                             {
                                                 /******************old Code for fitShow!!!!!!!!!!!!!! it uses soraty functions
                                                 if (result.Status == "SUCCESS-Pending Confirmation")
@@ -408,7 +416,7 @@ namespace Portal.Controllers
                                                 }
                                             }
                                         }
-                                        SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, result.Status.ToString());
+                                        SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, status.ToString());
                                     }
                                 }
                             }
@@ -416,7 +424,7 @@ namespace Portal.Controllers
                     }
                 }
             }
-            return result;
+            return status;
         }
 
         #endregion
@@ -501,8 +509,9 @@ namespace Portal.Controllers
                     result.Status = "You do not have permission";
                 else if (resultOk)
                 {
-                    result = await this.fnc_processOTPConfirm(messageObj, localCall, messageSourceType);
-                    if (result is string && result == "Exception has been occured!!! Contact Administrator")
+                    string status = await this.fnc_processOTPConfirm(messageObj, localCall, messageSourceType);
+                    result.Status = status;
+                    if (status == "Exception has been occured!!! Contact Administrator")
                         resultOk = false;
                 }
             }
@@ -597,9 +606,13 @@ namespace Portal.Controllers
                 else if (resultOk)
                 {
 
-                    result = await this.fnc_processOTPConfirm(messageObj, localCall, messageSourceType);
-                    if (result is string && result == "Exception has been occured!!! Contact Administrator")
+                    string status = await this.fnc_processOTPConfirm(messageObj, localCall, messageSourceType);
+                    result.Status = status;
+                    if (status == "Exception has been occured!!! Contact Administrator")
+                    {    
                         resultOk = false;
+                    }
+                    
 
                 }
             }
@@ -619,11 +632,11 @@ namespace Portal.Controllers
             return response;
         }
 
-        private async Task<dynamic> fnc_processOTPConfirm(MessageObject messageObj, bool localCall
+        private async Task<string> fnc_processOTPConfirm(MessageObject messageObj, bool localCall
             , SharedLibrary.MessageHandler.MessageSourceType messageSourceType)
         {
 
-            dynamic result = new ExpandoObject();
+            string status = null;
             if (messageObj.ServiceCode == "NabardGah")
                 messageObj.ServiceCode = "Soltan";
             else if (messageObj.ServiceCode == "ShenoYad")
@@ -639,15 +652,15 @@ namespace Portal.Controllers
                 messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
 
             if (messageObj.MobileNumber == "Invalid Mobile Number")
-                result.Status = "Invalid Mobile Number";
+                status = "Invalid Mobile Number";
             else if (messageObj.MobileNumber == "Invalid Number")
-                result.Status = "Invalid Number";
+                status = "Invalid Number";
             else
             {
 
                 var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
                 if (service == null)
-                    result.Status = "Invalid Service Code";
+                    status = "Invalid Service Code";
                 else
                 {
                     var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
@@ -716,7 +729,7 @@ namespace Portal.Controllers
                             }
                             else if (!servicesCodes.Any(o => o == service.ServiceCode))
                             {
-                                result.Status = "Service is not defined";
+                                status = "Service is not defined";
                             }
                             else
                             {
@@ -725,16 +738,16 @@ namespace Portal.Controllers
                                     var logId = SharedLibrary.MessageHandler.OtpLog(service, messageObj.MobileNumber, "confirm", "webservice-" + messageObj.ConfirmCode);
                                     var singleCharge = SharedLibrary.ServiceHandler.GetOTPRequestId(entityService, messageObj);
                                     if (singleCharge == null)
-                                        result.Status = "No Otp Request Found";
+                                        status = "No Otp Request Found";
                                     else
                                     {
                                         //string aggregatorName = "MobinOneMapfa";
                                         string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(service.ServiceCode);
                                         var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(messageObj.ServiceCode, aggregatorName);
                                         singleCharge = await SharedLibrary.MessageSender.OTPConfirmGeneral(aggregatorName, entityService, singleCharge, messageObj, serviceAdditionalInfo, messageObj.ConfirmCode);
-                                        result.Status = singleCharge.Description;
+                                        status = singleCharge.Description;
                                     }
-                                    SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, result.Status.ToString());
+                                    SharedLibrary.MessageHandler.OtpLogUpdate(service, logId, status.ToString());
                                 }
 
                             }
@@ -805,7 +818,7 @@ namespace Portal.Controllers
 
                             SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + ":" + errorDescription);
                             //resultOk = false;
-                            result = "Exception has been occured!!! Contact Administrator";
+                            status = "Exception has been occured!!! Contact Administrator";
                             if (messageEntity != null)
                                 messageEntity.description = (errorType + "-" + errorDescription).Substring(0, Math.Min((errorType + "-" + errorDescription).Length, 200));
 
@@ -819,7 +832,7 @@ namespace Portal.Controllers
 
                 }
             }
-            return result;
+            return status;
         }
         /// <summary>
         /// 
@@ -941,9 +954,15 @@ namespace Portal.Controllers
         }
         #endregion
 
+        /// <summary>
+        /// this function is implemented for those apps 
+        /// </summary>
+        /// <param name="appName"></param>
+        /// <param name="extraParameter"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage GetAppCipherText(string appName, string extraParameter)
+        private HttpResponseMessage GetAppCipherText(string appName, string extraParameter)
         {
 
             dynamic result = new ExpandoObject();

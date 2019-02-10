@@ -48,6 +48,16 @@ namespace DehnadReceiveProcessorService
             }
         }
 
+        static SharedShortCodeServiceLibrary.HandleMo v_hoshangLibrary;
+        public static SharedShortCodeServiceLibrary.HandleMo prp_hoshangLibrary
+        {
+            get
+            {
+                if (v_hoshangLibrary == null) v_hoshangLibrary = new SharedShortCodeServiceLibrary.HandleMo("Hoshang");
+                return v_hoshangLibrary;
+            }
+        }
+
         static SharedShortCodeServiceLibrary.HandleMo v_asemanLibrary;
         public static SharedShortCodeServiceLibrary.HandleMo prp_asemanLibrary
         {

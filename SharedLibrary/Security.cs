@@ -10,8 +10,7 @@ namespace SharedLibrary
 {
     public class Security
     {
-        public static string fnc_tpsRatePassed(HttpContext context, Dictionary<string, string> requestParams, string destinationIP, string methodName
-            )
+        public static string fnc_tpsRatePassed(HttpContext context, Dictionary<string, string> requestParams, string destinationIP, string methodName)
         {
             return fnc_tpsRatePassed(context, requestParams, destinationIP, methodName, DateTime.Now);
         }
@@ -71,23 +70,23 @@ namespace SharedLibrary
                 }
                 else
                 {
-                    string returnValue = (actionMessage == null ? "TPS Rate has been passed " : actionMessage.Value.ToString());
-                    SharedVariables.logs.Error("TPS Rate has been exceeded " + returnValue);
+                    string returnValue = (actionMessage == null ? "TCL Rate has been passed " : actionMessage.Value.ToString());
+                    SharedVariables.logs.Error("TCL Rate has been exceeded " + returnValue);
                     if (action.Value.ToString() == "0")
                     {
-                        SharedVariables.logs.Error("TPS Rate has been exceeded:Request is rejected");
-                        return "TPS Rate has been passed";
+                        SharedVariables.logs.Error("TCL Rate has been exceeded:Request is rejected" + returnValue);
+                        return "TCL Rate has been passed";
                     }
                     else if (action.Value.ToString() == "1")
                     {
                         //only notify
-                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, returnValue);
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue);
                         return null;
                     }
                     else if (action.Value.ToString() == "2")
                     {
-                        SharedVariables.logs.Error("TPS Rate has been exceeded:Request is rejected");
-                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, returnValue);
+                        SharedVariables.logs.Error("TCL Rate has been exceeded:Request is rejected" + returnValue);
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error,"Reject,"+ returnValue);
                         return "TPS Rate has been passed"; ;
                     }
 

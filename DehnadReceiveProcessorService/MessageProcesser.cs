@@ -825,6 +825,12 @@ namespace DehnadReceiveProcessorService
                     //AcharLibrary.HandleMo h = new AcharLibrary.HandleMo();
                     //isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
+                else if (service.ServiceCode == "Hoshang")
+                {
+                    isSucceeded = SharedVariables.prp_hoshangLibrary.ReceivedMessage(message, service).Result;
+                    //AcharLibrary.HandleMo h = new AcharLibrary.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
+                }
             }
             catch (Exception e)
             {
@@ -833,96 +839,96 @@ namespace DehnadReceiveProcessorService
             return isSucceeded;
         }
 
-        private static void SendMessageUsingServiceCode(string serviceCode, MessageObject message)
-        {
-            try
-            {
-                List<string> serviceCodes = new List<string> { "MyLeague", "Danestaneh" , "Mobiliga" , "MashinBazha" , "Soltan"
-                ,"Tabriz2018" ,"SepidRood", "Tirandazi" , "BimeKarbala" ,"Boating" ,"DonyayeAsatir" ,"ShahreKalameh" ,"BimeIran"
-                ,"JabehAbzar" , "Tamly" , "ShenoYad" , "FitShow","Takavar","MenchBaz","AvvalPod","AvvalYad","IrancellTest"
-                ,"Soraty" ,"DefendIran","TahChin","Nebula" ,"Dezhban","MusicYad" ,"Phantom" ,"Medio" , "Dambel" , "Aseman"
-                ,"Medad","PorShetab","TajoTakht","LahzeyeAkhar","Hazaran"};
-                if (serviceCodes.Any(o => o == serviceCode))
-                    SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(serviceCode, message);
-                //if (serviceCode == "MyLeague")
-                //    MyLeagueLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Danestaneh")
-                //    DanestanehLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Mobiliga")
-                //    MobiligaLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "MashinBazha")
-                //    MashinBazhaLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Soltan")
-                //    SoltanLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Tabriz2018")
-                //    Tabriz2018Library.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "SepidRood")
-                //    SepidRoodLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Tirandazi")
-                //    TirandaziLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "BimeKarbala")
-                //    BimeKarbalaLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Boating")
-                //    BoatingLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "DonyayeAsatir")
-                //    DonyayeAsatirLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "ShahreKalameh")
-                //    ShahreKalamehLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "BimeIran")
-                //    BimeIranLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "JabehAbzar")
-                //    JabehAbzarLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Tamly")
-                //    TamlyLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "ShenoYad")
-                //    ShenoYadLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "FitShow")
-                //    FitShowLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Takavar")
-                //    TakavarLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "MenchBaz")
-                //    MenchBazLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "AvvalPod")
-                //    AvvalPodLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "AvvalYad")
-                //    AvvalYadLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "IrancellTest")
-                //    IrancellTestLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Soraty")
-                //    SoratyLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "DefendIran")
-                //    DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "TahChin")
-                //    TahChinLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Nebula")
-                //    NebulaLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Dezhban")
-                //    DezhbanLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "MusicYad")
-                //    MusicYadLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Phantom")
-                //    PhantomLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Medio")
-                //    MedioLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Dambel")
-                //    DambelLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Aseman")
-                //    AsemanLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Medad")
-                //    MedadLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "PorShetab")
-                //    PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "TajoTakht")
-                //    TajoTakhtLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "LahzeyeAkhar")
-                //    LahzeyeAkharLibrary.MessageHandler.InsertMessageToQueue(message);
-                //else if (serviceCode == "Hazaran")
-                //    HazaranLibrary.MessageHandler.InsertMessageToQueue(message);
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in ChooseService: " + e);
-            }
-        }
+        //private static void SendMessageUsingServiceCode(string serviceCode, MessageObject message)
+        //{
+        //    try
+        //    {
+        //        List<string> serviceCodes = new List<string> { "MyLeague", "Danestaneh" , "Mobiliga" , "MashinBazha" , "Soltan"
+        //        ,"Tabriz2018" ,"SepidRood", "Tirandazi" , "BimeKarbala" ,"Boating" ,"DonyayeAsatir" ,"ShahreKalameh" ,"BimeIran"
+        //        ,"JabehAbzar" , "Tamly" , "ShenoYad" , "FitShow","Takavar","MenchBaz","AvvalPod","AvvalYad","IrancellTest"
+        //        ,"Soraty" ,"DefendIran","TahChin","Nebula" ,"Dezhban","MusicYad" ,"Phantom" ,"Medio" , "Dambel" , "Aseman"
+        //        ,"Medad","PorShetab","TajoTakht","LahzeyeAkhar","Hazaran"};
+        //        if (serviceCodes.Any(o => o == serviceCode))
+        //            SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(serviceCode, message);
+        //        //if (serviceCode == "MyLeague")
+        //        //    MyLeagueLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Danestaneh")
+        //        //    DanestanehLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Mobiliga")
+        //        //    MobiligaLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "MashinBazha")
+        //        //    MashinBazhaLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Soltan")
+        //        //    SoltanLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Tabriz2018")
+        //        //    Tabriz2018Library.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "SepidRood")
+        //        //    SepidRoodLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Tirandazi")
+        //        //    TirandaziLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "BimeKarbala")
+        //        //    BimeKarbalaLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Boating")
+        //        //    BoatingLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "DonyayeAsatir")
+        //        //    DonyayeAsatirLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "ShahreKalameh")
+        //        //    ShahreKalamehLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "BimeIran")
+        //        //    BimeIranLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "JabehAbzar")
+        //        //    JabehAbzarLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Tamly")
+        //        //    TamlyLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "ShenoYad")
+        //        //    ShenoYadLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "FitShow")
+        //        //    FitShowLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Takavar")
+        //        //    TakavarLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "MenchBaz")
+        //        //    MenchBazLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "AvvalPod")
+        //        //    AvvalPodLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "AvvalYad")
+        //        //    AvvalYadLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "IrancellTest")
+        //        //    IrancellTestLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Soraty")
+        //        //    SoratyLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "DefendIran")
+        //        //    DefendIranLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "TahChin")
+        //        //    TahChinLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Nebula")
+        //        //    NebulaLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Dezhban")
+        //        //    DezhbanLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "MusicYad")
+        //        //    MusicYadLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Phantom")
+        //        //    PhantomLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Medio")
+        //        //    MedioLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Dambel")
+        //        //    DambelLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Aseman")
+        //        //    AsemanLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Medad")
+        //        //    MedadLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "PorShetab")
+        //        //    PorShetabLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "TajoTakht")
+        //        //    TajoTakhtLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "LahzeyeAkhar")
+        //        //    LahzeyeAkharLibrary.MessageHandler.InsertMessageToQueue(message);
+        //        //else if (serviceCode == "Hazaran")
+        //        //    HazaranLibrary.MessageHandler.InsertMessageToQueue(message);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        logs.Error("Exception in ChooseService: " + e);
+        //    }
+        //}
     }
 }
