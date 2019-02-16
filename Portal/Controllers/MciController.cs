@@ -404,7 +404,7 @@ namespace Portal.Controllers
         {
             string result = "";
             bool resultOk = true;
-            string recievedPayload = await Request.Content.ReadAsStringAsync();
+            string receivedPayload = await Request.Content.ReadAsStringAsync();
             try
             {
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current, null, null, "Portal:MciController:Notify");
@@ -417,7 +417,7 @@ namespace Portal.Controllers
                 else
                 {
                     XmlDocument xml = new XmlDocument();
-                    xml.LoadXml(recievedPayload);
+                    xml.LoadXml(receivedPayload);
                     XmlNodeList nodes = xml.SelectNodes("/notifications/notification");
                     foreach (XmlNode node in nodes)
                     {

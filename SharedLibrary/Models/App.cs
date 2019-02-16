@@ -22,5 +22,6 @@ namespace SharedLibrary.Models
         public string enryptAlghorithm { get; set; }
         public string description { get; set; }
         public Nullable<int> state { get; set; }
+        public string allowedServices { get; set; }
     }
 }

@@ -30,7 +30,7 @@ namespace Portal.Controllers
             , "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin"
             , "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin"
             , "Halghe", "Achar","Hoshang" };
-        
+
         #region OTP Request
         //for old apps, old landings and localcall
         [HttpPost]
@@ -77,7 +77,7 @@ namespace Portal.Controllers
                     //localcall
                     try
                     {
-                        string extraParameter = SharedLibrary.Encrypt.DecryptString(messageObj.ExtraParameter);
+                        string extraParameter = SharedLibrary.Encrypt.DecryptString_RijndaelManaged(messageObj.ExtraParameter);
                         if (extraParameter == "localcall")
                         {
                             localCall = true;
@@ -187,8 +187,8 @@ namespace Portal.Controllers
                 }
 
                 string errorType, errorDescription;
-                if (!SharedLibrary.Encrypt.fnc_detectApp(messageObj.appName, messageObj.ExtraParameter
-                    , messageObj.cipherParameter, out errorType, out errorDescription))
+                if (!SharedLibrary.Encrypt.fnc_detectApp(messageObj.appName, messageObj.ServiceCode, messageObj.Content, messageObj.ExtraParameter
+                    , messageObj.cipherParameter, true, out errorType, out errorDescription))
                 {
                     SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
                     logs.Error("AppPortal:AppController:RequestOTPForApps,DetectApp," + errorType + "," + errorDescription);
@@ -201,10 +201,7 @@ namespace Portal.Controllers
 
                 SharedLibrary.MessageHandler.MessageSourceType messageSourceType = SharedLibrary.MessageHandler.MessageSourceType.app;
                 hash = SharedLibrary.Encrypt.GetSha256Hash("RequestOTPForApps" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
-
-
-
-
+                
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
                 else
@@ -475,7 +472,7 @@ namespace Portal.Controllers
                     try
                     {
 
-                        string extraParameter = SharedLibrary.Encrypt.DecryptString(messageObj.ExtraParameter);
+                        string extraParameter = SharedLibrary.Encrypt.DecryptString_RijndaelManaged(messageObj.ExtraParameter);
                         if (extraParameter == "localcall")
                         {
                             localCall = true;
@@ -585,8 +582,8 @@ namespace Portal.Controllers
                 }
 
                 string errorType, errorDescription;
-                if (!SharedLibrary.Encrypt.fnc_detectApp(messageObj.appName, messageObj.ExtraParameter
-                    , messageObj.cipherParameter, out errorType, out errorDescription))
+                if (!SharedLibrary.Encrypt.fnc_detectApp(messageObj.appName, messageObj.ServiceCode, messageObj.Content, messageObj.ExtraParameter
+                    , messageObj.cipherParameter, true, out errorType, out errorDescription))
                 {
                     SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
                     logs.Error("AppPortal:AppController:Confirm4DigitsOTPForApps,DetectApp," + errorType + "," + errorDescription);
@@ -609,10 +606,10 @@ namespace Portal.Controllers
                     string status = await this.fnc_processOTPConfirm(messageObj, localCall, messageSourceType);
                     result.Status = status;
                     if (status == "Exception has been occured!!! Contact Administrator")
-                    {    
+                    {
                         resultOk = false;
                     }
-                    
+
 
                 }
             }
@@ -677,7 +674,7 @@ namespace Portal.Controllers
                             ShortCode = messageObj.ShortCode,
                             ReceivedTime = DateTime.Parse(messageObj.ReceiveTime),
                             PersianReceivedTime = SharedLibrary.Date.GetPersianDateTime(DateTime.Now),
-                            Content = (messageObj.Content == null) ? " " : messageObj.Content,
+                            Content = (string.IsNullOrEmpty(messageObj.Content)) ? (string.IsNullOrEmpty(messageObj.ConfirmCode) ? "" : messageObj.ConfirmCode) : messageObj.Content,
                             IsProcessed = true,
                             IsReceivedFromIntegratedPanel = false,
                             ReceivedFromSource = messageObj.ReceivedFromSource,
@@ -994,14 +991,43 @@ namespace Portal.Controllers
                 }
 
                 string errorType, errorDescription;
-                string cipherText = SharedLibrary.Encrypt.fnc_enryptAppParameter(appName, extraParameter, out errorType, out errorDescription);
-                if (!string.IsNullOrEmpty(errorType))
+                using (var portal = new SharedLibrary.Models.PortalEntities())
                 {
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
-                    logs.Error("AppPortal:AppController:GetAppCipherText" + errorType + "," + errorDescription);
-                    result = errorType;
-                    resultOk = false;
+                    var entryApp = portal.Apps.Where(o => o.appName == appName).FirstOrDefault();
+                    if (entryApp == null)
+                    {
+                        errorType = "AppName is not defined";
+                        errorDescription = "AppName = " + appName;
+                        resultOk = false;
+                        goto endSection;
+                    }
+                    if (!entryApp.state.HasValue || entryApp.state.Value == 0)
+                    {
+                        errorType = "AppName is disabled";
+                        errorDescription = "AppName = " + appName;
+                        resultOk = false;
+                        goto endSection;
+                    }
+                    //if (app.keySize / 8 / 2 != System.Text.Encoding.UTF8.GetByteCount(app.IV))
+                    //{
+                    //    errorType = "IV byte length is not equal with keysize/16";
+                    //    errorDescription = "AppName = " + appName;
+                    //    return "";
+                    //}
+
+                    string cipherText = SharedLibrary.Encrypt.fnc_enryptAppParameter(entryApp.enryptAlghorithm, appName
+                        , entryApp.keySize, entryApp.IV, entryApp.keyVector, extraParameter, out errorType, out errorDescription);
+                    if (!string.IsNullOrEmpty(errorType))
+                    {
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
+                        logs.Error("AppPortal:AppController:GetAppCipherText" + errorType + "," + errorDescription);
+                        result = errorType;
+                        resultOk = false;
+                    }
+
+
                 }
+
 
             }
             catch (Exception e)
@@ -1352,37 +1378,8 @@ namespace Portal.Controllers
                     }
                     else
                     {
-                        messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
-                        if (messageObj.Number != null)
-                        {
-                            messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
-                            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
-                        }
-                        else
-                            messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
-
-                        if (messageObj.MobileNumber == "Invalid Mobile Number")
-                            result.Status = "Invalid Mobile Number";
-                        else if (messageObj.MobileNumber == "Invalid Number")
-                            result.Status = "Invalid Number";
-                        else if (!VerificactionAllowedServiceCode.Contains(messageObj.ServiceCode))
-                            result.Status = "This ServiceCode does not have permission";
-                        else
-                        {
-                            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
-                            if (service == null)
-                            {
-                                result.Status = "Invalid ServiceCode";
-                            }
-                            else
-                            {
-                                var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, service.Id);
-                                if (subscriber != null && subscriber.DeactivationDate == null)
-                                    result.Status = "Subscribed";
-                                else
-                                    result.Status = "NotSubscribed";
-                            }
-                        }
+                        string status = this.fnc_checkUserStatus(messageObj);
+                        result.Status = status;
                     }
                 }
             }
@@ -1400,6 +1397,144 @@ namespace Portal.Controllers
                 response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             response.Content = new StringContent(json, Encoding.UTF8, "application/json");
             return response;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage SubscriberActivationState([FromBody]MessageObject messageObj)
+        {
+            dynamic result = new ExpandoObject();
+            bool resultOk = true;
+
+            try
+            {
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                    , new Dictionary<string, string>()
+                                                            { { "servicecode",messageObj.ServiceCode }
+                                                            ,{ "content",messageObj.Content}
+                                                            ,{ "mobile",messageObj.MobileNumber}}, null, "AppPortal:AppController:SubscriberActivationState");
+
+                if (!string.IsNullOrEmpty(tpsRatePassed))
+                {
+                    result = tpsRatePassed;
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                if (string.IsNullOrEmpty(messageObj.appName))
+                {
+                    result = "AppName is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+                if (string.IsNullOrEmpty(messageObj.cipherParameter))
+                {
+                    result = "cipherParameter is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+                if (string.IsNullOrEmpty(messageObj.ExtraParameter))
+                {
+                    result = "ExtraParameter is not specified";
+                    resultOk = false;
+                    goto endSection;
+                }
+
+                string errorType, errorDescription;
+                if (!SharedLibrary.Encrypt.fnc_detectApp(messageObj.appName, messageObj.ServiceCode, messageObj.Content, messageObj.ExtraParameter
+                    , messageObj.cipherParameter, false, out errorType, out errorDescription))
+                {
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error
+                        , errorType + " " + errorDescription);
+                    logs.Error("AppPortal:AppController:SubscriberActivationState,DetectApp," + errorType + "," + errorDescription);
+                    result = errorType;
+                    resultOk = false;
+                }
+                if (!resultOk)
+                    goto endSection;
+                if (messageObj.Number != null)
+                {
+                    messageObj.MobileNumber = messageObj.Number;
+                    result.Number = messageObj.MobileNumber;
+                }
+                else
+                    result.MobileNumber = messageObj.MobileNumber;
+
+                if (messageObj.Number != null)
+                {
+                    messageObj.MobileNumber = messageObj.Number;
+                    result.Number = messageObj.MobileNumber;
+                }
+                else
+                    result.MobileNumber = messageObj.MobileNumber;
+                string hash = "";
+                hash = SharedLibrary.Encrypt.GetSha256Hash("SubscriberActivationState" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
+                SharedLibrary.MessageHandler.MessageSourceType messageSourceType = SharedLibrary.MessageHandler.MessageSourceType.app;
+
+                //var hash = SharedLibrary.Encrypt.GetSha256Hash("OtpConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
+                if (messageObj.AccessKey != hash)
+                    result.Status = "You do not have permission";
+                else if (resultOk)
+                {
+                    string status = this.fnc_checkUserStatus(messageObj);
+                    result.Status = status;
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error("AppPortal:AppController:SubscriberActivationState:", e);
+                //result = e.Message;
+                resultOk = false;
+                result = "Exception has been occured!!! Contact Administrator";
+            }
+            endSection: var json = JsonConvert.SerializeObject(result);
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
+            logs.Info("AppController:SubscriberActivationState,End," + messageObj.ServiceCode + "," + messageObj.MobileNumber);
+            return response;
+
+        }
+        private string fnc_checkUserStatus([FromBody]MessageObject messageObj)
+        {
+            string status = null;
+
+
+
+            messageObj.MobileNumber = SharedLibrary.MessageHandler.NormalizeContent(messageObj.MobileNumber);
+            if (messageObj.Number != null)
+            {
+                messageObj.Number = SharedLibrary.MessageHandler.NormalizeContent(messageObj.Number);
+                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(messageObj.Number);
+            }
+            else
+                messageObj.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(messageObj.MobileNumber);
+
+            if (messageObj.MobileNumber == "Invalid Mobile Number")
+                status = "Invalid Mobile Number";
+            else if (messageObj.MobileNumber == "Invalid Number")
+                status = "Invalid Number";
+            else if (!VerificactionAllowedServiceCode.Contains(messageObj.ServiceCode))
+                status = "This ServiceCode does not have permission";
+            else
+            {
+                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(messageObj.ServiceCode);
+                if (service == null)
+                {
+                    status = "Invalid ServiceCode";
+                }
+                else
+                {
+                    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, service.Id);
+                    if (subscriber != null && subscriber.DeactivationDate == null)
+                        status = "Subscribed";
+                    else
+                        status = "NotSubscribed";
+                }
+            }
+
+            return status;
         }
 
         [HttpPost]

@@ -5,7 +5,7 @@
     <Setting Name="LocalPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">E:\ImiFtps\MciDirectNew</Value>
     </Setting>
-    <Setting Name="TimeIntervalInSecond" Type="System.String" Scope="User">
+    <Setting Name="DownloadIntervalInSeconds" Type="System.String" Scope="User">
       <Value Profile="(Default)">900</Value>
     </Setting>
     <Setting Name="SaveFailFilesToSingleCharge" Type="System.String" Scope="User">
@@ -13,6 +13,18 @@
     </Setting>
     <Setting Name="CheckNDaysBefore" Type="System.String" Scope="User">
       <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="SyncSubStateServices" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Tamly500</Value>
+    </Setting>
+    <Setting Name="SyncIntervalInSeconds" Type="System.String" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="SyncServiceLastTime" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SyncNSecondsBefore" Type="System.String" Scope="User">
+      <Value Profile="(Default)">3600</Value>
     </Setting>
   </Settings>
 </SettingsFile>

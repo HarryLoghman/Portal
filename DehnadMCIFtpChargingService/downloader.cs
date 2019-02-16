@@ -10,19 +10,19 @@ namespace DehnadMCIFtpChargingService
 {
     class downloader
     {
-        string ServerFtpIP = "172.17.252.201";
+        internal static string ServerFtpIP = "172.17.252.201";
         string FtpUser = "DEH";
         string FtpPassword = "d9H&*&123";
-        public void updateSingleCharge()
+        public void updateSingleChargeAndSubscription()
         {
-            updateSingleCharge(DateTime.Now.ToString("yyyyMMdd"), null, false);
+            updateSingleChargeAndSubscription(DateTime.Now.ToString("yyyyMMdd"), null, false);
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="winDirectory">send as date format yyyyMMdd</param>
         /// <param name="operatorSIDs">Operators service Id for example 9951 for achar if specfied it means we should get all file which starts with this sid no matter if we get before or not</param>
-        public void updateSingleCharge(string winDirectory, string[] operatorSIDs, bool downloadAnyway)
+        public void updateSingleChargeAndSubscription(string winDirectory, string[] operatorSIDs, bool downloadAnyway)
         {
             try
             {
@@ -41,180 +41,320 @@ namespace DehnadMCIFtpChargingService
                 }
 
                 int i, j;
+                MCILog entryMCILog;
                 StreamReader sr;
                 string str;
                 string[] lines;
                 int chargeCount = 0;
-                ChargeInfo charge = new ChargeInfo();
+                int subCount = 0;
+                int unsubCount = 0;
+                ftpItemInfo ftpItem = new ftpItemInfo();
                 List<string> props;
                 SharedLibrary.Models.ServiceModel.Singlecharge singleCharge;
                 SharedLibrary.Models.ServiceModel.SinglechargeArchive singleChargeArchive;
                 SharedLibrary.Models.MCISingleChargeFtpFile portalFtpFiles;
-                bool saveSingleCharge;
+                bool saveFtpFile;
+                string mobileNumber;
+                bool addLastState = false;
+                DateTime regDate;
                 using (var portal = new SharedLibrary.Models.PortalEntities())
                 {
-                    for (i = 0; i <= newFtpFiles.Count - 1; i++)
+                    using (var entityFtp = new FtpLogEntities())
                     {
-                        chargeCount = 0;
-                        saveSingleCharge = true;
-                        //Program.logs.Info("updateSingleCharge:Read File " + newFtpFiles[i]);
-                        if (Path.GetFileName(newFtpFiles[i].winFilePath).ToLower().Contains("_fail_") && !saveFailFilesToSingleCharge)
+                        for (i = 0; i <= newFtpFiles.Count - 1; i++)
                         {
-                            //if filename contains _fail_ do not save to single charge
-                            saveSingleCharge = false;
-                        }
-
-                        using (sr = new StreamReader(newFtpFiles[i].winFilePath))
-                        {
-                            //lines = File.ReadAllLines(newFtpFiles[i].winFilePath);
-                            str = sr.ReadToEnd();
-                            props = charge.GetType().GetProperties().Where(o => o.Name.Contains("_")).Select(o => o.Name).ToList();
-                            for (j = 0; j <= props.Count - 1; j++)
+                            chargeCount = 0;
+                            subCount = 0;
+                            unsubCount = 0;
+                            saveFtpFile = true;
+                            //Program.logs.Info("updateSingleCharge:Read File " + newFtpFiles[i]);
+                            if (Path.GetFileName(newFtpFiles[i].winFilePath).ToLower().Contains("_fail_") && !saveFailFilesToSingleCharge)
                             {
-                                //e.g. replace trans-id with trans_id
-                                str = str.Replace(props[j].Replace("_", "-"), props[j]);
+                                //if filename contains _fail_ do not save to single charge
+                                saveFtpFile = false;
                             }
-                            lines = str.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                            Program.logs.Info("updateSingleCharge:Read " + newFtpFiles[i].fileName + " with " + lines.Length + " lines(remaining files = " + (newFtpFiles.Count - i - 1) + ")");
-                            if (saveSingleCharge)
+
+                            using (sr = new StreamReader(newFtpFiles[i].winFilePath))
                             {
+                                //lines = File.ReadAllLines(newFtpFiles[i].winFilePath);
+                                str = sr.ReadToEnd();
+                                props = ftpItem.GetType().GetProperties().Where(o => o.Name.Contains("_")).Select(o => o.Name).ToList();
+                                for (j = 0; j <= props.Count - 1; j++)
+                                {
+                                    //e.g. replace trans-id with trans_id
+                                    str = str.Replace(props[j].Replace("_", "-"), props[j]);
+                                }
+                                lines = str.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                                Program.logs.Info("updateSingleCharge:Read " + newFtpFiles[i].fileName + " with " + lines.Length + " lines(remaining files = " + (newFtpFiles.Count - i - 1) + ")");
+
                                 for (j = 0; j <= lines.Length - 1; j++)
                                 {
-                                    charge = Newtonsoft.Json.JsonConvert.DeserializeObject<ChargeInfo>(lines[j]);
-                                    if (charge.event_type == "1.5")
+                                    ftpItem = Newtonsoft.Json.JsonConvert.DeserializeObject<ftpItemInfo>(lines[j]);
+
+                                    var serviceItem = portal.vw_servicesServicesInfo.Where(o => o.OperatorServiceId == ftpItem.sid.ToString()).FirstOrDefault();
+
+                                    if (serviceItem == null || string.IsNullOrEmpty(serviceItem.ServiceCode))
                                     {
-                                        chargeCount++;
-                                        var serviceCode = portal.vw_servicesServicesInfo.Where(o => o.OperatorServiceId == charge.sid.ToString()).Select(o => o.ServiceCode).FirstOrDefault();
-                                        if (string.IsNullOrEmpty(serviceCode))
+                                        Program.logs.Error("UpdateSingleChargeAndSubscription: no service is found with operatorServiceId" + ftpItem.sid);
+                                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFTPDownloader:UpdateSingleChargeAndSubscription: no service is found with operatorServiceId " + ftpItem.sid);
+                                        continue;
+                                    }
+                                    mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(ftpItem.msisdn);
+                                    if (mobileNumber == "Invalid Mobile Number")
+                                    {
+                                        Program.logs.Error("UpdateSingleChargeAndSubscription: Invalid Mobile Number" + ftpItem.msisdn);
+                                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFTPDownloader:UpdateSingleChargeAndSubscription: Invalid Mobile Number " + ftpItem.msisdn);
+                                        continue;
+                                    }
+                                    regDate = DateTime.Now;
+                                    #region save ftp line into ftplog database
+                                    entryMCILog = new MCILog()
+                                    {
+                                        base_price_point = ftpItem.base_price_point
+                                        ,
+                                        billed_price_point = ftpItem.billed_price_point
+                                        ,
+                                        channel = ftpItem.channel
+                                        ,
+                                        chargeCode = ftpItem.chargeCode
+                                        ,
+                                        datetime = ftpItem.datetime
+                                        ,
+                                        event_type = ftpItem.event_type
+                                        ,
+                                        filePath = newFtpFiles[i].winFilePath
+                                        ,
+                                        keyword = ftpItem.keyword
+                                        ,
+                                        mobileNumber = mobileNumber
+                                        ,
+                                        msisdn = ftpItem.msisdn
+                                        ,
+                                        next_renewal_date = ftpItem.next_renewal_date
+                                        ,
+                                        regdate = regDate
+                                        ,
+                                        shortcode = ftpItem.shortcode
+                                        ,
+                                        sid = ftpItem.sid
+                                        ,
+                                        serviceId = serviceItem.Id
+                                        ,
+                                        status = ftpItem.status
+                                        ,
+                                        trans_id = ftpItem.trans_id
+                                        ,
+                                        trans_status = ftpItem.trans_status
+                                        ,
+                                        validity = ftpItem.validity
+                                    };
+
+                                    entityFtp.MCILogs.Add(entryMCILog);
+                                    entityFtp.SaveChanges();
+                                    #endregion
+
+                                    if (saveFtpFile)
+                                    {
+
+                                        if (ftpItem.event_type == "1.5")
                                         {
-                                            Program.logs.Error("UpdateSingleCharge: no service is found with operatorServiceId" + charge.sid);
-                                            continue;
+                                            chargeCount++;
+                                            using (SharedLibrary.Models.ServiceModel.SharedServiceEntities entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceItem.ServiceCode))
+                                            {
+                                                if (winDirectory == DateTime.Today.ToString("yyyyMMdd"))
+                                                {
+                                                    singleCharge = entityService.Singlecharges.Where(o => o.ReferenceId == ftpItem.trans_id && o.Description == "NewMethod").FirstOrDefault();
+                                                    if (singleCharge == null)
+                                                    {
+                                                        singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
+
+                                                        if (ftpItem.status != 0)
+                                                            singleCharge.IsSucceeded = false;
+                                                        else
+                                                            singleCharge.IsSucceeded = true;
+
+                                                        singleCharge.ReferenceId = ftpItem.trans_id;
+                                                        singleCharge.Price = ftpItem.base_price_point.Value / 10;
+                                                        singleCharge.IsApplicationInformed = false;
+                                                        singleCharge.IsCalledFromInAppPurchase = false;
+                                                        singleCharge.Description = "NewMethod";
+                                                        singleCharge.DateCreated = ftpItem.datetime;
+                                                        singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(ftpItem.datetime);
+                                                        singleCharge.MobileNumber = mobileNumber;
+                                                        entityService.Singlecharges.Add(singleCharge);
+                                                    }
+                                                    else
+                                                    {
+                                                        //singleCharge = new SharedShortCodeServiceLibrary.SharedModel.Singlecharge();
+
+                                                        if (ftpItem.status != 0)
+                                                            singleCharge.IsSucceeded = false;
+                                                        else
+                                                            singleCharge.IsSucceeded = true;
+
+                                                        singleCharge.ReferenceId = ftpItem.trans_id;
+                                                        singleCharge.Price = ftpItem.base_price_point.Value / 10;
+                                                        singleCharge.IsApplicationInformed = false;
+                                                        singleCharge.IsCalledFromInAppPurchase = false;
+                                                        singleCharge.Description = "NewMethod";
+                                                        singleCharge.DateCreated = ftpItem.datetime;
+                                                        singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(ftpItem.datetime);
+                                                        singleCharge.MobileNumber = mobileNumber;
+                                                        entityService.Entry(singleCharge).State = System.Data.Entity.EntityState.Modified;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    singleChargeArchive = entityService.SinglechargeArchives.Where(o => o.ReferenceId == ftpItem.trans_id && o.Description == "NewMethod").FirstOrDefault();
+                                                    if (singleChargeArchive == null)
+                                                    {
+                                                        singleChargeArchive = new SharedLibrary.Models.ServiceModel.SinglechargeArchive();
+
+                                                        if (ftpItem.status != 0)
+                                                            singleChargeArchive.IsSucceeded = false;
+                                                        else
+                                                            singleChargeArchive.IsSucceeded = true;
+
+                                                        singleChargeArchive.ReferenceId = ftpItem.trans_id;
+                                                        singleChargeArchive.Price = ftpItem.base_price_point.Value / 10;
+                                                        singleChargeArchive.IsApplicationInformed = false;
+                                                        singleChargeArchive.IsCalledFromInAppPurchase = false;
+                                                        singleChargeArchive.Description = "NewMethod";
+                                                        singleChargeArchive.DateCreated = ftpItem.datetime;
+                                                        singleChargeArchive.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(ftpItem.datetime);
+                                                        singleChargeArchive.MobileNumber = mobileNumber;
+                                                        entityService.SinglechargeArchives.Add(singleChargeArchive);
+                                                    }
+                                                    else
+                                                    {
+                                                        //singleChargeArchive = new SharedShortCodeServiceLibrary.SharedModel.SinglechargeArchive();
+
+                                                        if (ftpItem.status != 0)
+                                                            singleChargeArchive.IsSucceeded = false;
+                                                        else
+                                                            singleChargeArchive.IsSucceeded = true;
+
+                                                        singleChargeArchive.ReferenceId = ftpItem.trans_id;
+                                                        singleChargeArchive.Price = ftpItem.base_price_point.Value / 10;
+                                                        singleChargeArchive.IsApplicationInformed = false;
+                                                        singleChargeArchive.IsCalledFromInAppPurchase = false;
+                                                        singleChargeArchive.Description = "NewMethod";
+                                                        singleChargeArchive.DateCreated = ftpItem.datetime;
+                                                        singleChargeArchive.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(ftpItem.datetime);
+                                                        singleChargeArchive.MobileNumber = mobileNumber;
+                                                        entityService.Entry(singleChargeArchive).State = System.Data.Entity.EntityState.Modified;
+                                                    }
+                                                }
+                                                entityService.SaveChanges();
+                                            }
                                         }
-                                        using (SharedLibrary.Models.ServiceModel.SharedServiceEntities serviceDB = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
+                                        else if (ftpItem.event_type == "1.1" || ftpItem.event_type == "1.2")
                                         {
-                                            if (winDirectory == DateTime.Today.ToString("yyyyMMdd"))
+                                            if (ftpItem.event_type == "1.2")
                                             {
-                                                singleCharge = serviceDB.Singlecharges.Where(o => o.ReferenceId == charge.trans_id && o.Description == "NewMethod").FirstOrDefault();
-                                                if (singleCharge == null)
+                                                unsubCount++;
+                                            }
+                                            else subCount++;
+
+                                            using (SharedLibrary.Models.PortalEntities entityPortal = new SharedLibrary.Models.PortalEntities())
+                                            {
+
+                                                #region update last subscriber last state
+                                                var entryLastFtp = entityPortal.MCISubsLastStateFtpFiles.Where(o => o.sid == ftpItem.sid && o.msisdn == ftpItem.msisdn).OrderByDescending(o => o.datetime).FirstOrDefault();
+                                                if (entryLastFtp == null || entryLastFtp.datetime < ftpItem.datetime)
                                                 {
-                                                    singleCharge = new SharedLibrary.Models.ServiceModel.Singlecharge();
+                                                    addLastState = false;
+                                                    if (entryLastFtp == null)
+                                                    {
+                                                        entryLastFtp = new SharedLibrary.Models.MCISubsLastStateFtpFile();
+                                                        addLastState = true;
+                                                    }
 
-                                                    if (charge.status != 0)
-                                                        singleCharge.IsSucceeded = false;
+                                                    //there is no state registered for this subscriber or this ftp item has newer state
+                                                    entryLastFtp.base_price_point = ftpItem.base_price_point;
+                                                    entryLastFtp.billed_price_point = ftpItem.billed_price_point;
+                                                    entryLastFtp.channel = ftpItem.channel;
+                                                    entryLastFtp.chargeCode = ftpItem.chargeCode;
+                                                    entryLastFtp.datetime = ftpItem.datetime;
+                                                    entryLastFtp.event_type = ftpItem.event_type;
+                                                    entryLastFtp.filePath = newFtpFiles[i].winFilePath;
+                                                    entryLastFtp.keyword = ftpItem.keyword;
+                                                    entryLastFtp.mobileNumber = mobileNumber;
+                                                    entryLastFtp.msisdn = ftpItem.msisdn;
+                                                    entryLastFtp.next_renewal_date = ftpItem.next_renewal_date;
+                                                    entryLastFtp.regdate = regDate;
+                                                    entryLastFtp.shortcode = ftpItem.shortcode;
+                                                    entryLastFtp.serviceId = serviceItem.Id;
+                                                    entryLastFtp.sid = ftpItem.sid;
+                                                    entryLastFtp.status = ftpItem.status;
+                                                    entryLastFtp.trans_id = ftpItem.trans_id;
+                                                    entryLastFtp.trans_status = ftpItem.trans_status;
+                                                    entryLastFtp.validity = ftpItem.validity;
+
+                                                    if (addLastState)
+                                                    {
+                                                        entityPortal.MCISubsLastStateFtpFiles.Add(entryLastFtp);
+                                                    }
                                                     else
-                                                        singleCharge.IsSucceeded = true;
+                                                    {
+                                                        entityPortal.Entry(entryLastFtp).State = System.Data.Entity.EntityState.Modified;
+                                                    }
+                                                    entityPortal.SaveChanges();
+                                                    #endregion
 
-                                                    singleCharge.ReferenceId = charge.trans_id;
-                                                    singleCharge.Price = charge.base_price_point.Value / 10;
-                                                    singleCharge.IsApplicationInformed = false;
-                                                    singleCharge.IsCalledFromInAppPurchase = false;
-                                                    singleCharge.Description = "NewMethod";
-                                                    singleCharge.DateCreated = charge.datetime;
-                                                    singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(charge.datetime);
-                                                    singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(charge.msisdn);
-                                                    serviceDB.Singlecharges.Add(singleCharge);
+
+
+
                                                 }
                                                 else
                                                 {
-                                                    //singleCharge = new SharedShortCodeServiceLibrary.SharedModel.Singlecharge();
-
-                                                    if (charge.status != 0)
-                                                        singleCharge.IsSucceeded = false;
-                                                    else
-                                                        singleCharge.IsSucceeded = true;
-
-                                                    singleCharge.ReferenceId = charge.trans_id;
-                                                    singleCharge.Price = charge.base_price_point.Value / 10;
-                                                    singleCharge.IsApplicationInformed = false;
-                                                    singleCharge.IsCalledFromInAppPurchase = false;
-                                                    singleCharge.Description = "NewMethod";
-                                                    singleCharge.DateCreated = charge.datetime;
-                                                    singleCharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(charge.datetime);
-                                                    singleCharge.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(charge.msisdn);
-                                                    serviceDB.Entry(singleCharge).State = System.Data.Entity.EntityState.Modified;
+                                                    //there is no newer state for this subscriber
                                                 }
+
+
                                             }
-                                            else
-                                            {
-                                                singleChargeArchive = serviceDB.SinglechargeArchives.Where(o => o.ReferenceId == charge.trans_id && o.Description == "NewMethod").FirstOrDefault();
-                                                if (singleChargeArchive == null)
-                                                {
-                                                    singleChargeArchive = new SharedLibrary.Models.ServiceModel.SinglechargeArchive();
-
-                                                    if (charge.status != 0)
-                                                        singleChargeArchive.IsSucceeded = false;
-                                                    else
-                                                        singleChargeArchive.IsSucceeded = true;
-
-                                                    singleChargeArchive.ReferenceId = charge.trans_id;
-                                                    singleChargeArchive.Price = charge.base_price_point.Value / 10;
-                                                    singleChargeArchive.IsApplicationInformed = false;
-                                                    singleChargeArchive.IsCalledFromInAppPurchase = false;
-                                                    singleChargeArchive.Description = "NewMethod";
-                                                    singleChargeArchive.DateCreated = charge.datetime;
-                                                    singleChargeArchive.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(charge.datetime);
-                                                    singleChargeArchive.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(charge.msisdn);
-                                                    serviceDB.SinglechargeArchives.Add(singleChargeArchive);
-                                                }
-                                                else
-                                                {
-                                                    //singleChargeArchive = new SharedShortCodeServiceLibrary.SharedModel.SinglechargeArchive();
-
-                                                    if (charge.status != 0)
-                                                        singleChargeArchive.IsSucceeded = false;
-                                                    else
-                                                        singleChargeArchive.IsSucceeded = true;
-
-                                                    singleChargeArchive.ReferenceId = charge.trans_id;
-                                                    singleChargeArchive.Price = charge.base_price_point.Value / 10;
-                                                    singleChargeArchive.IsApplicationInformed = false;
-                                                    singleChargeArchive.IsCalledFromInAppPurchase = false;
-                                                    singleChargeArchive.Description = "NewMethod";
-                                                    singleChargeArchive.DateCreated = charge.datetime;
-                                                    singleChargeArchive.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(charge.datetime);
-                                                    singleChargeArchive.MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(charge.msisdn);
-                                                    serviceDB.Entry(singleChargeArchive).State = System.Data.Entity.EntityState.Modified;
-                                                }
-                                            }
-                                            serviceDB.SaveChanges();
                                         }
                                     }
                                 }
+                                string ftpUrl = newFtpFiles[i].ftpFilePath;
+                                if (string.IsNullOrEmpty(ftpUrl)) continue;
+
+                                Program.logs.Info(ftpUrl);
+
+                                var ftpFile = portal.MCISingleChargeFtpFiles.Where(o => "ftp://" + o.serverIP + "/" + o.ftpDirectory + "/" + o.fileName == ftpUrl).FirstOrDefault();
+                                if (ftpFile == null)
+                                {
+                                    //new file or modification detected
+                                    portalFtpFiles = new SharedLibrary.Models.MCISingleChargeFtpFile();
+                                    portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
+                                    portalFtpFiles.ftpDirectory = winDirectory;
+                                    portalFtpFiles.processDateTime = DateTime.Now;
+                                    portalFtpFiles.serverIP = ServerFtpIP;
+                                    portalFtpFiles.identifier = newFtpFiles[i].identifier;
+                                    portalFtpFiles.processLines = lines.Count();
+                                    portalFtpFiles.chargeCount = chargeCount;
+                                    portalFtpFiles.subCount = subCount;
+                                    portalFtpFiles.unsubCount = unsubCount;
+                                    portal.MCISingleChargeFtpFiles.Add(portalFtpFiles);
+
+                                }
+                                else
+                                {
+                                    portalFtpFiles = ftpFile;
+                                    portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
+                                    portalFtpFiles.ftpDirectory = winDirectory;
+                                    portalFtpFiles.processDateTime = DateTime.Now;
+                                    portalFtpFiles.serverIP = ServerFtpIP;
+                                    portalFtpFiles.identifier = newFtpFiles[i].identifier;
+                                    portalFtpFiles.processLines = lines.Count();
+                                    portalFtpFiles.chargeCount = chargeCount;
+                                    portalFtpFiles.subCount = subCount;
+                                    portalFtpFiles.unsubCount = unsubCount;
+                                    portal.Entry(portalFtpFiles).State = System.Data.Entity.EntityState.Modified;
+                                }
+
+                                portal.SaveChanges();
                             }
-                            string ftpUrl = newFtpFiles[i].ftpFilePath;
-                            if (string.IsNullOrEmpty(ftpUrl)) continue;
-
-                            Program.logs.Info(ftpUrl);
-
-                            var ftpFile = portal.MCISingleChargeFtpFiles.Where(o => "ftp://" + o.serverIP + "/" + o.ftpDirectory + "/" + o.fileName == ftpUrl).FirstOrDefault();
-                            if (ftpFile == null)
-                            {
-                                //new file or modification detected
-                                portalFtpFiles = new SharedLibrary.Models.MCISingleChargeFtpFile();
-                                portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
-                                portalFtpFiles.ftpDirectory = winDirectory;
-                                portalFtpFiles.processDateTime = DateTime.Now;
-                                portalFtpFiles.serverIP = this.ServerFtpIP;
-                                portalFtpFiles.identifier = newFtpFiles[i].identifier;
-                                portalFtpFiles.processLines = lines.Count();
-                                portalFtpFiles.chargeCount = chargeCount;
-                                portal.MCISingleChargeFtpFiles.Add(portalFtpFiles);
-
-                            }
-                            else
-                            {
-                                portalFtpFiles = ftpFile;
-                                portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
-                                portalFtpFiles.ftpDirectory = winDirectory;
-                                portalFtpFiles.processDateTime = DateTime.Now;
-                                portalFtpFiles.serverIP = this.ServerFtpIP;
-                                portalFtpFiles.identifier = newFtpFiles[i].identifier;
-                                portalFtpFiles.processLines = lines.Count();
-                                portalFtpFiles.chargeCount = chargeCount;
-                                portal.Entry(portalFtpFiles).State = System.Data.Entity.EntityState.Modified;
-                            }
-
-                            portal.SaveChanges();
                         }
                     }
                 }
@@ -242,7 +382,7 @@ namespace DehnadMCIFtpChargingService
                 if (ftpDirectory.EndsWith("/"))
                     ftpDirectory = ftpDirectory.Remove(winDirectory.Length - 1, 1);
 
-                string ftpURL = "ftp://" + this.ServerFtpIP + "/" + ftpDirectory + "/";
+                string ftpURL = "ftp://" + ServerFtpIP + "/" + ftpDirectory + "/";
                 return ftpURL;
             }
             catch (Exception e)

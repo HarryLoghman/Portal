@@ -28,6 +28,7 @@
           <Property Name="enryptAlghorithm" Type="nvarchar" MaxLength="100" />
           <Property Name="description" Type="nvarchar" MaxLength="500" />
           <Property Name="state" Type="int" />
+          <Property Name="allowedServices" Type="nvarchar" MaxLength="1000" />
         </EntityType>
         <EntityType Name="AspNetRoles">
           <Key>
@@ -187,6 +188,33 @@
           <Property Name="processDateTime" Type="datetime" />
           <Property Name="processLines" Type="int" />
           <Property Name="chargeCount" Type="int" />
+          <Property Name="subCount" Type="int" />
+          <Property Name="unsubCount" Type="int" />
+        </EntityType>
+        <EntityType Name="MCISubsLastStateFtpFiles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="regdate" Type="datetime" />
+          <Property Name="serviceId" Type="bigint" />
+          <Property Name="mobileNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="sid" Type="int" />
+          <Property Name="trans_id" Type="nvarchar" MaxLength="50" />
+          <Property Name="status" Type="int" />
+          <Property Name="base_price_point" Type="int" />
+          <Property Name="msisdn" Type="nvarchar" MaxLength="50" />
+          <Property Name="keyword" Type="nvarchar" MaxLength="50" />
+          <Property Name="validity" Type="int" />
+          <Property Name="next_renewal_date" Type="datetime" />
+          <Property Name="shortcode" Type="nvarchar" MaxLength="50" />
+          <Property Name="billed_price_point" Type="int" />
+          <Property Name="trans_status" Type="int" />
+          <Property Name="chargeCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="datetime" Type="datetime" />
+          <Property Name="event_type" Type="nvarchar" MaxLength="50" />
+          <Property Name="channel" Type="nvarchar" MaxLength="50" />
+          <Property Name="filePath" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="Operators">
           <Key>
@@ -746,6 +774,11 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Parameter Name="mobileNumber" Type="nvarchar" Mode="In" />
           <Parameter Name="chargePriceFrom" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="sp_MCISubsLastStateFtpFiles_getAsyncSubs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="serviceId" Type="bigint" Mode="In" />
+          <Parameter Name="startDate" Type="datetime" Mode="In" />
+          <Parameter Name="endDate" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="sp_RequestsRulesChecker" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="requestId" Type="bigint" Mode="In" />
           <Parameter Name="regdate" Type="datetime" Mode="In" />
@@ -773,6 +806,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MCISingleChargeFtpFiles" EntityType="Self.MCISingleChargeFtpFiles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MCISubsLastStateFtpFiles" EntityType="Self.MCISubsLastStateFtpFiles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Operators" EntityType="Self.Operators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
@@ -1018,7 +1052,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="vw_AspNetUsers" EntityType="PortalModel.vw_AspNetUsers" />
           <EntitySet Name="vw_DehnadAllServicesStatistics" EntityType="PortalModel.vw_DehnadAllServicesStatistics" />
           <EntitySet Name="Audits" EntityType="PortalModel.Audit" />
-          <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
           <EntitySet Name="chargeInfoes" EntityType="PortalModel.chargeInfo" />
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="PortalModel.RealtimeStatisticsFor2GServices" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="PortalModel.RealtimeStatisticsFor3GServices" />
@@ -1035,6 +1068,13 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           </FunctionImport>
           <EntitySet Name="ReceievedMessages" EntityType="PortalModel.ReceievedMessage" />
           <EntitySet Name="vw_ReceivedMessages" EntityType="PortalModel.vw_ReceivedMessages" />
+          <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
+          <EntitySet Name="MCISubsLastStateFtpFiles" EntityType="PortalModel.MCISubsLastStateFtpFile" />
+          <FunctionImport Name="sp_MCISubsLastStateFtpFiles_getAsyncSubs" ReturnType="Collection(PortalModel.sp_MCISubsLastStateFtpFiles_getAsyncSubs_Result)">
+            <Parameter Name="serviceId" Mode="In" Type="Int64" />
+            <Parameter Name="startDate" Mode="In" Type="DateTime" />
+            <Parameter Name="endDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
           <EntitySet Name="Apps" EntityType="PortalModel.App" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
@@ -1622,19 +1662,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Ip" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="MCISingleChargeFtpFile">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="serverIP" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ftpDirectory" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="fileName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="processDateTime" Type="DateTime" Precision="3" />
-          <Property Name="processLines" Type="Int32" />
-          <Property Name="chargeCount" Type="Int32" />
-        </EntityType>
         <EntityType Name="chargeInfo">
           <Key>
             <PropertyRef Name="serviceId" />
@@ -1765,6 +1792,68 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="RetryCount" Type="Int32" />
           <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="MCISingleChargeFtpFile">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="serverIP" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ftpDirectory" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="fileName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="processDateTime" Type="DateTime" Precision="3" />
+          <Property Name="processLines" Type="Int32" />
+          <Property Name="chargeCount" Type="Int32" />
+          <Property Name="subCount" Type="Int32" />
+          <Property Name="unsubCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MCISubsLastStateFtpFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="regdate" Type="DateTime" Precision="3" />
+          <Property Name="sid" Type="Int32" />
+          <Property Name="trans_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="base_price_point" Type="Int32" />
+          <Property Name="msisdn" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="keyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="validity" Type="Int32" />
+          <Property Name="next_renewal_date" Type="DateTime" Precision="3" />
+          <Property Name="shortcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="billed_price_point" Type="Int32" />
+          <Property Name="trans_status" Type="Int32" />
+          <Property Name="chargeCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="datetime" Type="DateTime" Precision="3" />
+          <Property Name="event_type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="filePath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="serviceId" Type="Int64" />
+          <Property Name="mobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <ComplexType Name="sp_MCISubsLastStateFtpFiles_getAsyncSubs_Result">
+          <Property Type="Int64" Name="Id" Nullable="false" />
+          <Property Type="DateTime" Name="regdate" Nullable="true" Precision="23" />
+          <Property Type="Int64" Name="serviceId" Nullable="true" />
+          <Property Type="String" Name="mobileNumber" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="sid" Nullable="true" />
+          <Property Type="String" Name="trans_id" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="status" Nullable="true" />
+          <Property Type="Int32" Name="base_price_point" Nullable="true" />
+          <Property Type="String" Name="msisdn" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="keyword" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="validity" Nullable="true" />
+          <Property Type="DateTime" Name="next_renewal_date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="shortcode" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="billed_price_point" Nullable="true" />
+          <Property Type="Int32" Name="trans_status" Nullable="true" />
+          <Property Type="String" Name="chargeCode" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="datetime" Nullable="true" Precision="23" />
+          <Property Type="String" Name="event_type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="channel" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="filePath" Nullable="true" MaxLength="500" />
+        </ComplexType>
         <EntityType Name="App">
           <Key>
             <PropertyRef Name="Id" />
@@ -1777,6 +1866,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="enryptAlghorithm" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="state" Type="Int32" />
+          <Property Name="allowedServices" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -2295,20 +2385,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="MCISingleChargeFtpFiles">
-            <EntityTypeMapping TypeName="PortalModel.MCISingleChargeFtpFile">
-              <MappingFragment StoreEntitySet="MCISingleChargeFtpFiles">
-                <ScalarProperty Name="chargeCount" ColumnName="chargeCount" />
-                <ScalarProperty Name="processLines" ColumnName="processLines" />
-                <ScalarProperty Name="processDateTime" ColumnName="processDateTime" />
-                <ScalarProperty Name="identifier" ColumnName="identifier" />
-                <ScalarProperty Name="fileName" ColumnName="fileName" />
-                <ScalarProperty Name="ftpDirectory" ColumnName="ftpDirectory" />
-                <ScalarProperty Name="serverIP" ColumnName="serverIP" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="chargeInfoes">
             <EntityTypeMapping TypeName="PortalModel.chargeInfo">
               <MappingFragment StoreEntitySet="chargeInfo">
@@ -2422,9 +2498,78 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="MCISingleChargeFtpFiles">
+            <EntityTypeMapping TypeName="PortalModel.MCISingleChargeFtpFile">
+              <MappingFragment StoreEntitySet="MCISingleChargeFtpFiles">
+                <ScalarProperty Name="unsubCount" ColumnName="unsubCount" />
+                <ScalarProperty Name="subCount" ColumnName="subCount" />
+                <ScalarProperty Name="chargeCount" ColumnName="chargeCount" />
+                <ScalarProperty Name="processLines" ColumnName="processLines" />
+                <ScalarProperty Name="processDateTime" ColumnName="processDateTime" />
+                <ScalarProperty Name="identifier" ColumnName="identifier" />
+                <ScalarProperty Name="fileName" ColumnName="fileName" />
+                <ScalarProperty Name="ftpDirectory" ColumnName="ftpDirectory" />
+                <ScalarProperty Name="serverIP" ColumnName="serverIP" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MCISubsLastStateFtpFiles">
+            <EntityTypeMapping TypeName="PortalModel.MCISubsLastStateFtpFile">
+              <MappingFragment StoreEntitySet="MCISubsLastStateFtpFiles">
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
+                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
+                <ScalarProperty Name="filePath" ColumnName="filePath" />
+                <ScalarProperty Name="channel" ColumnName="channel" />
+                <ScalarProperty Name="event_type" ColumnName="event_type" />
+                <ScalarProperty Name="datetime" ColumnName="datetime" />
+                <ScalarProperty Name="chargeCode" ColumnName="chargeCode" />
+                <ScalarProperty Name="trans_status" ColumnName="trans_status" />
+                <ScalarProperty Name="billed_price_point" ColumnName="billed_price_point" />
+                <ScalarProperty Name="shortcode" ColumnName="shortcode" />
+                <ScalarProperty Name="next_renewal_date" ColumnName="next_renewal_date" />
+                <ScalarProperty Name="validity" ColumnName="validity" />
+                <ScalarProperty Name="keyword" ColumnName="keyword" />
+                <ScalarProperty Name="msisdn" ColumnName="msisdn" />
+                <ScalarProperty Name="base_price_point" ColumnName="base_price_point" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="trans_id" ColumnName="trans_id" />
+                <ScalarProperty Name="sid" ColumnName="sid" />
+                <ScalarProperty Name="regdate" ColumnName="regdate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_MCISubsLastStateFtpFiles_getAsyncSubs" FunctionName="PortalModel.Store.sp_MCISubsLastStateFtpFiles_getAsyncSubs">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PortalModel.sp_MCISubsLastStateFtpFiles_getAsyncSubs_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="regdate" ColumnName="regdate" />
+                <ScalarProperty Name="serviceId" ColumnName="serviceId" />
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
+                <ScalarProperty Name="sid" ColumnName="sid" />
+                <ScalarProperty Name="trans_id" ColumnName="trans_id" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="base_price_point" ColumnName="base_price_point" />
+                <ScalarProperty Name="msisdn" ColumnName="msisdn" />
+                <ScalarProperty Name="keyword" ColumnName="keyword" />
+                <ScalarProperty Name="validity" ColumnName="validity" />
+                <ScalarProperty Name="next_renewal_date" ColumnName="next_renewal_date" />
+                <ScalarProperty Name="shortcode" ColumnName="shortcode" />
+                <ScalarProperty Name="billed_price_point" ColumnName="billed_price_point" />
+                <ScalarProperty Name="trans_status" ColumnName="trans_status" />
+                <ScalarProperty Name="chargeCode" ColumnName="chargeCode" />
+                <ScalarProperty Name="datetime" ColumnName="datetime" />
+                <ScalarProperty Name="event_type" ColumnName="event_type" />
+                <ScalarProperty Name="channel" ColumnName="channel" />
+                <ScalarProperty Name="filePath" ColumnName="filePath" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           <EntitySetMapping Name="Apps">
             <EntityTypeMapping TypeName="PortalModel.App">
               <MappingFragment StoreEntitySet="Apps">
+                <ScalarProperty Name="allowedServices" ColumnName="allowedServices" />
                 <ScalarProperty Name="state" ColumnName="state" />
                 <ScalarProperty Name="description" ColumnName="description" />
                 <ScalarProperty Name="enryptAlghorithm" ColumnName="enryptAlghorithm" />

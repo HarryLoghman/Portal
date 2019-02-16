@@ -38,12 +38,12 @@ namespace DehnadMCIFtpChargingService.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("900")]
-        public string TimeIntervalInSecond {
+        public string DownloadIntervalInSeconds {
             get {
-                return ((string)(this["TimeIntervalInSecond"]));
+                return ((string)(this["DownloadIntervalInSeconds"]));
             }
             set {
-                this["TimeIntervalInSecond"] = value;
+                this["DownloadIntervalInSeconds"] = value;
             }
         }
         
@@ -68,6 +68,54 @@ namespace DehnadMCIFtpChargingService.Properties {
             }
             set {
                 this["CheckNDaysBefore"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Tamly500")]
+        public string SyncSubStateServices {
+            get {
+                return ((string)(this["SyncSubStateServices"]));
+            }
+            set {
+                this["SyncSubStateServices"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public string SyncIntervalInSeconds {
+            get {
+                return ((string)(this["SyncIntervalInSeconds"]));
+            }
+            set {
+                this["SyncIntervalInSeconds"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SyncServiceLastTime {
+            get {
+                return ((string)(this["SyncServiceLastTime"]));
+            }
+            set {
+                this["SyncServiceLastTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3600")]
+        public string SyncNSecondsBefore {
+            get {
+                return ((string)(this["SyncNSecondsBefore"]));
+            }
+            set {
+                this["SyncNSecondsBefore"] = value;
             }
         }
     }

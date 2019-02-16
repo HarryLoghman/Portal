@@ -23,7 +23,7 @@ namespace SharedLibrary
                 logs.Error("MyError1:OtpCharge" + serviceCode + mobileNumber);
                 var accessKey = Encrypt.GetHMACSHA256Hash("OtpCharge" + serviceCode + mobileNumber);
                 logs.Info("OtpCharge" + serviceCode + mobileNumber);
-                var localCallCrypt = Encrypt.EncryptString("localcall");
+                var localCallCrypt = Encrypt.EncryptString_RijndaelManaged("localcall");
                 using (var client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(30);
@@ -62,7 +62,7 @@ namespace SharedLibrary
             try
             {
                 var accessKey = Encrypt.GetHMACSHA256Hash("OtpConfirm" + serviceCode + mobileNumber);
-                var localCallCrypt = Encrypt.EncryptString("localcall");
+                var localCallCrypt = Encrypt.EncryptString_RijndaelManaged("localcall");
                 using (var client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(30);

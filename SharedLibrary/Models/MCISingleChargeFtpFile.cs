@@ -22,5 +22,7 @@ namespace SharedLibrary.Models
         public Nullable<System.DateTime> processDateTime { get; set; }
         public Nullable<int> processLines { get; set; }
         public Nullable<int> chargeCount { get; set; }
+        public Nullable<int> subCount { get; set; }
+        public Nullable<int> unsubCount { get; set; }
     }
 }

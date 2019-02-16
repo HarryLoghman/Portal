@@ -107,6 +107,9 @@ namespace SharedShortCodeServiceLibrary
 
         public static void InsertMessageToQueue(string connectionStringNameInAppConfig, MessageObject message)
         {
+            if (!string.IsNullOrEmpty(message.ReceivedFrom) && message.ReceivedFrom.Contains("FromFtp"))
+                //do not create message for those users come from ftp
+                return;
             using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 message.Content = HandleSpecialStrings(message.Content, message.Point, message.MobileNumber, message.ServiceId);
@@ -153,12 +156,16 @@ namespace SharedShortCodeServiceLibrary
 
         public static void InsertBulkMessagesToQueue(string connectionStringNameInAppConfig, List<MessageObject> messages)
         {
+            
             using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 int counter = 0;
                 foreach (var message in messages)
                 {
+                    if (!string.IsNullOrEmpty(message.ReceivedFrom) && message.ReceivedFrom.Contains("FromFtp"))
+                        //do not create message for those users come from ftp
+                        continue;
                     if (message.MessageType == (int)SharedLibrary.MessageHandler.MessageType.AutoCharge)
                     {
                         var messageBuffer = CreateAutochargeMessageBuffer(message);

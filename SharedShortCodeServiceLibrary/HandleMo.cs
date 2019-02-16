@@ -45,7 +45,7 @@ namespace SharedShortCodeServiceLibrary
 
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         CompilerResults v_compilerResult;
-        protected virtual enumCommand EvaluateCommand(vw_servicesServicesInfo service, MessageObject message)
+        protected virtual enumCommand EvaluateCommandOld(vw_servicesServicesInfo service, MessageObject message)
         {
             string aggregatorIntegratedPanelKeyword = "IMI";
             if (service.aggregatorName.ToLower() == "mtn")

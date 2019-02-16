@@ -20,12 +20,17 @@ namespace DehnadMCIFtpChargingService
         }
 
         private Thread downloaderThread;
+        private Thread syncThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         protected override void OnStart(string[] args)
         {
             downloaderThread = new Thread(downloaderFunction);
             downloaderThread.IsBackground = true;
             downloaderThread.Start();
+
+            syncThread = new Thread(syncFunction);
+            syncThread.IsBackground = true;
+            syncThread.Start();
         }
 
 
@@ -46,7 +51,10 @@ namespace DehnadMCIFtpChargingService
                 {
                     downloaderThread.Abort();
                 }
-
+                if (!syncThread.Join(3000))
+                {
+                    syncThread.Abort();
+                }
             }
             catch (Exception exp)
             {
@@ -55,9 +63,23 @@ namespace DehnadMCIFtpChargingService
             }
         }
 
+        private void syncFunction()
+        {
+            return;
+            SyncSubscription sync = new SyncSubscription();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                sync.syncSubscription();
+                int timeInterval;
+                if (!int.TryParse(Properties.Settings.Default.SyncIntervalInSeconds, out timeInterval))
+                {
+                    timeInterval = 60 * 30;
+                }
+                Thread.Sleep(1000 * timeInterval);
+            }
+        }
         private void downloaderFunction()
         {
-
             downloader down = new downloader();
             while (!shutdownEvent.WaitOne(0))
             {
@@ -75,6 +97,7 @@ namespace DehnadMCIFtpChargingService
                     {
                         Program.logs.Info("downloaderFunction: started");
 
+                        #region parameter.txt check
                         try
                         {
                             string parameterPath = "parameter\\parameter.txt";
@@ -102,7 +125,7 @@ namespace DehnadMCIFtpChargingService
                                             operatorsSID = operatorsSID.Skip(1).ToArray();
                                         }
                                         else operatorsSID = null;
-                                        down.updateSingleCharge(directoryNameInFormatYYYYMMDD, operatorsSID, true);
+                                        down.updateSingleChargeAndSubscription(directoryNameInFormatYYYYMMDD, operatorsSID, true);
                                     }
                                     else
                                     {
@@ -119,9 +142,11 @@ namespace DehnadMCIFtpChargingService
                             SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "Exception in downloaderFunction reading parameter file: " + ex.Message);
                             Program.logs.Error("Exception in downloaderFunction reading parameter file: ", ex);
                         }
+                        #endregion
 
                         //check today
-                        down.updateSingleCharge();
+                        down.updateSingleChargeAndSubscription();
+
                         int nDaysBefore = 0;
                         if (int.TryParse(Properties.Settings.Default.CheckNDaysBefore, out nDaysBefore))
                         {
@@ -131,7 +156,7 @@ namespace DehnadMCIFtpChargingService
                                 for (i = 1; i <= nDaysBefore; i++)
                                 {
                                     Program.logs.Info("downloaderFunction:started:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
-                                    down.updateSingleCharge(DateTime.Now.AddDays(-1 * i).ToString("yyyyMMdd"), null, false);
+                                    down.updateSingleChargeAndSubscription(DateTime.Now.AddDays(-1 * i).ToString("yyyyMMdd"), null, false);
                                     Program.logs.Info("downloaderFunction:ended:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
                                 }
                             }
@@ -140,7 +165,7 @@ namespace DehnadMCIFtpChargingService
 
                         Program.logs.Info("downloaderFunction: Ended");
                         int timeInterval;
-                        if (!int.TryParse(Properties.Settings.Default.TimeIntervalInSecond, out timeInterval))
+                        if (!int.TryParse(Properties.Settings.Default.DownloadIntervalInSeconds, out timeInterval))
                         {
                             timeInterval = 60 * 30;
                         }
