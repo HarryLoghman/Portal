@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,101 +14,194 @@ namespace DehnadMCIFtpChargingService
             try
             {
                 List<SharedLibrary.Models.vw_servicesServicesInfo> lst_entryServices;
-                if (string.IsNullOrEmpty(Properties.Settings.Default.SyncSubStateServices))
+                string[] arrServicesString;
+                SharedLibrary.Models.vw_servicesServicesInfo entryService;
+                //string errorType, errorDescription;
+                string serviceCode;
+                bool autoSync;
+                int i;
+                string mobileNumber;
+                int syncedCount;
+                int operatorPlan, mobileOperator;
+                string notifDescription;
+
+                //DateTime? serviceSyncLastTime;
+                List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lstSyncSubs;
+                if (string.IsNullOrEmpty(Properties.Settings.Default.SyncServices))
                     return;
-                DateTime SyncStartTime;
                 using (var entityPortal = new SharedLibrary.Models.PortalEntities())
                 {
-                    
-                    if (Properties.Settings.Default.SyncSubStateServices != "All")
+                    #region which service to sync
+                    lst_entryServices = entityPortal.vw_servicesServicesInfo.OrderBy(o => o.ServiceCode).ToList();
+                    if (Properties.Settings.Default.SyncServices.ToLower() == "All".ToLower())
                     {
-                        var arrTemp = Properties.Settings.Default.SyncSubStateServices.Split(';');
-                        lst_entryServices = entityPortal.vw_servicesServicesInfo.Where(o => arrTemp.Contains(o.ServiceCode)).ToList();
+                        arrServicesString = lst_entryServices.Select(o => o.ServiceCode).ToArray();
+
+                    }
+                    else if (Properties.Settings.Default.SyncServices.ToLower() == "All:AutoSync".ToLower())
+                    {
+                        arrServicesString = lst_entryServices.Select(o => o.ServiceCode + ":AutoSync").ToArray();
                     }
                     else
                     {
-                        lst_entryServices = entityPortal.vw_servicesServicesInfo.ToList();
-                    }
-                    DateTime? startTime;
-                    DateTime time;
-                    string str;
-                    int i;
-                    string[] strServiceLastTimeArr;
-                    List<SharedLibrary.Models.sp_MCISubsLastStateFtpFiles_getAsyncSubs_Result> lstSyncSubs;
-                    foreach (var entryService in lst_entryServices)
-                    {
-                        
-                        startTime = null;
-                        if (!string.IsNullOrEmpty(Properties.Settings.Default.SyncServiceLastTime))
+                        arrServicesString = new string[0];
+                        var arrTemp = Properties.Settings.Default.SyncServices.Split(';');
+                        bool allServices = false;
+                        bool allServicesAutoSync = false;
+                        if (arrTemp.Any(o => o.ToLower() == "All".ToLower()))
                         {
-                            //Program.logs.Error("7324789273984728934");
-                            Program.logs.Error(Properties.Settings.Default.SyncServiceLastTime);
-                            str = Properties.Settings.Default.SyncServiceLastTime.Split(';').FirstOrDefault(o => o.Split('-')[0] == entryService.ServiceCode);
-                            
-                            if (DateTime.TryParse(str.Split('-')[1], out time))
+                            //SyncServices = all;all:autosync;achar:autosync
+                            //all is prior to all:autosync
+                            //achar autosync all other services notif only
+                            allServices = true;
+                            allServicesAutoSync = false;
+                        }
+                        else if (arrTemp.Any(o => o.ToLower() == "All:AutoSync".ToLower()))
+                        {
+                            //SyncServices = all:autosync;achar
+                            //achar notif all other services sync
+                            allServices = false;
+                            allServicesAutoSync = true;
+                        }
+                        for (i = 0; i <= lst_entryServices.Count - 1; i++)
+                        {
+                            //SyncServices = all:autosync;achar
+                            //achar notif all other services sync
+                            if (arrTemp.Any(o => o.ToLower() == lst_entryServices[i].ServiceCode.ToLower()))
                             {
-                                startTime = time;
+                                //we are checking achar
+                                //SyncServices = achar;achar:autosync
+                                //notif achar
+                                Array.Resize(ref arrServicesString, arrServicesString.Length + 1);
+                                arrServicesString[arrServicesString.Length - 1] = lst_entryServices[i].ServiceCode;
+                            }
+                            else if (arrTemp.Any(o => o.ToLower() == lst_entryServices[i].ServiceCode.ToLower() + ":AutoSync".ToLower()))
+                            {
+                                //we are checking achar
+                                //SyncServices = all;achar:autosync
+                                //sync achar and notif other services
+                                Array.Resize(ref arrServicesString, arrServicesString.Length + 1);
+                                arrServicesString[arrServicesString.Length - 1] = lst_entryServices[i].ServiceCode + ":AutoSync";
+                            }
+                            else if (allServices)
+                            {
+                                //we are checking aseman
+                                //SyncServices = all;achar:autosync
+                                //notif aseman
+                                Array.Resize(ref arrServicesString, arrServicesString.Length + 1);
+                                arrServicesString[arrServicesString.Length - 1] = lst_entryServices[i].ServiceCode;
+                            }
+                            else if (allServicesAutoSync)
+                            {
+                                //we are checking aseman
+                                //SyncServices = all:autosync;achar
+                                //sync aseman
+                                Array.Resize(ref arrServicesString, arrServicesString.Length + 1);
+                                arrServicesString[arrServicesString.Length - 1] = lst_entryServices[i].ServiceCode + ":AutoSync";
                             }
                         }
-                        SyncStartTime = DateTime.Now;
-                        
-                        lstSyncSubs = entityPortal.sp_MCISubsLastStateFtpFiles_getAsyncSubs(entryService.Id
-                            , startTime
-                            , DateTime.Now.AddSeconds(-1 * int.Parse(Properties.Settings.Default.SyncNSecondsBefore))).ToList();
-                        Program.logs.Error("sadasl;dk;alskd;laksd");
-                        foreach (var syncSub in lstSyncSubs)
-                        {
-                            SharedLibrary.Models.ReceievedMessage entryReceievedMessage = new SharedLibrary.Models.ReceievedMessage();
-                            entryReceievedMessage.Content = syncSub.keyword;
-                            entryReceievedMessage.description = "ftpMethod-" + syncSub.filePath;
-                            entryReceievedMessage.IsProcessed = false;
-                            entryReceievedMessage.IsReceivedFromIntegratedPanel = (string.IsNullOrEmpty(syncSub.channel) || syncSub.channel.ToLower() != "TAJMI".ToLower() ? false : true);
-                            entryReceievedMessage.LastRetryDate = null;
-                            entryReceievedMessage.MessageId = syncSub.trans_id;
-                            entryReceievedMessage.MobileNumber = syncSub.mobileNumber;
-                            entryReceievedMessage.PersianReceivedTime = SharedLibrary.Date.GetPersianDate(syncSub.datetime);
-                            entryReceievedMessage.ReceivedFrom = downloader.ServerFtpIP + "-FromFtp-" + (syncSub.event_type == "1.2" ? "Unsubscribe" : "Register");
-                            entryReceievedMessage.ReceivedFromSource = 0;
-                            entryReceievedMessage.ReceivedTime = syncSub.datetime.Value;
-                            entryReceievedMessage.RetryCount = null;
-                            entryReceievedMessage.ShortCode = syncSub.shortcode;
+                    }
+                    #endregion
 
-                            entityPortal.ReceievedMessages.Add(entryReceievedMessage);
-                            entityPortal.SaveChanges();
+                    var lst_entryOperatorPrefix = entityPortal.OperatorsPrefixs.ToList();
 
-                        }
+
+                    for (i = 0; i <= arrServicesString.Length - 1; i++)
+                    {
+                        syncedCount = 0;
+                        serviceCode = arrServicesString[i].Split(':')[0];
+                        entryService = lst_entryServices.Where(o => o.ServiceCode == serviceCode).FirstOrDefault();
+                        if (entryService == null) continue;
+                        //serviceSyncLastTime = this.fnc_getServiceLastSyncTime(entryService.ServiceCode, out errorType, out errorDescription);
+                        //if (!string.IsNullOrEmpty(errorType))
+                        //    return;
+
+
+
+                        lstSyncSubs = entityPortal.sp_MCIFtpLastState_getAsync(entryService.Id
+                            , DateTime.Now
+                            , Properties.Settings.Default.SyncFtpOldItemsInMins
+                            , Properties.Settings.Default.SyncFtpWaitTimeInMins
+                            , Properties.Settings.Default.SyncDBWaitTimeInMins
+                            , Properties.Settings.Default.SyncChargedTriedNDaysBefore).ToList();
+
                         if (lstSyncSubs.Count() > 0)
                         {
-                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers synchronized");
-                            Program.logs.Info("DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers synchronized");
-                        }
-                        if (string.IsNullOrEmpty(Properties.Settings.Default.SyncServiceLastTime))
-                        {
-                            Properties.Settings.Default.SyncServiceLastTime = entryService.ServiceCode + "-" + SyncStartTime.ToString("yyyy/MM/dd HH:mm:ss");
-                        }
-                        else
-                        {
-                            strServiceLastTimeArr = Properties.Settings.Default.SyncServiceLastTime.Split(';');
-                            for (i = 0; i <= strServiceLastTimeArr.Length - 1; i++)
+                            if (!arrServicesString[i].Contains(":") || string.IsNullOrEmpty(arrServicesString[i].Split(':')[1])
+                            || arrServicesString[i].Split(':')[1].ToLower() != "AutoSync".ToLower())
+                                autoSync = false;
+                            else autoSync = true;
+
+                            notifDescription = this.fnc_getNotifString(lstSyncSubs);
+                            if (autoSync)
                             {
-                                if (strServiceLastTimeArr[i].Split('-')[0] == entryService.ServiceCode)
+                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning
+                                    , "MCI Sync Detail -Service:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized"
+                                     + notifDescription);
+                                Program.logs.Info("DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized"
+                                     + notifDescription);
+                                foreach (var syncSub in lstSyncSubs)
                                 {
-                                    strServiceLastTimeArr[i] = entryService.ServiceCode + "-" + SyncStartTime.ToString("yyyy/MM/dd HH:mm:ss");
-                                    break;
+                                    if (!syncSub.datetime.HasValue) continue;
+                                    mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(syncSub.mobileNumber);
+                                    SharedLibrary.MessageHandler.GetSubscriberOperatorInfo(mobileNumber, out mobileOperator, out operatorPlan, lst_entryOperatorPrefix);
+                                    if (mobileNumber != "Invalid Mobile Number")
+                                    {
+                                        if (syncSub.Action.ToLower() == "SyncFtpDifference".ToLower()
+                                            || syncSub.Action.ToLower() == "SyncFtpAddition".ToLower())
+                                        {
+                                            if (syncSub.event_type == "1.2")
+                                            {
+                                                if (SharedLibrary.HandleSubscriptionFtp.UnsubscribeFtp(mobileNumber
+                                                      , syncSub.datetime.Value, syncSub.keyword, mobileOperator, operatorPlan, entryService))
+                                                {
+                                                    syncedCount++;
+                                                }
+                                            }
+                                            else if (syncSub.event_type == "1.1")
+                                            {
+                                                if (SharedLibrary.HandleSubscriptionFtp.SubscribeFtp(mobileNumber
+                                                    , syncSub.datetime.Value, syncSub.keyword, mobileOperator, operatorPlan, entryService))
+                                                {
+                                                    syncedCount++;
+                                                }
+                                            }
+                                        }
+                                        else if (syncSub.Action.ToLower() == "SyncChargeTryActivation".ToLower()
+                                            || syncSub.Action.ToLower() == "SyncChargeTryAddition".ToLower())
+                                        {
+                                            if (syncSub.event_type == "1.5")
+                                            {
+                                                if (SharedLibrary.HandleSubscriptionFtp.SubscribeFtp(mobileNumber
+                                                    , syncSub.datetime.Value, syncSub.Action, mobileOperator, operatorPlan, entryService))
+                                                {
+                                                    syncedCount++;
+                                                }
+                                            }
+                                        }
+
+
+                                    }
+                                    //if (!this.fnc_setServiceLastSyncTime(entryService.ServiceCode, syncTime, out errorType, out errorDescription))
+                                    //{
+                                    //    return;
+                                    //}
+                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers have been synchronized");
+                                    Program.logs.Info("DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + syncedCount + " Subscribers have been synchronized");
                                 }
                             }
-                            if (i == strServiceLastTimeArr.Length)
+                            else
                             {
-                                Array.Resize(ref strServiceLastTimeArr, strServiceLastTimeArr.Length + 1);
-                                strServiceLastTimeArr[strServiceLastTimeArr.Length - 1] = entryService.ServiceCode + "-" + SyncStartTime.ToString("yyyy/MM/dd HH:mm:ss");
+                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning
+                                    , "MCI Sync Detail -Service:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count() + " Subscribers need to be synchronized. Parameters "
+                                   + notifDescription);
+                                Program.logs.Info("DehnadMCIFtpChargingService: syncSubscription:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count() + " Subscribers need to be synchronized.Parameters "
+                                   + notifDescription);
                             }
-                            Properties.Settings.Default.SyncServiceLastTime = string.Join(";", strServiceLastTimeArr);
-                        }
-                        Program.logs.Error("sad");
-                        Properties.Settings.Default.Save();
-                        Program.logs.Error("sad11233");
-                    }
 
+                        }
+
+                    }
 
                 }
             }
@@ -117,5 +211,143 @@ namespace DehnadMCIFtpChargingService
                 Program.logs.Error("DehnadMCIFtpChargingService:syncSubscription:", e);
             }
         }
+
+        private string fnc_getNotifString(List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lstSyncSubs)
+        {
+            string str =
+                        "\n ChargeTryNDaysBefore = " + Properties.Settings.Default.SyncChargedTriedNDaysBefore.ToString()
+                        + "\n DBWaitTimeInMins = " + Properties.Settings.Default.SyncDBWaitTimeInMins.ToString()
+                        + "\n FtpOldItemsInMins = " + Properties.Settings.Default.SyncFtpOldItemsInMins.ToString()
+                        + "\n FtpWaitTime = " + Properties.Settings.Default.SyncFtpWaitTimeInMins.ToString()
+                        + "\n SyncFtpDifference = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpdifference").ToString()
+                        + "\n SyncFtpAddition = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpaddition").ToString()
+                        + "\n SyncChargeTryActivation = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncchargetryactivation").ToString()
+                        + "\n SyncChargeTryAddition = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncchargetryaddition").ToString();
+            return str;
+        }
+        //private DateTime? fnc_getServiceLastSyncTime(string serviceCode, out string errorType, out string errorDescription)
+        //{
+        //    errorType = "";
+        //    errorDescription = "";
+        //    if (string.IsNullOrEmpty(serviceCode))
+        //    {
+        //        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpCharging:syncSubscription:Servicecode is not specified");
+        //        throw new Exception("MCIFtpCharging:getServiceLastSyncTime:Servicecode is not specified");
+        //    }
+
+        //    try
+        //    {
+        //        Dictionary<string, DateTime> dic = this.fnc_readSyncLastTimesFile(out errorType, out errorDescription);
+        //        if (!string.IsNullOrEmpty(errorType)) return null;
+
+        //        if (dic == null) return null;
+        //        return dic.Where(o => o.Key == serviceCode).Select(o => o.Value).FirstOrDefault();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        errorType = "Exception is occurred";
+        //        errorDescription = e.Message;
+        //        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpCharging:getServiceLastSyncTime:" + errorDescription);
+        //        Program.logs.Error("MCIFtpCharging:getServiceLastSyncTime:", e);
+        //    }
+        //    return null;
+        //}
+
+        //private Dictionary<string, DateTime> fnc_readSyncLastTimesFile(out string errorType, out string errorDescription)
+        //{
+        //    errorType = "";
+        //    errorDescription = "";
+        //    if (!File.Exists("SyncLastTimes.txt"))
+        //    {
+        //        var fl = File.Create("SyncLastTimes.txt");
+        //        fl.Close();
+        //    }
+
+        //    try
+        //    {
+        //        string syncLastTimes = File.ReadAllText("SyncLastTimes.txt");
+        //        if (string.IsNullOrEmpty(syncLastTimes))
+        //            return null;
+        //        Dictionary<string, DateTime> dic = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, DateTime>>(syncLastTimes);
+        //        return dic;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        errorType = "Exception is occurred";
+        //        errorDescription = e.Message;
+        //        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpCharging:fnc_readSyncLastTimesFile:" + errorDescription);
+        //        Program.logs.Error("MCIFtpCharging:fnc_readSyncLastTimesFile:", e);
+        //    }
+        //    return null;
+        //}
+
+
+        //private bool fnc_setServiceLastSyncTime(string serviceCode, DateTime syncLastTime, out string errorType, out string errorDescription)
+        //{
+        //    errorType = "";
+        //    errorDescription = "";
+        //    if (string.IsNullOrEmpty(serviceCode))
+        //    {
+        //        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpCharging:syncSubscription:Servicecode is not specified");
+        //        throw new Exception("MCIFtpCharging:getServiceLastSyncTime:Servicecode is not specified");
+        //    }
+
+        //    try
+        //    {
+        //        Dictionary<string, DateTime> dic = this.fnc_readSyncLastTimesFile(out errorType, out errorDescription);
+        //        if (!string.IsNullOrEmpty(errorType)) return false;
+
+        //        if (dic == null)
+        //        {
+        //            dic = new Dictionary<string, DateTime>();
+        //            dic.Add(serviceCode, syncLastTime);
+        //        }
+        //        else
+        //        {
+        //            var serviceLastTime = dic.Where(o => o.Key == serviceCode).FirstOrDefault();
+        //            if (!dic.Any(o => o.Key == serviceCode))
+        //            {
+        //                dic.Add(serviceCode, syncLastTime);
+        //            }
+        //            else
+        //            {
+        //                dic[serviceCode] = syncLastTime;
+        //            }
+
+        //        }
+        //        if (this.fnc_writeSyncLastTimesFile(dic, out errorType, out errorDescription))
+        //            return true;
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        errorType = "Exception is occurred";
+        //        errorDescription = e.Message;
+        //        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpCharging:fnc_setServiceLastSyncTime:" + errorDescription);
+        //        Program.logs.Error("MCIFtpCharging:fnc_setServiceLastSyncTime:", e);
+        //    }
+        //    return false;
+        //}
+
+        //private bool fnc_writeSyncLastTimesFile(Dictionary<string, DateTime> dic, out string errorType, out string errorDescription)
+        //{
+        //    errorType = "";
+        //    errorDescription = "";
+
+        //    try
+        //    {
+        //        string content = Newtonsoft.Json.JsonConvert.SerializeObject(dic);
+        //        File.WriteAllText("SyncLastTimes.txt", content);
+        //        return true;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        errorType = "Exception is occurred";
+        //        errorDescription = e.Message;
+        //        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpCharging:fnc_writeSyncLastTimesFile:" + errorDescription);
+        //        Program.logs.Error("MCIFtpCharging:fnc_writeSyncLastTimesFile:", e);
+        //    }
+        //    return false;
+        //}
     }
 }

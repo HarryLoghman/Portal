@@ -256,21 +256,44 @@ namespace SharedLibrary
         }
         public static MessageObject GetSubscriberOperatorInfo(MessageObject message, List<SharedLibrary.Models.OperatorsPrefix> operatorPrefixes)
         {
+            int mobileOperator;
+            int operatorPlan;
+            GetSubscriberOperatorInfo(message.MobileNumber, out mobileOperator, out operatorPlan, operatorPrefixes);
+
+            message.MobileOperator = mobileOperator;
+            message.OperatorPlan = operatorPlan;
+            //foreach (var operatorPrefixe in operatorPrefixes)
+            //{
+            //    if (message.MobileNumber.StartsWith(operatorPrefixe.Prefix))
+            //    {
+            //        message.MobileOperator = operatorPrefixe.OperatorId;
+            //        message.OperatorPlan = operatorPrefixe.OperatorPlan;
+            //        break;
+            //    }
+            //    else
+            //    {
+            //        message.MobileOperator = (int)MobileOperators.Mci;
+            //        message.OperatorPlan = (int)OperatorPlan.Prepaid;
+            //    }
+            //}
+            return message;
+        }
+
+        public static void GetSubscriberOperatorInfo(string mobileNumber, out int mobileOperator, out int operatorPlan, List<SharedLibrary.Models.OperatorsPrefix> operatorPrefixes)
+        {
+            mobileOperator = (int)MobileOperators.Mci;
+            operatorPlan = (int)OperatorPlan.Prepaid;
             foreach (var operatorPrefixe in operatorPrefixes)
             {
-                if (message.MobileNumber.StartsWith(operatorPrefixe.Prefix))
+                if (mobileNumber.StartsWith(operatorPrefixe.Prefix))
                 {
-                    message.MobileOperator = operatorPrefixe.OperatorId;
-                    message.OperatorPlan = operatorPrefixe.OperatorPlan;
+                    mobileOperator = operatorPrefixe.OperatorId;
+                    operatorPlan = operatorPrefixe.OperatorPlan;
                     break;
                 }
-                else
-                {
-                    message.MobileOperator = (int)MobileOperators.Mci;
-                    message.OperatorPlan = (int)OperatorPlan.Prepaid;
-                }
+
             }
-            return message;
+
         }
 
         public static MessageObject CreateMessage(Subscriber subscriber, string content, long contentId, MessageType messageType, ProcessStatus processStatus, int ImiMessageType, dynamic ImiChargeObject, long AggregatorId, int messagePoint, int? tag, int price)
@@ -855,9 +878,9 @@ namespace SharedLibrary
 
         public enum MessageSourceType
         {
-            sms=0,
-            app=1,
-            landing=2
+            sms = 0,
+            app = 1,
+            landing = 2
         }
     }
 }

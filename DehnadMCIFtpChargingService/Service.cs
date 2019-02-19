@@ -21,6 +21,7 @@ namespace DehnadMCIFtpChargingService
 
         private Thread downloaderThread;
         private Thread syncThread;
+        //private Thread syncNotChargedThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         protected override void OnStart(string[] args)
         {
@@ -31,6 +32,10 @@ namespace DehnadMCIFtpChargingService
             syncThread = new Thread(syncFunction);
             syncThread.IsBackground = true;
             syncThread.Start();
+
+            //syncNotChargedThread = new Thread(syncNotChargedFunction);
+            //syncNotChargedThread.IsBackground = true;
+            //syncNotChargedThread.Start();
         }
 
 
@@ -55,6 +60,11 @@ namespace DehnadMCIFtpChargingService
                 {
                     syncThread.Abort();
                 }
+
+                //if (!syncThread.Join(3000))
+                //{
+                //    syncNotChargedThread.Abort();
+                //}
             }
             catch (Exception exp)
             {
@@ -65,19 +75,33 @@ namespace DehnadMCIFtpChargingService
 
         private void syncFunction()
         {
-            return;
             SyncSubscription sync = new SyncSubscription();
             while (!shutdownEvent.WaitOne(0))
             {
                 sync.syncSubscription();
-                int timeInterval;
-                if (!int.TryParse(Properties.Settings.Default.SyncIntervalInSeconds, out timeInterval))
-                {
-                    timeInterval = 60 * 30;
-                }
+                int timeInterval = int.Parse(Properties.Settings.Default.SyncIntervalInSeconds.ToString());
+                //if (!Properties.Settings.Default.SyncIntervalInSeconds, out timeInterval))
+                //{
+                //    timeInterval = 60 * 30;
+                //}
                 Thread.Sleep(1000 * timeInterval);
             }
         }
+
+        //private void syncNotChargedFunction()
+        //{
+        //    //SyncNotCharged sync = new SyncNotCharged();
+        //    //while (!shutdownEvent.WaitOne(0))
+        //    //{
+        //    //    sync.deactivatedNotCharged();
+        //    //    int timeInterval = int.Parse(Properties.Settings.Default.DeactiveNotChargedIntervalInSeconds.ToString());
+        //    //    //if (!Properties.Settings.Default.SyncIntervalInSeconds, out timeInterval))
+        //    //    //{
+        //    //    //    timeInterval = 60 * 30;
+        //    //    //}
+        //    //    Thread.Sleep(1000 * timeInterval);
+        //    //}
+        //}
         private void downloaderFunction()
         {
             downloader down = new downloader();
@@ -147,28 +171,38 @@ namespace DehnadMCIFtpChargingService
                         //check today
                         down.updateSingleChargeAndSubscription();
 
-                        int nDaysBefore = 0;
-                        if (int.TryParse(Properties.Settings.Default.CheckNDaysBefore, out nDaysBefore))
+                        //int nDaysBefore = 0;
+                        //if (int.TryParse(Properties.Settings.Default.CheckNDaysBefore, out nDaysBefore))
+                        //{
+                        //    if (nDaysBefore != 0)
+                        //    {
+                        //        int i;
+                        //        for (i = 1; i <= nDaysBefore; i++)
+                        //        {
+                        //            Program.logs.Info("downloaderFunction:started:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                        //            down.updateSingleChargeAndSubscription(DateTime.Now.AddDays(-1 * i).ToString("yyyyMMdd"), null, false);
+                        //            Program.logs.Info("downloaderFunction:ended:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                        //        }
+                        //    }
+                        //}
+                        int nDaysBefore = Properties.Settings.Default.CheckNDaysBefore;
+                        if (nDaysBefore != 0)
                         {
-                            if (nDaysBefore != 0)
+                            int i;
+                            for (i = 1; i <= nDaysBefore; i++)
                             {
-                                int i;
-                                for (i = 1; i <= nDaysBefore; i++)
-                                {
-                                    Program.logs.Info("downloaderFunction:started:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
-                                    down.updateSingleChargeAndSubscription(DateTime.Now.AddDays(-1 * i).ToString("yyyyMMdd"), null, false);
-                                    Program.logs.Info("downloaderFunction:ended:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
-                                }
+                                Program.logs.Info("downloaderFunction:started:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                                down.updateSingleChargeAndSubscription(DateTime.Now.AddDays(-1 * i).ToString("yyyyMMdd"), null, false);
+                                Program.logs.Info("downloaderFunction:ended:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
                             }
                         }
 
-
                         Program.logs.Info("downloaderFunction: Ended");
-                        int timeInterval;
-                        if (!int.TryParse(Properties.Settings.Default.DownloadIntervalInSeconds, out timeInterval))
-                        {
-                            timeInterval = 60 * 30;
-                        }
+                        int timeInterval = int.Parse(Properties.Settings.Default.DownloadIntervalInSeconds.ToString());
+                        //if (!int.TryParse(Properties.Settings.Default.DownloadIntervalInSeconds, out timeInterval))
+                        //{
+                        //    timeInterval = 60 * 30;
+                        //}
                         Thread.Sleep(1000 * timeInterval);
 
 

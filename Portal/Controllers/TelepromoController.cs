@@ -1098,7 +1098,7 @@ namespace Portal.Controllers
                                 message.IsReceivedFromIntegratedPanel = true;
                                 message.Content = "Integrated Panel";
                                 var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                                SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null, serviceInfo);
+                                SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null);
                                 result.status = 0;
                             }
                         }
@@ -1123,7 +1123,7 @@ namespace Portal.Controllers
                             message.ShortCode = serviceInfo.ShortCode;
                             message.IsReceivedFromIntegratedPanel = true;
                             message.Content = "Integrated Panel";
-                            SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null, serviceInfo);
+                            SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null);
                             result.status = 0;
                         }
                     }

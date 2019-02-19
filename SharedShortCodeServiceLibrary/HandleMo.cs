@@ -205,7 +205,6 @@ namespace SharedShortCodeServiceLibrary
             return singlecharge;
         }
 
-
         private string getSourceFromDatabase()
         {
             string moduleSource = "";

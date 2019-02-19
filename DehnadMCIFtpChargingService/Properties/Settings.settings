@@ -5,26 +5,47 @@
     <Setting Name="LocalPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">E:\ImiFtps\MciDirectNew</Value>
     </Setting>
-    <Setting Name="DownloadIntervalInSeconds" Type="System.String" Scope="User">
+    <Setting Name="DownloadIntervalInSeconds" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">900</Value>
     </Setting>
-    <Setting Name="SaveFailFilesToSingleCharge" Type="System.String" Scope="User">
-      <Value Profile="(Default)">false</Value>
+    <Setting Name="SaveFailFilesToSingleCharge" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="CheckNDaysBefore" Type="System.String" Scope="User">
+    <Setting Name="CheckNDaysBefore" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3</Value>
     </Setting>
-    <Setting Name="SyncSubStateServices" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Tamly500</Value>
+    <Setting Name="SyncServices" Type="System.String" Scope="User">
+      <Value Profile="(Default)">All</Value>
     </Setting>
-    <Setting Name="SyncIntervalInSeconds" Type="System.String" Scope="User">
+    <Setting Name="SyncIntervalInSeconds" Type="System.Int64" Scope="User">
+      <Value Profile="(Default)">3600</Value>
+    </Setting>
+    <Setting Name="SyncFtpWaitTimeInMins" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1440</Value>
+    </Setting>
+    <Setting Name="SyncDBWaitTimeInMins" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">60</Value>
     </Setting>
-    <Setting Name="SyncServiceLastTime" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="SyncFtpOldItemsInMins" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1440</Value>
     </Setting>
-    <Setting Name="SyncNSecondsBefore" Type="System.String" Scope="User">
-      <Value Profile="(Default)">3600</Value>
+    <Setting Name="SyncServicesDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">All (notif all services async) All:AutoSync(All services sync automatically) Tamly500:AutoSync;Achar(Sync Tamly 500 automatically notif achar async) All;Achar:AutoSync(notif all services async and sync achar)</Value>
+    </Setting>
+    <Setting Name="SyncChargedTriedNDaysBefore" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="SyncFtpWaitTimeInMinsDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">(Now - regDate).Minutes&gt;SyncFtpWaitTimeInMins (should wait for new ftp)</Value>
+    </Setting>
+    <Setting Name="SyncDBWaitTimeInMinsDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">(Now - max(activationDate,deactivationDate).Minutes&gt;SyncDBWaitTimeInMins (should wait may be we will be notif)</Value>
+    </Setting>
+    <Setting Name="SyncFtpOldItemsInMinsDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">(max(activationDate,deactivationDate) - ftpDateTime).SyncFtpOldItemsInMins (ftp item is really old -1 means do not apply this setting)</Value>
+    </Setting>
+    <Setting Name="SyncChargedTriedNDaysBeforeDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">if we have any try in ndays before consider this user active</Value>
     </Setting>
   </Settings>
 </SettingsFile>

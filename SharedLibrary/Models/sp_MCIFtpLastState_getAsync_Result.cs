@@ -11,7 +11,7 @@ namespace SharedLibrary.Models
 {
     using System;
     
-    public partial class sp_MCISubsLastStateFtpFiles_getAsyncSubs_Result
+    public partial class sp_MCIFtpLastState_getAsync_Result
     {
         public long Id { get; set; }
         public Nullable<System.DateTime> regdate { get; set; }
@@ -33,5 +33,6 @@ namespace SharedLibrary.Models
         public string event_type { get; set; }
         public string channel { get; set; }
         public string filePath { get; set; }
+        public string Action { get; set; }
     }
 }

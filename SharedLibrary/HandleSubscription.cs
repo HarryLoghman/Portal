@@ -14,18 +14,17 @@ namespace SharedLibrary
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, vw_servicesServicesInfo service, bool isUserWantsToUnsubscribe)
         {
-            var serviceInfo = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id);
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             message.MessageType = (int)MessageHandler.MessageType.OnDemand;
 
             if (isUserWantsToUnsubscribe == true)
-                serviceStatusForSubscriberState = Unsubscribe(message, service, serviceInfo);
+                serviceStatusForSubscriberState = Unsubscribe(message, service);
             else
-                serviceStatusForSubscriberState = Subscribe(message, service, serviceInfo);
+                serviceStatusForSubscriberState = Subscribe(message, service);
             return serviceStatusForSubscriberState;
         }
 
-        public static ServiceStatusForSubscriberState Subscribe(MessageObject message, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
+        public static ServiceStatusForSubscriberState Subscribe(MessageObject message, vw_servicesServicesInfo service)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -34,11 +33,11 @@ namespace SharedLibrary
                 subscriber = entity.Subscribers.Where(o => o.MobileNumber == message.MobileNumber && o.ServiceId == service.Id).FirstOrDefault();
             }
             if (subscriber == null)
-                serviceStatusForSubscriberState = AddNewSubscriberToService(message, service, serviceInfo);
+                serviceStatusForSubscriberState = AddNewSubscriberToService(message, service);
             //else if (subscriber.DeactivationDate == null)
             //    serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenSubscribed;
             else
-                serviceStatusForSubscriberState = ActivateServiceForSubscriber(message, subscriber, message.Content, service, serviceInfo);
+                serviceStatusForSubscriberState = ActivateServiceForSubscriber(message, subscriber, message.Content, service);
             return serviceStatusForSubscriberState;
         }
 
@@ -65,7 +64,7 @@ namespace SharedLibrary
 
 
         private static ServiceStatusForSubscriberState ActivateServiceForSubscriber(MessageObject message, Subscriber subscriber
-            , string onKeyword, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
+            , string onKeyword, vw_servicesServicesInfo service)
         {
             try
             {
@@ -111,7 +110,7 @@ namespace SharedLibrary
             {
                 logs.Error("Exception in ActivateServiceForSubscriber: ", e);
             }
-            AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
+            AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
             return ServiceStatusForSubscriberState.Renewal;
         }
 
@@ -136,7 +135,7 @@ namespace SharedLibrary
             }
         }
 
-        private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
+        private static ServiceStatusForSubscriberState AddNewSubscriberToService(MessageObject message, vw_servicesServicesInfo service)
         {
             var newSubscriber = new Subscriber();
             try
@@ -198,7 +197,7 @@ namespace SharedLibrary
                 logs.Error("Exception in AddNewSubscriberToService: ", e);
             }
             AddSubscriberToSubscriberPointsTable(newSubscriber, service);
-            AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null, serviceInfo);
+            AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Activated, WhoChangedSubscriberState.User, null);
             return ServiceStatusForSubscriberState.Activated;
         }
 
@@ -341,7 +340,7 @@ namespace SharedLibrary
             }
         }
 
-        public static void AddToSubscriberHistory(MessageObject message, vw_servicesServicesInfo service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent, ServiceInfo serviceInfo)
+        public static void AddToSubscriberHistory(MessageObject message, vw_servicesServicesInfo service, ServiceStatusForSubscriberState subscriberState, WhoChangedSubscriberState whoChangedSubscriberState, string invalidContent)
         {
             try
             {
@@ -370,11 +369,11 @@ namespace SharedLibrary
                     else
                         subscriberHistory.WhoChangedSubscriberStatus = (int)WhoChangedSubscriberState.Web;
 
-                    subscriberHistory.AggregatorServiceId = serviceInfo.AggregatorServiceId;
+                    subscriberHistory.AggregatorServiceId = service.AggregatorServiceId;
                     subscriberHistory.DateTime = DateTime.Now;
                     subscriberHistory.PersianDateTime = Date.GetPersianDateTime();
                     subscriberHistory.InvalidContent = invalidContent;
-                    subscriberHistory.AggregatorId = serviceInfo.AggregatorId;
+                    subscriberHistory.AggregatorId = service.AggregatorId;
                     if (subscriberState == ServiceStatusForSubscriberState.Activated || subscriberState == ServiceStatusForSubscriberState.Renewal)
                         subscriberHistory.SubscriptionKeyword = message.Content;
                     else
@@ -495,7 +494,7 @@ namespace SharedLibrary
             return result;
         }
 
-        public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, vw_servicesServicesInfo service, ServiceInfo serviceInfo)
+        public static ServiceStatusForSubscriberState Unsubscribe(MessageObject message, vw_servicesServicesInfo service)
         {
             var serviceStatusForSubscriberState = ServiceStatusForSubscriberState.Unspecified;
             Subscriber subscriber;
@@ -506,12 +505,12 @@ namespace SharedLibrary
             if (subscriber == null)
                 serviceStatusForSubscriberState = ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed;
             else
-                serviceStatusForSubscriberState = DeactivateServiceForSubscriber(message, service, subscriber, serviceInfo);
+                serviceStatusForSubscriberState = DeactivateServiceForSubscriber(message, service, subscriber);
 
             return serviceStatusForSubscriberState;
         }
 
-        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, ServiceInfo serviceInfo)
+        private static ServiceStatusForSubscriberState DeactivateServiceForSubscriber(MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber)
         {
             try
             {
@@ -530,7 +529,7 @@ namespace SharedLibrary
                         subscriber.OffMethod = "Web";
                     entity.Entry(subscriber).State = EntityState.Modified;
                     entity.SaveChanges();
-                    AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null, serviceInfo);
+                    AddToSubscriberHistory(message, service, ServiceStatusForSubscriberState.Deactivated, WhoChangedSubscriberState.User, null);
                 }
             }
             catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
@@ -659,7 +658,8 @@ namespace SharedLibrary
         {
             User = 0,
             IntegratedPanel = 1,
-            Web = 2
+            Web = 2,
+            Ftp = 3
         }
     }
 }

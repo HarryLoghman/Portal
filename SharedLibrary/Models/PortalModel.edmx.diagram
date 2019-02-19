@@ -59,8 +59,8 @@
         <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="8.0733395088805544" PointY="24.375777553941951" />
         <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="9.45256776802827" PointY="5.19994774702934" />
         <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="10.484746271038775" PointY="9.0923696500679334" />
-        <EntityTypeShape EntityType="PortalModel.MCISubsLastStateFtpFile" Width="1.5" PointX="0.84700239116652043" PointY="23.478617544974487" />
-        <EntityTypeShape EntityType="PortalModel.App" Width="1.5" PointX="1.8202169490140943" PointY="21.715689371207585" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.App" Width="1.5" PointX="1.8202169490140943" PointY="21.715689371207585" />
+        <EntityTypeShape EntityType="PortalModel.MCIFtpLastState" Width="1.5" PointX="8.641841935292744" PointY="5.9841692624539924" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         

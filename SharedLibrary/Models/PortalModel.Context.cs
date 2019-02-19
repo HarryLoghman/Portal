@@ -68,8 +68,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<ReceievedMessage> ReceievedMessages { get; set; }
         public virtual DbSet<vw_ReceivedMessages> vw_ReceivedMessages { get; set; }
         public virtual DbSet<MCISingleChargeFtpFile> MCISingleChargeFtpFiles { get; set; }
-        public virtual DbSet<MCISubsLastStateFtpFile> MCISubsLastStateFtpFiles { get; set; }
         public virtual DbSet<App> Apps { get; set; }
+        public virtual DbSet<MCIFtpLastState> MCIFtpLastStates { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {
@@ -162,21 +162,33 @@ namespace SharedLibrary.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_RequestsRulesChecker", requestIdParameter, regdateParameter, sourceIPParameter, requestParamsParameter, destinationIPParameter, methodNameParameter, action, actionMessage);
         }
     
-        public virtual ObjectResult<sp_MCISubsLastStateFtpFiles_getAsyncSubs_Result> sp_MCISubsLastStateFtpFiles_getAsyncSubs(Nullable<long> serviceId, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
+        public virtual ObjectResult<sp_MCIFtpLastState_getAsync_Result> sp_MCIFtpLastState_getAsync(Nullable<long> serviceId, Nullable<System.DateTime> datetimeNow, Nullable<int> syncFtpOldItemsInMins, Nullable<int> syncFtpWaitTimeInMins, Nullable<int> syncDBWaitTimeInMins, Nullable<int> syncChargedTriedNDaysBefore)
         {
             var serviceIdParameter = serviceId.HasValue ?
                 new ObjectParameter("serviceId", serviceId) :
                 new ObjectParameter("serviceId", typeof(long));
     
-            var startDateParameter = startDate.HasValue ?
-                new ObjectParameter("startDate", startDate) :
-                new ObjectParameter("startDate", typeof(System.DateTime));
+            var datetimeNowParameter = datetimeNow.HasValue ?
+                new ObjectParameter("datetimeNow", datetimeNow) :
+                new ObjectParameter("datetimeNow", typeof(System.DateTime));
     
-            var endDateParameter = endDate.HasValue ?
-                new ObjectParameter("endDate", endDate) :
-                new ObjectParameter("endDate", typeof(System.DateTime));
+            var syncFtpOldItemsInMinsParameter = syncFtpOldItemsInMins.HasValue ?
+                new ObjectParameter("SyncFtpOldItemsInMins", syncFtpOldItemsInMins) :
+                new ObjectParameter("SyncFtpOldItemsInMins", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_MCISubsLastStateFtpFiles_getAsyncSubs_Result>("sp_MCISubsLastStateFtpFiles_getAsyncSubs", serviceIdParameter, startDateParameter, endDateParameter);
+            var syncFtpWaitTimeInMinsParameter = syncFtpWaitTimeInMins.HasValue ?
+                new ObjectParameter("SyncFtpWaitTimeInMins", syncFtpWaitTimeInMins) :
+                new ObjectParameter("SyncFtpWaitTimeInMins", typeof(int));
+    
+            var syncDBWaitTimeInMinsParameter = syncDBWaitTimeInMins.HasValue ?
+                new ObjectParameter("SyncDBWaitTimeInMins", syncDBWaitTimeInMins) :
+                new ObjectParameter("SyncDBWaitTimeInMins", typeof(int));
+    
+            var syncChargedTriedNDaysBeforeParameter = syncChargedTriedNDaysBefore.HasValue ?
+                new ObjectParameter("SyncChargedTriedNDaysBefore", syncChargedTriedNDaysBefore) :
+                new ObjectParameter("SyncChargedTriedNDaysBefore", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_MCIFtpLastState_getAsync_Result>("sp_MCIFtpLastState_getAsync", serviceIdParameter, datetimeNowParameter, syncFtpOldItemsInMinsParameter, syncFtpWaitTimeInMinsParameter, syncDBWaitTimeInMinsParameter, syncChargedTriedNDaysBeforeParameter);
         }
     }
 }

@@ -82,7 +82,7 @@ namespace ChargingLibrary
          , int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, long installmentId = 0)
         {
             DateTime timeStartChargeMtnSubscriber = DateTime.Now;
-            Nullable<DateTime> timeBeforeSendMTNClient = null;
+            Nullable<DateTime> timeBeforeSendMTNClient = DateTime.Now;
 
             string guidStr = Guid.NewGuid().ToString();
 

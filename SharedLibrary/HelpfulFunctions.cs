@@ -341,12 +341,14 @@ namespace SharedLibrary
         public static void sb_sendNotification_SingleChargeGang(StandardEventLevel level, string message)
         {
             //string url = "http://84.22.102.27/notif/n6.php";
-            string url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
+            string url = "";
+            string icon = "";
+            
             try
             {
-
-                string icon = fnc_getNotificationIcon(level);
-                Uri uri = new Uri(url + icon + message, UriKind.Absolute);
+                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
+                icon = fnc_getNotificationIcon(level);
+                Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
                 webRequest.Timeout = 60 * 1000;
 
@@ -354,7 +356,8 @@ namespace SharedLibrary
                 webRequest.ContentType = "text/xml;charset=\"utf-8\"";
                 webRequest.Accept = "text/xml";
                 webRequest.Method = "Get";
-                webRequest.GetResponse();
+                WebResponse webResponse = webRequest.GetResponse();
+                webResponse.Close();
             }
             catch (Exception e)
             {
@@ -364,12 +367,15 @@ namespace SharedLibrary
         public static void sb_sendNotification_DEmergency(StandardEventLevel level, string message)
         {
             //string url = "http://84.22.102.27/notif/n3.php";
-            string url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDEmergency);
+            string url = "";
+            string icon = "";
+            
             try
             {
-                string icon = fnc_getNotificationIcon(level);
+                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDEmergency);
+                icon = fnc_getNotificationIcon(level);
 
-                Uri uri = new Uri(url + icon + message, UriKind.Absolute);
+                Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
                 webRequest.Timeout = 60 * 1000;
 
@@ -377,22 +383,25 @@ namespace SharedLibrary
                 webRequest.ContentType = "text/xml;charset=\"utf-8\"";
                 webRequest.Accept = "text/xml";
                 webRequest.Method = "Get";
-                webRequest.GetResponse();
+                WebResponse webResponse = webRequest.GetResponse();
+                webResponse.Close();
             }
             catch (Exception e)
             {
-                logs.Error(e);
+                logs.Error(e + url + icon + HttpUtility.UrlEncode(message));
             }
         }
         public static void sb_sendNotification_DLog(StandardEventLevel level, string message)
         {
             //string url = "http://84.22.102.27/notif/n5.php";
-            string url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDLog);
+            string url = "";
+            string icon = "";
             try
             {
-                string icon = fnc_getNotificationIcon(level);
-
-                Uri uri = new Uri(url + icon + message, UriKind.Absolute);
+                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDLog);
+                icon = fnc_getNotificationIcon(level);
+                
+                Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
                 webRequest.Timeout = 60 * 1000;
 
@@ -400,11 +409,12 @@ namespace SharedLibrary
                 webRequest.ContentType = "text/xml;charset=\"utf-8\"";
                 webRequest.Accept = "text/xml";
                 webRequest.Method = "Get";
-                webRequest.GetResponse();
+                WebResponse webResponse =  webRequest.GetResponse();
+                webResponse.Close();
             }
             catch (Exception e)
             {
-                logs.Error(e);
+                logs.Error(e + url + icon + HttpUtility.UrlEncode(message));
             }
         }
         private static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"

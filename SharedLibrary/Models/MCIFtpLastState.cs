@@ -12,10 +12,12 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class MCISubsLastStateFtpFile
+    public partial class MCIFtpLastState
     {
         public long Id { get; set; }
         public Nullable<System.DateTime> regdate { get; set; }
+        public Nullable<long> serviceId { get; set; }
+        public string mobileNumber { get; set; }
         public Nullable<int> sid { get; set; }
         public string trans_id { get; set; }
         public Nullable<int> status { get; set; }
@@ -32,7 +34,5 @@ namespace SharedLibrary.Models
         public string event_type { get; set; }
         public string channel { get; set; }
         public string filePath { get; set; }
-        public Nullable<long> serviceId { get; set; }
-        public string mobileNumber { get; set; }
     }
 }

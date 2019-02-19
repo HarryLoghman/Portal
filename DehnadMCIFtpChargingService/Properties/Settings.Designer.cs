@@ -38,9 +38,9 @@ namespace DehnadMCIFtpChargingService.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("900")]
-        public string DownloadIntervalInSeconds {
+        public long DownloadIntervalInSeconds {
             get {
-                return ((string)(this["DownloadIntervalInSeconds"]));
+                return ((long)(this["DownloadIntervalInSeconds"]));
             }
             set {
                 this["DownloadIntervalInSeconds"] = value;
@@ -49,10 +49,10 @@ namespace DehnadMCIFtpChargingService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("false")]
-        public string SaveFailFilesToSingleCharge {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SaveFailFilesToSingleCharge {
             get {
-                return ((string)(this["SaveFailFilesToSingleCharge"]));
+                return ((bool)(this["SaveFailFilesToSingleCharge"]));
             }
             set {
                 this["SaveFailFilesToSingleCharge"] = value;
@@ -62,9 +62,9 @@ namespace DehnadMCIFtpChargingService.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public string CheckNDaysBefore {
+        public int CheckNDaysBefore {
             get {
-                return ((string)(this["CheckNDaysBefore"]));
+                return ((int)(this["CheckNDaysBefore"]));
             }
             set {
                 this["CheckNDaysBefore"] = value;
@@ -73,22 +73,22 @@ namespace DehnadMCIFtpChargingService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Tamly500")]
-        public string SyncSubStateServices {
+        [global::System.Configuration.DefaultSettingValueAttribute("All")]
+        public string SyncServices {
             get {
-                return ((string)(this["SyncSubStateServices"]));
+                return ((string)(this["SyncServices"]));
             }
             set {
-                this["SyncSubStateServices"] = value;
+                this["SyncServices"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public string SyncIntervalInSeconds {
+        [global::System.Configuration.DefaultSettingValueAttribute("3600")]
+        public long SyncIntervalInSeconds {
             get {
-                return ((string)(this["SyncIntervalInSeconds"]));
+                return ((long)(this["SyncIntervalInSeconds"]));
             }
             set {
                 this["SyncIntervalInSeconds"] = value;
@@ -97,25 +97,113 @@ namespace DehnadMCIFtpChargingService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SyncServiceLastTime {
+        [global::System.Configuration.DefaultSettingValueAttribute("1440")]
+        public int SyncFtpWaitTimeInMins {
             get {
-                return ((string)(this["SyncServiceLastTime"]));
+                return ((int)(this["SyncFtpWaitTimeInMins"]));
             }
             set {
-                this["SyncServiceLastTime"] = value;
+                this["SyncFtpWaitTimeInMins"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3600")]
-        public string SyncNSecondsBefore {
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int SyncDBWaitTimeInMins {
             get {
-                return ((string)(this["SyncNSecondsBefore"]));
+                return ((int)(this["SyncDBWaitTimeInMins"]));
             }
             set {
-                this["SyncNSecondsBefore"] = value;
+                this["SyncDBWaitTimeInMins"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1440")]
+        public int SyncFtpOldItemsInMins {
+            get {
+                return ((int)(this["SyncFtpOldItemsInMins"]));
+            }
+            set {
+                this["SyncFtpOldItemsInMins"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("All (notif all services async) All:AutoSync(All services sync automatically) Taml" +
+            "y500:AutoSync;Achar(Sync Tamly 500 automatically notif achar async) All;Achar:Au" +
+            "toSync(notif all services async and sync achar)")]
+        public string SyncServicesDescription {
+            get {
+                return ((string)(this["SyncServicesDescription"]));
+            }
+            set {
+                this["SyncServicesDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int SyncChargedTriedNDaysBefore {
+            get {
+                return ((int)(this["SyncChargedTriedNDaysBefore"]));
+            }
+            set {
+                this["SyncChargedTriedNDaysBefore"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(Now - regDate).Minutes>SyncFtpWaitTimeInMins (should wait for new ftp)")]
+        public string SyncFtpWaitTimeInMinsDescription {
+            get {
+                return ((string)(this["SyncFtpWaitTimeInMinsDescription"]));
+            }
+            set {
+                this["SyncFtpWaitTimeInMinsDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(Now - max(activationDate,deactivationDate).Minutes>SyncDBWaitTimeInMins (should " +
+            "wait may be we will be notif)")]
+        public string SyncDBWaitTimeInMinsDescription {
+            get {
+                return ((string)(this["SyncDBWaitTimeInMinsDescription"]));
+            }
+            set {
+                this["SyncDBWaitTimeInMinsDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(max(activationDate,deactivationDate) - ftpDateTime).SyncFtpOldItemsInMins (ftp i" +
+            "tem is really old -1 means do not apply this setting)")]
+        public string SyncFtpOldItemsInMinsDescription {
+            get {
+                return ((string)(this["SyncFtpOldItemsInMinsDescription"]));
+            }
+            set {
+                this["SyncFtpOldItemsInMinsDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("if we have any try in ndays before consider this user active")]
+        public string SyncChargedTriedNDaysBeforeDescription {
+            get {
+                return ((string)(this["SyncChargedTriedNDaysBeforeDescription"]));
+            }
+            set {
+                this["SyncChargedTriedNDaysBeforeDescription"] = value;
             }
         }
     }
