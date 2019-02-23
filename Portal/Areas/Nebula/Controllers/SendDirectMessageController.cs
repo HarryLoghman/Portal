@@ -47,7 +47,7 @@ namespace Portal.Areas.Nebula.Controllers
             messageObject.ServiceId = service.Id;
             messageObject.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
             messageObject.AggregatorId = serviceInfo.AggregatorId;
-            messageObject.SubscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(messageObject.MobileNumber, messageObject.ServiceId);
+            messageObject.SubscriberId = SharedLibrary.SubscriptionHandler.GetSubscriberId(messageObject.MobileNumber, messageObject.ServiceId);
             if ((messageObject.SubscriberId == null || messageObject.SubscriberId == 0) && messageObject.Point != 0)
             {
                 return Content("Cant add point to unsubscribed");

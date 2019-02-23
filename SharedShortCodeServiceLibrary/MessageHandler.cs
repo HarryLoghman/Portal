@@ -61,15 +61,15 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static MessageObject SetImiChargeInfo(SharedServiceEntities entity, ImiChargeCode imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
+        public static MessageObject SetImiChargeInfo(SharedServiceEntities entity, ImiChargeCode imiChargeCode, MessageObject message, int price, int messageType, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState? subscriberState)
         {
             if (subscriberState == null && price > 0)
                 imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price);
-            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+            else if (subscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated)
                 imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Register");
-            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+            else if (subscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated)
                 imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
-            else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+            else if (subscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal)
                 imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
             else
                 imiChargeCode = ((IEnumerable<dynamic>)entity.ImiChargeCodes).FirstOrDefault(o => o.Price == price && o.Description == "Free");
@@ -86,21 +86,21 @@ namespace SharedShortCodeServiceLibrary
 
         public static MessageObject InvalidContentWhenSubscribed(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static MessageObject EmptyContentWhenNotSubscribed(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "EmptyContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static MessageObject EmptyContentWhenSubscribed(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "EmptyContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
             return message;
         }
@@ -134,7 +134,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static MessageObject SendContentWhenUserIsSubscribedAndWantsToSubscribeAgain(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "SubscribedUserSendKeyword").Select(o => o.Content).FirstOrDefault();
             return message;
         }
@@ -142,14 +142,14 @@ namespace SharedShortCodeServiceLibrary
         public static MessageObject SendServiceSubscriptionHelp(string connectionStringNameInAppConfig, MessageObject message
             , List<SharedLibrary.Models.ServiceModel.MessagesTemplate> messagesTemplate)
         {
-            message = SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message = SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
             message.Content = messagesTemplate.Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static MessageObject SendServiceHelp(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "ServiceHelp").Select(o => o.Content).FirstOrDefault();
             return message;
         }
@@ -217,7 +217,7 @@ namespace SharedShortCodeServiceLibrary
 
         public static MessageObject UserHasActiveSinglecharge(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
             message.Content = messagesTemplate.Where(o => o.Title == "UserHasActiveSinglecharge").Select(o => o.Content).FirstOrDefault();
             return message;
         }
@@ -231,7 +231,7 @@ namespace SharedShortCodeServiceLibrary
                 offReason.Reason = message.Content;
                 entity.ServiceOffReasons.Add(offReason);
                 entity.SaveChanges();
-                message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
                 message.Content = messagesTemplate.Where(o => o.Title == "SubscriberSendedOffReason").Select(o => o.Content).FirstOrDefault();
                 InsertMessageToQueue(connectionStringNameInAppConfig, message);
             }
@@ -258,7 +258,7 @@ namespace SharedShortCodeServiceLibrary
                 if (content.Contains("{REFERRALCODE}"))
                 {
                     var subId = "1";
-                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, serviceId);
+                    var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(mobileNumber, serviceId);
                     if (sub != null)
                         subId = sub.SpecialUniqueId;
                     content = content.Replace("{REFERRALCODE}", subId);
@@ -288,7 +288,7 @@ namespace SharedShortCodeServiceLibrary
             messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
             messageBuffer.Tag = message.Tag;
-            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.SubscriptionHandler.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
             messageBuffer.Price = message.Price;
             return messageBuffer;
@@ -315,7 +315,7 @@ namespace SharedShortCodeServiceLibrary
             messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
             messageBuffer.Tag = message.Tag;
-            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.SubscriptionHandler.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
             messageBuffer.Price = message.Price;
             return messageBuffer;
@@ -432,24 +432,24 @@ namespace SharedShortCodeServiceLibrary
             messageBuffer.SubUnSubType = (message.SubUnSubType == null) ? 0 : message.SubUnSubType;
             messageBuffer.AggregatorId = message.AggregatorId;
             messageBuffer.Tag = message.Tag;
-            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
+            messageBuffer.SubscriberId = message.SubscriberId == null ? SharedLibrary.SubscriptionHandler.GetSubscriberId(message.MobileNumber, message.ServiceId) : message.SubscriberId;
             messageBuffer.PersianDateAddedToQueue = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
             messageBuffer.Price = message.Price;
             return messageBuffer;
         }
 
-        public static ImiChargeCode GetImiChargeObjectFromPrice(string connectionStringNameInAppConfig, int price, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
+        public static ImiChargeCode GetImiChargeObjectFromPrice(string connectionStringNameInAppConfig, int price, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState? subscriberState)
         {
             using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
             {
                 ImiChargeCode imiChargeCode;
                 if (subscriberState == null && price > 0)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price);
-                else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+                else if (subscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Register");
-                else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                else if (subscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "UnSubscription");
-                else if (subscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                else if (subscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal)
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Renewal");
                 else
                     imiChargeCode = entity.ImiChargeCodes.FirstOrDefault(o => o.Price == price && o.Description == "Free");
@@ -468,14 +468,14 @@ namespace SharedShortCodeServiceLibrary
 
         public static MessageObject InvalidContentWhenNotSubscribed(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
             return message;
         }
 
         public static void OffReasonResponse(string connectionStringNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
-            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
             message.Content = messagesTemplate.Where(o => o.Title == "SubscriberSendedOffReason").Select(o => o.Content).FirstOrDefault();
             InsertMessageToQueue(connectionStringNameInAppConfig, message);
         }
@@ -579,7 +579,7 @@ namespace SharedShortCodeServiceLibrary
             }
         }
 
-        public static MessageObject SetImiChargeInfo(string connectionStringNameInAppConfig, MessageObject message, int price, int messageType, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState? subscriberState)
+        public static MessageObject SetImiChargeInfo(string connectionStringNameInAppConfig, MessageObject message, int price, int messageType, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState? subscriberState)
         {
             var imiChargeObj = GetImiChargeObjectFromPrice(connectionStringNameInAppConfig, price, subscriberState);
             message.ImiChargeCode = imiChargeObj.ChargeCode;
@@ -589,33 +589,33 @@ namespace SharedShortCodeServiceLibrary
             return message;
         }
 
-        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState, int isCampaignActive)
+        public static string PrepareSubscriptionMessage(List<MessagesTemplate> messagesTemplate, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState serviceStatusForSubscriberState, int isCampaignActive)
         {
             string content = null;
             switch (serviceStatusForSubscriberState)
             {
-                case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated:
+                case SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated:
                     if (isCampaignActive == (int)CampaignStatus.Suspend || isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "OffMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignOffMessage").Select(o => o.Content).FirstOrDefault();
                     break;
-                case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated:
+                case SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated:
                     if (isCampaignActive == (int)CampaignStatus.Suspend || isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignWelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     break;
-                case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal:
+                case SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal:
                     if (isCampaignActive == (int)CampaignStatus.Suspend || isCampaignActive == (int)CampaignStatus.Deactive)
                         content = messagesTemplate.Where(o => o.Title == "WelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     else
                         content = messagesTemplate.Where(o => o.Title == "CampaignWelcomeMessage").Select(o => o.Content).FirstOrDefault();
                     break;
-                case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed:
+                case SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed:
                     content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenNotSubscribed").Select(o => o.Content).FirstOrDefault();
                     break;
-                case SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed:
+                case SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed:
                     content = messagesTemplate.Where(o => o.Title == "InvalidContentWhenSubscribed").Select(o => o.Content).FirstOrDefault();
                     break;
                 default:

@@ -21,67 +21,7 @@ namespace DehnadTahChinService
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static int maxChargeLimit = 300;
         static string v_url;
-        public int ProcessInstallment(int installmentCycleNumber)
-        {
-            var income = 0;
-            try
-            {
-                v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
-
-                string aggregatorName = SharedLibrary.ServiceHandler.GetAggregatorNameFromServiceCode(Properties.Settings.Default.ServiceCode); ;
-                var serviceCode = Properties.Settings.Default.ServiceCode;
-                var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceCode, aggregatorName);
-                List<string> installmentList;
-                var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
-                using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
-                {
-                    entity.Configuration.AutoDetectChangesEnabled = false;
-                    entity.Database.CommandTimeout = 120;
-                    List<SharedLibrary.Models.ServiceModel.ImiChargeCode> chargeCodes = SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity).ToList();
-                    for (int installmentInnerCycleNumber = 1; installmentInnerCycleNumber <= 1; installmentInnerCycleNumber++)
-                    {
-                        logs.Info("start of installmentInnerCycleNumber " + installmentInnerCycleNumber);
-                        //installmentList = ((IEnumerable)SharedLibrary.InstallmentHandler.GetInstallmentList(entity)).OfType<SinglechargeInstallment>().ToList();
-
-                        installmentList = SharedLibrary.ServiceHandler.GetServiceActiveMobileNumbersFromServiceCode(serviceCode);
-                        logs.Info("installmentList all users count:" + installmentList.Count);
-                        var today = DateTime.Now;
-                        List<string> chargeCompleted;
-                        var delayDateBetweenCharges = today.AddDays(0);
-                        if (delayDateBetweenCharges.Date != today.Date)
-                        {
-                            chargeCompleted = entity.vw_Singlecharge.AsNoTracking()
-                                .Where(o => DbFunctions.TruncateTime(o.DateCreated) >= DbFunctions.TruncateTime(delayDateBetweenCharges) && DbFunctions.TruncateTime(o.DateCreated) <= DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
-                                .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
-                        }
-                        else
-                        {
-                            chargeCompleted = entity.Singlecharges.AsNoTracking()
-                                .Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today) && o.IsSucceeded == true && o.Price > 0)
-                                .GroupBy(o => o.MobileNumber).Where(o => o.Sum(x => x.Price) >= maxChargeLimit).Select(o => o.Key).ToList();
-                        }
-                        var waitingList = entity.SinglechargeWaitings.AsNoTracking().Select(o => o.MobileNumber).ToList();
-                        logs.Info("installmentList compeleted charge users count:" + chargeCompleted.Count);
-                        logs.Info("installmentList users in waiting list count:" + waitingList.Count);
-                        installmentList.RemoveAll(o => chargeCompleted.Contains(o));
-                        installmentList.RemoveAll(o => waitingList.Contains(o));
-                        var yesterday = DateTime.Now.AddDays(-1);
-                        //var sucessfulyChargedYesterday = entity.SinglechargeArchives.AsNoTracking().Where(o => DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(yesterday) && o.IsSucceeded == true && o.Price > 0).GroupBy(o => o.MobileNumber).Select(o => o.Key).ToList();
-                        var randomList = installmentList.OrderBy(o => Guid.NewGuid()).ToList();
-                        int installmentListCount = installmentList.Count;
-                        logs.Info("installmentList final list count:" + installmentListCount);
-                        var installmentListTakeSize = Properties.Settings.Default.DefaultSingleChargeTakeSize;
-                        income += InstallmentJob(maxChargeLimit, installmentCycleNumber, installmentInnerCycleNumber, serviceCode, chargeCodes, randomList, installmentListCount, installmentListTakeSize, serviceAdditionalInfo);
-                        logs.Info("end of installmentInnerCycleNumber " + installmentInnerCycleNumber);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in ProcessInstallment:", e);
-            }
-            return income;
-        }
+       
 
         public static int InstallmentJob(int maxChargeLimit, int installmentCycleNumber, int installmentInnerCycleNumber, string serviceCode, dynamic chargeCodes, List<string> installmentList, int installmentListCount, int installmentListTakeSize, Dictionary<string, string> serviceAdditionalInfo)
         {
@@ -142,7 +82,7 @@ namespace DehnadTahChinService
                         }
                         //singlecharge = reserverdSingleCharge;
                         int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
-                        bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
+                        bool isSubscriberActive = SharedLibrary.SubscriptionHandler.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
                             continue;

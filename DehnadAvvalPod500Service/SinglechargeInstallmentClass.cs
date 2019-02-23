@@ -132,7 +132,7 @@ namespace DehnadAvvalPod500Service
                             batchSaveCounter = 0;
                         }
                         int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today)).Select(o => o.Price).ToList().Sum(o => o);
-                        bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
+                        bool isSubscriberActive = SharedLibrary.SubscriptionHandler.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
                             continue;

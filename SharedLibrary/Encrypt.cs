@@ -341,7 +341,7 @@ namespace SharedLibrary
                     }
                     if (!entryApp.state.HasValue || entryApp.state.Value == 0)
                     {
-                        errorType = "AppName is disabled";
+                        errorType = "App is disabled";
                         errorDescription = "AppName = " + appName;
                         return false;
                     }

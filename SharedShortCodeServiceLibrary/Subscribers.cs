@@ -14,7 +14,7 @@ namespace SharedShortCodeServiceLibrary
         {
             try
             {
-                var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(mobileNumber, serviceId);
+                var subscriberId = SharedLibrary.SubscriptionHandler.GetSubscriberId(mobileNumber, serviceId);
                 var subscriberAdditionalInfo = GetSubscriberAdditionalInfo(connectionStringNameInAppConfig, subscriberId.Value);
                 if (subscriberAdditionalInfo.IsSubscriberReceivedSubscriptionPoint == true)
                     return;
@@ -79,7 +79,7 @@ namespace SharedShortCodeServiceLibrary
             {
                 using (var entity = new SharedServiceEntities(connectionStringNameInAppConfig))
                 {
-                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(mobileNumber, serviceId);
+                    var subscriberId = SharedLibrary.SubscriptionHandler.GetSubscriberId(mobileNumber, serviceId);
                     var subscriberAdditionalInfo = entity.SubscribersAdditionalInfoes.FirstOrDefault(o => o.SubscriberId == subscriberId);
                     if (subscriberAdditionalInfo == null)
                     {

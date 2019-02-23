@@ -222,8 +222,8 @@ namespace DehnadJhoobinService
                             message.Content = token;
                             message.MobileOperator = 2;
                             message.OperatorPlan = 0;
-                            SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, false);
-                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
+                            SharedLibrary.SubscriptionHandler.HandleSubscriptionContent(message, service, false);
+                            var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(mobileNumber, service.Id);
                             startTime = startTime.Replace("/", "-");
                             var splitedStartTime = startTime.Split(' ');
                             var georgianDate = SharedLibrary.Date.GetGregorianDate(splitedStartTime[0]);
@@ -234,7 +234,7 @@ namespace DehnadJhoobinService
                             {
                                 entity.Entry(subscriber).State = EntityState.Modified;
                                 entity.SaveChanges();
-                                var history = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
+                                var history = SharedLibrary.SubscriptionHandler.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
                                 history.Date = georgianDate.Date;
                                 history.Time = georgianDateTime.TimeOfDay;
                                 history.DateTime = georgianDateTime;
@@ -288,7 +288,7 @@ namespace DehnadJhoobinService
                         }
                         if (token != "")
                         {
-                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
+                            var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(mobileNumber, service.Id);
                             if (subscriber == null)
                             {
                                 var message = new SharedLibrary.Models.MessageObject();
@@ -297,9 +297,9 @@ namespace DehnadJhoobinService
                                 message.Content = token;
                                 message.MobileOperator = 2;
                                 message.OperatorPlan = 0;
-                                SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, false);
+                                SharedLibrary.SubscriptionHandler.HandleSubscriptionContent(message, service, false);
 
-                                subscriber = SharedLibrary.HandleSubscription.GetSubscriber(mobileNumber, service.Id);
+                                subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(mobileNumber, service.Id);
                                 startTime = startTime.Replace("/", "-");
                                 var splitedStartTime = startTime.Split(' ');
                                 var georgianDate = SharedLibrary.Date.GetGregorianDate(splitedStartTime[0]);
@@ -310,7 +310,7 @@ namespace DehnadJhoobinService
                                     subscriber.PersianActivationDate = splitedStartTime[0];
                                     entity.Entry(subscriber).State = EntityState.Modified;
                                     entity.SaveChanges();
-                                    var history = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
+                                    var history = SharedLibrary.SubscriptionHandler.GetLastInsertedSubscriberHistory(message.MobileNumber, service.Id);
                                     history.Date = georgianDate.Date;
                                     history.Time = georgianDateTime.TimeOfDay;
                                     history.DateTime = georgianDateTime;
@@ -326,7 +326,7 @@ namespace DehnadJhoobinService
                             message2.Content = cancelChannel;
                             message2.MobileOperator = 2;
                             message2.OperatorPlan = 0;
-                            SharedLibrary.HandleSubscription.HandleSubscriptionContent(message2, service, true);
+                            SharedLibrary.SubscriptionHandler.HandleSubscriptionContent(message2, service, true);
 
                             expiryTime = expiryTime.Replace("/", "-");
                             var splitedExpiryTime = expiryTime.Split(' ');
@@ -339,7 +339,7 @@ namespace DehnadJhoobinService
                                 entity.Entry(subscriber).State = EntityState.Modified;
                                 entity.SaveChanges();
 
-                                var history2 = SharedLibrary.HandleSubscription.GetLastInsertedSubscriberHistory(message2.MobileNumber, service.Id);
+                                var history2 = SharedLibrary.SubscriptionHandler.GetLastInsertedSubscriberHistory(message2.MobileNumber, service.Id);
                                 history2.Date = georgianDate2.Date;
                                 history2.Time = georgianDateTime2.TimeOfDay;
                                 history2.DateTime = georgianDateTime2;

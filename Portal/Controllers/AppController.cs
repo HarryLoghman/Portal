@@ -286,7 +286,7 @@ namespace Portal.Controllers
                         {
                             messageObj.ServiceId = service.Id;
                             messageObj.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id).ShortCode;
-                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
+                            var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
                             if (subscriber != null && subscriber.DeactivationDate == null)
                             {
                                 Random random = new Random();
@@ -363,7 +363,7 @@ namespace Portal.Controllers
                         {
                             messageObj.ServiceId = service.Id;
                             messageObj.ShortCode = SharedLibrary.ServiceHandler.GetServiceInfoFromServiceId(service.Id).ShortCode;
-                            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
+                            var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(messageObj.MobileNumber, messageObj.ServiceId);
                             var daysLeft = 0;
                             if (messageObj.ServiceCode == "Soltan")
                             {

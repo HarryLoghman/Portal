@@ -1098,7 +1098,7 @@ namespace Portal.Controllers
                                 message.IsReceivedFromIntegratedPanel = true;
                                 message.Content = "Integrated Panel";
                                 var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                                SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null);
+                                SharedLibrary.SubscriptionHandler.AddToSubscriberHistory(message, service, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated, SharedLibrary.SubscriptionHandler.WhoChangedSubscriberState.IntegratedPanel, null);
                                 result.status = 0;
                             }
                         }
@@ -1117,13 +1117,13 @@ namespace Portal.Controllers
                             entity.Subscribers.Add(newSubscriber);
                             entity.SaveChanges();
                             var service = SharedLibrary.ServiceHandler.GetServiceFromServiceId(serviceInfo.ServiceId);
-                            SharedLibrary.HandleSubscription.AddSubscriberToSubscriberPointsTable(newSubscriber, service);
+                            SharedLibrary.SubscriptionHandler.AddSubscriberToSubscriberPointsTable(newSubscriber, service);
                             var message = new MessageObject();
                             message.MobileNumber = mobileNumber;
                             message.ShortCode = serviceInfo.ShortCode;
                             message.IsReceivedFromIntegratedPanel = true;
                             message.Content = "Integrated Panel";
-                            SharedLibrary.HandleSubscription.AddToSubscriberHistory(message, service, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated, SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel, null);
+                            SharedLibrary.SubscriptionHandler.AddToSubscriberHistory(message, service, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated, SharedLibrary.SubscriptionHandler.WhoChangedSubscriberState.IntegratedPanel, null);
                             result.status = 0;
                         }
                     }
@@ -1204,9 +1204,9 @@ namespace Portal.Controllers
                                     subscriberHistoryObject.subscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(subscriber.DateTime.GetValueOrDefault());
                                     subscriberHistoryObject.subscriptionKeyword = subscriber.SubscriptionKeyword;
                                     subscriberHistoryObject.enabled = 0;
-                                    if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.HandleSubscription.WhoChangedSubscriberState.User)
+                                    if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.SubscriptionHandler.WhoChangedSubscriberState.User)
                                         subscriberHistoryObject.subscriptionMethod = 1;
-                                    else if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel)
+                                    else if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.SubscriptionHandler.WhoChangedSubscriberState.IntegratedPanel)
                                         subscriberHistoryObject.subscriptionMethod = 2;
                                     else
                                         subscriberHistoryObject.subscriptionMethod = 3;
@@ -1217,9 +1217,9 @@ namespace Portal.Controllers
                                     subscriberHistoryObject.unsubscriptionDate = (long)SharedLibrary.Date.DateTimeToUnixTimestamp(subscriber.DateTime.GetValueOrDefault());
                                     subscriberHistoryObject.unsubscriptionKeyword = subscriber.UnsubscriptionKeyword;
                                     subscriberHistoryObject.enabled = 1;
-                                    if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.HandleSubscription.WhoChangedSubscriberState.User)
+                                    if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.SubscriptionHandler.WhoChangedSubscriberState.User)
                                         subscriberHistoryObject.unsubscriptionMethod = 1;
-                                    else if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.HandleSubscription.WhoChangedSubscriberState.IntegratedPanel)
+                                    else if (subscriber.WhoChangedSubscriberStatus == (int)SharedLibrary.SubscriptionHandler.WhoChangedSubscriberState.IntegratedPanel)
                                         subscriberHistoryObject.unsubscriptionMethod = 2;
                                     else
                                         subscriberHistoryObject.unsubscriptionMethod = 3;

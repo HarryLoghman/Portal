@@ -85,18 +85,6 @@ namespace DehnadMCIFtpChargingService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3600")]
-        public long SyncIntervalInSeconds {
-            get {
-                return ((long)(this["SyncIntervalInSeconds"]));
-            }
-            set {
-                this["SyncIntervalInSeconds"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1440")]
         public int SyncFtpWaitTimeInMins {
             get {

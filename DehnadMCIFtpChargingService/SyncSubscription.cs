@@ -125,6 +125,12 @@ namespace DehnadMCIFtpChargingService
                             , Properties.Settings.Default.SyncDBWaitTimeInMins
                             , Properties.Settings.Default.SyncChargedTriedNDaysBefore).ToList();
 
+                        if (i == 0)
+                        {
+                            notifDescription = this.fnc_getNotifString(true, lstSyncSubs);
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning
+                                , "MCI Sync setting " + notifDescription);
+                        }
                         if (lstSyncSubs.Count() > 0)
                         {
                             if (!arrServicesString[i].Contains(":") || string.IsNullOrEmpty(arrServicesString[i].Split(':')[1])
@@ -132,7 +138,9 @@ namespace DehnadMCIFtpChargingService
                                 autoSync = false;
                             else autoSync = true;
 
-                            notifDescription = this.fnc_getNotifString(lstSyncSubs);
+                           
+
+                            notifDescription = this.fnc_getNotifString(false, lstSyncSubs);
                             if (autoSync)
                             {
                                 SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning
@@ -152,7 +160,7 @@ namespace DehnadMCIFtpChargingService
                                         {
                                             if (syncSub.event_type == "1.2")
                                             {
-                                                if (SharedLibrary.HandleSubscriptionFtp.UnsubscribeFtp(mobileNumber
+                                                if (SharedLibrary.SubscriptionFtpHandler.UnsubscribeFtp(mobileNumber
                                                       , syncSub.datetime.Value, syncSub.keyword, mobileOperator, operatorPlan, entryService))
                                                 {
                                                     syncedCount++;
@@ -160,7 +168,7 @@ namespace DehnadMCIFtpChargingService
                                             }
                                             else if (syncSub.event_type == "1.1")
                                             {
-                                                if (SharedLibrary.HandleSubscriptionFtp.SubscribeFtp(mobileNumber
+                                                if (SharedLibrary.SubscriptionFtpHandler.SubscribeFtp(mobileNumber
                                                     , syncSub.datetime.Value, syncSub.keyword, mobileOperator, operatorPlan, entryService))
                                                 {
                                                     syncedCount++;
@@ -172,7 +180,7 @@ namespace DehnadMCIFtpChargingService
                                         {
                                             if (syncSub.event_type == "1.5")
                                             {
-                                                if (SharedLibrary.HandleSubscriptionFtp.SubscribeFtp(mobileNumber
+                                                if (SharedLibrary.SubscriptionFtpHandler.SubscribeFtp(mobileNumber
                                                     , syncSub.datetime.Value, syncSub.Action, mobileOperator, operatorPlan, entryService))
                                                 {
                                                     syncedCount++;
@@ -212,17 +220,21 @@ namespace DehnadMCIFtpChargingService
             }
         }
 
-        private string fnc_getNotifString(List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lstSyncSubs)
+        private string fnc_getNotifString(bool settingParameters, List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lstSyncSubs)
         {
-            string str =
-                        "\n ChargeTryNDaysBefore = " + Properties.Settings.Default.SyncChargedTriedNDaysBefore.ToString()
+            string str = "";
+            if (!settingParameters)
+                str = "\n SyncFtpDifference = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpdifference").ToString()
+                            + "(Need to be activated = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpdifference" && o.event_type == "1.1").ToString()
+                            + " Need to be deactivated = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpdifference" && o.event_type == "1.2").ToString() + ")"
+                            + "\n SyncFtpAddition = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpaddition").ToString()
+                            + "\n SyncChargeTryActivation = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncchargetryactivation").ToString()
+                            + "\n SyncChargeTryAddition = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncchargetryaddition").ToString();
+            else
+                str = "\n ChargeTryNDaysBefore = " + Properties.Settings.Default.SyncChargedTriedNDaysBefore.ToString()
                         + "\n DBWaitTimeInMins = " + Properties.Settings.Default.SyncDBWaitTimeInMins.ToString()
                         + "\n FtpOldItemsInMins = " + Properties.Settings.Default.SyncFtpOldItemsInMins.ToString()
-                        + "\n FtpWaitTime = " + Properties.Settings.Default.SyncFtpWaitTimeInMins.ToString()
-                        + "\n SyncFtpDifference = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpdifference").ToString()
-                        + "\n SyncFtpAddition = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncftpaddition").ToString()
-                        + "\n SyncChargeTryActivation = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncchargetryactivation").ToString()
-                        + "\n SyncChargeTryAddition = " + lstSyncSubs.Count(o => o.Action.ToLower() == "syncchargetryaddition").ToString();
+                        + "\n FtpWaitTime = " + Properties.Settings.Default.SyncFtpWaitTimeInMins.ToString();
             return str;
         }
         //private DateTime? fnc_getServiceLastSyncTime(string serviceCode, out string errorType, out string errorDescription)

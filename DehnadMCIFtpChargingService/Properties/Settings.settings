@@ -17,9 +17,6 @@
     <Setting Name="SyncServices" Type="System.String" Scope="User">
       <Value Profile="(Default)">All</Value>
     </Setting>
-    <Setting Name="SyncIntervalInSeconds" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">3600</Value>
-    </Setting>
     <Setting Name="SyncFtpWaitTimeInMins" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1440</Value>
     </Setting>

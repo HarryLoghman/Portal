@@ -265,7 +265,7 @@ namespace DehnadMedadService
 
                     DateTime timeAfterWhere = DateTime.Now;
                     //int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == mobileNumber && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == today.Date).ToList().Sum(o => o.Price);
-                    bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(mobileNumber, serviceAdditionalInfo["serviceId"]);
+                    bool isSubscriberActive = SharedLibrary.SubscriptionHandler.IsSubscriberActive(mobileNumber, serviceAdditionalInfo["serviceId"]);
                     if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                     {
                         return 0;

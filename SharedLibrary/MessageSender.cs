@@ -28,10 +28,11 @@ namespace SharedLibrary
         //public static string irancellIp = "http://92.42.55.180:8310";
         //public static string mciIp = "http://172.17.251.18:8090";
 
-        public static async Task<dynamic> OTPRequestGeneral(string aggregatorName, dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> OTPRequestGeneral(string aggregatorName, SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             logs.Info("OTPRequestGeneral,Start," + message.ServiceCode + "," + message.MobileNumber + "," + aggregatorName);
-            Task<dynamic> result;
+            //Task<dynamic> result;
             string aggregatorNameLowerCase = aggregatorName.ToLower();
             if (aggregatorNameLowerCase == "mobinonemapfa")
             {
@@ -44,15 +45,15 @@ namespace SharedLibrary
             }
             else if (aggregatorNameLowerCase == "telepromo")
             {
-                if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
-                   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500" || serviceAdditionalInfo["serviceCode"] == "Halghe")
-                {
+                //if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
+                //   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500" || serviceAdditionalInfo["serviceCode"] == "Halghe")
+                //{
                     return await TelepromoOTPRequestJSON(entity, singlecharge, message, serviceAdditionalInfo);
-                }
-                else
-                {
-                    return await TelepromoOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
-                }
+                //}
+                //else
+                //{
+                //    return await TelepromoOTPRequest(entity, singlecharge, message, serviceAdditionalInfo);
+                //}
             }
             else if (aggregatorNameLowerCase == "telepromomapfa")
             {
@@ -74,10 +75,13 @@ namespace SharedLibrary
             else return null;
             //else return null;
             logs.Info("OTPRequestGeneral,End," + message.ServiceCode + "," + message.MobileNumber);
-            return result;
+            //return result;
         }
 
-        public static async Task<dynamic> OTPConfirmGeneral(string aggregatorName, dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> OTPConfirmGeneral(string aggregatorName
+            , SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge
+            , MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmCode)
         {
             logs.Info("OTPConfirmGeneral,Start," + message.ServiceCode + "," + message.MobileNumber);
             Task<dynamic> result = null;
@@ -92,15 +96,15 @@ namespace SharedLibrary
             }
             else if (aggregatorNameLowerCase == "telepromo")
             {
-                if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
-                   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500")
-                {
-                    return await TelepromoOTPConfirmJson(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
-                }
-                else
-                {
-                    return await TelepromoOTPConfirmJson(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
-                }
+                //if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
+                //   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500")
+                //{
+                return await TelepromoOTPConfirmJson(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+                //}
+                //else
+                //{
+                //    return await TelepromoOTPConfirmJson(entity, singlecharge, message, serviceAdditionalInfo, confirmCode);
+                //}
             }
             else if (aggregatorNameLowerCase == "telepromomapfa")
             {
@@ -120,7 +124,7 @@ namespace SharedLibrary
             }
             else return null;
             logs.Info("OTPConfirmGeneral,End," + message.ServiceCode + "," + message.MobileNumber);
-            return result;
+            //return result;
         }
 
 
@@ -606,7 +610,8 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> TelepromoOTPRequestJSON(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> TelepromoOTPRequestJSON(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             //logs.Info("TelepromoOTPRequestJSON");
             entity.Configuration.AutoDetectChangesEnabled = false;
@@ -745,7 +750,7 @@ namespace SharedLibrary
                 singlecharge.Description = description;
                 singlecharge.IsApplicationInformed = false;
                 singlecharge.InstallmentId = null;
-                singlecharge.IsCalledFromInAppPurchase = true;
+                //singlecharge.IsCalledFromInAppPurchase = true;
 
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
@@ -802,7 +807,9 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> TelepromoOTPConfirmJson(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> TelepromoOTPConfirmJson(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge
+            , MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             logs.Info("TelepromoOTPConfirmJSON");
@@ -1280,222 +1287,8 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> HubOtpChargeRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
-        {
-            entity.Configuration.AutoDetectChangesEnabled = false;
-            singlecharge.MobileNumber = message.MobileNumber;
-            try
-            {
-                var aggregatorUsername = serviceAdditionalInfo["username"];
-                var aggregatorPassword = serviceAdditionalInfo["password"];
-                var from = serviceAdditionalInfo["shortCode"];
-                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-
-                XmlDocument doc = new XmlDocument();
-                XmlElement root = doc.CreateElement("xmsrequest");
-                XmlElement userid = doc.CreateElement("userid");
-                XmlElement password = doc.CreateElement("password");
-                XmlElement action = doc.CreateElement("action");
-                XmlElement body = doc.CreateElement("body");
-                XmlElement serviceid = doc.CreateElement("serviceid");
-                serviceid.InnerText = serviceId;
-                body.AppendChild(serviceid);
-
-                XmlElement recipient = doc.CreateElement("recipient");
-                body.AppendChild(recipient);
-
-                XmlAttribute mobile = doc.CreateAttribute("mobile");
-                recipient.Attributes.Append(mobile);
-                mobile.InnerText = message.MobileNumber;
-
-                XmlAttribute originator = doc.CreateAttribute("originator");
-                originator.InnerText = from;
-                recipient.Attributes.Append(originator);
-
-                XmlAttribute cost = doc.CreateAttribute("cost");
-                if (message.Price == 5 || message.Price == 6) // 5 for Sub and 6 for Unsub price on otp
-                    cost.InnerText = message.Price.ToString();
-                else
-                    cost.InnerText = (message.Price * 10).ToString();
-
-                recipient.Attributes.Append(cost);
-
-                var random = new Random();
-                long doer = random.Next(10000000, 999999999);
-                XmlAttribute doerid = doc.CreateAttribute("doerid");
-                doerid.InnerText = doer.ToString();
-                recipient.Attributes.Append(doerid);
-
-                userid.InnerText = aggregatorUsername;
-                password.InnerText = aggregatorPassword;
-                action.InnerText = "PushOtp";
-                //
-                doc.AppendChild(root);
-                root.AppendChild(userid);
-                root.AppendChild(password);
-                root.AppendChild(action);
-                root.AppendChild(body);
-                //
-                string stringedXml = doc.OuterXml;
-                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
-                string response = hubClient.XmsRequest(stringedXml).ToString();
-                XmlDocument xml = new XmlDocument();
-                xml.LoadXml(response);
-                XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
-                foreach (XmlNode error in OK)
-                {
-                    if (error.InnerText != "" && error.InnerText != "ok")
-                    {
-                        logs.Error("Error in OtpChargeReuqest using Hub");
-                    }
-                    else
-                    {
-                        var i = 0;
-                        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
-                        foreach (XmlNode xn in xnList)
-                        {
-                            string responseCode = (xn.Attributes["status"].Value).ToString();
-                            if (responseCode == "40")
-                            {
-                                singlecharge.Description = "SUCCESS-Pending Confirmation";
-                                singlecharge.ReferenceId = xn.InnerText;
-                            }
-                            else
-                            {
-                                singlecharge.Description = responseCode;
-                                //singlecharge.ReferenceId = xn.InnerText;
-                            }
-                            i++;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in HubOtpChargeRequest: " + e);
-                singlecharge.Description = "Exception Occurred";
-            }
-            try
-            {
-                singlecharge.IsSucceeded = false;
-                singlecharge.DateCreated = DateTime.Now;
-                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                if (message.Price == 5 || message.Price == 6)
-                    singlecharge.Price = 0;
-                else
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
-
-                entity.Singlecharges.Add(singlecharge);
-                entity.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in HubOtpChargeRequest on saving values to db: " + e);
-            }
-            return singlecharge;
-        }
-
-        public static async Task<dynamic> HubOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
-        {
-            entity.Configuration.AutoDetectChangesEnabled = false;
-            try
-            {
-                var aggregatorUsername = serviceAdditionalInfo["username"];
-                var aggregatorPassword = serviceAdditionalInfo["password"];
-                var from = serviceAdditionalInfo["shortCode"];
-                var serviceId = serviceAdditionalInfo["aggregatorServiceId"];
-
-                XmlDocument doc = new XmlDocument();
-                XmlElement root = doc.CreateElement("xmsrequest");
-                XmlElement userid = doc.CreateElement("userid");
-                XmlElement password = doc.CreateElement("password");
-                XmlElement action = doc.CreateElement("action");
-                XmlElement body = doc.CreateElement("body");
-                XmlElement serviceid = doc.CreateElement("serviceid");
-                serviceid.InnerText = serviceId;
-                body.AppendChild(serviceid);
-
-                XmlElement recipient = doc.CreateElement("recipient");
-                body.AppendChild(recipient);
-
-                XmlAttribute mobile = doc.CreateAttribute("mobile");
-                recipient.Attributes.Append(mobile);
-                mobile.InnerText = message.MobileNumber;
-
-                XmlAttribute originator = doc.CreateAttribute("originator");
-                originator.InnerText = from;
-                recipient.Attributes.Append(originator);
-
-                var random = new Random();
-                long doer = random.Next(10000000, 999999999);
-                XmlAttribute doerid = doc.CreateAttribute("doerid");
-                doerid.InnerText = doer.ToString();
-                recipient.Attributes.Append(doerid);
-
-                XmlAttribute pin = doc.CreateAttribute("pin");
-                pin.InnerText = confirmationCode;
-                recipient.Attributes.Append(pin);
-
-                recipient.InnerText = singlecharge.ReferenceId;
-
-                userid.InnerText = aggregatorUsername;
-                password.InnerText = aggregatorPassword;
-                action.InnerText = "chargeotp";
-                //
-                doc.AppendChild(root);
-                root.AppendChild(userid);
-                root.AppendChild(password);
-                root.AppendChild(action);
-                root.AppendChild(body);
-                //
-                string stringedXml = doc.OuterXml;
-                SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();
-                string response = hubClient.XmsRequest(stringedXml).ToString();
-                XmlDocument xml = new XmlDocument();
-                xml.LoadXml(response);
-                XmlNodeList OK = xml.SelectNodes("/xmsresponse/code");
-                foreach (XmlNode error in OK)
-                {
-                    if (error.InnerText != "" && error.InnerText != "ok")
-                    {
-                        logs.Error("Error in HubOtpConfrim");
-                    }
-                    else
-                    {
-                        var i = 0;
-                        XmlNodeList xnList = xml.SelectNodes("/xmsresponse/body/recipient");
-                        foreach (XmlNode xn in xnList)
-                        {
-                            string responseCode = (xn.Attributes["status"].Value).ToString();
-                            if (responseCode == "41")
-                            {
-                                singlecharge.Description = "SUCCESS";
-                                singlecharge.ReferenceId = xn.InnerText;
-                                singlecharge.IsSucceeded = true;
-                                entity.Entry(singlecharge).State = EntityState.Modified;
-                                entity.SaveChanges();
-                            }
-                            else
-                            {
-                                singlecharge.Description = responseCode;
-                                //singlecharge.ReferenceId = xn.InnerText;
-                            }
-                            i++;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in HubOtpConfrim: " + e);
-                singlecharge.Description = "Exception Occurred";
-            }
-            return singlecharge;
-        }
-
-        public static async Task<dynamic> PardisImiOtpChargeRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> PardisImiOtpChargeRequest(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             singlecharge.MobileNumber = message.MobileNumber;
@@ -1530,7 +1323,7 @@ namespace SharedLibrary
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
+                //singlecharge.IsCalledFromInAppPurchase = true;
 
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
@@ -1542,7 +1335,9 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> PardisImiOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> PardisImiOTPConfirm(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge
+            , MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
@@ -1697,7 +1492,8 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MapfaOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MapfaOTPRequest(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             logs.Info("MapfaOTPRequest:start" + message.ServiceCode + "," + message.MobileNumber);
             entity.Configuration.AutoDetectChangesEnabled = false;
@@ -1709,7 +1505,7 @@ namespace SharedLibrary
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
+                //singlecharge.IsCalledFromInAppPurchase = true;
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
 
@@ -1749,7 +1545,10 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> MapfaOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MapfaOTPConfirm(
+            SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge
+            , MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
@@ -1788,229 +1587,6 @@ namespace SharedLibrary
                 singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
             }
             return singlecharge;
-        }
-
-        public static async Task<dynamic> MapfaStaticPriceSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
-        {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
-                singlecharge.MobileNumber = message.MobileNumber;
-                try
-                {
-                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
-                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
-                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
-                    var username = serviceAdditionalInfo["username"];
-                    var password = serviceAdditionalInfo["password"];
-                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
-                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
-                    var domain = "";
-                    if (aggregatorId == "3")
-                        domain = "pardis1";
-                    else
-                        domain = "alladmin";
-                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
-                    var result = client.singleCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
-                    if (result > 10000)
-                        singlecharge.IsSucceeded = true;
-                    else
-                        singlecharge.IsSucceeded = false;
-
-                    singlecharge.Description = result.ToString();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaStaticPriceSinglecharge: " + e);
-                    singlecharge.Description = "Exception";
-                }
-                try
-                {
-
-                    singlecharge.DateCreated = DateTime.Now;
-                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                    singlecharge.IsApplicationInformed = false;
-                    singlecharge.IsCalledFromInAppPurchase = false;
-                    if (installmentId != 0)
-                        singlecharge.InstallmentId = installmentId;
-                    entity.Singlecharges.Add(singlecharge);
-                    entity.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaStaticPriceSinglecharge on saving values to db: " + e);
-                }
-                return singlecharge;
-            }
-        }
-
-        public static async Task<dynamic> MapfaDynamicPriceSinglecharge(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, long installmentId = 0)
-        {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                singlecharge.MobileNumber = message.MobileNumber;
-                try
-                {
-                    var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
-                    var paridsShortCodes = ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
-                    var aggregatorServiceId = paridsShortCodes.FirstOrDefault(o => o.Price == message.Price.Value).PardisServiceId;
-                    var username = serviceAdditionalInfo["username"];
-                    var password = serviceAdditionalInfo["password"];
-                    var aggregatorId = serviceAdditionalInfo["aggregatorId"];
-                    var channelType = (int)MessageHandler.MapfaChannels.SMS;
-                    var domain = "";
-                    if (aggregatorId == "3")
-                        domain = "pardis1";
-                    else
-                        domain = "alladmin";
-                    var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-                    var price = Convert.ToInt64(message.Price.Value * 10);
-                    var client = new MobinOneMapfaChargingServiceReference.ChargingClient();
-                    var result = client.dynamicCharge(username, password, domain, channelType, mobileNumber, aggregatorServiceId, price);
-                    if (result > 10000)
-                        singlecharge.IsSucceeded = true;
-                    else
-                        singlecharge.IsSucceeded = false;
-
-                    singlecharge.Description = result;
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaDynamicPriceSinglecharge: " + e);
-                    singlecharge.Description = "Exception";
-                }
-                try
-                {
-                    singlecharge.DateCreated = DateTime.Now;
-                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                    singlecharge.IsApplicationInformed = false;
-                    singlecharge.IsCalledFromInAppPurchase = false;
-                    if (installmentId != 0)
-                        singlecharge.InstallmentId = installmentId;
-                    entity.Singlecharges.Add(singlecharge);
-                    entity.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in MapfaDynamicPriceSinglecharge on saving values to db: " + e);
-                }
-                return singlecharge;
-            }
-        }
-
-        public static async Task<dynamic> SamssonTciSinglecharge(Type entityType, Type singlechargeType, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, bool fromWeb, long installmentId = 0)
-        {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                dynamic singlecharge = Activator.CreateInstance(singlechargeType);
-                singlecharge.MobileNumber = message.MobileNumber;
-                try
-                {
-                    var splitedToken = message.Token.Split(';');
-                    singlecharge.UserToken = splitedToken[0];
-                    var packageName = splitedToken[1];
-                    var sku = splitedToken[2];
-                    bool isCancel = false;
-                    ServicePointManager.ServerCertificateValidationCallback +=
-        (sender, cert, chain, sslPolicyErrors) => true;
-                    using (var client = new HttpClient())
-                    {
-                        var values = new Dictionary<string, string>
-                        {
-                        };
-
-                        var content = new FormUrlEncodedContent(values);
-                        var url = "";
-                        HttpResponseMessage response = null;
-                        if (message.Price >= 0)
-                        {
-                            //url = string.Format("https://samssonsdp.com/api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}", singlecharge.UserToken, packageName, sku, message.Price);
-                            url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.charge), singlecharge.UserToken, packageName, sku, message.Price);
-                            singlecharge.ReferenceId = "Charging";
-                            logs.Info("samssonsinglecharge url: " + url);
-                            response = await client.PostAsync(url, content);
-                        }
-                        else
-                        {
-                            //url = string.Format("https://samssonsdp.com/api/v1/GuestMode/cancel/{0}/{1}/{2}/", singlecharge.UserToken, packageName, sku);
-                            url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.chargeCancel), singlecharge.UserToken, packageName, sku);
-                            singlecharge.ReferenceId = "Unsubscribe";
-                            message.Price = 0;
-                            isCancel = true;
-                            logs.Info("samssonsinglecharge url: " + url);
-                            response = await client.GetAsync(url);
-                        }
-
-                        var responseString = await response.Content.ReadAsStringAsync();
-                        logs.Info(responseString);
-                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                        if (jsonResponse.error == null)
-                        {
-                            string value = jsonResponse.value.ToString();
-                            value = value.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
-                            dynamic valueObj = Newtonsoft.Json.JsonConvert.DeserializeObject(value);
-                            if (isCancel == true)
-                            {
-                                if (valueObj.canceled == true)
-                                {
-                                    singlecharge.IsSucceeded = true;
-                                    singlecharge.Description = "User Successfuly Canceled";
-                                }
-                                else
-                                {
-                                    singlecharge.IsSucceeded = false;
-                                    singlecharge.Description = "User Does Not Canceled";
-                                }
-                            }
-                            else
-                            {
-                                if (valueObj.status == true)
-                                    singlecharge.IsSucceeded = true;
-                                else
-                                    singlecharge.IsSucceeded = false;
-                                singlecharge.Description = value;
-                            }
-                        }
-                        else
-                        {
-                            string e = jsonResponse.error.ToString();
-                            e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
-                            dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
-                            singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
-                            singlecharge.IsSucceeded = false;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SamssonTciSinglecharge: " + e);
-                    singlecharge.Description = "Exception";
-                }
-                try
-                {
-
-                    singlecharge.DateCreated = DateTime.Now;
-                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                    singlecharge.IsApplicationInformed = false;
-                    singlecharge.IsCalledFromInAppPurchase = false;
-                    if (installmentId != 0)
-                        singlecharge.InstallmentId = installmentId;
-                    entity.Singlecharges.Add(singlecharge);
-                    entity.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SamssonTciSinglecharge on saving values to db: " + e);
-                }
-                return singlecharge;
-            }
         }
 
         public static async Task SendMesssagesToPardisImi(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
@@ -2558,7 +2134,8 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MobinOneOTPRequest(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MobinOneOTPRequest(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             singlecharge.MobileNumber = message.MobileNumber;
@@ -2601,7 +2178,7 @@ namespace SharedLibrary
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
+                //singlecharge.IsCalledFromInAppPurchase = true;
 
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
@@ -2613,7 +2190,9 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> MobinOneOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MobinOneOTPConfirm(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge
+            , MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             logs.Error("mobineoneotpConfirm");
             entity.Configuration.AutoDetectChangesEnabled = false;
@@ -2652,68 +2231,11 @@ namespace SharedLibrary
             }
             return singlecharge;
         }
-
-        public static async Task<dynamic> MobinOneCharge(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> SamssonTciOTPRequest(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
-            entity.Configuration.AutoDetectChangesEnabled = false;
-            singlecharge.MobileNumber = message.MobileNumber;
-            try
-            {
-                logs.Error("nebula,exception0");
-                var shortCode = "98" + serviceAdditionalInfo["shortCode"];
-                var mobile = "98" + message.MobileNumber.TrimStart('0');
-                var stringedPrice = ""; // (message.Price * 10).ToString();
-                if (message.Price == 0)
-                    stringedPrice = "";
-                var rnd = new Random();
-                var requestId = rnd.Next(1000000, 9999999).ToString();
-                logs.Error("nebula,exception1");
-                var client = new MobinOneServiceReference.tpsPortTypeClient();
-                logs.Error(serviceAdditionalInfo["username"] + "," + serviceAdditionalInfo["password"] + "," + shortCode + "," + serviceAdditionalInfo["aggregatorServiceId"] + "," + message.ImiChargeKey + "," + mobile + "," + stringedPrice + "," + requestId);
-
-                var result = client.charge(serviceAdditionalInfo["username"], serviceAdditionalInfo["password"], shortCode, serviceAdditionalInfo["aggregatorServiceId"], message.ImiChargeKey, mobile, stringedPrice, requestId);
-                logs.Error("nebula,exceptio3");
-                var splitedResult = result.Split('-');
-                logs.Error("nebula,exception4");
-                if (splitedResult[0] == "Success")
-                    singlecharge.IsSucceeded = true;
-                else
-                    singlecharge.IsSucceeded = false;
-                logs.Error("nebula," + result);
-                singlecharge.Description = splitedResult[1] + "-" + splitedResult[2];
-                singlecharge.ReferenceId = splitedResult[3];
-                logs.Error("nebula,exception6");
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in MobinOneCharge: " + e);
-                singlecharge.Description = "Exception";
-            }
-            try
-            {
-                singlecharge.IsSucceeded = false;
-                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
-                    singlecharge.ReferenceId = "Exception occurred!";
-                singlecharge.DateCreated = DateTime.Now;
-                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                singlecharge.Price = message.Price.GetValueOrDefault();
-                singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
-
-                entity.Singlecharges.Add(singlecharge);
-                entity.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in MobinOneCharge on saving values to db: " + e);
-            }
-            return singlecharge;
-        }
-
-        public static async Task<dynamic> SamssonTciOTPRequest(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
-        {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
+            
                 entity.Configuration.AutoDetectChangesEnabled = false;
                 singlecharge.MobileNumber = message.MobileNumber;
                 try
@@ -2747,7 +2269,7 @@ namespace SharedLibrary
                             }
                         }
                         else
-                            singlecharge.Description = response.StatusCode;
+                            singlecharge.Description = response.StatusCode.ToString();
                     }
                 }
                 catch (Exception e)
@@ -2764,7 +2286,7 @@ namespace SharedLibrary
                     singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                     singlecharge.Price = message.Price.GetValueOrDefault();
                     singlecharge.IsApplicationInformed = false;
-                    singlecharge.IsCalledFromInAppPurchase = true;
+                    //singlecharge.IsCalledFromInAppPurchase = true;
 
                     entity.Singlecharges.Add(singlecharge);
                     entity.SaveChanges();
@@ -2773,58 +2295,59 @@ namespace SharedLibrary
                 {
                     logs.Error("Exception in SamssonTciOTPRequest on saving values to db: " + e);
                 }
-            }
+            
             return singlecharge;
         }
 
-        public static async Task<dynamic> SamssonTciOTPConfirm(Type entityType, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> SamssonTciOTPConfirm(
+            SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                try
-                {
-                    using (var client = new HttpClient())
-                    {
-                        var values = new Dictionary<string, string>
-                        {
-                        };
 
-                        var content = new FormUrlEncodedContent(values);
-                        //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
-                        var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpConfirm), message.Token, message.ConfirmCode);
-                        var response = await client.PostAsync(url, content);
-                        var responseString = await response.Content.ReadAsStringAsync();
-                        logs.Info(responseString);
-                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                        if (jsonResponse.error == null)
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var values = new Dictionary<string, string>
+                    {
+                    };
+
+                    var content = new FormUrlEncodedContent(values);
+                    //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
+                    var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpConfirm), message.Token, message.ConfirmCode);
+                    var response = await client.PostAsync(url, content);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    logs.Info(responseString);
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                    if (jsonResponse.error == null)
+                    {
+                        if (jsonResponse.value == true)
                         {
-                            if (jsonResponse.value == true)
-                            {
-                                singlecharge.Description = "SUCCESS";
-                                singlecharge.ReferenceId = "Register";
-                                singlecharge.Price = 0;
-                                singlecharge.IsSucceeded = true;
-                                singlecharge.UserToken = message.Token;
-                            }
-                        }
-                        else
-                        {
-                            string e = jsonResponse.error.ToString();
-                            e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
-                            dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
-                            singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
+                            singlecharge.Description = "SUCCESS";
+                            singlecharge.ReferenceId = "Register";
+                            singlecharge.Price = 0;
+                            singlecharge.IsSucceeded = true;
+                            //singlecharge.UserToken = message.Token;
                         }
                     }
-                    entity.Entry(singlecharge).State = EntityState.Modified;
-                    entity.SaveChanges();
+                    else
+                    {
+                        string e = jsonResponse.error.ToString();
+                        e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
+                        dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
+                        singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
+                    }
                 }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SamssonTciOTPConfirm: " + e);
-                    singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
-                }
+                entity.Entry(singlecharge).State = EntityState.Modified;
+                entity.SaveChanges();
             }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SamssonTciOTPConfirm: " + e);
+                singlecharge.Description = "Exception Occured for" + "-code:" + confirmationCode;
+            }
+
             return singlecharge;
         }
 
@@ -2969,7 +2492,8 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> MciDirectOtpCharge(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MciDirectOtpCharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             singlecharge.MobileNumber = message.MobileNumber;
             try
@@ -3028,13 +2552,13 @@ namespace SharedLibrary
             try
             {
                 singlecharge.IsSucceeded = false;
-                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
-                    singlecharge.ReferenceId = "Exception occurred!";
+                //if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                //    singlecharge.ReferenceId = "Exception occurred!";
                 singlecharge.DateCreated = DateTime.Now;
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
+                //singlecharge.IsCalledFromInAppPurchase = true;
 
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
@@ -3046,7 +2570,9 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> MciDirectOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MciDirectOTPConfirm(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge
+            , MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
@@ -3205,7 +2731,8 @@ namespace SharedLibrary
             }
         }
 
-        public static async Task<dynamic> TelepromoMapfaOtpCharge(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> TelepromoMapfaOtpCharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             singlecharge.MobileNumber = message.MobileNumber;
             try
@@ -3257,7 +2784,7 @@ namespace SharedLibrary
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
-                singlecharge.IsCalledFromInAppPurchase = true;
+                //singlecharge.IsCalledFromInAppPurchase = true;
 
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();
@@ -3269,7 +2796,9 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task<dynamic> TelepromoMapfaOTPConfirm(dynamic entity, dynamic singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
+        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> TelepromoMapfaOTPConfirm(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+            , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge
+            , MessageObject message, Dictionary<string, string> serviceAdditionalInfo, string confirmationCode)
         {
             entity.Configuration.AutoDetectChangesEnabled = false;
             try
@@ -3315,7 +2844,7 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static string fnc_getCorrelator( string shortCode , long ticks, bool addShortCode)
+        public static string fnc_getCorrelator(string shortCode, long ticks, bool addShortCode)
         {
             if (string.IsNullOrEmpty(shortCode))
             {

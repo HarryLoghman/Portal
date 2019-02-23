@@ -89,22 +89,22 @@ namespace DehnadMTNChargeServices
                         TimeSpan ts = DateTime.Now.TimeOfDay;
                         string day = ((int)DateTime.Now.DayOfWeek).ToString();
                         string strDate = DateTime.Now.ToString("yyyy-MM-dd");
-                        
+
                         using (var portal = new SharedLibrary.Models.PortalEntities())
                         {
-                            var serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime 
-                            && ((o.servicesIDs == "10025" || o.servicesIDs.StartsWith("10025;") || o.servicesIDs.Contains(";10025;") || o.servicesIDs.EndsWith("10025;")) ||
-                            ((o.servicesIDs == "10036" || o.servicesIDs.StartsWith("10036;") || o.servicesIDs.Contains(";10036;") || o.servicesIDs.EndsWith("10036;")) ||
-                            (o.servicesIDs == "10028" || o.servicesIDs.StartsWith("10028;") || o.servicesIDs.Contains(";10028;") || o.servicesIDs.EndsWith("10028;")) ||
-                            (o.servicesIDs == "10039" || o.servicesIDs.StartsWith("10039;") || o.servicesIDs.Contains(";10039;") || o.servicesIDs.EndsWith("10039;"))))
+                            var serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime
+                            && ((o.servicesIDs == "10025" || o.servicesIDs.StartsWith("10025;") || o.servicesIDs.Contains(";10025;") || o.servicesIDs.EndsWith(";10025")) ||
+                            ((o.servicesIDs == "10036" || o.servicesIDs.StartsWith("10036;") || o.servicesIDs.Contains(";10036;") || o.servicesIDs.EndsWith(";10036")) ||
+                            (o.servicesIDs == "10028" || o.servicesIDs.StartsWith("10028;") || o.servicesIDs.Contains(";10028;") || o.servicesIDs.EndsWith(";10028")) ||
+                            (o.servicesIDs == "10039" || o.servicesIDs.StartsWith("10039;") || o.servicesIDs.Contains(";10039;") || o.servicesIDs.EndsWith(";10039"))))
                             && (o.daysOfWeekOrDate == strDate)).Select(o => o);
                             if (serviceCycles.Count() == 0)
                             {
                                 serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime
-                                && ((o.servicesIDs == "10025" || o.servicesIDs.StartsWith("10025;") || o.servicesIDs.Contains(";10025;") || o.servicesIDs.EndsWith("10025;")) ||
-                            ((o.servicesIDs == "10036" || o.servicesIDs.StartsWith("10036;") || o.servicesIDs.Contains(";10036;") || o.servicesIDs.EndsWith("10036;")) ||
-                            (o.servicesIDs == "10028" || o.servicesIDs.StartsWith("10028;") || o.servicesIDs.Contains(";10028;") || o.servicesIDs.EndsWith("10028;")) ||
-                            (o.servicesIDs == "10039" || o.servicesIDs.StartsWith("10039;") || o.servicesIDs.Contains(";10039;") || o.servicesIDs.EndsWith("10039;"))))
+                                && ((o.servicesIDs == "10025" || o.servicesIDs.StartsWith("10025;") || o.servicesIDs.Contains(";10025;") || o.servicesIDs.EndsWith(";10025")) ||
+                            ((o.servicesIDs == "10036" || o.servicesIDs.StartsWith("10036;") || o.servicesIDs.Contains(";10036;") || o.servicesIDs.EndsWith(";10036")) ||
+                            (o.servicesIDs == "10028" || o.servicesIDs.StartsWith("10028;") || o.servicesIDs.Contains(";10028;") || o.servicesIDs.EndsWith(";10028")) ||
+                            (o.servicesIDs == "10039" || o.servicesIDs.StartsWith("10039;") || o.servicesIDs.Contains(";10039;") || o.servicesIDs.EndsWith(";10039"))))
                                 && o.daysOfWeekOrDate.Contains(day)).Select(o => o);
                             }
                             if (serviceCycles.Count() >= 1)
@@ -145,16 +145,16 @@ namespace DehnadMTNChargeServices
 
                                     for (int i = 0; i <= servicesIDsArr.Length - 1; i++)
                                     {
-                                        if (servicesIDsArr[i] == "")
+                                        if (!int.TryParse(servicesIDsArr[i], out serviceId))
                                             continue;
-                                        serviceId = int.Parse(servicesIDsArr[i]);
+                                        //serviceId = int.Parse(servicesIDsArr[i]);
                                         aggregatorServiceId = portal.ServiceInfoes.Where(o => o.ServiceId == serviceId).Select(o => o.AggregatorServiceId).FirstOrDefault();
-                                        
+
                                         if (string.IsNullOrEmpty(aggregatorServiceId))
                                             continue;
                                         if (servicesIDsArr[i] == "10025")
                                         {
-                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i]));
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
@@ -164,7 +164,7 @@ namespace DehnadMTNChargeServices
                                         }
                                         else if (servicesIDsArr[i] == "10036")
                                         {
-                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber,int.Parse(cycleChargePricesArr[i])); 
+                                            ServiceChargeMTN sc = new ServiceChargeMTN(int.Parse(servicesIDsArr[i]), int.Parse(minTPSsArr[i]), v_maxTries, cycleNumber, int.Parse(cycleChargePricesArr[i]));
                                             if (!sc.fnc_canStartCharging(cycleNumber, out notStartReason))
                                             {
                                                 Program.logs.Warn(sc.prp_service.ServiceCode + " is not started because of : " + notStartReason);
@@ -210,7 +210,7 @@ namespace DehnadMTNChargeServices
 
                                     Program.logs.Info("installmentCycleNumber: ended");
                                     Program.logs.Info("InstallmentJob ended!");
-                                    
+
                                 }
 
                             }

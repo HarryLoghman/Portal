@@ -133,7 +133,7 @@ namespace DehnadTajoTakhtService
                             batchSaveCounter = 0;
                         }
                         int priceUserChargedToday = entity.Singlecharges.Where(o => o.MobileNumber == installment && o.IsSucceeded == true && DbFunctions.TruncateTime(o.DateCreated) == DbFunctions.TruncateTime(today)).Select(o => o.Price).ToList().Sum(o => o);
-                        bool isSubscriberActive = SharedLibrary.HandleSubscription.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
+                        bool isSubscriberActive = SharedLibrary.SubscriptionHandler.IsSubscriberActive(installment, serviceAdditionalInfo["serviceId"]);
                         if (priceUserChargedToday >= maxChargeLimit || isSubscriberActive == false)
                         {
                             continue;
@@ -158,7 +158,7 @@ namespace DehnadTajoTakhtService
                                 var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, serviceId);
                                 if (isInBlackList != true)
                                 {
-                                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, Convert.ToInt64(serviceAdditionalInfo["serviceId"]));
+                                    var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, Convert.ToInt64(serviceAdditionalInfo["serviceId"]));
                                     if (sub != null)
                                     {
                                         if (sub.SpecialUniqueId != null)

@@ -9,7 +9,7 @@ using System.Data.Entity.Validation;
 
 namespace SharedLibrary
 {
-    public class HandleSubscription
+    public class SubscriptionHandler
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static ServiceStatusForSubscriberState HandleSubscriptionContent(MessageObject message, vw_servicesServicesInfo service, bool isUserWantsToUnsubscribe)
@@ -264,32 +264,6 @@ namespace SharedLibrary
                 }
             }
             return result;
-        }
-        public static string AssignUniqueId(string mobileNumber)
-        {
-            using (var entity = new PortalEntities())
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                var subscriber = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber);
-                string uniqueId = "";
-                if (subscriber == null)
-                    uniqueId = CreateUniqueId();
-                else
-                    uniqueId = subscriber.SubscriberUniqueId;
-                return uniqueId;
-            }
-        }
-
-        public static string AssignSpecialUniqueId(string mobileNumber)
-        {
-            using (var entity = new PortalEntities())
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                var subscriber = entity.Subscribers.FirstOrDefault(o => o.MobileNumber == mobileNumber);
-                string uniqueId = "";
-                uniqueId = CreateSpecialUniqueId();
-                return uniqueId;
-            }
         }
 
         public static string CreateSpecialUniqueId()
@@ -549,25 +523,6 @@ namespace SharedLibrary
             }
             return ServiceStatusForSubscriberState.Deactivated;
         }
-
-        public static void ChangeSubscriptionKeyword(Subscriber subscriber, string keyword)
-        {
-            try
-            {
-                using (var entity = new PortalEntities())
-                {
-                    var sub = entity.Subscribers.FirstOrDefault(o => o.Id == subscriber.Id);
-                    sub.OnKeyword = keyword;
-                    entity.Entry(sub).State = EntityState.Modified;
-                    entity.SaveChanges();
-                }
-            }
-            catch (Exception e)
-            {
-                logs.Error("Exception in ChangeSubscriptionKeyword: " + e);
-            }
-        }
-
         public static void UnsubscribeUserFromTelepromoService(long serviceId, string mobileNumber)
         {
             //var url = "http://10.20.9.135:8600/samsson-sdp/pin/cancel?";
@@ -598,52 +553,125 @@ namespace SharedLibrary
             //}
         }
 
-        public static void UnsubscribeUserFromHubService(long serviceId, string mobileNumber)
+        public static bool consumeAppCharge(string requesterIP, string serviceCode, string appName, string mobileNumber, int? price
+            , out string errorType, out string errorDescription)
         {
-            //try
-            //{
-            //    var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage(serviceId, "Hub");
+            errorType = "";
+            errorDescription = "";
 
-            //    XmlDocument doc = new XmlDocument();
-            //    XmlElement root = doc.CreateElement("xmsrequest");
-            //    XmlElement userid = doc.CreateElement("userid");
-            //    XmlElement password = doc.CreateElement("password");
-            //    XmlElement action = doc.CreateElement("action");
-            //    XmlElement body = doc.CreateElement("body");
-            //    XmlElement recipient = doc.CreateElement("recipient");
-            //    recipient.InnerText = mobileNumber;
-            //    XmlElement serviceid = doc.CreateElement("serviceid");
-            //    serviceid.InnerText = serviceAdditionalInfo["aggregatorServiceId"];
-            //    body.AppendChild(serviceid);
-            //    body.AppendChild(recipient);
+            
+            if (!price.HasValue || price <= 0)
+            {
+                errorType = "Invalid Price";
+                errorDescription = "";
+                return false;
+            }
+            int totalCharged;
+            int totalConsumed;
 
-            //    //Random random = new Random();
-            //    //var randomNumber = random.Next(1000000, 9999999);
-            //    //XmlAttribute doerId = doc.CreateAttribute("doerId");
-            //    //doerId.InnerText = randomNumber.ToString();
-            //    //recipient.Attributes.Append(doerId);
+            int remain = getRemainAppCharge(serviceCode, appName, mobileNumber, out totalCharged, out totalConsumed, out errorType, out errorDescription);
+            if (!string.IsNullOrEmpty(errorType))
+            {
+                return false;
+            }
+            if (price > remain)
+            {
+                errorType = "OverCharge";
+                errorDescription = "Remain Charge is " + remain;
+                return false;
+            }
+            using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
+            {
+                SharedLibrary.Models.ServiceModel.SingleChargeAppsConsume entryChargeApp = new Models.ServiceModel.SingleChargeAppsConsume();
+                entryChargeApp.appName = appName;
+                entryChargeApp.DateCreated = DateTime.Now;
+                entryChargeApp.Description = null;
+                entryChargeApp.MobileNumber = mobileNumber;
+                entryChargeApp.PersianDateCreated = Date.GetPersianDate(DateTime.Now);
+                entryChargeApp.Price = price.Value;
+                entryChargeApp.requesterIP = requesterIP;
 
-            //    userid.InnerText = serviceAdditionalInfo["username"];
-            //    password.InnerText = serviceAdditionalInfo["password"];
-            //    action.InnerText = "crm";
 
-            //    doc.AppendChild(root);
-            //    root.AppendChild(userid);
-            //    root.AppendChild(password);
-            //    root.AppendChild(action);
-            //    root.AppendChild(body);
-            //    string stringedXml = doc.OuterXml;
-            //    logs.Info("hub cancel api request: " + stringedXml);
-            //    SharedLibrary.HubServiceReference.SmsSoapClient hubClient = new SharedLibrary.HubServiceReference.SmsSoapClient();                
-            //    string response = hubClient.XmsRequest(stringedXml).ToString();
-            //    logs.Info("hub cancel api response: " + response);
-            //}
-            //catch (Exception e)
-            //{
-            //    logs.Error("Exception in UnsubscribeUserFromHubService: " + e);
-            //}
+                entityService.SingleChargeAppsConsumes.Add(entryChargeApp);
+            }
+            return true;
         }
 
+        public static int getRemainAppCharge(string serviceCode, string appName, string mobileNumber
+            , out int totalCharged, out int totalConsumed, out string errorType, out string errorDescription)
+        {
+            totalCharged = 0;
+            totalConsumed = 0;
+            errorType = "";
+            errorDescription = "";
+
+            mobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(mobileNumber);
+
+            if (mobileNumber == "Invalid Mobile Number")
+            {
+                errorType = "Invalid Mobile Number";
+                errorDescription = mobileNumber;
+                return 0;
+            }
+            else if (mobileNumber == "Invalid Number")
+            {
+                errorType = "Invalid Number";
+                errorType = mobileNumber;
+                return 0;
+            }
+            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
+            if (service == null)
+            {
+                errorType = "Invalid Service Code";
+                errorDescription = serviceCode;
+                return 0;
+            }
+
+            using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
+            {
+                totalCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).Sum(o => o.Price);
+                totalConsumed = entityService.SingleChargeAppsConsumes.Where(o => o.MobileNumber == mobileNumber && o.appName == appName).Sum(o => o.Price);
+            }
+            return totalCharged - totalConsumed;
+        }
+
+        public static void getAppChargeDetail(string serviceCode, string appName, string mobileNumber
+            , out Dictionary<DateTime, int> dicCharged, out Dictionary<DateTime, int> dicConsumed, out string errorType, out string errorDescription)
+        {
+            dicCharged = new Dictionary<DateTime, int>();
+            dicConsumed = new Dictionary<DateTime, int>();
+            errorType = "";
+            errorDescription = "";
+
+            mobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(mobileNumber);
+
+            if (mobileNumber == "Invalid Mobile Number")
+            {
+                errorType = "Invalid Mobile Number";
+                errorDescription = mobileNumber;
+                return;
+            }
+            else if (mobileNumber == "Invalid Number")
+            {
+                errorType = "Invalid Number";
+                errorType = mobileNumber;
+                return;
+            }
+            var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
+            if (service == null)
+            {
+                errorType = "Invalid Service Code";
+                errorDescription = serviceCode;
+                return;
+            }
+
+            using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
+            {
+                dicCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
+                dicConsumed = entityService.SingleChargeAppsConsumes.Where(o => o.MobileNumber == mobileNumber && o.appName == appName).OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
+            }
+            
+        }
         public enum ServiceStatusForSubscriberState
         {
             Deactivated = 0,

@@ -80,7 +80,7 @@ namespace SharedShortCodeServiceLibrary
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(message.MobileNumber, service.Id);
                     if (isInBlackList == true)
                         isCampaignActive = (int)CampaignStatus.Deactive;
-                    message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    message = MessageHandler.SetImiChargeInfo(connectionStringNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
                     if (message.Content == null || message.Content == "" || message.Content == " ")
                     {
                         if (isCampaignActive == (int)CampaignStatus.Active)
@@ -245,7 +245,7 @@ namespace SharedShortCodeServiceLibrary
         public static Singlecharge HandleSinglechargeContent(string connectionStringInAppConfig , MessageObject message, vw_servicesServicesInfo service, Subscriber subscriber, List<MessagesTemplate> messagesTemplate)
         {
             Singlecharge singlecharge = new Singlecharge();
-            message = MessageHandler.SetImiChargeInfo(connectionStringInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+            message = MessageHandler.SetImiChargeInfo(connectionStringInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
             try
             {
                 var content = Convert.ToInt32(message.Content);
@@ -270,7 +270,7 @@ namespace SharedShortCodeServiceLibrary
                 if (singlecharge.IsSucceeded == true)
                 {
                     message.Content = "خرید شما به مبلغ " + message.Price * 10 + " ریال با موفقیت انجام شد.";
-                    message = MessageHandler.SetImiChargeInfo(connectionStringInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    message = MessageHandler.SetImiChargeInfo(connectionStringInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
                     MessageHandler.InsertMessageToQueue(connectionStringInAppConfig, message);
                 }
             }

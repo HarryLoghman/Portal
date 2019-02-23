@@ -40,7 +40,7 @@ namespace ChargingLibrary
                 if (v_isMatchActive == (int)CampaignStatus.Active && (v_isCampaignActive == (int)CampaignStatus.Deactive || v_isCampaignActive == (int)CampaignStatus.Suspend))
                 {
 
-                    var sub = SharedLibrary.HandleSubscription.GetSubscriber(chargeRequest.mobileNumber, this.prp_service.Id);
+                    var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(chargeRequest.mobileNumber, this.prp_service.Id);
                     if (sub != null)
                     {
                         if (sub.SpecialUniqueId != null)

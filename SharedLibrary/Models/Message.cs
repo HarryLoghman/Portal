@@ -55,6 +55,8 @@ namespace SharedLibrary.Models
         /// </summary>
         public string appName { get; set; }
         public string cipherParameter { get; set; }
+
+        public bool InAppPurchase { get; set; }
     }
 
 }

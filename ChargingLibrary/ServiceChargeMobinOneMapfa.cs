@@ -200,7 +200,7 @@ namespace ChargingLibrary
                     var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(chargeRequest.mobileNumber, serviceId);
                     if (isInBlackList != true)
                     {
-                        var sub = SharedLibrary.HandleSubscription.GetSubscriber(chargeRequest.mobileNumber, serviceId);
+                        var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(chargeRequest.mobileNumber, serviceId);
                         if (sub != null)
                         {
                             if (sub.SpecialUniqueId != null)

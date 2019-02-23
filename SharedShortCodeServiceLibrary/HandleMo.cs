@@ -128,7 +128,7 @@ namespace SharedShortCodeServiceLibrary
             var messagesTemplate = ServiceHandler.GetServiceMessagesTemplate(service.ServiceCode);
             var isUserSendsSubscriptionKeyword = ServiceHandler.CheckIfUserSendsSubscriptionKeyword(message.Content, service);
             var isUserWantsToUnsubscribe = ServiceHandler.CheckIfUserWantsToUnsubscribe(message.Content);
-            var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+            var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, message.ServiceId);
 
             if (subscriber == null)
                 isUserSendsSubscriptionKeyword = true;
@@ -144,8 +144,8 @@ namespace SharedShortCodeServiceLibrary
                 //        return singlecharge;
                 //    }
                 //}
-                var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
-                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                var serviceStatusForSubscriberState = SharedLibrary.SubscriptionHandler.HandleSubscriptionContent(message, service, isUserWantsToUnsubscribe);
+                if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal)
                 {
                     if (message.IsReceivedFromIntegratedPanel)
                     {
@@ -158,34 +158,34 @@ namespace SharedShortCodeServiceLibrary
                         message.SubUnSubType = 1;
                     }
                 }
-                var subsciber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
-                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+                var subsciber = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, message.ServiceId);
+                if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated)
                 {
                     Subscribers.CreateSubscriberAdditionalInfo(service.ServiceCode, message.MobileNumber, service.Id);
                     Subscribers.AddSubscriptionPointIfItsFirstTime(service.ServiceCode, message.MobileNumber, service.Id);
-                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated);
                 }
-                else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+                else if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated)
                 {
-                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                    var subscriberId = SharedLibrary.SubscriptionHandler.GetSubscriberId(message.MobileNumber, message.ServiceId);
+                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated);
                 }
                 else
                 {
-                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                    var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
+                    message = MessageHandler.SetImiChargeInfo(service.ServiceCode, message, 0, 21, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated);
+                    var subscriberId = SharedLibrary.SubscriptionHandler.GetSubscriberId(message.MobileNumber, message.ServiceId);
                     //Subscribers.SetIsSubscriberSendedOffReason(subscriberId.Value, false);
                 }
                 //message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState);
                 //MessageHandler.InsertMessageToQueue(message);
-                if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal)
                 {
                     message.Content = content;
                     singlecharge = ContentManager.HandleSinglechargeContent(service.ServiceCode, message, service, subsciber, messagesTemplate);
                 }
                 return singlecharge;
             }
-            subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+            subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, message.ServiceId);
 
             if (subscriber == null)
             {
@@ -369,7 +369,7 @@ namespace SharedShortCodeServiceLibrary
                         isCampaignActive = (int)CampaignStatus.Deactive;
                     List<ImiChargeCode> imiChargeCodes = ServiceHandler.GetImiChargeCodes(connectionStringeNameInAppConfig).ToList();
                     //mycomment : List<ImiChargeCode> imiChargeCodes = ((IEnumerable)SharedLibrary.ServiceHandler.GetServiceImiChargeCodes(entity)).OfType<ImiChargeCode>().ToList();
-                    message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                    message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
 
                     enumCommand command = EvaluateCommandFromDatabase(message);
                     logs.Info("ReceivedMessage:Command:" + command.ToString() + "," + message.ShortCode + "," + message.MobileNumber);
@@ -400,7 +400,7 @@ namespace SharedShortCodeServiceLibrary
                     }
                     if ((command & enumCommand.UserUnsubscription) == enumCommand.UserUnsubscription)
                     {
-                        SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+                        SharedLibrary.SubscriptionHandler.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
                         return isSucceeded;
                     }
                     if ((command & enumCommand.UserSubscription) == enumCommand.UserSubscription)
@@ -428,7 +428,7 @@ namespace SharedShortCodeServiceLibrary
 
                     if ((message.IsReceivedFromIntegratedPanel == true) && !message.ReceivedFrom.Contains("IMI"))
                     {
-                        SharedLibrary.HandleSubscription.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
+                        SharedLibrary.SubscriptionHandler.UnsubscribeUserFromTelepromoService(service.Id, message.MobileNumber);
                         return isSucceeded;
                     }
 
@@ -440,7 +440,7 @@ namespace SharedShortCodeServiceLibrary
                     else if ((command & enumCommand.AggregatorUnsubscription) == enumCommand.AggregatorUnsubscription)
                         aggregatorSendsUnSubscriptionKeyword = true;
 
-                    var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                    var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, message.ServiceId);
                     #region user wants subscribe or unsubscribe
                     if (aggregatorSendsSubscriptionKeyword == true)
                     {
@@ -451,12 +451,12 @@ namespace SharedShortCodeServiceLibrary
 
                     if (aggregatorSendsSubscriptionKeyword == true || aggregatorSendsUnSubscriptionKeyword == true)
                     {
-                        var serviceStatusForSubscriberState = SharedLibrary.HandleSubscription.HandleSubscriptionContent(message, service, aggregatorSendsUnSubscriptionKeyword);
+                        var serviceStatusForSubscriberState = SharedLibrary.SubscriptionHandler.HandleSubscriptionContent(message, service, aggregatorSendsUnSubscriptionKeyword);
 
                         #region received content is sub/unsub/renewal set message.SubUnSubMoMssage and message.SubUnSubType
-                        if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated
-                            || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated
-                            || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+                        if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated
+                            || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated
+                            || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal)
                         {
                             if (message.IsReceivedFromIntegratedPanel)
                             {
@@ -542,7 +542,7 @@ namespace SharedShortCodeServiceLibrary
         protected virtual bool AppMessage(string connectionStringeNameInAppConfig, MessageObject message)
         {
             bool isSucceeded = true;
-            message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
             return isSucceeded;
         }
@@ -553,7 +553,7 @@ namespace SharedShortCodeServiceLibrary
             var verficationMessage = message.Content.Split('-');
             message.Content = messagesTemplate.Where(o => o.Title == "VerificationMessage").Select(o => o.Content).FirstOrDefault();
             message.Content = message.Content.Replace("{CODE}", verficationMessage[1]);
-            message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
             return isSucceeded;
         }
@@ -561,7 +561,7 @@ namespace SharedShortCodeServiceLibrary
         protected virtual bool AppHelp(string connectionStringeNameInAppConfig, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
             bool isSucceeded = true;
-            message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             message.Content = messagesTemplate.Where(o => o.Title == "SendServiceSubscriptionHelp").Select(o => o.Content).FirstOrDefault();
             MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
             return isSucceeded;
@@ -610,7 +610,7 @@ namespace SharedShortCodeServiceLibrary
                 {
                     if (isCampaignActive == (int)CampaignStatus.Active)
                     {
-                        SharedLibrary.HandleSubscription.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
+                        SharedLibrary.SubscriptionHandler.AddToTempReferral(message.MobileNumber, service.Id, message.Content);
                         message.Content = messagesTemplate.Where(o => o.Title == "CampaignOtpFromUniqueId").Select(o => o.Content).FirstOrDefault();
                         MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
                     }
@@ -670,32 +670,32 @@ namespace SharedShortCodeServiceLibrary
         }
 
         protected virtual MessageObject SetMessageDueToSubscriberStatus(string connectionStringeNameInAppConfig, vw_servicesServicesInfo service, MessageObject message
-            , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState
+            , SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState serviceStatusForSubscriberState
             , string content)
         {
-            if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated)
+            if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated)
             {
                 Subscribers.CreateSubscriberAdditionalInfo(connectionStringeNameInAppConfig, message.MobileNumber, service.Id);
                 Subscribers.AddSubscriptionPointIfItsFirstTime(connectionStringeNameInAppConfig, message.MobileNumber, service.Id);
-                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated);
                 ContentManager.AddSubscriberToSinglechargeQueue(connectionStringeNameInAppConfig, message.MobileNumber, content);
             }
-            else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+            else if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated)
             {
                 ContentManager.DeleteFromSinglechargeQueue(connectionStringeNameInAppConfig, message.MobileNumber);
                 ServiceHandler.CancelUserInstallments(connectionStringeNameInAppConfig, message.MobileNumber);
-                var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
-                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated);
+                var subscriberId = SharedLibrary.SubscriptionHandler.GetSubscriberId(message.MobileNumber, message.ServiceId);
+                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated);
             }
-            else if (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal)
+            else if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal)
             {
-                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
-                var subscriberId = SharedLibrary.HandleSubscription.GetSubscriberId(message.MobileNumber, message.ServiceId);
+                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated);
+                var subscriberId = SharedLibrary.SubscriptionHandler.GetSubscriberId(message.MobileNumber, message.ServiceId);
                 Subscribers.SetIsSubscriberSendedOffReason(connectionStringeNameInAppConfig, subscriberId.Value, false);
                 ContentManager.AddSubscriberToSinglechargeQueue(connectionStringeNameInAppConfig, message.MobileNumber, content);
             }
             else
-                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
+                message = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 21, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenNotSubscribed);
             return message;
         }
 
@@ -703,12 +703,12 @@ namespace SharedShortCodeServiceLibrary
             , vw_servicesServicesInfo service, MessageObject message, List<MessagesTemplate> messagesTemplate)
         {
             bool isSucceeded = true;
-            var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+            var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, service.Id);
             var sha = SharedLibrary.Encrypt.GetSha256Hash("parent" + message.MobileNumber);
             //dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
             dynamic result = await SharedLibrary.UsefulWebApis.DanoopReferral(service.referralUrl + (service.referralUrl.EndsWith("/") ? "" : "/") + "parent.php", string.Format("code={0}&parent_code={1}&number={2}&kc={3}", sub.SpecialUniqueId, message.Content, message.MobileNumber, sha));
 
-            message = MessageHandler.SetImiChargeInfo(connectionStringInappConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
+            message = MessageHandler.SetImiChargeInfo(connectionStringInappConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.InvalidContentWhenSubscribed);
             message.Content = "";
             if (result.status.ToString() == "ok")
                 message.Content = messagesTemplate.Where(o => o.Title == "ParentReferralCodeExists").Select(o => o.Content).FirstOrDefault();
@@ -722,24 +722,24 @@ namespace SharedShortCodeServiceLibrary
         protected virtual async void CampaignManagment(string connectionStringeNameInAppConfig
             , vw_servicesServicesInfo service, MessageObject message
             , Subscriber subscriber, List<MessagesTemplate> messagesTemplate
-            , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState
+            , SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState serviceStatusForSubscriberState
             , int isCampaignActive, int isMatchActive)
         {
             #region campaignActive and user is active or renewal
-            if (isCampaignActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
+            if (isCampaignActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal))
             {
                 //create a special uniqueId for the mobilenumber in serviceid and save to DB
-                SharedLibrary.HandleSubscription.CampaignUniqueId(message.MobileNumber, service.Id);
-                subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
+                SharedLibrary.SubscriptionHandler.CampaignUniqueId(message.MobileNumber, service.Id);
+                subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, message.ServiceId);
                 string parentId = "1";
-                var subscriberInviterCode = SharedLibrary.HandleSubscription.IsSubscriberInvited(message.MobileNumber, service.Id);
+                var subscriberInviterCode = SharedLibrary.SubscriptionHandler.IsSubscriberInvited(message.MobileNumber, service.Id);
                 if (subscriberInviterCode != "")
                 {
                     parentId = subscriberInviterCode;
-                    SharedLibrary.HandleSubscription.AddReferral(subscriberInviterCode, subscriber.SpecialUniqueId);
+                    SharedLibrary.SubscriptionHandler.AddReferral(subscriberInviterCode, subscriber.SpecialUniqueId);
                 }
                 var subId = "1";
-                var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, service.Id);
                 if (sub != null)
                     subId = sub.SpecialUniqueId;
                 var sha = SharedLibrary.Encrypt.GetSha256Hash(subId + message.MobileNumber);
@@ -751,7 +751,7 @@ namespace SharedShortCodeServiceLibrary
                     {
                         if (parentId != "1")
                         {
-                            var parentSubscriber = SharedLibrary.HandleSubscription.GetSubscriberBySpecialUniqueId(parentId);
+                            var parentSubscriber = SharedLibrary.SubscriptionHandler.GetSubscriberBySpecialUniqueId(parentId);
                             if (parentSubscriber != null)
                             {
                                 var oldMobileNumber = message.MobileNumber;
@@ -759,7 +759,7 @@ namespace SharedShortCodeServiceLibrary
                                 var newMessage = message;
                                 newMessage.MobileNumber = parentSubscriber.MobileNumber;
                                 newMessage.SubscriberId = parentSubscriber.Id;
-                                newMessage = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                                newMessage = MessageHandler.SetImiChargeInfo(connectionStringeNameInAppConfig, message, 0, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
                                 newMessage.Content = messagesTemplate.Where(o => o.Title == "CampaignNotifyParentForNewReferral").Select(o => o.Content).FirstOrDefault();
                                 if (newMessage.Content.Contains("{REFERRALCODE}"))
                                 {
@@ -775,7 +775,7 @@ namespace SharedShortCodeServiceLibrary
             }
             #endregion
             #region matchActive and user is active or renewal
-            else if (isMatchActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Renewal))
+            else if (isMatchActive == (int)CampaignStatus.Active && (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal))
             {
                 var sha = SharedLibrary.Encrypt.GetSha256Hash("match" + message.MobileNumber);
                 //var result = await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/porshetab/sub.php", string.Format("number={0}&kc={1}", message.MobileNumber, sha));
@@ -786,10 +786,10 @@ namespace SharedShortCodeServiceLibrary
             }
             #endregion
             #region campaign is Active or suspended and user is deactivated
-            else if ((isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend) && serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated)
+            else if ((isCampaignActive == (int)CampaignStatus.Active || isCampaignActive == (int)CampaignStatus.Suspend) && serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated)
             {
                 var subId = "1";
-                var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, service.Id);
                 if (sub != null && sub.SpecialUniqueId != null)
                 {
                     subId = sub.SpecialUniqueId;
@@ -810,22 +810,22 @@ namespace SharedShortCodeServiceLibrary
         protected virtual void PrepareSubscriptionMessage(string connectionStringeNameInAppConfig
             , SharedServiceEntities entity, vw_servicesServicesInfo service, MessageObject message
             , List<MessagesTemplate> messagesTemplate
-            , SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState serviceStatusForSubscriberState
+            , SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState serviceStatusForSubscriberState
             , int isCampaignActive)
         {
             message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
             if (message.Content.Contains("{REFERRALCODE}"))
             {
                 var subId = "1";
-                var sub = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, service.Id);
+                var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, service.Id);
                 if (sub != null && sub.SpecialUniqueId != null)
                     subId = sub.SpecialUniqueId;
                 message.Content = message.Content.Replace("{REFERRALCODE}", subId);
             }
 
             Setting set = entity.Settings.Where(o => o.Name == "CreateDeactivatedMessage").FirstOrDefault();
-            if (serviceStatusForSubscriberState != SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated
-                || (serviceStatusForSubscriberState == SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Deactivated
+            if (serviceStatusForSubscriberState != SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated
+                || (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated
                         && (set == null || string.IsNullOrEmpty(set.Value) || set.Value == "1")))
                 MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
         }
@@ -841,7 +841,7 @@ namespace SharedShortCodeServiceLibrary
                 {
 
                     var oldService = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(oldServicesArr[i]);
-                    var oldServiceSubscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, oldService.Id);
+                    var oldServiceSubscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(message.MobileNumber, oldService.Id);
                     if (oldServiceSubscriber != null && oldServiceSubscriber.DeactivationDate == null)
                     {
                         await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(oldService.ServiceCode, message.MobileNumber, "-1");

@@ -92,9 +92,9 @@ namespace DehnadDonyayeAsatirService
                     var shortCode = serviceInfo.ShortCode;
                     foreach (var item in QueueList)
                     {
-                        var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
+                        var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "RenewalSinglechargeMessage").Content;
-                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode , 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode , 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
                         SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode , message);
                         item.IsRenewalMessageSent = true;
@@ -143,9 +143,9 @@ namespace DehnadDonyayeAsatirService
                             entity.SaveChanges();
                             batchSaveCounter = 0;
                         }
-                        var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
+                        var subscriber = SharedLibrary.SubscriptionHandler.GetSubscriber(item.MobileNumber, serviceId.GetValueOrDefault());
                         var content = entity.MessagesTemplates.FirstOrDefault(o => o.Title == "OneDayRemainedTillSinglecharge").Content;
-                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode , 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Unspecified);
+                        var imiChargeObject = SharedShortCodeServiceLibrary.MessageHandler.GetImiChargeObjectFromPrice(Properties.Settings.Default.ServiceCode , 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Unspecified);
                         var message = SharedLibrary.MessageHandler.CreateMessage(subscriber, content, 0, SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageHandler.ProcessStatus.TryingToSend, 0, imiChargeObject, serviceInfo.AggregatorId, 0, null, imiChargeObject.Price);
                         SharedShortCodeServiceLibrary.MessageHandler.InsertMessageToQueue(Properties.Settings.Default.ServiceCode , message);
                         item.IsLastDayWarningSent = true;

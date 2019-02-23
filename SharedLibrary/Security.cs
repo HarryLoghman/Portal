@@ -80,13 +80,13 @@ namespace SharedLibrary
                     else if (action.Value.ToString() == "1")
                     {
                         //only notify
-                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue);
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue);
                         return null;
                     }
                     else if (action.Value.ToString() == "2")
                     {
                         SharedVariables.logs.Error("TCL Rate has been exceeded:Request is rejected" + returnValue);
-                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error,"Reject,"+ returnValue);
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error,"Reject,"+ returnValue);
                         return "TPS Rate has been passed"; ;
                     }
 

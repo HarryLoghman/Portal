@@ -9,7 +9,7 @@ using System.Data.Entity.Validation;
 
 namespace SharedLibrary
 {
-    public class HandleSubscriptionFtp
+    public class SubscriptionFtpHandler
     {
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -164,9 +164,9 @@ namespace SharedLibrary
                 {
                     int state;
                     if (active)
-                        state = (int)HandleSubscription.ServiceStatusForSubscriberState.Activated;
+                        state = (int)SubscriptionHandler.ServiceStatusForSubscriberState.Activated;
                     else
-                        state = (int)HandleSubscription.ServiceStatusForSubscriberState.Deactivated;
+                        state = (int)SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated;
 
                     var subscriberHistory = new SubscribersHistory();
                     subscriberHistory.MobileNumber = mobileNumber;
@@ -178,7 +178,7 @@ namespace SharedLibrary
                     subscriberHistory.ServiceStatusForSubscriber = state;
                     subscriberHistory.ShortCode = service.ShortCode;
                     subscriberHistory.Time = DateTime.Now.TimeOfDay;
-                    subscriberHistory.WhoChangedSubscriberStatus = (int)SharedLibrary.HandleSubscription.WhoChangedSubscriberState.Ftp;
+                    subscriberHistory.WhoChangedSubscriberStatus = (int)SharedLibrary.SubscriptionHandler.WhoChangedSubscriberState.Ftp;
                     subscriberHistory.AggregatorServiceId = service.AggregatorServiceId;
                     subscriberHistory.DateTime = DateTime.Now;
                     subscriberHistory.PersianDateTime = Date.GetPersianDateTime();

@@ -238,7 +238,7 @@ namespace Portal.Controllers
                                         {
                                             dateTime = DateTime.Now;
                                         }
-                                        logs.Error("1");
+                                        //logs.Error("1");
                                         singlecharge.DateCreated = dateTime;
                                         //singlecharge.chargeCode = chargeCode;
                                         //singlecharge.basePrice = basePrice;
@@ -249,7 +249,7 @@ namespace Portal.Controllers
                                             price = service.chargePrice;
                                         }
                                         else price = temp;
-                                        logs.Error("2");
+                                        //logs.Error("2");
                                         singlecharge.Price = price.Value / 10;
                                         if (status == "0")
                                             singlecharge.IsSucceeded = true;
@@ -263,9 +263,9 @@ namespace Portal.Controllers
                                         if (installment != null)
                                             singlecharge.InstallmentId = installment.Id;
                                         entity.Singlecharges.Add(singlecharge);
-                                        logs.Error("3");
+                                        //logs.Error("3");
                                         entity.SaveChanges();
-                                        logs.Error("4");
+                                        //logs.Error("4");
                                     }
                                 }
                             }

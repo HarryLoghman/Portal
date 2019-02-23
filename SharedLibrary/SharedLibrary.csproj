@@ -89,8 +89,8 @@
     <Compile Include="Aggregators\WebRequestProcess.cs" />
     <Compile Include="Date.cs" />
     <Compile Include="Encrypt.cs" />
-    <Compile Include="HandleSubscription.cs" />
-    <Compile Include="HandleSubscriptionFtp.cs" />
+    <Compile Include="SubscriptionHandler.cs" />
+    <Compile Include="SubscriptionFtpHandler.cs" />
     <Compile Include="HelpfulFunctions.cs" />
     <Compile Include="InstallmentHandler.cs" />
     <Compile Include="MessageHandler.cs" />
@@ -289,6 +289,9 @@
       <DependentUpon>SharedServiceModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ServiceModel\Singlecharge.cs">
+      <DependentUpon>SharedServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceModel\SingleChargeAppsConsume.cs">
       <DependentUpon>SharedServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServiceModel\SinglechargeArchive.cs">

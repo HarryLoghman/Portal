@@ -452,6 +452,19 @@
           <Property Name="ThreadNumber" Type="int" />
           <Property Name="wipe" Type="bit" />
         </EntityType>
+        <EntityType Name="SingleChargeAppsConsume">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" />
+          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="requesterIP" Type="nvarchar" MaxLength="50" />
+          <Property Name="appName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="SinglechargeArchive">
           <Key>
             <PropertyRef Name="Id" />
@@ -665,6 +678,7 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <EntitySet Name="ServicesRealtimeStatistics" EntityType="Self.ServicesRealtimeStatistics" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Settings" EntityType="Self.Settings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Singlecharge" EntityType="Self.Singlecharge" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SingleChargeAppsConsume" EntityType="Self.SingleChargeAppsConsume" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeArchive" EntityType="Self.SinglechargeArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinglechargeInstallment" EntityType="Self.SinglechargeInstallment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SingleChargeTiming" EntityType="Self.SingleChargeTiming" Schema="dbo" store:Type="Tables" />
@@ -964,10 +978,11 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <EntitySet Name="EventbaseMessagesBuffers" EntityType="SharedServiceModel.EventbaseMessagesBuffer" />
           <EntitySet Name="MessagesArchives" EntityType="SharedServiceModel.MessagesArchive" />
           <EntitySet Name="OnDemandMessagesBuffers" EntityType="SharedServiceModel.OnDemandMessagesBuffer" />
-          <EntitySet Name="vw_Singlecharge" EntityType="SharedServiceModel.vw_Singlecharge" />
           <EntitySet Name="SinglechargeInstallments" EntityType="SharedServiceModel.SinglechargeInstallment" />
           <EntitySet Name="SinglechargeArchives" EntityType="SharedServiceModel.SinglechargeArchive" />
           <EntitySet Name="SingleChargeTimings" EntityType="SharedServiceModel.SingleChargeTiming" />
+          <EntitySet Name="SingleChargeAppsConsumes" EntityType="SharedServiceModel.SingleChargeAppsConsume" />
+          <EntitySet Name="vw_Singlecharge" EntityType="SharedServiceModel.vw_Singlecharge" />
         </EntityContainer>
         <EntityType Name="vw_SentMessages">
           <Key>
@@ -1299,33 +1314,6 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <Property Name="bulkId" Type="Int32" />
           <Property Name="sendResult" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="vw_Singlecharge">
-          <Key>
-            <PropertyRef Name="Id" />
-            <PropertyRef Name="MobileNumber" />
-            <PropertyRef Name="DateCreated" />
-            <PropertyRef Name="PersianDateCreated" />
-            <PropertyRef Name="Price" />
-            <PropertyRef Name="IsSucceeded" />
-            <PropertyRef Name="IsApplicationInformed" />
-            <PropertyRef Name="IsCalledFromInAppPurchase" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
-          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
-          <Property Name="InstallmentId" Type="Int64" />
-          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
-          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
-          <Property Name="CycleNumber" Type="Int32" />
-          <Property Name="ThreadNumber" Type="Int32" />
-          <Property Name="wipe" Type="Boolean" />
-        </EntityType>
         <EntityType Name="SinglechargeInstallment">
           <Key>
             <PropertyRef Name="Id" />
@@ -1389,6 +1377,46 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
           <Property Name="timeAfterReadStringClient" Type="DateTime" Precision="3" />
           <Property Name="timeAfterXML" Type="DateTime" Precision="3" />
           <Property Name="timeFinish" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="SingleChargeAppsConsume">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="requesterIP" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="appName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_Singlecharge">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="MobileNumber" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="PersianDateCreated" />
+            <PropertyRef Name="Price" />
+            <PropertyRef Name="IsSucceeded" />
+            <PropertyRef Name="IsApplicationInformed" />
+            <PropertyRef Name="IsCalledFromInAppPurchase" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+          <Property Name="IsSucceeded" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsApplicationInformed" Type="Boolean" Nullable="false" />
+          <Property Name="InstallmentId" Type="Int64" />
+          <Property Name="IsCalledFromInAppPurchase" Type="Boolean" Nullable="false" />
+          <Property Name="ProcessTimeInMilliSecond" Type="Int32" />
+          <Property Name="CycleNumber" Type="Int32" />
+          <Property Name="ThreadNumber" Type="Int32" />
+          <Property Name="wipe" Type="Boolean" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1949,27 +1977,6 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vw_Singlecharge">
-            <EntityTypeMapping TypeName="SharedServiceModel.vw_Singlecharge">
-              <MappingFragment StoreEntitySet="vw_Singlecharge">
-                <ScalarProperty Name="wipe" ColumnName="wipe" />
-                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
-                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
-                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
-                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
-                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
-                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="SinglechargeInstallments">
             <EntityTypeMapping TypeName="SharedServiceModel.SinglechargeInstallment">
               <MappingFragment StoreEntitySet="SinglechargeInstallment">
@@ -2034,6 +2041,41 @@ warning 6002: The table/view 'Achar.dbo.vw_Singlecharge' does not have a primary
                 <ScalarProperty Name="loopNo" ColumnName="loopNo" />
                 <ScalarProperty Name="cycleNumber" ColumnName="cycleNumber" />
                 <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SingleChargeAppsConsumes">
+            <EntityTypeMapping TypeName="SharedServiceModel.SingleChargeAppsConsume">
+              <MappingFragment StoreEntitySet="SingleChargeAppsConsume">
+                <ScalarProperty Name="appName" ColumnName="appName" />
+                <ScalarProperty Name="requesterIP" ColumnName="requesterIP" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_Singlecharge">
+            <EntityTypeMapping TypeName="SharedServiceModel.vw_Singlecharge">
+              <MappingFragment StoreEntitySet="vw_Singlecharge">
+                <ScalarProperty Name="wipe" ColumnName="wipe" />
+                <ScalarProperty Name="ThreadNumber" ColumnName="ThreadNumber" />
+                <ScalarProperty Name="CycleNumber" ColumnName="CycleNumber" />
+                <ScalarProperty Name="ProcessTimeInMilliSecond" ColumnName="ProcessTimeInMilliSecond" />
+                <ScalarProperty Name="IsCalledFromInAppPurchase" ColumnName="IsCalledFromInAppPurchase" />
+                <ScalarProperty Name="InstallmentId" ColumnName="InstallmentId" />
+                <ScalarProperty Name="IsApplicationInformed" ColumnName="IsApplicationInformed" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsSucceeded" ColumnName="IsSucceeded" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

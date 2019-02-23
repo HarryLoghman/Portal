@@ -300,7 +300,7 @@ namespace Portal.Controllers
                     using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Soraty"))
                     {
                         var imiChargeCode = new SharedLibrary.Models.ServiceModel.ImiChargeCode();
-                        message = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                        message = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated);
                     }
                     var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                     var rnd = new Random();
@@ -451,7 +451,7 @@ namespace Portal.Controllers
                     using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Nebula"))
                     {
                         var imiChargeCode = new SharedLibrary.Models.ServiceModel.ImiChargeCode();
-                        message = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.HandleSubscription.ServiceStatusForSubscriberState.Activated);
+                        message = SharedShortCodeServiceLibrary.MessageHandler.SetImiChargeInfo(entity, imiChargeCode, message, message.Price.Value, 0, SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated);
                     }
                     var mobile = "98" + message.MobileNumber.TrimStart('0');
                     var stringedPrice = "";
