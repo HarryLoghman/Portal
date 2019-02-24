@@ -39,7 +39,7 @@ namespace SharedLibrary
                 requestLog.sourceIP = srcIP;
                 requestLog.isProcessed = null;
                 requestLog.description = null;
-                requestLog.x_forwarder = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+                requestLog.x_forwarder = (context != null ? context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"] : null);
 
 
                 if (requestParams != null)
@@ -86,7 +86,7 @@ namespace SharedLibrary
                     else if (action.Value.ToString() == "2")
                     {
                         SharedVariables.logs.Error("TCL Rate has been exceeded:Request is rejected" + returnValue);
-                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error,"Reject,"+ returnValue);
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Reject," + returnValue);
                         return "TPS Rate has been passed"; ;
                     }
 

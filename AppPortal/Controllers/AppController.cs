@@ -12,6 +12,7 @@ using System;
 using System.Data.Entity;
 using System.Threading.Tasks;
 
+
 namespace Portal.Controllers
 {
     public class AppController : ApiController
@@ -108,7 +109,11 @@ namespace Portal.Controllers
                                 , "OTPCharge: Wrong Hash sent from " + HttpContext.Current.Request.UserHostAddress + " parameterEncrypted=" + messageObj.ExtraParameter);
                     }
                 }
-
+                if (!localCall && messageObj.ServiceCode == "Hoshang")
+                {
+                    result.Status = "Use New Method";
+                    resultOk = false;
+                }
                 logs.Info(messageObj.AccessKey + "-" + hash);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";
@@ -259,11 +264,11 @@ namespace Portal.Controllers
             {
                 if (messageObj.Price > 0 && !messageObj.InAppPurchase)
                 {
-                    return "InAppPurchase Price Conflict";
+                    return "InAppPurchase/Price Conflict";
                 }
                 else if (messageObj.Price == 0 && messageObj.InAppPurchase)
                 {
-                    return "InAppPurchase Price Conflict";
+                    return "InAppPurchase/Price Conflict";
                 }
                 else if (messageObj.Price < 0)
                 {
@@ -315,7 +320,7 @@ namespace Portal.Controllers
                 }
                 else if (!servicesCodes.Any(o => o == service.ServiceCode))
                 {
-                    return "Service does not defined";
+                    return "Invalid Service Code";
                 }
 
                 using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(service.ServiceCode))
@@ -526,6 +531,12 @@ namespace Portal.Controllers
                         SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error
                                 , "OTPConfirm: Wrong Hash sent from " + HttpContext.Current.Request.UserHostAddress + " parameterEncrypted=" + messageObj.ExtraParameter);
                     }
+                }
+
+                if (!localCall && messageObj.ServiceCode == "Hoshang")
+                {
+                    result.Status = "Use New Method";
+                    resultOk = false;
                 }
                 //var hash = SharedLibrary.Encrypt.GetSha256Hash("OtpConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
@@ -1044,7 +1055,7 @@ namespace Portal.Controllers
                     string statusDetail;
                     SharedLibrary.SubscriptionHandler.consumeAppCharge(HttpContext.Current.Request.UserHostAddress
                         , messageObj.ServiceCode, messageObj.appName, messageObj.MobileNumber, messageObj.Price, out errorType, out errorDescription);
-                    if(!string.IsNullOrEmpty(errorType))
+                    if (!string.IsNullOrEmpty(errorType))
                     {
                         status = errorType;
                         statusDetail = errorDescription;
@@ -1145,8 +1156,8 @@ namespace Portal.Controllers
                     string status = "";
                     string statusDetail;
                     int totalCharged, totalConsumed, remained;
-                    remained= SharedLibrary.SubscriptionHandler.getRemainAppCharge(messageObj.ServiceCode, messageObj.appName, messageObj.MobileNumber
-                        ,out totalCharged,out totalConsumed, out errorType, out errorDescription);
+                    remained = SharedLibrary.SubscriptionHandler.getRemainAppCharge(messageObj.ServiceCode, messageObj.appName, messageObj.MobileNumber
+                        , out totalCharged, out totalConsumed, out errorType, out errorDescription);
                     if (!string.IsNullOrEmpty(errorType))
                     {
                         status = errorType;
@@ -1249,7 +1260,7 @@ namespace Portal.Controllers
                 {
                     string status = "";
                     string statusDetail;
-                    Dictionary<DateTime,int> dicCharged, dicConsumed;
+                    Dictionary<DateTime, int> dicCharged, dicConsumed;
                     SharedLibrary.SubscriptionHandler.getAppChargeDetail(messageObj.ServiceCode, messageObj.appName, messageObj.MobileNumber
                         , out dicCharged, out dicConsumed, out errorType, out errorDescription);
                     if (!string.IsNullOrEmpty(errorType))
@@ -1265,7 +1276,7 @@ namespace Portal.Controllers
                         result.Status = "Successfully Fetched";
                         result.ChargedDetail = JsonConvert.SerializeObject(dicCharged);
                         result.ConsumedDetail = JsonConvert.SerializeObject(dicConsumed);
-                        
+
                         resultOk = true;
                     }
                 }
@@ -1286,29 +1297,43 @@ namespace Portal.Controllers
             return response;
         }
         #endregion
+
         /// <summary>
-        /// this function is implemented for those apps 
+        /// this function is implemented for those apps who cannot encrypt users
         /// </summary>
         /// <param name="appName"></param>
         /// <param name="extraParameter"></param>
         /// <returns></returns>
         [HttpPost]
+        [System.Web.Mvc.RequireHttps]
         [AllowAnonymous]
-        public HttpResponseMessage GetAppCipherText(string appName, string keyVector, string IV, string extraParameter)
+        public async Task<HttpResponseMessage> GetAppCipherText([FromBody] AppEncryption app)
         {
-
             dynamic result = new ExpandoObject();
             bool resultOk = true;
+            if (HttpContext.Current.Request.Url.Scheme != Uri.UriSchemeHttps)
+            {
+                result = "Require Https";
+                resultOk = false;
+                goto endSection;
+            }
 
             try
             {
+                string appName = app.appName;
+                string extraParameter = app.ExtraParameter;
+                string keyVector = app.keyVector;
+                string IV = app.IV;
 
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
                        , new Dictionary<string, string>() { { "appname", appName } }, null, "AppPortal:AppController:GetAppCipherText");
+
+
                 if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
                     result = tpsRatePassed;
                     resultOk = false;
+
                     goto endSection;
                 }
 
@@ -1316,44 +1341,53 @@ namespace Portal.Controllers
                 {
                     result = "AppName is not specified";
                     resultOk = false;
+
                     goto endSection;
                 }
                 if (string.IsNullOrEmpty(extraParameter))
                 {
                     result = "ExtraParameter is not specified";
                     resultOk = false;
+
                     goto endSection;
                 }
 
                 string errorType, errorDescription;
+
+
                 using (var portal = new SharedLibrary.Models.PortalEntities())
                 {
+
                     var entryApp = portal.Apps.Where(o => o.appName == appName).FirstOrDefault();
                     if (entryApp == null)
                     {
-                        errorType = "AppName is not defined";
+                        errorType = "Invalid AppName";
                         errorDescription = "AppName = " + appName;
+                        result = errorType;
                         resultOk = false;
                         goto endSection;
                     }
                     if (!entryApp.state.HasValue || entryApp.state.Value == 0)
                     {
-                        errorType = "AppName is disabled";
+                        errorType = "App is disabled";
                         errorDescription = "AppName = " + appName;
+                        result = errorType;
                         resultOk = false;
                         goto endSection;
                     }
                     if (entryApp.keyVector != keyVector)
                     {
-                        errorType = "Wrong keyvector is specified";
+                        errorType = "Wrong keyvector";
                         errorDescription = "AppName = " + appName;
+                        result = errorType;
                         resultOk = false;
                         goto endSection;
                     }
                     if (entryApp.IV != IV)
                     {
-                        errorType = "Wrong IV is specified";
+                        errorType = "Wrong IV";
                         errorDescription = "AppName = " + appName;
+                        result = errorType;
                         resultOk = false;
                         goto endSection;
                     }
@@ -1363,13 +1397,14 @@ namespace Portal.Controllers
                     //    errorDescription = "AppName = " + appName;
                     //    return "";
                     //}
-
+                    //logs.Error("Ciphersdasdasdasd");
                     string cipherText = SharedLibrary.Encrypt.fnc_enryptAppParameter(entryApp.enryptAlghorithm, appName
                         , entryApp.keySize, entryApp.IV, entryApp.keyVector, extraParameter, out errorType, out errorDescription);
+                    //logs.Error("Cipher1100");
                     if (!string.IsNullOrEmpty(errorType))
                     {
                         SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, errorType + " " + errorDescription);
-                        logs.Error("AppPortal:AppController:GetAppCipherText" + errorType + "," + errorDescription);
+
                         result = errorType;
                         resultOk = false;
                     }
@@ -1389,6 +1424,7 @@ namespace Portal.Controllers
                 //result = e.Message;
                 resultOk = false;
                 result = "Exception has been occured!!! Contact Administrator";
+                //result = e.Message + e.StackTrace;
             }
             endSection: var json = JsonConvert.SerializeObject(result);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -1397,6 +1433,7 @@ namespace Portal.Controllers
             response.Content = new StringContent(json, System.Text.Encoding.UTF8, "text/plain");
 
             return response;
+
         }
         [HttpPost]
         [AllowAnonymous]
@@ -1822,7 +1859,7 @@ namespace Portal.Controllers
                     result.MobileNumber = messageObj.MobileNumber;
                 string hash = "";
                 hash = SharedLibrary.Encrypt.GetSha256Hash("SubscriberActivationState" + "-" + messageObj.ServiceCode + "-" + messageObj.MobileNumber);
-                
+
                 //var hash = SharedLibrary.Encrypt.GetSha256Hash("OtpConfirm" + messageObj.ServiceCode + messageObj.MobileNumber);
                 if (messageObj.AccessKey != hash)
                     result.Status = "You do not have permission";

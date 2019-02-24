@@ -89,6 +89,7 @@
     <Compile Include="Aggregators\WebRequestProcess.cs" />
     <Compile Include="Date.cs" />
     <Compile Include="Encrypt.cs" />
+    <Compile Include="Models\AppEncryption.cs" />
     <Compile Include="SubscriptionHandler.cs" />
     <Compile Include="SubscriptionFtpHandler.cs" />
     <Compile Include="HelpfulFunctions.cs" />

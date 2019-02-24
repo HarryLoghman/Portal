@@ -335,7 +335,7 @@ namespace SharedLibrary
                     var entryApp = portal.Apps.Where(o => o.appName == appName).FirstOrDefault();
                     if (entryApp == null)
                     {
-                        errorType = "AppName is not defined";
+                        errorType = "Invalid AppName";
                         errorDescription = "AppName = " + appName;
                         return false;
                     }
@@ -450,6 +450,7 @@ namespace SharedLibrary
             }
             catch (Exception ex)
             {
+                
                 errorType = "Exception has been occured!!! Contact Administrator";
                 errorDescription = "AppName = " + appName + " exception : " + ex.Message;
                 return "";

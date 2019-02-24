@@ -48,7 +48,7 @@ namespace SharedLibrary
                 //if (serviceAdditionalInfo["serviceCode"] == "JabehAbzar" || serviceAdditionalInfo["serviceCode"] == "ShenoYad"
                 //   || serviceAdditionalInfo["serviceCode"] == "ShenoYad500" || serviceAdditionalInfo["serviceCode"] == "Halghe")
                 //{
-                    return await TelepromoOTPRequestJSON(entity, singlecharge, message, serviceAdditionalInfo);
+                return await TelepromoOTPRequestJSON(entity, singlecharge, message, serviceAdditionalInfo);
                 //}
                 //else
                 //{
@@ -673,7 +673,7 @@ namespace SharedLibrary
                                 ,{"contentid","48" }
                                 , {"chargecode" ,chargeCode }
                                 , {"description" ,description }
-                                ,{ "amount" , "0" }
+                                ,{ "amount" , message.Price.ToString() }
 
                 };
                 //json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"serviceid\":\"" + serviceId.ToString() + "\""
@@ -2231,71 +2231,71 @@ namespace SharedLibrary
             }
             return singlecharge;
         }
-        
+
         public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> SamssonTciOTPRequest(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
             , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
-            
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                singlecharge.MobileNumber = message.MobileNumber;
-                try
-                {
-                    using (var client = new HttpClient())
-                    {
-                        var values = new Dictionary<string, string>
-                        {
-                        };
 
-                        var content = new FormUrlEncodedContent(values);
-                        //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/AddPhone/{0}", message.MobileNumber);
-                        var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpRequest), message.MobileNumber);
-                        var response = await client.PostAsync(url, content);
-                        if (response.IsSuccessStatusCode)
+            entity.Configuration.AutoDetectChangesEnabled = false;
+            singlecharge.MobileNumber = message.MobileNumber;
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var values = new Dictionary<string, string>
+                    {
+                    };
+
+                    var content = new FormUrlEncodedContent(values);
+                    //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/AddPhone/{0}", message.MobileNumber);
+                    var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpRequest), message.MobileNumber);
+                    var response = await client.PostAsync(url, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        logs.Info(responseString);
+                        dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+                        if (jsonResponse.error == null)
                         {
-                            var responseString = await response.Content.ReadAsStringAsync();
-                            logs.Info(responseString);
-                            dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-                            if (jsonResponse.error == null)
-                            {
-                                singlecharge.Description = "SUCCESS-Pending Confirmation";
-                                singlecharge.ReferenceId = jsonResponse.value.ToString();
-                            }
-                            else
-                            {
-                                string e = jsonResponse.error.ToString();
-                                e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
-                                dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
-                                singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
-                            }
+                            singlecharge.Description = "SUCCESS-Pending Confirmation";
+                            singlecharge.ReferenceId = jsonResponse.value.ToString();
                         }
                         else
-                            singlecharge.Description = response.StatusCode.ToString();
+                        {
+                            string e = jsonResponse.error.ToString();
+                            e = e.Replace("[\r\n", string.Empty).Replace("\r\n]", string.Empty);
+                            dynamic error = Newtonsoft.Json.JsonConvert.DeserializeObject(e);
+                            singlecharge.Description = error.code.ToString() + "-" + error.message.ToString();
+                        }
                     }
+                    else
+                        singlecharge.Description = response.StatusCode.ToString();
                 }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SamssonTciOTPRequest: " + e);
-                    singlecharge.Description = "Exception";
-                }
-                try
-                {
-                    singlecharge.IsSucceeded = false;
-                    if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
-                        singlecharge.ReferenceId = "Exception occurred!";
-                    singlecharge.DateCreated = DateTime.Now;
-                    singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                    singlecharge.Price = message.Price.GetValueOrDefault();
-                    singlecharge.IsApplicationInformed = false;
-                    //singlecharge.IsCalledFromInAppPurchase = true;
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SamssonTciOTPRequest: " + e);
+                singlecharge.Description = "Exception";
+            }
+            try
+            {
+                singlecharge.IsSucceeded = false;
+                if (HelpfulFunctions.IsPropertyExist(singlecharge, "ReferenceId") != true)
+                    singlecharge.ReferenceId = "Exception occurred!";
+                singlecharge.DateCreated = DateTime.Now;
+                singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
+                singlecharge.Price = message.Price.GetValueOrDefault();
+                singlecharge.IsApplicationInformed = false;
+                //singlecharge.IsCalledFromInAppPurchase = true;
 
-                    entity.Singlecharges.Add(singlecharge);
-                    entity.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SamssonTciOTPRequest on saving values to db: " + e);
-                }
-            
+                entity.Singlecharges.Add(singlecharge);
+                entity.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logs.Error("Exception in SamssonTciOTPRequest on saving values to db: " + e);
+            }
+
             return singlecharge;
         }
 
@@ -2351,148 +2351,7 @@ namespace SharedLibrary
             return singlecharge;
         }
 
-        public static async Task SendMesssagesToMci(Type entityType, dynamic messages, Dictionary<string, string> serviceAdditionalInfo)
-        {
-            using (dynamic entity = Activator.CreateInstance(entityType))
-            {
-                entity.Configuration.AutoDetectChangesEnabled = false;
-                var waitingForRetryMobileNumbers = new List<string>();
-                try
-                {
-                    await Task.Delay(10); // for making it async
-                    var messagesCount = messages.Count;
-                    if (messagesCount == 0)
-                        return;
-                    var shortcode = "98" + serviceAdditionalInfo["shortCode"];
-                    var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
-                    var serviceId = serviceAdditionalInfo["serviceId"];
-
-                    //var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
-                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.sendmessage);
-                    var urlMCIDelivery = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.dehnadReceivePortalOnTohid, HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
-                    foreach (var message in messages)
-                    {
-                        var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-
-                        //string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/sms/send/v4_0/local"">
-                        //   <soapenv:Header/>
-                        //   <soapenv:Body>
-                        //      <loc:sendSms>
-                        //<loc:addresses>{0}</loc:addresses>
-                        //         <loc:senderName>{1}</loc:senderName>", mobileNumber, shortcode);
-                        //if (message.Price != 0)
-                        //{
-                        //    payload += string.Format(@"
-                        //    <loc:charging>
-                        //        <description></description>
-                        //        <currency>RLS</currency>
-                        //        <amount>{0}</amount>
-                        //        <code>{1}</code>
-                        //     </loc:charging>", message.Price + "0", message.ImiChargeKey);
-                        //}
-
-                        ////payload += string.Format(@"
-                        ////<loc:message> {0} </loc:message>
-                        ////    <loc:receiptRequest>
-                        ////                 <endpoint>http://10.20.96.65:8090/api/Mci/Delivery</endpoint>
-                        ////            <interfaceName>SMS</interfaceName>
-                        ////            <correlator>{1}</correlator>
-                        ////            </loc:receiptRequest>
-                        ////          </loc:sendSms>
-                        ////        </soapenv:Body>
-                        ////      </soapenv:Envelope>", message.Content, fnc_getCorrelator(shortcode, message, true));
-
-                        //payload += string.Format(@"
-                        //<loc:message> {0} </loc:message>
-                        //    <loc:receiptRequest>
-                        //                 <endpoint>{2}</endpoint>
-                        //            <interfaceName>SMS</interfaceName>
-                        //            <correlator>{1}</correlator>
-                        //            </loc:receiptRequest>
-                        //          </loc:sendSms>
-                        //        </soapenv:Body>
-                        //      </soapenv:Envelope>", message.Content, fnc_getCorrelator(shortcode, message, true), urlMCIDelivery);
-                        string payload = MessageHandler.CreateMCISoapEnvelopeString(message, shortcode
-                            , message.Price, message.ImiChargeKey, urlMCIDelivery);
-                        using (var client = new HttpClient())
-                        {
-                            client.DefaultRequestHeaders.Add("serviceKey", aggregatorServiceId);
-                            var request = new HttpRequestMessage(HttpMethod.Post, url);
-                            request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
-                            using (var response = await client.SendAsync(request))
-                            {
-                                if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
-                                {
-                                    string httpResult = response.Content.ReadAsStringAsync().Result;
-                                    XmlDocument xml = new XmlDocument();
-                                    xml.LoadXml(httpResult);
-                                    XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
-                                    manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
-                                    manager.AddNamespace("ns2", "http://www.csapi.org/schema/parlayx/sms/send/v4_0/local");
-                                    XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns2:sendSmsResponse/ns2:result", manager);
-                                    if (successNode != null)
-                                    {
-                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Success;
-                                        message.ReferenceId = successNode.InnerText;
-                                        message.SentDate = DateTime.Now;
-                                        message.PersianSentDate = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
-                                        if (message.MessagePoint > 0)
-                                            SharedLibrary.MessageHandler.SetSubscriberPoint(message.MobileNumber, message.ServiceId, message.MessagePoint);
-                                        entity.Entry(message).State = EntityState.Modified;
-                                    }
-                                    else
-                                    {
-                                        XmlNode faultCode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode", manager);
-                                        XmlNode faultString = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/soapenv:Fault/faultstring", manager);
-                                        XmlNode faultDetail = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/soapenv:Fault/detail", manager);
-                                        var error = "";
-                                        if (faultCode != null)
-                                            error += "faultCode=" + faultCode.InnerText;
-                                        if (faultString != null)
-                                            error += "faultString=" + faultString.InnerText;
-                                        if (faultDetail != null)
-                                            error += "faultDetail=" + faultDetail.InnerText;
-                                        logs.Info("SendMesssagesToMci Message was not sended with error: " + error);
-                                        if (message.RetryCount > retryCountMax)
-                                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                        message.DateLastTried = DateTime.Now;
-                                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
-                                        entity.Entry(message).State = EntityState.Modified;
-                                    }
-                                }
-                                else
-                                {
-                                    logs.Info("SendMesssagesToMci Message was not sended with status of: " + response.StatusCode);
-                                    if (message.RetryCount > retryCountMax)
-                                        message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                                    message.DateLastTried = DateTime.Now;
-                                    message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
-                                    entity.Entry(message).State = EntityState.Modified;
-                                }
-                            }
-                        }
-                    }
-                    entity.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SendMesssagesToMci: " + e);
-                    foreach (var message in messages)
-                    {
-                        if (waitingForRetryMobileNumbers.Contains(message.MobileNumber))
-                            continue;
-                        if (message.RetryCount > retryCountMax)
-                            message.ProcessStatus = (int)SharedLibrary.MessageHandler.ProcessStatus.Failed;
-                        message.DateLastTried = DateTime.Now;
-                        message.RetryCount = message.RetryCount == null ? 1 : message.RetryCount + 1;
-                        entity.Entry(message).State = EntityState.Modified;
-                    }
-                    entity.SaveChanges();
-                }
-            }
-        }
-
-        public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MciDirectOtpCharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
+       public static async Task<SharedLibrary.Models.ServiceModel.Singlecharge> MciDirectOtpCharge(SharedLibrary.Models.ServiceModel.SharedServiceEntities entity
             , SharedLibrary.Models.ServiceModel.Singlecharge singlecharge, MessageObject message, Dictionary<string, string> serviceAdditionalInfo)
         {
             singlecharge.MobileNumber = message.MobileNumber;
@@ -2517,10 +2376,10 @@ namespace SharedLibrary
                             }} ,
                         ""charge"": {{
                                 ""code"": ""{4}"",
-                                ""amount"":0,
+                                ""amount"":{6},
                                 ""description"": ""otp""
                             }}
-                    }}", aggregatorServiceId, mobileNumber, refrenceCode, shortcode, message.ImiChargeKey, serviceAdditionalInfo["serviceName"]);
+                    }}", aggregatorServiceId, mobileNumber, refrenceCode, shortcode, message.ImiChargeKey, serviceAdditionalInfo["serviceName"], message.Price * 10);
 
                 using (var client = new HttpClient())
                 {
@@ -2531,6 +2390,8 @@ namespace SharedLibrary
                     var result = await client.PostAsync(url, content);
                     var responseString = await result.Content.ReadAsStringAsync();
                     dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
+
+                    //logs.Error("MCIDirectOTPCharge " + mobileNumber + responseString);
                     if (jsonResponse.statusInfo.statusCode.ToString() == "200")
                     {
                         singlecharge.Description = "SUCCESS-Pending Confirmation";
@@ -2598,6 +2459,7 @@ namespace SharedLibrary
                        ""shortCode"": ""{5}""
                        }}
                     }}", aggregatorServiceId, mobileNumber, otpTransactionId, confirmationCode, referenceCode, shortcode);
+                //logs.Error("MCIDirectOTPConfirm" + json);
                 using (var client = new HttpClient())
                 {
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -2784,7 +2646,7 @@ namespace SharedLibrary
                 singlecharge.PersianDateCreated = SharedLibrary.Date.GetPersianDateTime(DateTime.Now);
                 singlecharge.Price = message.Price.GetValueOrDefault();
                 singlecharge.IsApplicationInformed = false;
-                //singlecharge.IsCalledFromInAppPurchase = true;
+                //singlecharge.IsCalledFromInAppPurchase = message.InAppPurchase;
 
                 entity.Singlecharges.Add(singlecharge);
                 entity.SaveChanges();

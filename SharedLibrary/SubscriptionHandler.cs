@@ -559,7 +559,7 @@ namespace SharedLibrary
             errorType = "";
             errorDescription = "";
 
-            
+
             if (!price.HasValue || price <= 0)
             {
                 errorType = "Invalid Price";
@@ -593,6 +593,7 @@ namespace SharedLibrary
 
 
                 entityService.SingleChargeAppsConsumes.Add(entryChargeApp);
+                entityService.SaveChanges();
             }
             return true;
         }
@@ -605,18 +606,12 @@ namespace SharedLibrary
             errorType = "";
             errorDescription = "";
 
-            mobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(mobileNumber);
+            mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(mobileNumber);
 
             if (mobileNumber == "Invalid Mobile Number")
             {
                 errorType = "Invalid Mobile Number";
                 errorDescription = mobileNumber;
-                return 0;
-            }
-            else if (mobileNumber == "Invalid Number")
-            {
-                errorType = "Invalid Number";
-                errorType = mobileNumber;
                 return 0;
             }
             var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
@@ -629,8 +624,8 @@ namespace SharedLibrary
 
             using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
             {
-                totalCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).Sum(o => o.Price);
-                totalConsumed = entityService.SingleChargeAppsConsumes.Where(o => o.MobileNumber == mobileNumber && o.appName == appName).Sum(o => o.Price);
+                totalCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).Sum(o => (int?)o.Price) ?? 0;
+                totalConsumed = entityService.SingleChargeAppsConsumes.Where(o => o.MobileNumber == mobileNumber && o.appName == appName).Sum(o => (int?)o.Price) ?? 0;
             }
             return totalCharged - totalConsumed;
         }
@@ -643,18 +638,12 @@ namespace SharedLibrary
             errorType = "";
             errorDescription = "";
 
-            mobileNumber = SharedLibrary.MessageHandler.ValidateLandLineNumber(mobileNumber);
+            mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(mobileNumber);
 
             if (mobileNumber == "Invalid Mobile Number")
             {
                 errorType = "Invalid Mobile Number";
                 errorDescription = mobileNumber;
-                return;
-            }
-            else if (mobileNumber == "Invalid Number")
-            {
-                errorType = "Invalid Number";
-                errorType = mobileNumber;
                 return;
             }
             var service = SharedLibrary.ServiceHandler.GetServiceFromServiceCode(serviceCode);
@@ -670,7 +659,7 @@ namespace SharedLibrary
                 dicCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
                 dicConsumed = entityService.SingleChargeAppsConsumes.Where(o => o.MobileNumber == mobileNumber && o.appName == appName).OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
             }
-            
+
         }
         public enum ServiceStatusForSubscriberState
         {
