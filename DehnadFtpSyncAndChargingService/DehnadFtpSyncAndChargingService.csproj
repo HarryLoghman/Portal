@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DehnadSyncAndFtpChargingService</RootNamespace>
-    <AssemblyName>DehnadSyncAndFtpChargingService</AssemblyName>
+    <RootNamespace>DehnadFtpSyncAndChargingService</RootNamespace>
+    <AssemblyName>DehnadFtpSyncAndChargingService</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DehnadSyncAndFtpChargingService
+namespace DehnadFtpSyncAndChargingService
 {
     using System;
     using System.Collections.Generic;

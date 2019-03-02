@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DehnadSyncAndFtpChargingService.Properties {
+namespace DehnadFtpSyncAndChargingService.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -197,7 +197,7 @@ namespace DehnadSyncAndFtpChargingService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
         public int MobinOneSyncNDaysBefore {
             get {
                 return ((int)(this["MobinOneSyncNDaysBefore"]));

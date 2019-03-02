@@ -1,5 +1,5 @@
-﻿using DehnadSyncAndFtpChargingService.MCI;
-using DehnadSyncAndFtpChargingService.MobinOne;
+﻿using DehnadFtpSyncAndChargingService.MCI;
+using DehnadFtpSyncAndChargingService.MobinOne;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DehnadSyncAndFtpChargingService
+namespace DehnadFtpSyncAndChargingService
 {
     public partial class Service : ServiceBase
     {
@@ -28,17 +28,22 @@ namespace DehnadSyncAndFtpChargingService
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         protected override void OnStart(string[] args)
         {
+            
             downloaderMCIThread = new Thread(downloaderMCI);
             downloaderMCIThread.IsBackground = true;
             downloaderMCIThread.Start();
 
+            
             syncMCIThread = new Thread(syncMCI);
             syncMCIThread.IsBackground = true;
             syncMCIThread.Start();
 
+            
             syncMobinOneThread = new Thread(syncMobinOne);
-            syncMCIThread.IsBackground = true;
-            syncMCIThread.Start();
+            syncMobinOneThread.IsBackground = true;
+            syncMobinOneThread.Start();
+
+            
             //syncNotChargedThread = new Thread(syncNotChargedFunction);
             //syncNotChargedThread.IsBackground = true;
             //syncNotChargedThread.Start();
@@ -123,8 +128,8 @@ namespace DehnadSyncAndFtpChargingService
                 }
                 catch (Exception e)
                 {
-                    Program.logs.Error("MCIFtpSync:SyncFunction: ", e);
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "MCIFtpSync:SyncFunction: (" + e.Message + ")");
+                    Program.logs.Error("FtpSyncAndCharging:SyncFunction: ", e);
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "FtpSyncAndCharging:SyncFunction: (" + e.Message + ")");
                     Thread.Sleep(1000);
                 }
             }

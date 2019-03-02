@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DehnadSyncAndFtpChargingService.MobinOne
+namespace DehnadFtpSyncAndChargingService.MobinOne
 {
     class SyncMobinOne
     {
@@ -64,17 +64,17 @@ namespace DehnadSyncAndFtpChargingService.MobinOne
                         if (str == "-1")
                         {
                             SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "MobinOneSync Wrong userName password");
-                            Program.logs.Error("DehnadSyncAndFtpChargingService:MobinOne:sb_download:Wrong userName password");
+                            Program.logs.Error("DehnadFtpSyncAndChargingService:MobinOne:sb_download:Wrong userName password");
                         }
                         else if (str == "-2")
                         {
                             SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "MobinOneSync UserName or password is empty");
-                            Program.logs.Error("DehnadSyncAndFtpChargingService:MobinOne:sb_download:UserName or password is empty");
+                            Program.logs.Error("DehnadFtpSyncAndChargingService:MobinOne:sb_download:UserName or password is empty");
                         }
                         else if (str == "-3")
                         {
                             SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "MobinOneSync Parameters are empty");
-                            Program.logs.Error("DehnadSyncAndFtpChargingService:MobinOne:sb_download:Parameters are empty");
+                            Program.logs.Error("DehnadFtpSyncAndChargingService:MobinOne:sb_download:Parameters are empty");
                         }
                         else if (str == "-5")
                         {
@@ -136,7 +136,7 @@ namespace DehnadSyncAndFtpChargingService.MobinOne
                                 else
                                 {
                                     SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MobinOneSync Unknown short code " + entryService.ShortCode);
-                                    Program.logs.Error("DehnadSyncAndFtpChargingService:MobinOne:sb_download:Unknown short code " + entryService.ShortCode);
+                                    Program.logs.Error("DehnadFtpSyncAndChargingService:MobinOne:sb_download:Unknown short code " + entryService.ShortCode);
                                 }
 
                                 entityPortal.MobinOneFtps.Add(entryMobinOneFtp);
@@ -144,7 +144,7 @@ namespace DehnadSyncAndFtpChargingService.MobinOne
                                 if (!string.IsNullOrEmpty(contradictionsIds))
                                 {
                                     SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MobinOneSync Contradiction has been detected newID=" + entryMobinOneFtp.Id + " oldID(s)=" + contradictionsIds);
-                                    Program.logs.Error("DehnadSyncAndFtpChargingService:MobinOne:sb_download:Contradiction has been detected newID=" + entryMobinOneFtp.Id + " oldID(s)=" + contradictionsIds);
+                                    Program.logs.Error("DehnadFtpSyncAndChargingService:MobinOne:sb_download:Contradiction has been detected newID=" + entryMobinOneFtp.Id + " oldID(s)=" + contradictionsIds);
                                 }
                             }
 
@@ -153,7 +153,7 @@ namespace DehnadSyncAndFtpChargingService.MobinOne
                     catch (Exception e)
                     {
                         SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MobinOneSync " + e.Message);
-                        Program.logs.Error("DehnadSyncAndFtpChargingService:MobinOne:sb_download:", e);
+                        Program.logs.Error("DehnadFtpSyncAndChargingService:MobinOne:sb_download:", e);
                     }
                     date = date.AddDays(1);
                 }

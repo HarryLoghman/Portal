@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DehnadSyncAndFtpChargingService
+namespace DehnadFtpSyncAndChargingService
 {
     //deactive those users who are not charged for DeactiveNotChargedCheckNDaysBefore setting
     class SyncNotCharged
@@ -75,8 +75,8 @@ namespace DehnadSyncAndFtpChargingService
 
                             if (autoSync)
                             {
-                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "DehnadSyncAndFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized");
-                                Program.logs.Info("DehnadSyncAndFtpChargingService:syncNotCharged:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized");
+                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "DehnadFtpSyncAndChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized");
+                                Program.logs.Info("DehnadFtpSyncAndChargingService:syncNotCharged:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized");
                                 foreach (var syncSub in lstSyncSubs)
                                 {
 
@@ -96,14 +96,14 @@ namespace DehnadSyncAndFtpChargingService
 
                                 }
 
-                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "DehnadSyncAndFtpChargingService:syncNotCharged:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers have been deactivated due to not charging from "+ syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                                Program.logs.Info("DehnadSyncAndFtpChargingService:syncNotCharged:" + entryService.ServiceCode + ":" + syncedCount + " Subscribers have been deactivated due to not charging from " + syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "DehnadFtpSyncAndChargingService:syncNotCharged:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers have been deactivated due to not charging from "+ syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                                Program.logs.Info("DehnadFtpSyncAndChargingService:syncNotCharged:" + entryService.ServiceCode + ":" + syncedCount + " Subscribers have been deactivated due to not charging from " + syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                             }
                             else
                             {
-                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "DehnadSyncAndFtpChargingService:syncNotCharged:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count() + " Subscribers have not been charged from "+ syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff")+" and need to be deactivated. Parameters "
+                                SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "DehnadFtpSyncAndChargingService:syncNotCharged:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count() + " Subscribers have not been charged from "+ syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff")+" and need to be deactivated. Parameters "
                                    + parametersStr);
-                                Program.logs.Info("DehnadSyncAndFtpChargingService:syncNotCharged:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count()  +" Subscribers have not been charged from " + syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff") + " and need to be deactivated.Parameters "
+                                Program.logs.Info("DehnadFtpSyncAndChargingService:syncNotCharged:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count()  +" Subscribers have not been charged from " + syncNotChargedFromDate.ToString("yyyy-MM-dd HH:mm:ss.fff") + " and need to be deactivated.Parameters "
                                    + parametersStr);
                             }
 
@@ -115,8 +115,8 @@ namespace DehnadSyncAndFtpChargingService
             }
             catch (Exception e)
             {
-                //SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "DehnadSyncAndFtpChargingService:syncSubscription:" + e.Message);
-                Program.logs.Error("DehnadSyncAndFtpChargingService:syncSubscription:", e);
+                //SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "DehnadFtpSyncAndChargingService:syncSubscription:" + e.Message);
+                Program.logs.Error("DehnadFtpSyncAndChargingService:syncSubscription:", e);
             }
         }
 

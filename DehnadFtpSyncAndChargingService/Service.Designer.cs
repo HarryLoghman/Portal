@@ -1,4 +1,4 @@
-﻿namespace DehnadSyncAndFtpChargingService
+﻿namespace DehnadFtpSyncAndChargingService
 {
     partial class Service
     {

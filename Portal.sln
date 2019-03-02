@@ -109,7 +109,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkLibrary", "BulkLibrary\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadHoshangService", "DehnadHoshangService\DehnadHoshangService.csproj", "{8D9A1B98-BB4E-4D85-B526-98831CE8BA21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadSyncAndFtpChargingService", "DehnadSyncAndFtpChargingService\DehnadSyncAndFtpChargingService.csproj", "{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadFtpSyncAndChargingService", "DehnadFtpSyncAndChargingService\DehnadFtpSyncAndChargingService.csproj", "{266F2AFA-5753-4183-B00C-C89EBDB8A6BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
