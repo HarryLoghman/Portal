@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DehnadMCIFtpChargingService
+namespace DehnadSyncAndFtpChargingService
 {
-    class ftpItemInfo
+    class MCIftpItemInfo
     {
         public int sid { get; set; }
         public string trans_id { get; set; }

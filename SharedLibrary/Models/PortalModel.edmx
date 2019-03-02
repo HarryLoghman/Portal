@@ -216,6 +216,25 @@
           <Property Name="subCount" Type="int" />
           <Property Name="unsubCount" Type="int" />
         </EntityType>
+        <EntityType Name="MobinOneFtp">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="regDate" Type="datetime" />
+          <Property Name="serviceCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="date" Type="date" />
+          <Property Name="service_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="event_type" Type="nvarchar" MaxLength="50" />
+          <Property Name="requestedChannel" Type="nvarchar" MaxLength="50" />
+          <Property Name="download_channel" Type="nvarchar" MaxLength="50" />
+          <Property Name="eup" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="action_type" Type="nvarchar" MaxLength="50" />
+          <Property Name="subscriber_type" Type="nvarchar" MaxLength="50" />
+          <Property Name="shortcode" Type="nvarchar" MaxLength="50" />
+          <Property Name="downloads" Type="int" />
+          <Property Name="revenue" Type="int" />
+        </EntityType>
         <EntityType Name="Operators">
           <Key>
             <PropertyRef Name="Id" />
@@ -360,6 +379,8 @@
           <Property Name="priority" Type="int" />
           <Property Name="state" Type="int" />
           <Property Name="description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="userName" Type="nvarchar" MaxLength="50" />
+          <Property Name="pwd" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="serviceCyclesNew">
           <Key>
@@ -810,6 +831,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MCIFtpLastState" EntityType="Self.MCIFtpLastState" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MCISingleChargeFtpFiles" EntityType="Self.MCISingleChargeFtpFiles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MobinOneFtp" EntityType="Self.MobinOneFtp" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Operators" EntityType="Self.Operators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPlans" EntityType="Self.OperatorsPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperatorsPrefixs" EntityType="Self.OperatorsPrefixs" Schema="dbo" store:Type="Tables" />
@@ -1003,7 +1025,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="ParidsShortCodes" EntityType="PortalModel.ParidsShortCode" />
           <EntitySet Name="Referrals" EntityType="PortalModel.Referral" />
           <EntitySet Name="ServersActions" EntityType="PortalModel.ServersAction" />
-          <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
           <EntitySet Name="serviceCyclesNews" EntityType="PortalModel.serviceCyclesNew" />
           <EntitySet Name="ServiceInfoes" EntityType="PortalModel.ServiceInfo" />
           <EntitySet Name="ServiceKeywords" EntityType="PortalModel.ServiceKeyword" />
@@ -1082,6 +1103,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             <Parameter Name="SyncChargedTriedNDaysBefore" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="MCIFtpLastStates" EntityType="PortalModel.MCIFtpLastState" />
+          <EntitySet Name="MobinOneFtps" EntityType="PortalModel.MobinOneFtp" />
+          <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1261,18 +1284,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="serverId" Type="Int32" Nullable="false" />
           <Property Name="Action" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="URL" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="priority" Type="Int32" />
-          <Property Name="state" Type="Int32" />
-          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ServersIP">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ServerName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ports" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="priority" Type="Int32" />
           <Property Name="state" Type="Int32" />
           <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
@@ -1875,6 +1886,39 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="filePath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="MobinOneFtp">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="regDate" Type="DateTime" Precision="3" />
+          <Property Name="serviceCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="date" Type="DateTime" Precision="0" />
+          <Property Name="service_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="event_type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="requestedChannel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="download_channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="eup" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="action_type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="subscriber_type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="shortcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="downloads" Type="Int32" />
+          <Property Name="revenue" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ServersIP">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServerName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ports" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="priority" Type="Int32" />
+          <Property Name="state" Type="Int32" />
+          <Property Name="description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="userName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="pwd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2074,19 +2118,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="URL" ColumnName="URL" />
                 <ScalarProperty Name="Action" ColumnName="Action" />
                 <ScalarProperty Name="serverId" ColumnName="serverId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ServersIPs">
-            <EntityTypeMapping TypeName="PortalModel.ServersIP">
-              <MappingFragment StoreEntitySet="ServersIPs">
-                <ScalarProperty Name="description" ColumnName="description" />
-                <ScalarProperty Name="state" ColumnName="state" />
-                <ScalarProperty Name="priority" ColumnName="priority" />
-                <ScalarProperty Name="ports" ColumnName="ports" />
-                <ScalarProperty Name="IP" ColumnName="IP" />
-                <ScalarProperty Name="ServerName" ColumnName="ServerName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2585,6 +2616,41 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
                 <ScalarProperty Name="serviceId" ColumnName="serviceId" />
                 <ScalarProperty Name="regdate" ColumnName="regdate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MobinOneFtps">
+            <EntityTypeMapping TypeName="PortalModel.MobinOneFtp">
+              <MappingFragment StoreEntitySet="MobinOneFtp">
+                <ScalarProperty Name="revenue" ColumnName="revenue" />
+                <ScalarProperty Name="downloads" ColumnName="downloads" />
+                <ScalarProperty Name="shortcode" ColumnName="shortcode" />
+                <ScalarProperty Name="subscriber_type" ColumnName="subscriber_type" />
+                <ScalarProperty Name="action_type" ColumnName="action_type" />
+                <ScalarProperty Name="eup" ColumnName="eup" />
+                <ScalarProperty Name="download_channel" ColumnName="download_channel" />
+                <ScalarProperty Name="requestedChannel" ColumnName="requestedChannel" />
+                <ScalarProperty Name="event_type" ColumnName="event_type" />
+                <ScalarProperty Name="service_name" ColumnName="service_name" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="serviceCode" ColumnName="serviceCode" />
+                <ScalarProperty Name="regDate" ColumnName="regDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServersIPs">
+            <EntityTypeMapping TypeName="PortalModel.ServersIP">
+              <MappingFragment StoreEntitySet="ServersIPs">
+                <ScalarProperty Name="pwd" ColumnName="pwd" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="priority" ColumnName="priority" />
+                <ScalarProperty Name="ports" ColumnName="ports" />
+                <ScalarProperty Name="IP" ColumnName="IP" />
+                <ScalarProperty Name="ServerName" ColumnName="ServerName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

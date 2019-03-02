@@ -41,7 +41,6 @@ namespace SharedLibrary.Models
         public virtual DbSet<ParidsShortCode> ParidsShortCodes { get; set; }
         public virtual DbSet<Referral> Referrals { get; set; }
         public virtual DbSet<ServersAction> ServersActions { get; set; }
-        public virtual DbSet<ServersIP> ServersIPs { get; set; }
         public virtual DbSet<serviceCyclesNew> serviceCyclesNews { get; set; }
         public virtual DbSet<ServiceInfo> ServiceInfoes { get; set; }
         public virtual DbSet<ServiceKeyword> ServiceKeywords { get; set; }
@@ -70,6 +69,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<MCISingleChargeFtpFile> MCISingleChargeFtpFiles { get; set; }
         public virtual DbSet<App> Apps { get; set; }
         public virtual DbSet<MCIFtpLastState> MCIFtpLastStates { get; set; }
+        public virtual DbSet<MobinOneFtp> MobinOneFtps { get; set; }
+        public virtual DbSet<ServersIP> ServersIPs { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

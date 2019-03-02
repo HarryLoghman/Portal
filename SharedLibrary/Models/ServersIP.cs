@@ -21,5 +21,7 @@ namespace SharedLibrary.Models
         public Nullable<int> priority { get; set; }
         public Nullable<int> state { get; set; }
         public string description { get; set; }
+        public string userName { get; set; }
+        public string pwd { get; set; }
     }
 }

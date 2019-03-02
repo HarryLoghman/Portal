@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DehnadMCIFtpChargingService.Properties {
+namespace DehnadSyncAndFtpChargingService.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -192,6 +192,18 @@ namespace DehnadMCIFtpChargingService.Properties {
             }
             set {
                 this["SyncChargedTriedNDaysBeforeDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int MobinOneSyncNDaysBefore {
+            get {
+                return ((int)(this["MobinOneSyncNDaysBefore"]));
+            }
+            set {
+                this["MobinOneSyncNDaysBefore"] = value;
             }
         }
     }

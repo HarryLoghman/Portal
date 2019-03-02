@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
-namespace DehnadMCIFtpChargingService
+namespace DehnadSyncAndFtpChargingService
 {
     static class Program
     {

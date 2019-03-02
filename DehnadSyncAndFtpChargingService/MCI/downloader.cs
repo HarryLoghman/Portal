@@ -6,13 +6,25 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DehnadMCIFtpChargingService
+namespace DehnadSyncAndFtpChargingService.MCI
 {
     class downloader
     {
-        internal static string ServerFtpIP = "172.17.252.201";
-        string FtpUser = "DEH";
-        string FtpPassword = "d9H&*&123";
+        string ServerUrl;// = "172.17.252.201";
+        string ServerIP;// = "ftp://172.17.252.201";
+        string FtpUser;// = "DEH";
+        string FtpPassword;// = "d9H&*&123";
+        public downloader()
+        {
+            string userName, pwd;
+            ServerUrl = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCIFtpSync, SharedLibrary.HelpfulFunctions.enumServersActions.MCISync, out userName , out pwd);
+            Uri uri = new Uri(ServerUrl);
+            ServerIP = uri.Host;
+
+            FtpUser = userName;
+            FtpPassword = pwd;  
+        }
+        
         public void updateSingleChargeAndSubscription()
         {
             updateSingleChargeAndSubscription(DateTime.Now.ToString("yyyyMMdd"), null, false);
@@ -43,7 +55,7 @@ namespace DehnadMCIFtpChargingService
                 int chargeCount = 0;
                 int subCount = 0;
                 int unsubCount = 0;
-                ftpItemInfo ftpItem = new ftpItemInfo();
+                MCIftpItemInfo ftpItem = new MCIftpItemInfo();
                 List<string> props;
                 SharedLibrary.Models.ServiceModel.Singlecharge singleCharge;
                 SharedLibrary.Models.ServiceModel.SinglechargeArchive singleChargeArchive;
@@ -81,7 +93,7 @@ namespace DehnadMCIFtpChargingService
 
                             for (j = 0; j <= lines.Length - 1; j++)
                             {
-                                ftpItem = Newtonsoft.Json.JsonConvert.DeserializeObject<ftpItemInfo>(lines[j]);
+                                ftpItem = Newtonsoft.Json.JsonConvert.DeserializeObject<MCIftpItemInfo>(lines[j]);
 
                                 var serviceItem = entityPortal.vw_servicesServicesInfo.Where(o => o.OperatorServiceId == ftpItem.sid.ToString()).FirstOrDefault();
 
@@ -220,7 +232,7 @@ namespace DehnadMCIFtpChargingService
                                 portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
                                 portalFtpFiles.ftpDirectory = winDirectory;
                                 portalFtpFiles.processDateTime = DateTime.Now;
-                                portalFtpFiles.serverIP = ServerFtpIP;
+                                portalFtpFiles.serverIP = ServerIP;
                                 portalFtpFiles.identifier = newFtpFiles[i].identifier;
                                 portalFtpFiles.processLines = lines.Count();
                                 portalFtpFiles.chargeCount = chargeCount;
@@ -235,7 +247,7 @@ namespace DehnadMCIFtpChargingService
                                 portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
                                 portalFtpFiles.ftpDirectory = winDirectory;
                                 portalFtpFiles.processDateTime = DateTime.Now;
-                                portalFtpFiles.serverIP = ServerFtpIP;
+                                portalFtpFiles.serverIP = ServerIP;
                                 portalFtpFiles.identifier = newFtpFiles[i].identifier;
                                 portalFtpFiles.processLines = lines.Count();
                                 portalFtpFiles.chargeCount = chargeCount;
@@ -258,7 +270,7 @@ namespace DehnadMCIFtpChargingService
             }
         }
 
-        private void AddFtpLog(ftpItemInfo ftpItem, string winFilePath, DateTime regdate, long serviceId)
+        private void AddFtpLog(MCIftpItemInfo ftpItem, string winFilePath, DateTime regdate, long serviceId)
         {
             using (var entityFtp = new FtpLogEntities())
             {
@@ -310,7 +322,7 @@ namespace DehnadMCIFtpChargingService
             #endregion
         }
 
-        private void updateFtpLastState(SharedLibrary.Models.PortalEntities entityPortal, ftpItemInfo ftpItem
+        private void updateFtpLastState(SharedLibrary.Models.PortalEntities entityPortal, MCIftpItemInfo ftpItem
             , string winFilePath, DateTime regdate, long serviceId, ref int subCount, ref int unsubCount)
         {
             bool addNewRecord = false;
@@ -400,7 +412,7 @@ namespace DehnadMCIFtpChargingService
                 if (ftpDirectory.EndsWith("/"))
                     ftpDirectory = ftpDirectory.Remove(winDirectory.Length - 1, 1);
 
-                string ftpURL = "ftp://" + ServerFtpIP + "/" + ftpDirectory + "/";
+                string ftpURL = ServerUrl + ftpDirectory + "/";
                 return ftpURL;
             }
             catch (Exception e)

@@ -24,7 +24,6 @@
         <EntityTypeShape EntityType="PortalModel.ParidsShortCode" Width="1.5" PointX="10.75" PointY="7.625" />
         <EntityTypeShape EntityType="PortalModel.Referral" Width="1.5" PointX="0.75" PointY="12.625" />
         <EntityTypeShape EntityType="PortalModel.ServersAction" Width="1.5" PointX="2.75" PointY="12.625" />
-        <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="11.75" PointY="10.625" />
         <EntityTypeShape EntityType="PortalModel.serviceCyclesNew" Width="1.5" PointX="4.75" PointY="13.625" />
         <EntityTypeShape EntityType="PortalModel.ServiceInfo" Width="1.5" PointX="6" PointY="6.5" />
         <EntityTypeShape EntityType="PortalModel.ServiceKeyword" Width="1.5" PointX="12.75" PointY="7.625" />
@@ -60,7 +59,9 @@
         <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="9.45256776802827" PointY="5.19994774702934" />
         <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="10.484746271038775" PointY="9.0923696500679334" />
         <EntityTypeShape EntityType="PortalModel.App" Width="1.5" PointX="1.8202169490140943" PointY="21.715689371207585" />
-        <EntityTypeShape EntityType="PortalModel.MCIFtpLastState" Width="1.5" PointX="8.641841935292744" PointY="5.9841692624539924" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.MCIFtpLastState" Width="1.5" PointX="8.641841935292744" PointY="5.9841692624539924" />
+        <EntityTypeShape EntityType="PortalModel.MobinOneFtp" Width="1.5" PointX="10.081020376682757" PointY="8.4050371238985271" />
+        <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="1.2279946139212674" PointY="16.968686484251492" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         

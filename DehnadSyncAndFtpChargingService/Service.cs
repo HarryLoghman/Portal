@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DehnadSyncAndFtpChargingService.MCI;
+using DehnadSyncAndFtpChargingService.MobinOne;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DehnadMCIFtpChargingService
+namespace DehnadSyncAndFtpChargingService
 {
     public partial class Service : ServiceBase
     {
@@ -19,20 +21,24 @@ namespace DehnadMCIFtpChargingService
             InitializeComponent();
         }
 
-        private Thread downloaderThread;
-        private Thread syncThread;
+        private Thread downloaderMCIThread;
+        private Thread syncMCIThread;
+        private Thread syncMobinOneThread;
         //private Thread syncNotChargedThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         protected override void OnStart(string[] args)
         {
-            downloaderThread = new Thread(downloaderFunction);
-            downloaderThread.IsBackground = true;
-            downloaderThread.Start();
+            downloaderMCIThread = new Thread(downloaderMCI);
+            downloaderMCIThread.IsBackground = true;
+            downloaderMCIThread.Start();
 
-            syncThread = new Thread(syncFunction);
-            syncThread.IsBackground = true;
-            syncThread.Start();
+            syncMCIThread = new Thread(syncMCI);
+            syncMCIThread.IsBackground = true;
+            syncMCIThread.Start();
 
+            syncMobinOneThread = new Thread(syncMobinOne);
+            syncMCIThread.IsBackground = true;
+            syncMCIThread.Start();
             //syncNotChargedThread = new Thread(syncNotChargedFunction);
             //syncNotChargedThread.IsBackground = true;
             //syncNotChargedThread.Start();
@@ -52,13 +58,13 @@ namespace DehnadMCIFtpChargingService
             try
             {
                 shutdownEvent.Set();
-                if (!downloaderThread.Join(3000))
+                if (!downloaderMCIThread.Join(3000))
                 {
-                    downloaderThread.Abort();
+                    downloaderMCIThread.Abort();
                 }
-                if (!syncThread.Join(3000))
+                if (!syncMCIThread.Join(3000))
                 {
-                    syncThread.Abort();
+                    syncMCIThread.Abort();
                 }
 
                 //if (!syncThread.Join(3000))
@@ -73,7 +79,58 @@ namespace DehnadMCIFtpChargingService
             }
         }
 
-        private void syncFunction()
+        private void syncMobinOne()
+        {
+            SyncMobinOne sync = new SyncMobinOne();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                bool isInMaintenanceTime = false;
+                try
+                {
+
+                    if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00")) || isInMaintenanceTime == true)
+                    {
+                        Program.logs.Info("isInMaintenanceTime:" + isInMaintenanceTime);
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        TimeSpan ts = DateTime.Now.TimeOfDay;
+                        string day = ((int)DateTime.Now.DayOfWeek).ToString();
+                        string strDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+                        using (var portal = new SharedLibrary.Models.PortalEntities())
+                        {
+                            var serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime
+                            && ((o.servicesIDs.ToLower() == "MobinOneSync".ToLower() || o.servicesIDs.ToLower().StartsWith("MobinOneSync;".ToLower()) || o.servicesIDs.ToLower().Contains(";MobinOneSync;".ToLower()) || o.servicesIDs.ToLower().EndsWith(";MobinOneSync".ToLower())))
+                                && (o.daysOfWeekOrDate == strDate)).Select(o => o);
+                            if (serviceCycles.Count() == 0)
+                            {
+                                serviceCycles = portal.serviceCyclesNews.Where(o => o.startTime <= ts && ts <= o.endTime
+                                && ((o.servicesIDs.ToLower() == "MobinOneSync".ToLower() || o.servicesIDs.ToLower().StartsWith("MobinOneSync;".ToLower()) || o.servicesIDs.ToLower().Contains(";MobinOneSync;".ToLower()) || o.servicesIDs.ToLower().EndsWith(";MobinOneSync".ToLower())))
+                                && o.daysOfWeekOrDate.Contains(day)).Select(o => o);
+                            }
+                            if (serviceCycles.Count() >= 1)
+                            {
+                                sync.sb_sync(DateTime.Now.AddDays(-1 + -1 * Properties.Settings.Default.MobinOneSyncNDaysBefore)
+                                    , DateTime.Now.AddDays(-1));
+                                Thread.Sleep(1000 * 60 * 10);
+                            }
+                        }
+                    }
+                    Thread.Sleep(1000 * 60);
+
+                }
+                catch (Exception e)
+                {
+                    Program.logs.Error("MCIFtpSync:SyncFunction: ", e);
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "MCIFtpSync:SyncFunction: (" + e.Message + ")");
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
+        private void syncMCI()
         {
             SyncSubscription sync = new SyncSubscription();
             while (!shutdownEvent.WaitOne(0))
@@ -138,7 +195,7 @@ namespace DehnadMCIFtpChargingService
         //    //    Thread.Sleep(1000 * timeInterval);
         //    //}
         //}
-        private void downloaderFunction()
+        private void downloaderMCI()
         {
             downloader down = new downloader();
             while (!shutdownEvent.WaitOne(0))

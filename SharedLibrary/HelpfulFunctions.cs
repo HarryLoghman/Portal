@@ -343,7 +343,7 @@ namespace SharedLibrary
             //string url = "http://84.22.102.27/notif/n6.php";
             string url = "";
             string icon = "";
-            
+
             try
             {
                 url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
@@ -369,7 +369,7 @@ namespace SharedLibrary
             //string url = "http://84.22.102.27/notif/n3.php";
             string url = "";
             string icon = "";
-            
+
             try
             {
                 url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDEmergency);
@@ -400,7 +400,7 @@ namespace SharedLibrary
             {
                 url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDLog);
                 icon = fnc_getNotificationIcon(level);
-                
+
                 Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
                 webRequest.Timeout = 60 * 1000;
@@ -409,7 +409,7 @@ namespace SharedLibrary
                 webRequest.ContentType = "text/xml;charset=\"utf-8\"";
                 webRequest.Accept = "text/xml";
                 webRequest.Method = "Get";
-                WebResponse webResponse =  webRequest.GetResponse();
+                WebResponse webResponse = webRequest.GetResponse();
                 webResponse.Close();
             }
             catch (Exception e)
@@ -456,6 +456,8 @@ namespace SharedLibrary
         private static string dehnadAppPortalIP = "http://79.175.164.51:8093";
         private static string dehnadReceivePortalIP = "http://79.175.164.51:200";
         private static string dehnadReceivePortalOnTohidIP = "http://10.20.96.65:8090";
+        private static string mobinOneSyncIP = "http://cp.mobinone.org:33065";
+        private static string MCIFtpSyncIP = "ftp://172.17.252.201";
 
         public enum enumServers
         {
@@ -472,7 +474,8 @@ namespace SharedLibrary
             dehnadAppPortal = 10,
             dehnadReceivePortal = 11,
             dehnadReceivePortalOnTohid = 12,
-
+            mobinOneSync = 13,
+            MCIFtpSync = 14,
         }
 
         public enum enumServersActions
@@ -496,6 +499,8 @@ namespace SharedLibrary
             dehnadMCIDelivery = 16,
             dehnadBot = 17,
             dehnadNotificationDResuestLog = 18,
+            mobinOneSync = 19,
+            MCISync = 20
         }
         public static List<Models.ServersIP> fnc_getLocalServers()
         {
@@ -511,12 +516,19 @@ namespace SharedLibrary
             }
         }
 
+        public static string fnc_getServerURL(enumServers server, enumServersActions action)
+        {
+            string userName, pwd;
+            return fnc_getServerURL(server, action, out userName, out pwd);
+        }
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public static string fnc_getServerURL(enumServers server, enumServersActions action)
+        public static string fnc_getServerURL(enumServers server, enumServersActions action, out string userName, out string pwd)
         {
+            userName = null;
+            pwd = null;
             try
             {
                 string serverIP = "";
@@ -524,24 +536,27 @@ namespace SharedLibrary
                 var actionName = action.ToString().ToLower();
                 using (var portal = new PortalEntities())
                 {
-                    var serverIPEntity = portal.ServersIPs.Where(o => o.ServerName == serverName && o.state == 1 && !string.IsNullOrEmpty(o.IP)).OrderBy(o => o.priority).FirstOrDefault();
+                    var entryServersIP = portal.ServersIPs.Where(o => o.ServerName == serverName && o.state == 1 && !string.IsNullOrEmpty(o.IP)).OrderBy(o => o.priority).FirstOrDefault();
 
-                    if (serverIPEntity != null)
+                    if (entryServersIP != null)
                     {
-                        serverIP = serverIPEntity.IP;
-                        if (!serverIP.StartsWith("http://"))
+                        userName = entryServersIP.userName;
+                        pwd = entryServersIP.pwd;
+
+                        serverIP = entryServersIP.IP;
+                        if (!serverIP.StartsWith("http://") && !serverIP.StartsWith("ftp://"))
                             serverIP = "http://" + serverIP;
                         if (serverIP.EndsWith("/"))
                             serverIP = serverIP.Remove(serverIP.Length - 1, 1);
 
-                        var url = portal.ServersActions.Where(o => o.serverId == serverIPEntity.Id && o.Action == actionName && o.state == 1 && !string.IsNullOrEmpty(o.URL)).OrderBy(o => o.priority).Select(o => o.URL).FirstOrDefault();
+                        var url = portal.ServersActions.Where(o => o.serverId == entryServersIP.Id && o.Action == actionName && o.state == 1 && !string.IsNullOrEmpty(o.URL)).OrderBy(o => o.priority).Select(o => o.URL).FirstOrDefault();
                         if (!string.IsNullOrEmpty(url))
                         {
                             if (url.StartsWith("/"))
                                 url = url.Remove(0, 1);
-                            if (string.IsNullOrEmpty(serverIPEntity.ports))
+                            if (string.IsNullOrEmpty(entryServersIP.ports))
                                 return serverIP + "/" + url;
-                            else return serverIP + ":" + serverIPEntity.ports.Split(';')[0] + "/" + url;
+                            else return serverIP + ":" + entryServersIP.ports.Split(';')[0] + "/" + url;
                         }
                         else
                         {
@@ -588,6 +603,16 @@ namespace SharedLibrary
                                 break;
                             case enumServers.dehnadReceivePortalOnTohid:
                                 serverIP = dehnadReceivePortalOnTohidIP;
+                                break;
+                            case enumServers.mobinOneSync:
+                                serverIP = mobinOneSyncIP;
+                                userName = "dehnad";
+                                pwd = "OC56i4yA";
+                                break;
+                            case enumServers.MCIFtpSync:
+                                serverIP = MCIFtpSyncIP;
+                                userName = "DEH";
+                                pwd = "d9H&*&123";
                                 break;
                             default:
                                 logs.Error("Error in fnc_getServerURL : Unknown Server " + server.ToString());
@@ -746,6 +771,22 @@ namespace SharedLibrary
                                 {
                                     case enumServersActions.dehnadMCIDelivery:
                                         return serverIP + "/" + "api/Mci/Delivery";
+
+                                }
+                                break;
+                            case enumServers.mobinOneSync:
+                                switch (action)
+                                {
+                                    case enumServersActions.mobinOneSync:
+                                        return serverIP + "/?";
+
+                                }
+                                break;
+                            case enumServers.MCIFtpSync:
+                                switch (action)
+                                {
+                                    case enumServersActions.MCISync:
+                                        return serverIP + "/";
 
                                 }
                                 break;

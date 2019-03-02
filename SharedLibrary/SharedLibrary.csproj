@@ -90,6 +90,12 @@
     <Compile Include="Date.cs" />
     <Compile Include="Encrypt.cs" />
     <Compile Include="Models\AppEncryption.cs" />
+    <Compile Include="Models\MobinOneFtp.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServersIP.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="SubscriptionHandler.cs" />
     <Compile Include="SubscriptionFtpHandler.cs" />
     <Compile Include="HelpfulFunctions.cs" />
@@ -197,9 +203,6 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServersAction.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServersIP.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Service.cs">

@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadMCIFtpChargingService.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadSyncAndFtpChargingService.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="LocalPath" Type="System.String" Scope="User">
@@ -43,6 +43,9 @@
     </Setting>
     <Setting Name="SyncChargedTriedNDaysBeforeDescription" Type="System.String" Scope="User">
       <Value Profile="(Default)">if we have any try in ndays before consider this user active</Value>
+    </Setting>
+    <Setting Name="MobinOneSyncNDaysBefore" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60</Value>
     </Setting>
   </Settings>
 </SettingsFile>

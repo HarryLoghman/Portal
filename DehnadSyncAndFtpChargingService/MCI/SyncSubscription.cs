@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DehnadMCIFtpChargingService
+namespace DehnadSyncAndFtpChargingService.MCI
 {
     class SyncSubscription
     {
@@ -146,7 +146,7 @@ namespace DehnadMCIFtpChargingService
                                 SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning
                                     , "MCI Sync Detail -Service:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized"
                                      + notifDescription);
-                                Program.logs.Info("DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized"
+                                Program.logs.Info("DehnadSyncAndFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers are going to be synchronized"
                                      + notifDescription);
                                 foreach (var syncSub in lstSyncSubs)
                                 {
@@ -194,8 +194,8 @@ namespace DehnadMCIFtpChargingService
                                     //{
                                     //    return;
                                     //}
-                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers have been synchronized");
-                                    Program.logs.Info("DehnadMCIFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + syncedCount + " Subscribers have been synchronized");
+                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Informational, "DehnadSyncAndFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + lstSyncSubs.Count() + " Subscribers have been synchronized");
+                                    Program.logs.Info("DehnadSyncAndFtpChargingService:syncSubscription:" + entryService.ServiceCode + ":" + syncedCount + " Subscribers have been synchronized");
                                 }
                             }
                             else
@@ -203,7 +203,7 @@ namespace DehnadMCIFtpChargingService
                                 SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning
                                     , "MCI Sync Detail -Service:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count() + " Subscribers need to be synchronized. Parameters "
                                    + notifDescription);
-                                Program.logs.Info("DehnadMCIFtpChargingService: syncSubscription:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count() + " Subscribers need to be synchronized.Parameters "
+                                Program.logs.Info("DehnadSyncAndFtpChargingService: syncSubscription:" + entryService.ServiceCode + ":There are " + lstSyncSubs.Count() + " Subscribers need to be synchronized.Parameters "
                                    + notifDescription);
                             }
 
@@ -215,8 +215,8 @@ namespace DehnadMCIFtpChargingService
             }
             catch (Exception e)
             {
-                //SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "DehnadMCIFtpChargingService:syncSubscription:" + e.Message);
-                Program.logs.Error("DehnadMCIFtpChargingService:syncSubscription:", e);
+                //SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "DehnadSyncAndFtpChargingService:syncSubscription:" + e.Message);
+                Program.logs.Error("DehnadSyncAndFtpChargingService:syncSubscription:", e);
             }
         }
 
