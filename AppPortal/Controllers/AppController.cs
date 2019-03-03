@@ -1065,7 +1065,7 @@ namespace Portal.Controllers
                     }
                     else
                     {
-                        status = "Successfully Consumed";
+                        status = "SUCCESS";
                         result.Status = status;
                         resultOk = true;
                     }

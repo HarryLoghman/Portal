@@ -154,5 +154,17 @@ namespace DehnadAvvalPod500Service.Properties {
                 this["DefaultSingleChargeTakeSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("👨‍🎓")]
+        public string NotifIcon {
+            get {
+                return ((string)(this["NotifIcon"]));
+            }
+            set {
+                this["NotifIcon"] = value;
+            }
+        }
     }
 }

@@ -235,7 +235,6 @@ namespace SharedLibrary.Aggregators
         }
         #endregion
         #region charging
-
         #endregion
         #region sendMessage
 

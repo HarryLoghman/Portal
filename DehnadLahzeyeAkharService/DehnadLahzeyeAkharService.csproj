@@ -117,6 +117,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ChargingLibrary\ChargingLibrary.csproj">
+      <Project>{a8445fdb-2782-4cf8-90aa-42c6bb9d0cc1}</Project>
+      <Name>ChargingLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{7c0f0f11-95bd-4606-9a8a-7249fb13a1ee}</Project>
       <Name>SharedLibrary</Name>

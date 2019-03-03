@@ -35,5 +35,8 @@
     <Setting Name="Take" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
+    <Setting Name="NotifIcon" Type="System.String" Scope="User">
+      <Value Profile="(Default)">👼</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

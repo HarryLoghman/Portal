@@ -12,7 +12,7 @@ using System.Xml;
 
 namespace ChargingLibrary
 {
-    public class ServiceChargeMobinOneMapfa : ServiceCharge
+    public class ServiceChargeTelepromoMapfa : ServiceCharge
     {
         string v_url;
         int v_isCampaignActive;
@@ -29,7 +29,7 @@ namespace ChargingLibrary
                 };
             }
         }
-        public ServiceChargeMobinOneMapfa(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
+        public ServiceChargeTelepromoMapfa(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
             : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon)
         {
             v_isCampaignActive = 0;
@@ -54,7 +54,7 @@ namespace ChargingLibrary
                 }
                 this.v_pardisShortCode = entryPardisShortCode.PardisServiceId;
             }
-            this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.mobinOneMapfa, HelpfulFunctions.enumServersActions.charge);
+            this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.charge);
 
         }
 
@@ -99,28 +99,22 @@ namespace ChargingLibrary
             //string referenceCode;
             var startTime = DateTime.Now;
             var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-            var aggregatorId = this.prp_service.AggregatorId;
-            var channelType = (int)SharedLibrary.MessageHandler.MapfaChannels.SMS;
-            var domain = "";
-            if (aggregatorId.ToString() == "3")
-                domain = "pardis1";
-            else
-                domain = "alladmin";
-
+            var shortCode = "98" + this.prp_service.ShortCode;
+            var description = string.Format("deliverychannel=WAP|discoverychannel=WAP|origin={0}|contentid=1", shortCode);
             //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
             //var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
-            string payload = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                            + "<s:Body>"
-                            + "<singleCharge xmlns=\"http://services.mapfa.net\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                            + "<username xmlns=\"\">" + this.prp_aggregator.AggregatorUsername + "</username>"
-                            + "<password xmlns=\"\">" + this.prp_aggregator.AggregatorPassword + "</password>"
-                            + "<domain xmlns=\"\">" + domain + "</domain>"
-                            + "<channel xmlns=\"\">" + channelType + "</channel>"
-                            + "<mobilenum xmlns=\"\">" + mobileNumber + "</mobilenum>"
-                            + "<serviceId xmlns=\"\">" + this.v_pardisShortCode + "</serviceId></singleCharge>"
-                            + "</s:Body></s:Envelope>";
+            var json = string.Format(@"{{
+                                ""username"": ""{0}"",
+                                ""password"": ""{1}"",
+                                ""serviceid"": ""{2}"",
+                                ""msisdn"": ""{3}"",
+                                ""description"": ""{4}"",
+                                ""shortcode"": ""{5}""
+                    }}", this.prp_aggregator.AggregatorUsername, this.prp_aggregator.AggregatorPassword
+                    , this.v_pardisShortCode, mobileNumber, description, shortCode);
+
             #endregion
-            Program.logs.Info(this.v_url + " " + payload);
+            Program.logs.Info(this.v_url + " " + json);
 
             DateTime dateCreated = DateTime.Now;
 
@@ -139,7 +133,7 @@ namespace ChargingLibrary
                 singleChargeReq.internalServerError = true;
                 singleChargeReq.loopNo = loopNo;
                 singleChargeReq.mobileNumber = message.MobileNumber;
-                singleChargeReq.payload = payload;
+                singleChargeReq.payload = json;
                 singleChargeReq.Price = message.Price;
                 singleChargeReq.referenceCode = guidStr;
                 singleChargeReq.threadNumber = threadNumber;
@@ -181,8 +175,8 @@ namespace ChargingLibrary
                 webRequest.Timeout = 60 * 1000;
 
                 //webRequest.Headers.Add("SOAPAction", action);
-                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
-                webRequest.Accept = "text/xml";
+                webRequest.ContentType = "application/json;charset=\"utf-8\"";
+                webRequest.Accept = "application/json";
                 webRequest.Method = "POST";
 
                 webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, singleChargeReq });
@@ -263,7 +257,7 @@ namespace ChargingLibrary
 
             HttpWebRequest webRequest = (HttpWebRequest)objs[0];
             singleChargeRequest singleChargeReq = (singleChargeRequest)objs[1];
-
+            string referenceId;
             singleChargeReq.timeAfterWhere = DateTime.Now;
             try
             {
@@ -279,7 +273,7 @@ namespace ChargingLibrary
                 //singleChargeReq.dateCreated = dateCreated;
                 //singleChargeReq.guidStr = guidStr;
 
-                singleChargeReq.resultDescription = this.parse_XMLResult(result, out isSucceeded);
+                singleChargeReq.resultDescription = this.parse_JsonResult(result, out referenceId, out isSucceeded);
                 //singleChargeReq.installmentCycleNumber = installmentCycleNumber;
                 //singleChargeReq.installmentId = installmentId;
                 singleChargeReq.internalServerError = false;
@@ -287,7 +281,7 @@ namespace ChargingLibrary
                 //singleChargeReq.mobileNumber = message.MobileNumber;
                 //singleChargeReq.payload = payload;
                 //singleChargeReq.Price = message.Price;
-                //singleChargeReq.referenceCode = referenceCode;
+                singleChargeReq.referenceCode = referenceId;
                 //singleChargeReq.threadNumber = threadNumber;
                 //singleChargeReq.timeAfterReadStringClient = null;
                 //singleChargeReq.timeAfterSendMTNClient = null;
@@ -316,7 +310,13 @@ namespace ChargingLibrary
                     {
                         using (StreamReader rd = new StreamReader(ex.Response.GetResponseStream()))
                         {
-                            singleChargeReq.resultDescription = this.parse_XMLResult(rd.ReadToEnd(), out isSucceeded);
+                            string result = "";
+
+                            result = rd.ReadToEnd();
+                            singleChargeReq.resultDescription = this.parse_JsonResult(rd.ReadToEnd(), out referenceId, out isSucceeded);
+                            singleChargeReq.referenceCode = referenceId;
+
+
                         }
                         ex.Response.Close();
                     }
@@ -347,65 +347,35 @@ namespace ChargingLibrary
         }
 
 
-        protected string parse_XMLResult(string xmlResult, out bool isSucceeded)
+        protected string parse_JsonResult(string jsonResult, out string referenceId, out bool isSucceeded)
         {
             isSucceeded = false;
             string resultDescription = "";
+            referenceId = "";
+
             try
             {
-
-                if (!string.IsNullOrEmpty(xmlResult))
+                dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonResult);
+                if (jsonResponse.data.ToString().Length > 5)
                 {
-                    XmlDocument xml = new XmlDocument();
-                    xml.LoadXml(xmlResult);
-                    XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
-                    manager.AddNamespace("S", "http://schemas.xmlsoap.org/soap/envelope/");
-                    //manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                    manager.AddNamespace("ns2", "http://services.mapfa.net");
-                    XmlNode successNode = xml.SelectSingleNode("/S:Envelope/S:Body/ns2:singleChargeResponse/return", manager);
-                    if (successNode != null)
-                    {
-                        if (string.IsNullOrEmpty(successNode.InnerText))
-                        {
-                            resultDescription = "No Inner Text";
-                            isSucceeded = false;
-                        }
-                        else
-                        {
-                            int returnValue;
-                            if (int.TryParse(successNode.InnerText, out returnValue))
-                            {
-                                if (returnValue > 10000)
-                                {
-                                    isSucceeded = true;
-                                }
-                                else
-                                {
-                                    isSucceeded = false;
-                                }
-                                resultDescription = successNode.InnerText;
-                            }
-                            else
-                            {
-                                resultDescription = successNode.InnerText;
-                                isSucceeded = false;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        resultDescription = "No Return Value";
-                        isSucceeded = false;
-                    }
+                    isSucceeded = true;
                 }
+                else
+                {
+                    isSucceeded = false;
+                }
+                referenceId = jsonResponse.data.ToString();
+                resultDescription = jsonResponse.status_code.ToString() + "-" + jsonResponse.status_txt.ToString() + "-" + jsonResponse.data.ToString();
             }
             catch (Exception ex)
             {
-                resultDescription = xmlResult;
-                Program.logs.Error("Error in MobinOneMapfa parse_XMLResult:", ex);
+                resultDescription = jsonResult;
+                Program.logs.Error("Error in TelepromoMapfa parse_JsonResult:", ex);
                 SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error
-                    , (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + "ChargingLibrary:ServiceChargeMobinOneMapfa:parse_XMLResult:" + ex.Message);
+                    , (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + "ChargingLibrary:ServiceChargeTelepromoMapfa:parse_JsonResult:" + ex.Message);
+
             }
+
             return resultDescription;
 
         }

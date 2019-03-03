@@ -40,6 +40,9 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -62,11 +65,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServiceCharge.cs" />
+    <Compile Include="ServiceChargeTelepromoMapfa.cs" />
+    <Compile Include="ServiceChargeMobinOneMapfaOld.cs" />
     <Compile Include="ServiceChargeMobinOneMapfa.cs" />
     <Compile Include="ServiceChargeMTN.cs" />
     <Compile Include="ServiceChargeMTNPorshetab.cs" />
     <Compile Include="ServicePointSettings.cs" />
     <Compile Include="singleChargeRequest.cs" />
+    <Compile Include="SingleChargeThread.cs" />
     <Compile Include="ThreadPoolSettings.cs" />
   </ItemGroup>
   <ItemGroup>

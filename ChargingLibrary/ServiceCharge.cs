@@ -72,8 +72,10 @@ namespace ChargingLibrary
         public bool prp_wipe { get; set; }
         #endregion
 
-        public ServiceCharge(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
+        public string prp_notifIcon { get; set; }
+        public ServiceCharge(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
         {
+            this.prp_notifIcon = notifIcon;
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {
                 var vw = portal.vw_servicesServicesInfo.Where(o => o.Id == serviceId).FirstOrDefault();
@@ -136,18 +138,18 @@ namespace ChargingLibrary
         }
 
         #region subs and functions
-        public virtual bool fnc_canStartCharging(int cycleNumber, out string reason)
+        public virtual bool fnc_canStartCharging(int cycleNumber, TimeSpan maintenanceStartTime, TimeSpan maintenanceEndTime, out string reason)
         {
-            return this.fnc_canStartCharging(cycleNumber, DateTime.Now, out reason);
+            return this.fnc_canStartCharging(cycleNumber, DateTime.Now, maintenanceStartTime, maintenanceEndTime, out reason);
         }
-        public virtual bool fnc_canStartCharging(int cycleNumber, DateTime date, out string reason)
+        public virtual bool fnc_canStartCharging(int cycleNumber, DateTime date, TimeSpan maintenanceStartTime, TimeSpan maintenanceEndTime, out string reason)
         {
 
             reason = "";
             bool canStart = false;
-            if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00")))
+            if ((DateTime.Now.TimeOfDay >= maintenanceStartTime || DateTime.Now.TimeOfDay < maintenanceEndTime))
             {
-                reason = "23:45:00 to 00:01:00";
+                reason = maintenanceStartTime.ToString("c") + " to " + maintenanceEndTime.ToString("c");
                 return canStart;
             }
             SqlCommand cmd = new SqlCommand();
@@ -184,7 +186,7 @@ namespace ChargingLibrary
             catch (Exception e)
             {
                 Program.logs.Error(this.prp_service.ServiceCode + ": cannot start charging", e);
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, this.prp_service.ServiceCode + " : cannot start charging" + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + this.prp_service.ServiceCode + " : cannot start charging" + e.Message);
                 try
                 {
                     cmd.Connection.Close();
@@ -215,7 +217,7 @@ namespace ChargingLibrary
             {
                 error = true;
                 Program.logs.Error(this.prp_service.ServiceCode + " : fill", e);
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : fill " + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + this.prp_service.ServiceCode + " : fill " + e.Message);
             }
         }
 
@@ -227,17 +229,20 @@ namespace ChargingLibrary
                 this.v_subscribersAndCharges = null;
                 this.prp_rowCount = 0;
                 this.prp_rowIndex = 0;
-
-                this.v_subscribersAndCharges = SharedLibrary.ServiceHandler.getActiveSubscribersForCharge(this.prp_service.databaseName, this.prp_service.Id, DateTime.Now, this.prp_maxPrice, this.prp_maxTries, this.prp_cycleNumber
-                    , true, true, string.Join(";", this.prp_wipeDescription), null, null);
-                this.prp_rowCount = this.v_subscribersAndCharges.Count;
+                if (this.prp_wipeDescription != null && this.prp_wipeDescription.Length > 0)
+                {
+                    this.v_subscribersAndCharges = SharedLibrary.ServiceHandler.getActiveSubscribersForCharge(this.prp_service.databaseName, this.prp_service.Id, DateTime.Now, this.prp_maxPrice, this.prp_maxTries, this.prp_cycleNumber
+                        , true, true, string.Join(";", this.prp_wipeDescription), null, null);
+                    this.prp_rowCount = this.v_subscribersAndCharges.Count;
+                }
+                else this.prp_rowCount = 0;
 
             }
             catch (Exception e)
             {
                 error = true;
                 Program.logs.Error(this.prp_service.ServiceCode + " : fill wipe", e);
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : fill wipe" + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + this.prp_service.ServiceCode + " : fill wipe" + e.Message);
             }
 
         }
@@ -261,7 +266,7 @@ namespace ChargingLibrary
             System.Threading.Interlocked.Decrement(ref ChargingController.v_taskCount);
             //object obj = new object();
             //lock (obj) { int t = chargeServices.v_taskCount; chargeServices.v_taskCount = t - 1; }
-            singleChargeReq.timeAfterSendMTNClient = DateTime.Now;
+            singleChargeReq.timeAfterSendRequest = DateTime.Now;
             Nullable<TimeSpan> duration = null;
 
             try
@@ -283,7 +288,7 @@ namespace ChargingLibrary
 
                 //dateCreated = DateTime.Now;
                 var endTime = DateTime.Now;
-                duration = endTime - singleChargeReq.timeBeforeSendMTNClient;
+                duration = endTime - singleChargeReq.timeBeforeSendRequest;
 
 
             }
@@ -302,7 +307,7 @@ namespace ChargingLibrary
                 this.insertSingleChargeTiming(singleChargeReq.installmentCycleNumber, singleChargeReq.loopNo, singleChargeReq.threadNumber, singleChargeReq.mobileNumber, singleChargeReq.guidStr
                     , singleChargeReq.timeLoop, singleChargeReq.timeStartProcessMtnInstallment, singleChargeReq.timeAfterEntity, singleChargeReq.timeAfterWhere
                     , singleChargeReq.timeStartChargeMtnSubscriber, singleChargeReq.timeBeforeHTTPClient
-                    , singleChargeReq.timeBeforeSendMTNClient, singleChargeReq.timeAfterSendMTNClient, singleChargeReq.timeBeforeReadStringClient
+                    , singleChargeReq.timeBeforeSendRequest, singleChargeReq.timeAfterSendRequest, singleChargeReq.timeBeforeReadStringClient
                     , singleChargeReq.timeAfterReadStringClient, singleChargeReq.timeAfterXML, singleChargeReq.dateCreated);
 
             }
@@ -400,7 +405,7 @@ namespace ChargingLibrary
             catch (Exception e)
             {
                 Program.logs.Error(this.prp_service.ServiceCode + " : Exception in insertSingleChargeTiming: ", e);
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : Exception in insertSingleChargeTiming: " + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + this.prp_service.ServiceCode + " : Exception in insertSingleChargeTiming: " + e.Message);
             }
         }
 
@@ -477,7 +482,7 @@ namespace ChargingLibrary
             catch (Exception e)
             {
                 Program.logs.Error(this.prp_service.ServiceCode + " : Exception in sb_finishCharge: ", e);
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, this.prp_service.ServiceCode + " : Exception in sb_finishCharge: " + e.Message);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + this.prp_service.ServiceCode + " : Exception in sb_finishCharge: " + e.Message);
             }
 
         }

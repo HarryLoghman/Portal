@@ -159,9 +159,10 @@ namespace SharedLibrary.Aggregators
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
                 parameter.prp_isSucceeded = false;
+                string errorTitle = "SendingMessage";
                 if (ex is WebException)
                 {
-                    SharedVariables.logs.Error("AggregatorMobinoneMapfa " + parameter.prp_service.ServiceCode + " : Exception in SendingMessage: ", ex);
+                    SharedVariables.logs.Error("AggregatorMobinoneMapfa " + parameter.prp_service.ServiceCode + " : Exception in " + errorTitle + ": ", ex);
                     //eventbase.ReferenceId = null;
                     parameter.prp_result = ex.Message + "\r\n" + ex.StackTrace;
 
@@ -182,7 +183,7 @@ namespace SharedLibrary.Aggregators
                     }
                     catch (Exception ex1)
                     {
-                        SharedVariables.logs.Error("AggregatorMobinoneMapfa " + parameter.prp_service.ServiceCode + " : Exception in SendingMessage inner try: ", ex1);
+                        SharedVariables.logs.Error("AggregatorMobinoneMapfa " + parameter.prp_service.ServiceCode + " : Exception in " + errorTitle + " inner try: ", ex1);
                     }
                 }
                 else
@@ -190,10 +191,11 @@ namespace SharedLibrary.Aggregators
                     //eventbase.ReferenceId = null;
                     parameter.prp_result = ex.Message + "\r\n" + ex.StackTrace;
                     ((WebRequestParameterMessage)parameter).prp_referenceId = null;
-                    SharedVariables.logs.Error("AggregatorMobinoneMapfa " + parameter.prp_service.ServiceCode + " : Exception in SendingMessage2: ", ex);
+                    SharedVariables.logs.Error("AggregatorMobinoneMapfa " + parameter.prp_service.ServiceCode + " : Exception in " + errorTitle + "2: ", ex);
                 }
 
             }
+
             this.sb_saveResponseToDB(parameter);
         }
         internal override void sb_finishRequest(WebRequestParameter parameter, bool httpOK, string result)

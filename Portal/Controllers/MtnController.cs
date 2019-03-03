@@ -24,6 +24,7 @@ namespace Portal.Controllers
         {
             string result = "";
             bool resultOk = true;
+            string notify = "";
             try
             {
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current, null, null, "Portal:MtnController:SubUnsubNotify");
@@ -34,7 +35,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    var notify = Request.Content.ReadAsStringAsync().Result;
+                    notify = Request.Content.ReadAsStringAsync().Result;
                     XmlDocument xml = new XmlDocument();
                     xml.LoadXml(notify);
                     XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
@@ -81,7 +82,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                logs.Error("Portal:MtnController:SubUnsubNotify", e);
+                logs.Error("Portal:MtnController:SubUnsubNotify:notify:" + notify, e);
                 resultOk = false;
                 //result = e.Message;
                 result = "Exception has been occured!!! Contact Administrator";

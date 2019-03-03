@@ -72,6 +72,10 @@ namespace DehnadFtpSyncAndChargingService
                     syncMCIThread.Abort();
                 }
 
+                if (!syncMobinOneThread.Join(3000))
+                {
+                    syncMobinOneThread.Abort();
+                }
                 //if (!syncThread.Join(3000))
                 //{
                 //    syncNotChargedThread.Abort();

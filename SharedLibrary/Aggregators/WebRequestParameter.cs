@@ -58,7 +58,7 @@ namespace SharedLibrary.Aggregators
     public enum enum_webRequestParameterType
     {
         message,
-        charge
+        singleCharge
     }
 }
 

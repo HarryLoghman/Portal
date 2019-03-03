@@ -17,7 +17,7 @@ namespace ChargingLibrary
         int v_isMatchActive = 0;
 
         public ServiceChargeMTNPorShetab(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
-            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, "")
         {
 
             using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(this.prp_service.ServiceCode))

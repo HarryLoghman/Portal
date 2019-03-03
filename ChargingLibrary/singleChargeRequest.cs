@@ -22,8 +22,8 @@ namespace ChargingLibrary
         public string guidStr { get; set; }
         public DateTime? timeAfterXML { get; set; }
         public DateTime? timeBeforeHTTPClient  { get; set; }
-        public DateTime? timeBeforeSendMTNClient  { get; set; }
-        public DateTime? timeAfterSendMTNClient  { get; set; }
+        public DateTime? timeBeforeSendRequest  { get; set; }
+        public DateTime? timeAfterSendRequest  { get; set; }
         public DateTime? timeBeforeReadStringClient  { get; set; }
         public DateTime? timeAfterReadStringClient  { get; set; }
         public DateTime dateCreated { get; set; }

@@ -40,7 +40,7 @@
             // DehnadFtpSyncAndChargingServiceInstaller
             // 
             this.DehnadFtpSyncAndChargingServiceInstaller.Description = "Ftp Sync And Charging";
-            this.DehnadFtpSyncAndChargingServiceInstaller.DisplayName = "Ftp Sync And Charging";
+            this.DehnadFtpSyncAndChargingServiceInstaller.DisplayName = "DehnadFtpSyncAndChargingService";
             this.DehnadFtpSyncAndChargingServiceInstaller.ServiceName = "DehnadFtpSyncAndChargingService";
             // 
             // ProjectInstaller

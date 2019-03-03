@@ -15,8 +15,8 @@ namespace ChargingLibrary
     {
         string v_url;
         public override string[] prp_wipeDescription { get { return new string[] { "SVC0001: Service Error", "POL0904: SP API level request rate control not pass, sla id is 1002.", "POL0910: Minimum Amount per Transaction" }; ; } }
-        public ServiceChargeMTN(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
-            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice)
+        public ServiceChargeMTN(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon)
         {
             this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
         }
@@ -36,13 +36,12 @@ namespace ChargingLibrary
             System.Threading.Interlocked.Increment(ref ChargingController.v_taskCount);
             //object obj = new object();
             //lock (obj) { int t = chargeServices.v_taskCount; chargeServices.v_taskCount = t + 1; }
-            this.sb_chargeMtnSubscriberWithOutThread(subscriber, message, installmentCycleNumber, loopNo, threadNumber, timeLoop
+            this.sb_chargeMtnSubscriberWithOutThread(message, installmentCycleNumber, loopNo, threadNumber, timeLoop
                 , installmentId);
         }
 
         public virtual void sb_chargeMtnSubscriberWithOutThread(
-        SharedLibrary.ServiceHandler.SubscribersAndCharges subscriber, MessageObject message
-         , int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, long installmentId = 0)
+         MessageObject message, int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, long installmentId = 0)
         {
             DateTime timeStartChargeMtnSubscriber = DateTime.Now;
             Nullable<DateTime> timeBeforeSendMTNClient = null;
@@ -71,7 +70,7 @@ namespace ChargingLibrary
             var referenceCode = Guid.NewGuid().ToString();
 
             //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
-            var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
+            //var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
             string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
 , timeStamp, mobile, rialedPrice, referenceCode, charge, this.prp_service.AggregatorServiceId, spId);
             ////string charge = "chargeAmount";
@@ -112,11 +111,11 @@ namespace ChargingLibrary
                 singleChargeReq.threadNumber = threadNumber;
                 singleChargeReq.timeAfterEntity = null;
                 singleChargeReq.timeAfterReadStringClient = null;
-                singleChargeReq.timeAfterSendMTNClient = null;
+                singleChargeReq.timeAfterSendRequest = null;
                 singleChargeReq.timeAfterXML = null;
                 singleChargeReq.timeBeforeHTTPClient = null;
                 singleChargeReq.timeBeforeReadStringClient = null;
-                singleChargeReq.timeBeforeSendMTNClient = timeBeforeSendMTNClient;
+                singleChargeReq.timeBeforeSendRequest = timeBeforeSendMTNClient;
                 singleChargeReq.timeLoop = timeLoop;
                 singleChargeReq.timeStartChargeMtnSubscriber = timeStartChargeMtnSubscriber;
                 singleChargeReq.timeStartProcessMtnInstallment = null;
@@ -245,7 +244,7 @@ namespace ChargingLibrary
 
                 //singleChargeReq.dateCreated = dateCreated;
                 //singleChargeReq.guidStr = guidStr;
-                
+
                 singleChargeReq.resultDescription = this.parseMTN_XMLResult(result, out isSucceeded);
                 //singleChargeReq.installmentCycleNumber = installmentCycleNumber;
                 //singleChargeReq.installmentId = installmentId;
@@ -318,32 +317,44 @@ namespace ChargingLibrary
         {
             isSucceeded = false;
             string resultDescription = "";
-            if (!string.IsNullOrEmpty(xmlResult))
-            {
-                XmlDocument xml = new XmlDocument();
-                xml.LoadXml(xmlResult);
-                XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
-                manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
-                manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local");
-                XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns1:chargeAmountResponse", manager);
-                if (successNode != null)
-                {
-                    isSucceeded = true;
-                }
-                else
-                {
-                    isSucceeded = false;
 
-                    manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
-                    XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
-                    foreach (XmlNode fault in faultNode)
+            try
+            {
+                if (!string.IsNullOrEmpty(xmlResult))
+                {
+                    XmlDocument xml = new XmlDocument();
+                    xml.LoadXml(xmlResult);
+                    XmlNamespaceManager manager = new XmlNamespaceManager(xml.NameTable);
+                    manager.AddNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+                    manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                    manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local");
+                    XmlNode successNode = xml.SelectSingleNode("/soapenv:Envelope/soapenv:Body/ns1:chargeAmountResponse", manager);
+                    if (successNode != null)
                     {
-                        XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
-                        XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
-                        resultDescription = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
+                        isSucceeded = true;
+                    }
+                    else
+                    {
+                        isSucceeded = false;
+
+                        manager.AddNamespace("ns1", "http://www.csapi.org/schema/parlayx/common/v2_1");
+                        XmlNodeList faultNode = xml.SelectNodes("/soapenv:Envelope/soapenv:Body/soapenv:Fault", manager);
+                        foreach (XmlNode fault in faultNode)
+                        {
+                            XmlNode faultCodeNode = fault.SelectSingleNode("faultcode");
+                            XmlNode faultStringNode = fault.SelectSingleNode("faultstring");
+                            resultDescription = faultCodeNode.InnerText.Trim() + ": " + faultStringNode.InnerText.Trim();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                resultDescription = xmlResult;
+                Program.logs.Error("Error in MTN parseMTN_XMLResult:", ex);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error
+                    , (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + "ChargingLibrary:ServiceChargeMTN:parseMTN_XMLResult:" + ex.Message);
+
             }
             return resultDescription;
 

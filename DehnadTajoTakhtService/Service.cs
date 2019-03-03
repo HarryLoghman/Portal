@@ -191,120 +191,134 @@ namespace DehnadTajoTakhtService
 
         private void SinglechargeInstallmentWorkerThread()
         {
-            var singlechargeInstallment = new SinglechargeInstallmentClass();
-            int installmentCycleNumber = 1;
-            var entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
-            var cycleType = typeof(SharedLibrary.Models.ServiceModel.InstallmentCycle);
-            TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
-            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("9:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
-                installmentCycleNumber = 2;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("13:00:00"))
-                installmentCycleNumber = 3;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("13:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
-                installmentCycleNumber = 4;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:00:00"))
-                installmentCycleNumber = 5;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("18:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
-                installmentCycleNumber = 6;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
-                installmentCycleNumber = 7;
-            else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
-                installmentCycleNumber = 8;
-            else
-                installmentCycleNumber = 1;
-            while (!shutdownEvent.WaitOne(0))
+            try
             {
-                bool isInMaintenanceTime = false;
-                try
+                while (!shutdownEvent.WaitOne(0))
                 {
-                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
-                    {
-                        var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
-                        if (isInMaintenace != null)
-                            isInMaintenanceTime = isInMaintenace.Value == "True" ? true : false;
-                    }
-                    if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("07:03:00")) || isInMaintenanceTime == true)
-                    {
-                        installmentCycleNumber = 1;
-                        Thread.Sleep(/*50 * 60 * */1000);
-                    }
-                    else
-                    {
-                        var startTime = DateTime.Now;
-                        if (installmentCycleNumber == 1 && DateTime.Now.TimeOfDay < TimeSpan.Parse("09:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("09:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("13:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("13:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 6 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("18:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 7 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else if (installmentCycleNumber == 8 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
-                        {
-                            var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-                            SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
-                            installmentCycleNumber++;
-                        }
-                        else
-                            Thread.Sleep(1000);
-                    }
-                }
-                catch (Exception e)
-                {
-                    logs.Error("Exception in SinglechargeInstallmentWorkerThread: ", e);
-                    Thread.Sleep(1000);
+                    ChargingLibrary.SingleChargeThread.SinglechargeInstallmentWorkerThread(TimeSpan.Parse("23:45:00")
+                        , TimeSpan.Parse("07:00:00"), 10040, 8, Properties.Settings.Default.notifIcon);
                 }
             }
+            catch (Exception ex)
+            {
+                logs.Error("DehnadTajoTakhtService:Service:SinglechargeInstallmentWorkerThread", ex);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical
+                    , (string.IsNullOrEmpty(Properties.Settings.Default.notifIcon) ? "" : Properties.Settings.Default.notifIcon) + "Exception in " + Properties.Settings.Default.ServiceCode + " SinglechargeInstallmentWorkerThread:" + ex.Message);
+            }
+            //var singlechargeInstallment = new SinglechargeInstallmentClass();
+            //int installmentCycleNumber = 1;
+            //var entityType = typeof(SharedLibrary.Models.ServiceModel.SharedServiceEntities);
+            //var cycleType = typeof(SharedLibrary.Models.ServiceModel.InstallmentCycle);
+            //TimeSpan timeDiffs = TimeSpan.FromSeconds(1);
+            //if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("9:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
+            //    installmentCycleNumber = 2;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("13:00:00"))
+            //    installmentCycleNumber = 3;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("13:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
+            //    installmentCycleNumber = 4;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:00:00"))
+            //    installmentCycleNumber = 5;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("18:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
+            //    installmentCycleNumber = 6;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
+            //    installmentCycleNumber = 7;
+            //else if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
+            //    installmentCycleNumber = 8;
+            //else
+            //    installmentCycleNumber = 1;
+            //while (!shutdownEvent.WaitOne(0))
+            //{
+            //    bool isInMaintenanceTime = false;
+            //    try
+            //    {
+            //        using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(Properties.Settings.Default.ServiceCode))
+            //        {
+            //            var isInMaintenace = entity.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime");
+            //            if (isInMaintenace != null)
+            //                isInMaintenanceTime = isInMaintenace.Value == "True" ? true : false;
+            //        }
+            //        if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("07:03:00")) || isInMaintenanceTime == true)
+            //        {
+            //            installmentCycleNumber = 1;
+            //            Thread.Sleep(/*50 * 60 * */1000);
+            //        }
+            //        else
+            //        {
+            //            var startTime = DateTime.Now;
+            //            if (installmentCycleNumber == 1 && DateTime.Now.TimeOfDay < TimeSpan.Parse("09:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else if (installmentCycleNumber == 2 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("09:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("11:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else if (installmentCycleNumber == 3 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("11:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("13:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else if (installmentCycleNumber == 4 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("13:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("16:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else if (installmentCycleNumber == 5 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("16:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("18:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else if (installmentCycleNumber == 6 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("18:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("20:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else if (installmentCycleNumber == 7 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("20:00:00") && DateTime.Now.TimeOfDay < TimeSpan.Parse("22:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else if (installmentCycleNumber == 8 && DateTime.Now.TimeOfDay >= TimeSpan.Parse("22:00:00"))
+            //            {
+            //                var income = singlechargeInstallment.ProcessInstallment(installmentCycleNumber);
+            //                var endTime = DateTime.Now;
+            //                var duration = endTime - startTime;
+            //                SharedLibrary.InstallmentHandler.InstallmentCycleToDb(Properties.Settings.Default.ServiceCode, entityType, cycleType, installmentCycleNumber, (long)duration.TotalSeconds, income);
+            //                installmentCycleNumber++;
+            //            }
+            //            else
+            //                Thread.Sleep(1000);
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        logs.Error("Exception in SinglechargeInstallmentWorkerThread: ", e);
+            //        Thread.Sleep(1000);
+            //    }
+            //}
         }
 
         //private void SinglechargeInstallmentBalancerWorkerThread()
@@ -327,7 +341,7 @@ namespace DehnadTajoTakhtService
             while (!shutdownEvent.WaitOne(0))
             {
                 singlechargeQueue.ProcessQueue();
-                Thread.Sleep(1000);
+                Thread.Sleep(60 * 1000);
             }
         }
     }
