@@ -136,6 +136,32 @@
           <Property Name="DateAdded" Type="datetime" Nullable="false" />
           <Property Name="PersianDateAdded" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="Bulks">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="bulkName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ServiceId" Type="bigint" />
+          <Property Name="tps" Type="int" />
+          <Property Name="startTime" Type="datetime" />
+          <Property Name="endTime" Type="datetime" />
+          <Property Name="message" Type="nvarchar" MaxLength="4000" />
+          <Property Name="readSize" Type="int" />
+          <Property Name="retryCount" Type="int" />
+          <Property Name="retryTimeoutInSeconds" Type="int" />
+          <Property Name="TotalMessages" Type="int" />
+          <Property Name="TotalSuccessfullySent" Type="int" />
+          <Property Name="TotalFailed" Type="int" />
+          <Property Name="TotalRetry" Type="int" />
+          <Property Name="TotalRetryUnique" Type="int" />
+          <Property Name="TotalDelivery" Type="int" />
+          <Property Name="BulkFile" Type="nvarchar" MaxLength="1000" />
+          <Property Name="status" Type="int" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" />
+          <Property Name="Tag" Type="int" />
+        </EntityType>
         <EntityType Name="chargeInfo">
           <Key>
             <PropertyRef Name="serviceId" />
@@ -826,6 +852,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="Audit" EntityType="Self.Audit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BulkList" EntityType="Self.BulkList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Bulks" EntityType="Self.Bulks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="chargeInfo" EntityType="Self.chargeInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
@@ -1105,6 +1132,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="MCIFtpLastStates" EntityType="PortalModel.MCIFtpLastState" />
           <EntitySet Name="MobinOneFtps" EntityType="PortalModel.MobinOneFtp" />
           <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
+          <EntitySet Name="Bulks" EntityType="PortalModel.Bulk" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1919,6 +1947,32 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="userName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="pwd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="Bulk">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="bulkName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" />
+          <Property Name="tps" Type="Int32" />
+          <Property Name="startTime" Type="DateTime" Precision="3" />
+          <Property Name="endTime" Type="DateTime" Precision="3" />
+          <Property Name="message" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="readSize" Type="Int32" />
+          <Property Name="retryCount" Type="Int32" />
+          <Property Name="retryTimeoutInSeconds" Type="Int32" />
+          <Property Name="TotalMessages" Type="Int32" />
+          <Property Name="TotalSuccessfullySent" Type="Int32" />
+          <Property Name="TotalFailed" Type="Int32" />
+          <Property Name="TotalRetry" Type="Int32" />
+          <Property Name="TotalRetryUnique" Type="Int32" />
+          <Property Name="TotalDelivery" Type="Int32" />
+          <Property Name="BulkFile" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Tag" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2651,6 +2705,33 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="ports" ColumnName="ports" />
                 <ScalarProperty Name="IP" ColumnName="IP" />
                 <ScalarProperty Name="ServerName" ColumnName="ServerName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Bulks">
+            <EntityTypeMapping TypeName="PortalModel.Bulk">
+              <MappingFragment StoreEntitySet="Bulks">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="PersianDateCreated" ColumnName="PersianDateCreated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="BulkFile" ColumnName="BulkFile" />
+                <ScalarProperty Name="TotalDelivery" ColumnName="TotalDelivery" />
+                <ScalarProperty Name="TotalRetryUnique" ColumnName="TotalRetryUnique" />
+                <ScalarProperty Name="TotalRetry" ColumnName="TotalRetry" />
+                <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
+                <ScalarProperty Name="TotalSuccessfullySent" ColumnName="TotalSuccessfullySent" />
+                <ScalarProperty Name="TotalMessages" ColumnName="TotalMessages" />
+                <ScalarProperty Name="retryTimeoutInSeconds" ColumnName="retryTimeoutInSeconds" />
+                <ScalarProperty Name="retryCount" ColumnName="retryCount" />
+                <ScalarProperty Name="readSize" ColumnName="readSize" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="tps" ColumnName="tps" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="bulkName" ColumnName="bulkName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

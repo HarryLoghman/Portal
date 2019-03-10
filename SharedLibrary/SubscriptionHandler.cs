@@ -624,7 +624,8 @@ namespace SharedLibrary
 
             using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
             {
-                totalCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).Sum(o => (int?)o.Price) ?? 0;
+                totalCharged = entityService.Singlecharges.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).Sum(o => (int?)o.Price) ?? 0;
+                totalCharged += entityService.SinglechargeArchives.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).Sum(o => (int?)o.Price) ?? 0;
                 totalConsumed = entityService.SingleChargeAppsConsumes.Where(o => o.MobileNumber == mobileNumber && o.appName == appName).Sum(o => (int?)o.Price) ?? 0;
             }
             return totalCharged - totalConsumed;
@@ -653,10 +654,19 @@ namespace SharedLibrary
                 errorDescription = serviceCode;
                 return;
             }
-
+            
             using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(serviceCode))
             {
-                dicCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
+                var f = (from o in entityService.Singlecharges
+                         where o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded
+                         select new { o.DateCreated , o.Price})
+                         .Union
+                         (from o in entityService.SinglechargeArchives
+                          where o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded
+                          select new { o.DateCreated, o.Price });
+                dicCharged = f.OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
+                //dicCharged = entityService.vw_Singlecharge.Where(o => o.MobileNumber == mobileNumber && o.IsCalledFromInAppPurchase && o.IsSucceeded).OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
+
                 dicConsumed = entityService.SingleChargeAppsConsumes.Where(o => o.MobileNumber == mobileNumber && o.appName == appName).OrderByDescending(o => o.DateCreated).ToDictionary(o => o.DateCreated, o => o.Price);
             }
 

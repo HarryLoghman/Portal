@@ -71,6 +71,7 @@ namespace SharedLibrary.Models
         public virtual DbSet<MCIFtpLastState> MCIFtpLastStates { get; set; }
         public virtual DbSet<MobinOneFtp> MobinOneFtps { get; set; }
         public virtual DbSet<ServersIP> ServersIPs { get; set; }
+        public virtual DbSet<Bulk> Bulks { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

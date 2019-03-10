@@ -61,7 +61,8 @@
         <EntityTypeShape EntityType="PortalModel.App" Width="1.5" PointX="19.75" PointY="0.75" />
         <EntityTypeShape EntityType="PortalModel.MCIFtpLastState" Width="1.5" PointX="0.75" PointY="19.75" />
         <EntityTypeShape EntityType="PortalModel.MobinOneFtp" Width="1.5" PointX="19.75" PointY="4.75" />
-        <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="7.75" PointY="19.75" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="7.75" PointY="19.75" />
+        <EntityTypeShape EntityType="PortalModel.Bulk" Width="1.5" PointX="2.851773548336594" PointY="20.719781587235527" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         

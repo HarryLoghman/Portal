@@ -90,6 +90,9 @@
     <Compile Include="Date.cs" />
     <Compile Include="Encrypt.cs" />
     <Compile Include="Models\AppEncryption.cs" />
+    <Compile Include="Models\Bulk.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MobinOneFtp.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

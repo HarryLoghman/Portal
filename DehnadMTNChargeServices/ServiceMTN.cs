@@ -96,6 +96,11 @@ namespace DehnadMTNChargeServices
                             //if we have only one minute only sleep second by second
                             sleepTime = 1000;
                         }
+                        else
+                        {
+                            sleepTime = sleepTime - (1000 * 60);//sleep till one minute to the start of the illegalEndTime
+                            Program.logs.Info("Charging is stopped for " + sleepTime / 1000 + " seconds");
+                        }
                         Thread.Sleep(sleepTime);
                     }
                     else
