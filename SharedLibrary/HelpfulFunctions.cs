@@ -444,6 +444,33 @@ namespace SharedLibrary
                 logs.Error(e + url + icon + HttpUtility.UrlEncode(message));
             }
         }
+
+        public static void sb_sendNotification_Monitoring(StandardEventLevel level, string message)
+        {
+            //string url = "http://84.22.102.27/notif/n6.php";
+            string url = "";
+            string icon = "";
+
+            try
+            {
+                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
+                icon = fnc_getNotificationIcon(level);
+                Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                webRequest.Timeout = 60 * 1000;
+
+                //webRequest.Headers.Add("SOAPAction", action);
+                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                webRequest.Accept = "text/xml";
+                webRequest.Method = "Get";
+                WebResponse webResponse = webRequest.GetResponse();
+                webResponse.Close();
+            }
+            catch (Exception e)
+            {
+                logs.Error(e);
+            }
+        }
         private static string telepromoIp = "http://10.20.9.135:8600"; // "http://10.20.9.157:8600" "http://10.20.9.159:8600"
         private static string telepromoIpJSON = "http://10.20.9.187:8700";
         private static string telepromoMapfaIp = "http://10.20.9.188:9090";

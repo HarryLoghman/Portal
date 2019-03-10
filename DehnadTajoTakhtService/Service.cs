@@ -196,7 +196,9 @@ namespace DehnadTajoTakhtService
                 while (!shutdownEvent.WaitOne(0))
                 {
                     ChargingLibrary.SingleChargeThread.SinglechargeInstallmentWorkerThread(TimeSpan.Parse("23:45:00")
-                        , TimeSpan.Parse("07:00:00"), 10040, 8, Properties.Settings.Default.notifIcon);
+                        , TimeSpan.Parse("07:00:00"), 10040, 8, Properties.Settings.Default.notifIcon
+                        , Properties.Settings.Default.ResetVerySlowCharging
+                        , Properties.Settings.Default.ResetTooSlowCharging);
                 }
             }
             catch (Exception ex)

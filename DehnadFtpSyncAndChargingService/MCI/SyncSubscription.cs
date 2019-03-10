@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -117,13 +120,15 @@ namespace DehnadFtpSyncAndChargingService.MCI
                         //    return;
 
 
-
+                        DateTime syncDateTime = DateTime.Now;
                         lstSyncSubs = entityPortal.sp_MCIFtpLastState_getAsync(entryService.Id
-                            , DateTime.Now
+                            , syncDateTime
                             , Properties.Settings.Default.SyncFtpOldItemsInMins
                             , Properties.Settings.Default.SyncFtpWaitTimeInMins
                             , Properties.Settings.Default.SyncDBWaitTimeInMins
                             , Properties.Settings.Default.SyncChargedTriedNDaysBefore).ToList();
+
+                        this.sb_saveResultToDatabase(syncDateTime, lstSyncSubs);
 
                         if (i == 0)
                         {
@@ -138,7 +143,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                                 autoSync = false;
                             else autoSync = true;
 
-                           
+
 
                             notifDescription = this.fnc_getNotifString(false, lstSyncSubs);
                             if (autoSync)
@@ -220,6 +225,46 @@ namespace DehnadFtpSyncAndChargingService.MCI
             }
         }
 
+        private void sb_saveResultToDatabase(DateTime syncDateTime, List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lst)
+        {
+            if (lst.Count == 0) return;
+            DataTable dt = this.fnc_convertListToDataTable(syncDateTime, lst);
+            SqlConnection cnn = new SqlConnection();
+            cnn.ConnectionString = "data source=.; initial catalog=ftplog;integrated security=true;";
+            System.Data.SqlClient.SqlBulkCopy b = new System.Data.SqlClient.SqlBulkCopy(cnn);
+
+            if (dt.Rows.Count > 0)
+            {
+                cnn.Open();
+                b.DestinationTableName = "syncResult";
+                b.WriteToServer(dt);
+                cnn.Close();
+            }
+
+
+        }
+        private DataTable fnc_convertListToDataTable(DateTime syncDateTime, List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> data)
+        {
+
+            PropertyDescriptorCollection properties =
+               TypeDescriptor.GetProperties(typeof(SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result));
+            DataTable table = new DataTable();
+            foreach (PropertyDescriptor prop in properties)
+                table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+
+            table.Columns.Add("syncDate");
+            table.Columns["syncDate"].DefaultValue = syncDateTime.ToString("yyyy-MM-dd HH:00:00");
+            foreach (var item in data)
+            {
+                DataRow row = table.NewRow();
+                foreach (PropertyDescriptor prop in properties)
+                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+                table.Rows.Add(row);
+            }
+
+            return table;
+
+        }
         private string fnc_getNotifString(bool settingParameters, List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lstSyncSubs)
         {
             string str = "";

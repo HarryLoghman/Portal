@@ -32,7 +32,9 @@ namespace Portal.Controllers
             , "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin"
             , "Halghe", "Achar","Hoshang" };
 
+       
         #region OTP Request
+
         //for old apps, old landings and localcall
         [HttpPost]
         [AllowAnonymous]
@@ -43,6 +45,7 @@ namespace Portal.Controllers
             dynamic result = new ExpandoObject();
             bool resultOk = true;
             bool localCall = false;
+
             try
             {
                 if (messageObj.Number != null)
@@ -130,7 +133,7 @@ namespace Portal.Controllers
                 //result = e.Message;
                 result = "Exception has been occured!!! Contact Administrator";
             }
-            var json = JsonConvert.SerializeObject(result);
+            endSection: var json = JsonConvert.SerializeObject(result);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             if (!resultOk)
                 response = new HttpResponseMessage(HttpStatusCode.BadRequest);
@@ -556,7 +559,7 @@ namespace Portal.Controllers
                 resultOk = false;
                 result = "Exception has been occured!!! Contact Administrator";
             }
-            var json = JsonConvert.SerializeObject(result);
+            endSection: var json = JsonConvert.SerializeObject(result);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             if (!resultOk)
                 response = new HttpResponseMessage(HttpStatusCode.BadRequest);
@@ -578,6 +581,7 @@ namespace Portal.Controllers
             dynamic result = new ExpandoObject();
             bool resultOk = true;
             bool localCall = false;
+
             try
             {
                 if (messageObj.Number != null)
@@ -1744,6 +1748,7 @@ namespace Portal.Controllers
                                                             { { "servicecode",messageObj.ServiceCode }
                                                             ,{ "content",messageObj.Content}
                                                             ,{ "mobile",messageObj.MobileNumber}}, null, "AppPortal:AppController:IsUserSubscribed");
+
                 if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
                     result = tpsRatePassed;
@@ -1752,6 +1757,12 @@ namespace Portal.Controllers
                 }
                 else
                 {
+                    if (messageObj.ServiceCode.ToLower() == "Hoshang".ToLower())
+                    {
+                        result.Status = "Use New Method";
+                        resultOk = false;
+                        goto endSection;
+                    }
                     if (messageObj.Number != null)
                     {
                         messageObj.MobileNumber = messageObj.Number;
@@ -1781,7 +1792,7 @@ namespace Portal.Controllers
                 result = "Exception has been occured!!! Contact Administrator";
             }
 
-            var json = JsonConvert.SerializeObject(result);
+            endSection: var json = JsonConvert.SerializeObject(result);
             var response = Request.CreateResponse(HttpStatusCode.OK);
             if (!resultOk)
                 response = new HttpResponseMessage(HttpStatusCode.BadRequest);

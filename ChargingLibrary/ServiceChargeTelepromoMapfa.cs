@@ -29,8 +29,9 @@ namespace ChargingLibrary
                 };
             }
         }
-        public ServiceChargeTelepromoMapfa(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
-            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon)
+        public ServiceChargeTelepromoMapfa(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon
+            , TimeSpan illegalStartTime, TimeSpan illegalEndTime)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon, illegalStartTime, illegalEndTime)
         {
             v_isCampaignActive = 0;
             using (var entityPortal = new SharedLibrary.Models.PortalEntities())
@@ -70,40 +71,51 @@ namespace ChargingLibrary
 
             var message = this.ChooseSinglechargePrice(subscriber);
             if (message == null) return;
+            if (!ServiceCharge.fnc_isChargingLegalTime(this.prp_illegalStartTime, this.prp_illegalEndTime))
+            {
+                //System.Threading.Interlocked.Decrement(ref ChargingController.v_taskCount);
+                return;
+            }
+            Program.logs.Info("ChargeSubscriber" + subscriber.mobileNumber);
             System.Threading.Interlocked.Increment(ref ChargingController.v_taskCount);
             //object obj = new object();
             //lock (obj) { int t = chargeServices.v_taskCount; chargeServices.v_taskCount = t + 1; }
             this.sb_chargeSubscriberWithOutThread(message, installmentCycleNumber, loopNo, threadNumber, timeLoop
                 , installmentId);
+            Program.logs.Info("ChargeSubscriberEnd" + subscriber.mobileNumber);
         }
 
         public virtual void sb_chargeSubscriberWithOutThread(
          MessageObject message, int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, long installmentId = 0)
         {
-            DateTime timeStartChargeMtnSubscriber = DateTime.Now;
-            Nullable<DateTime> timeBeforeSendMTNClient = null;
-
-            string guidStr = Guid.NewGuid().ToString();
-
-            //PorShetabLibrary.Models.Singlecharge singlecharge;
-
-
-            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
+            if (!ServiceCharge.fnc_isChargingLegalTime(this.prp_illegalStartTime, this.prp_illegalEndTime))
             {
                 System.Threading.Interlocked.Decrement(ref ChargingController.v_taskCount);
                 return;
             }
 
-            #region prepare Request
-            //var startTime = DateTime.Now;
-            //string referenceCode;
-            var startTime = DateTime.Now;
-            var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-            var shortCode = "98" + this.prp_service.ShortCode;
-            var description = string.Format("deliverychannel=WAP|discoverychannel=WAP|origin={0}|contentid=1", shortCode);
-            //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
-            //var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
-            var json = string.Format(@"{{
+            singleChargeRequest singleChargeReq = new singleChargeRequest();
+            try
+            {
+                DateTime timeStartChargeMtnSubscriber = DateTime.Now;
+                Nullable<DateTime> timeBeforeSendMTNClient = null;
+
+                string guidStr = Guid.NewGuid().ToString();
+
+                //PorShetabLibrary.Models.Singlecharge singlecharge;
+
+
+
+                #region prepare Request
+                //var startTime = DateTime.Now;
+                //string referenceCode;
+                var startTime = DateTime.Now;
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var shortCode = "98" + this.prp_service.ShortCode;
+                var description = string.Format("deliverychannel=WAP|discoverychannel=WAP|origin={0}|contentid=1", shortCode);
+                //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+                //var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
+                var json = string.Format(@"{{
                                 ""username"": ""{0}"",
                                 ""password"": ""{1}"",
                                 ""serviceid"": ""{2}"",
@@ -111,17 +123,13 @@ namespace ChargingLibrary
                                 ""description"": ""{4}"",
                                 ""shortcode"": ""{5}""
                     }}", this.prp_aggregator.AggregatorUsername, this.prp_aggregator.AggregatorPassword
-                    , this.v_pardisShortCode, mobileNumber, description, shortCode);
+                        , this.v_pardisShortCode, mobileNumber, description, shortCode);
 
-            #endregion
-            Program.logs.Info(this.v_url + " " + json);
+                #endregion
+                Program.logs.Info(this.v_url + " " + json);
 
-            DateTime dateCreated = DateTime.Now;
+                DateTime dateCreated = DateTime.Now;
 
-
-            singleChargeRequest singleChargeReq = new singleChargeRequest();
-            try
-            {
                 timeBeforeSendMTNClient = DateTime.Now;
 
                 singleChargeReq.dateCreated = dateCreated;
@@ -150,6 +158,7 @@ namespace ChargingLibrary
                 singleChargeReq.webStatus = WebExceptionStatus.UnknownError;
                 singleChargeReq.url = this.v_url;
 
+                Program.logs.Info("ChargeSubscriberWithoutThread" + message.MobileNumber);
                 sendPostAsync(singleChargeReq);
 
 
@@ -157,12 +166,12 @@ namespace ChargingLibrary
             catch (Exception e)
             {
                 //Program.logs.Info(this.prp_service.ServiceCode + " : " + payload);
-                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in ChargeMobinOneMapfa: ", e);
+                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in ChargeTelepromoMapfa: ", e);
                 singleChargeReq.resultDescription = e.Message + "\r\n" + e.StackTrace;
                 singleChargeReq.isSucceeded = false;
                 this.saveResponseToDB(singleChargeReq);
             }
-
+            Program.logs.Info("ChargeSubscriberWithoutThreadEnd" + message.MobileNumber);
         }
 
         public void sendPostAsync(singleChargeRequest singleChargeReq)
@@ -170,6 +179,8 @@ namespace ChargingLibrary
 
             try
             {
+                Program.logs.Info("sendPostAsync" + singleChargeReq.mobileNumber);
+
                 Uri uri = new Uri(singleChargeReq.url, UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
                 webRequest.Timeout = 60 * 1000;
@@ -178,16 +189,18 @@ namespace ChargingLibrary
                 webRequest.ContentType = "application/json;charset=\"utf-8\"";
                 webRequest.Accept = "application/json";
                 webRequest.Method = "POST";
+                webRequest.Proxy = null;
 
                 webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, singleChargeReq });
             }
             catch (Exception ex)
             {
-                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in SendPostAsync: ", ex);
+                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in Charging SendPostAsync: ", ex);
                 singleChargeReq.resultDescription = ex.Message + "\r\n" + ex.StackTrace;
                 singleChargeReq.isSucceeded = false;
                 this.saveResponseToDB(singleChargeReq);
             }
+            Program.logs.Info("sendPostAsyncEnd" + singleChargeReq.mobileNumber);
         }
 
         private void GetRequestStreamCallBack(IAsyncResult parameters)
@@ -196,6 +209,7 @@ namespace ChargingLibrary
 
             HttpWebRequest webRequest = (HttpWebRequest)objs[0];
             singleChargeRequest singleChargeReq = (singleChargeRequest)objs[1];
+            Program.logs.Info("GetRequestStreamCallBack" + singleChargeReq.mobileNumber);
             try
             {
                 singleChargeReq.timeStartProcessMtnInstallment = DateTime.Now;
@@ -247,7 +261,7 @@ namespace ChargingLibrary
                 this.saveResponseToDB(singleChargeReq);
 
             }
-
+            Program.logs.Info("GetRequestStreamCallBackEnd" + singleChargeReq.mobileNumber);
         }
 
         private void GetResponseCallback(IAsyncResult parameters)
@@ -257,6 +271,7 @@ namespace ChargingLibrary
 
             HttpWebRequest webRequest = (HttpWebRequest)objs[0];
             singleChargeRequest singleChargeReq = (singleChargeRequest)objs[1];
+            Program.logs.Info("GetResponseCallback" + singleChargeReq.mobileNumber);
             string referenceId;
             singleChargeReq.timeAfterWhere = DateTime.Now;
             try
@@ -338,12 +353,10 @@ namespace ChargingLibrary
                 Program.logs.Error(this.prp_service.ServiceCode + " : Exception in GetResponseCallback2: ", ex1);
                 //this.saveResponseToDB(singleChargeReq);
             }
+            Program.logs.Info("GetResponseCallbackBeforeSave" + singleChargeReq.mobileNumber);
             this.saveResponseToDB(singleChargeReq);
-            if (!singleChargeReq.internalServerError)
-            {
-                this.afterSend(singleChargeReq);
-            }
-
+           
+            Program.logs.Info("GetResponseCallbackAfterSave" + singleChargeReq.mobileNumber);
         }
 
 
@@ -352,7 +365,7 @@ namespace ChargingLibrary
             isSucceeded = false;
             string resultDescription = "";
             referenceId = "";
-
+            
             try
             {
                 dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonResult);
@@ -380,39 +393,6 @@ namespace ChargingLibrary
 
         }
 
-        protected override void afterSend(singleChargeRequest chargeRequest)
-        {
-            if (v_isCampaignActive == 1 || v_isCampaignActive == 2)
-            {
-                try
-                {
-                    var serviceId = Convert.ToInt64(this.prp_service.Id);
-                    var isInBlackList = SharedLibrary.MessageHandler.IsInBlackList(chargeRequest.mobileNumber, serviceId);
-                    if (isInBlackList != true)
-                    {
-                        var sub = SharedLibrary.SubscriptionHandler.GetSubscriber(chargeRequest.mobileNumber, serviceId);
-                        if (sub != null)
-                        {
-                            if (sub.SpecialUniqueId != null)
-                            {
-                                var sha = SharedLibrary.Encrypt.GetSha256Hash(sub.SpecialUniqueId + chargeRequest.mobileNumber);
-                                var price = 0;
-                                if (chargeRequest.isSucceeded == true)
-                                    price = chargeRequest.Price.Value;
-                                var result = SharedLibrary.UsefulWebApis.DanoopReferral(this.prp_service.referralUrl + (this.prp_service.referralUrl.EndsWith("/") ? "" : "/") + "platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, chargeRequest.mobileNumber, chargeRequest.Price, sha)).Result;
-                                //if (serviceAdditionalInfo["serviceCode"] == "Phantom")
-                                //    await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/phantom/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
-                                //else if (serviceAdditionalInfo["serviceCode"] == "Medio")
-                                //    await SharedLibrary.UsefulWebApis.DanoopReferral("http://79.175.164.52/medio/platformCharge.php", string.Format("code={0}&number={1}&amount={2}&kc={3}", sub.SpecialUniqueId, message.MobileNumber, price, sha));
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Program.logs.Error("Exception in calling danoop charge service: " + e);
-                }
-            }
-        }
+     
     }
 }

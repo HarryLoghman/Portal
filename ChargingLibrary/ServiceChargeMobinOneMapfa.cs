@@ -29,8 +29,9 @@ namespace ChargingLibrary
                 };
             }
         }
-        public ServiceChargeMobinOneMapfa(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
-            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon)
+        public ServiceChargeMobinOneMapfa(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon
+             , TimeSpan illegalStartTime, TimeSpan illegalEndTime)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon, illegalStartTime, illegalEndTime)
         {
             v_isCampaignActive = 0;
             using (var entityPortal = new SharedLibrary.Models.PortalEntities())
@@ -70,6 +71,11 @@ namespace ChargingLibrary
 
             var message = this.ChooseSinglechargePrice(subscriber);
             if (message == null) return;
+            if (!ServiceCharge.fnc_isChargingLegalTime(this.prp_illegalStartTime, this.prp_illegalEndTime))
+            {
+                //System.Threading.Interlocked.Decrement(ref ChargingController.v_taskCount);
+                return;
+            }
             System.Threading.Interlocked.Increment(ref ChargingController.v_taskCount);
             //object obj = new object();
             //lock (obj) { int t = chargeServices.v_taskCount; chargeServices.v_taskCount = t + 1; }
@@ -80,54 +86,54 @@ namespace ChargingLibrary
         public virtual void sb_chargeSubscriberWithOutThread(
          MessageObject message, int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, long installmentId = 0)
         {
-            DateTime timeStartChargeMtnSubscriber = DateTime.Now;
-            Nullable<DateTime> timeBeforeSendMTNClient = null;
-
-            string guidStr = Guid.NewGuid().ToString();
-
-            //PorShetabLibrary.Models.Singlecharge singlecharge;
-
-
-            if (DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00"))
+            if (!ServiceCharge.fnc_isChargingLegalTime(this.prp_illegalStartTime, this.prp_illegalEndTime))
             {
                 System.Threading.Interlocked.Decrement(ref ChargingController.v_taskCount);
                 return;
             }
-
-            #region prepare Request
-            //var startTime = DateTime.Now;
-            //string referenceCode;
-            var startTime = DateTime.Now;
-            var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
-            var aggregatorId = this.prp_service.AggregatorId;
-            var channelType = (int)SharedLibrary.MessageHandler.MapfaChannels.SMS;
-            var domain = "";
-            if (aggregatorId.ToString() == "3")
-                domain = "pardis1";
-            else
-                domain = "alladmin";
-
-            //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
-            //var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
-            string payload = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                            + "<s:Body>"
-                            + "<singleCharge xmlns=\"http://services.mapfa.net\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                            + "<username xmlns=\"\">" + this.prp_aggregator.AggregatorUsername + "</username>"
-                            + "<password xmlns=\"\">" + this.prp_aggregator.AggregatorPassword + "</password>"
-                            + "<domain xmlns=\"\">" + domain + "</domain>"
-                            + "<channel xmlns=\"\">" + channelType + "</channel>"
-                            + "<mobilenum xmlns=\"\">" + mobileNumber + "</mobilenum>"
-                            + "<serviceId xmlns=\"\">" + this.v_pardisShortCode + "</serviceId></singleCharge>"
-                            + "</s:Body></s:Envelope>";
-            #endregion
-            Program.logs.Info(this.v_url + " " + payload);
-
-            DateTime dateCreated = DateTime.Now;
-
-
             singleChargeRequest singleChargeReq = new singleChargeRequest();
             try
             {
+                DateTime timeStartChargeMtnSubscriber = DateTime.Now;
+                Nullable<DateTime> timeBeforeSendMTNClient = null;
+
+                string guidStr = Guid.NewGuid().ToString();
+
+                //PorShetabLibrary.Models.Singlecharge singlecharge;
+
+
+                #region prepare Request
+                //var startTime = DateTime.Now;
+                //string referenceCode;
+                var startTime = DateTime.Now;
+                var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
+                var aggregatorId = this.prp_service.AggregatorId;
+                var channelType = (int)SharedLibrary.MessageHandler.MapfaChannels.SMS;
+                var domain = "";
+                if (aggregatorId.ToString() == "3")
+                    domain = "pardis1";
+                else
+                    domain = "alladmin";
+
+                //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
+                //var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
+                string payload = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                                + "<s:Body>"
+                                + "<singleCharge xmlns=\"http://services.mapfa.net\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                                + "<username xmlns=\"\">" + this.prp_aggregator.AggregatorUsername + "</username>"
+                                + "<password xmlns=\"\">" + this.prp_aggregator.AggregatorPassword + "</password>"
+                                + "<domain xmlns=\"\">" + domain + "</domain>"
+                                + "<channel xmlns=\"\">" + channelType + "</channel>"
+                                + "<mobilenum xmlns=\"\">" + mobileNumber + "</mobilenum>"
+                                + "<serviceId xmlns=\"\">" + this.v_pardisShortCode + "</serviceId></singleCharge>"
+                                + "</s:Body></s:Envelope>";
+                #endregion
+                Program.logs.Info(this.v_url + " " + payload);
+
+                DateTime dateCreated = DateTime.Now;
+
+
+
                 timeBeforeSendMTNClient = DateTime.Now;
 
                 singleChargeReq.dateCreated = dateCreated;
@@ -184,12 +190,12 @@ namespace ChargingLibrary
                 webRequest.ContentType = "text/xml;charset=\"utf-8\"";
                 webRequest.Accept = "text/xml";
                 webRequest.Method = "POST";
-
+                webRequest.Proxy = null;
                 webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, singleChargeReq });
             }
             catch (Exception ex)
             {
-                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in SendPostAsync: ", ex);
+                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in Charging SendPostAsync: ", ex);
                 singleChargeReq.resultDescription = ex.Message + "\r\n" + ex.StackTrace;
                 singleChargeReq.isSucceeded = false;
                 this.saveResponseToDB(singleChargeReq);
@@ -372,8 +378,8 @@ namespace ChargingLibrary
                         }
                         else
                         {
-                            int returnValue;
-                            if (int.TryParse(successNode.InnerText, out returnValue))
+                            long returnValue;
+                            if (long.TryParse(successNode.InnerText, out returnValue))
                             {
                                 if (returnValue > 10000)
                                 {

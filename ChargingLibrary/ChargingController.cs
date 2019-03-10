@@ -29,7 +29,15 @@ namespace ChargingLibrary
         }
         ServicePointSettings v_spSettings;
 
-
+        public enum enum_chargingSpeed
+        {
+            normal = 1,
+            slow = 2,
+            verySlow = 4,
+            tooSlow = 8
+        }
+        public bool prp_resetVerySlowCharging { get; set; }
+        public bool prp_resetTooSlowCharging { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -37,8 +45,14 @@ namespace ChargingLibrary
         /// <param name="chargeServices"></param>
         /// <param name="ticksStart"></param>
         /// <param name="chargingServiceName">for notify the user e.g. MTN Services or Phantom</param>
-        public void sb_chargeAll(int tpsTotal, List<ServiceCharge> chargeServices, long ticksStart, string chargingServiceName, string notifIcon)
+        public void sb_chargeAll(int tpsTotal, List<ServiceCharge> chargeServices, long ticksStart, string chargingServiceName
+            , string notifIcon, bool resetVerySlowCharging, bool resetTooSlowCharging)
         {
+
+            if (chargeServices == null || chargeServices.Count == 0)
+                return;
+            this.prp_resetTooSlowCharging = resetTooSlowCharging;
+            this.prp_resetVerySlowCharging = resetVerySlowCharging;
 
             object lockObj = new object();
             this.v_spSettings = new ServicePointSettings();
@@ -50,16 +64,18 @@ namespace ChargingLibrary
 
             this.v_tpsTotal = tpsTotal;
             this.v_intervalInMillisecond = 1000.00 / tpsTotal;
-            this.v_ticksStart = DateTime.Now.Ticks;
+            
 
             this.v_turn = 0;
             this.v_ticksPrevious = null;
             lock (lockObj) { v_taskCount = 0; }
-
+            //System.Threading.Interlocked.Exchange(ref v_taskCount ,0);
             this.sb_fillChargeList(chargeServices, false, notifIcon);
 
             this.sb_resetTPSs();
             this.sb_assignServicesTPS(this.v_tpsTotal);
+
+            this.v_ticksStart = DateTime.Now.Ticks;
 
             if (this.v_chargeServices.Where(o => o.prp_remainRowCount > 0).Count() > 0)
             {
@@ -111,8 +127,8 @@ namespace ChargingLibrary
             this.v_turn = 0;
             this.v_ticksPrevious = null;
             lock (lockObj) { v_taskCount = 0; }
-
-            this.sb_fillChargeList(chargeServices, true,notifIcon);
+            //System.Threading.Interlocked.Exchange(ref v_taskCount ,0);
+            this.sb_fillChargeList(chargeServices, true, notifIcon);
             this.sb_resetTPSs();
             this.sb_assignServicesTPS(this.v_tpsTotal);
 
@@ -368,30 +384,88 @@ namespace ChargingLibrary
 
         private void sb_notifyLongCharging(string chargingServiceName)
         {
+            if (this.v_chargeServices == null || this.v_chargeServices.Count == 0) return;
+            
+            enum_chargingSpeed chargingSpeed = enum_chargingSpeed.normal;
+            int totalRowCount = this.v_chargeServices.Sum(o => o.prp_rowCount);
+            double bestSpeed;
+            if (totalRowCount < this.v_tpsTotal)
+                bestSpeed = 1;
+            else bestSpeed = ((double)totalRowCount / this.v_tpsTotal);
+            if (bestSpeed == 0) return;
             TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - this.v_ticksStart);
-            if (ts.TotalMinutes / 120 > 1)
+
+            if (ts.TotalSeconds < bestSpeed)
+                return;
+            else if (bestSpeed <= ts.TotalSeconds &&
+                ts.TotalSeconds < bestSpeed * (int)enum_chargingSpeed.slow)
             {
-                if ((new TimeSpan(DateTime.Now.Ticks - this.v_notifTime)).Minutes > 1)
-                {
-                    string connectionLimitStr = "Null";
-                    ServicePoint sp = this.v_spSettings.GetServicePoint();
-                    if (sp != null)
-                    {
-                        connectionLimitStr = sp.ConnectionLimit.ToString();
-                    }
-                    else
-                    {
-                        connectionLimitStr = "Null";
-
-                    }
-
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, chargingServiceName + " Long Charging:" + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")" + "(Connection Limit:" + connectionLimitStr + ")");
-
-
-                    this.v_notifTime = DateTime.Now.Ticks;
-                }
-
+                chargingSpeed = enum_chargingSpeed.slow;
+                return;
             }
+            else if (bestSpeed * (int)enum_chargingSpeed.slow <= ts.TotalSeconds &&
+                ts.TotalSeconds < bestSpeed * (int)enum_chargingSpeed.verySlow)
+            {
+                chargingSpeed = enum_chargingSpeed.verySlow;
+            }
+            else
+            {
+                chargingSpeed = enum_chargingSpeed.tooSlow;
+            }
+
+            Program.logs.Info(chargingSpeed.ToString() + " starttime:" + (new DateTime(this.v_ticksStart)).ToString("HH:mm:ss.fff")
+                + " datetimeNow" + DateTime.Now.ToString("HH:mm:ss.fff")
+                + " rowCount = " + totalRowCount.ToString()
+                + " difference = " + ts.ToString("c")
+                + " bestSpeed="+ bestSpeed.ToString());
+            int? connectionLimit = null;
+            ServicePoint sp = this.v_spSettings.GetServicePoint();
+            if (sp != null)
+            {
+                connectionLimit = sp.ConnectionLimit;
+            }
+            if ((new TimeSpan(DateTime.Now.Ticks - this.v_notifTime)).Minutes > 1)
+            {
+                //notif every one minute
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, chargingServiceName + " " + chargingSpeed.ToString() + ":" + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")" + "(Connection Limit:" + (connectionLimit.HasValue ? connectionLimit.Value.ToString() : "Null") + ")");
+                this.v_notifTime = DateTime.Now.Ticks;
+                if ((chargingSpeed == ChargingController.enum_chargingSpeed.verySlow && this.prp_resetVerySlowCharging)
+                || (chargingSpeed == ChargingController.enum_chargingSpeed.tooSlow && this.prp_resetTooSlowCharging))
+                {
+                    if (v_taskCount == 0) return;
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Service is going to be restarted due to " + chargingSpeed.ToString() + " charging. The service should restart in a minute :"
+                        + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")"
+                        + "(Connection Limit:" + (connectionLimit.HasValue ? connectionLimit.Value.ToString() : "Null") + ")");
+                    Environment.Exit(1);
+                }
+            }
+
+
+
+            //TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - this.v_ticksStart);
+            //if (ts.TotalMinutes / 120 > 1)
+            //{
+            //    if ((new TimeSpan(DateTime.Now.Ticks - this.v_notifTime)).Minutes > 1)
+            //    {
+            //        string connectionLimitStr = "Null";
+            //        ServicePoint sp = this.v_spSettings.GetServicePoint();
+            //        if (sp != null)
+            //        {
+            //            connectionLimitStr = sp.ConnectionLimit.ToString();
+            //        }
+            //        else
+            //        {
+            //            connectionLimitStr = "Null";
+
+            //        }
+
+            //        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, chargingServiceName + " Long Charging:" + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")" + "(Connection Limit:" + connectionLimitStr + ")");
+
+
+            //        this.v_notifTime = DateTime.Now.Ticks;
+            //    }
+
+            //}
         }
 
         private void sb_charge(bool wipe, int turn)

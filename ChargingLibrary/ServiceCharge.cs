@@ -70,11 +70,19 @@ namespace ChargingLibrary
         { get; set; }
 
         public bool prp_wipe { get; set; }
-        #endregion
 
         public string prp_notifIcon { get; set; }
-        public ServiceCharge(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
+
+        public TimeSpan prp_illegalStartTime { get; set; }
+        public TimeSpan prp_illegalEndTime { get; set; }
+        #endregion
+
+
+        public ServiceCharge(long serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon
+            , TimeSpan illegalStartTime, TimeSpan illegalEndTime)
         {
+            this.prp_illegalStartTime = illegalStartTime;
+            this.prp_illegalEndTime = illegalEndTime;
             this.prp_notifIcon = notifIcon;
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {
@@ -138,50 +146,76 @@ namespace ChargingLibrary
         }
 
         #region subs and functions
-        public virtual bool fnc_canStartCharging(int cycleNumber, TimeSpan maintenanceStartTime, TimeSpan maintenanceEndTime, out string reason)
+        public virtual bool fnc_canStartCharging(int cycleNumber, TimeSpan illegalStartTime, TimeSpan illegalEndTime, out string reason)
         {
-            return this.fnc_canStartCharging(cycleNumber, DateTime.Now, maintenanceStartTime, maintenanceEndTime, out reason);
+            return this.fnc_canStartCharging(cycleNumber, DateTime.Now, illegalStartTime, illegalEndTime, out reason);
         }
-        public virtual bool fnc_canStartCharging(int cycleNumber, DateTime date, TimeSpan maintenanceStartTime, TimeSpan maintenanceEndTime, out string reason)
+        public virtual bool fnc_canStartCharging(int cycleNumber, DateTime date, TimeSpan illegalStartTime, TimeSpan illegalEndTime, out string reason)
         {
 
             reason = "";
             bool canStart = false;
-            if ((DateTime.Now.TimeOfDay >= maintenanceStartTime || DateTime.Now.TimeOfDay < maintenanceEndTime))
+            TimeSpan timeSpanNow = DateTime.Now.TimeOfDay;
+            if (!ServiceCharge.fnc_isChargingLegalTime(illegalStartTime, illegalEndTime))
             {
-                reason = maintenanceStartTime.ToString("c") + " to " + maintenanceEndTime.ToString("c");
+                reason = illegalStartTime.ToString("c") + " to " + illegalEndTime.ToString("c");
                 return canStart;
             }
-            SqlCommand cmd = new SqlCommand();
+            //SqlCommand cmd = new SqlCommand();
             try
             {
-
-                cmd.CommandText = "Select top 1 value from " + this.prp_service.databaseName + ".dbo.settings where Name='IsInMaintenanceTime'";
-                cmd.Connection = new SqlConnection(Program.v_cnnStr);
-                cmd.Connection.Open();
-
-                object isInMaintenace = cmd.ExecuteScalar();
-                bool bl;
-                if (isInMaintenace == null || isInMaintenace == DBNull.Value || isInMaintenace.ToString() == "" || (bool.TryParse(isInMaintenace.ToString(), out bl) && !bl))
+                using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(this.prp_service.ServiceCode))
                 {
-                    cmd.CommandText = "Select top 1 value from " + this.prp_service.databaseName + ".dbo.settings where Name='LastSingleCharge'";
-                    object lastSingleCharge = cmd.ExecuteScalar();
-                    if (lastSingleCharge == null || lastSingleCharge == DBNull.Value || lastSingleCharge.ToString() == "" || (!lastSingleCharge.ToString().StartsWith(date.ToString("yyyy-MM-dd")) || !lastSingleCharge.ToString().EndsWith(";" + cycleNumber.ToString() + ";wipe")))
+                    var isInMaintenace = entityService.Settings.FirstOrDefault(o => o.Name == "IsInMaintenanceTime" && o.Value.ToLower() == "true");
+                    if (isInMaintenace != null)
                     {
-                        canStart = true;
+                        reason = "Service " + this.prp_service.Id.ToString() + " is in maintenance mode";
+                        canStart = false;
                     }
                     else
                     {
-                        reason = "Cycle " + cycleNumber.ToString() + " for date " + date.ToString("yyyy-MM-dd") + " has been completed recently";
-                        canStart = false;
+                        var lastSingleChargeTime = entityService.Settings.FirstOrDefault(o => o.Name == "LastSingleCharge");
+                        if (lastSingleChargeTime == null || lastSingleChargeTime == Convert.DBNull || lastSingleChargeTime.ToString() == ""
+                            || string.IsNullOrEmpty(lastSingleChargeTime.Value)
+                            || (!lastSingleChargeTime.Value.ToString().StartsWith(date.ToString("yyyy-MM-dd"))
+                            || (lastSingleChargeTime.Value.ToString().StartsWith(date.ToString("yyyy-MM-dd")) && !lastSingleChargeTime.Value.ToString().EndsWith(";" + cycleNumber.ToString() + ";wipe"))))
+                        {
+                            canStart = true;
+                        }
+                        else
+                        {
+                            reason = "Cycle " + cycleNumber.ToString() + " for date " + date.ToString("yyyy-MM-dd") + " has been completed recently";
+                            canStart = false;
+                        }
                     }
                 }
-                else
-                {
-                    reason = "Service " + this.prp_service.Id.ToString() + " is in maintenance mode";
-                    canStart = false;
-                }
-                cmd.Connection.Close();
+
+                //cmd.CommandText = "Select top 1 value from " + this.prp_service.databaseName + ".dbo.settings where Name='IsInMaintenanceTime' and lower(value)='true'";
+                //cmd.Connection = new SqlConnection(Program.v_cnnStr);
+                //cmd.Connection.Open();
+
+                //object isInMaintenace = cmd.ExecuteScalar();
+                ////bool bl;
+                //if (isInMaintenace == null || isInMaintenace == DBNull.Value || isInMaintenace.ToString() == "" )//|| (bool.TryParse(isInMaintenace.ToString(), out bl) && !bl))
+                //{
+                //    cmd.CommandText = "Select top 1 value from " + this.prp_service.databaseName + ".dbo.settings where Name='LastSingleCharge'";
+                //    object lastSingleCharge = cmd.ExecuteScalar();
+                //    if (lastSingleCharge == null || lastSingleCharge == DBNull.Value || lastSingleCharge.ToString() == "" || (!lastSingleCharge.ToString().StartsWith(date.ToString("yyyy-MM-dd")) || !lastSingleCharge.ToString().EndsWith(";" + cycleNumber.ToString() + ";wipe")))
+                //    {
+                //        canStart = true;
+                //    }
+                //    else
+                //    {
+                //        reason = "Cycle " + cycleNumber.ToString() + " for date " + date.ToString("yyyy-MM-dd") + " has been completed recently";
+                //        canStart = false;
+                //    }
+                //}
+                //else
+                //{
+                //    reason = "Service " + this.prp_service.Id.ToString() + " is in maintenance mode";
+                //    canStart = false;
+                //}
+                //cmd.Connection.Close();
             }
             catch (Exception e)
             {
@@ -189,7 +223,7 @@ namespace ChargingLibrary
                 SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, (string.IsNullOrEmpty(this.prp_notifIcon) ? "" : this.prp_notifIcon) + this.prp_service.ServiceCode + " : cannot start charging" + e.Message);
                 try
                 {
-                    cmd.Connection.Close();
+                    //cmd.Connection.Close();
                     reason = e.Message + "\r\n" + e.StackTrace;
                 }
                 catch
@@ -251,7 +285,8 @@ namespace ChargingLibrary
        SharedLibrary.ServiceHandler.SubscribersAndCharges subscriber
        , int installmentCycleNumber, int loopNo, int threadNumber, DateTime timeLoop, long installmentId = 0)
         {
-
+            if (!ServiceCharge.fnc_isChargingLegalTime(this.prp_illegalStartTime, this.prp_illegalEndTime))
+                return;
         }
 
         internal void saveResponseToDB(singleChargeRequest singleChargeReq)
@@ -487,6 +522,46 @@ namespace ChargingLibrary
 
         }
 
+        public static bool fnc_isChargingLegalTime(TimeSpan illegalStartTime, TimeSpan illegalEndTime)
+        {
+            TimeSpan timeSpanNow = DateTime.Now.TimeOfDay;
+            if ((illegalStartTime < illegalEndTime && timeSpanNow >= illegalStartTime && timeSpanNow < illegalEndTime)
+               || (illegalStartTime > illegalEndTime && !(timeSpanNow < illegalStartTime && timeSpanNow >= illegalEndTime)))
+            {
+
+                return false;
+            }
+            return true;
+        }
+        public static bool fnc_isChargingLegalTime(TimeSpan illegalStartTime, TimeSpan illegalEndTime, out int timeRemainInMilliSeconds)
+        {
+            timeRemainInMilliSeconds = 0;
+            TimeSpan timeSpanNow = DateTime.Now.TimeOfDay;
+            if ((illegalStartTime < illegalEndTime && timeSpanNow >= illegalStartTime && timeSpanNow < illegalEndTime)
+               || (illegalStartTime > illegalEndTime && !(timeSpanNow < illegalStartTime && timeSpanNow >= illegalEndTime)))
+            {
+                if (timeSpanNow > illegalEndTime)
+                {
+                    if (timeSpanNow >= new TimeSpan(23, 59, 59))
+                    {
+                        timeRemainInMilliSeconds = (int)((illegalEndTime - (new TimeSpan(0, 0, 0)))).TotalMilliseconds;
+                    }
+                    else
+                    {
+                        timeRemainInMilliSeconds = (int)(((new TimeSpan(23, 59, 59))) - timeSpanNow).TotalMilliseconds;
+                        timeRemainInMilliSeconds += (int)((illegalEndTime - (new TimeSpan(0, 0, 0)))).TotalMilliseconds;
+                    }
+
+
+                }
+                else
+                {
+                    timeRemainInMilliSeconds = (int)(illegalEndTime - timeSpanNow).TotalMilliseconds;
+                }
+                return false;
+            }
+            return true;
+        }
         #endregion
     }
 }

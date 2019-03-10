@@ -28,8 +28,9 @@ namespace ChargingLibrary
             }
         }
         public Aggregator prp_aggregator { get; set; }
-        public ServiceChargeMobinOneMapfaOld(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon)
-            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon)
+        public ServiceChargeMobinOneMapfaOld(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice, string notifIcon
+            , TimeSpan illegalStartTime, TimeSpan illegalEndTime)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon, illegalStartTime, illegalEndTime)
         {
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {

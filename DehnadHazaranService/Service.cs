@@ -204,14 +204,16 @@ namespace DehnadHazaranService
                 while (!shutdownEvent.WaitOne(0))
                 {
                     ChargingLibrary.SingleChargeThread.SinglechargeInstallmentWorkerThread(TimeSpan.Parse("23:45:00")
-                        , TimeSpan.Parse("07:00:00"), 10043, 8, Properties.Settings.Default.NotifIcon);
+                        , TimeSpan.Parse("07:00:00"), 10043, 8, Properties.Settings.Default.notifIcon
+                        , Properties.Settings.Default.ResetVerySlowCharging
+                        , Properties.Settings.Default.ResetTooSlowCharging);
                 }
             }
             catch (Exception ex)
             {
                 logs.Error("DehnadHazaranService:Service:SinglechargeInstallmentWorkerThread", ex);
                 SharedLibrary.HelpfulFunctions.sb_sendNotification_SingleChargeGang(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical
-                    , (string.IsNullOrEmpty(Properties.Settings.Default.NotifIcon) ? "" : Properties.Settings.Default.NotifIcon)  + "Exception in " + Properties.Settings.Default.ServiceCode + " SinglechargeInstallmentWorkerThread:" + ex.Message);
+                    , (string.IsNullOrEmpty(Properties.Settings.Default.notifIcon) ? "" : Properties.Settings.Default.notifIcon)  + "Exception in " + Properties.Settings.Default.ServiceCode + " SinglechargeInstallmentWorkerThread:" + ex.Message);
             }
             //bool isInMaintenanceTime = false;
             //ServiceChargeMobinOneMapfa serviceChargeMobinOneMapfa;

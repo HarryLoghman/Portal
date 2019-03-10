@@ -158,12 +158,36 @@ namespace DehnadHazaranService.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("👼")]
-        public string NotifIcon {
+        public string notifIcon {
             get {
-                return ((string)(this["NotifIcon"]));
+                return ((string)(this["notifIcon"]));
             }
             set {
-                this["NotifIcon"] = value;
+                this["notifIcon"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ResetVerySlowCharging {
+            get {
+                return ((bool)(this["ResetVerySlowCharging"]));
+            }
+            set {
+                this["ResetVerySlowCharging"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ResetTooSlowCharging {
+            get {
+                return ((bool)(this["ResetTooSlowCharging"]));
+            }
+            set {
+                this["ResetTooSlowCharging"] = value;
             }
         }
     }

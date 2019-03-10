@@ -35,8 +35,14 @@
     <Setting Name="Take" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
-    <Setting Name="NotifIcon" Type="System.String" Scope="User">
+    <Setting Name="notifIcon" Type="System.String" Scope="User">
       <Value Profile="(Default)">👼</Value>
+    </Setting>
+    <Setting Name="ResetVerySlowCharging" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ResetTooSlowCharging" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

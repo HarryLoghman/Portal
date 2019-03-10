@@ -87,7 +87,7 @@ namespace SharedLibrary
                     {
                         SharedVariables.logs.Error("TCL Rate has been exceeded:Request is rejected" + returnValue);
                         SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Reject," + returnValue);
-                        return "TPS Rate has been passed"; ;
+                        return "TPS Rate has been passed";
                     }
 
                 }

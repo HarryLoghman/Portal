@@ -16,8 +16,9 @@ namespace ChargingLibrary
         int v_isCampaignActive = 0;
         int v_isMatchActive = 0;
 
-        public ServiceChargeMTNPorShetab(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice)
-            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, "")
+        public ServiceChargeMTNPorShetab(int serviceId, int tpsService, int maxTries, int cycleNumber, int cyclePrice
+            , TimeSpan illegalStartTime, TimeSpan illegalEndTime)
+            : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, "", illegalStartTime, illegalEndTime)
         {
 
             using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(this.prp_service.ServiceCode))

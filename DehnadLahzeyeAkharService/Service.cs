@@ -197,7 +197,9 @@ namespace DehnadLahzeyeAkharService
             while (!shutdownEvent.WaitOne(0))
             {
                 ChargingLibrary.SingleChargeThread.SinglechargeInstallmentWorkerThread(TimeSpan.Parse("23:45:00")
-                    , TimeSpan.Parse("07:00:00"), 10042, 8, Properties.Settings.Default.NotifIcon);
+                    , TimeSpan.Parse("07:00:00"), 10042, 8, Properties.Settings.Default.NotifIcon
+                    , Properties.Settings.Default.ResetVerySlowCharging
+                    , Properties.Settings.Default.ResetTooSlowCharging);
             }
             }
             catch (Exception ex)

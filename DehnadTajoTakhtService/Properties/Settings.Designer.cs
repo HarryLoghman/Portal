@@ -166,5 +166,29 @@ namespace DehnadTajoTakhtService.Properties {
                 this["notifIcon"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ResetVerySlowCharging {
+            get {
+                return ((bool)(this["ResetVerySlowCharging"]));
+            }
+            set {
+                this["ResetVerySlowCharging"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ResetTooSlowCharging {
+            get {
+                return ((bool)(this["ResetTooSlowCharging"]));
+            }
+            set {
+                this["ResetTooSlowCharging"] = value;
+            }
+        }
     }
 }
