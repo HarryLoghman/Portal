@@ -64,7 +64,7 @@ namespace ChargingLibrary
 
             this.v_tpsTotal = tpsTotal;
             this.v_intervalInMillisecond = 1000.00 / tpsTotal;
-            
+
 
             this.v_turn = 0;
             this.v_ticksPrevious = null;
@@ -385,7 +385,7 @@ namespace ChargingLibrary
         private void sb_notifyLongCharging(string chargingServiceName)
         {
             if (this.v_chargeServices == null || this.v_chargeServices.Count == 0) return;
-            
+
             enum_chargingSpeed chargingSpeed = enum_chargingSpeed.normal;
             int totalRowCount = this.v_chargeServices.Sum(o => o.prp_rowCount);
             double bestSpeed;
@@ -395,16 +395,16 @@ namespace ChargingLibrary
             if (bestSpeed == 0) return;
             TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - this.v_ticksStart);
 
-            if (ts.TotalSeconds < bestSpeed)
+            if (ts.TotalSeconds <= bestSpeed)
                 return;
-            else if (bestSpeed <= ts.TotalSeconds &&
-                ts.TotalSeconds < bestSpeed * (int)enum_chargingSpeed.slow)
+            else if (bestSpeed < ts.TotalSeconds &&
+                ts.TotalSeconds <= bestSpeed * (int)enum_chargingSpeed.slow * 1.2)
             {
                 chargingSpeed = enum_chargingSpeed.slow;
                 return;
             }
-            else if (bestSpeed * (int)enum_chargingSpeed.slow <= ts.TotalSeconds &&
-                ts.TotalSeconds < bestSpeed * (int)enum_chargingSpeed.verySlow)
+            else if (bestSpeed * (int)enum_chargingSpeed.slow * 1.2 < ts.TotalSeconds &&
+                ts.TotalSeconds <= bestSpeed * (int)enum_chargingSpeed.verySlow * 1.2)
             {
                 chargingSpeed = enum_chargingSpeed.verySlow;
             }
@@ -417,7 +417,7 @@ namespace ChargingLibrary
                 + " datetimeNow" + DateTime.Now.ToString("HH:mm:ss.fff")
                 + " rowCount = " + totalRowCount.ToString()
                 + " difference = " + ts.ToString("c")
-                + " bestSpeed="+ bestSpeed.ToString());
+                + " bestSpeed=" + bestSpeed.ToString());
             int? connectionLimit = null;
             ServicePoint sp = this.v_spSettings.GetServicePoint();
             if (sp != null)

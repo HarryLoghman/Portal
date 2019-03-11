@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using SharedLibrary.Models.ServiceModel;
 using SharedLibrary.Models;
 namespace BulkLibrary
 {
@@ -17,7 +18,7 @@ namespace BulkLibrary
         public Sender(vw_servicesServicesInfo service)
         {
             this.prp_service = service;
-            this.v_serviceEntity = new SharedServiceEntities("Shared" + service.databaseName + "Entities");
+            this.v_serviceEntity = new SharedServiceEntities(service.databaseName);
             this.prp_imiChargeKey = this.v_serviceEntity.ImiChargeCodes.Where(o => o.Description == "Free").Select(o => o.ChargeKey).FirstOrDefault();
 
         }
@@ -128,7 +129,7 @@ namespace BulkLibrary
         //    }
         //}
 
-        protected void sb_afterSend(SharedLibrary.Models.EventbaseMessagesBuffer eventbase, bool isSucceeded)
+        protected void sb_afterSend(SharedLibrary.Models.ServiceModel.EventbaseMessagesBuffer eventbase, bool isSucceeded)
         {
 
         }

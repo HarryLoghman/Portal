@@ -113,6 +113,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadFtpSyncAndChargingSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadMonitoringService", "DehnadMonitoringService\DehnadMonitoringService.csproj", "{597727B8-83B2-4A7C-BC37-DF2328FDD2CB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkExecuter", "BulkExecuter\BulkExecuter.csproj", "{1A5E2307-F2A6-4E5A-85F0-CE489CD30577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadBulkService", "DehnadBulkService\DehnadBulkService.csproj", "{4607A7E0-2376-489F-A51F-21324A39DCB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -339,6 +343,14 @@ Global
 		{597727B8-83B2-4A7C-BC37-DF2328FDD2CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{597727B8-83B2-4A7C-BC37-DF2328FDD2CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{597727B8-83B2-4A7C-BC37-DF2328FDD2CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A5E2307-F2A6-4E5A-85F0-CE489CD30577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A5E2307-F2A6-4E5A-85F0-CE489CD30577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A5E2307-F2A6-4E5A-85F0-CE489CD30577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A5E2307-F2A6-4E5A-85F0-CE489CD30577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4607A7E0-2376-489F-A51F-21324A39DCB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4607A7E0-2376-489F-A51F-21324A39DCB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4607A7E0-2376-489F-A51F-21324A39DCB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4607A7E0-2376-489F-A51F-21324A39DCB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BulkLibrary
 {
-    public class EventbaseMessagesBufferExtended : SharedShortCodeServiceLibrary.SharedModel.EventbaseMessagesBuffer
+    public class EventbaseMessagesBufferExtended : SharedLibrary.Models.ServiceModel.EventbaseMessagesBuffer
     {
-        public EventbaseMessagesBufferExtended(SharedShortCodeServiceLibrary.SharedModel.EventbaseMessagesBuffer eventbase)
+        public EventbaseMessagesBufferExtended(SharedLibrary.Models.ServiceModel.EventbaseMessagesBuffer eventbase)
         {
             this.AggregatorId = eventbase.AggregatorId;
             this.Content = eventbase.Content;

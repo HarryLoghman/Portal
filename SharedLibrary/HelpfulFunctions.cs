@@ -338,9 +338,38 @@ namespace SharedLibrary
             }
             return icon;
         }
+        
+            public static void sb_sendNotification_AtomicWarning(StandardEventLevel level, string message)
+        {
+            //string url = "http://84.22.102.27/notif/n4.php";
+
+            string url = "";
+            string icon = "";
+
+            try
+            {
+                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationAtomicWarning);
+                icon = fnc_getNotificationIcon(level);
+                Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                webRequest.Timeout = 60 * 1000;
+
+                //webRequest.Headers.Add("SOAPAction", action);
+                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                webRequest.Accept = "text/xml";
+                webRequest.Method = "Get";
+                WebResponse webResponse = webRequest.GetResponse();
+                webResponse.Close();
+            }
+            catch (Exception e)
+            {
+                logs.Error(e);
+            }
+        }
         public static void sb_sendNotification_SingleChargeGang(StandardEventLevel level, string message)
         {
             //string url = "http://84.22.102.27/notif/n6.php";
+
             string url = "";
             string icon = "";
 
@@ -527,7 +556,9 @@ namespace SharedLibrary
             dehnadBot = 17,
             dehnadNotificationDResuestLog = 18,
             mobinOneSync = 19,
-            MCISync = 20
+            MCISync = 20,
+            dehnadNotificationAtomicWarning = 21,
+
         }
         public static List<Models.ServersIP> fnc_getLocalServers()
         {
@@ -768,6 +799,10 @@ namespace SharedLibrary
                                         return serverIP + "/" + "notif/n5.php?msg=";
                                     case enumServersActions.dehnadNotificationSingleChargeGang:
                                         return serverIP + "/" + "notif/n6.php?msg=";
+                                    case enumServersActions.dehnadNotificationDResuestLog:
+                                        return serverIP + "/" + "notif/n7.php?msg=";
+                                    case enumServersActions.dehnadNotificationAtomicWarning:
+                                        return serverIP + "/" + "notif/n4.php?msg=";
                                 }
                                 break;
                             case enumServers.dehnadAppPortal:

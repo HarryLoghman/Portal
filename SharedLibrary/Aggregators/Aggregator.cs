@@ -234,8 +234,10 @@ namespace SharedLibrary.Aggregators
             return errorDesc;
         }
         #endregion
+
         #region charging
         #endregion
+
         #region sendMessage
 
 

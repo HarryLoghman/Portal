@@ -7,22 +7,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BulkLibrary
+namespace BulkExecuter
 {
-    public class BulkSenderController
+    public class BulkController
     {
         #region properties and variables
         SharedLibrary.Models.ServiceModel.SharedServiceEntities v_sharedServiceEntity;
         SharedLibrary.Models.PortalEntities v_portalEntities;
-        public int prp_bulkId { get; set; }
-        /// <summary>
-        /// tells us how many rows should load in every fetch; 0 means all rows
-        /// </summary>
-        public int prp_readSize { get; set; }
+
         public vw_servicesServicesInfo prp_service { get; set; }
-        public int prp_tps { get; }
-        public virtual int prp_maxTries { get; }
-        public virtual int prp_retryIntervalInSeconds { get; }
+        public SharedLibrary.Models.Bulk v_entryBulk;
+
         public int prp_rowCount { get; set; }
         protected List<SharedLibrary.Models.ServiceModel.EventbaseMessagesBuffer> v_lstEventbase;
         public int prp_rowIndex { get; set; }
@@ -34,61 +29,73 @@ namespace BulkLibrary
         public static int v_taskCount;
         private long v_notifTime;
 
-        public Sender prp_sender { get; }
+        public SharedLibrary.Aggregators.Aggregator prp_aggregator { get; }
         #endregion
 
         #region subs and functions
-        public BulkSenderController(int serviceId, int contentId, int fetchCapacity, int tps, int maxTries, Sender sender)
+        public BulkController(SharedLibrary.Models.Bulk entryBulk)
         {
+            string exceptionStr;
+            if (entryBulk == null)
+            {
+                exceptionStr = "BulkExecuter:BulkControler:BulkControler,entryBulk is not specified";
+                Program.logs.Error(exceptionStr);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, exceptionStr);
+                return;
+            }
+            this.v_entryBulk = entryBulk;
             this.v_portalEntities = new PortalEntities();
             //using (var portal = new SharedLibrary.Models.PortalEntities())
             //{
-            var vw = this.v_portalEntities.vw_servicesServicesInfo.Where(o => o.Id == serviceId).FirstOrDefault();
-            if (vw == null)
+            var entryService = this.v_portalEntities.vw_servicesServicesInfo.Where(o => o.Id == entryBulk.ServiceId).FirstOrDefault();
+            if (entryService == null)
             {
                 this.v_portalEntities.Dispose();
-                throw new Exception("There is no service with serviceId=" + serviceId.ToString());
+                exceptionStr = "BulkExecuter:BulkControler:BulkControler,serviceId is invalid (bulkId=" + entryBulk.Id + ", ServiceId=" + entryBulk.ServiceId + ")";
+                Program.logs.Error(exceptionStr);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, exceptionStr);
             }
             else
             {
-                this.prp_service = vw;
+                this.prp_service = entryService;
             }
+
             //}
-            this.prp_bulkId = contentId;
-            this.prp_readSize = fetchCapacity;
-            this.prp_tps = tps;
-            this.prp_maxTries = maxTries;
-            this.prp_sender = sender;
+
+            this.prp_aggregator = SharedLibrary.SharedVariables.fnc_getAggregator(this.prp_service.aggregatorName);
             this.v_sharedServiceEntity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(this.prp_service.ServiceCode);
         }
 
-        private void sb_fill(bool getRetryOnes)
+        private void sb_fill(bool getFailedOnes)
         {
-            DateTime retryTimeOut = DateTime.Now.AddSeconds(-1 * this.prp_retryIntervalInSeconds);
-            if (!getRetryOnes)
+            DateTime retryTimeOut = DateTime.Now;
+            if (this.v_entryBulk.retryIntervalInSeconds.HasValue)
+                retryTimeOut = DateTime.Now.AddSeconds(-1 * this.v_entryBulk.retryIntervalInSeconds.Value);
+
+            if (!getFailedOnes)
             {
-                if (this.prp_readSize == 0)
-                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.bulkId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
+                if (!this.v_entryBulk.readSize.HasValue || this.v_entryBulk.readSize.Value == 0)
+                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.bulkId == this.v_entryBulk.Id && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
                    && (o.DateLastTried == null) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
                    && (o.RetryCount == null || o.RetryCount == 0)).ToList();
                 else
                 {
-                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
+                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.v_entryBulk.Id && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
                   && (o.DateLastTried == null) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
-                  && (o.RetryCount == null || o.RetryCount == 0)).Take(this.prp_readSize).ToList();
+                  && (o.RetryCount == null || o.RetryCount == 0)).Take(this.v_entryBulk.readSize.Value).ToList();
                 }
             }
             else
             {
-                if (this.prp_readSize == 0)
-                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
+                if (!this.v_entryBulk.readSize.HasValue || this.v_entryBulk.readSize.Value == 0)
+                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.v_entryBulk.Id && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
                    && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
-                   && (o.RetryCount == null || o.RetryCount < this.prp_maxTries)).ToList();
+                   && (o.RetryCount == null || o.RetryCount < this.v_entryBulk.retryCount)).ToList();
                 else
                 {
-                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
+                    this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.v_entryBulk.Id && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
                   && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
-                  && (o.RetryCount == null || o.RetryCount < this.prp_maxTries)).Take(this.prp_readSize).ToList();
+                  && (o.RetryCount == null || o.RetryCount < this.v_entryBulk.retryCount)).Take(this.v_entryBulk.readSize.Value).ToList();
                 }
             }
 
@@ -99,10 +106,10 @@ namespace BulkLibrary
         /// <returns></returns>
         private int fnc_getTotalRowCount()
         {
-            DateTime retryTimeOut = DateTime.Now.AddSeconds(-1 * this.prp_retryIntervalInSeconds);
-            return v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
+            DateTime retryTimeOut = DateTime.Now.AddSeconds(-1 * this.v_entryBulk.retryIntervalInSeconds.Value);
+            return v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.bulkId == this.v_entryBulk.Id && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
            && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
-           && (o.RetryCount == null || o.RetryCount < this.prp_maxTries)).Count();
+           && (o.RetryCount == null || o.RetryCount < this.v_entryBulk.retryCount)).Count();
         }
 
         public virtual void sb_startSending()
@@ -114,7 +121,7 @@ namespace BulkLibrary
             ThreadPoolSettings thread = new ThreadPoolSettings();
             thread.Assign();
 
-            this.v_intervalInMillisecond = 1000.00 / this.prp_tps;
+            this.v_intervalInMillisecond = 1000.00 / this.v_entryBulk.tps;
             this.v_ticksStart = DateTime.Now.Ticks;
             this.v_ticksPrevious = null;
             lock (lockObj) { v_taskCount = 0; }
@@ -167,14 +174,14 @@ namespace BulkLibrary
                         totalRowCount = this.fnc_getTotalRowCount();
                         if (totalRowCount == 0)
                         {
-                            //all rows are processed or their retryCount&gt;maxRetries
+                            //all rows are processed or their retryCount<maxRetries
                             break;
                         }
                         else
                         {
-                            //we have rows that are fully retired
+                            //we have rows that are fully retried
                             //wait till the retry timeout of the rows passed
-                            Thread.Sleep(1000 * this.prp_retryIntervalInSeconds);
+                            Thread.Sleep(1000 * this.v_entryBulk.retryIntervalInSeconds.Value);
                             continue;
                         }
                     }
@@ -201,31 +208,73 @@ namespace BulkLibrary
 
         }
 
+
+        public static bool fnc_canStartSendingList(int bulkId, out string reason, out SharedLibrary.MessageHandler.BulkStatus bulkStatus)
+        {
+            using (var entityPortal = new SharedLibrary.Models.PortalEntities())
+            {
+                var entryBulk = entityPortal.Bulks.Where(o => o.Id == bulkId).FirstOrDefault();
+                reason = "";
+                bulkStatus = SharedLibrary.MessageHandler.BulkStatus.Enabled;
+                if (entryBulk == null)
+                {
+                    reason = "Bulk " + bulkId + " does not exist anymore";
+                }
+                else
+                {
+                    bulkStatus = (SharedLibrary.MessageHandler.BulkStatus)entryBulk.status;
+                    if (entryBulk.startTime > DateTime.Now)
+                    {
+                        reason = bulkId + " startTime is " + entryBulk.startTime.ToString("yyyy-MM-dd HH:mm:ss") + ". Its execution period is not started yet.";
+                    }
+                    else if (entryBulk.endTime < DateTime.Now)
+                    {
+                        reason = "Bulk " + bulkId + " endTime is " + entryBulk.startTime.ToString("yyyy-MM-dd HH:mm:ss") + ". Its execution period is passed.";
+                    }
+                    else
+                    {
+                        if (bulkStatus == SharedLibrary.MessageHandler.BulkStatus.Disabled
+                        || bulkStatus == SharedLibrary.MessageHandler.BulkStatus.FinishedAll
+                        || bulkStatus == SharedLibrary.MessageHandler.BulkStatus.FinishedByTime
+                        || bulkStatus == SharedLibrary.MessageHandler.BulkStatus.Stopped)
+                            reason = "Bulk " + bulkId + " status is " + bulkStatus.ToString();
+                    }
+                }
+            }
+            return string.IsNullOrEmpty(reason);
+
+        }
         private bool fnc_sendList()
         {
+            string exceptionStr = "";
+            SharedLibrary.MessageHandler.BulkStatus bulkStatus;
             for (int i = 0; i <= this.v_lstEventbase.Count - 1; i++)
             {
-                #region checkMonitoringStatus
-                int? bulkStatus = this.v_portalEntities.Bulks.Where(o => o.Id == this.prp_bulkId).Select(o => o.status).FirstOrDefault();
-                if (!bulkStatus.HasValue)
+                #region checkBulkStatus
+                if (i % 1000 == 0)
                 {
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Bulk Status is not specified for bulkId" + this.prp_bulkId.ToString());
-                    return false;
+                    //check status for a thousand process
+                    bool canStart = fnc_canStartSendingList(this.v_entryBulk.Id, out exceptionStr, out bulkStatus);
+                    if (!canStart)
+                    {
+                        exceptionStr = "BulkExecuter:BulkController:fnc_sendList," + exceptionStr;
+                        Program.logs.Error(exceptionStr);
+                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, exceptionStr);
+                        return false;
+                    }
+                    while (bulkStatus == SharedLibrary.MessageHandler.BulkStatus.Paused)
+                    {
+                        exceptionStr = "";
+                        canStart = fnc_canStartSendingList(this.v_entryBulk.Id, out exceptionStr, out bulkStatus);
+                        if (!canStart)
+                        {
+                            exceptionStr = "BulkExecuter:BulkController:fnc_sendList,inner while " + exceptionStr;
+                            Program.logs.Error(exceptionStr);
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, exceptionStr);
+                            return false;
+                        }
+                    }
                 }
-                if (bulkStatus == (int)SharedLibrary.MessageHandler.BulkStatus.Disabled
-                     || bulkStatus == (int)SharedLibrary.MessageHandler.BulkStatus.FinishedAll
-                      || bulkStatus == (int)SharedLibrary.MessageHandler.BulkStatus.FinishedByTime
-                      || bulkStatus == (int)SharedLibrary.MessageHandler.BulkStatus.Stopped)
-                {
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Bulk Status =" + ((SharedLibrary.MessageHandler.BulkStatus)bulkStatus).ToString()
-                        + " for bulkId" + this.prp_bulkId.ToString());
-                    return false;
-                }
-                while (bulkStatus == (int)SharedLibrary.MessageHandler.BulkStatus.Paused)
-                {
-                    bulkStatus = this.v_sharedServiceEntity.MessagesMonitorings.Where(o => o.ContentId == this.prp_bulkId).Select(o => o.Status).FirstOrDefault();
-                }
-
                 #endregion
 
                 #region throttle request
@@ -247,12 +296,15 @@ namespace BulkLibrary
                 #endregion
 
                 DateTime timeStart = DateTime.Now;
-                while (v_taskCount == this.prp_tps)
+                while (v_taskCount == this.v_entryBulk.tps)
                 {
-                    //if all created tasks are in process. wait till one of them stops and we have free thread
+                    //if all created tasks are in process, wait till one of them stops and we have free thread
                 }
-                EventbaseMessagesBufferExtended eventbase = new EventbaseMessagesBufferExtended(this.v_lstEventbase[i]);
-                this.prp_sender.sb_send(eventbase);
+                //EventbaseMessagesBufferExtended eventbase = new EventbaseMessagesBufferExtended(this.v_lstEventbase[i]);
+                this.prp_aggregator.sb_sendMessage(this.prp_service, this.v_lstEventbase[i].Id
+                    , this.v_lstEventbase[i].MobileNumber, SharedLibrary.MessageHandler.MessageType.EventBase
+                    , this.v_entryBulk.retryCount.Value, this.v_lstEventbase[i].Content, DateTime.Now, null, this.v_lstEventbase[i].ImiChargeKey);
+
                 DateTime timeEnd = DateTime.Now;
                 TimeSpan span2 = timeEnd - (this.v_ticksPrevious.HasValue ? (new DateTime(this.v_ticksPrevious.Value)) : timeEnd);
                 this.v_ticksPrevious = DateTime.Now.Ticks;

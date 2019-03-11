@@ -859,13 +859,13 @@ namespace SharedLibrary
 
         public enum BulkStatus
         {
-            Enabled,
-            Disabled,
-            Stopped,
-            Paused,
-            Running,
-            FinishedByTime,
-            FinishedAll
+            Enabled=1,
+            Disabled=0,
+            Stopped=2,
+            Paused=3,
+            Running=4,
+            FinishedByTime=5,
+            FinishedAll=6
         }
 
         public enum BulkFileType

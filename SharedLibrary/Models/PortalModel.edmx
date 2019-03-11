@@ -141,15 +141,15 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="bulkName" Type="nvarchar" MaxLength="100" />
-          <Property Name="ServiceId" Type="bigint" />
-          <Property Name="tps" Type="int" />
-          <Property Name="startTime" Type="datetime" />
-          <Property Name="endTime" Type="datetime" />
-          <Property Name="message" Type="nvarchar" MaxLength="4000" />
+          <Property Name="bulkName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="tps" Type="int" Nullable="false" />
+          <Property Name="startTime" Type="datetime" Nullable="false" />
+          <Property Name="endTime" Type="datetime" Nullable="false" />
+          <Property Name="message" Type="nvarchar" MaxLength="4000" Nullable="false" />
           <Property Name="readSize" Type="int" />
           <Property Name="retryCount" Type="int" />
-          <Property Name="retryTimeoutInSeconds" Type="int" />
+          <Property Name="retryIntervalInSeconds" Type="int" />
           <Property Name="TotalMessages" Type="int" />
           <Property Name="TotalSuccessfullySent" Type="int" />
           <Property Name="TotalFailed" Type="int" />
@@ -157,7 +157,7 @@
           <Property Name="TotalRetryUnique" Type="int" />
           <Property Name="TotalDelivery" Type="int" />
           <Property Name="BulkFile" Type="nvarchar" MaxLength="1000" />
-          <Property Name="status" Type="int" />
+          <Property Name="status" Type="int" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" />
           <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" />
           <Property Name="Tag" Type="int" />
@@ -1952,15 +1952,15 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="bulkName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceId" Type="Int64" />
-          <Property Name="tps" Type="Int32" />
-          <Property Name="startTime" Type="DateTime" Precision="3" />
-          <Property Name="endTime" Type="DateTime" Precision="3" />
-          <Property Name="message" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="bulkName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="tps" Type="Int32" Nullable="false" />
+          <Property Name="startTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="endTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="message" Type="String" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="true" />
           <Property Name="readSize" Type="Int32" />
           <Property Name="retryCount" Type="Int32" />
-          <Property Name="retryTimeoutInSeconds" Type="Int32" />
+          <Property Name="retryIntervalInSeconds" Type="Int32" />
           <Property Name="TotalMessages" Type="Int32" />
           <Property Name="TotalSuccessfullySent" Type="Int32" />
           <Property Name="TotalFailed" Type="Int32" />
@@ -1968,7 +1968,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="TotalRetryUnique" Type="Int32" />
           <Property Name="TotalDelivery" Type="Int32" />
           <Property Name="BulkFile" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="Int32" />
+          <Property Name="status" Type="Int32" Nullable="false" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Tag" Type="Int32" />
@@ -2723,7 +2723,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
                 <ScalarProperty Name="TotalSuccessfullySent" ColumnName="TotalSuccessfullySent" />
                 <ScalarProperty Name="TotalMessages" ColumnName="TotalMessages" />
-                <ScalarProperty Name="retryTimeoutInSeconds" ColumnName="retryTimeoutInSeconds" />
+                <ScalarProperty Name="retryIntervalInSeconds" ColumnName="retryIntervalInSeconds" />
                 <ScalarProperty Name="retryCount" ColumnName="retryCount" />
                 <ScalarProperty Name="readSize" ColumnName="readSize" />
                 <ScalarProperty Name="message" ColumnName="message" />

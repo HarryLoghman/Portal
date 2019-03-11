@@ -405,6 +405,11 @@ namespace Portal.Controllers
             string result = "";
             bool resultOk = true;
             string receivedPayload = await Request.Content.ReadAsStringAsync();
+            string msisdn = "";
+            string sid = "";
+            string shortcode = "";
+            string keyword = "";
+            string event_type = "";
             try
             {
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current, null, null, "Portal:MciController:Notify");
@@ -421,11 +426,11 @@ namespace Portal.Controllers
                     XmlNodeList nodes = xml.SelectNodes("/notifications/notification");
                     foreach (XmlNode node in nodes)
                     {
-                        var msisdn = node.SelectSingleNode("msisdn").InnerText;
-                        var sid = node.SelectSingleNode("sid").InnerText;
-                        var shortcode = node.SelectSingleNode("shortcode").InnerText;
-                        var keyword = node.SelectSingleNode("keyword").InnerText;
-                        var event_type = node.SelectSingleNode("event-type").InnerText;
+                        msisdn = node.SelectSingleNode("msisdn").InnerText;
+                        sid = node.SelectSingleNode("sid").InnerText;
+                        shortcode = node.SelectSingleNode("shortcode").InnerText;
+                        keyword = node.SelectSingleNode("keyword").InnerText;
+                        event_type = node.SelectSingleNode("event-type").InnerText;
                         if (event_type == "1.1" || event_type == "1.2")
                         {
                             var messageObj = new SharedLibrary.Models.MessageObject();
@@ -453,7 +458,8 @@ namespace Portal.Controllers
             {
                 //logs.Error("MCI Controller Exception in Notify: " + e);
                 //result = string.Format(@"<response>    <status>{0}</status>  <description>{1}</description > </response>", 400, "Error");
-                logs.Error("Portal:MciController:Notify", e);
+                logs.Error("Portal:MciController:Notify,msisdn:" + msisdn + ",sid:" + sid + ",shortCode:" + shortcode
+                    + ",keyword:" + keyword + ",event_type:" + event_type, e);
                 resultOk = false;
                 //result = e.Message;
                 result = "Exception has been occured!!! Contact Administrator";

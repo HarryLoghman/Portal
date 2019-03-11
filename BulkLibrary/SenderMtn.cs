@@ -33,61 +33,14 @@ namespace BulkLibrary
 
         internal virtual void sb_sendMessageToMtnWithOutThread(EventbaseMessagesBufferExtended eventbase)
         {
-            //PorShetabLibrary.Models.Singlecharge singlecharge;
-            #region prepare Request
-            //var url = "http://92.42.55.180:8310" + "/SendSmsService/services/SendSms";
-            var url = this.v_url;
-            var urlDelivery = this.v_urlDelivery;
-            //var timeStamp = SharedLibrary.Date.MTNTimestamp(DateTime.Now);
-            string payload = SharedLibrary.Aggregators.MTN.CreateBodyStringForMessage(this.prp_service.AggregatorServiceId
-                ,this.prp_service.ShortCode
-                , eventbase.MobileNumber, eventbase.Content, eventbase.DateAddedToQueue);
-            #endregion
-
-            try
-            {
-                eventbase.prp_IsSucceeded = false;
-                eventbase.prp_payload = payload;
-                eventbase.prp_resultDescription = null;
-                eventbase.prp_url = url;
-                sendPostAsync(eventbase);
-            }
-            catch (Exception e)
-            {
-                //Program.logs.Info(this.prp_service.ServiceCode + " : " + payload);
-                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in SendMessageToMTNSubscriber: ", e);
-                eventbase.prp_resultDescription = e.Message + "\r\n" + e.StackTrace;
-                eventbase.prp_IsSucceeded = false;
-                this.sb_saveResponseToDB(eventbase);
-            }
+          
 
         }
 
         internal void sendPostAsync(EventbaseMessagesBufferExtended eventbase)
         {
 
-            try
-            {
-                HttpWebRequest webRequest = SharedLibrary.Aggregators.MTN.CreateWebRequestWithoutBody(eventbase.prp_url);
-                //Uri uri = new Uri(eventbase.prp_url, UriKind.Absolute);
-                //HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
-                //webRequest.Timeout = 60 * 1000;
-
-                ////webRequest.Headers.Add("SOAPAction", action);
-                //webRequest.ContentType = "text/xml;charset=\"utf-8\"";
-                //webRequest.Accept = "text/xml";
-                //webRequest.Method = "POST";
-
-                webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, eventbase });
-            }
-            catch (Exception ex)
-            {
-                Program.logs.Error(this.prp_service.ServiceCode + " : Exception in SendPostAsync: ", ex);
-                eventbase.prp_resultDescription = ex.Message + "\r\n" + ex.StackTrace;
-                eventbase.prp_IsSucceeded = false;
-                eventbase.ReferenceId = null;
-                this.sb_saveResponseToDB(eventbase);
-            }
+          
         }
 
         private void GetRequestStreamCallBack(IAsyncResult parameters)

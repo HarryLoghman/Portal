@@ -49,7 +49,7 @@ namespace BulkLibrary
             string json = SharedLibrary.MessageHandler.CreateTelepromoJsonString(this.v_userName, this.v_password
                                 , this.prp_service.OperatorServiceId, this.prp_service.ShortCode, eventbase
                                 , description, "", "0", "RLS", "1"
-                                , this.prp_service.ServiceName);
+                                , this.prp_service.serviceName);
             
             #endregion
 
