@@ -9,7 +9,7 @@ using System.Net;
 
 namespace BulkExecuter
 {
-    class ServicePointSettings : ConfigurationSection
+    public class ServicePointSettings : ConfigurationSection
     {
 
         private static ServicePointSettings settings = ConfigurationManager.GetSection("ServicePointSettings") as ServicePointSettings;

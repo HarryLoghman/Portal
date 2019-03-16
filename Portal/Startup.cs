@@ -1,5 +1,7 @@
 ﻿using Microsoft.Owin;
 using Owin;
+using Microsoft.AspNet.SignalR;
+using RealTimeProgressBar;
 
 [assembly: OwinStartupAttribute(typeof(Portal.Startup))]
 namespace Portal
@@ -9,6 +11,7 @@ namespace Portal
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
         }
     }
 }

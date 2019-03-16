@@ -329,7 +329,7 @@ namespace SharedShortCodeServiceLibrary
             {
                 //var url = "http://10.20.9.159:8600" + "/samsson-sdp/transfer/charge?";
                 //var url = "http://10.20.9.135:8600" + "/samsson-sdp/transfer/charge?";
-                var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.charge);
+                var url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.telepromo, SharedLibrary.HelpfulFunctions.enumServersActions.charge);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];

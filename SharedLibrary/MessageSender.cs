@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
+
 namespace SharedLibrary
 {
     public class MessageSender
@@ -140,7 +141,7 @@ namespace SharedLibrary
                         return;
 
                     //var url = telepromoIp + "/samsson-sdp/transfer/send?";
-                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.sendmessage);
+                    var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.sendmessage);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -232,7 +233,7 @@ namespace SharedLibrary
                         return;
 
                     //var url = telepromoIpJSON + "/samsson-gateway/sendmessage/";
-                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.sendmessage);
+                    var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.sendmessage);
                     var username = "dehnad";
                     var password = "D4@Hn!";
                     var operatorServiceId = serviceAdditionalInfo["OperatorServiceId"];
@@ -390,7 +391,7 @@ namespace SharedLibrary
                         return;
 
                     //var url = telepromoIp + "/samsson-sdp/jtransfer/qsend?";
-                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.bulk);
+                    var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.bulk);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -494,7 +495,7 @@ namespace SharedLibrary
                 try
                 {
                     //var url = telepromoIp + "/samsson-sdp/transfer/charge?";
-                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.charge);
+                    var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.charge);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -557,7 +558,7 @@ namespace SharedLibrary
             try
             {
                 //var url = telepromoIp + "/samsson-sdp/pin/generate?";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpRequest);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpRequest);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -628,7 +629,7 @@ namespace SharedLibrary
             try
             {
                 //var url = telepromoIpJSON + "/samsson-gateway/otp-generation/";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.otpRequest);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.otpRequest);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var username = "dehnad";
                 var password = "D4@Hn!";
@@ -768,7 +769,7 @@ namespace SharedLibrary
             try
             {
                 //var url = telepromoIp + "/samsson-sdp/pin/confirm?";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpConfirm);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpConfirm);
                 var sc = "Dehnad";
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
@@ -825,7 +826,7 @@ namespace SharedLibrary
             try
             {
                 //var url = telepromoIpJSON + "/samsson-gateway/otp-confirmation/";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.otpConfirm);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromoJson, HelpfulFunctions.enumServersActions.otpConfirm);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var username = "dehnad";
                 var password = "D4@Hn!";
@@ -1912,7 +1913,7 @@ namespace SharedLibrary
                 int rialedPrice = message.Price.Value * 10;
                 var referenceCode = Guid.NewGuid().ToString();
                 //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
                 string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
         , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
                 try
@@ -2248,7 +2249,7 @@ namespace SharedLibrary
 
                     var content = new FormUrlEncodedContent(values);
                     //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/AddPhone/{0}", message.MobileNumber);
-                    var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpRequest), message.MobileNumber);
+                    var url = string.Format(HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpRequest), message.MobileNumber);
                     var response = await client.PostAsync(url, content);
                     if (response.IsSuccessStatusCode)
                     {
@@ -2315,7 +2316,7 @@ namespace SharedLibrary
 
                     var content = new FormUrlEncodedContent(values);
                     //var url = string.Format("https://www.tci.ir/api/v1/GuestMode/Verify/{0}/{1}", message.Token, message.ConfirmCode);
-                    var url = string.Format(HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpConfirm), message.Token, message.ConfirmCode);
+                    var url = string.Format(HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.SamssonTci, HelpfulFunctions.enumServersActions.otpConfirm), message.Token, message.ConfirmCode);
                     var response = await client.PostAsync(url, content);
                     var responseString = await response.Content.ReadAsStringAsync();
                     logs.Info(responseString);
@@ -2361,7 +2362,7 @@ namespace SharedLibrary
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
                 //var url = mciIp + "/apigw/charging/pushotp";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpRequest);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpRequest);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 var rnd = new Random();
                 var refrenceCode = rnd.Next(100000000, 999999999).ToString();
@@ -2442,7 +2443,7 @@ namespace SharedLibrary
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                 var serviceId = serviceAdditionalInfo["serviceId"];
                 //var url = mciIp + "/apigw/charging/chargeotp";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpConfirm);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpConfirm);
                 var mobileNumber = "98" + message.MobileNumber.TrimStart('0');
                 string otpIds = singlecharge.ReferenceId;
                 var optIdsSplitted = otpIds.Split('_');
@@ -2498,7 +2499,7 @@ namespace SharedLibrary
                         return;
 
                     //var url = telepromoPardisIp + "/samsson-gateway/sendmessagepardis/";
-                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.sendmessage);
+                    var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.sendmessage);
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
@@ -2600,7 +2601,7 @@ namespace SharedLibrary
             try
             {
                 //var url = telepromoPardisIp + "/samsson-gateway/otp-generationpardis/";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.otpRequest);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.otpRequest);
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
                 var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
@@ -2666,7 +2667,7 @@ namespace SharedLibrary
             try
             {
                 //var url = telepromoPardisIp + "/samsson-gateway/otp-confirmationpardis/";
-                var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.otpConfirm);
+                var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.TelepromoMapfa, HelpfulFunctions.enumServersActions.otpConfirm);
                 var username = serviceAdditionalInfo["username"];
                 var password = serviceAdditionalInfo["password"];
                 var shortcode = "98" + serviceAdditionalInfo["shortCode"];

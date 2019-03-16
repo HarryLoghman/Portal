@@ -362,7 +362,7 @@ namespace ChargingLibrary
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = new SqlConnection(Program.v_cnnStr);
+                cmd.Connection = new SqlConnection(SharedLibrary.SharedVariables.v_cnnStr);
 
                 cmd.CommandText = "insert into " + this.prp_service.databaseName + ".dbo.singleCharge "
                              + "(MobileNumber, ReferenceId, DateCreated, PersianDateCreated, Price, IsSucceeded, Description, IsApplicationInformed, InstallmentId"
@@ -407,7 +407,7 @@ namespace ChargingLibrary
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = new SqlConnection(Program.v_cnnStr);
+                cmd.Connection = new SqlConnection(SharedLibrary.SharedVariables.v_cnnStr);
 
                 cmd.CommandText = "insert into " + this.prp_service.databaseName + ".dbo.singleChargeTiming "
                              + "(cycleNumber, loopNo, threadNumber, mobileNumber, guid, timeCreate, timeStartProcessMtnInstallment, timeAfterEntity, timeAfterWhere "

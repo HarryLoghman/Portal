@@ -15,8 +15,8 @@ namespace BulkLibrary
         string v_urlDelivery;
         public SenderMCI(SharedLibrary.Models.vw_servicesServicesInfo service) : base(service)
         {
-            this.v_url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
-            this.v_urlDelivery = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
+            this.v_url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
+            this.v_urlDelivery = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMCIDelivery);
         }
         public override void sb_send(EventbaseMessagesBufferExtended eventbase)
         {

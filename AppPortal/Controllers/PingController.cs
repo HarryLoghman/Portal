@@ -42,7 +42,7 @@ namespace Portal.Controllers
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Tamly500", "Telepromo");
                     //var telepromoIp = SharedLibrary.MessageSender.telepromoIp;
                     //var url = telepromoIp + "/samsson-sdp/transfer/send?";
-                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.sendmessage);
+                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.sendmessage);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -119,7 +119,7 @@ namespace Portal.Controllers
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Tamly500", "Telepromo");
                     //var telepromoIp = SharedLibrary.MessageSender.telepromoIp;
                     //var url = telepromoIp + "/samsson-sdp/pin/generate?";
-                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpRequest);
+                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.telepromo, HelpfulFunctions.enumServersActions.otpRequest);
                     var sc = "Dehnad";
                     var username = serviceAdditionalInfo["username"];
                     var password = serviceAdditionalInfo["password"];
@@ -191,7 +191,7 @@ namespace Portal.Controllers
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("Soraty", "MciDirect");
                     //var mciIp = SharedLibrary.MessageSender.mciIp;
                     //var url = mciIp + "/parlayxsmsgw/services/SendSmsService";
-                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.sendmessage);
+                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.sendmessage);
                     var shortcode = "98" + serviceAdditionalInfo["shortCode"];
                     var aggregatorServiceId = serviceAdditionalInfo["aggregatorServiceId"];
                     var serviceId = serviceAdditionalInfo["serviceId"];
@@ -292,7 +292,7 @@ namespace Portal.Controllers
                     var serviceId = serviceAdditionalInfo["serviceId"];
                     //var mciIp = SharedLibrary.MessageSender.mciIp;
                     //var url = mciIp + "/apigw/charging/pushotp";
-                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpRequest);
+                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MCI, HelpfulFunctions.enumServersActions.otpRequest);
                     var message = new SharedLibrary.Models.MessageObject();
                     message.Price = 0;
                     message.MobileNumber = "09900000000";
@@ -689,7 +689,7 @@ namespace Portal.Controllers
                     result.time = 0;
                     var serviceAdditionalInfo = SharedLibrary.ServiceHandler.GetAdditionalServiceInfoForSendingMessage("TahChin", "MTN");
                     //var url = SharedLibrary.MessageSender.irancellIp + "/SendSmsService/services/SendSms";
-                    var url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.sendmessage);
+                    var url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.sendmessage);
                     var username = serviceAdditionalInfo["username"];
                     var serviceId = serviceAdditionalInfo["serviceId"];
                     using (var client = new HttpClient())
@@ -769,7 +769,7 @@ namespace Portal.Controllers
                     int rialedPrice = 0;
                     var referenceCode = Guid.NewGuid().ToString();
                     //var url = "http://92.42.55.180:8310" + "/AmountChargingService/services/AmountCharging";
-                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
+                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
                     string payload = string.Format(@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:loc=""http://www.csapi.org/schema/parlayx/payment/amount_charging/v2_1/local"">      <soapenv:Header>         <RequestSOAPHeader xmlns=""http://www.huawei.com.cn/schema/common/v2_1"">            <spId>{6}</spId>  <serviceId>{5}</serviceId>             <timeStamp>{0}</timeStamp>   <OA>{1}</OA> <FA>{1}</FA>        </RequestSOAPHeader>       </soapenv:Header>       <soapenv:Body>          <loc:{4}>             <loc:endUserIdentifier>{1}</loc:endUserIdentifier>             <loc:charge>                <description>charge</description>                <currency>IRR</currency>                <amount>{2}</amount>                </loc:charge>              <loc:referenceCode>{3}</loc:referenceCode>            </loc:{4}>          </soapenv:Body></soapenv:Envelope>"
         , timeStamp, mobile, rialedPrice, referenceCode, charge, serviceAdditionalInfo["aggregatorServiceId"], spId);
 

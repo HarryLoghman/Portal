@@ -29,7 +29,7 @@ namespace DehnadReceiveProcessorService
     , serviceInfo.AggregatorServiceId, timeStamp, serviceInfo.ShortCode, spId);
 
                     //string url = "http://92.42.55.180:8310/ReceiveSmsService/services/ReceiveSms/getReceivedSmsRequest";
-                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNGetReceivedSms);
+                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNGetReceivedSms);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var client = new HttpClient())

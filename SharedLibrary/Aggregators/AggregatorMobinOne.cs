@@ -21,7 +21,7 @@ namespace SharedLibrary.Aggregators
         public AggregatorMobinOne(bool addErrorDescription)
             : base(addErrorDescription)
         {
-            this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.mobinOne, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
+            this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.mobinOne, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
             this.prp_url_delivery = "";
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {
@@ -47,8 +47,9 @@ namespace SharedLibrary.Aggregators
             return webRequest;
         }
 
-        internal override string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service, SharedLibrary.MessageHandler.MessageType messageType, string mobileNumber, string messageContent, DateTime dateTimeCorrelator
-            , int? price, string imiChargeKey)
+        internal override string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service
+            , SharedLibrary.MessageHandler.MessageType messageType, string mobileNumber, string messageContent, DateTime dateTimeCorrelator
+            , int? price, string imiChargeKey, bool useBulk)
         {
             string shortCode = service.ShortCode;
             //DateTime dateTimeCorrelator = request.prp_dateTimeCorrelator;
@@ -68,9 +69,12 @@ namespace SharedLibrary.Aggregators
             string serviceKey = service.AggregatorServiceId;
             string type = "mt";
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!type == bulk does not work on testing the service!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //if (messageType == SharedLibrary.MessageHandler.MessageType.EventBase)
-            //    type = "bulk";
+            if (messageType == SharedLibrary.MessageHandler.MessageType.EventBase
+                 && useBulk)
+                type = "bulk";
             string chargeKey;
+            if (!price.HasValue)
+                price = 0;
             if (price == 0)
                 chargeKey = "";
             else

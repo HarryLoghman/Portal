@@ -19,7 +19,7 @@ namespace BulkLibrary
 
         public SenderTelepromo(SharedLibrary.Models.vw_servicesServicesInfo service) : base(service)
         {
-            this.v_url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.telepromoJson, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
+            this.v_url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.telepromoJson, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
             //this.v_urlDelivery = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCI, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadt);
             this.v_userName = "dehnad";
             this.v_password = "D4@Hn!";

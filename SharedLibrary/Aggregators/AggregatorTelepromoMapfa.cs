@@ -22,7 +22,7 @@ namespace SharedLibrary.Aggregators
         public AggregatorTelepromoMapfa(bool addErrorDescription)
             : base(addErrorDescription)
         {
-            this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.TelepromoMapfa, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
+            this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.TelepromoMapfa, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
             this.prp_url_delivery = "";
 
             using (var portal = new SharedLibrary.Models.PortalEntities())
@@ -52,7 +52,7 @@ namespace SharedLibrary.Aggregators
         }
 
         internal override string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service, SharedLibrary.MessageHandler.MessageType messageType, string mobileNumber, string messageContent, DateTime dateTimeCorrelator
-            , int? price, string imiChargeKey)
+            , int? price, string imiChargeKey, bool useBulk)
         {
             string shortCode = service.ShortCode;
             if (!shortCode.StartsWith("98"))

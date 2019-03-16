@@ -2808,7 +2808,7 @@ namespace Portal.Controllers
                         sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
                         //var url = string.Format(@"http://92.42.51.91/CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}"
                         //                        , timestampParam, requestIdParam, pageNo, callBackParam, sign, modeParam);
-                        var url = string.Format(SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTNGet, SharedLibrary.HelpfulFunctions.enumServersActions.MTNOtpGet)
+                        var url = string.Format(SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MTNGet, SharedLibrary.HelpfulFunctions.enumServersActions.MTNOtpGet)
                                                 , timestampParam, requestIdParam, pageNo, callBackParam, sign, modeParam);
                         result.Status = "Success";
                         result.uuid = requestIdParam;
@@ -2883,7 +2883,7 @@ namespace Portal.Controllers
                         sign = SharedLibrary.HelpfulFunctions.IrancellSignatureGenerator(authKey, cpId, serviceInfo.AggregatorServiceId, price, timestampParam, requestIdParam);
                         //var url = string.Format(@"http://92.42.51.91/CGGateway/UnSubscribe.aspx?Timestamp={0}&RequestID={1}&CpCode={2}&Callback={3}&Sign={4}&mode={5}"
                         //                        , timestampParam, requestIdParam, cpId, callBackParam, sign, modeParam);
-                        var url = string.Format(SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTNGet, SharedLibrary.HelpfulFunctions.enumServersActions.MTNUnsubGet)
+                        var url = string.Format(SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MTNGet, SharedLibrary.HelpfulFunctions.enumServersActions.MTNUnsubGet)
                                                 , timestampParam, requestIdParam, cpId, callBackParam, sign, modeParam);
                         result.Status = "Success";
                         result.uuid = requestIdParam;

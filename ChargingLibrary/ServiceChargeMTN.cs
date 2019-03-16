@@ -19,7 +19,7 @@ namespace ChargingLibrary
             , TimeSpan illegalStartTime, TimeSpan illegalEndTime)
             : base(serviceId, tpsService, maxTries, cycleNumber, cyclePrice, notifIcon, illegalStartTime, illegalEndTime)
         {
-            this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
+            this.v_url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.MTN, HelpfulFunctions.enumServersActions.charge);
         }
 
         public override void sb_charge(ServiceHandler.SubscribersAndCharges subscriber

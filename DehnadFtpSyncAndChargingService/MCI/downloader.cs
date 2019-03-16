@@ -17,7 +17,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
         public downloader()
         {
             string userName, pwd;
-            ServerUrl = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MCIFtpSync, SharedLibrary.HelpfulFunctions.enumServersActions.MCISync, out userName , out pwd);
+            ServerUrl = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MCIFtpSync, SharedLibrary.HelpfulFunctions.enumServersActions.MCISync, out userName , out pwd);
             Uri uri = new Uri(ServerUrl);
             ServerIP = uri.Host;
 

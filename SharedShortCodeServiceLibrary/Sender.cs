@@ -72,7 +72,7 @@ namespace SharedShortCodeServiceLibrary
                     {
                         this.v_aggregator.sb_sendMessage(this.v_service, message.Id, message.MobileNumber
                             , SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageSender.retryCountMax
-                            , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
+                            , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount, null);
 
                     }
                     while (this.v_messageCount > 0)
@@ -90,7 +90,7 @@ namespace SharedShortCodeServiceLibrary
                         {
                             this.v_aggregator.sb_sendMessage(this.v_service, message.Id, message.MobileNumber
                                 , SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageSender.retryCountMax
-                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
+                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount, null);
 
                         }
                         while (this.v_messageCount > 0)
@@ -105,7 +105,7 @@ namespace SharedShortCodeServiceLibrary
                         {
                             this.v_aggregator.sb_sendMessage(this.v_service, message.Id, message.MobileNumber
                                 , SharedLibrary.MessageHandler.MessageType.EventBase, SharedLibrary.MessageSender.retryCountMax
-                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
+                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount, null);
 
                         }
                         while (this.v_messageCount > 0)

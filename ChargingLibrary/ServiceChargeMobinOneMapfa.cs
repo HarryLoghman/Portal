@@ -55,7 +55,7 @@ namespace ChargingLibrary
                 }
                 this.v_pardisShortCode = entryPardisShortCode.PardisServiceId;
             }
-            this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.mobinOneMapfa, HelpfulFunctions.enumServersActions.charge);
+            this.v_url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.mobinOneMapfa, HelpfulFunctions.enumServersActions.charge);
 
         }
 

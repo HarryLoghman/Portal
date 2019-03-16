@@ -9,7 +9,7 @@ namespace SharedLibrary
     public class SharedVariables
     {
         public static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        public static string v_cnnStr = "Data source =.; initial catalog = portal; integrated security = True; max pool size=4000; multipleactiveresultsets=True;connection timeout=180 ;";
         static Aggregators.AggregatorMCI v_aggregatorMCI;
         public static Aggregators.AggregatorMCI prp_aggregatorMCI
         {

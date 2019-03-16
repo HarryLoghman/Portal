@@ -1,8 +1,158 @@
 ﻿
 @{
     ViewBag.Title = "بالکها";
+    if (TempData["message"] != null)
+    {
+        <script type="text/javascript">
+            alert(@Html.Raw(Json.Encode(TempData["message"])));
+        </script>
+    }
 }
+@{
+    List<object> values = new List<object>();
 
-<button id="newUser" class="k-primary k-button" style="width: 10%;margin-right:10px" onclick="window.location = '/Account/Register';"><span>تعریف Bulk جدید</span></button>
+    foreach (var value in Enum.GetValues(typeof(SharedLibrary.MessageHandler.BulkStatus)))
+    {
+        values.Add(new
+        {
+
+            text = value.ToString(),
+            value = ((int)value).ToString()
+        });
+    }
+
+}
+@Html.AntiForgeryToken()
+@Html.ValidationSummary("", new { @class = "text-danger", style = "color:red" })
+<button id="newBulk" class="k-primary k-button" style="width: 10%;margin-right:10px" onclick="window.location = '/Tools/Bulks/Bulks_Edit';"><span>تعریف Bulk جدید</span></button>
 <div class="k-rtl" id="grid"></div>
+<script>
+
+    $("#grid").kendoGrid({
+
+        columns: [
+            { field: "Id", title: "شناسه" },
+            { field: "bulkName", title: "عنوان" },
+            { field: "serviceName", title: "سرویس" },
+            { field: "ServiceId", title: "شناسه سرویس", hidden:true},
+            { field: "tps", title: "tps" },
+            { field: "startTime", title: "زمان شروع" },
+            { field: "endTime", title: "زمان پایان"},
+            { field: "message", title: "پیام" },
+            { field: "TotalMessages", title: "تعداد کل" },
+            { field: "TotalSuccessfullySent", title: "موفق" },
+            { field: "TotalFailed", title: " ناموفق" },
+            { field: "TotalDelivery", title: "Delivery" },
+            { field: "status", title: "وضعیت", values: @(Html.Raw(Json.Encode(values))) },
+            {
+                command: [{ name: "myEdit", iconClass:"k-icon k-edit",text:" ", click:redirectToEdit},"destroy"
+                ], width: 100
+            },
+
+        ],
+        dataSource: {
+            error: function (e) { grid_error_handler(e) },
+            requestEnd: function (e) { if (e.type == "destroy" && !e.response.Errors)alert('حذف انجام شد');},
+            type: "aspnetmvc-ajax",
+            transport: {
+                read: {
+                    url: "Bulks/Bulks_Read",
+                    type: "POST"
+                },
+                destroy: {
+                    url: "Bulks/Bulks_Delete",
+                    type: "POST",
+                    complete: function (e) {
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    },
+
+
+                },
+            },
+            schema: {
+                data: "Data",
+                total: "Total",
+                errors: "Errors",
+                model: {
+                    id: "Id",
+                    fields: {
+                        Id: { type: "text", editable: false },
+                    },
+
+                }
+            },
+
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 10,
+            serverPaging: true,
+            sort: [
+                { field: "startTime", dir: "asc" }
+            ],
+
+        },
+        columnMenu: true,
+        editable: {
+               
+            mode: "inline",
+            window: {
+                title: "ویرایش",
+                width: 500
+            },
+
+            confirmation: "آیا می خواهید این ‌Bulk را حذف کنید؟ توجه داشته باشید با حذف یک Bulk تمامی پیامهای مرتبط با آن حذف می شوند",
+        },
+        pageable: {
+            refresh: true,
+            pageSizes: [10, 25, 50, 100],
+            buttonCount: 10,
+            input: true
+        },
+        navigatable: true,
+        selectable: "single row",
+        sortable: {
+            mode: "multiple",
+            allowUnsort: false
+        },
+        filterable: true,
+        scrollable: false,
+
+
+    });
+
+    function redirectToEdit(e) {
+        //alert(e.currentTarget);
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");
+        var data = this.dataItem(tr);
+        //alert("Details for: " + data.Id);
+        window.location = "/Tools/Bulks/Bulks_Edit/" + data.id;
+    }
+
+    function grid_error_handler(e) {
+
+
+        if (e.errors) {
+            var grid = $('#grid').data('kendoGrid');
+            $("#grid").data('kendoGrid').cancelChanges();
+            //prevent the dataBinding from refreshing so the current edit remains
+            grid.one("dataBinding", function (x) {
+                //x.preventDefault();
+                //              alert('b');
+                var message = "";
+                $.each(e.errors, function (key, value) {
+                    //                    alert('c');
+                    if ('errors' in value) {
+                        $.each(value.errors, function () {
+                            message += this + "\n";
+                        });
+                    }
+                });
+                alert(message);
+                //CBmessagebox.Warning(message);
+            });
+        }
+    }
+</script>
+
 

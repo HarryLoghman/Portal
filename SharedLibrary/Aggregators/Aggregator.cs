@@ -137,7 +137,8 @@ namespace SharedLibrary.Aggregators
 
         internal virtual void sb_saveResponseToDB(WebRequestParameter parameter)
         {
-
+            if (parameter.prp_handlerFinish != null)
+                parameter.prp_handlerFinish(this, null);
 
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
@@ -162,36 +163,71 @@ namespace SharedLibrary.Aggregators
 
                     DateTime now = DateTime.Now;
                     SqlCommand cmd = new SqlCommand();
+                    SharedLibrary.MessageHandler.ProcessStatus processStatus = SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
                     cmd.Connection = new SqlConnection(parameterMessage.prp_cnnStrService);
                     if (parameter.prp_isSucceeded)
                     {
+                        processStatus = SharedLibrary.MessageHandler.ProcessStatus.Success;
                         cmd.CommandText = "update " + parameter.prp_service.databaseName + ".dbo." + tableName + " "
-                             + "set ProcessStatus=" + ((int)SharedLibrary.MessageHandler.ProcessStatus.Success).ToString()
+                             + "set ProcessStatus=" + ((int)processStatus).ToString()
                              + ",ReferenceId=" + (string.IsNullOrEmpty(parameterMessage.prp_referenceId) ? "Null" : "'" + parameterMessage.prp_referenceId + "'")
                              + ",SentDate='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                              + ",PersianSentDate='" + SharedLibrary.Date.GetPersianDateTime(now) + "'"
                              + ",SendResult=" + (string.IsNullOrEmpty(parameterMessage.prp_result) ? "Null" : "'" + parameterMessage.prp_result + "'")
                              + " where id = " + parameterMessage.prp_id.ToString();
+
                     }
                     else
                     {
-                        SharedLibrary.MessageHandler.ProcessStatus processStatus = SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+
                         if (parameterMessage.prp_retryCount.HasValue && parameterMessage.prp_retryCount.Value >= parameterMessage.prp_maxTries)
                         {
                             processStatus = SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         }
+                        else processStatus = SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+
+
                         cmd.CommandText = "update " + parameter.prp_service.databaseName + ".dbo." + tableName + " "
                           + "set DateLastTried='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                           + ",RetryCount=IsNull(RetryCount,0)+1"
                           + ",SendResult=" + (string.IsNullOrEmpty(parameterMessage.prp_result) ? "Null" : "'" + parameterMessage.prp_result + "'")
-                          + (processStatus == SharedLibrary.MessageHandler.ProcessStatus.Failed ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
+                          + ",ProcessStatus = " + ((int)processStatus).ToString()
                           //+ (parameterMessage.prp_retryCount > parameterMessage.prp_maxTries ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
                           + " where id = " + parameterMessage.prp_id.ToString();
 
                     }
+
                     SharedVariables.logs.Info(parameter.prp_service.ServiceCode + " : " + cmd.CommandText);
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
+                    #region update bulk statistics
+                    if (parameterMessage.prp_bulkId.HasValue)
+                    {
+                        if (processStatus == MessageHandler.ProcessStatus.Success)
+                        {
+                            cmd.CommandText = "update portal.dbo.bulks "
+                            + "set TotalSuccessfullySent=IsNull(TotalSuccessfullySent,0)+1"
+                            + " where id = " + parameterMessage.prp_bulkId.ToString();
+                            cmd.ExecuteNonQuery();
+                        }
+                        else if (processStatus == MessageHandler.ProcessStatus.Failed)
+                        {
+                            cmd.CommandText = "update portal.dbo.bulks "
+                            + "set TotalFailed=IsNull(TotalFailed,0)+1"
+                            + " where id = " + parameterMessage.prp_bulkId.ToString();
+                            cmd.ExecuteNonQuery();
+                        }
+                        else if (processStatus == MessageHandler.ProcessStatus.TryingToSend)
+                        {
+                            cmd.CommandText = "update portal.dbo.bulks "
+                            + "set TotalRetry=IsNull(TotalRetry,0)+1"
+                            + ((!parameterMessage.prp_retryCount.HasValue || parameterMessage.prp_retryCount == 0) ? " , TotalRetryUnique =IsNull(TotalRetry,0)+1 " : "")
+                            + " where id = " + parameterMessage.prp_bulkId.ToString();
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    #endregion
+
                     cmd.Connection.Close();
                     if (parameterMessage.prp_messagePoint.HasValue && parameterMessage.prp_messagePoint.Value > 0)
                     {
@@ -241,17 +277,18 @@ namespace SharedLibrary.Aggregators
         #region sendMessage
 
 
-        public void sb_sendMessage(SharedLibrary.Models.vw_servicesServicesInfo service, long id, string mobileNumber, SharedLibrary.MessageHandler.MessageType messageType, int maxTries
+        public void sb_sendMessage(SharedLibrary.Models.vw_servicesServicesInfo service, long id, string mobileNumber
+            , SharedLibrary.MessageHandler.MessageType messageType, int maxTries
             , string messageContent, DateTime dateTimeCorrelator
-            , int? price, string chargeKey)
+            , int? price, string chargeKey, int? bulkId, bool useBulk, int? retryCount, EventHandler handlerFinish)
         {
             string requestBody = "";
             HttpWebRequest webRequest = this.fnc_createWebRequestHeader(service, this.prp_url_sendMessage);
 
             requestBody = this.fnc_sendMessage_createBodyString(service, messageType, mobileNumber, messageContent, dateTimeCorrelator
-                , price, chargeKey);
+                , price, chargeKey, useBulk);
             WebRequestParameterMessage parameter = new WebRequestParameterMessage(id, mobileNumber, maxTries, dateTimeCorrelator, messageContent
-                , enum_webRequestParameterType.message, messageType, requestBody, service, SharedVariables.logs);
+                , enum_webRequestParameterType.message, messageType, requestBody, bulkId, retryCount, service, handlerFinish, SharedVariables.logs);
 
             //parameter.prp_bodyString = requestBody;
             this.prp_webRequestProcess.SendRequest(webRequest, requestBody, parameter, this);
@@ -261,7 +298,7 @@ namespace SharedLibrary.Aggregators
 
         internal virtual string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service,
             SharedLibrary.MessageHandler.MessageType messageType, string mobileNumber, string messageContent, DateTime dateTimeCorrelator
-            , int? price, string imiChargeKey)
+            , int? price, string imiChargeKey, bool usebulk)
         {
             return "";
         }

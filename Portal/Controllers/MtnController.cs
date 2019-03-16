@@ -300,7 +300,7 @@ namespace Portal.Controllers
                 else
                 {
                     //string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/startSmsNotificationRequest";
-                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNSmsNotification);
+                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNSmsNotification);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var client = new HttpClient())
@@ -355,7 +355,7 @@ namespace Portal.Controllers
                 else
                 {
                     //string url = "http://92.42.55.180:8310/SmsNotificationManagerService/services/SmsNotificationManager/stopSmsNotificationRequest";
-                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNSmsStopNotification);
+                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNSmsStopNotification);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var client = new HttpClient())
@@ -411,7 +411,7 @@ namespace Portal.Controllers
                 else
                 {
                     //string url = "http://92.42.55.180:8310/ReceiveSmsService/services/ReceiveSms/getReceivedSmsRequest";
-                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNGetReceivedSms);
+                    string url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.MTNGetReceivedSms);
                     var request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(payload, Encoding.UTF8, "text/xml");
                     using (var client = new HttpClient())

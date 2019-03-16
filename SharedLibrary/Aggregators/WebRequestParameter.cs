@@ -8,8 +8,10 @@ namespace SharedLibrary.Aggregators
 {
     public class WebRequestParameter
     {
-        public WebRequestParameter(enum_webRequestParameterType webRequestType, string bodyString , SharedLibrary.Models.vw_servicesServicesInfo service
-            ,log4net.ILog logs)
+        public WebRequestParameter(enum_webRequestParameterType webRequestType, string bodyString
+            , SharedLibrary.Models.vw_servicesServicesInfo service
+            , EventHandler handlerFinish
+            , log4net.ILog logs)
         {
             if (service == null) throw new Exception("Service is not specified");
             if (string.IsNullOrEmpty(service.databaseName)) throw new Exception("database name of the service id " + service.Id.ToString() + " is not specified");
@@ -18,6 +20,7 @@ namespace SharedLibrary.Aggregators
             this.prp_bodyString = bodyString;
             this.prp_logs = logs;
             this.prp_service = service;
+            this.prp_handlerFinish = handlerFinish;
         }
 
         public enum_webRequestParameterType prp_webRequestType { get; }
@@ -42,16 +45,8 @@ namespace SharedLibrary.Aggregators
                 return this.prp_service.databaseName;
             }
         }
-        public virtual void sb_save()
-        {
-            
-        }
 
-        public virtual string fnc_parseResult(string result, out bool isSucceeded)
-        {
-            isSucceeded = false;
-            return "";
-        }
+        internal EventHandler prp_handlerFinish { get; set; }
 
     }
 

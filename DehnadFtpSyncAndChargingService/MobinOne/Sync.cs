@@ -17,7 +17,7 @@ namespace DehnadFtpSyncAndChargingService.MobinOne
         public SyncMobinOne()
         {
             string userName, pwd;
-            this.v_serverUrl = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.mobinOneSync, SharedLibrary.HelpfulFunctions.enumServersActions.mobinOneSync, out userName, out pwd);
+            this.v_serverUrl = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.mobinOneSync, SharedLibrary.HelpfulFunctions.enumServersActions.mobinOneSync, out userName, out pwd);
             this.v_userName = userName;
             this.v_pwd = pwd;
         }

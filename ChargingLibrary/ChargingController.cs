@@ -58,9 +58,10 @@ namespace ChargingLibrary
             this.v_spSettings = new ServicePointSettings();
             ServicePoint sp;
 
+            #region threadPoolSetting
             ThreadPoolSettings thread = new ThreadPoolSettings();
             thread.Assign();
-
+            #endregion
 
             this.v_tpsTotal = tpsTotal;
             this.v_intervalInMillisecond = 1000.00 / tpsTotal;

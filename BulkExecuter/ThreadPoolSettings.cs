@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace BulkExecuter
 {
-    class ThreadPoolSettings : ConfigurationSection
+    public class ThreadPoolSettings : ConfigurationSection
     {
         private static ThreadPoolSettings settings = ConfigurationManager.GetSection("ThreadPoolSettings") as ThreadPoolSettings;
 

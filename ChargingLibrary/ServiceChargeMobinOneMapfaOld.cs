@@ -45,7 +45,7 @@ namespace ChargingLibrary
                 if (campaign != null)
                     isCampaignActive = Convert.ToInt32(campaign.Value);
             }
-            this.v_url = HelpfulFunctions.fnc_getServerURL(HelpfulFunctions.enumServers.mobinOneMapfa, HelpfulFunctions.enumServersActions.charge);
+            this.v_url = HelpfulFunctions.fnc_getServerActionURL(HelpfulFunctions.enumServers.mobinOneMapfa, HelpfulFunctions.enumServersActions.charge);
         }
 
         public override void sb_charge(ServiceHandler.SubscribersAndCharges subscriber, int installmentCycleNumber, int loopNo

@@ -629,34 +629,34 @@ namespace SharedLibrary
                     return new List<dynamic>();
             }
         }
-        public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
-            , List<SharedLibrary.Models.ServiceModel.AutochargeMessagesBuffer> messages)
-        {
-            Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
-            foreach (var message in messages)
-                agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.AutoCharge
-                    , SharedLibrary.MessageSender.retryCountMax
-                    , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
-        }
-        public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
-            , List<SharedLibrary.Models.ServiceModel.EventbaseMessagesBuffer> messages)
-        {
-            Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
-            foreach (var message in messages)
-                agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.EventBase
-                    , SharedLibrary.MessageSender.retryCountMax
-                    , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
-        }
+        //public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
+        //    , List<SharedLibrary.Models.ServiceModel.AutochargeMessagesBuffer> messages)
+        //{
+        //    Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
+        //    foreach (var message in messages)
+        //        agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.AutoCharge
+        //            , SharedLibrary.MessageSender.retryCountMax
+        //            , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, null);
+        //}
+        //public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
+        //    , List<SharedLibrary.Models.ServiceModel.EventbaseMessagesBuffer> messages)
+        //{
+        //    Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
+        //    foreach (var message in messages)
+        //        agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.EventBase
+        //            , SharedLibrary.MessageSender.retryCountMax
+        //            , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, null);
+        //}
 
-        public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
-            , List<SharedLibrary.Models.ServiceModel.OnDemandMessagesBuffer> messages)
-        {
-            Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
-            foreach (var message in messages)
-                agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.OnDemand
-                    , SharedLibrary.MessageSender.retryCountMax
-                    , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey);
-        }
+        //public static void SendSelectedMessages(SharedLibrary.Models.vw_servicesServicesInfo service
+        //    , List<SharedLibrary.Models.ServiceModel.OnDemandMessagesBuffer> messages)
+        //{
+        //    Aggregators.Aggregator agg = SharedVariables.fnc_getAggregator(service.aggregatorName);
+        //    foreach (var message in messages)
+        //        agg.sb_sendMessage(service, message.Id, message.MobileNumber, SharedLibrary.MessageHandler.MessageType.OnDemand
+        //            , SharedLibrary.MessageSender.retryCountMax
+        //            , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, null);
+        //}
 
         public static void SendSelectedMessagesOld(Type entityType, dynamic messages, int[] skip, int[] take, Dictionary<string, string> serviceAdditionalInfo, string aggregatorName)
         {
@@ -859,13 +859,13 @@ namespace SharedLibrary
 
         public enum BulkStatus
         {
-            Enabled=1,
-            Disabled=0,
-            Stopped=2,
-            Paused=3,
-            Running=4,
-            FinishedByTime=5,
-            FinishedAll=6
+            Enabled = 1,
+            Disabled = 0,
+            Stopped = 2,
+            Paused = 3,
+            Running = 4,
+            FinishedByTime = 5,
+            FinishedAll = 6
         }
 
         public enum BulkFileType

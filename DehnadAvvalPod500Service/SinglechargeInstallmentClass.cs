@@ -172,7 +172,7 @@ namespace DehnadAvvalPod500Service
                 try
                 {
                     //var url = SharedLibrary.MessageSender.telepromoPardisIp + "/samsson-gateway/chargingpardis/";
-                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.TelepromoMapfa, SharedLibrary.HelpfulFunctions.enumServersActions.charge);
+                    var url = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.TelepromoMapfa, SharedLibrary.HelpfulFunctions.enumServersActions.charge);
                     var serivceId = Convert.ToInt32(serviceAdditionalInfo["serviceId"]);
                     var paridsShortCodes = SharedLibrary.ServiceHandler.GetPardisShortcodesFromServiceId(serivceId);
                     var shortCode = "98" + paridsShortCodes.FirstOrDefault().ShortCode;

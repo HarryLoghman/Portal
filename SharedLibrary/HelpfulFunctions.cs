@@ -348,7 +348,7 @@ namespace SharedLibrary
 
             try
             {
-                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationAtomicWarning);
+                url = fnc_getServerActionURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationAtomicWarning);
                 icon = fnc_getNotificationIcon(level);
                 Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
@@ -375,7 +375,7 @@ namespace SharedLibrary
 
             try
             {
-                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
+                url = fnc_getServerActionURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
                 icon = fnc_getNotificationIcon(level);
                 Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
@@ -401,7 +401,7 @@ namespace SharedLibrary
 
             try
             {
-                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDEmergency);
+                url = fnc_getServerActionURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDEmergency);
                 icon = fnc_getNotificationIcon(level);
 
                 Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
@@ -427,7 +427,7 @@ namespace SharedLibrary
             string icon = "";
             try
             {
-                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDLog);
+                url = fnc_getServerActionURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDLog);
                 icon = fnc_getNotificationIcon(level);
 
                 Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
@@ -454,7 +454,7 @@ namespace SharedLibrary
             string icon = "";
             try
             {
-                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDResuestLog);
+                url = fnc_getServerActionURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationDResuestLog);
                 icon = fnc_getNotificationIcon(level);
 
                 Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
@@ -482,7 +482,7 @@ namespace SharedLibrary
 
             try
             {
-                url = fnc_getServerURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
+                url = fnc_getServerActionURL(enumServers.dehnadNotification, enumServersActions.dehnadNotificationSingleChargeGang);
                 icon = fnc_getNotificationIcon(level);
                 Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
@@ -574,24 +574,53 @@ namespace SharedLibrary
             }
         }
 
-        public static string fnc_getServerURL(enumServers server, enumServersActions action)
+        public static enumServers fnc_getEnumServerByAggregatorName(string aggregatorName)
         {
-            string userName, pwd;
-            return fnc_getServerURL(server, action, out userName, out pwd);
+            if (aggregatorName.ToLower() == "MciDirect".ToLower())
+            {
+                return enumServers.MCI;
+            }
+            else if (aggregatorName.ToLower() == "MobinOne".ToLower())
+            {
+                return enumServers.mobinOne;
+            }
+            else if (aggregatorName.ToLower() == "MobinOneMapfa".ToLower())
+            {
+                return enumServers.mobinOneMapfa;
+            }
+            else if (aggregatorName.ToLower() == "MTN".ToLower())
+            {
+                return enumServers.MTN;
+            }
+            else if (aggregatorName.ToLower() == "SamssonTci".ToLower())
+            {
+                return enumServers.SamssonTci;
+            }
+            else if (aggregatorName.ToLower() == "Telepromo".ToLower())
+            {
+                return enumServers.telepromoJson;
+            }
+            else if (aggregatorName.ToLower() == "TelepromoMapfa".ToLower())
+            {
+                return enumServers.TelepromoMapfa;
+            }
+            else throw new Exception("There is no URL defined for the AggregatorName " + aggregatorName);
+
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public static string fnc_getServerURL(enumServers server, enumServersActions action, out string userName, out string pwd)
+        public static string fnc_getServerURL(enumServers server)
+        {
+            string userName = null;
+            string pwd = null;
+            return fnc_getServerURL(server, out userName, out pwd);
+        }
+        public static string fnc_getServerURL(enumServers server, out string userName, out string pwd)
         {
             userName = null;
             pwd = null;
             try
             {
-                string serverIP = "";
+                string serverURL = "";
                 var serverName = server.ToString().ToLower();
-                var actionName = action.ToString().ToLower();
                 using (var portal = new PortalEntities())
                 {
                     var entryServersIP = portal.ServersIPs.Where(o => o.ServerName == serverName && o.state == 1 && !string.IsNullOrEmpty(o.IP)).OrderBy(o => o.priority).FirstOrDefault();
@@ -601,20 +630,116 @@ namespace SharedLibrary
                         userName = entryServersIP.userName;
                         pwd = entryServersIP.pwd;
 
-                        serverIP = entryServersIP.IP;
-                        if (!serverIP.StartsWith("http://") && !serverIP.StartsWith("ftp://"))
-                            serverIP = "http://" + serverIP;
-                        if (serverIP.EndsWith("/"))
-                            serverIP = serverIP.Remove(serverIP.Length - 1, 1);
+                        serverURL = entryServersIP.IP;
+                        if (!serverURL.StartsWith("http://") && !serverURL.StartsWith("ftp://"))
+                            serverURL = "http://" + serverURL;
+                        if (serverURL.EndsWith("/"))
+                            serverURL = serverURL.Remove(serverURL.Length - 1, 1);
 
+                        return serverURL;
+                       
+                    }
+                    else
+                    {
+                        logs.Error("Error in fnc_getServerURL : No serverIP found for =" + server.ToString());
+                        switch (server)
+                        {
+                            case enumServers.telepromo:
+                                serverURL = telepromoIp;
+                                break;
+                            case enumServers.telepromoJson:
+                                serverURL = telepromoIpJSON;
+                                break;
+                            case enumServers.SamssonTci:
+                                serverURL = sammsonTciIP;
+                                break;
+                            case enumServers.MTN:
+                                serverURL = mtnIp;
+                                break;
+                            case enumServers.MTNGet:
+                                serverURL = mtnIpGet;
+                                break;
+                            case enumServers.MCI:
+                                serverURL = mciIp;
+                                break;
+                            case enumServers.TelepromoMapfa:
+                                serverURL = telepromoMapfaIp;
+                                break;
+                            case enumServers.mobinOneMapfa:
+                                serverURL = mobinOneMapfaIP;
+                                break;
+                            case enumServers.dehnadNotification:
+                                serverURL = dehnadNotificationIP;
+                                break;
+                            case enumServers.dehnadAppPortal:
+                                serverURL = dehnadAppPortalIP;
+                                break;
+                            case enumServers.dehnadReceivePortal:
+                                serverURL = dehnadReceivePortalIP;
+                                break;
+                            case enumServers.dehnadReceivePortalOnTohid:
+                                serverURL = dehnadReceivePortalOnTohidIP;
+                                break;
+                            case enumServers.mobinOneSync:
+                                serverURL = mobinOneSyncIP;
+                                userName = "dehnad";
+                                pwd = "OC56i4yA";
+                                break;
+                            case enumServers.MCIFtpSync:
+                                serverURL = MCIFtpSyncIP;
+                                userName = "DEH";
+                                pwd = "d9H&*&123";
+                                break;
+                            default:
+                                logs.Error("Error in fnc_getServerURL : Unknown Server " + server.ToString());
+                                return "";
+                        }
+                        return serverURL;
+                    }
+                }
+                //logs.Error("Error in fnc_getServerURL : Unknown Match server= " + server.ToString() + " and action = " + action.ToString());
+                //return "";
+            }
+            catch (Exception e)
+            {
+                logs.Error("Error in fnc_getServerURL", e);
+                return "";
+            }
+
+        }
+        public static string fnc_getServerActionURL(enumServers server, enumServersActions action)
+        {
+            string userName, pwd;
+            return fnc_getServerActionURL(server, action, out userName, out pwd);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string fnc_getServerActionURL(enumServers server, enumServersActions action, out string userName, out string pwd)
+        {
+            userName = null;
+            pwd = null;
+            try
+            {
+                string serverURL = "";
+                var serverName = server.ToString().ToLower();
+                var actionName = action.ToString().ToLower();
+                serverURL = fnc_getServerURL(server, out userName, out pwd);
+                using (var portal = new PortalEntities())
+                {
+                    
+                    var entryServersIP = portal.ServersIPs.Where(o => o.ServerName == serverName && o.state == 1 && !string.IsNullOrEmpty(o.IP)).OrderBy(o => o.priority).FirstOrDefault();
+                    if (entryServersIP != null)
+                    {
                         var url = portal.ServersActions.Where(o => o.serverId == entryServersIP.Id && o.Action == actionName && o.state == 1 && !string.IsNullOrEmpty(o.URL)).OrderBy(o => o.priority).Select(o => o.URL).FirstOrDefault();
                         if (!string.IsNullOrEmpty(url))
                         {
                             if (url.StartsWith("/"))
                                 url = url.Remove(0, 1);
                             if (string.IsNullOrEmpty(entryServersIP.ports))
-                                return serverIP + "/" + url;
-                            else return serverIP + ":" + entryServersIP.ports.Split(';')[0] + "/" + url;
+                                return serverURL + "/" + url;
+                            else return serverURL + ":" + entryServersIP.ports.Split(';')[0] + "/" + url;
                         }
                         else
                         {
@@ -624,75 +749,24 @@ namespace SharedLibrary
                     else
                     {
                         logs.Error("Error in fnc_getServerURL : No serverIP found for =" + server.ToString());
-                        switch (server)
-                        {
-                            case enumServers.telepromo:
-                                serverIP = telepromoIp;
-                                break;
-                            case enumServers.telepromoJson:
-                                serverIP = telepromoIpJSON;
-                                break;
-                            case enumServers.SamssonTci:
-                                serverIP = sammsonTciIP;
-                                break;
-                            case enumServers.MTN:
-                                serverIP = mtnIp;
-                                break;
-                            case enumServers.MTNGet:
-                                serverIP = mtnIpGet;
-                                break;
-                            case enumServers.MCI:
-                                serverIP = mciIp;
-                                break;
-                            case enumServers.TelepromoMapfa:
-                                serverIP = telepromoMapfaIp;
-                                break;
-                            case enumServers.mobinOneMapfa:
-                                serverIP = mobinOneMapfaIP;
-                                break;
-                            case enumServers.dehnadNotification:
-                                serverIP = dehnadNotificationIP;
-                                break;
-                            case enumServers.dehnadAppPortal:
-                                serverIP = dehnadAppPortalIP;
-                                break;
-                            case enumServers.dehnadReceivePortal:
-                                serverIP = dehnadReceivePortalIP;
-                                break;
-                            case enumServers.dehnadReceivePortalOnTohid:
-                                serverIP = dehnadReceivePortalOnTohidIP;
-                                break;
-                            case enumServers.mobinOneSync:
-                                serverIP = mobinOneSyncIP;
-                                userName = "dehnad";
-                                pwd = "OC56i4yA";
-                                break;
-                            case enumServers.MCIFtpSync:
-                                serverIP = MCIFtpSyncIP;
-                                userName = "DEH";
-                                pwd = "d9H&*&123";
-                                break;
-                            default:
-                                logs.Error("Error in fnc_getServerURL : Unknown Server " + server.ToString());
-                                return "";
-                        }
+                        
                         switch (server)
                         {
                             case enumServers.telepromo:
                                 switch (action)
                                 {
                                     case enumServersActions.sendmessage:
-                                        return serverIP + "/" + "samsson-sdp/transfer/send?";
+                                        return serverURL + "/" + "samsson-sdp/transfer/send?";
                                     case enumServersActions.bulk:
-                                        return serverIP + "/" + "samsson-sdp/jtransfer/qsend?";
+                                        return serverURL + "/" + "samsson-sdp/jtransfer/qsend?";
                                     case enumServersActions.charge:
-                                        return serverIP + "/" + "samsson-sdp/transfer/charge?";
+                                        return serverURL + "/" + "samsson-sdp/transfer/charge?";
                                     case enumServersActions.otpRequest:
-                                        return serverIP + "/" + "samsson-sdp/pin/generate?";
+                                        return serverURL + "/" + "samsson-sdp/pin/generate?";
                                     case enumServersActions.otpConfirm:
-                                        return serverIP + "/" + "samsson-sdp/pin/confirm?";
+                                        return serverURL + "/" + "samsson-sdp/pin/confirm?";
                                     case enumServersActions.ftp:
-                                        return serverIP + "/" + "ftp/{0}-{1}.txt.bz2";
+                                        return serverURL + "/" + "ftp/{0}-{1}.txt.bz2";
                                     default:
                                         break;
                                 }
@@ -701,11 +775,11 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.sendmessage:
-                                        return serverIP + "/" + "samsson-gateway/sendmessage/";
+                                        return serverURL + "/" + "samsson-gateway/sendmessage/";
                                     case enumServersActions.otpRequest:
-                                        return serverIP + "/" + "samsson-gateway/otp-generation/";
+                                        return serverURL + "/" + "samsson-gateway/otp-generation/";
                                     case enumServersActions.otpConfirm:
-                                        return serverIP + "/" + "samsson-gateway/otp-confirmation/";
+                                        return serverURL + "/" + "samsson-gateway/otp-confirmation/";
                                     default:
                                         break;
                                 }
@@ -714,13 +788,13 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.charge:
-                                        return serverIP + "/" + "api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}";
+                                        return serverURL + "/" + "api/v1/GuestMode/Bill/{0}/{1}/{2}/{3}";
                                     case enumServersActions.chargeCancel:
-                                        return serverIP + "/" + "api/v1/GuestMode/cancel/{0}/{1}/{2}/";
+                                        return serverURL + "/" + "api/v1/GuestMode/cancel/{0}/{1}/{2}/";
                                     case enumServersActions.otpRequest:
-                                        return serverIP + "/" + "api/v1/GuestMode/AddPhone/{0}";
+                                        return serverURL + "/" + "api/v1/GuestMode/AddPhone/{0}";
                                     case enumServersActions.otpConfirm:
-                                        return serverIP + "/" + "api/v1/GuestMode/Verify/{0}/{1}";
+                                        return serverURL + "/" + "api/v1/GuestMode/Verify/{0}/{1}";
                                     default:
                                         break;
                                 }
@@ -729,15 +803,15 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.sendmessage:
-                                        return serverIP + "/" + "SendSmsService/services/SendSms";
+                                        return serverURL + "/" + "SendSmsService/services/SendSms";
                                     case enumServersActions.charge:
-                                        return serverIP + "/" + "AmountChargingService/services/AmountCharging";
+                                        return serverURL + "/" + "AmountChargingService/services/AmountCharging";
                                     case enumServersActions.MTNGetReceivedSms:
-                                        return serverIP + "/" + "ReceiveSmsService/services/ReceiveSms/getReceivedSmsRequest";
+                                        return serverURL + "/" + "ReceiveSmsService/services/ReceiveSms/getReceivedSmsRequest";
                                     case enumServersActions.MTNSmsNotification:
-                                        return serverIP + "/" + "SmsNotificationManagerService/services/SmsNotificationManager/startSmsNotificationRequest";
+                                        return serverURL + "/" + "SmsNotificationManagerService/services/SmsNotificationManager/startSmsNotificationRequest";
                                     case enumServersActions.MTNSmsStopNotification:
-                                        return serverIP + "/" + "SmsNotificationManagerService/services/SmsNotificationManager/stopSmsNotificationRequest";
+                                        return serverURL + "/" + "SmsNotificationManagerService/services/SmsNotificationManager/stopSmsNotificationRequest";
                                     default:
                                         break;
                                 }
@@ -746,9 +820,9 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.MTNOtpGet:
-                                        return serverIP + "/" + "CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}";
+                                        return serverURL + "/" + "CGGateway/Default.aspx?Timestamp={0}&RequestID={1}&pageno={2}&Callback={3}&Sign={4}&mode={5}";
                                     case enumServersActions.MTNUnsubGet:
-                                        return serverIP + "/" + "CGGateway/UnSubscribe.aspx?Timestamp={0}&RequestID={1}&CpCode={2}&Callback={3}&Sign={4}&mode={5}";
+                                        return serverURL + "/" + "CGGateway/UnSubscribe.aspx?Timestamp={0}&RequestID={1}&CpCode={2}&Callback={3}&Sign={4}&mode={5}";
                                     default:
                                         break;
                                 }
@@ -757,11 +831,11 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.sendmessage:
-                                        return serverIP + "/" + "parlayxsmsgw/services/SendSmsService";
+                                        return serverURL + "/" + "parlayxsmsgw/services/SendSmsService";
                                     case enumServersActions.otpRequest:
-                                        return serverIP + "/" + "apigw/charging/pushotp";
+                                        return serverURL + "/" + "apigw/charging/pushotp";
                                     case enumServersActions.otpConfirm:
-                                        return serverIP + "/" + "apigw/charging/chargeotp";
+                                        return serverURL + "/" + "apigw/charging/chargeotp";
                                     default:
                                         break;
                                 }
@@ -770,13 +844,13 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.sendmessage:
-                                        return serverIP + "/" + "samsson-gateway/sendmessagepardis/";
+                                        return serverURL + "/" + "samsson-gateway/sendmessagepardis/";
                                     case enumServersActions.charge:
-                                        return serverIP + "/" + "samsson-gateway/chargingpardis/";
+                                        return serverURL + "/" + "samsson-gateway/chargingpardis/";
                                     case enumServersActions.otpRequest:
-                                        return serverIP + "/" + "samsson-gateway/otp-generationpardis/";
+                                        return serverURL + "/" + "samsson-gateway/otp-generationpardis/";
                                     case enumServersActions.otpConfirm:
-                                        return serverIP + "/" + "samsson-gateway/otp-confirmationpardis/";
+                                        return serverURL + "/" + "samsson-gateway/otp-confirmationpardis/";
                                     default:
                                         break;
                                 }
@@ -785,7 +859,7 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.charge:
-                                        return serverIP + "/" + "charging_websrv/services/Charging?wsdl";
+                                        return serverURL + "/" + "charging_websrv/services/Charging?wsdl";
                                     default:
                                         break;
                                 }
@@ -794,15 +868,15 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.dehnadNotificationDEmergency:
-                                        return serverIP + "/" + "notif/n3.php?msg=";
+                                        return serverURL + "/" + "notif/n3.php?msg=";
                                     case enumServersActions.dehnadNotificationDLog:
-                                        return serverIP + "/" + "notif/n5.php?msg=";
+                                        return serverURL + "/" + "notif/n5.php?msg=";
                                     case enumServersActions.dehnadNotificationSingleChargeGang:
-                                        return serverIP + "/" + "notif/n6.php?msg=";
+                                        return serverURL + "/" + "notif/n6.php?msg=";
                                     case enumServersActions.dehnadNotificationDResuestLog:
-                                        return serverIP + "/" + "notif/n7.php?msg=";
+                                        return serverURL + "/" + "notif/n7.php?msg=";
                                     case enumServersActions.dehnadNotificationAtomicWarning:
-                                        return serverIP + "/" + "notif/n4.php?msg=";
+                                        return serverURL + "/" + "notif/n4.php?msg=";
                                 }
                                 break;
                             case enumServers.dehnadAppPortal:
@@ -810,11 +884,11 @@ namespace SharedLibrary
                                 {
 
                                     case enumServersActions.otpRequest:
-                                        return serverIP + "/" + "api/App/OtpCharge";
+                                        return serverURL + "/" + "api/App/OtpCharge";
                                     case enumServersActions.otpConfirm:
-                                        return serverIP + "/" + "api/App/OtpConfirm";
+                                        return serverURL + "/" + "api/App/OtpConfirm";
                                     case enumServersActions.dehnadBot:
-                                        return serverIP + "/" + "api/Bot/";
+                                        return serverURL + "/" + "api/Bot/";
 
                                 }
                                 break;
@@ -822,7 +896,7 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.dehnadMTNDelivery:
-                                        return serverIP + "/" + "api/Mtn/Delivery";
+                                        return serverURL + "/" + "api/Mtn/Delivery";
 
 
                                 }
@@ -832,7 +906,7 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.dehnadMCIDelivery:
-                                        return serverIP + "/" + "api/Mci/Delivery";
+                                        return serverURL + "/" + "api/Mci/Delivery";
 
                                 }
                                 break;
@@ -840,7 +914,7 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.mobinOneSync:
-                                        return serverIP + "/?";
+                                        return serverURL + "/?";
 
                                 }
                                 break;
@@ -848,7 +922,7 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.MCISync:
-                                        return serverIP + "/";
+                                        return serverURL + "/";
 
                                 }
                                 break;

@@ -20,8 +20,8 @@ namespace SharedLibrary.Aggregators
         public AggregatorMTN(bool addErrorDescription)
             : base(addErrorDescription)
         {
-            this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
-            this.prp_url_delivery = SharedLibrary.HelpfulFunctions.fnc_getServerURL(SharedLibrary.HelpfulFunctions.enumServers.dehnadReceivePortal, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMTNDelivery);
+            this.prp_url_sendMessage = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MTN, SharedLibrary.HelpfulFunctions.enumServersActions.sendmessage);
+            this.prp_url_delivery = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.dehnadReceivePortal, SharedLibrary.HelpfulFunctions.enumServersActions.dehnadMTNDelivery);
             using (var portal = new SharedLibrary.Models.PortalEntities())
             {
                 var agg = portal.Aggregators.Where(o => o.AggregatorName == "MTN").FirstOrDefault();
@@ -53,7 +53,7 @@ namespace SharedLibrary.Aggregators
         }
 
         internal override string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service, SharedLibrary.MessageHandler.MessageType messageType, string mobileNumber, string messageContent, DateTime dateTimeCorrelator
-            , int? price, string imiChargeKey)
+            , int? price, string imiChargeKey, bool useBulk)
         {
             string shortCode = service.ShortCode.Replace("-", "");
             //DateTime dateTimeCorrelator = request.prp_dateTimeCorrelator;

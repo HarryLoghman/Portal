@@ -628,8 +628,8 @@ namespace Portal.Controllers
             {
                 string msisdn = input.msisdn;
                 string shortCode = input.shortcode;
-                logs.Error(input.shortcode );
-                logs.Error(input.msisdn);
+                //logs.Error(input.shortcode );
+                //logs.Error(input.msisdn);
                 logs.Info("Telepromo Controller MessagePost:" + input.msisdn + ", " + input.shortcode + "," + input.message + "," + input.partnername);
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
                     , new Dictionary<string, string>() { { "shortcode", shortCode}

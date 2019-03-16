@@ -14,7 +14,7 @@ namespace ChargingLibrary
     internal static class Program
     {
         internal static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        internal static string v_cnnStr = "Data source =.; initial catalog = portal; integrated security = True; max pool size=4000; multipleactiveresultsets=True;connection timeout=180 ;";
+        
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
