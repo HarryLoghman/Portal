@@ -32,15 +32,15 @@ namespace SharedShortCodeServiceLibrary
         {
             this.v_service = service;
             this.v_aggregator = SharedLibrary.SharedVariables.fnc_getAggregator(this.v_service.aggregatorName);
-            this.v_aggregator.ev_requestFinished += aggregator_ev_requestFinished;
+            //this.v_aggregator.ev_requestFinished += aggregator_ev_requestFinished;
         }
 
-        private void aggregator_ev_requestFinished(SharedLibrary.Aggregators.Aggregator agg, SharedLibrary.Aggregators.WebRequestParameter e)
+        private void sb_sendingMessageIsFinished(object sender, EventArgs e)
         {
-            if (e.prp_webRequestType == SharedLibrary.Aggregators.enum_webRequestParameterType.message)
-            {
+            //if (e.prp_webRequestType == SharedLibrary.Aggregators.enum_webRequestParameterType.message)
+            //{
                 System.Threading.Interlocked.Decrement(ref this.v_messageCount);
-            }
+            //}
         }
 
         public virtual void SendHandler()
@@ -72,7 +72,8 @@ namespace SharedShortCodeServiceLibrary
                     {
                         this.v_aggregator.sb_sendMessage(this.v_service, message.Id, message.MobileNumber
                             , SharedLibrary.MessageHandler.MessageType.OnDemand, SharedLibrary.MessageSender.retryCountMax
-                            , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount, null);
+                            , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount
+                            , new EventHandler(this.sb_sendingMessageIsFinished));
 
                     }
                     while (this.v_messageCount > 0)

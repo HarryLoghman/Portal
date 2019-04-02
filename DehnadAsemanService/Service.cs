@@ -101,11 +101,11 @@ namespace DehnadAsemanService
                 //    informApplicationThread.Abort();
                 //}
 
-                shutdownEvent.Set();
-                if (!singlechargeInstallmentThread.Join(3000))
-                {
-                    singlechargeInstallmentThread.Abort();
-                }
+                //shutdownEvent.Set();
+                //if (!singlechargeInstallmentThread.Join(3000))
+                //{
+                //    singlechargeInstallmentThread.Abort();
+                //}
 
                 //shutdownEvent.Set();
                 //if (!singlechargeInstallmentBalancerThread.Join(3000))

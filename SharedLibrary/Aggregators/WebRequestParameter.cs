@@ -21,6 +21,8 @@ namespace SharedLibrary.Aggregators
             this.prp_logs = logs;
             this.prp_service = service;
             this.prp_handlerFinish = handlerFinish;
+
+            this.v_timings = new Dictionary<string, DateTime>();
         }
 
         public enum_webRequestParameterType prp_webRequestType { get; }
@@ -47,6 +49,8 @@ namespace SharedLibrary.Aggregators
         }
 
         internal EventHandler prp_handlerFinish { get; set; }
+
+        public Dictionary<string, DateTime> v_timings;
 
     }
 

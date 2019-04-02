@@ -300,11 +300,11 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                    
+
                     //string transId = input.trans_id;//no map field in db
                     //string transStatus = input.trans_status;//no map field in db
                     //string channel = input.channel;//no map field in db
-                    
+
                     string keyword = input.keyword;
                     //string dateTimeStr = input.datetime;//set while saving to db
                     //string chargeCode = input.chargecode;//no map field in db
@@ -745,7 +745,7 @@ namespace Portal.Controllers
                 string deliveryStatus = input.deliverystatus;
 
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
-                    , new Dictionary<string, string>() { { "mobile", msisdn}}
+                    , new Dictionary<string, string>() { { "mobile", msisdn } }
                     , null, "Portal:TelepromoController:DeliveryPost");
                 if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
@@ -754,16 +754,30 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                
+
                     logs.Info("Telepromo Controller DeliveryPost: msisdn=" + input.msisdn + ", correlator=" + input.correlator + ",deliveryStatus=" + input.deliverystatus);
 
                     string shortCode;
                     SharedLibrary.MessageSender.sb_processCorrelator(correlator, ref msisdn, out shortCode);
                     var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
-
-
+                    long aggregatorId;
+                    using (var entityPortal = new SharedLibrary.Models.PortalEntities())
+                    {
+                        var entryService = entityPortal.vw_servicesServicesInfo.FirstOrDefault(o => o.ShortCode == shortCode);
+                        if (entryService == null || !entryService.AggregatorId.HasValue)
+                        {
+                            result = "Unknown ServiceCode or Aggregator";
+                            resultOk = false;
+                            goto endSection;
+                        }
+                        aggregatorId = entryService.AggregatorId.Value;
+                    }
                     if (MobileNumber == "Invalid Mobile Number")
+                    {
                         result = "-1";
+                        resultOk = false;
+                        goto endSection;
+                    }
                     else
                     {
                         result = "";
@@ -771,9 +785,9 @@ namespace Portal.Controllers
 
 
                     var delivery = new SharedLibrary.Models.Delivery();
-                    delivery.AggregatorId = 5;
+                    delivery.AggregatorId = aggregatorId;
                     delivery.Correlator = correlator;
-                    if (deliveryStatus == "deliver to terminal")
+                    if (deliveryStatus.ToLower() == "DeliveredToTerminal".ToLower())
                         delivery.Delivered = true;
                     else delivery.Delivered = false;
 
@@ -788,6 +802,7 @@ namespace Portal.Controllers
                     using (var portal = new SharedLibrary.Models.PortalEntities())
                     {
                         portal.Deliveries.Add(delivery);
+                        portal.SaveChanges();
                     }
                     //delivery.Delivered
                 }
@@ -799,7 +814,7 @@ namespace Portal.Controllers
                 //result = e.Message;
                 result = "Exception has been occured!!! Contact Administrator";
             }
-            var response = Request.CreateResponse(HttpStatusCode.OK);
+            endSection: var response = Request.CreateResponse(HttpStatusCode.OK);
             if (!resultOk)
                 response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             response.Content = new StringContent(result, Encoding.UTF8, "application/json");
@@ -1341,7 +1356,7 @@ namespace Portal.Controllers
                 }
                 else
                 {
-                 
+
                     string recievedPayload = Request.Content.ReadAsStringAsync().Result;
                     //logs.Info("Telepromo Controller PardisMessagePayload:" + recievedPayload);
                     logs.Info("Telepromo Controller pardisMessage:MobileNumber:" + messageObj.MobileNumber + ",ShortCode:" + messageObj.ShortCode + ",Content:" + messageObj.Content
@@ -1397,6 +1412,82 @@ namespace Portal.Controllers
                 else
                 {
                     logs.Info("Telepromo Controller PardisDelivery:messageid:" + input.messageid + ",part:" + input.part + ",DeliveryStatus:" + input.DeliveryStatus + ",msisdn:" + input.msisdn + ",shortcode:" + input.shortcode);
+                    string shortCode;
+                    shortCode = input.shortcode;
+                    if(string.IsNullOrEmpty(shortCode))
+                    {
+                        result = "Unknown ShortCode";
+                        resultOk = false;
+                        goto endSection;
+                    }
+                    string msisdn = input.msisdn;
+                    string messageId = input.messageid;
+                    string deliveryStatusCode = "" + input.DeliveryStatus;
+                    string part = input.part;
+                    Dictionary<string, string> Dic = new Dictionary<string, string>(){{"1","DELIVERED" }
+                                                        ,{ "2","UNDELIVERED" }
+                                                        ,{"3","EXPIRED"}
+                                                        ,{"4","REJECT"}
+                                                        ,{"5","EXCEPTION IN SMSC"}
+                                                        ,{"6","No_Connection"}
+                                                        ,{"7","No_CBP"}
+                                                        ,{"8","No_Server"}
+                                                        ,{"9","DCC_ERROR"}
+                                                        ,{"10","ChargeInfo_NotFound"}
+                                                        ,{"11","WebService DCC Error"}
+                                                        ,{"12","Receiver_Blocked" }
+                                                        ,{"13","Timeout" } };
+                    var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(msisdn);
+                    long aggregatorId;
+                    using (var entityPortal = new SharedLibrary.Models.PortalEntities())
+                    {
+                        if (shortCode != null && shortCode.StartsWith("98"))
+                            shortCode = shortCode.Remove(0, 2);
+                        var entryService = entityPortal.vw_servicesServicesInfo.FirstOrDefault(o => o.ShortCode == shortCode);
+                        if (entryService == null || !entryService.AggregatorId.HasValue)
+                        {
+                            
+                            result = "Unknown ServiceCode or Aggregator";
+                            logs.Error(result + shortCode);
+                            resultOk = false;
+                            goto endSection;
+                        }
+                        aggregatorId = entryService.AggregatorId.Value;
+                    }
+                    if (MobileNumber == "Invalid Mobile Number")
+                    {
+                        result = "-1";
+                        resultOk = false;
+                        goto endSection;
+                    }
+                    else
+                    {
+                        result = "";
+                    }
+
+
+                    var delivery = new SharedLibrary.Models.Delivery();
+                    delivery.AggregatorId = aggregatorId;
+                    delivery.Correlator = null;
+                    if (deliveryStatusCode == "1")
+                        delivery.Delivered = true;
+                    else delivery.Delivered = false;
+
+                    delivery.DeliveryTime = DateTime.Now;
+                    delivery.Description = deliveryStatusCode;
+                    delivery.IsProcessed = false;
+                    delivery.MobileNumber = MobileNumber;
+                    delivery.ReferenceId = messageId;
+                    delivery.ShortCode = shortCode;
+                    delivery.Status = Dic.Any(o => o.Key == deliveryStatusCode) ?
+                                            Dic.FirstOrDefault(o => o.Key == deliveryStatusCode).Value
+                                            : deliveryStatusCode;
+
+                    using (var portal = new SharedLibrary.Models.PortalEntities())
+                    {
+                        portal.Deliveries.Add(delivery);
+                        portal.SaveChanges();
+                    }
                 }
             }
             catch (Exception e)
@@ -1407,7 +1498,7 @@ namespace Portal.Controllers
                 result = "Exception has been occured!!! Contact Administrator";
             }
 
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            endSection: var response = new HttpResponseMessage(HttpStatusCode.OK);
             if (!resultOk)
                 response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");

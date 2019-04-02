@@ -46,5 +46,101 @@ namespace BulkExecuter.Properties {
                 this["CheckBulkStatusRowSizeDescription"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseBulk {
+            get {
+                return ((bool)(this["UseBulk"]));
+            }
+            set {
+                this["UseBulk"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("For MobinOne Set tag Bulk or not")]
+        public string UseBulkDescription {
+            get {
+                return ((string)(this["UseBulkDescription"]));
+            }
+            set {
+                this["UseBulkDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UsePackForSending {
+            get {
+                return ((bool)(this["UsePackForSending"]));
+            }
+            set {
+                this["UsePackForSending"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Use Pack 90 rows for sending requests")]
+        public string UsePackForSendingDescription {
+            get {
+                return ((string)(this["UsePackForSendingDescription"]));
+            }
+            set {
+                this["UsePackForSendingDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("90")]
+        public int PackSize {
+            get {
+                return ((int)(this["PackSize"]));
+            }
+            set {
+                this["PackSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("For MobinOne it is 90")]
+        public string PackSizeDescription {
+            get {
+                return ((string)(this["PackSizeDescription"]));
+            }
+            set {
+                this["PackSizeDescription"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseDataTable {
+            get {
+                return ((bool)(this["UseDataTable"]));
+            }
+            set {
+                this["UseDataTable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Use DataTable for Creating List")]
+        public string UseDataTableDescription {
+            get {
+                return ((string)(this["UseDataTableDescription"]));
+            }
+            set {
+                this["UseDataTableDescription"] = value;
+            }
+        }
     }
 }

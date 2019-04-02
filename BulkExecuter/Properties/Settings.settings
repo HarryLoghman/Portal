@@ -8,5 +8,29 @@
     <Setting Name="CheckBulkStatusRowSizeDescription" Type="System.String" Scope="User">
       <Value Profile="(Default)">it means how many rows should passed to check bulk status</Value>
     </Setting>
+    <Setting Name="UseBulk" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="UseBulkDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">For MobinOne Set tag Bulk or not</Value>
+    </Setting>
+    <Setting Name="UsePackForSending" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="UsePackForSendingDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Use Pack 90 rows for sending requests</Value>
+    </Setting>
+    <Setting Name="PackSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">90</Value>
+    </Setting>
+    <Setting Name="PackSizeDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">For MobinOne it is 90</Value>
+    </Setting>
+    <Setting Name="UseDataTable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="UseDataTableDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Use DataTable for Creating List</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

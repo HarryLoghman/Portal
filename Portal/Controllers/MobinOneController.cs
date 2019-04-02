@@ -78,6 +78,105 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delivery(string requestId, string receiver, string status)
         {
+            var result = "";
+            bool resultOk = true;
+            try
+            {
+                string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
+                    , new Dictionary<string, string>() { { "mobile", receiver } }
+                    , null, "Portal:MobinOneController:Delivery");
+                if (!string.IsNullOrEmpty(tpsRatePassed))
+                {
+                    result = tpsRatePassed;
+                    resultOk = false;
+                }
+                else
+                {
+                    logs.Info("MobinOne Controller Delivery:" + "requestId=" + requestId + ",receiver=" + receiver + ",status=" + status);
+                    var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(receiver);
+                    if (MobileNumber == "Invalid Mobile Number")
+                    {
+                        result = MobileNumber;
+                    }
+                    else
+                    {
+                        
+                        using (var entityPortal = new SharedLibrary.Models.PortalEntities())
+                        {
+                            var lstMobinOneServices = entityPortal.vw_servicesServicesInfo.Where(o => o.aggregatorName.ToLower() == "mobinone").ToList();
+                            foreach (var entryService in lstMobinOneServices)
+                            {
+                                if (entryService == null || !entryService.AggregatorId.HasValue)
+                                {
+                                    result = "Unknown ServiceCode or Aggregator";
+                                    resultOk = false;
+                                    goto endSection;
+                                }
+                                long aggregatorId = entryService.AggregatorId.Value;
+                                using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(entryService.databaseName))
+                                {
+                                    if (entityService.EventbaseMessagesBuffers.Any(o => o.MobileNumber == receiver)
+                                         || entityService.OnDemandMessagesBuffers.Any(o => o.MobileNumber == receiver)
+                                         || entityService.AutochargeMessagesBuffers.Any(o => o.MobileNumber == receiver))
+                                    {
+
+                                        var delivery = new SharedLibrary.Models.Delivery();
+                                        delivery.AggregatorId = aggregatorId;
+                                        delivery.Correlator = null;
+                                        if (status == "DeliveredToTerminal")
+                                            delivery.Delivered = true;
+                                        else delivery.Delivered = false;
+
+                                        delivery.DeliveryTime = DateTime.Now;
+                                        delivery.Description = status;
+                                        delivery.IsProcessed = false;
+                                        delivery.MobileNumber = MobileNumber;
+                                        delivery.ReferenceId = "0";
+                                        delivery.ShortCode = entryService.ShortCode;
+                                        delivery.Status = status;
+
+                                        using (var portal = new SharedLibrary.Models.PortalEntities())
+                                        {
+                                            portal.Deliveries.Add(delivery);
+                                            portal.SaveChanges();
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }
+                  
+                   
+                    //delivery.Delivered
+                }
+            }
+            catch (Exception e)
+            {
+                //logs.Error("Portal:MobinOneController:Delivery:", e);
+                //result = e.Message;
+                logs.Error("Portal:MobinOneController:Delivery", e);
+                resultOk = false;
+                //result = e.Message;
+                result = "Exception has been occured!!! Contact Administrator";
+            }
+
+            //var delivery = new DeliveryObject();
+            //delivery.ReferenceId = requestId;
+            //delivery.Status = status;
+            //delivery.AggregatorId = 8;
+            //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
+            endSection: var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (!resultOk)
+                response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+            return response;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage DeliveryOld(string requestId, string receiver, string status)
+        {
 
             var result = "";
             bool resultOk = true;
@@ -95,15 +194,26 @@ namespace Portal.Controllers
                 {
                     logs.Info("MobinOne Controller Delivery:" + "requestId=" + requestId + ",receiver=" + receiver + ",status=" + status);
                     string shortCode;
+                    long aggregatorId;
                     SharedLibrary.MessageSender.sb_processCorrelator(requestId, ref receiver, out shortCode);
                     var MobileNumber = SharedLibrary.MessageHandler.ValidateNumber(receiver);
                     if (MobileNumber == "Invalid Mobile Number")
                     {
                         result = MobileNumber;
                     }
-
+                    using (var entityPortal = new SharedLibrary.Models.PortalEntities())
+                    {
+                        var entryService = entityPortal.vw_servicesServicesInfo.FirstOrDefault(o => o.ShortCode == shortCode);
+                        if (entryService == null || !entryService.AggregatorId.HasValue)
+                        {
+                            result = "Unknown ServiceCode or Aggregator";
+                            resultOk = false;
+                            goto endSection;
+                        }
+                        aggregatorId = entryService.AggregatorId.Value;
+                    }
                     var delivery = new SharedLibrary.Models.Delivery();
-                    delivery.AggregatorId = 8;
+                    delivery.AggregatorId = aggregatorId;
                     delivery.Correlator = requestId;
                     if (status == "DeliveredToTerminal")
                         delivery.Delivered = true;
@@ -120,6 +230,7 @@ namespace Portal.Controllers
                     using (var portal = new SharedLibrary.Models.PortalEntities())
                     {
                         portal.Deliveries.Add(delivery);
+                        portal.SaveChanges();
                     }
                     //delivery.Delivered
                 }
@@ -139,7 +250,7 @@ namespace Portal.Controllers
             //delivery.Status = status;
             //delivery.AggregatorId = 8;
             //SharedLibrary.MessageHandler.SaveDeliveryStatus(delivery);
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            endSection: var response = new HttpResponseMessage(HttpStatusCode.OK);
             if (!resultOk)
                 response = new HttpResponseMessage(HttpStatusCode.BadRequest);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");

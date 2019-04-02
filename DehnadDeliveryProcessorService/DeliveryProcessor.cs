@@ -19,6 +19,8 @@ namespace DehnadDeliveryProcessorService
                 string dbName;
                 string shortCode;
                 string mobileNumber;
+                string referenceId;
+                string cmd;
                 using (var portal = new PortalEntities())
                 {
                     var serviceInfo = portal.ServiceInfoes.ToList();
@@ -28,32 +30,58 @@ namespace DehnadDeliveryProcessorService
                     {
                         deliveryMessage = deliveryMessages[i];
 
-                        if (deliveryMessage.Delivered.HasValue
-                          && !string.IsNullOrEmpty(deliveryMessage.Correlator)
-                          && deliveryMessage.Correlator.Contains("s")
-                          && long.TryParse(deliveryMessage.Correlator.Split('s')[1], out timeLng)
-                          && !string.IsNullOrEmpty(deliveryMessage.MobileNumber))
+                        if (deliveryMessage.Delivered.HasValue && !string.IsNullOrEmpty(deliveryMessage.MobileNumber))
                         {
-                            mobileNumber = deliveryMessage.MobileNumber;
-                            SharedLibrary.MessageSender.sb_processCorrelator(deliveryMessage.Correlator, ref mobileNumber, out shortCode);
-
-                            if (!mobileNumber.StartsWith("0")) mobileNumber = mobileNumber + "0";
-                            dbName = serviceInfo.Where(o => o.ShortCode == shortCode).Select(o => o.databaseName).FirstOrDefault();
-                            if (!string.IsNullOrEmpty(dbName))
+                            if (!string.IsNullOrEmpty(deliveryMessage.Correlator)
+                            && deliveryMessage.Correlator.Contains("s")
+                            && long.TryParse(deliveryMessage.Correlator.Split('s')[1], out timeLng))
                             {
-                                DateTime dateAddedToQueue = new DateTime(timeLng);
-                                portal.Database.ExecuteSqlCommand("exec sp_messageDeliveryUpdate '" + dbName + "'"
-                                    + "," + (deliveryMessages[i].Delivered.Value ? "1" : "0")
-                                    + "," + (string.IsNullOrEmpty(deliveryMessages[i].Status) ? "Null" : "'" + deliveryMessages[i].Status + "'")
-                                    + "," + "'" + dateAddedToQueue.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
-                                    + "," + "'" + mobileNumber + "'");
+                                mobileNumber = deliveryMessage.MobileNumber;
+                                SharedLibrary.MessageSender.sb_processCorrelator(deliveryMessage.Correlator, ref mobileNumber, out shortCode);
 
-                                deliveryMessage.IsProcessed = true;
-                                portal.Entry(deliveryMessage).State = System.Data.Entity.EntityState.Modified;
-                                if (i % 500 == 0) portal.SaveChanges();
+                                if (!mobileNumber.StartsWith("0")) mobileNumber = mobileNumber + "0";
+                                dbName = serviceInfo.Where(o => o.ShortCode == shortCode).Select(o => o.databaseName).FirstOrDefault();
+                                if (!string.IsNullOrEmpty(dbName))
+                                {
+                                    DateTime dateAddedToQueue = new DateTime(timeLng);
+                                    cmd = "exec sp_messageDeliveryUpdate '" + dbName + "'"
+                                        + "," + (deliveryMessages[i].Delivered.Value ? "1" : "0")
+                                        + "," + (string.IsNullOrEmpty(deliveryMessages[i].Status) ? "Null" : "'" + deliveryMessages[i].Status + "'")
+                                        + "," + "'" + dateAddedToQueue.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
+                                        + ",Null"
+                                        + "," + "'" + mobileNumber + "'";
+                                    portal.Database.ExecuteSqlCommand(cmd);
+                                    Program.logs.Info(cmd);
+                                    deliveryMessage.IsProcessed = true;
+                                    portal.Entry(deliveryMessage).State = System.Data.Entity.EntityState.Modified;
+                                    if (i % 500 == 0) portal.SaveChanges();
+                                }
+                            }
+                            else if (string.IsNullOrEmpty(deliveryMessage.Correlator)
+                             && !string.IsNullOrEmpty(deliveryMessage.ReferenceId))
+                            {
+                                //for avvalpod500
+                                mobileNumber = deliveryMessage.MobileNumber;
+                                referenceId = deliveryMessage.ReferenceId;
+                                shortCode = deliveryMessage.ShortCode;
+                                if (!mobileNumber.StartsWith("0")) mobileNumber = mobileNumber + "0";
+                                dbName = serviceInfo.Where(o => o.ShortCode == shortCode).Select(o => o.databaseName).FirstOrDefault();
+                                if (!string.IsNullOrEmpty(dbName))
+                                {
+                                    cmd = "exec sp_messageDeliveryUpdate '" + dbName + "'"
+                                        + "," + (deliveryMessages[i].Delivered.Value ? "1" : "0")
+                                        + "," + (string.IsNullOrEmpty(deliveryMessages[i].Status) ? "Null" : "'" + deliveryMessages[i].Status + "'")
+                                        + "," + "Null"
+                                        + ",'" + referenceId + "'"
+                                        + "," + "'" + mobileNumber + "'";
+                                    portal.Database.ExecuteSqlCommand(cmd);
+                                    Program.logs.Info(cmd);
+                                    deliveryMessage.IsProcessed = true;
+                                    portal.Entry(deliveryMessage).State = System.Data.Entity.EntityState.Modified;
+                                    if (i % 500 == 0) portal.SaveChanges();
+                                }
                             }
                         }
-
                         portal.SaveChanges();
 
                     }

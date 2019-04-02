@@ -382,7 +382,6 @@
     <Compile Include="Areas\Ashpazkhoone\AshpazkhooneAreaRegistration.cs" />
     <Compile Include="Areas\Tools\Controllers\BulksController.cs" />
     <Compile Include="Areas\Tools\Controllers\RolesController.cs" />
-    <Compile Include="Areas\Tools\Controllers\SendBulkMessageController.cs" />
     <Compile Include="Areas\Tools\Controllers\UsersController.cs" />
     <Compile Include="Areas\Tools\ToolsAreaRegistration.cs" />
     <Compile Include="Areas\Statistics\Controllers\ServiceDailyStatisticsController.cs" />
@@ -1110,7 +1109,6 @@
     <Content Include="Areas\TahChin\Views\web.config" />
     <Content Include="Areas\Statistics\Views\ServiceDailyStatistics\Index.cshtml" />
     <Content Include="Areas\Tools\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Tools\Views\SendBulkMessage\Index.cshtml" />
     <Content Include="Areas\Tools\Views\web.config" />
     <Content Include="Areas\Nebula\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Nebula\Views\EventbaseContents\Index.cshtml" />

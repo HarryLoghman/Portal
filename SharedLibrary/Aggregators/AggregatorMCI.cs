@@ -138,7 +138,7 @@ namespace SharedLibrary.Aggregators
             return resultDescription;
         }
 
-        internal override void sb_finishRequest(WebRequestParameter parameter, Exception ex)
+        internal override void sb_finishRequest(WebRequestParameter parameter, Exception ex, bool changeTaskCount)
         {
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
@@ -177,9 +177,9 @@ namespace SharedLibrary.Aggregators
                 }
 
             }
-            this.sb_saveResponseToDB(parameter);
+            this.sb_saveResponseToDB(parameter, changeTaskCount);
         }
-        internal override void sb_finishRequest(WebRequestParameter parameter, bool httpOK, string result)
+        internal override void sb_finishRequest(WebRequestParameter parameter, bool httpOK, string result, bool changeTaskCount)
         {
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
@@ -190,7 +190,7 @@ namespace SharedLibrary.Aggregators
                 if (isSucceeded)
                 {
                     parameterMessage.prp_isSucceeded = isSucceeded;
-                    parameterMessage.prp_referenceId = parameter.prp_result;
+                    parameterMessage.prp_referenceId = parsedResult;
                     parameterMessage.prp_result = "Success";
                 }
                 else
@@ -200,7 +200,7 @@ namespace SharedLibrary.Aggregators
                 }
 
             }
-            this.sb_saveResponseToDB(parameter);
+            this.sb_saveResponseToDB(parameter, changeTaskCount);
         }
     }
 }

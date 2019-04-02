@@ -30,6 +30,9 @@ namespace BulkExecuter
             {
                 Uri uri = new Uri(settings.Uri);
                 ServicePoint sp = ServicePointManager.FindServicePoint(uri);
+                sp.ConnectionLimit = 4000;
+                sp.Expect100Continue = false;
+                sp.UseNagleAlgorithm = false;
                 return sp;
             }
             catch (Exception ex)

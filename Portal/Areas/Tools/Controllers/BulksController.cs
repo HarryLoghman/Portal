@@ -123,7 +123,7 @@ namespace Portal.Areas.Tools.Controllers
         {
             using (SharedLibrary.Models.PortalEntities entity = new SharedLibrary.Models.PortalEntities())
             {
-                var services = entity.Services.Select(o => new { Id = o.Id, ServiceCode = o.ServiceCode, ServiceCaption = o.Name }).OrderBy(o => o.ServiceCode).ToList();
+                var services = entity.Services.Select(o => new { Id = o.Id, ServiceCode = o.ServiceCode, ServiceCaption = o.Name }).OrderBy(o=>o.ServiceCode).ToList();
                 List<SelectListItem> servicesList = new List<SelectListItem>();
                 foreach (var service in services)
                 {
@@ -239,7 +239,7 @@ namespace Portal.Areas.Tools.Controllers
                     model.TotalMessages = bulk.TotalMessages.HasValue ? bulk.TotalMessages.Value : 0;
                     model.TotalSuccessfullySent = bulk.TotalSuccessfullySent.HasValue ? bulk.TotalSuccessfullySent.Value : 0;
                     model.TotalRetryCount = bulk.TotalRetry.HasValue ? bulk.TotalRetry.Value : 0;
-                    model.TotalRetryCountUnique = bulk.TotalMessages.HasValue ? bulk.TotalRetryUnique.Value : 0;
+                    model.TotalRetryCountUnique = bulk.TotalRetryUnique.HasValue ? bulk.TotalRetryUnique.Value : 0;
                     model.TotalFailed = bulk.TotalFailed.HasValue ? bulk.TotalFailed.Value : 0;
                 }
 
@@ -304,12 +304,16 @@ namespace Portal.Areas.Tools.Controllers
                             bulk.readSize = model.readSize;
                             bulk.retryCount = model.retryCount;
                             bulk.retryIntervalInSeconds = model.retryIntervalInSeconds;
+                            bulk.resetVerySlowSending = model.resetVerySlowSending;
+                            bulk.resetTooSlowSending = model.resetTooSlowSending;
                             bulk.ServiceId = int.Parse(model.service);
                             bulk.startTime = model.startTime.Value;
                             bulk.status = (int)model.status;
                             bulk.tps = model.tps;
                             portal.Bulks.Add(bulk);
                             portal.SaveChanges();
+
+                            model.BulkId = bulk.Id;
                         }
 
                     }
@@ -339,6 +343,8 @@ namespace Portal.Areas.Tools.Controllers
                                 bulk.readSize = model.readSize;
                                 bulk.retryCount = model.retryCount;
                                 bulk.retryIntervalInSeconds = model.retryIntervalInSeconds;
+                                bulk.resetVerySlowSending = model.resetVerySlowSending;
+                                bulk.resetTooSlowSending = model.resetTooSlowSending;
                                 bulk.ServiceId = int.Parse(model.service);
                                 bulk.startTime = model.startTime.Value;
                                 bulk.status = (int)model.status;
@@ -364,10 +370,11 @@ namespace Portal.Areas.Tools.Controllers
                     servicesList.Add(new SelectListItem { Text = service.ServiceCode + "(" + service.ServiceCaption + ")", Value = service.Id.ToString() });
                 }
                 ViewBag.Services = servicesList;
-
+                //ModelState.Clear();
 
                 //var modelNew = new Models.Bulks_EditViewModel(id);
                 ModelState.Remove("Id");
+                ModelState.Remove("BulkId");
                 ModelState.Remove("DateCreated");
                 ModelState.Remove("PersianDateCreated");
                 ModelState.Remove("TotalMessages");
@@ -377,13 +384,14 @@ namespace Portal.Areas.Tools.Controllers
                 ModelState.Remove("TotalFailed");
                 if (bulk != null)
                 {
+                    
                     model.BulkId = bulk.Id;
                     model.DateCreated = bulk.DateCreated.HasValue ? bulk.DateCreated.Value.ToString("yyyy/MM/dd HH:mm:ss") : "";
                     model.PersianDateCreated = bulk.PersianDateCreated;
                     model.TotalMessages = bulk.TotalMessages.HasValue ? bulk.TotalMessages.Value : 0;
                     model.TotalSuccessfullySent = bulk.TotalSuccessfullySent.HasValue ? bulk.TotalSuccessfullySent.Value : 0;
                     model.TotalRetryCount = bulk.TotalRetry.HasValue ? bulk.TotalRetry.Value : 0;
-                    model.TotalRetryCountUnique = bulk.TotalMessages.HasValue ? bulk.TotalRetryUnique.Value : 0;
+                    model.TotalRetryCountUnique = bulk.TotalRetryUnique.HasValue ? bulk.TotalRetryUnique.Value : 0;
                     model.TotalFailed = bulk.TotalFailed.HasValue ? bulk.TotalFailed.Value : 0;
                 }
 
@@ -429,7 +437,7 @@ namespace Portal.Areas.Tools.Controllers
                     var bulk = db.Bulks.Where(o => o.Id == model.BulkId).FirstOrDefault();
                     if (bulk != null)
                     {
-                        if (bulk.startTime < DateTime.Now)
+                        if (bulk.startTime< DateTime.Now)
                         {
                             ModelState.AddModelError("passedTime", "زمان تغییرات پس از شروع برنامه Bulk به پایان رسیده است");
                         }
@@ -500,7 +508,7 @@ namespace Portal.Areas.Tools.Controllers
                         }
                         if (ModelState.IsValid)
                         {
-                            progress.SendMessage("Import Numbers to Service Table", 70);
+                            progress.SendMessage("Import Numbers to BulkTable", 70);
                             affectedRows = this.fnc_transferMobileNumbers(model.BulkId.Value, uniqueTableName, model.mobileNumberStartsWith98);
 
                             if (!model.save)

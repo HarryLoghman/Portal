@@ -16,8 +16,8 @@ namespace SharedLibrary.Aggregators
         internal virtual string prp_userName { get; set; }
         internal virtual string prp_password { get; set; }
         public Dictionary<string, string> prp_aggregatorErrors { get; set; }
-        public delegate void hanlder_requestFinished(Aggregator agg, WebRequestParameter parameter);
-        public event hanlder_requestFinished ev_requestFinished;
+        //public delegate void hanlder_requestFinished(Aggregator agg, WebRequestParameter parameter);
+        //public event hanlder_requestFinished ev_requestFinished;
 
         public string prp_url_sendMessage { get; set; }
         public string prp_url_delivery { get; set; }
@@ -74,7 +74,7 @@ namespace SharedLibrary.Aggregators
         }
 
 
-        internal virtual void sb_finishRequest(WebRequestParameter parameter, Exception ex)
+        internal virtual void sb_finishRequest(WebRequestParameter parameter, Exception ex, bool changeTaskCount)
         {
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
@@ -112,9 +112,11 @@ namespace SharedLibrary.Aggregators
                     SharedVariables.logs.Error(parameter.prp_service.ServiceCode + " : Exception in SendingMessage2: ", ex);
                 }
             }
-            this.sb_saveResponseToDB(parameter);
+            this.sb_saveResponseToDB(parameter, changeTaskCount);
         }
-        internal virtual void sb_finishRequest(WebRequestParameter parameter, bool httpOK, string result)
+
+
+        internal virtual void sb_finishRequest(WebRequestParameter parameter, bool httpOK, string result, bool changeTaskCount)
         {
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
@@ -132,14 +134,14 @@ namespace SharedLibrary.Aggregators
                 }
 
             }
-            this.sb_saveResponseToDB(parameter);
+            this.sb_saveResponseToDB(parameter, changeTaskCount);
         }
 
-        internal virtual void sb_saveResponseToDB(WebRequestParameter parameter)
-        {
-            if (parameter.prp_handlerFinish != null)
-                parameter.prp_handlerFinish(this, null);
 
+        internal virtual void sb_saveResponseToDB(WebRequestParameter parameter, bool changeTaskCount)
+        {
+            if (changeTaskCount)
+                parameter.prp_handlerFinish?.Invoke(this, null);
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
                 WebRequestParameterMessage parameterMessage = (WebRequestParameterMessage)parameter;
@@ -176,6 +178,8 @@ namespace SharedLibrary.Aggregators
                              + ",SendResult=" + (string.IsNullOrEmpty(parameterMessage.prp_result) ? "Null" : "'" + parameterMessage.prp_result + "'")
                              + " where id = " + parameterMessage.prp_id.ToString();
 
+
+
                     }
                     else
                     {
@@ -196,8 +200,7 @@ namespace SharedLibrary.Aggregators
                           + " where id = " + parameterMessage.prp_id.ToString();
 
                     }
-
-                    SharedVariables.logs.Info(parameter.prp_service.ServiceCode + " : " + cmd.CommandText);
+                    SharedVariables.logs.Error(cmd.CommandText);
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
                     #region update bulk statistics
@@ -245,10 +248,10 @@ namespace SharedLibrary.Aggregators
 
                 }
             }
-            if (ev_requestFinished != null)
-            {
-                this.ev_requestFinished(this, parameter);
-            }
+            //if (ev_requestFinished != null)
+            //{
+            //    this.ev_requestFinished(this, parameter);
+            //}
         }
         protected virtual string fnc_getAggregatorErrorDescription(string errorNameOrId)
         {
@@ -282,16 +285,67 @@ namespace SharedLibrary.Aggregators
             , string messageContent, DateTime dateTimeCorrelator
             , int? price, string chargeKey, int? bulkId, bool useBulk, int? retryCount, EventHandler handlerFinish)
         {
+
+            DateTime datetimeStart = DateTime.Now;
             string requestBody = "";
             HttpWebRequest webRequest = this.fnc_createWebRequestHeader(service, this.prp_url_sendMessage);
 
-            requestBody = this.fnc_sendMessage_createBodyString(service, messageType, mobileNumber, messageContent, dateTimeCorrelator
+            DateTime dateTimeAfterHeader = DateTime.Now;
+
+            requestBody = this.
+                fnc_sendMessage_createBodyString(service, messageType, mobileNumber, messageContent, dateTimeCorrelator
                 , price, chargeKey, useBulk);
+
+            DateTime dateTimeAfterBody = DateTime.Now;
+
             WebRequestParameterMessage parameter = new WebRequestParameterMessage(id, mobileNumber, maxTries, dateTimeCorrelator, messageContent
                 , enum_webRequestParameterType.message, messageType, requestBody, bulkId, retryCount, service, handlerFinish, SharedVariables.logs);
 
+            parameter.v_timings.Add("start", datetimeStart);
+            parameter.v_timings.Add("afterHeader", dateTimeAfterHeader);
+            parameter.v_timings.Add("afterBody", dateTimeAfterBody);
+            parameter.v_timings.Add("parameterConstruction", DateTime.Now);
             //parameter.prp_bodyString = requestBody;
+
             this.prp_webRequestProcess.SendRequest(webRequest, requestBody, parameter, this);
+
+            parameter.v_timings.Add("requestSent", DateTime.Now);
+        }
+
+        public void sb_sendMessage(SharedLibrary.Models.vw_servicesServicesInfo service, long[] id, string[] mobileNumberArr
+            , SharedLibrary.MessageHandler.MessageType messageType, int maxTries
+            , string[] messageContentArr, DateTime[] dateTimeCorrelatorArr
+            , int?[] priceArr, string[] chargeKeyArr, int? bulkId, bool useBulk, int? retryCount, EventHandler handlerFinish)
+        {
+            DateTime datetimeStart = DateTime.Now;
+            string requestBody = "";
+            HttpWebRequest webRequest = this.fnc_createWebRequestHeader(service, this.prp_url_sendMessage);
+
+            DateTime dateTimeAfterHeader = DateTime.Now;
+
+            requestBody = this.fnc_sendMessage_createBodyString(service, messageType, mobileNumberArr, messageContentArr, dateTimeCorrelatorArr
+                , priceArr, chargeKeyArr, useBulk);
+
+            DateTime dateTimeAfterBody = DateTime.Now;
+
+            List<WebRequestParameterMessage> lstParameters = new List<WebRequestParameterMessage>();
+            int i;
+            for (i = 0; i <= mobileNumberArr.Length - 1; i++)
+            {
+                WebRequestParameterMessage parameter = new WebRequestParameterMessage(id[i], mobileNumberArr[i], maxTries
+                , dateTimeCorrelatorArr[i], messageContentArr[i]
+                , enum_webRequestParameterType.message, messageType, requestBody, bulkId, retryCount, service, handlerFinish, SharedVariables.logs);
+                lstParameters.Add(parameter);
+                parameter.v_timings.Add("start", datetimeStart);
+                parameter.v_timings.Add("afterHeader", dateTimeAfterHeader);
+                parameter.v_timings.Add("afterBody", dateTimeAfterBody);
+                parameter.v_timings.Add("parameterConstruction", DateTime.Now);
+            }
+
+
+            //parameter.prp_bodyString = requestBody;
+
+            this.prp_webRequestProcess.SendRequest(webRequest, requestBody, lstParameters, this);
 
 
         }
@@ -303,6 +357,12 @@ namespace SharedLibrary.Aggregators
             return "";
         }
 
+        internal virtual string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service,
+            SharedLibrary.MessageHandler.MessageType messageType, string[] mobileNumberArr, string[] messageContentArr
+            , DateTime[] dateTimeCorrelatorArr, int?[] priceArr, string[] imiChargeKeyArr, bool usebulk)
+        {
+            return "";
+        }
         internal virtual string fnc_sendMessage_parseResult(SharedLibrary.Models.vw_servicesServicesInfo service, string result, out bool isSucceeded)
         {
             isSucceeded = false;

@@ -78,6 +78,14 @@
             @Html.LabelFor(m => m.retryIntervalInSeconds, new { @class = "col-md-2 control-label" })
             @Html.TextBoxFor(m => m.retryIntervalInSeconds, new { @class = "col-md-2 control-label k-input", style = "width:50px;" })
 
+            <div style="direction:ltr;margin-left:20px;display:inline-block;">
+                @Html.LabelFor(m => m.resetTooSlowSending, new { @class = "col-md-2 control-label" })
+                @Html.CheckBoxFor(m => m.resetTooSlowSending, new { @class = "col-md-2 control-label k-input", style = "" })
+
+                @Html.LabelFor(m => m.resetVerySlowSending, new { @class = "col-md-2 control-label" })
+                @Html.CheckBoxFor(m => m.resetVerySlowSending, new { @class = "col-md-2 control-label k-input", style = "" })
+
+            </div>
         </div>
 
         <div class="col-md-10" style="padding-top:10px;">

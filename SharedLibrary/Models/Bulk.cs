@@ -24,6 +24,8 @@ namespace SharedLibrary.Models
         public Nullable<int> readSize { get; set; }
         public Nullable<int> retryCount { get; set; }
         public Nullable<int> retryIntervalInSeconds { get; set; }
+        public Nullable<bool> resetVerySlowSending { get; set; }
+        public Nullable<bool> resetTooSlowSending { get; set; }
         public Nullable<int> TotalMessages { get; set; }
         public Nullable<int> TotalSuccessfullySent { get; set; }
         public Nullable<int> TotalFailed { get; set; }

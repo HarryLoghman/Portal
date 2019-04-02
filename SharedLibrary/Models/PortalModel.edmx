@@ -150,6 +150,8 @@
           <Property Name="readSize" Type="int" />
           <Property Name="retryCount" Type="int" />
           <Property Name="retryIntervalInSeconds" Type="int" />
+          <Property Name="resetVerySlowSending" Type="bit" />
+          <Property Name="resetTooSlowSending" Type="bit" />
           <Property Name="TotalMessages" Type="int" />
           <Property Name="TotalSuccessfullySent" Type="int" />
           <Property Name="TotalFailed" Type="int" />
@@ -1961,6 +1963,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="readSize" Type="Int32" />
           <Property Name="retryCount" Type="Int32" />
           <Property Name="retryIntervalInSeconds" Type="Int32" />
+          <Property Name="resetVerySlowSending" Type="Boolean" />
+          <Property Name="resetTooSlowSending" Type="Boolean" />
           <Property Name="TotalMessages" Type="Int32" />
           <Property Name="TotalSuccessfullySent" Type="Int32" />
           <Property Name="TotalFailed" Type="Int32" />
@@ -2723,6 +2727,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="TotalFailed" ColumnName="TotalFailed" />
                 <ScalarProperty Name="TotalSuccessfullySent" ColumnName="TotalSuccessfullySent" />
                 <ScalarProperty Name="TotalMessages" ColumnName="TotalMessages" />
+                <ScalarProperty Name="resetTooSlowSending" ColumnName="resetTooSlowSending" />
+                <ScalarProperty Name="resetVerySlowSending" ColumnName="resetVerySlowSending" />
                 <ScalarProperty Name="retryIntervalInSeconds" ColumnName="retryIntervalInSeconds" />
                 <ScalarProperty Name="retryCount" ColumnName="retryCount" />
                 <ScalarProperty Name="readSize" ColumnName="readSize" />

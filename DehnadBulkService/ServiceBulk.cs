@@ -105,7 +105,9 @@ namespace DehnadBulkService
                     {
                         var lstEntryBulks = entityPortal.Bulks.Where(o => (o.status != (int)SharedLibrary.MessageHandler.BulkStatus.Disabled
                         && o.status != (int)SharedLibrary.MessageHandler.BulkStatus.Stopped
-                        && o.status != (int)SharedLibrary.MessageHandler.BulkStatus.Paused) && o.startTime <= DateTime.Now && DateTime.Now <= o.endTime).ToList();
+                        //&& o.status != (int)SharedLibrary.MessageHandler.BulkStatus.Paused
+                        )
+                        && o.startTime <= DateTime.Now && DateTime.Now <= o.endTime).ToList();
 
                         foreach (var entryBulk in lstEntryBulks)
                         {
@@ -124,19 +126,21 @@ namespace DehnadBulkService
                             //exeName = "BulkExecuter_" + entryService.ServiceCode + "_" + entryBulk.Id;
 
                             exeName = "BulkExecuter";
-                            dirDesName = Properties.Settings.Default.BulkExecuterTemplateFolderPath + "\\BulkExecuter" + entryService.ServiceCode + "_" + entryBulk.Id;
+                            dirDesName = Properties.Settings.Default.BulkExecuterTemplateFolderPath + "\\BulkExecuter_" + entryService.ServiceCode + "_" + entryBulk.Id;
 
                             process = arrProcess.FirstOrDefault(o => o.ProcessName.ToLower() == exeName.ToLower()
-                             && o.StartInfo.WorkingDirectory == dirDesName);
+                             && Path.GetDirectoryName(o.MainModule.FileName).ToLower() == dirDesName.ToLower());
                             if (process == null)
                             {
-                             
+                                
                                 //there is no process with the name "BulkExecuter_Achar_1025"
                                 using (var entityService = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(entryService.ServiceCode))
                                 {
-                                    var cnt = entityService.EventbaseMessagesBuffers.Count(o => o.ProcessStatus != (int)SharedLibrary.MessageHandler.ProcessStatus.Failed
-                                     && o.ProcessStatus != (int)SharedLibrary.MessageHandler.ProcessStatus.Finished
-                                     && o.ProcessStatus != (int)SharedLibrary.MessageHandler.ProcessStatus.Success
+                                    entityService.Database.CommandTimeout = 600;
+                                    var cnt = entityService.EventbaseMessagesBuffers.Count(o =>
+                                    (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend
+                                      || o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.InQueue)
+                                     //&& o.ProcessStatus != (int)SharedLibrary.MessageHandler.ProcessStatus.Success
                                      && o.bulkId == entryBulk.Id);
                                     if (cnt > 0)
                                     {
@@ -270,7 +274,7 @@ namespace DehnadBulkService
         private void sb_renameExeFilesAndSetServicePointSettings(string dirDesPath, string exeName, string aggregatorName)
         {
             SharedLibrary.HelpfulFunctions.enumServers enumServer = SharedLibrary.HelpfulFunctions.fnc_getEnumServerByAggregatorName(aggregatorName);
-            string serverUrl = SharedLibrary.HelpfulFunctions.fnc_getServerURL(enumServer);
+            string serverUrl = SharedLibrary.HelpfulFunctions.fnc_getServerURL(true, enumServer);
             string str = File.ReadAllText(dirDesPath + "\\BulkExecuter.exe.config");
             str = str.Replace("<ServicePointSettings Uri=\"http://92.42.55.180:8310/\" ConnectionLimit=\"4000\" Expect100Continue=\"false\" UseNagleAlgorithm=\"false\">"
                 , "<ServicePointSettings Uri=\"\" ConnectionLimit=\"4000\" Expect100Continue=\"false\" UseNagleAlgorithm=\"false\">");

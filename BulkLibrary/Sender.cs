@@ -57,7 +57,7 @@ namespace BulkLibrary
                 if (eventbase.prp_IsSucceeded)
                 {
                     cmd.CommandText = "update " + this.prp_service.databaseName + ".dbo.EventbaseMessagesBuffer "
-                         + "set ProcessStatus=" + ((int)SharedLibrary.MessageHandler.ProcessStatus.Success).ToString()
+                         + "set ProcessStatus=" + ((int)SharedLibrary.MessageHandler.MessageProcessStatus.Success).ToString()
                          + ",ReferenceId='" + eventbase.ReferenceId + "'"
                          + ",SentDate='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                          + ",PersianSentDate='" + SharedLibrary.Date.GetPersianDateTime(now) + "'"
@@ -65,16 +65,16 @@ namespace BulkLibrary
                 }
                 else
                 {
-                    SharedLibrary.MessageHandler.ProcessStatus processStatus = SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
+                    SharedLibrary.MessageHandler.MessageProcessStatus processStatus = SharedLibrary.MessageHandler.MessageProcessStatus.TryingToSend;
                     if (eventbase.RetryCount.HasValue && eventbase.RetryCount.Value >= this.prp_maxTries)
                     {
-                        processStatus = SharedLibrary.MessageHandler.ProcessStatus.Failed;
+                        processStatus = SharedLibrary.MessageHandler.MessageProcessStatus.Failed;
                     }
                     cmd.CommandText = "update " + this.prp_service.databaseName + ".dbo.EventbaseMessagesBuffer "
                       + "set DateLastTried='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                       + ",RetryCount=IsNull(RetryCount,0)+1"
-                      + (processStatus == SharedLibrary.MessageHandler.ProcessStatus.Failed ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
-                      + (eventbase.RetryCount > this.prp_maxTries ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
+                      + (processStatus == SharedLibrary.MessageHandler.MessageProcessStatus.Failed ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.MessageProcessStatus.Failed).ToString() : "")
+                      + (eventbase.RetryCount > this.prp_maxTries ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.MessageProcessStatus.Failed).ToString() : "")
                       + "where id = " + eventbase.Id.ToString();
 
                 }

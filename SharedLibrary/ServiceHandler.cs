@@ -382,6 +382,7 @@ namespace SharedLibrary
             }
         }
 
+        
         public static bool IsUserVerifedTheSubscription(string mobileNumber, long serviceId, string keyword)
         {
             var result = false;
@@ -449,6 +450,7 @@ namespace SharedLibrary
             }
         }
 
+        
         public static bool CheckIfUserSendedUnsubscribeContentToShortCode(string content)
         {
             foreach (var offKeyword in ServiceOffKeywords())

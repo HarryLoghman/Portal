@@ -69,12 +69,12 @@ namespace BulkLibrary
             {
                 if (this.prp_readSize == 0)
                     this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.bulkId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
-                   && (o.DateLastTried == null) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
+                   && (o.DateLastTried == null) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.MessageProcessStatus.TryingToSend)
                    && (o.RetryCount == null || o.RetryCount == 0)).ToList();
                 else
                 {
                     this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
-                  && (o.DateLastTried == null) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
+                  && (o.DateLastTried == null) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.MessageProcessStatus.TryingToSend)
                   && (o.RetryCount == null || o.RetryCount == 0)).Take(this.prp_readSize).ToList();
                 }
             }
@@ -82,12 +82,12 @@ namespace BulkLibrary
             {
                 if (this.prp_readSize == 0)
                     this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
-                   && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
+                   && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.MessageProcessStatus.TryingToSend)
                    && (o.RetryCount == null || o.RetryCount < this.prp_maxTries)).ToList();
                 else
                 {
                     this.v_lstEventbase = v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
-                  && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
+                  && (o.DateLastTried == null || o.DateLastTried < retryTimeOut) && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.MessageProcessStatus.TryingToSend)
                   && (o.RetryCount == null || o.RetryCount < this.prp_maxTries)).Take(this.prp_readSize).ToList();
                 }
             }
@@ -101,7 +101,7 @@ namespace BulkLibrary
         {
             DateTime retryTimeOut = DateTime.Now.AddSeconds(-1 * this.prp_retryIntervalInSeconds);
             return v_sharedServiceEntity.EventbaseMessagesBuffers.Where(o => o.ContentId == this.prp_bulkId && o.MessageType == (int)SharedLibrary.MessageHandler.MessageType.EventBase
-           && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.ProcessStatus.TryingToSend)
+           && (o.ProcessStatus == (int)SharedLibrary.MessageHandler.MessageProcessStatus.TryingToSend)
            && (o.RetryCount == null || o.RetryCount < this.prp_maxTries)).Count();
         }
 

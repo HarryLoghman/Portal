@@ -338,8 +338,8 @@ namespace SharedLibrary
             }
             return icon;
         }
-        
-            public static void sb_sendNotification_AtomicWarning(StandardEventLevel level, string message)
+
+        public static void sb_sendNotification_AtomicWarning(StandardEventLevel level, string message)
         {
             //string url = "http://84.22.102.27/notif/n4.php";
 
@@ -607,13 +607,13 @@ namespace SharedLibrary
             else throw new Exception("There is no URL defined for the AggregatorName " + aggregatorName);
 
         }
-        public static string fnc_getServerURL(enumServers server)
+        public static string fnc_getServerURL(bool includePortNumber, enumServers server)
         {
             string userName = null;
             string pwd = null;
-            return fnc_getServerURL(server, out userName, out pwd);
+            return fnc_getServerURL(server, includePortNumber, out userName, out pwd);
         }
-        public static string fnc_getServerURL(enumServers server, out string userName, out string pwd)
+        public static string fnc_getServerURL(enumServers server, bool includePortNumber, out string userName, out string pwd)
         {
             userName = null;
             pwd = null;
@@ -636,8 +636,15 @@ namespace SharedLibrary
                         if (serverURL.EndsWith("/"))
                             serverURL = serverURL.Remove(serverURL.Length - 1, 1);
 
+                        if (includePortNumber)
+                        {
+                            if (!string.IsNullOrEmpty(entryServersIP.ports))
+                            {
+                                serverURL = serverURL + ":" + entryServersIP.ports;
+                            }
+                        }
                         return serverURL;
-                       
+
                     }
                     else
                     {
@@ -725,10 +732,10 @@ namespace SharedLibrary
                 string serverURL = "";
                 var serverName = server.ToString().ToLower();
                 var actionName = action.ToString().ToLower();
-                serverURL = fnc_getServerURL(server, out userName, out pwd);
+                serverURL = fnc_getServerURL(server, false, out userName, out pwd);
                 using (var portal = new PortalEntities())
                 {
-                    
+
                     var entryServersIP = portal.ServersIPs.Where(o => o.ServerName == serverName && o.state == 1 && !string.IsNullOrEmpty(o.IP)).OrderBy(o => o.priority).FirstOrDefault();
                     if (entryServersIP != null)
                     {
@@ -749,7 +756,7 @@ namespace SharedLibrary
                     else
                     {
                         logs.Error("Error in fnc_getServerURL : No serverIP found for =" + server.ToString());
-                        
+
                         switch (server)
                         {
                             case enumServers.telepromo:

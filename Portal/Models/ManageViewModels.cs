@@ -143,6 +143,8 @@ namespace Portal.Models
                     this.readSize = bulk.readSize.HasValue ? bulk.readSize.Value : 0;
                     this.retryCount = bulk.retryCount.HasValue ? bulk.retryCount.Value : 0;
                     this.retryIntervalInSeconds = bulk.retryIntervalInSeconds.HasValue ? bulk.retryIntervalInSeconds.Value : 0;
+                    this.resetVerySlowSending = (!bulk.resetVerySlowSending.HasValue ? false : bulk.resetVerySlowSending.Value);
+                    this.resetTooSlowSending = (!bulk.resetTooSlowSending.HasValue ? false : bulk.resetTooSlowSending.Value);
                     this.service = bulk.ServiceId.ToString();
                     this.startTime = bulk.startTime;
                     this.status = (SharedLibrary.MessageHandler.BulkStatus)bulk.status;
@@ -151,6 +153,8 @@ namespace Portal.Models
                     this.TotalRetryCount = bulk.TotalRetry.HasValue ? bulk.TotalRetry.Value : 0;
                     this.TotalRetryCountUnique = bulk.TotalRetryUnique.HasValue ? bulk.TotalRetryUnique.Value : 0;
                     this.TotalSuccessfullySent = bulk.TotalSuccessfullySent.HasValue ? bulk.TotalSuccessfullySent.Value : 0;
+
+
                     this.tps = bulk.tps;
 
                 }
@@ -190,6 +194,12 @@ namespace Portal.Models
 
         [Display(Name = "فاصله زمانی برای تلاش مجدد(ثانیه)"), Range(0, 3600, ErrorMessage = "مقدار قابل قبول 0 تا 3600")]
         public int retryIntervalInSeconds { get; set; }
+
+        [Display(Name = "ResetVerySlowSending")]
+        public bool resetVerySlowSending { get; set; }
+
+        [Display(Name = "ResetTooSlowSending")]
+        public bool resetTooSlowSending { get; set; }
 
         [Display(Name = "تعداد کل پیامها"), Editable(false)]
         public int TotalMessages { get; set; }

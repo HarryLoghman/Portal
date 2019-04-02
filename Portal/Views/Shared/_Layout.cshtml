@@ -1427,9 +1427,9 @@
                                     <ul>
                                         @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                         {
-                                            <li>
+                                            @*<li>
                                                 @Html.ActionLink("ارسال بالک", "Index", "SendBulkMessage", new { area = "Tools" }, null)
-                                            </li>
+                                            </li>*@
                                             <li>
                                                 @Html.ActionLink("کاربران", "Index", "Users", new { area = "Tools" }, null)
                                             </li>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,12 +10,24 @@ using System.Threading.Tasks;
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 namespace BulkExecuter
 {
+    public enum enum_sendingSpeed
+    {
+        normal = 1,
+        slow = 2,
+        verySlow = 4,
+        tooSlow = 8
+    }
     class Program
     {
+        
         internal static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        internal static string v_currentDirecoty;
         static int v_bulkId;
         static void Main(string[] args)
         {
+            DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName));
+            v_currentDirecoty = di.Name;
+
             //args = new string[] { "5" };
             string exceptionStr;
 
@@ -40,7 +53,7 @@ namespace BulkExecuter
                 }
                 v_bulkId = bulkId;
                 SharedLibrary.MessageHandler.BulkStatus bulkStatus;
-                bool canStart = BulkController.fnc_canStartSendingList(bulkId, out exceptionStr, out bulkStatus);
+                bool canStart = BulkControllerList.fnc_checkBulkStatus(bulkId, out exceptionStr, out bulkStatus);
                 if (!canStart)
                 {
                     exceptionStr = "BulkExecuter:Program:Main," + exceptionStr;
@@ -51,8 +64,18 @@ namespace BulkExecuter
                 }
                 else
                 {
-                    BulkController bulkController = new BulkController(bulkId);
-                    bulkController.sb_startSending();
+
+                    if (Properties.Settings.Default.UseDataTable)
+                    {
+                        BulkControllerDataTable bulkController = new BulkControllerDataTable(bulkId);
+                        bulkController.sb_startSending();
+                    }
+                    else
+                    {
+                        BulkControllerList bulkController = new BulkControllerList(bulkId);
+                        bulkController.sb_startSending();
+                    }
+                    
                 }
 
             }

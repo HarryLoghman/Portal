@@ -114,7 +114,86 @@ namespace SharedLibrary.Aggregators
             return xmlString;
         }
 
-        internal override string fnc_sendMessage_parseResult(SharedLibrary.Models.vw_servicesServicesInfo service, string result, out bool isSucceeded)
+        internal override string fnc_sendMessage_createBodyString(SharedLibrary.Models.vw_servicesServicesInfo service
+            , SharedLibrary.MessageHandler.MessageType messageType, string[] mobileNumberArr, string[] messageContentArr, DateTime[] dateTimeCorrelatorArr
+            , int?[] priceArr, string[] imiChargeKeyArr, bool useBulk)
+        {
+            string shortCode = service.ShortCode;
+            if (!shortCode.StartsWith("98"))
+                shortCode = "98" + shortCode.Replace("-", "");
+            //DateTime dateTimeCorrelator = request.prp_dateTimeCorrelator;
+            //string mobileNumber = request.prp_mobileNumber;
+            string aggregatorServiceId = service.AggregatorServiceId;
+            int i;
+            string userName = this.prp_userName;
+            string password = this.prp_password;
+            string serviceKey = service.AggregatorServiceId;
+            string type = "mt";
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!type == bulk does not work on testing the service!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (messageType == SharedLibrary.MessageHandler.MessageType.EventBase
+                 && useBulk)
+                type = "bulk";
+            string xmlString = $"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                    "<s:Body s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
+                    "<q1:sendSms xmlns:q1=\"urn:tpswsdl\"><msg href=\"#id1\"/></q1:sendSms>" +
+                    "<q2:ArrayReq id=\"id1\" xsi:type=\"q2:ArrayReq\" xmlns:q2=\"urn:tpswsdl\">" +
+                    $"   <username xsi:type=\"xsd:string\">{userName}</username>" +
+                    $"   <password xsi:type=\"xsd:string\">{password}</password>" +
+                    $"   <shortcode xsi:type=\"xsd:string\">{shortCode}</shortcode>" +
+                    $"   <servicekey xsi:type=\"xsd:string\">{serviceKey}</servicekey>" +
+                    "   <number href=\"#id2\"/>" +
+                    "   <message href=\"#id3\"/>" +
+                    $"   <type xsi:type=\"xsd:string\">{type}</type>" +
+                    "   <requestId href=\"#id4\"/>" +
+                    "</q2:ArrayReq>" +
+                    "<q3:Array id=\"id2\" q3:arrayType=\"xsd:string[1]\" xmlns:q3=\"http://schemas.xmlsoap.org/soap/encoding/\">";
+            for (i = 0; i <= mobileNumberArr.Length - 1; i++)
+            {
+                if (!mobileNumberArr[i].StartsWith("98"))
+                    mobileNumberArr[i] = "98" + mobileNumberArr[i].TrimStart('0');
+                xmlString = xmlString
+                    + "   <Item>" + mobileNumberArr[i] + "</Item>";
+            }
+            xmlString = xmlString
+                   + "</q3:Array>";
+            xmlString = xmlString + "<q4:Array id=\"id3\" q4:arrayType=\"xsd:string[1]\" xmlns:q4=\"http://schemas.xmlsoap.org/soap/encoding/\">";
+            for (i = 0; i <= messageContentArr.Length - 1; i++)
+            {
+                xmlString = xmlString
+            + "   <Item>" + messageContentArr[i] + "</Item>";
+            }
+
+            xmlString = xmlString + "</q4:Array>";
+            xmlString = xmlString + "<q5:Array id=\"id4\" q5:arrayType=\"xsd:string[1]\" xmlns:q5=\"http://schemas.xmlsoap.org/soap/encoding/\">";
+            xmlString += "   <Item></Item>";
+            xmlString = xmlString + "</q5:Array>";
+            xmlString = xmlString + "<q6:Array id=\"id5\" q6:arrayType=\"xsd:string[1]\" xmlns:q6=\"http://schemas.xmlsoap.org/soap/encoding/\">";
+            for (i = 0; i <= imiChargeKeyArr.Length - 1; i++)
+            {
+                xmlString = xmlString
+                    + "<Item>" + imiChargeKeyArr[i] + "</Item>";
+            }
+
+            xmlString = xmlString + "</q6:Array>";
+            xmlString = xmlString + "<q7:Array id=\"id6\" q7:arrayType=\"xsd:string[1]\" xmlns:q7=\"http://schemas.xmlsoap.org/soap/encoding/\">";
+            for (i = 0; i <= dateTimeCorrelatorArr.Length - 1; i++)
+            {
+                string correlator = SharedLibrary.MessageSender.fnc_getCorrelator(shortCode, dateTimeCorrelatorArr[i].Ticks, true);
+                xmlString = xmlString
+                    + "<Item>" + correlator + "</Item>";
+            }
+            xmlString = xmlString +
+            "</q7:Array>" +
+            "</s:Body>" +
+            "</s:Envelope>";
+
+
+            SharedVariables.logs.Info(xmlString);
+            return xmlString;
+        }
+
+        internal override string fnc_sendMessage_parseResult(SharedLibrary.Models.vw_servicesServicesInfo service
+            , string result, out bool isSucceeded)
         {
             string resultDescription = "";
             isSucceeded = false;
@@ -137,9 +216,17 @@ namespace SharedLibrary.Aggregators
                         string[] returnPartsArr = returnText.Split('-');
                         if (returnPartsArr.Length != 4)
                         {
-                            resultDescription = returnText + this.fnc_getAggregatorErrorDescription(returnText);
-                            isSucceeded = false;
-                            SharedVariables.logs.Error("AggregatorMobinOne " + service.ServiceCode + " fnc_sendMessage_parseResult contains " + returnPartsArr.Length + " item(s). The result is :" + returnText);
+                            if (returnText.StartsWith("-"))
+                            {
+                                resultDescription = returnText + this.fnc_getAggregatorErrorDescription(returnText);
+                                isSucceeded = false;
+                                SharedVariables.logs.Error("AggregatorMobinOne " + service.ServiceCode + " fnc_sendMessage_parseResult contains " + returnPartsArr.Length + " item(s). The result is :" + returnText);
+                            }
+                            else
+                            {
+                                resultDescription = returnText;
+                                isSucceeded = true;
+                            }
                         }
                         else
                         {
@@ -195,7 +282,7 @@ namespace SharedLibrary.Aggregators
             return resultDescription;
         }
 
-        internal override void sb_finishRequest(WebRequestParameter parameter, Exception ex)
+        internal override void sb_finishRequest(WebRequestParameter parameter, Exception ex, bool changeTaskCount)
         {
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
@@ -235,9 +322,9 @@ namespace SharedLibrary.Aggregators
                 }
 
             }
-            this.sb_saveResponseToDB(parameter);
+            this.sb_saveResponseToDB(parameter, changeTaskCount);
         }
-        internal override void sb_finishRequest(WebRequestParameter parameter, bool httpOK, string result)
+        internal override void sb_finishRequest(WebRequestParameter parameter, bool httpOK, string result, bool changeTaskCount)
         {
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
             {
@@ -248,7 +335,7 @@ namespace SharedLibrary.Aggregators
                 if (isSucceeded)
                 {
                     parameterMessage.prp_isSucceeded = isSucceeded;
-                    parameterMessage.prp_referenceId = parameter.prp_result;
+                    parameterMessage.prp_referenceId = parsedResult;
                     parameterMessage.prp_result = "Success";
                 }
                 else
@@ -259,7 +346,7 @@ namespace SharedLibrary.Aggregators
                 }
 
             }
-            this.sb_saveResponseToDB(parameter);
+            this.sb_saveResponseToDB(parameter, changeTaskCount);
         }
     }
 }
