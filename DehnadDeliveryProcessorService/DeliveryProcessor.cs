@@ -50,8 +50,9 @@ namespace DehnadDeliveryProcessorService
                                         + "," + "'" + dateAddedToQueue.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                                         + ",Null"
                                         + "," + "'" + mobileNumber + "'";
-                                    portal.Database.ExecuteSqlCommand(cmd);
                                     Program.logs.Info(cmd);
+                                    portal.Database.ExecuteSqlCommand(cmd);
+                                    
                                     deliveryMessage.IsProcessed = true;
                                     portal.Entry(deliveryMessage).State = System.Data.Entity.EntityState.Modified;
                                     if (i % 500 == 0) portal.SaveChanges();
@@ -74,8 +75,9 @@ namespace DehnadDeliveryProcessorService
                                         + "," + "Null"
                                         + ",'" + referenceId + "'"
                                         + "," + "'" + mobileNumber + "'";
-                                    portal.Database.ExecuteSqlCommand(cmd);
                                     Program.logs.Info(cmd);
+                                    portal.Database.ExecuteSqlCommand(cmd);
+                                    
                                     deliveryMessage.IsProcessed = true;
                                     portal.Entry(deliveryMessage).State = System.Data.Entity.EntityState.Modified;
                                     if (i % 500 == 0) portal.SaveChanges();
