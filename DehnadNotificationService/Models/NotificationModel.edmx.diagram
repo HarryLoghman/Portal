@@ -5,7 +5,7 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="e6180304f1964dae8650e29057fa029f" Name="Diagram1">
-        <EntityTypeShape EntityType="NotificationModel.SentMessage" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NotificationModel.SentMessage" Width="1.5" PointX="4.875" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="NotificationModel.UserMessage" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="NotificationModel.User" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="NotificationModel.UserSetting" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
