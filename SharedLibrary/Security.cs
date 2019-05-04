@@ -61,8 +61,9 @@ namespace SharedLibrary
 
                 System.Data.Entity.Core.Objects.ObjectParameter action = new System.Data.Entity.Core.Objects.ObjectParameter("action", typeof(int));
                 System.Data.Entity.Core.Objects.ObjectParameter actionMessage = new System.Data.Entity.Core.Objects.ObjectParameter("actionMessage", typeof(string));
+                System.Data.Entity.Core.Objects.ObjectParameter actionUrl = new System.Data.Entity.Core.Objects.ObjectParameter("actionUrl", typeof(string));
                 var serverTps = portal.sp_RequestsRulesChecker(requestLog.Id, regdate, srcIP, requestParamsStr, destinationIP, methodName
-                    , action, actionMessage);
+                    , action, actionMessage, actionUrl);
 
                 if (action.Value == null || action.Value == DBNull.Value)
                 {
@@ -80,13 +81,19 @@ namespace SharedLibrary
                     else if (action.Value.ToString() == "1")
                     {
                         //only notify
-                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue);
+                        if (actionUrl != null && actionUrl != Convert.DBNull
+                            && actionUrl.Value != null && actionUrl.Value != Convert.DBNull && !string.IsNullOrEmpty(actionUrl.ToString()))
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue, actionUrl.Value.ToString());
+                        else SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue);
                         return null;
                     }
                     else if (action.Value.ToString() == "2")
                     {
                         SharedVariables.logs.Error("TCL Rate has been exceeded:Request is rejected" + returnValue);
-                        SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Reject," + returnValue);
+                        if (actionUrl != null && actionUrl != Convert.DBNull
+                            && actionUrl.Value != null && actionUrl.Value != Convert.DBNull && !string.IsNullOrEmpty(actionUrl.ToString()))
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue, actionUrl.Value.ToString());
+                        else SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Reject," + returnValue);
                         return "TPS Rate has been passed";
                     }
 

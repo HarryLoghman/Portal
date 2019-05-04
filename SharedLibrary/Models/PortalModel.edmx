@@ -857,6 +857,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Parameter Name="methodName" Type="nvarchar" Mode="In" />
           <Parameter Name="action" Type="int" Mode="InOut" />
           <Parameter Name="actionMessage" Type="nvarchar(max)" Mode="InOut" />
+          <Parameter Name="actionUrl" Type="nvarchar" Mode="InOut" />
         </Function>
         <EntityContainer Name="PortalModelStoreContainer">
           <EntitySet Name="Aggregators" EntityType="Self.Aggregators" Schema="dbo" store:Type="Tables" />
@@ -1126,16 +1127,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="PortalModel.RealtimeStatisticsFor2GServices" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="PortalModel.RealtimeStatisticsFor3GServices" />
           <EntitySet Name="RequestsLogs" EntityType="PortalModel.RequestsLog" />
-          <FunctionImport Name="sp_RequestsRulesChecker">
-            <Parameter Name="requestId" Mode="In" Type="Int64" />
-            <Parameter Name="regdate" Mode="In" Type="DateTime" />
-            <Parameter Name="sourceIP" Mode="In" Type="String" />
-            <Parameter Name="requestParams" Mode="In" Type="String" />
-            <Parameter Name="destinationIP" Mode="In" Type="String" />
-            <Parameter Name="methodName" Mode="In" Type="String" />
-            <Parameter Name="action" Mode="InOut" Type="Int32" />
-            <Parameter Name="actionMessage" Mode="InOut" Type="String" />
-          </FunctionImport>
           <EntitySet Name="ReceievedMessages" EntityType="PortalModel.ReceievedMessage" />
           <EntitySet Name="vw_ReceivedMessages" EntityType="PortalModel.vw_ReceivedMessages" />
           <EntitySet Name="MCISingleChargeFtpFiles" EntityType="PortalModel.MCISingleChargeFtpFile" />
@@ -1154,6 +1145,17 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="Bulks" EntityType="PortalModel.Bulk" />
           <EntitySet Name="CampaignsCharges" EntityType="PortalModel.CampaignsCharge" />
           <EntitySet Name="CampaignsMobileNumbers" EntityType="PortalModel.CampaignsMobileNumber" />
+          <FunctionImport Name="sp_RequestsRulesChecker">
+            <Parameter Name="requestId" Mode="In" Type="Int64" />
+            <Parameter Name="regdate" Mode="In" Type="DateTime" />
+            <Parameter Name="sourceIP" Mode="In" Type="String" />
+            <Parameter Name="requestParams" Mode="In" Type="String" />
+            <Parameter Name="destinationIP" Mode="In" Type="String" />
+            <Parameter Name="methodName" Mode="In" Type="String" />
+            <Parameter Name="action" Mode="InOut" Type="Int32" />
+            <Parameter Name="actionMessage" Mode="InOut" Type="String" />
+            <Parameter Name="actionUrl" Mode="InOut" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -2581,7 +2583,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="sp_RequestsRulesChecker" FunctionName="PortalModel.Store.sp_RequestsRulesChecker" />
           <EntitySetMapping Name="ReceievedMessages">
             <EntityTypeMapping TypeName="PortalModel.ReceievedMessage">
               <MappingFragment StoreEntitySet="ReceievedMessages">
@@ -2798,6 +2799,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_RequestsRulesChecker" FunctionName="PortalModel.Store.sp_RequestsRulesChecker" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

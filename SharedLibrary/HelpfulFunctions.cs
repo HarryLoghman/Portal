@@ -474,6 +474,33 @@ namespace SharedLibrary
             }
         }
 
+        public static void sb_sendNotification_DRequestLog(StandardEventLevel level, string message, string notifUrl)
+        {
+            //string url = "http://84.22.102.27/notif/n7.php";
+            string url = "";
+            string icon = "";
+            try
+            {
+                url = notifUrl;
+                icon = fnc_getNotificationIcon(level);
+
+                Uri uri = new Uri(url + icon + HttpUtility.UrlEncode(message), UriKind.Absolute);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+                webRequest.Timeout = 60 * 1000;
+
+                //webRequest.Headers.Add("SOAPAction", action);
+                webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+                webRequest.Accept = "text/xml";
+                webRequest.Method = "Get";
+                WebResponse webResponse = webRequest.GetResponse();
+                webResponse.Close();
+            }
+            catch (Exception e)
+            {
+                logs.Error(e + url + icon + HttpUtility.UrlEncode(message));
+            }
+        }
+
         public static void sb_sendNotification_Monitoring(StandardEventLevel level, string message)
         {
             //string url = "http://84.22.102.27/notif/n6.php";
