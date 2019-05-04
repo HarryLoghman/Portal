@@ -159,7 +159,6 @@
       <Name>SharedLibrary</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Models\NotificationModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

@@ -507,6 +507,7 @@ namespace DehnadReceiveProcessorService
             message.IsReceivedFromIntegratedPanel = receivedMessage.IsReceivedFromIntegratedPanel;
             message.ReceivedFrom = receivedMessage.ReceivedFrom;
             message.ReceivedFromSource = receivedMessage.ReceivedFromSource;
+            message.ReceiveTime = receivedMessage.ReceivedTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
             using (var entity = new PortalEntities())
             {

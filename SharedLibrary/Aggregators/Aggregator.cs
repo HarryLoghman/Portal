@@ -184,8 +184,11 @@ namespace SharedLibrary.Aggregators
                     else
                     {
 
+                        SharedVariables.logs.Warn("retryCount=" + parameterMessage.prp_retryCount.Value
+                             + " maxTries=" + parameterMessage.prp_maxTries);
                         if (parameterMessage.prp_retryCount.HasValue && parameterMessage.prp_retryCount.Value >= parameterMessage.prp_maxTries)
                         {
+                            //SharedVariables.logs.Warn("Failed");
                             processStatus = SharedLibrary.MessageHandler.ProcessStatus.Failed;
                         }
                         else processStatus = SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;

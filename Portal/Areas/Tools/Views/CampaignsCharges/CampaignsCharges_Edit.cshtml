@@ -1,0 +1,131 @@
+﻿@model Portal.Models.CampaignsCharges_EditViewModel
+@{
+    ViewBag.Title = "تعریف کمپین";
+}
+
+@using (Html.BeginForm("CampaignsCharges_Edit", "CampaignsCharges", FormMethod.Post, new { @class = "form-horizontal", role = "form", spellcheck = "false", autocomplete = "off", autocorrect = "off", autocapitalize = "off" }))
+{
+    @Html.AntiForgeryToken()
+
+    <hr />
+
+    if (TempData["message"] != null)
+    {
+        <script type="text/javascript">
+        alert(@Html.Raw(Json.Encode(TempData["message"])));
+        </script>
+    }
+
+    @Html.ValidationSummary("", new { @class = "text-danger", style = "color:red" })
+
+    <div class="form-group">
+
+        <div class="col-md-10" style="padding-top:10px;">
+            @Html.LabelFor(m => m.service, new { @class = "col-md-2 control-label" })
+            @*@if (Model != null && Model.CampaignId.HasValue)
+                {
+                    @Html.DropDownListFor(m => m.service, (IEnumerable<SelectListItem>)ViewBag.Services, new { disabled = "disabled", style = "background-color:#d8d8d8;color:gray;", @class = "col-md-2 control-label k-input" })
+                    @Html.HiddenFor(x => x.service)
+                }
+                else
+                {*@
+            @Html.DropDownListFor(m => m.service, (IEnumerable<SelectListItem>)ViewBag.Services, new { @class = "col-md-2 control-label k-input" })
+            @* }*@
+        </div>
+        <div class="col-md-10" style="padding-top:10px;">
+
+            @Html.LabelFor(m => m.CampaignId, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.CampaignId, new { @class = "col-md-2 control-label k-input", @readonly = "true", style = "background-color:#d8d8d8;color:gray;" })
+
+            @Html.LabelFor(m => m.CampaignName, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.CampaignName, new { @class = "col-md-2 control-label k-input", style = "width:150px;margin-left:20px;" })
+        </div>
+        <div class="col-md-10" style="padding-top:10px;">
+            @Html.LabelFor(m => m.keyword, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.keyword, new { @class = "col-md-2 control-label k-input", style = "width:100px;margin-left:20px;" })
+
+            @Html.LabelFor(m => m.status, new { @class = "col-md-2 control-label" })
+            @Html.EnumDropDownListFor(m => m.status, new { @class = "col-md-2 control-label k-input", style = "margin-left:20px;" })
+
+            @Html.LabelFor(m => m.price, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.price, new { @class = "col-md-2 control-label k-input", style = "width:50px;margin-left:20px;" })
+        </div>
+
+        <div class="col-md-10" style="padding-top:10px;">
+
+            @Html.LabelFor(m => m.startTime, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.startTime, new { @class = "", style = "direction:ltr" })
+
+            @Html.LabelFor(m => m.endTime, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.endTime, new { @class = "", style = "direction:ltr" })
+
+        </div>
+
+        <div class="col-md-10" style="padding-top:10px; vertical-align:text-top;line-height:normal">
+            @Html.LabelFor(m => m.message, new { @class = "col-md-2 control-label" })
+            @Html.TextAreaFor(m => m.message, new { @class = "col-md-2 control-label k-input", style = "width:75%; height:100px;" })
+        </div>
+
+        <div class="col-md-10" style="padding-top:10px;">
+
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.TotalRequests, new { @class = "col-md-2 control-label" })
+                        @Html.TextBoxFor(m => m.TotalRequests, new { @class = "col-md-2 control-label k-input", @readonly = "true", style = "background-color:#d8d8d8;color:gray;margin-left:20px;width:75px;" })
+                    </td>
+                    <td>
+                        @Html.LabelFor(m => m.TotalPaid, new { @class = "col-md-2 control-label" })
+                        @Html.TextBoxFor(m => m.TotalPaid, new { @class = "col-md-2 control-label k-input", @readonly = "true", style = "background-color:#d8d8d8;color:gray;margin-left:20px;width:75px;" })
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-md-10" style="padding-top:20px;text-align:center;">
+            @{
+                //if (Model != null && Model.startTime.HasValue && Model.startTime.Value < DateTime.Now)
+                //{
+                //  <input type="submit" id="save" disabled="disabled" class="k-primary k-button" style="width: 10%;margin-right:10px" value="ذخیره" name="save" />
+                //}
+                //else
+                //{
+                //<input type="submit" id="save" class="k-primary k-button" style="width: 10%;margin-right:10px" value="ذخیره" name="save" />
+
+                //}
+            }
+
+            <input type="submit" id="save" class="k-primary k-button" style="width: 10%;margin-right:10px" value="ذخیره" name="save" />
+            <button id="cancel" class="k-primary k-button" style="width: 10%;margin-right:10px" onclick="window.location = '/Tools/CampaignsCharges'; return false;"><span>انصراف</span></button>
+
+            <button id="new" class="k-primary k-button" style="width: 10%;margin-right:10px;background-color:green;" value="جدید" onclick="window.location = '/Tools/CampaignsCharges/CampaignsCharges_Edit'; return false;">جدید</button>
+
+        </div>
+
+        <br />
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#startTime").kendoDateTimePicker();
+            $("#endTime").kendoDateTimePicker();
+
+
+        });
+    </script>
+    <style>
+        .box .k-textbox {
+            width: 80px;
+        }
+
+        .box .k-button {
+            min-width: 80px;
+        }
+    </style>
+}
+
+
+
+
+

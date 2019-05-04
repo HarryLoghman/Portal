@@ -93,6 +93,12 @@
     <Compile Include="Models\Bulk.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CampaignsCharge.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CampaignsMobileNumber.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MobinOneFtp.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
@@ -112,9 +118,6 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AspNetRole.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AspNetRoleUserAccess.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AspNetUser.cs">

@@ -12,7 +12,6 @@
 
         <EntityTypeShape EntityType="PortalModel.Aggregator" Width="1.5" PointX="0.75" PointY="9.875" />
         <EntityTypeShape EntityType="PortalModel.AspNetRole" Width="1.5" PointX="5.75" PointY="2.5" />
-        <EntityTypeShape EntityType="PortalModel.AspNetRoleUserAccess" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="3.625" />
         <EntityTypeShape EntityType="PortalModel.AspNetUserLogin" Width="1.5" PointX="10.25" PointY="1" />
         <EntityTypeShape EntityType="PortalModel.AspNetUser" Width="1.5" PointX="8" PointY="1.125" />
@@ -62,7 +61,9 @@
         <EntityTypeShape EntityType="PortalModel.MCIFtpLastState" Width="1.5" PointX="0.75" PointY="19.75" />
         <EntityTypeShape EntityType="PortalModel.MobinOneFtp" Width="1.5" PointX="19.75" PointY="4.75" />
         <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="7.75" PointY="19.75" />
-        <EntityTypeShape EntityType="PortalModel.Bulk" Width="1.5" PointX="2.851773548336594" PointY="20.719781587235527" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.Bulk" Width="1.5" PointX="2.851773548336594" PointY="20.719781587235527" />
+        <EntityTypeShape EntityType="PortalModel.CampaignsCharge" Width="1.5" PointX="3.5117123851141487" PointY="30.13643690856939" />
+        <EntityTypeShape EntityType="PortalModel.CampaignsMobileNumber" Width="1.5" PointX="0.56700926859258183" PointY="20.140874350509083" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         

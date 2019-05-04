@@ -31,6 +31,7 @@ namespace SharedShortCodeServiceLibrary
             DoNothingReturnFalse = 2048,
             DoNothing = 4096,
             EmptyString = 8192,
+            CampaignFreeCharge = 16384,
             unknown = 0
         }
         protected virtual string prp_serviceCode { get; }
@@ -482,6 +483,7 @@ namespace SharedShortCodeServiceLibrary
 
                     //var subscriber = SharedLibrary.HandleSubscription.GetSubscriber(message.MobileNumber, message.ServiceId);
 
+
                     #region there is no such subscriber
                     if (subscriber == null)
                     {
@@ -528,9 +530,18 @@ namespace SharedShortCodeServiceLibrary
                         return isSucceeded;
                     }
                     #endregion
+
+                    #region campaignCharges
+                    if (this.CampaignCharges(connectionStringeNameInAppConfig, service, message))
+                    {
+                        return isSucceeded;
+                    }
+                    #endregion
                     message.Content = content;
                     ContentManager.HandleContent(connectionStringeNameInAppConfig, message, service, subscriber, messagesTemplate, imiChargeCodes);
                 }
+
+
             }
             catch (Exception e)
             {
@@ -571,7 +582,7 @@ namespace SharedShortCodeServiceLibrary
             , List<MessagesTemplate> messagesTemplate
             , vw_servicesServicesInfo service, int isCampaignActive)
         {
-            
+
             bool isSucceeded = true;
             if (message.Content.Contains("25000"))
                 message.Content = "25000";
@@ -579,7 +590,7 @@ namespace SharedShortCodeServiceLibrary
                 message.ReceivedFrom = "OtpCharge";
             else if (!message.ReceivedFrom.ToLower().Contains("-otpcharge"))
                 message.ReceivedFrom = message.ReceivedFrom + "-OtpCharge";
-            
+
             var logId = MessageHandler.OtpLog(connectionStringeNameInAppConfig, message.MobileNumber, "request", message.Content);
             var result = await SharedLibrary.UsefulWebApis.MciOtpSendActivationCode(message.ServiceCode, message.MobileNumber, "0");
             if (!(result is string) && result != null)
@@ -623,7 +634,7 @@ namespace SharedShortCodeServiceLibrary
                 isSucceeded = true;
                 message.description = result;
             }
-            
+
             return isSucceeded;
         }
 
@@ -638,7 +649,7 @@ namespace SharedShortCodeServiceLibrary
                 message.ReceivedFrom = "OtpConfirm";
             else if (!message.ReceivedFrom.ToLower().Contains("-otpconfirm"))
                 message.ReceivedFrom = message.ReceivedFrom + "-OtpConfirm";
-            
+
             if (!(result is string) && result != null)
             {
                 MessageHandler.OtpLogUpdate(connectionStringeNameInAppConfig, logId, result.Status.ToString());
@@ -860,6 +871,46 @@ namespace SharedShortCodeServiceLibrary
                 if (isSubscriberdVerified == false)
                 {
                     return isSucceeded;
+                }
+            }
+            return false;
+        }
+
+        protected virtual bool CampaignCharges(string connectionStringInAppConfig, vw_servicesServicesInfo service, MessageObject message)
+        {
+            using (var entityPortal = new SharedLibrary.Models.PortalEntities())
+            {
+                if (!entityPortal.Subscribers.Any(o => o.ServiceId == service.Id && o.MobileNumber == message.MobileNumber && o.DeactivationDate == null))
+                {
+                    // user is deactived or we dont have such user or user is not in this service
+                    return false;
+                }
+                var entryCampaign = entityPortal.CampaignsCharges.FirstOrDefault(o => o.ServiceId == service.Id && o.keyword.ToLower() == message.Content.ToLower()
+                && o.status == 1 && (!o.endTime.HasValue || DateTime.Now <= o.endTime)
+                && (!o.startTime.HasValue || o.startTime <= DateTime.Now));
+                if (entryCampaign == null) return false;
+
+                if (!entityPortal.CampaignsMobileNumbers.Any(o => o.mobileNumber == message.MobileNumber
+                 && o.campaignType.ToLower() == "charges" && o.campaignId == entryCampaign.Id))
+                {
+
+
+                    CampaignsMobileNumber entryCampaignsMobile = new CampaignsMobileNumber();
+                    entryCampaignsMobile.campaignId = entryCampaign.Id;
+                    entryCampaignsMobile.campaignType = "charges";
+                    entryCampaignsMobile.keyword = entryCampaign.keyword;
+                    entryCampaignsMobile.mobileNumber = message.MobileNumber;
+                    entryCampaignsMobile.paid = false;
+                    entryCampaignsMobile.receivedTime = string.IsNullOrEmpty(message.ReceiveTime) ? DateTime.Now : DateTime.Parse(message.ReceiveTime);
+                    entryCampaignsMobile.regdate = DateTime.Now;
+                    entityPortal.CampaignsMobileNumbers.Add(entryCampaignsMobile);
+                    entityPortal.SaveChanges();
+
+
+                    message.Content = entryCampaign.message;
+                    MessageHandler.InsertMessageToQueue(connectionStringInAppConfig, message);
+                    return true;
+
                 }
             }
             return false;

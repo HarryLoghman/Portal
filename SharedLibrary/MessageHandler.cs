@@ -868,6 +868,12 @@ namespace SharedLibrary
             FinishedAll = 6
         }
 
+        public enum CampaignChargeStatus
+        {
+            Enabled = 1,
+            Disabled = 0
+        }
+
         public enum BulkFileType
         {
             file = 0,

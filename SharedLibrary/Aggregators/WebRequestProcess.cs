@@ -70,7 +70,6 @@ namespace SharedLibrary.Aggregators
 
                 if (objs[1].GetType() == typeof(WebRequestParameter)
                   || objs[1].GetType() == typeof(WebRequestParameterMessage))
-
                 {
                     ((WebRequestParameter)objs[1]).v_timings.Add("requestAfter", DateTime.Now);
                 }
@@ -154,6 +153,10 @@ namespace SharedLibrary.Aggregators
 
                 {
                     ((WebRequestParameter)objs[1]).v_timings.Add("responseBefore", DateTime.Now);
+                    //if(((WebRequestParameter)objs[1]).prp_bodyString.Contains("salamsalamsalam"))
+                    //{
+                    //    throw new Exception ("my exception");
+                    //}
                 }
                 else
                 {
@@ -292,7 +295,7 @@ namespace SharedLibrary.Aggregators
             {
                 if (objs[1].GetType() == typeof(WebRequestParameterMessage)
                     || objs[1].GetType() == typeof(WebRequestParameter))
-                    aggregator.sb_finishRequest((WebRequestParameter)objs[1], ex, false);
+                    aggregator.sb_finishRequest((WebRequestParameter)objs[1], ex, true);
                 else
                 {
                     //SharedVariables.logs.Info("exception list2    " + ex.Message);
@@ -304,8 +307,7 @@ namespace SharedLibrary.Aggregators
                 }
 
             }
-
-
+            
         }
 
         private void sb_saveTimings(List<WebRequestParameterMessage> parameterMessageList)
@@ -315,6 +317,7 @@ namespace SharedLibrary.Aggregators
                 this.sb_saveTimings(parameter);
             }
         }
+
         private void sb_saveTimings(WebRequestParameterMessage parameterMessage)
         {
             SqlCommand cmd = new SqlCommand();

@@ -404,7 +404,7 @@ namespace BulkExecuter
                 }
                 sb_notifyLongSending(this.v_entryBulk, this.v_dtEventbase.Rows.Count - pausedRowCount + 1, this.v_ticksStart, this.v_taskCount);
             }
-            Thread.Sleep(60 * 1000);//wait for saving to db is finished
+            Thread.Sleep(10 * 1000);//wait for saving to db is finished
             
             //this.sb_finish();
             return true;

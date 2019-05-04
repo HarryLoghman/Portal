@@ -381,6 +381,7 @@
     <Compile Include="Areas\Ashpazkhoone\Controllers\StatisticsController.cs" />
     <Compile Include="Areas\Ashpazkhoone\AshpazkhooneAreaRegistration.cs" />
     <Compile Include="Areas\Tools\Controllers\BulksController.cs" />
+    <Compile Include="Areas\Tools\Controllers\CampaignsChargesController.cs" />
     <Compile Include="Areas\Tools\Controllers\RolesController.cs" />
     <Compile Include="Areas\Tools\Controllers\UsersController.cs" />
     <Compile Include="Areas\Tools\ToolsAreaRegistration.cs" />
@@ -1324,6 +1325,8 @@
     <Content Include="Areas\Tools\Views\Bulks\Bulks_Numbers.cshtml" />
     <Content Include="files\bulks\unsubfileuniq.csv" />
     <Content Include="files\bulks\unsubfileuniq.xls" />
+    <Content Include="Areas\Tools\Views\CampaignsCharges\CampaignsCharges_Edit.cshtml" />
+    <Content Include="Areas\Tools\Views\CampaignsCharges\Index.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />

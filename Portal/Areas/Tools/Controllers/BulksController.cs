@@ -145,12 +145,7 @@ namespace Portal.Areas.Tools.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult Bulks_Edit_DeleteNumbers(Models.Bulks_EditViewModel model)
-        {
-            return View("Bulks_Edit", model);
-        }
-
+    
         [HttpPost]
         public ActionResult Bulks_Edit(Models.Bulks_EditViewModel model, string save, string deleteNumbers)
         {
@@ -162,6 +157,12 @@ namespace Portal.Areas.Tools.Controllers
             {
                 return fnc_deleteNumbers(model);
             }
+        }
+
+        [HttpPost]
+        public ActionResult Bulks_Edit_DeleteNumbers(Models.Bulks_EditViewModel model)
+        {
+            return View("Bulks_Edit", model);
         }
 
         private ActionResult fnc_deleteNumbers(Models.Bulks_EditViewModel model)

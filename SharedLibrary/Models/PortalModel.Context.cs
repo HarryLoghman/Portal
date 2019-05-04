@@ -29,7 +29,6 @@ namespace SharedLibrary.Models
     
         public virtual DbSet<Aggregator> Aggregators { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
-        public virtual DbSet<AspNetRoleUserAccess> AspNetRoleUserAccesses { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
@@ -72,6 +71,8 @@ namespace SharedLibrary.Models
         public virtual DbSet<MobinOneFtp> MobinOneFtps { get; set; }
         public virtual DbSet<ServersIP> ServersIPs { get; set; }
         public virtual DbSet<Bulk> Bulks { get; set; }
+        public virtual DbSet<CampaignsCharge> CampaignsCharges { get; set; }
+        public virtual DbSet<CampaignsMobileNumber> CampaignsMobileNumbers { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

@@ -12,10 +12,15 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetRoleUserAccess
+    public partial class CampaignsMobileNumber
     {
-        public string roleId { get; set; }
-        public string userId { get; set; }
-        public long applicationId { get; set; }
+        public long Id { get; set; }
+        public Nullable<int> campaignId { get; set; }
+        public string campaignType { get; set; }
+        public string mobileNumber { get; set; }
+        public Nullable<System.DateTime> receivedTime { get; set; }
+        public string keyword { get; set; }
+        public Nullable<bool> paid { get; set; }
+        public Nullable<System.DateTime> regdate { get; set; }
     }
 }

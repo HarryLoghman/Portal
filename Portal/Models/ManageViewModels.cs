@@ -327,4 +327,80 @@ namespace Portal.Models
 
 
     }
+
+
+    public class CampaignsCharges_EditViewModel
+    {
+        public CampaignsCharges_EditViewModel()
+        {
+            this.status = SharedLibrary.MessageHandler.CampaignChargeStatus.Enabled;
+        }
+
+        public CampaignsCharges_EditViewModel(Nullable<int> id)
+        {
+            this.status = SharedLibrary.MessageHandler.CampaignChargeStatus.Enabled;
+            if (!id.HasValue) return;
+            using (var portal = new SharedLibrary.Models.PortalEntities())
+            {
+                var entryCampaign = portal.CampaignsCharges.Where(o => o.Id == id).FirstOrDefault();
+                if (entryCampaign != null)
+                {
+                    this.CampaignName = entryCampaign.campaignName;
+                    this.CampaignId = id;
+                    this.endTime = entryCampaign.endTime;
+                    this.keyword = entryCampaign.keyword;
+                    this.message = entryCampaign.message;
+                    this.price = entryCampaign.price;
+                    this.service = entryCampaign.ServiceId.ToString();
+                    this.startTime = entryCampaign.startTime;
+                    this.status = (SharedLibrary.MessageHandler.CampaignChargeStatus)entryCampaign.status;
+                    this.TotalPaid = portal.CampaignsMobileNumbers.Count(o => o.campaignId == id && o.campaignType.ToLower() == "charges"
+                     && o.paid.HasValue && o.paid.Value);
+
+                    this.TotalRequests = portal.CampaignsMobileNumbers.Count(o => o.campaignId == id && o.campaignType.ToLower() == "charges");
+                    
+
+                    
+
+                }
+            }
+
+
+        }
+
+        [Display(Name = "شناسه کمپین")]
+        public Nullable<int> CampaignId { get; set; }
+
+        [Display(Name = "عنوان کمپین"), Required(ErrorMessage = "عنوان مشخص نشده است")]
+        public string CampaignName { get; set; }
+
+        [Display(Name = "سرویس"), Required(ErrorMessage = "سرویس مشخص نشده است")]
+        public string service { get; set; }
+
+        [Display(Name = "قیمت")]
+        public int? price { get; set; }
+
+        [Display(Name = "کلمه کلیدی"), Required(ErrorMessage = "کلمه کلیدی مشخص نشده است"),StringLength(10,ErrorMessage ="حداکثر تعداد کاراکتر مجاز برای کلمه کلیدی ۱۰")]
+        public string keyword { get; set; }
+
+        [DataType(DataType.Text), Display(Name = "پیام"), StringLength(4000, ErrorMessage = "حداکثر تعداد کاراکتر مجاز برای پیام 4000")]
+        public string message { get; set; }
+
+        [Display(Name = "وضعیت"), EnumDataType(typeof(SharedLibrary.MessageHandler.CampaignChargeStatus)), Editable(false)
+           , DefaultValue(SharedLibrary.MessageHandler.CampaignChargeStatus.Enabled)]
+        public SharedLibrary.MessageHandler.CampaignChargeStatus status { get; set; }
+
+        [DataType(DataType.DateTime), Display(Name = "زمان شروع")]
+        public Nullable<DateTime> startTime { get; set; }
+
+        [DataType(DataType.DateTime), Display(Name = "زمان پایان")]
+        public Nullable<DateTime> endTime { get; set; }
+
+        [Display(Name = "TotalRequests")]
+        public int TotalRequests { get; set; }
+
+        [Display(Name = "TotalPaid")]
+        public int TotalPaid { get; set; }
+
+    }
 }

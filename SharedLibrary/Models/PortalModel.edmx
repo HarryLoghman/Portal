@@ -37,16 +37,6 @@
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
-        <EntityType Name="AspNetRoleUserAccess">
-          <Key>
-            <PropertyRef Name="roleId" />
-            <PropertyRef Name="userId" />
-            <PropertyRef Name="applicationId" />
-          </Key>
-          <Property Name="roleId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="userId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="applicationId" Type="bigint" Nullable="false" />
-        </EntityType>
         <EntityType Name="AspNetUserClaims">
           <Key>
             <PropertyRef Name="Id" />
@@ -163,6 +153,33 @@
           <Property Name="DateCreated" Type="datetime" />
           <Property Name="PersianDateCreated" Type="nvarchar" MaxLength="50" />
           <Property Name="Tag" Type="int" />
+        </EntityType>
+        <EntityType Name="CampaignsCharges">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="campaignName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="ServiceId" Type="bigint" Nullable="false" />
+          <Property Name="price" Type="int" />
+          <Property Name="keyword" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="message" Type="nvarchar(max)" />
+          <Property Name="status" Type="int" />
+          <Property Name="startTime" Type="datetime" />
+          <Property Name="endTime" Type="datetime" />
+        </EntityType>
+        <EntityType Name="CampaignsMobileNumbers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="campaignId" Type="int" />
+          <Property Name="campaignType" Type="nvarchar" MaxLength="50" />
+          <Property Name="mobileNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="receivedTime" Type="datetime" />
+          <Property Name="keyword" Type="nvarchar" MaxLength="50" />
+          <Property Name="paid" Type="bit" />
+          <Property Name="regdate" Type="datetime" />
         </EntityType>
         <EntityType Name="chargeInfo">
           <Key>
@@ -845,7 +862,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="Aggregators" EntityType="Self.Aggregators" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Apps" EntityType="Self.Apps" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AspNetRoleUserAccess" EntityType="Self.AspNetRoleUserAccess" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
@@ -855,6 +871,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BulkList" EntityType="Self.BulkList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Bulks" EntityType="Self.Bulks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CampaignsCharges" EntityType="Self.CampaignsCharges" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CampaignsMobileNumbers" EntityType="Self.CampaignsMobileNumbers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="chargeInfo" EntityType="Self.chargeInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery" EntityType="Self.Delivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="JhoobinSettings" EntityType="Self.JhoobinSettings" Schema="dbo" store:Type="Tables" />
@@ -1042,7 +1060,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           </FunctionImport>
           <EntitySet Name="Aggregators" EntityType="PortalModel.Aggregator" />
           <EntitySet Name="AspNetRoles" EntityType="PortalModel.AspNetRole" />
-          <EntitySet Name="AspNetRoleUserAccesses" EntityType="PortalModel.AspNetRoleUserAccess" />
           <EntitySet Name="AspNetUserClaims" EntityType="PortalModel.AspNetUserClaim" />
           <EntitySet Name="AspNetUserLogins" EntityType="PortalModel.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="PortalModel.AspNetUser" />
@@ -1135,6 +1152,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="MobinOneFtps" EntityType="PortalModel.MobinOneFtp" />
           <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
           <EntitySet Name="Bulks" EntityType="PortalModel.Bulk" />
+          <EntitySet Name="CampaignsCharges" EntityType="PortalModel.CampaignsCharge" />
+          <EntitySet Name="CampaignsMobileNumbers" EntityType="PortalModel.CampaignsMobileNumber" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1186,16 +1205,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUsers" Relationship="PortalModel.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
-        </EntityType>
-        <EntityType Name="AspNetRoleUserAccess">
-          <Key>
-            <PropertyRef Name="roleId" />
-            <PropertyRef Name="userId" />
-            <PropertyRef Name="applicationId" />
-          </Key>
-          <Property Name="roleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="userId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="applicationId" Type="Int64" Nullable="false" />
         </EntityType>
         <EntityType Name="AspNetUserClaim">
           <Key>
@@ -1977,6 +1986,33 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Tag" Type="Int32" />
         </EntityType>
+        <EntityType Name="CampaignsCharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="campaignName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="price" Type="Int32" />
+          <Property Name="keyword" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="startTime" Type="DateTime" Precision="3" />
+          <Property Name="endTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="CampaignsMobileNumber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="campaignId" Type="Int32" />
+          <Property Name="campaignType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="mobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="receivedTime" Type="DateTime" Precision="3" />
+          <Property Name="keyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="paid" Type="Boolean" />
+          <Property Name="regdate" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2044,15 +2080,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               <MappingFragment StoreEntitySet="AspNetRoles">
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetRoleUserAccesses">
-            <EntityTypeMapping TypeName="PortalModel.AspNetRoleUserAccess">
-              <MappingFragment StoreEntitySet="AspNetRoleUserAccess">
-                <ScalarProperty Name="applicationId" ColumnName="applicationId" />
-                <ScalarProperty Name="userId" ColumnName="userId" />
-                <ScalarProperty Name="roleId" ColumnName="roleId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2738,6 +2765,35 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="tps" ColumnName="tps" />
                 <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
                 <ScalarProperty Name="bulkName" ColumnName="bulkName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CampaignsCharges">
+            <EntityTypeMapping TypeName="PortalModel.CampaignsCharge">
+              <MappingFragment StoreEntitySet="CampaignsCharges">
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="keyword" ColumnName="keyword" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="campaignName" ColumnName="campaignName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CampaignsMobileNumbers">
+            <EntityTypeMapping TypeName="PortalModel.CampaignsMobileNumber">
+              <MappingFragment StoreEntitySet="CampaignsMobileNumbers">
+                <ScalarProperty Name="regdate" ColumnName="regdate" />
+                <ScalarProperty Name="paid" ColumnName="paid" />
+                <ScalarProperty Name="keyword" ColumnName="keyword" />
+                <ScalarProperty Name="receivedTime" ColumnName="receivedTime" />
+                <ScalarProperty Name="mobileNumber" ColumnName="mobileNumber" />
+                <ScalarProperty Name="campaignType" ColumnName="campaignType" />
+                <ScalarProperty Name="campaignId" ColumnName="campaignId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
