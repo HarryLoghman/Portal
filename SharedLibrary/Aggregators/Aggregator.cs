@@ -140,6 +140,7 @@ namespace SharedLibrary.Aggregators
 
         internal virtual void sb_saveResponseToDB(WebRequestParameter parameter, bool changeTaskCount)
         {
+            string lastStep = "0";
             if (changeTaskCount)
                 parameter.prp_handlerFinish?.Invoke(this, null);
             if (parameter.prp_webRequestType == enum_webRequestParameterType.message)
@@ -184,8 +185,9 @@ namespace SharedLibrary.Aggregators
                     else
                     {
 
-                        SharedVariables.logs.Warn("retryCount=" + parameterMessage.prp_retryCount.Value
-                             + " maxTries=" + parameterMessage.prp_maxTries);
+                        //SharedVariables.logs.Warn("retryCount=" + parameterMessage.prp_retryCount.Value
+                        //     + " maxTries=" + parameterMessage.prp_maxTries);
+                        lastStep = "1";
                         if (parameterMessage.prp_retryCount.HasValue && parameterMessage.prp_retryCount.Value >= parameterMessage.prp_maxTries)
                         {
                             //SharedVariables.logs.Warn("Failed");
@@ -193,7 +195,7 @@ namespace SharedLibrary.Aggregators
                         }
                         else processStatus = SharedLibrary.MessageHandler.ProcessStatus.TryingToSend;
 
-
+                        lastStep = "2";
                         cmd.CommandText = "update " + parameter.prp_service.databaseName + ".dbo." + tableName + " "
                           + "set DateLastTried='" + now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "'"
                           + ",RetryCount=IsNull(RetryCount,0)+1"
@@ -201,7 +203,7 @@ namespace SharedLibrary.Aggregators
                           + ",ProcessStatus = " + ((int)processStatus).ToString()
                           //+ (parameterMessage.prp_retryCount > parameterMessage.prp_maxTries ? ",ProcessStatus = " + ((int)SharedLibrary.MessageHandler.ProcessStatus.Failed).ToString() : "")
                           + " where id = " + parameterMessage.prp_id.ToString();
-
+                        lastStep = "3";
                     }
                     SharedVariables.logs.Error(cmd.CommandText);
                     cmd.Connection.Open();
@@ -242,8 +244,8 @@ namespace SharedLibrary.Aggregators
                 }
                 catch (Exception ex1)
                 {
-                    SharedVariables.logs.Error(parameter.prp_service.ServiceCode + " : Exception in saving to " + tableName + ": ", ex1);
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "sb_saveResponseToDB : " + parameter.prp_service.ServiceCode + " Exception in saving to " + tableName + "(" + ex1.Message + ")");
+                    SharedVariables.logs.Error(parameter.prp_service.ServiceCode + " : Exception in saving to " + tableName + ": " + " last step = " + lastStep, ex1);
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "sb_saveResponseToDB : " + parameter.prp_service.ServiceCode + " Exception in saving to " + tableName + " last step = " + lastStep + "(" + ex1.Message + ")");
                     //Program.logs.Error("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
                     //Program.logs.Warn("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
                     //Program.logs.Info("**********************Application Stops because of DB Exception has been occured during the save operation to database**********************");
