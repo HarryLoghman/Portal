@@ -99,10 +99,19 @@
     <Compile Include="Models\CampaignsMobileNumber.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\FtpSubAndChargeLastState.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FtpSyncFile.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MobinOneFtp.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ServersIP.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_FtpSubAndChargeLastState_getAsync_Result.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="SubscriptionHandler.cs" />
@@ -157,12 +166,6 @@
     <Compile Include="Models\ImiData.cs" />
     <Compile Include="Models\IntegratedPanel.cs" />
     <Compile Include="Models\JhoobinSetting.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MCIFtpLastState.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MCISingleChargeFtpFile.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Message.cs" />
@@ -335,9 +338,6 @@
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sp_getSubscriberServices_Result.cs">
-      <DependentUpon>PortalModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sp_MCIFtpLastState_getAsync_Result.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Subscriber.cs">

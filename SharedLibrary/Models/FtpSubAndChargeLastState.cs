@@ -10,8 +10,9 @@
 namespace SharedLibrary.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class sp_MCIFtpLastState_getAsync_Result
+    public partial class FtpSubAndChargeLastState
     {
         public long Id { get; set; }
         public Nullable<System.DateTime> regdate { get; set; }
@@ -33,6 +34,5 @@ namespace SharedLibrary.Models
         public string event_type { get; set; }
         public string channel { get; set; }
         public string filePath { get; set; }
-        public string Action { get; set; }
     }
 }

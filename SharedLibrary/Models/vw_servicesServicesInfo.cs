@@ -14,6 +14,9 @@ namespace SharedLibrary.Models
     
     public partial class vw_servicesServicesInfo
     {
+        public Nullable<int> userCount { get; set; }
+        public Nullable<int> activeUserCount { get; set; }
+        public int TodayTillNowChargeAmount { get; set; }
         public long Id { get; set; }
         public string Name { get; set; }
         public string ServiceCode { get; set; }

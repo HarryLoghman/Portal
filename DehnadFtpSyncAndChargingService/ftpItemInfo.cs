@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DehnadFtpSyncAndChargingService
 {
-    class MCIftpItemInfo
+    class ftpItemInfo
     {
         public int sid { get; set; }
         public string trans_id { get; set; }

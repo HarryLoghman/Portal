@@ -541,6 +541,7 @@ namespace SharedLibrary
         private static string dehnadReceivePortalOnTohidIP = "http://10.20.96.65:8090";
         private static string mobinOneSyncIP = "http://cp.mobinone.org:33065";
         private static string MCIFtpSyncIP = "ftp://172.17.252.201";
+        private static string mobineOneFtpIP = "ftp://cp.mobinone.org:30041";
 
         public enum enumServers
         {
@@ -559,6 +560,7 @@ namespace SharedLibrary
             dehnadReceivePortalOnTohid = 12,
             mobinOneSync = 13,
             MCIFtpSync = 14,
+            mobinOneFtp = 15,
         }
 
         public enum enumServersActions
@@ -585,6 +587,7 @@ namespace SharedLibrary
             mobinOneSync = 19,
             MCISync = 20,
             dehnadNotificationAtomicWarning = 21,
+            mobineOneFtpSync=22
 
         }
         public static List<Models.ServersIP> fnc_getLocalServers()
@@ -723,6 +726,11 @@ namespace SharedLibrary
                                 serverURL = MCIFtpSyncIP;
                                 userName = "DEH";
                                 pwd = "d9H&*&123";
+                                break;
+                            case enumServers.mobinOneFtp:
+                                serverURL = mobineOneFtpIP;
+                                userName = "dehnad";
+                                pwd = "abcd.1234";
                                 break;
                             default:
                                 logs.Error("Error in fnc_getServerURL : Unknown Server " + server.ToString());
@@ -956,6 +964,14 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.MCISync:
+                                        return serverURL + "/";
+
+                                }
+                                break;
+                            case enumServers.mobinOneFtp:
+                                switch (action)
+                                {
+                                    case enumServersActions.mobineOneFtpSync:
                                         return serverURL + "/";
 
                                 }

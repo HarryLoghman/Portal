@@ -26,12 +26,12 @@ namespace DehnadFtpSyncAndChargingService.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("E:\\ImiFtps\\MciDirectNew")]
-        public string LocalPath {
+        public string LocalPathMCI {
             get {
-                return ((string)(this["LocalPath"]));
+                return ((string)(this["LocalPathMCI"]));
             }
             set {
-                this["LocalPath"] = value;
+                this["LocalPathMCI"] = value;
             }
         }
         
@@ -204,6 +204,18 @@ namespace DehnadFtpSyncAndChargingService.Properties {
             }
             set {
                 this["MobinOneSyncNDaysBefore"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\ImiFtps\\MobinOne")]
+        public string LocalPathMobinOne {
+            get {
+                return ((string)(this["LocalPathMobinOne"]));
+            }
+            set {
+                this["LocalPathMobinOne"] = value;
             }
         }
     }

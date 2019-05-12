@@ -61,7 +61,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MCI\ftpItemInfo.cs" />
     <Compile Include="MCI\downloader.cs" />
     <Compile Include="MCI\FtpFile.cs" />
     <Compile Include="FtpLogEntities.Context.cs">
@@ -82,6 +81,9 @@
     <Compile Include="MCILog.cs">
       <DependentUpon>FtpLogEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="MobinOne\downloader.cs" />
+    <Compile Include="MobinOne\FtpFile.cs" />
+    <Compile Include="ftpItemInfo.cs" />
     <Compile Include="MobinOne\Sync.cs" />
     <Compile Include="MobinOne\MobinOneItemInfo.cs" />
     <Compile Include="ProjectInstaller.cs">

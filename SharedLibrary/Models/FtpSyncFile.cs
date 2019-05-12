@@ -12,7 +12,7 @@ namespace SharedLibrary.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class MCISingleChargeFtpFile
+    public partial class FtpSyncFile
     {
         public int id { get; set; }
         public string serverIP { get; set; }

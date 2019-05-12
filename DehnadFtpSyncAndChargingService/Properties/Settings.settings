@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DehnadFtpSyncAndChargingService.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="LocalPath" Type="System.String" Scope="User">
+    <Setting Name="LocalPathMCI" Type="System.String" Scope="User">
       <Value Profile="(Default)">E:\ImiFtps\MciDirectNew</Value>
     </Setting>
     <Setting Name="DownloadIntervalInSeconds" Type="System.Int64" Scope="User">
@@ -46,6 +46,9 @@
     </Setting>
     <Setting Name="MobinOneSyncNDaysBefore" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="LocalPathMobinOne" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\ImiFtps\MobinOne</Value>
     </Setting>
   </Settings>
 </SettingsFile>

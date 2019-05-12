@@ -17,14 +17,14 @@ namespace DehnadFtpSyncAndChargingService.MCI
         public downloader()
         {
             string userName, pwd;
-            ServerUrl = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MCIFtpSync, SharedLibrary.HelpfulFunctions.enumServersActions.MCISync, out userName , out pwd);
+            ServerUrl = SharedLibrary.HelpfulFunctions.fnc_getServerActionURL(SharedLibrary.HelpfulFunctions.enumServers.MCIFtpSync, SharedLibrary.HelpfulFunctions.enumServersActions.MCISync, out userName, out pwd);
             Uri uri = new Uri(ServerUrl);
             ServerIP = uri.Host;
 
             FtpUser = userName;
-            FtpPassword = pwd;  
+            FtpPassword = pwd;
         }
-        
+
         public void updateSingleChargeAndSubscription()
         {
             updateSingleChargeAndSubscription(DateTime.Now.ToString("yyyyMMdd"), null, false);
@@ -38,33 +38,34 @@ namespace DehnadFtpSyncAndChargingService.MCI
         {
             try
             {
-                bool saveFailFilesToSingleCharge = Properties.Settings.Default.SaveFailFilesToSingleCharge;
-                List<FtpFile> newFtpFiles = this.downloadNewFiles(winDirectory, operatorSIDs, downloadAnyway);
-
-                if (newFtpFiles == null) return;
-                if (newFtpFiles.Count == 0)
-                {
-                    Program.logs.Info("updateSingleCharge:There is no file to download");
-                    return;
-                }
-
-                int i, j;
-                StreamReader sr;
-                string str;
-                string[] lines;
-                int chargeCount = 0;
-                int subCount = 0;
-                int unsubCount = 0;
-                MCIftpItemInfo ftpItem = new MCIftpItemInfo();
-                List<string> props;
-                SharedLibrary.Models.ServiceModel.Singlecharge singleCharge;
-                SharedLibrary.Models.ServiceModel.SinglechargeArchive singleChargeArchive;
-                SharedLibrary.Models.MCISingleChargeFtpFile portalFtpFiles;
-                bool saveFtpFile;
-                string mobileNumber;
-                DateTime regDate;
                 using (var entityPortal = new SharedLibrary.Models.PortalEntities())
                 {
+                    bool saveFailFilesToSingleCharge = Properties.Settings.Default.SaveFailFilesToSingleCharge;
+                    List<FtpFile> newFtpFiles = this.downloadNewFiles(winDirectory, operatorSIDs, downloadAnyway);
+
+                    if (newFtpFiles == null) return;
+                    if (newFtpFiles.Count == 0)
+                    {
+                        Program.logs.Info("MCI:updateSingleCharge:There is no file to download");
+                        return;
+                    }
+
+                    int i, j;
+                    StreamReader sr;
+                    string str;
+                    string[] lines;
+                    int chargeCount = 0;
+                    int subCount = 0;
+                    int unsubCount = 0;
+                    ftpItemInfo ftpItem = new ftpItemInfo();
+                    List<string> props;
+                    SharedLibrary.Models.ServiceModel.Singlecharge singleCharge;
+                    SharedLibrary.Models.ServiceModel.SinglechargeArchive singleChargeArchive;
+                    SharedLibrary.Models.FtpSyncFile portalFtpFiles;
+                    bool saveFtpFile;
+                    string mobileNumber;
+                    DateTime regDate;
+
                     for (i = 0; i <= newFtpFiles.Count - 1; i++)
                     {
                         chargeCount = 0;
@@ -89,25 +90,33 @@ namespace DehnadFtpSyncAndChargingService.MCI
                                 str = str.Replace(props[j].Replace("_", "-"), props[j]);
                             }
                             lines = str.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                            Program.logs.Info("updateSingleCharge:Read " + newFtpFiles[i].fileName + " with " + lines.Length + " lines(remaining files = " + (newFtpFiles.Count - i - 1) + ")");
+                            Program.logs.Info("MCI:updateSingleCharge:Read " + newFtpFiles[i].fileName + " with " + lines.Length + " lines(remaining files = " + (newFtpFiles.Count - i - 1) + ")");
 
                             for (j = 0; j <= lines.Length - 1; j++)
                             {
-                                ftpItem = Newtonsoft.Json.JsonConvert.DeserializeObject<MCIftpItemInfo>(lines[j]);
+                                try
+                                {
+                                    ftpItem = Newtonsoft.Json.JsonConvert.DeserializeObject<ftpItemInfo>(lines[j]);
+                                }
+                                catch (Exception ex)
+                                {
+                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:MCI:" + "downloader:updateSingleCharge:" + ex.Message);
+                                    Program.logs.Error("FtpSync:MCI:downloader:updateSingleCharge:", ex);
+                                }
 
                                 var serviceItem = entityPortal.vw_servicesServicesInfo.Where(o => o.OperatorServiceId == ftpItem.sid.ToString()).FirstOrDefault();
 
                                 if (serviceItem == null || string.IsNullOrEmpty(serviceItem.ServiceCode))
                                 {
-                                    Program.logs.Error("UpdateSingleChargeAndSubscription: no service is found with operatorServiceId" + ftpItem.sid);
-                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFTPDownloader:UpdateSingleChargeAndSubscription: no service is found with operatorServiceId " + ftpItem.sid);
+                                    Program.logs.Error("MCI:UpdateSingleChargeAndSubscription: no service is found with operatorServiceId" + ftpItem.sid);
+                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:MCI:UpdateSingleChargeAndSubscription: no service is found with operatorServiceId " + ftpItem.sid);
                                     continue;
                                 }
                                 mobileNumber = SharedLibrary.MessageHandler.ValidateNumber(ftpItem.msisdn);
                                 if (mobileNumber == "Invalid Mobile Number")
                                 {
-                                    Program.logs.Error("UpdateSingleChargeAndSubscription: Invalid Mobile Number" + ftpItem.msisdn);
-                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFTPDownloader:UpdateSingleChargeAndSubscription: Invalid Mobile Number " + ftpItem.msisdn);
+                                    Program.logs.Error("MCI:UpdateSingleChargeAndSubscription: Invalid Mobile Number" + ftpItem.msisdn);
+                                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:MCI:UpdateSingleChargeAndSubscription: Invalid Mobile Number " + ftpItem.msisdn);
                                     continue;
                                 }
                                 regDate = DateTime.Now;
@@ -224,11 +233,11 @@ namespace DehnadFtpSyncAndChargingService.MCI
 
                             Program.logs.Info(ftpUrl);
 
-                            var ftpFile = entityPortal.MCISingleChargeFtpFiles.Where(o => "ftp://" + o.serverIP + "/" + o.ftpDirectory + "/" + o.fileName == ftpUrl).FirstOrDefault();
+                            var ftpFile = entityPortal.FtpSyncFiles.Where(o => "ftp://" + o.serverIP + "/" + o.ftpDirectory + "/" + o.fileName == ftpUrl).FirstOrDefault();
                             if (ftpFile == null)
                             {
                                 //new file or modification detected
-                                portalFtpFiles = new SharedLibrary.Models.MCISingleChargeFtpFile();
+                                portalFtpFiles = new SharedLibrary.Models.FtpSyncFile();
                                 portalFtpFiles.fileName = Path.GetFileName(newFtpFiles[i].winFilePath);
                                 portalFtpFiles.ftpDirectory = winDirectory;
                                 portalFtpFiles.processDateTime = DateTime.Now;
@@ -238,7 +247,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                                 portalFtpFiles.chargeCount = chargeCount;
                                 portalFtpFiles.subCount = subCount;
                                 portalFtpFiles.unsubCount = unsubCount;
-                                entityPortal.MCISingleChargeFtpFiles.Add(portalFtpFiles);
+                                entityPortal.FtpSyncFiles.Add(portalFtpFiles);
 
                             }
                             else
@@ -264,13 +273,13 @@ namespace DehnadFtpSyncAndChargingService.MCI
             }
             catch (Exception e)
             {
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "downloader:updateSingleCharge:" + e.Message);
-                Program.logs.Error("downloader:updateSingleCharge:", e);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:MCI:" + "downloader:updateSingleCharge:" + e.Message);
+                Program.logs.Error("FtpSync:MCI:downloader:updateSingleCharge:", e);
                 return;
             }
         }
 
-        private void AddFtpLog(MCIftpItemInfo ftpItem, string winFilePath, DateTime regdate, long serviceId)
+        private void AddFtpLog(ftpItemInfo ftpItem, string winFilePath, DateTime regdate, long serviceId)
         {
             using (var entityFtp = new FtpLogEntities())
             {
@@ -322,12 +331,12 @@ namespace DehnadFtpSyncAndChargingService.MCI
             #endregion
         }
 
-        private void updateFtpLastState(SharedLibrary.Models.PortalEntities entityPortal, MCIftpItemInfo ftpItem
+        private void updateFtpLastState(SharedLibrary.Models.PortalEntities entityPortal, ftpItemInfo ftpItem
             , string winFilePath, DateTime regdate, long serviceId, ref int subCount, ref int unsubCount)
         {
             bool addNewRecord = false;
 
-            var entryLastFtp = entityPortal.MCIFtpLastStates.Where(o => o.sid == ftpItem.sid && o.msisdn == ftpItem.msisdn).OrderByDescending(o => o.datetime).FirstOrDefault();
+            var entryLastFtp = entityPortal.FtpSubAndChargeLastStates.Where(o => o.sid == ftpItem.sid && o.msisdn == ftpItem.msisdn).OrderByDescending(o => o.datetime).FirstOrDefault();
             if (ftpItem.event_type == "1.5")
             {
                 if (entryLastFtp == null || (entryLastFtp.datetime < ftpItem.datetime && entryLastFtp.event_type == "1.5"))
@@ -335,7 +344,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                     //there is no item or there is try after this try
                     if (entryLastFtp == null)
                     {
-                        entryLastFtp = new SharedLibrary.Models.MCIFtpLastState();
+                        entryLastFtp = new SharedLibrary.Models.FtpSubAndChargeLastState();
                         addNewRecord = true;
                     }
                     else addNewRecord = false;
@@ -355,7 +364,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                     //there is no item or there is sub/unsub before this item or there is try after ftp item
                     if (entryLastFtp == null)
                     {
-                        entryLastFtp = new SharedLibrary.Models.MCIFtpLastState();
+                        entryLastFtp = new SharedLibrary.Models.FtpSubAndChargeLastState();
                         addNewRecord = true;
                     }
 
@@ -389,7 +398,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
 
             if (addNewRecord)
             {
-                entityPortal.MCIFtpLastStates.Add(entryLastFtp);
+                entityPortal.FtpSubAndChargeLastStates.Add(entryLastFtp);
             }
             else
             {
@@ -403,7 +412,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
             {
                 winDirectory = winDirectory.Replace("/", "\\");
                 //create directory if not does exist
-                if (!this.createDirectory(Properties.Settings.Default.LocalPath, winDirectory))
+                if (!this.createDirectory(Properties.Settings.Default.LocalPathMCI, winDirectory))
                     return null;
 
                 string ftpDirectory = winDirectory.Replace("\\", "/");
@@ -417,8 +426,8 @@ namespace DehnadFtpSyncAndChargingService.MCI
             }
             catch (Exception e)
             {
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "downloader:getFtpUrl:" + e.Message);
-                Program.logs.Error("downloader:getFtpUrl:", e);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:MCI:" + "downloader:getFtpUrl:" + e.Message);
+                Program.logs.Error("FtpSync:MCI:getFtpUrl:", e);
                 return null;
             }
         }
@@ -432,7 +441,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
         {
             try
             {
-                string localPath = Properties.Settings.Default.LocalPath;
+                string localPath = Properties.Settings.Default.LocalPathMCI;
                 if (localPath.EndsWith("\\"))
                     localPath = localPath.Remove(localPath.Length - 1, 1);
 
@@ -450,7 +459,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                 }
                 for (i = 0; i <= newFtpFiles.Count - 1; i++)
                 {
-                    Program.logs.Info("downloadNewFiles:downloadFile " + newFtpFiles[i].ftpFilePath + " is started");
+                    Program.logs.Info("FtpSync:MCI:downloadNewFiles:downloadFile " + newFtpFiles[i].ftpFilePath + " is started");
                     FtpWebRequest request = (FtpWebRequest)WebRequest.Create(newFtpFiles[i].ftpFilePath);
                     request.Method = WebRequestMethods.Ftp.DownloadFile;
                     request.Credentials = new NetworkCredential(this.FtpUser, this.FtpPassword);
@@ -477,14 +486,14 @@ namespace DehnadFtpSyncAndChargingService.MCI
                     }
                     reader.Close();
                     response.Close();
-                    Program.logs.Info("downloadNewFiles:downloadFile " + newFtpFiles[i].fileName + " is finished");
+                    Program.logs.Info("FtpSync:MCI:downloadNewFiles:downloadFile " + newFtpFiles[i].fileName + " is finished");
                 }
                 return newFtpFiles;
             }
             catch (Exception e)
             {
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "downloader:downloadNewFiles:" + e.Message);
-                Program.logs.Error("downloader:downloadNewFiles:", e);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:MCI:" + "downloader:downloadNewFiles:" + e.Message);
+                Program.logs.Error("FtpSync:MCI:downloader:downloadNewFiles:", e);
                 return null;
             }
         }
@@ -546,17 +555,17 @@ namespace DehnadFtpSyncAndChargingService.MCI
                         response.Close();
                         string identifier = size + ";" + modifiedTime.ToString();
 
-                        SharedLibrary.Models.MCISingleChargeFtpFile ftpFile = null;
+                        SharedLibrary.Models.FtpSyncFile ftpFile = null;
                         if (operatorSIDs == null || !downloadAnyway)
                         {
                             //if operatorSIDs are not specified check if process this file before or not
                             //otherwise do not check and detect the file as a new file
-                            ftpFile = portal.MCISingleChargeFtpFiles.Where(o => "ftp://" + o.serverIP + "/" + o.ftpDirectory + "/" + o.fileName == uri.AbsoluteUri && (string.IsNullOrEmpty(o.identifier) || o.identifier == identifier)).FirstOrDefault();
+                            ftpFile = portal.FtpSyncFiles.Where(o => "ftp://" + o.serverIP + "/" + o.ftpDirectory + "/" + o.fileName == uri.AbsoluteUri && (string.IsNullOrEmpty(o.identifier) || o.identifier == identifier)).FirstOrDefault();
                         }
 
                         if (ftpFile == null)
                         {
-                            Program.logs.Info("detectNewFtpFiles: new or modified File is " + uri.AbsoluteUri + " with identifier " + identifier);
+                            Program.logs.Info("FtpSync:MCI:detectNewFtpFiles: new or modified File is " + uri.AbsoluteUri + " with identifier " + identifier);
                             //new file or modification detected
                             newFtpFiles.Add(new FtpFile(fileName, windowsFilePath + (windowsFilePath.EndsWith("\\") ? "" : "\\") + fileName
                                 , ftpDirectory + (ftpDirectory.EndsWith("/") ? "" : "/") + fileName, identifier));
@@ -568,7 +577,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                 ftpResponse.Close();
 
                 streamReader.Close();
-                Program.logs.Info("detectNewFtpFiles:" + newFtpFiles.Count + " new or modified files have been detected ");
+                Program.logs.Info("FtpSync:MCI:detectNewFtpFiles:" + newFtpFiles.Count + " new or modified files have been detected ");
                 return newFtpFiles;
             }
             catch (Exception e)
@@ -624,8 +633,8 @@ namespace DehnadFtpSyncAndChargingService.MCI
                 {
 
                 }
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "MCIFtpDownloader:" + "downloader:detectNewFilesUri:" + e.Message);
-                Program.logs.Error("downloader:detectNewFilesUri:", e);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Critical, "FtpSync:MCI:" + "downloader:detectNewFilesUri:" + e.Message);
+                Program.logs.Error("FtpSync:MCI:downloader:detectNewFilesUri:", e);
 
                 return null;
             }
@@ -649,7 +658,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                     if (!Directory.Exists(dirPath))
                     {
                         Directory.CreateDirectory(dirPath);
-                        Program.logs.Info("createDirectory:" + dirPath);
+                        Program.logs.Info("FtpSync:MCI:createDirectory:" + dirPath);
                     }
                 }
 
@@ -657,8 +666,8 @@ namespace DehnadFtpSyncAndChargingService.MCI
             }
             catch (Exception e)
             {
-                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "createDirectory:" + e.Message);
-                Program.logs.Error("createDirectory:", e);
+                SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:MCI:" + "createDirectory:" + e.Message);
+                Program.logs.Error("FtpSync:MCI:createDirectory:", e);
                 return false;
             }
         }

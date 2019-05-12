@@ -29,7 +29,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
                 string notifDescription;
 
                 //DateTime? serviceSyncLastTime;
-                List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lstSyncSubs;
+                List<SharedLibrary.Models.sp_FtpSubAndChargeLastState_getAsync_Result> lstSyncSubs;
                 if (string.IsNullOrEmpty(Properties.Settings.Default.SyncServices))
                     return;
                 using (var entityPortal = new SharedLibrary.Models.PortalEntities())
@@ -121,7 +121,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
 
 
                         DateTime syncDateTime = DateTime.Now;
-                        lstSyncSubs = entityPortal.sp_MCIFtpLastState_getAsync(entryService.Id
+                        lstSyncSubs = entityPortal.sp_FtpSubAndChargeLastState_getAsync(entryService.Id
                             , syncDateTime
                             , Properties.Settings.Default.SyncFtpOldItemsInMins
                             , Properties.Settings.Default.SyncFtpWaitTimeInMins
@@ -225,7 +225,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
             }
         }
 
-        private void sb_saveResultToDatabase(DateTime syncDateTime, List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lst)
+        private void sb_saveResultToDatabase(DateTime syncDateTime, List<SharedLibrary.Models.sp_FtpSubAndChargeLastState_getAsync_Result> lst)
         {
             if (lst.Count == 0) return;
             DataTable dt = this.fnc_convertListToDataTable(syncDateTime, lst);
@@ -243,11 +243,11 @@ namespace DehnadFtpSyncAndChargingService.MCI
 
 
         }
-        private DataTable fnc_convertListToDataTable(DateTime syncDateTime, List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> data)
+        private DataTable fnc_convertListToDataTable(DateTime syncDateTime, List<SharedLibrary.Models.sp_FtpSubAndChargeLastState_getAsync_Result> data)
         {
 
             PropertyDescriptorCollection properties =
-               TypeDescriptor.GetProperties(typeof(SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result));
+               TypeDescriptor.GetProperties(typeof(SharedLibrary.Models.sp_FtpSubAndChargeLastState_getAsync_Result));
             DataTable table = new DataTable();
             foreach (PropertyDescriptor prop in properties)
                 table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
@@ -265,7 +265,7 @@ namespace DehnadFtpSyncAndChargingService.MCI
             return table;
 
         }
-        private string fnc_getNotifString(bool settingParameters, List<SharedLibrary.Models.sp_MCIFtpLastState_getAsync_Result> lstSyncSubs)
+        private string fnc_getNotifString(bool settingParameters, List<SharedLibrary.Models.sp_FtpSubAndChargeLastState_getAsync_Result> lstSyncSubs)
         {
             string str = "";
             if (!settingParameters)

@@ -24,6 +24,7 @@ namespace DehnadFtpSyncAndChargingService
         private Thread downloaderMCIThread;
         private Thread syncMCIThread;
         private Thread syncMobinOneThread;
+        private Thread downloaderMobinOneThread;
         //private Thread syncNotChargedThread;
         private ManualResetEvent shutdownEvent = new ManualResetEvent(false);
         protected override void OnStart(string[] args)
@@ -43,7 +44,10 @@ namespace DehnadFtpSyncAndChargingService
             syncMobinOneThread.IsBackground = true;
             syncMobinOneThread.Start();
 
-            
+            downloaderMobinOneThread = new Thread(downloaderMobineOne);
+            downloaderMobinOneThread.IsBackground = true;
+            downloaderMobinOneThread.Start();
+
             //syncNotChargedThread = new Thread(syncNotChargedFunction);
             //syncNotChargedThread.IsBackground = true;
             //syncNotChargedThread.Start();
@@ -73,6 +77,11 @@ namespace DehnadFtpSyncAndChargingService
                 }
 
                 if (!syncMobinOneThread.Join(3000))
+                {
+                    syncMobinOneThread.Abort();
+                }
+
+                if (!downloaderMobinOneThread.Join(3000))
                 {
                     syncMobinOneThread.Abort();
                 }
@@ -206,7 +215,7 @@ namespace DehnadFtpSyncAndChargingService
         //}
         private void downloaderMCI()
         {
-            downloader down = new downloader();
+            MCI.downloader down = new MCI.downloader();
             while (!shutdownEvent.WaitOne(0))
             {
                 bool isInMaintenanceTime = false;
@@ -226,7 +235,7 @@ namespace DehnadFtpSyncAndChargingService
                         #region parameter.txt check
                         try
                         {
-                            string parameterPath = "parameter\\parameter.txt";
+                            string parameterPath = "parameter\\parameterMCI.txt";
                             if (File.Exists(parameterPath))
                             {
                                 Program.logs.Info("start of reading parameter file");
@@ -314,6 +323,122 @@ namespace DehnadFtpSyncAndChargingService
                 {
                     SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "MCIFtpDownloader:" + "Exception in downloaderFunction: " + e.Message);
                     Program.logs.Error("Exception in downloaderFunction: ", e);
+                    Thread.Sleep(1000);
+                }
+            }
+
+        }
+
+        private void downloaderMobineOne()
+        {
+            MobinOne.downloader down = new MobinOne.downloader();
+            while (!shutdownEvent.WaitOne(0))
+            {
+                bool isInMaintenanceTime = false;
+                try
+                {
+
+                    if ((DateTime.Now.TimeOfDay >= TimeSpan.Parse("23:45:00") || DateTime.Now.TimeOfDay < TimeSpan.Parse("00:01:00")) || isInMaintenanceTime == true)
+                    {
+                        isInMaintenanceTime = true;
+                        Program.logs.Info("isInMaintenanceTime:" + isInMaintenanceTime);
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        Program.logs.Info("downloaderFunction: started");
+
+                        #region parameter.txt check
+                        try
+                        {
+                            string parameterPath = "parameter\\parameterMobinOne.txt";
+                            if (File.Exists(parameterPath))
+                            {
+                                Program.logs.Info("start of reading parameter file");
+                                string[] datesAndOperatorSID = File.ReadAllLines(parameterPath);
+                                string[] operatorsSID;
+                                DateTime date;
+                                string directoryNameInFormatYYYYMMDD;
+                                int i;
+                                for (i = 0; i <= datesAndOperatorSID.Length - 1; i++)
+                                {
+                                    if (string.IsNullOrEmpty(datesAndOperatorSID[i]))
+                                    {
+                                        continue;
+                                    }
+                                    operatorsSID = datesAndOperatorSID[i].Split(';');
+                                    if (operatorsSID.Length == 0) continue;
+                                    directoryNameInFormatYYYYMMDD = operatorsSID[0];
+                                    if (DateTime.TryParse(directoryNameInFormatYYYYMMDD+ " 00:00:00 ", out date))
+                                    {
+                                        if (operatorsSID.Length > 1)
+                                        {
+                                            operatorsSID = operatorsSID.Skip(1).ToArray();
+                                        }
+                                        else operatorsSID = null;
+                                        down.updateSingleChargeAndSubscription(directoryNameInFormatYYYYMMDD, operatorsSID, true);
+                                    }
+                                    else
+                                    {
+                                        Program.logs.Error("Date should be in format of yyyy-MM-dd, the given value is " + operatorsSID[0]);
+                                    }
+                                }
+
+                                File.Move(parameterPath, parameterPath.Remove(parameterPath.Length - 4, 4) + "_processed" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt");
+                                Program.logs.Info("end of reading parameter file");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:downloaderMobinOne:" + "Exception in downloaderFunction reading parameter file: " + ex.Message);
+                            Program.logs.Error("FtpSync:downloaderMobinOne:Exception in downloaderFunction reading parameter file: ", ex);
+                        }
+                        #endregion
+
+                        //check today
+                        down.updateSingleChargeAndSubscription();
+
+                        //int nDaysBefore = 0;
+                        //if (int.TryParse(Properties.Settings.Default.CheckNDaysBefore, out nDaysBefore))
+                        //{
+                        //    if (nDaysBefore != 0)
+                        //    {
+                        //        int i;
+                        //        for (i = 1; i <= nDaysBefore; i++)
+                        //        {
+                        //            Program.logs.Info("downloaderFunction:started:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                        //            down.updateSingleChargeAndSubscription(DateTime.Now.AddDays(-1 * i).ToString("yyyyMMdd"), null, false);
+                        //            Program.logs.Info("downloaderFunction:ended:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                        //        }
+                        //    }
+                        //}
+                        int nDaysBefore = Properties.Settings.Default.CheckNDaysBefore;
+                        if (nDaysBefore != 0)
+                        {
+                            int i;
+                            for (i = 1; i <= nDaysBefore; i++)
+                            {
+                                Program.logs.Info("FtpSync:downloaderMobinOne:started:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                                down.updateSingleChargeAndSubscription(DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"), null, false);
+                                Program.logs.Info("FtpSync:downloaderMobinOne:ended:" + DateTime.Now.AddDays(-1 * i).ToString("yyyy-MM-dd"));
+                            }
+                        }
+
+                        Program.logs.Info("FtpSync:downloaderMobinOne: Ended");
+                        int timeInterval = int.Parse(Properties.Settings.Default.DownloadIntervalInSeconds.ToString());
+                        //if (!int.TryParse(Properties.Settings.Default.DownloadIntervalInSeconds, out timeInterval))
+                        //{
+                        //    timeInterval = 60 * 30;
+                        //}
+                        Thread.Sleep(1000 * timeInterval);
+
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "FtpSync:downloaderMobinOne:" + "Exception in downloaderFunction: " + e.Message);
+                    Program.logs.Error("Exception in FtpSync:downloaderMobinOne: ", e);
                     Thread.Sleep(1000);
                 }
             }

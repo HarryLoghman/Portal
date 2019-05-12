@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="9ebda56575074f109e97a0f267321995" Name="Diagram1" ZoomLevel="49">
+      <Diagram DiagramId="9ebda56575074f109e97a0f267321995" Name="Diagram1" ZoomLevel="55">
         <<<<<<< HEAD
         
         
@@ -32,7 +32,6 @@
         <EntityTypeShape EntityType="PortalModel.SubscribersPoint" Width="1.5" PointX="3" PointY="12.5" />
         <EntityTypeShape EntityType="PortalModel.TempReferralData" Width="1.5" PointX="5.75" PointY="12.75" />
         <EntityTypeShape EntityType="PortalModel.VerifySubscriber" Width="1.5" PointX="13.75" PointY="4.75" />
-        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="13.75" PointY="7.75" />
         <AssociationConnector Association="PortalModel.C_FK_Aggregators_Operators" />
         <AssociationConnector Association="PortalModel.C_FK_ServiceInfo_Aggregators" />
         <AssociationConnector Association="PortalModel.C_FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
@@ -56,14 +55,15 @@
         <EntityTypeShape EntityType="PortalModel.RequestsLog" Width="1.5" PointX="17.75" PointY="6.75" />
         <EntityTypeShape EntityType="PortalModel.ReceievedMessage" Width="1.5" PointX="17.75" PointY="10.75" />
         <EntityTypeShape EntityType="PortalModel.vw_ReceivedMessages" Width="1.5" PointX="11.75" PointY="17.75" />
-        <EntityTypeShape EntityType="PortalModel.MCISingleChargeFtpFile" Width="1.5" PointX="17.75" PointY="15.75" />
         <EntityTypeShape EntityType="PortalModel.App" Width="1.5" PointX="19.75" PointY="0.75" />
-        <EntityTypeShape EntityType="PortalModel.MCIFtpLastState" Width="1.5" PointX="0.75" PointY="19.75" />
         <EntityTypeShape EntityType="PortalModel.MobinOneFtp" Width="1.5" PointX="19.75" PointY="4.75" />
         <EntityTypeShape EntityType="PortalModel.ServersIP" Width="1.5" PointX="7.75" PointY="19.75" />
         <EntityTypeShape EntityType="PortalModel.Bulk" Width="1.5" PointX="2.851773548336594" PointY="20.719781587235527" />
         <EntityTypeShape EntityType="PortalModel.CampaignsCharge" Width="1.5" PointX="3.5117123851141487" PointY="30.13643690856939" />
-        <EntityTypeShape EntityType="PortalModel.CampaignsMobileNumber" Width="1.5" PointX="0.56700926859258183" PointY="20.140874350509083" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
+        <EntityTypeShape EntityType="PortalModel.CampaignsMobileNumber" Width="1.5" PointX="0.56700926859258183" PointY="20.140874350509083" />
+        <EntityTypeShape EntityType="PortalModel.FtpSubAndChargeLastState" Width="1.5" PointX="8.7625242587004433" PointY="19.593186551515565" />
+        <EntityTypeShape EntityType="PortalModel.vw_servicesServicesInfo" Width="1.5" PointX="9.8869508197004681" PointY="19.493237072365936" />
+        <EntityTypeShape EntityType="PortalModel.FtpSyncFile" Width="1.5" PointX="8.899951674463205" PointY="28.968807621378829" />&gt;&gt;&gt;&gt;&gt;&gt;&gt; 49228c62def3990acee2dd6cd121b818b6d444ca
         
         
         
