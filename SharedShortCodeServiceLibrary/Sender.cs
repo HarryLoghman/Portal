@@ -39,7 +39,7 @@ namespace SharedShortCodeServiceLibrary
         {
             //if (e.prp_webRequestType == SharedLibrary.Aggregators.enum_webRequestParameterType.message)
             //{
-                System.Threading.Interlocked.Decrement(ref this.v_messageCount);
+            System.Threading.Interlocked.Decrement(ref this.v_messageCount);
             //}
         }
 
@@ -58,8 +58,7 @@ namespace SharedShortCodeServiceLibrary
                 List<EventbaseMessagesBuffer> eventbaseMessages;
                 List<OnDemandMessagesBuffer> onDemandMessages;
 
-
-
+                DateTime timerStart, timer;
                 using (var serviceEntity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities(connectionStringInAppConfig))
                 {
                     onDemandMessages = ((IEnumerable)SharedLibrary.MessageHandler.GetUnprocessedMessages(serviceEntity, SharedLibrary.MessageHandler.MessageType.OnDemand, 0)).OfType<OnDemandMessagesBuffer>().ToList();
@@ -76,9 +75,14 @@ namespace SharedShortCodeServiceLibrary
                             , new EventHandler(this.sb_sendingMessageIsFinished));
 
                     }
+                    timer = timerStart = DateTime.Now;
                     while (this.v_messageCount > 0)
                     {
-
+                        if ((DateTime.Now - timer).TotalMinutes == 1)
+                        {
+                            logs.Debug("locked sending ondemand. remaining message count =" + this.v_messageCount + " waiting time in minute " + (DateTime.Now - timerStart).TotalMinutes.ToString());
+                            timer = DateTime.Now;
+                        }
                     }
                     if ((!timeStart.HasValue || timeStart.Value <= DateTime.Now.TimeOfDay) && (!timeEnd.HasValue || DateTime.Now.TimeOfDay <= timeEnd.Value))
                     {
@@ -91,12 +95,18 @@ namespace SharedShortCodeServiceLibrary
                         {
                             this.v_aggregator.sb_sendMessage(this.v_service, message.Id, message.MobileNumber
                                 , SharedLibrary.MessageHandler.MessageType.AutoCharge, SharedLibrary.MessageSender.retryCountMax
-                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount, null);
+                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount
+                                ,  new EventHandler(this.sb_sendingMessageIsFinished));
 
                         }
+                        timer = timerStart = DateTime.Now;
                         while (this.v_messageCount > 0)
                         {
-
+                            if ((DateTime.Now - timer).TotalMinutes == 1)
+                            {
+                                logs.Debug("locked sending autocharge. remaining message count =" + this.v_messageCount + " waiting time in minute " + (DateTime.Now - timerStart).TotalMinutes.ToString());
+                                timer = DateTime.Now;
+                            }
                         }
 
                         //SharedLibrary.MessageHandler.SendSelectedMessages(this.v_service, eventbaseMessages);
@@ -106,12 +116,18 @@ namespace SharedShortCodeServiceLibrary
                         {
                             this.v_aggregator.sb_sendMessage(this.v_service, message.Id, message.MobileNumber
                                 , SharedLibrary.MessageHandler.MessageType.EventBase, SharedLibrary.MessageSender.retryCountMax
-                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount, null);
+                                , message.Content, message.DateAddedToQueue, message.Price, message.ImiChargeKey, null, false, message.RetryCount
+                                , new EventHandler(this.sb_sendingMessageIsFinished));
 
                         }
+                        timer = timerStart = DateTime.Now;
                         while (this.v_messageCount > 0)
                         {
-
+                            if ((DateTime.Now - timer).TotalMinutes == 1)
+                            {
+                                logs.Debug("locked sending eventbase. remaining message count =" + this.v_messageCount + " waiting time in minute " + (DateTime.Now - timerStart).TotalMinutes.ToString());
+                                timer = DateTime.Now;
+                            }
                         }
                     }
                 }

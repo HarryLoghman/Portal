@@ -11,6 +11,7 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json;
 using SharedLibrary.Models.ServiceModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace SharedLibrary
 {
@@ -887,6 +888,14 @@ namespace SharedLibrary
             sms = 0,
             app = 1,
             landing = 2
+        }
+
+        public enum CampaignChargeType
+        {
+            [Display(Name ="دو مرحله ای")]
+            TwoStep = 2,
+            [Display(Name = "تک مرحله ای")]
+            OneStep = 1
         }
     }
 }

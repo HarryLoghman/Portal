@@ -21,6 +21,30 @@
         });
     }
 
+    List<object> valuesCampaignType = new List<object>();
+
+    foreach (var value in Enum.GetValues(typeof(SharedLibrary.MessageHandler.CampaignChargeType)))
+    {
+        string displayString;
+
+        if ((SharedLibrary.MessageHandler.CampaignChargeType)value == SharedLibrary.MessageHandler.CampaignChargeType.OneStep)
+        {
+            displayString = "تک مرحله ای";
+        }
+        else
+        {
+            displayString = "دو مرحله ای";
+        }
+        valuesCampaignType.Add(new
+        {
+
+            text = displayString,
+            value = ((int)value).ToString()
+        });
+
+
+    }
+
 }
 @Html.AntiForgeryToken()
 @Html.ValidationSummary("", new { @class = "text-danger", style = "color:red" })
@@ -30,19 +54,21 @@
 
     $("#grid").kendoGrid({
 
-        columns: [
+       columns: [
             { field: "Id", title: "شناسه" },
             { field: "campaignName", title: "عنوان" },
+            { field: "campaignType", title: "نوع", values: @(Html.Raw(Json.Encode(valuesCampaignType))) },
             { field: "serviceName", title: "سرویس" },
             { field: "ServiceId", title: "شناسه سرویس", hidden:true},
             { field: "price", title: "قیمت" },
             { field: "keyword", title: "کلمه کلیدی" },
-            { field: "message", title: "پیام" },
+            { field: "message", title: "پیام کمپین", width:"50%" },
             { field: "status", title: "وضعیت", values: @(Html.Raw(Json.Encode(values))) },
-            { field: "startTime", title: "زمان شروع" },
-            { field: "endTime", title: "زمان پایان"},
-            { field: "TotalRequests", title: "تعداد درخواست" },
-            { field: "TotalPaid", title: "تعداد انجام شده" },
+            { field: "startTime", title: "شروع" },
+            { field: "endTime", title: "پایان" },
+            { field: "replaceWelcomeMessage", title: "Welcome" },
+            { field: "TotalRequests", title: "درخواست" },
+            { field: "TotalPaid", title: "انجام شده" },
             {
                 command: [{ name: "myEdit", iconClass:"k-icon k-edit",text:" ", click:redirectToEdit},"destroy"
                 ], width: 100
@@ -92,7 +118,7 @@
         },
         columnMenu: true,
         editable: {
-               
+
             mode: "inline",
             window: {
                 title: "ویرایش",

@@ -5,6 +5,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -824,7 +825,118 @@ namespace SharedShortCodeServiceLibrary
             , SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState serviceStatusForSubscriberState
             , int isCampaignActive)
         {
-            message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+            
+            string secondMessage = "";
+            string contentSentForOtpCharge = "";
+
+            if (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Activated
+                || serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Renewal)
+            {
+                using (var entityPortal = new SharedLibrary.Models.PortalEntities())
+                {
+
+                    var entryCampaignLst = entityPortal.CampaignsCharges.Where(o => o.ServiceId == service.Id
+                    //&& o.keyword.ToLower() == message.Content.ToLower()
+                    && o.status == 1 && (!o.endTime.HasValue || DateTime.Now <= o.endTime)
+                    && (!o.startTime.HasValue || o.startTime <= DateTime.Now)
+                    && o.campaignType == (int)SharedLibrary.MessageHandler.CampaignChargeType.OneStep).ToList();
+                    if (entryCampaignLst == null || entryCampaignLst.Count == 0)
+                    {
+                        //we do not have any onestep campaign 
+                        message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                    }
+                    else
+                    {
+                        
+                        //we have onestep campaing
+                        // get otpcharge content
+                        DateTime receivedTime = DateTime.Now;
+                        DateTime tempTime;
+                        if (!string.IsNullOrEmpty(message.ReceiveTime)
+                            && DateTime.TryParse(message.ReceiveTime, out tempTime))
+                        {
+                            receivedTime = tempTime;
+                        }
+
+                        var receivedOtpCharge = entityPortal.ReceievedMessages.Where(o => o.ShortCode == message.ShortCode
+                              && DbFunctions.TruncateTime(o.ReceivedTime) == DbFunctions.TruncateTime(receivedTime)
+                              && o.MobileNumber == message.MobileNumber && o.ReceivedFrom.Contains("OtpCharge")
+                              && o.ReceivedTime < receivedTime).OrderByDescending(o => o.ReceivedTime).FirstOrDefault();
+
+                        if (receivedOtpCharge == null)
+                        {
+                            //it is probable that we archive the message in receivedMessagesArchive check yesterday
+                            receivedTime = receivedTime.AddDays(-1);// go to the day before
+                            var receivedOtpChargeArchive = entityPortal.ReceivedMessagesArchives.Where(o => o.ShortCode == message.ShortCode
+                              && DbFunctions.TruncateTime(o.ReceivedTime) == DbFunctions.TruncateTime(receivedTime)
+                              && o.MobileNumber == message.MobileNumber && o.ReceivedFrom.Contains("OtpCharge")
+                              && o.ReceivedTime < receivedTime).OrderByDescending(o => o.ReceivedTime).FirstOrDefault();
+                            if (receivedOtpChargeArchive == null)
+                            {
+                                contentSentForOtpCharge = "";
+                            }
+                            else
+                            {
+                                contentSentForOtpCharge = receivedOtpCharge.Content;
+                            }
+
+                        }
+                        else
+                        {
+                            contentSentForOtpCharge = receivedOtpCharge.Content;
+                        }
+
+                        var entryCampaign = entryCampaignLst.FirstOrDefault(o => o.keyword == contentSentForOtpCharge);
+                        if (entryCampaign != null)
+                        {
+                            var entryCampaignMobile = entityPortal.CampaignsMobileNumbers.FirstOrDefault(o => o.mobileNumber == message.MobileNumber
+                            && o.campaignId == entryCampaign.Id
+                            && o.campaignType == "charges");
+
+                            if (entryCampaignMobile == null)
+                            {
+                                if (entryCampaign.replaceWelcomeMessage.HasValue && entryCampaign.replaceWelcomeMessage.Value)
+                                {
+                                    message.Content = entryCampaign.message;
+                                }
+                                else
+                                {
+                                    message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                                    secondMessage = entryCampaign.message;
+                                }
+                                entryCampaignMobile = new CampaignsMobileNumber();
+                                entryCampaignMobile.campaignId = entryCampaign.Id;
+                                entryCampaignMobile.campaignType = "charges";
+                                entryCampaignMobile.keyword = entryCampaign.keyword;
+                                entryCampaignMobile.mobileNumber = message.MobileNumber;
+                                entryCampaignMobile.paid = false;
+                                entryCampaignMobile.receivedTime = receivedTime;
+                                entryCampaignMobile.regdate = DateTime.Now;
+
+                                entityPortal.CampaignsMobileNumbers.Add(entryCampaignMobile);
+                                entityPortal.SaveChanges();
+
+                            }
+                            else
+                            {
+                                //subscriber used this campaign before
+                                message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                            }
+                        }
+                        else
+                        {
+                            message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+                        }
+                    }
+
+                }
+
+            }
+            else
+            {
+                message.Content = MessageHandler.PrepareSubscriptionMessage(messagesTemplate, serviceStatusForSubscriberState, isCampaignActive);
+            }
+
             if (message.Content.Contains("{REFERRALCODE}"))
             {
                 var subId = "1";
@@ -838,7 +950,16 @@ namespace SharedShortCodeServiceLibrary
             if (serviceStatusForSubscriberState != SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated
                 || (serviceStatusForSubscriberState == SharedLibrary.SubscriptionHandler.ServiceStatusForSubscriberState.Deactivated
                         && (set == null || string.IsNullOrEmpty(set.Value) || set.Value == "1")))
+            {
                 MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                if (!string.IsNullOrEmpty(secondMessage))
+                {
+                    var contentBack = message.Content;
+                    message.Content = secondMessage;
+                    MessageHandler.InsertMessageToQueue(connectionStringeNameInAppConfig, message);
+                    message.Content = contentBack;
+                }
+            }
         }
 
         protected async virtual void DeactiveOldServices(vw_servicesServicesInfo service, MessageObject message)
@@ -885,9 +1006,11 @@ namespace SharedShortCodeServiceLibrary
                     // user is deactived or we dont have such user or user is not in this service
                     return false;
                 }
-                var entryCampaign = entityPortal.CampaignsCharges.FirstOrDefault(o => o.ServiceId == service.Id && o.keyword.ToLower() == message.Content.ToLower()
+                var entryCampaign = entityPortal.CampaignsCharges.FirstOrDefault(o => o.ServiceId == service.Id
+                && o.keyword.ToLower() == message.Content.ToLower()
                 && o.status == 1 && (!o.endTime.HasValue || DateTime.Now <= o.endTime)
-                && (!o.startTime.HasValue || o.startTime <= DateTime.Now));
+                && (!o.startTime.HasValue || o.startTime <= DateTime.Now)
+                && o.campaignType == (int)SharedLibrary.MessageHandler.CampaignChargeType.TwoStep);
                 if (entryCampaign == null) return false;
 
                 if (!entityPortal.CampaignsMobileNumbers.Any(o => o.mobileNumber == message.MobileNumber

@@ -832,6 +832,12 @@ namespace DehnadReceiveProcessorService
                     //AcharLibrary.HandleMo h = new AcharLibrary.HandleMo();
                     //isSucceeded = h.ReceivedMessage(message, service).Result;
                 }
+                else if (service.ServiceCode.ToLower() == "ChassisBoland".ToLower())
+                {
+                    isSucceeded = SharedVariables.prp_chassisBolandLibrary.ReceivedMessage(message, service).Result;
+                    //AcharLibrary.HandleMo h = new AcharLibrary.HandleMo();
+                    //isSucceeded = h.ReceivedMessage(message, service).Result;
+                }
             }
             catch (Exception e)
             {

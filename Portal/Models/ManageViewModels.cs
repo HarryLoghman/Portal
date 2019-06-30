@@ -347,6 +347,7 @@ namespace Portal.Models
                 {
                     this.CampaignName = entryCampaign.campaignName;
                     this.CampaignId = id;
+                    this.CampaignType = (SharedLibrary.MessageHandler.CampaignChargeType)(entryCampaign.campaignType.HasValue ? entryCampaign.campaignType.Value : 2);
                     this.endTime = entryCampaign.endTime;
                     this.keyword = entryCampaign.keyword;
                     this.message = entryCampaign.message;
@@ -358,9 +359,9 @@ namespace Portal.Models
                      && o.paid.HasValue && o.paid.Value);
 
                     this.TotalRequests = portal.CampaignsMobileNumbers.Count(o => o.campaignId == id && o.campaignType.ToLower() == "charges");
-                    
 
-                    
+                    this.replaceWelcomeMessage = entryCampaign.replaceWelcomeMessage.HasValue ? entryCampaign.replaceWelcomeMessage.Value : true;
+
 
                 }
             }
@@ -374,13 +375,19 @@ namespace Portal.Models
         [Display(Name = "عنوان کمپین"), Required(ErrorMessage = "عنوان مشخص نشده است")]
         public string CampaignName { get; set; }
 
+
+        [Display(Name = "نوع"), EnumDataType(typeof(SharedLibrary.MessageHandler.CampaignChargeType)), Editable(false)
+           , DefaultValue(SharedLibrary.MessageHandler.CampaignChargeType.TwoStep)
+            , Required(ErrorMessage = "نوع مشخص نشده است")]
+        public SharedLibrary.MessageHandler.CampaignChargeType CampaignType { get; set; }
+
         [Display(Name = "سرویس"), Required(ErrorMessage = "سرویس مشخص نشده است")]
         public string service { get; set; }
 
         [Display(Name = "قیمت")]
         public int? price { get; set; }
 
-        [Display(Name = "کلمه کلیدی"), Required(ErrorMessage = "کلمه کلیدی مشخص نشده است"),StringLength(10,ErrorMessage ="حداکثر تعداد کاراکتر مجاز برای کلمه کلیدی ۱۰")]
+        [Display(Name = "کلمه کلیدی"), Required(ErrorMessage = "کلمه کلیدی مشخص نشده است"), StringLength(10, ErrorMessage = "حداکثر تعداد کاراکتر مجاز برای کلمه کلیدی ۱۰")]
         public string keyword { get; set; }
 
         [DataType(DataType.Text), Display(Name = "پیام"), StringLength(4000, ErrorMessage = "حداکثر تعداد کاراکتر مجاز برای پیام 4000")]
@@ -401,6 +408,9 @@ namespace Portal.Models
 
         [Display(Name = "TotalPaid")]
         public int TotalPaid { get; set; }
+
+        [Display(Name = "Replace Welcome Message")]
+        public bool replaceWelcomeMessage { get; set; }
 
     }
 }

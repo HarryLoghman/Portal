@@ -39,6 +39,9 @@
 
             @Html.LabelFor(m => m.CampaignName, new { @class = "col-md-2 control-label" })
             @Html.TextBoxFor(m => m.CampaignName, new { @class = "col-md-2 control-label k-input", style = "width:150px;margin-left:20px;" })
+
+            @Html.LabelFor(m => m.CampaignType, new { @class = "col-md-2 control-label" })
+            @Html.EnumDropDownListFor(m => m.CampaignType, new { @class = "col-md-2 control-label k-input", style = "width:150px;margin-left:20px;" })
         </div>
         <div class="col-md-10" style="padding-top:10px;">
             @Html.LabelFor(m => m.keyword, new { @class = "col-md-2 control-label" })
@@ -49,6 +52,10 @@
 
             @Html.LabelFor(m => m.price, new { @class = "col-md-2 control-label" })
             @Html.TextBoxFor(m => m.price, new { @class = "col-md-2 control-label k-input", style = "width:50px;margin-left:20px;" })
+
+            @Html.CheckBoxFor(m => m.replaceWelcomeMessage, new { @class = "col-md-2 control-label k-input", style = "" })
+            @Html.LabelFor(m => m.replaceWelcomeMessage, new { @class = "col-md-2 control-label" })
+
         </div>
 
         <div class="col-md-10" style="padding-top:10px;">

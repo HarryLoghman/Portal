@@ -129,7 +129,7 @@ namespace ChargingLibrary
                                 + "</s:Body></s:Envelope>";
                 #endregion
                 Program.logs.Info(this.v_url + " " + payload);
-
+                Program.logs.Debug(this.v_url + " " + payload);
                 DateTime dateCreated = DateTime.Now;
 
 
@@ -191,7 +191,10 @@ namespace ChargingLibrary
                 webRequest.Accept = "text/xml";
                 webRequest.Method = "POST";
                 webRequest.Proxy = null;
+
+                Program.logs.Debug("PostAsyncBefore:" + this.v_url + " " + singleChargeReq.payload);
                 webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, singleChargeReq });
+                Program.logs.Debug("PostAsyncAfter:" + this.v_url + " " + singleChargeReq.payload);
             }
             catch (Exception ex)
             {
@@ -217,8 +220,9 @@ namespace ChargingLibrary
                     Byte[] bts = UnicodeEncoding.UTF8.GetBytes(singleChargeReq.payload);
                     stream.Write(bts, 0, bts.Count());
                 }
-
+                Program.logs.Debug("GetRequestStreamBefore:" + this.v_url + " " + singleChargeReq.payload);
                 webRequest.BeginGetResponse(new AsyncCallback(GetResponseCallback), new object[] { webRequest, singleChargeReq });
+                Program.logs.Debug("GetRequestStreamAfter:" + this.v_url + " " + singleChargeReq.payload);
                 singleChargeReq.timeAfterEntity = DateTime.Now;
 
             }
@@ -273,8 +277,9 @@ namespace ChargingLibrary
             singleChargeReq.timeAfterWhere = DateTime.Now;
             try
             {
-
+                Program.logs.Debug("GetResponseBefore:" + this.v_url + " " + singleChargeReq.payload);
                 HttpWebResponse response = (HttpWebResponse)webRequest.EndGetResponse(parameters);
+                Program.logs.Debug("GetResponseAfter:" + this.v_url + " " + singleChargeReq.payload);
                 string result = "";
                 using (StreamReader rd = new StreamReader(response.GetResponseStream()))
                 {

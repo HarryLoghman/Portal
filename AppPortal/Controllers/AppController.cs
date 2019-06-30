@@ -20,19 +20,19 @@ namespace Portal.Controllers
         static log4net.ILog logs = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<string> OtpAllowedServiceCodes = new List<string>() { /*"Soltan", */ "DonyayeAsatir", "MenchBaz", "Soraty", "DefendIran"
-            , "AvvalYad", "BehAmooz500", "Darchin", "Halghe","Hoshang" };
+            , "AvvalYad", "BehAmooz500", "Darchin", "Halghe","Hoshang","ChassisBoland" };
         private List<string> AppMessageAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir", "Tamly"
             , "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin"
             , "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin"
             , "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin"
-            , "Halghe", "Achar","Hoshang" };
+            , "Halghe", "Achar","Hoshang" ,"ChassisBoland"};
         private List<string> VerificactionAllowedServiceCode = new List<string>() { /*"Soltan",*/ "ShahreKalameh", "DonyayeAsatir"
             , "Tamly", "JabehAbzar", "ShenoYad", "FitShow", "Takavar", "MenchBaz", "AvvalPod", "AvvalYad", "Soraty", "DefendIran", "TahChin"
             , "Nebula", "Dezhban", "MusicYad", "Phantom", "Medio", "BehAmooz500", "ShenoYad500", "Tamly500", "AvvalPod500", "Darchin"
             , "Dambel", "Aseman", "Medad", "PorShetab", "TajoTakht", "LahzeyeAkhar", "Hazaran", "JhoobinDambel", "JhoobinMedad", "JhoobinMusicYad", "JhoobinPin", "JhoobinPorShetab", "JhoobinTahChin"
-            , "Halghe", "Achar","Hoshang" };
+            , "Halghe", "Achar","Hoshang" ,"ChassisBoland"};
 
-       
+
         #region OTP Request
 
         //for old apps, old landings and localcall
@@ -56,12 +56,14 @@ namespace Portal.Controllers
                 else
                     result.MobileNumber = messageObj.MobileNumber;
 
+                
                 string tpsRatePassed = SharedLibrary.Security.fnc_tpsRatePassed(HttpContext.Current
                         , new Dictionary<string, string>() { { "servicecode",messageObj.ServiceCode }
                                                             ,{ "content",messageObj.Content}
                                                             ,{ "mobile",messageObj.MobileNumber}}
                         , null
                         , "AppPortal:AppController:OtpCharge");
+                
                 if (!string.IsNullOrEmpty(tpsRatePassed))
                 {
                     result = tpsRatePassed;
@@ -470,6 +472,12 @@ namespace Portal.Controllers
         [AllowAnonymous]
         public async Task<HttpResponseMessage> OtpConfirm([FromBody]MessageObject messageObj)
         {
+            //if (messageObj.MobileNumber == "09105340027")
+            //{
+            //    logs.Info("Sleep for 09105340027");
+            //    System.Threading.Thread.Sleep(5000);
+            //    logs.Info("End of Sleep for 09105340027");
+            //}
             logs.Info("AppController:OtpConfirm,Start," + messageObj.ServiceCode + "," + messageObj.MobileNumber);
             dynamic result = new ExpandoObject();
             bool resultOk = true;
@@ -2708,6 +2716,24 @@ namespace Portal.Controllers
                                 else if (messageObj.ServiceCode == "Achar")
                                 {
                                     using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("Achar"))
+                                    {
+                                        var now = DateTime.Now;
+                                        var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();
+                                        if (singlechargeInstallment == null)
+                                        {
+                                            var installmentQueue = entity.SinglechargeWaitings.FirstOrDefault(o => o.MobileNumber == messageObj.MobileNumber);
+                                            if (installmentQueue != null)
+                                                daysLeft = 30;
+                                            else
+                                                daysLeft = 0;
+                                        }
+                                        else
+                                            daysLeft = 30 - now.Subtract(singlechargeInstallment.DateCreated).Days;
+                                    }
+                                }
+                                else if (messageObj.ServiceCode == "ChasssisBoland")
+                                {
+                                    using (var entity = new SharedLibrary.Models.ServiceModel.SharedServiceEntities("ChasssisBoland"))
                                     {
                                         var now = DateTime.Now;
                                         var singlechargeInstallment = entity.SinglechargeInstallments.Where(o => o.MobileNumber == messageObj.MobileNumber && DbFunctions.AddDays(o.DateCreated, 30) >= now && o.IsUserCanceledTheInstallment != true).OrderByDescending(o => o.DateCreated).FirstOrDefault();

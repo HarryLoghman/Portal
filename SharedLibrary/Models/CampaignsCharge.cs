@@ -16,6 +16,7 @@ namespace SharedLibrary.Models
     {
         public int Id { get; set; }
         public string campaignName { get; set; }
+        public Nullable<int> campaignType { get; set; }
         public long ServiceId { get; set; }
         public Nullable<int> price { get; set; }
         public string keyword { get; set; }
@@ -23,5 +24,6 @@ namespace SharedLibrary.Models
         public Nullable<int> status { get; set; }
         public Nullable<System.DateTime> startTime { get; set; }
         public Nullable<System.DateTime> endTime { get; set; }
+        public Nullable<bool> replaceWelcomeMessage { get; set; }
     }
 }

@@ -434,9 +434,15 @@ namespace ChargingLibrary
                 || (chargingSpeed == ChargingController.enum_chargingSpeed.tooSlow && this.prp_resetTooSlowCharging))
                 {
                     if (v_taskCount == 0) return;
-                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error, "Service is going to be restarted due to " + chargingSpeed.ToString() + " charging. The service should restart in a minute :"
+                    Program.logs.Error("Service is going to be restarted due to " + chargingSpeed.ToString() + " charging. The service should restart in a minute :"
                         + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")"
                         + "(Connection Limit:" + (connectionLimit.HasValue ? connectionLimit.Value.ToString() : "Null") + ")");
+
+                    SharedLibrary.HelpfulFunctions.sb_sendNotification_DEmergency(System.Diagnostics.Eventing.Reader.StandardEventLevel.Error
+                        , "Service is going to be restarted due to " + chargingSpeed.ToString() + " charging. The service should restart in a minute :"
+                        + ts.ToString("c") + " (Task Remain:" + v_taskCount.ToString() + ")"
+                        + "(Connection Limit:" + (connectionLimit.HasValue ? connectionLimit.Value.ToString() : "Null") + ")");
+                    
                     Environment.Exit(1);
                 }
             }

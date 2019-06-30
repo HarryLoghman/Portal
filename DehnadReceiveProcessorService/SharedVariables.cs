@@ -7,6 +7,17 @@ namespace DehnadReceiveProcessorService
 {
     public class SharedVariables
     {
+        static SharedShortCodeServiceLibrary.HandleMo v_chassisBolandLibrary;
+        public static SharedShortCodeServiceLibrary.HandleMo prp_chassisBolandLibrary
+        {
+            get
+            {
+                if (v_chassisBolandLibrary == null)
+                    v_chassisBolandLibrary = new SharedShortCodeServiceLibrary.HandleMo("ChassisBoland");
+                return v_chassisBolandLibrary;
+            }
+        }
+
         static SharedShortCodeServiceLibrary.HandleMo v_jabehAbzarLibrary;
         public static SharedShortCodeServiceLibrary.HandleMo prp_jabehAbzarLibrary
         {

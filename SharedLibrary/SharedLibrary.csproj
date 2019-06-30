@@ -108,6 +108,9 @@
     <Compile Include="Models\MobinOneFtp.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ReceivedMessagesArchive.cs">
+      <DependentUpon>PortalModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ServersIP.cs">
       <DependentUpon>PortalModel.tt</DependentUpon>
     </Compile>

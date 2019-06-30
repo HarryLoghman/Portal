@@ -81,6 +81,7 @@ namespace SharedLibrary
                     else if (action.Value.ToString() == "1")
                     {
                         //only notify
+
                         if (actionUrl != null && actionUrl != Convert.DBNull
                             && actionUrl.Value != null && actionUrl.Value != Convert.DBNull && !string.IsNullOrEmpty(actionUrl.ToString()))
                             SharedLibrary.HelpfulFunctions.sb_sendNotification_DRequestLog(System.Diagnostics.Eventing.Reader.StandardEventLevel.Warning, "Notif," + returnValue, actionUrl.Value.ToString());

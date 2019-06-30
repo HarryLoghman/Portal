@@ -36,6 +36,7 @@ namespace Portal.Areas.Tools.Controllers
                              {
                                  Id = c.Id,
                                  campaignName = c.campaignName,
+                                 campaingType = c.campaignType,
                                  serviceName = sers.Name,
                                  ServiceId = c.ServiceId,
                                  price = c.price,
@@ -44,6 +45,7 @@ namespace Portal.Areas.Tools.Controllers
                                  status = c.status,
                                  startTime = c.startTime,
                                  endTime = c.endTime,
+                                 replaceWelcomeMessage = c.replaceWelcomeMessage,
                                  TotalRequests = db.CampaignsMobileNumbers.Count(o => o.campaignId == c.Id && o.campaignType.ToLower() == "charges"),
                                  TotalPaid = db.CampaignsMobileNumbers.Count(o => o.campaignId == c.Id && o.campaignType.ToLower() == "charges" && o.paid.HasValue && o.paid.Value),
                              }).OrderBy(o => o.startTime).ThenBy(o => o.campaignName);
@@ -51,6 +53,7 @@ namespace Portal.Areas.Tools.Controllers
             {
                 Id = c.Id,
                 campaignName = c.campaignName,
+                campaignType = c.campaingType,
                 serviceName = c.serviceName,
                 ServiceId = c.ServiceId,
                 price = c.price,
@@ -59,6 +62,7 @@ namespace Portal.Areas.Tools.Controllers
                 status = c.status,
                 startTime = c.startTime.HasValue ? c.startTime.Value.ToString("yyyy/MM/dd HH:mm:ss") : null,
                 endTime = c.endTime.HasValue ? c.endTime.Value.ToString("yyyy/MM/dd HH:mm:ss") : null,
+                replaceWelcomeMessage = c.replaceWelcomeMessage,
                 TotalRequests = c.TotalRequests,
                 TotalPaid = c.TotalPaid,
             });
@@ -68,7 +72,7 @@ namespace Portal.Areas.Tools.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult CampaignCharges_Delete([DataSourceRequest]DataSourceRequest request, [Bind] CampaignsCharge campaign)
+        public ActionResult CampaignsCharges_Delete([DataSourceRequest]DataSourceRequest request, [Bind] CampaignsCharge campaign)
         {
             try
             {
@@ -168,10 +172,12 @@ namespace Portal.Areas.Tools.Controllers
                         {
                             campaigns = new SharedLibrary.Models.CampaignsCharge();
                             campaigns.campaignName = model.CampaignName;
+                            campaigns.campaignType = (int)model.CampaignType;
                             campaigns.endTime = model.endTime;
                             campaigns.keyword = model.keyword;
                             campaigns.message = model.message;
                             campaigns.price = model.price;
+                            campaigns.replaceWelcomeMessage = model.replaceWelcomeMessage;
                             campaigns.ServiceId = int.Parse(model.service);
                             campaigns.startTime = model.startTime;
                             campaigns.status = (int)model.status;
@@ -190,10 +196,12 @@ namespace Portal.Areas.Tools.Controllers
                             if (ModelState.IsValid)
                             {
                                 campaigns.campaignName = model.CampaignName;
+                                campaigns.campaignType = (int)model.CampaignType;
                                 campaigns.endTime = model.endTime;
                                 campaigns.keyword = model.keyword;
                                 campaigns.message = model.message;
                                 campaigns.price = model.price;
+                                campaigns.replaceWelcomeMessage = model.replaceWelcomeMessage;
                                 campaigns.ServiceId = int.Parse(model.service);
                                 campaigns.startTime = model.startTime;
                                 campaigns.status = (int)model.status;

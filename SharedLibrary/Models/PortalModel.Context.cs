@@ -68,11 +68,12 @@ namespace SharedLibrary.Models
         public virtual DbSet<MobinOneFtp> MobinOneFtps { get; set; }
         public virtual DbSet<ServersIP> ServersIPs { get; set; }
         public virtual DbSet<Bulk> Bulks { get; set; }
-        public virtual DbSet<CampaignsCharge> CampaignsCharges { get; set; }
         public virtual DbSet<CampaignsMobileNumber> CampaignsMobileNumbers { get; set; }
         public virtual DbSet<FtpSubAndChargeLastState> FtpSubAndChargeLastStates { get; set; }
         public virtual DbSet<vw_servicesServicesInfo> vw_servicesServicesInfo { get; set; }
         public virtual DbSet<FtpSyncFile> FtpSyncFiles { get; set; }
+        public virtual DbSet<CampaignsCharge> CampaignsCharges { get; set; }
+        public virtual DbSet<ReceivedMessagesArchive> ReceivedMessagesArchives { get; set; }
     
         public virtual int ArchiveReceivedMessages()
         {

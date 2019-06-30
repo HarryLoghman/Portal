@@ -160,6 +160,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="campaignName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="campaignType" Type="int" />
           <Property Name="ServiceId" Type="bigint" Nullable="false" />
           <Property Name="price" Type="int" />
           <Property Name="keyword" Type="nvarchar" MaxLength="10" Nullable="false" />
@@ -167,6 +168,7 @@
           <Property Name="status" Type="int" />
           <Property Name="startTime" Type="datetime" />
           <Property Name="endTime" Type="datetime" />
+          <Property Name="replaceWelcomeMessage" Type="bit" />
         </EntityType>
         <EntityType Name="CampaignsMobileNumbers">
           <Key>
@@ -375,6 +377,25 @@
           <Property Name="RetryCount" Type="int" />
           <Property Name="LastRetryDate" Type="datetime" />
           <Property Name="description" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="ReceivedMessagesArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ShortCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReceivedTime" Type="datetime" Nullable="false" />
+          <Property Name="MessageId" Type="nvarchar" MaxLength="100" />
+          <Property Name="IsProcessed" Type="bit" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="bit" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="nvarchar" MaxLength="50" />
+          <Property Name="ReceivedFrom" Type="nvarchar" MaxLength="50" />
+          <Property Name="ReceivedFromSource" Type="int" />
+          <Property Name="RetryCount" Type="int" />
+          <Property Name="LastRetryDate" Type="datetime" />
+          <Property Name="description" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Referral">
           <Key>
@@ -891,6 +912,7 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="RealtimeStatisticsFor2GServices" EntityType="Self.RealtimeStatisticsFor2GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RealtimeStatisticsFor3GServices" EntityType="Self.RealtimeStatisticsFor3GServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReceievedMessages" EntityType="Self.ReceievedMessages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ReceivedMessagesArchive" EntityType="Self.ReceivedMessagesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Referral" EntityType="Self.Referral" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestsLogs" EntityType="Self.RequestsLogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServersActions" EntityType="Self.ServersActions" Schema="dbo" store:Type="Tables" />
@@ -1139,7 +1161,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <EntitySet Name="MobinOneFtps" EntityType="PortalModel.MobinOneFtp" />
           <EntitySet Name="ServersIPs" EntityType="PortalModel.ServersIP" />
           <EntitySet Name="Bulks" EntityType="PortalModel.Bulk" />
-          <EntitySet Name="CampaignsCharges" EntityType="PortalModel.CampaignsCharge" />
           <EntitySet Name="CampaignsMobileNumbers" EntityType="PortalModel.CampaignsMobileNumber" />
           <FunctionImport Name="sp_RequestsRulesChecker">
             <Parameter Name="requestId" Mode="In" Type="Int64" />
@@ -1163,6 +1184,8 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           </FunctionImport>
           <EntitySet Name="vw_servicesServicesInfo" EntityType="PortalModel.vw_servicesServicesInfo" />
           <EntitySet Name="FtpSyncFiles" EntityType="PortalModel.FtpSyncFile" />
+          <EntitySet Name="CampaignsCharges" EntityType="PortalModel.CampaignsCharge" />
+          <EntitySet Name="ReceivedMessagesArchives" EntityType="PortalModel.ReceivedMessagesArchive" />
           </EntityContainer>
         <ComplexType Name="GetUserLog_Result">
           <Property Type="String" Name="Type" Nullable="false" MaxLength="2" />
@@ -1904,20 +1927,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="PersianDateCreated" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Tag" Type="Int32" />
         </EntityType>
-        <EntityType Name="CampaignsCharge">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="campaignName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ServiceId" Type="Int64" Nullable="false" />
-          <Property Name="price" Type="Int32" />
-          <Property Name="keyword" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="Int32" />
-          <Property Name="startTime" Type="DateTime" Precision="3" />
-          <Property Name="endTime" Type="DateTime" Precision="3" />
-        </EntityType>
         <EntityType Name="CampaignsMobileNumber">
           <Key>
             <PropertyRef Name="Id" />
@@ -2025,6 +2034,41 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
           <Property Name="chargeCount" Type="Int32" />
           <Property Name="subCount" Type="Int32" />
           <Property Name="unsubCount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="CampaignsCharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="campaignName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="campaignType" Type="Int32" />
+          <Property Name="ServiceId" Type="Int64" Nullable="false" />
+          <Property Name="price" Type="Int32" />
+          <Property Name="keyword" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="startTime" Type="DateTime" Precision="3" />
+          <Property Name="endTime" Type="DateTime" Precision="3" />
+          <Property Name="replaceWelcomeMessage" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="ReceivedMessagesArchive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MessageId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsProcessed" Type="Boolean" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsReceivedFromIntegratedPanel" Type="Boolean" Nullable="false" />
+          <Property Name="PersianReceivedTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedFromSource" Type="Int32" />
+          <Property Name="RetryCount" Type="Int32" />
+          <Property Name="LastRetryDate" Type="DateTime" Precision="3" />
+          <Property Name="description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -2688,21 +2732,6 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="CampaignsCharges">
-            <EntityTypeMapping TypeName="PortalModel.CampaignsCharge">
-              <MappingFragment StoreEntitySet="CampaignsCharges">
-                <ScalarProperty Name="endTime" ColumnName="endTime" />
-                <ScalarProperty Name="startTime" ColumnName="startTime" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="message" ColumnName="message" />
-                <ScalarProperty Name="keyword" ColumnName="keyword" />
-                <ScalarProperty Name="price" ColumnName="price" />
-                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
-                <ScalarProperty Name="campaignName" ColumnName="campaignName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="CampaignsMobileNumbers">
             <EntityTypeMapping TypeName="PortalModel.CampaignsMobileNumber">
               <MappingFragment StoreEntitySet="CampaignsMobileNumbers">
@@ -2811,6 +2840,43 @@ warning 6002: The table/view 'portal.dbo.vw_servicesServicesInfo' does not have 
                 <ScalarProperty Name="ftpDirectory" ColumnName="ftpDirectory" />
                 <ScalarProperty Name="serverIP" ColumnName="serverIP" />
                 <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CampaignsCharges">
+            <EntityTypeMapping TypeName="PortalModel.CampaignsCharge">
+              <MappingFragment StoreEntitySet="CampaignsCharges">
+                <ScalarProperty Name="replaceWelcomeMessage" ColumnName="replaceWelcomeMessage" />
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="keyword" ColumnName="keyword" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="campaignType" ColumnName="campaignType" />
+                <ScalarProperty Name="campaignName" ColumnName="campaignName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReceivedMessagesArchives">
+            <EntityTypeMapping TypeName="PortalModel.ReceivedMessagesArchive">
+              <MappingFragment StoreEntitySet="ReceivedMessagesArchive">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="LastRetryDate" ColumnName="LastRetryDate" />
+                <ScalarProperty Name="RetryCount" ColumnName="RetryCount" />
+                <ScalarProperty Name="ReceivedFromSource" ColumnName="ReceivedFromSource" />
+                <ScalarProperty Name="ReceivedFrom" ColumnName="ReceivedFrom" />
+                <ScalarProperty Name="PersianReceivedTime" ColumnName="PersianReceivedTime" />
+                <ScalarProperty Name="IsReceivedFromIntegratedPanel" ColumnName="IsReceivedFromIntegratedPanel" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="ReceivedTime" ColumnName="ReceivedTime" />
+                <ScalarProperty Name="ShortCode" ColumnName="ShortCode" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
