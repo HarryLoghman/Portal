@@ -129,12 +129,11 @@ namespace ChargingLibrary
                                 + "</s:Body></s:Envelope>";
                 #endregion
                 Program.logs.Info(this.v_url + " " + payload);
-                Program.logs.Debug(this.v_url + " " + payload);
-                DateTime dateCreated = DateTime.Now;
-
-
 
                 timeBeforeSendMTNClient = DateTime.Now;
+                Program.logs.Debug(mobileNumber + " " + timeBeforeSendMTNClient.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+
+                DateTime dateCreated = DateTime.Now;
 
                 singleChargeReq.dateCreated = dateCreated;
                 singleChargeReq.guidStr = guidStr;
@@ -192,9 +191,9 @@ namespace ChargingLibrary
                 webRequest.Method = "POST";
                 webRequest.Proxy = null;
 
-                Program.logs.Debug("PostAsyncBefore:" + this.v_url + " " + singleChargeReq.payload);
+                Program.logs.Debug("PostAsyncBefore:" + singleChargeReq.mobileNumber + " " + singleChargeReq.timeBeforeSendRequest.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 webRequest.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallBack), new object[] { webRequest, singleChargeReq });
-                Program.logs.Debug("PostAsyncAfter:" + this.v_url + " " + singleChargeReq.payload);
+                Program.logs.Debug("PostAsyncAfter:" + singleChargeReq.mobileNumber + " " + singleChargeReq.timeBeforeSendRequest.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             }
             catch (Exception ex)
             {
@@ -220,9 +219,9 @@ namespace ChargingLibrary
                     Byte[] bts = UnicodeEncoding.UTF8.GetBytes(singleChargeReq.payload);
                     stream.Write(bts, 0, bts.Count());
                 }
-                Program.logs.Debug("GetRequestStreamBefore:" + this.v_url + " " + singleChargeReq.payload);
+                Program.logs.Debug("GetRequestStreamBefore:" + singleChargeReq.mobileNumber + " " + singleChargeReq.timeBeforeSendRequest.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 webRequest.BeginGetResponse(new AsyncCallback(GetResponseCallback), new object[] { webRequest, singleChargeReq });
-                Program.logs.Debug("GetRequestStreamAfter:" + this.v_url + " " + singleChargeReq.payload);
+                Program.logs.Debug("GetRequestStreamAfter:" + singleChargeReq.mobileNumber + " " + singleChargeReq.timeBeforeSendRequest.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 singleChargeReq.timeAfterEntity = DateTime.Now;
 
             }
@@ -277,9 +276,9 @@ namespace ChargingLibrary
             singleChargeReq.timeAfterWhere = DateTime.Now;
             try
             {
-                Program.logs.Debug("GetResponseBefore:" + this.v_url + " " + singleChargeReq.payload);
+                Program.logs.Debug("GetResponseBefore:" + singleChargeReq.mobileNumber + " " + singleChargeReq.timeBeforeSendRequest.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 HttpWebResponse response = (HttpWebResponse)webRequest.EndGetResponse(parameters);
-                Program.logs.Debug("GetResponseAfter:" + this.v_url + " " + singleChargeReq.payload);
+                Program.logs.Debug("GetResponseAfter:" + singleChargeReq.mobileNumber + " " + singleChargeReq.timeBeforeSendRequest.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 string result = "";
                 using (StreamReader rd = new StreamReader(response.GetResponseStream()))
                 {

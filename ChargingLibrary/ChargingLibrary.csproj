@@ -66,7 +66,6 @@
     </Compile>
     <Compile Include="ServiceCharge.cs" />
     <Compile Include="ServiceChargeTelepromoMapfa.cs" />
-    <Compile Include="ServiceChargeMobinOneMapfaOld.cs" />
     <Compile Include="ServiceChargeMobinOneMapfa.cs" />
     <Compile Include="ServiceChargeMTN.cs" />
     <Compile Include="ServiceChargeMTNPorshetab.cs" />
