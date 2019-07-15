@@ -1527,6 +1527,8 @@ namespace SharedLibrary
                 {
                     logs.Info("Mapfa OtpCharge: " + mobileNumber);
                     var result = client.sendVerificationCode(username, password, domain, channelType, mobileNumber, aggregatorServiceId);
+                    var t = new MobinOneMapfaSendServiceReference.SendClient();
+                    t.Unsubscribe(username, password, domain, message.ShortCode, mobileNumber, aggregatorServiceId);
                     logs.Info("Mapfa OtpCharge: " + mobileNumber);
                     if (result == 0)
                         singlecharge.Description = "SUCCESS-Pending Confirmation";

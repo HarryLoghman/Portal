@@ -1923,7 +1923,8 @@ namespace Portal.Controllers
                 status = "Invalid Mobile Number";
             else if (messageObj.MobileNumber == "Invalid Number")
                 status = "Invalid Number";
-            else if (!VerificactionAllowedServiceCode.Contains(messageObj.ServiceCode))
+            else if (!VerificactionAllowedServiceCode.Contains(messageObj.ServiceCode,StringComparer.CurrentCultureIgnoreCase)
+                && !VerificactionAllowedServiceCode.Contains(messageObj.ServiceCode, StringComparer.InvariantCultureIgnoreCase))
                 status = "This ServiceCode does not have permission";
             else
             {
