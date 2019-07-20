@@ -117,6 +117,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadBulkService", "Dehnad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadChassisService", "DehnadChassisBolandService\DehnadChassisService.csproj", "{1462A385-A185-4555-8E23-EAEFC037D819}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DehnadTransferLogs", "DehnadTransferLogs\DehnadTransferLogs.csproj", "{D13F2B9D-3273-4163-86AD-62DA9F0FB1C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -351,6 +353,10 @@ Global
 		{1462A385-A185-4555-8E23-EAEFC037D819}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1462A385-A185-4555-8E23-EAEFC037D819}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1462A385-A185-4555-8E23-EAEFC037D819}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D13F2B9D-3273-4163-86AD-62DA9F0FB1C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D13F2B9D-3273-4163-86AD-62DA9F0FB1C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D13F2B9D-3273-4163-86AD-62DA9F0FB1C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D13F2B9D-3273-4163-86AD-62DA9F0FB1C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

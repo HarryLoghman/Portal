@@ -542,6 +542,7 @@ namespace SharedLibrary
         private static string mobinOneSyncIP = "http://cp.mobinone.org:33065";
         private static string MCIFtpSyncIP = "ftp://172.17.252.201";
         private static string mobineOneFtpIP = "ftp://cp.mobinone.org:30041";
+        private static string ftpInternal53 = "ftp://140.130.120.11";
 
         public enum enumServers
         {
@@ -561,6 +562,7 @@ namespace SharedLibrary
             mobinOneSync = 13,
             MCIFtpSync = 14,
             mobinOneFtp = 15,
+            ftpInternal53=16,
         }
 
         public enum enumServersActions
@@ -587,8 +589,8 @@ namespace SharedLibrary
             mobinOneSync = 19,
             MCISync = 20,
             dehnadNotificationAtomicWarning = 21,
-            mobineOneFtpSync=22
-
+            mobineOneFtpSync=22,
+            ftpInternalTransferLog = 23,
         }
         public static List<Models.ServersIP> fnc_getLocalServers()
         {
@@ -731,6 +733,11 @@ namespace SharedLibrary
                                 serverURL = mobineOneFtpIP;
                                 userName = "dehnad";
                                 pwd = "abcd.1234";
+                                break;
+                            case enumServers.ftpInternal53:
+                                serverURL = ftpInternal53;
+                                userName = "FTPUser";
+                                pwd = "T@ngeH0rm0z@98.53";
                                 break;
                             default:
                                 logs.Error("Error in fnc_getServerURL : Unknown Server " + server.ToString());
@@ -972,6 +979,14 @@ namespace SharedLibrary
                                 switch (action)
                                 {
                                     case enumServersActions.mobineOneFtpSync:
+                                        return serverURL + "/";
+
+                                }
+                                break;
+                            case enumServers.ftpInternal53:
+                                switch (action)
+                                {
+                                    case enumServersActions.ftpInternalTransferLog:
                                         return serverURL + "/";
 
                                 }
